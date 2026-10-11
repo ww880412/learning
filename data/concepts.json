@@ -1,24 +1,278 @@
 [
- {"id":"agent-loop","term":"智能体循环","en":"agent loop","def":"编程智能体的核心是一个循环：客户端把对话发给大模型；大模型有时请求调用工具；客户端在大模型之外执行工具，把结果追加回对话，大模型再接着想，直到回复里不再请求工具。课件的说法是 It's that simple。",
-  "refs":[{"item":"cs146s-L01","card":5,"note":"核心：It's that simple"},{"item":"cs146s-L01","card":6,"note":"课件里的 4 个步骤"},{"item":"cs146s-L01","card":9,"note":"主循环代码"},{"item":"cs146s-L01","card":10,"note":"模拟器：亲手走一遍循环"}],"related":["tool-calling","system-prompt","context"]},
- {"id":"tool-calling","term":"工具调用","en":"tool calling","def":"大模型自己碰不到电脑，只能请求调用工具，由客户端执行。CS146S 第 1 讲的官方代码只有 3 个工具（read_file、list_files、edit_file），并且不用 API 自带的工具调用功能：模型回复一行 tool: NAME({JSON})，程序逐行解析后执行，结果以 tool_result(...) 追加回对话。",
-  "refs":[{"item":"cs146s-L01","card":7,"note":"官方代码只有 3 个工具"},{"item":"cs146s-L01","card":8,"note":"系统提示词规定调用格式"},{"item":"cs146s-L01","card":9,"note":"解析 tool: 行并执行"}],"related":["agent-loop","system-prompt"]},
- {"id":"system-prompt","term":"系统提示词","en":"system prompt","def":"放在对话最前面、告诉模型身份和规则的提示词。第 1 讲的官方代码用它列出可用工具，并规定调用格式。黄同学h的文章提到：模型变强后，一些约束变成噪声，要清理不必要的 Skill 和系统提示词。",
-  "refs":[{"item":"cs146s-L01","card":8,"note":"系统提示词告诉模型怎样调用工具"},{"item":"huangtongxueh-ai-dev","card":2,"note":"重流程正在变成噪声"}],"related":["tool-calling","skill"]},
- {"id":"context","term":"上下文","en":"context","def":"模型做事时能看到的全部信息：对话、文件内容、需求文档等。课件说「好上下文 → 好代码」；黄同学h把它列为 Harness 的第一项，并用 Spec / CONTEXT.md 让后面的 Agent 共享同一份上下文。",
-  "refs":[{"item":"cs146s-L01","card":3,"note":"好上下文 → 好代码"},{"item":"cs146s-L01","card":11,"note":"作业：分析上下文管理"},{"item":"huangtongxueh-ai-dev","card":14,"note":"Spec 记录决策，Agent 共享上下文"},{"item":"huangtongxueh-ai-dev","card":23,"note":"Harness = 上下文 + 环境 + 判断依据"}],"related":["agent-loop","harness"]},
- {"id":"adversarial-review","term":"对抗性审查","en":"adversarial review","def":"不帮方案找理由，而是想办法证明它是错的：优先寻找能推翻核心假设的反例。原文 Prompt：「对这个方案做一次对抗性审查，优先寻找能推翻核心假设的反例。」适合方案评审和 Code Review。",
-  "refs":[{"item":"huangtongxueh-ai-dev","card":8,"note":"对抗性审查"},{"item":"huangtongxueh-ai-dev","card":13,"note":"工作流里的方案审查和交叉审查"},{"item":"huangtongxueh-ai-dev","card":15,"note":"自测后引入其他 Agent 交叉对抗性审查"}],"related":["first-principles","occam"]},
- {"id":"e2e-test","term":"端到端测试","en":"end-to-end test","def":"从真实入口执行业务，再检查是否得到用户要的结果。黄同学h认为 Agent 写的测试多，缺的是端到端测试环境；预期结果要来自业务契约，不能把系统返回当正确答案。",
-  "refs":[{"item":"huangtongxueh-ai-dev","card":17,"note":"测试多不等于放心"},{"item":"huangtongxueh-ai-dev","card":18,"note":"Agent 如何完成端到端验证"},{"item":"huangtongxueh-ai-dev","card":19,"note":"搭建环境的四件事"},{"item":"huangtongxueh-ai-dev","card":20,"note":"工具取证，契约判对错"}],"related":["skill","harness"]},
- {"id":"skill","term":"Skill","en":"Skill","def":"写给 Agent 的可复用流程说明（SOP），比如需求追问、交接、端到端测试怎么跑。黄同学h的建议：一个流程重复超过三次，就让 Codex 整理成 Skill；但过重的 Skill 会消耗 Token，还会让模型照流程走多余的步骤。",
-  "refs":[{"item":"huangtongxueh-ai-dev","card":2,"note":"重 Skill 的弊端"},{"item":"huangtongxueh-ai-dev","card":4,"note":"常用的 7 类 Skill"},{"item":"huangtongxueh-ai-dev","card":18,"note":"Skill 沉淀测试方法"}],"related":["system-prompt","e2e-test"]},
- {"id":"ablation","term":"消融实验","en":"ablation study","def":"系统变好了，不代表每样东西都有用：逐项去掉改动，判断收益真正来自哪里。原文例子：三项优化让 800ms 降到 100ms，消融后可能发现只加索引就到了 120ms。",
-  "refs":[{"item":"huangtongxueh-ai-dev","card":9,"note":"消融实验"},{"item":"huangtongxueh-ai-dev","card":12,"note":"验证贡献"}],"related":["occam"]},
- {"id":"occam","term":"奥卡姆剃刀","en":"Occam's razor","def":"效果差不多时，选假设更少的方案。原文 Prompt：「用奥卡姆剃刀重新审查这个设计，在满足需求的前提下，删除所有非必要机制。」模型容易为了「完整」过度设计，所以对 Coding Agent 尤其有用。",
-  "refs":[{"item":"huangtongxueh-ai-dev","card":10,"note":"奥卡姆剃刀"},{"item":"huangtongxueh-ai-dev","card":21,"note":"Review 时专查新增的抽象"}],"related":["ablation","adversarial-review"]},
- {"id":"first-principles","term":"第一性原理","en":"first principles","def":"不沿既定方案继续优化，而是重新问问题该怎么解。原文例子：不要基于「加 Redis 缓存」继续设计，先分析接口为什么慢，再找最小必要的解决方案。",
-  "refs":[{"item":"huangtongxueh-ai-dev","card":7,"note":"第一性原理"},{"item":"huangtongxueh-ai-dev","card":12,"note":"重新定义问题"}],"related":["adversarial-review"]},
- {"id":"harness","term":"Harness","en":"harness","def":"黄同学h的总结：Harness = 正确的上下文 + 能执行的环境 + 判断结果的依据。工作流要定期做减法，删掉只是在弥补旧模型短板的步骤和约束。",
-  "refs":[{"item":"huangtongxueh-ai-dev","card":23,"note":"Harness 与减法"}],"related":["context","e2e-test"]}
+ {
+  "id": "agent-loop",
+  "term": "智能体循环",
+  "en": "agent loop",
+  "def": "编程智能体的核心是一个循环：客户端把对话发给大模型；大模型有时请求调用工具；客户端在大模型之外执行工具，把结果追加回对话，大模型再接着想，直到回复里不再请求工具。课件的说法是 It's that simple。",
+  "refs": [
+   {
+    "item": "cs146s-L01",
+    "card": 1,
+    "note": "两层循环 + 一个对话列表"
+   },
+   {
+    "item": "cs146s-L01",
+    "card": 2,
+    "note": "It’s that simple：客户端在模型外执行工具"
+   },
+   {
+    "item": "cs146s-L01",
+    "card": 6,
+    "note": "主循环代码与停止条件"
+   },
+   {
+    "item": "cs146s-L01",
+    "card": 9,
+    "note": "模拟器：亲手走一遍循环"
+   }
+  ],
+  "related": [
+   "tool-calling",
+   "system-prompt",
+   "context"
+  ]
+ },
+ {
+  "id": "tool-calling",
+  "term": "工具调用",
+  "en": "tool calling",
+  "def": "大模型自己碰不到电脑，只能请求调用工具，由客户端执行。CS146S 第 1 讲的官方代码只有 3 个工具（read_file、list_files、edit_file），并且不用 API 自带的工具调用功能：模型回复一行 tool: NAME({JSON})，程序逐行解析后执行，结果以 tool_result(...) 追加回对话。",
+  "refs": [
+   {
+    "item": "cs146s-L01",
+    "card": 1,
+    "note": "官方代码只有 3 个工具"
+   },
+   {
+    "item": "cs146s-L01",
+    "card": 4,
+    "note": "系统提示词规定 tool: 调用格式"
+   },
+   {
+    "item": "cs146s-L01",
+    "card": 5,
+    "note": "逐行解析 tool: 行"
+   },
+   {
+    "item": "cs146s-L01",
+    "card": 10,
+    "note": "哪些工具错误能回到模型"
+   }
+  ],
+  "related": [
+   "agent-loop",
+   "system-prompt"
+  ]
+ },
+ {
+  "id": "system-prompt",
+  "term": "系统提示词",
+  "en": "system prompt",
+  "def": "放在对话最前面、告诉模型身份和规则的提示词。第 1 讲的官方代码用它列出可用工具，并规定调用格式。黄同学h的文章提到：模型变强后，一些约束变成噪声，要清理不必要的 Skill 和系统提示词。",
+  "refs": [
+   {
+    "item": "cs146s-L01",
+    "card": 4,
+    "note": "工具说明写进系统提示词"
+   },
+   {
+    "item": "cs146s-L01",
+    "card": 12,
+    "note": "作业：逐节注解真实系统提示词"
+   },
+   {
+    "item": "huangtongxueh-ai-dev",
+    "card": 2,
+    "note": "模型变强后，写死的工作流变成噪声"
+   }
+  ],
+  "related": [
+   "tool-calling",
+   "skill"
+  ]
+ },
+ {
+  "id": "context",
+  "term": "上下文",
+  "en": "context",
+  "def": "模型做事时能看到的全部信息：对话、文件内容、需求文档等。课件说「好上下文 → 好代码」；黄同学h把它列为 Harness 的第一项，并用 CONTEXT.md 让后面的 Agent 共享同一份上下文。",
+  "refs": [
+   {
+    "item": "cs146s-L01",
+    "card": 8,
+    "note": "对话列表越长，每次调用越长"
+   },
+   {
+    "item": "cs146s-L01",
+    "card": 13,
+    "note": "Good context leads to good code"
+   },
+   {
+    "item": "huangtongxueh-ai-dev",
+    "card": 4,
+    "note": "需求对齐的结论写进 CONTEXT.md"
+   },
+   {
+    "item": "huangtongxueh-ai-dev",
+    "card": 1,
+    "note": "少写死工作流，多给上下文、环境和判断依据"
+   }
+  ],
+  "related": [
+   "agent-loop",
+   "harness"
+  ]
+ },
+ {
+  "id": "adversarial-review",
+  "term": "对抗性审查",
+  "en": "adversarial review",
+  "def": "不帮方案找理由，而是想办法证明它是错的：优先寻找能推翻核心假设的反例。原文 Prompt：「对这个方案做一次对抗性审查，优先寻找能推翻核心假设的反例。」适合方案评审和 Code Review。",
+  "refs": [
+   {
+    "item": "huangtongxueh-ai-dev",
+    "card": 9,
+    "note": "让模型推翻方案，而不是替方案找理由"
+   },
+   {
+    "item": "huangtongxueh-ai-dev",
+    "card": 5,
+    "note": "工作流里的交叉审查"
+   },
+   {
+    "item": "huangtongxueh-ai-dev",
+    "card": 7,
+    "note": "组合 Prompt 里的对抗性审查"
+   }
+  ],
+  "related": [
+   "first-principles",
+   "occam"
+  ]
+ },
+ {
+  "id": "e2e-test",
+  "term": "端到端测试",
+  "en": "end-to-end test",
+  "def": "从真实入口执行业务，再检查是否得到用户要的结果。黄同学h认为 Agent 写的测试多，缺的是端到端测试环境；预期结果要来自业务契约，不能把系统返回当正确答案。",
+  "refs": [
+   {
+    "item": "huangtongxueh-ai-dev",
+    "card": 6,
+    "note": "Agent 从真实入口跑到结果，自己找证据"
+   },
+   {
+    "item": "huangtongxueh-ai-dev",
+    "card": 10,
+    "note": "「什么算对」由业务契约来定"
+   },
+   {
+    "item": "huangtongxueh-ai-dev",
+    "card": 11,
+    "note": "靠小 MR 和端到端测试换来少读代码"
+   }
+  ],
+  "related": [
+   "skill",
+   "harness"
+  ]
+ },
+ {
+  "id": "skill",
+  "term": "Skill",
+  "en": "Skill",
+  "def": "写给 Agent 的可复用流程说明（SOP），比如需求追问、交接、端到端测试怎么跑。黄同学h的建议：一个流程重复超过三次，就让 Codex 整理成 Skill；但过重的 Skill 会消耗 Token，还会让模型照流程走多余的步骤。",
+  "refs": [
+   {
+    "item": "huangtongxueh-ai-dev",
+    "card": 2,
+    "note": "写死的工作流变成噪声"
+   },
+   {
+    "item": "huangtongxueh-ai-dev",
+    "card": 6,
+    "note": "可复用步骤写成 Skill"
+   }
+  ],
+  "related": [
+   "system-prompt",
+   "e2e-test"
+  ]
+ },
+ {
+  "id": "ablation",
+  "term": "消融实验",
+  "en": "ablation study",
+  "def": "系统变好了，不代表每样东西都有用：逐项去掉改动，判断收益真正来自哪里。原文例子：三项优化让 800ms 降到 100ms，消融后可能发现只加索引就到了 120ms。",
+  "refs": [
+   {
+    "item": "huangtongxueh-ai-dev",
+    "card": 8,
+    "note": "实例：消融实验怎么用"
+   },
+   {
+    "item": "huangtongxueh-ai-dev",
+    "card": 7,
+    "note": "组合 Prompt：验证贡献"
+   }
+  ],
+  "related": [
+   "occam"
+  ]
+ },
+ {
+  "id": "occam",
+  "term": "奥卡姆剃刀",
+  "en": "Occam's razor",
+  "def": "效果差不多时，选假设更少的方案。原文 Prompt：「用奥卡姆剃刀重新审查这个设计，在满足需求的前提下，删除所有非必要机制。」模型容易为了「完整」过度设计，所以对 Coding Agent 尤其有用。",
+  "refs": [
+   {
+    "item": "huangtongxueh-ai-dev",
+    "card": 7,
+    "note": "组合 Prompt：删除复杂度"
+   },
+   {
+    "item": "huangtongxueh-ai-dev",
+    "card": 9,
+    "note": "换一句话，模型关注什么"
+   }
+  ],
+  "related": [
+   "ablation",
+   "adversarial-review"
+  ]
+ },
+ {
+  "id": "first-principles",
+  "term": "第一性原理",
+  "en": "first principles",
+  "def": "不沿既定方案继续优化，而是重新问问题该怎么解。原文例子：不要基于「加 Redis 缓存」继续设计，先分析接口为什么慢，再找最小必要的解决方案。",
+  "refs": [
+   {
+    "item": "huangtongxueh-ai-dev",
+    "card": 7,
+    "note": "组合 Prompt：重新定义问题"
+   }
+  ],
+  "related": [
+   "adversarial-review"
+  ]
+ },
+ {
+  "id": "harness",
+  "term": "Harness",
+  "en": "harness",
+  "def": "黄同学h的总结：Harness = 正确的上下文 + 能执行的环境 + 判断结果的依据。工作流要定期做减法，删掉只是在弥补旧模型短板的步骤和约束。",
+  "refs": [
+   {
+    "item": "huangtongxueh-ai-dev",
+    "card": 1,
+    "note": "少写死工作流，多给 Agent 上下文、环境和判断依据"
+   }
+  ],
+  "related": [
+   "context",
+   "e2e-test"
+  ]
+ }
 ]

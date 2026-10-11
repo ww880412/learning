@@ -1,146 +1,476 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>黄同学h · 入职大厂两个月，我的 AI 开发心得</title><style>
-:root{--bg:#0f1420;--card:#171e2e;--line:#2a3550;--text:#e6ebf5;--mute:#94a3c0;--a:#6ea8ff;--b:#ffb86b;--c:#6ee7b7;--d:#f472b6;--err:#f87171}
-*{box-sizing:border-box}html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:16px/1.6 -apple-system,"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif}
-#bar{position:fixed;top:0;left:0;height:4px;background:linear-gradient(90deg,var(--a),var(--c));transition:width .3s;z-index:9}
-header{position:fixed;top:4px;left:0;right:0;display:flex;justify-content:space-between;padding:8px 16px;color:var(--mute);font-size:13px;z-index:8;background:var(--bg)}
-main{height:100%;padding:44px 12px 72px;display:flex;align-items:center;justify-content:center}
-.card{display:none;width:100%;max-width:1040px;max-height:100%;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px 30px;animation:in .35s}
-.card.on{display:block}@keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1}}
-h2{margin:0 0 4px;font-size:24px}.src{display:inline-block;font-size:12px;color:var(--mute);border:1px solid var(--line);border-radius:99px;padding:1px 10px;margin-bottom:14px}
-.src.extra{color:var(--b);border-color:var(--b)}
-.row{display:grid;grid-template-columns:1.1fr 1fr;gap:26px;align-items:center}
-@media(max-width:760px){header span:first-child{display:none}nav button{padding:8px 10px;font-size:13px;white-space:nowrap}.dots i{width:6px;height:6px}.dots{gap:3px}.row{grid-template-columns:1fr}.card{padding:18px}h2{font-size:20px}}
-svg{width:100%;height:auto}svg text{fill:var(--text);font-size:14px;font-family:inherit}
-ul{padding-left:20px;margin:6px 0}li{margin:4px 0}.mute{color:var(--mute)}a{color:var(--a)}
-code{background:#0b0f18;border:1px solid var(--line);border-radius:5px;padding:0 5px;font:13px ui-monospace,Menlo,Consolas,monospace}
-pre{background:#0b0f18;border:1px solid var(--line);border-radius:10px;padding:12px 14px;overflow:auto;font:12.5px/1.55 ui-monospace,Menlo,Consolas,monospace;margin:0;max-height:430px;white-space:pre-wrap;word-break:break-word}
-.k{color:#c792ea}.s{color:#c3e88d}.cm{color:#697098;font-style:italic}.f{color:#82aaff}.n{color:#f78c6c}.hl{background:#2a3a1f;display:inline-block;width:100%}
-nav{position:fixed;bottom:0;left:0;right:0;display:flex;gap:10px;justify-content:center;align-items:center;padding:12px;background:var(--bg)}
-button{background:#22304d;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:8px 16px;font:inherit;font-size:14px;cursor:pointer}
-button:hover{border-color:var(--a)}button.pri{background:var(--a);color:#0b1020;border-color:var(--a);font-weight:600}button:disabled{opacity:.4;cursor:default}
-.dots{display:flex;gap:5px}.dots i{width:8px;height:8px;border-radius:50%;background:var(--line);cursor:pointer}.dots i.on{background:var(--a)}
-.chip{display:inline-block;border-radius:8px;padding:2px 10px;margin:3px;font-size:14px}
-.big{font-size:44px;font-weight:700}
-/* simulator */
-.sim{display:grid;grid-template-columns:360px 1fr;gap:16px}@media(max-width:820px){.sim{grid-template-columns:1fr}}
-.ctrl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}.ctrl label{font-size:13px;color:var(--mute)}
-select,input[type=range]{background:#0b0f18;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:4px}
-.node{transition:all .25s}.node.act rect{stroke:var(--b);stroke-width:3;filter:drop-shadow(0 0 6px var(--b))}
-#ctx{height:300px;overflow:auto;background:#0b0f18;border:1px solid var(--line);border-radius:10px;padding:8px}
-.msg{border-left:4px solid;border-radius:6px;padding:5px 9px;margin:6px 0;font:12.5px/1.5 ui-monospace,Menlo,monospace;white-space:pre-wrap;word-break:break-all;background:#121929;animation:in .3s}
-.msg b{font-family:inherit}.m-dev{border-color:var(--d)}.m-user{border-color:var(--a)}.m-asst{border-color:var(--b)}.m-tool{border-color:var(--c)}
-#say{min-height:48px;margin-top:8px;padding:8px 12px;border-radius:10px;background:#1d2840;font-size:14px}
-/* quiz */
-.q{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:10px 0}.opt{display:block;width:100%;text-align:left;margin:5px 0}
-.opt.ok{background:#11402d;border-color:var(--c)}.opt.no{background:#4a1a1f;border-color:var(--err)}.fb{font-size:14px;margin-top:4px}
-.tag{font-size:12px;color:var(--mute)}blockquote{margin:8px 0;padding:6px 12px;border-left:4px solid var(--b);background:#121929;border-radius:6px;font-size:14px}.sit{display:block;width:100%;text-align:left;margin:5px 0}.sit.on{border-color:var(--b);background:#2d2a1d}
-</style></head><body><div id="bar"></div><header><span>X 长文 · 黄同学h · 入职大厂两个月，我的 AI 开发心得</span><span id="cnt"></span></header><main>
-<section class="card" data-t="封面"><div class="row"><div><div class="mute">X 长文 · 黄同学h <a href="https://x.com/huangtongxueh" target="_blank">@huangtongxueh</a> · 2026-10-09</div>
-<h2 style="font-size:30px;margin:6px 0 10px">入职大厂两个月，我的 AI 开发心得</h2>
-<p>结论先说：少用重流程，多给 Agent 上下文、执行环境和判断依据。人把精力放在验收和 Review。</p>
-<p class="mute">用 ← → 键、按钮或左右滑动翻页。第 16 张和第 24 张是模拟器，第 25 张是小测。</p>
-<p style="font-size:13px" class="mute">原文：<a href="https://x.com/huangtongxueh/status/2108577165306687938" target="_blank">x.com/huangtongxueh/status/2108577165306687938</a>。每张卡片标了出处；原文没有的内容标「补充」。</p></div>
-<svg viewBox="0 0 400 290"><rect x="20" y="20" width="360" height="40" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="200.0" y="44.55" text-anchor="middle" style="font-size:13px">上下文：PRD · Wiki · 代码</text><rect x="20" y="72" width="360" height="40" rx="10" fill="#1d2840" stroke="#ffb86b"/><text x="200.0" y="96.55" text-anchor="middle" style="font-size:13px">短 Prompt：方法论当快捷键</text><rect x="20" y="124" width="360" height="40" rx="10" fill="#1d2840" stroke="#f472b6"/><text x="200.0" y="148.55" text-anchor="middle" style="font-size:13px">小增量 + 交叉对抗审查</text><rect x="20" y="176" width="360" height="40" rx="10" fill="#1d2840" stroke="#6ee7b7"/><text x="200.0" y="200.55" text-anchor="middle" style="font-size:13px">Agent 友好的端到端测试</text><rect x="20" y="228" width="360" height="40" rx="10" fill="#1d2840" stroke="#94a3c0"/><text x="200.0" y="252.55" text-anchor="middle" style="font-size:13px">人工 Review：验收标准 + 核心逻辑</text></svg></div></section>
-<section class="card" data-t="背景"><h2>背景：重流程正在变成噪声</h2><span class="src">原文 · 背景</span><div class="row"><svg viewBox="0 0 400 300"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#94a3c0"/></marker><marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#f87171"/></marker></defs><rect x="20" y="20" width="160" height="50" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="100.0" y="49.55" text-anchor="middle" style="font-size:13px">老板 one-on-one</text><rect x="220" y="20" width="160" height="50" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="300.0" y="49.55" text-anchor="middle" style="font-size:13px">已是一些项目的主 O</text><rect x="110" y="110" width="180" height="50" rx="10" fill="#1d2840" stroke="#ffb86b"/><text x="200.0" y="131.75" text-anchor="middle" style="font-size:13px">重 Skill（如 Superpowers）</text><text x="200.0" y="147.35" text-anchor="middle" style="font-size:13px">Spec + TDD</text><path d="M200 160V200" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><rect x="20" y="205" width="170" height="60" rx="10" fill="#1d2840" stroke="#f87171"/><text x="105.0" y="239.55" text-anchor="middle" style="font-size:13px">Token 消耗快</text><rect x="210" y="205" width="170" height="60" rx="10" fill="#1d2840" stroke="#f87171"/><text x="295.0" y="231.75" text-anchor="middle" style="font-size:13px">步骤不需要了</text><text x="295.0" y="247.35" text-anchor="middle" style="font-size:13px">模型仍照流程走</text></svg><div><ul><li>作者在组里做 Agent 开发，也维护后端业务。</li><li>Superpowers 这类 Skill 围绕 Spec 和 TDD，流程很重。</li><li>弊端一：Token 消耗得很快。</li><li>弊端二：上下文已经够了，模型仍沿流程往下走。</li><li>模型变强后，一些约束变成了噪声。OpenAI 发布 Astra 时写过博客，讲怎样清理不必要的 Skill 和系统提示词。</li></ul></div></div></section>
-<section class="card" data-t="工具分工"><h2>工具分工：不同任务用不同模型</h2><span class="src">原文 · 一、我目前的工具分工</span><div class="row"><svg viewBox="0 0 400 290"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#94a3c0"/></marker><marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#f87171"/></marker></defs><rect x="10" y="10" width="140" height="44" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="80.0" y="36.2" text-anchor="middle" style="font-size:12px">编码实现</text><rect x="165" y="10" width="225" height="44" rx="10" fill="#121929" stroke="#6ea8ff"/><text x="277.5" y="36.2" text-anchor="middle" style="font-size:12px">Codex + GPT-5.6 Sol</text><rect x="10" y="66" width="140" height="44" rx="10" fill="#1d2840" stroke="#ffb86b"/><text x="80.0" y="92.2" text-anchor="middle" style="font-size:12px">规划</text><rect x="165" y="66" width="225" height="44" rx="10" fill="#121929" stroke="#ffb86b"/><text x="277.5" y="92.2" text-anchor="middle" style="font-size:12px">Astra（之前用 GPT-5.6 Sol Max）</text><rect x="10" y="122" width="140" height="44" rx="10" fill="#1d2840" stroke="#6ee7b7"/><text x="80.0" y="148.2" text-anchor="middle" style="font-size:12px">简单需求</text><rect x="165" y="122" width="225" height="44" rx="10" fill="#121929" stroke="#6ee7b7"/><text x="277.5" y="148.2" text-anchor="middle" style="font-size:12px">pi + DeepSeek V4 Flash</text><rect x="10" y="178" width="140" height="44" rx="10" fill="#1d2840" stroke="#f472b6"/><text x="80.0" y="204.2" text-anchor="middle" style="font-size:12px">方案审查 · Code Review</text><rect x="165" y="178" width="225" height="44" rx="10" fill="#121929" stroke="#f472b6"/><text x="277.5" y="204.2" text-anchor="middle" style="font-size:12px">Claude 5 Fable</text><rect x="10" y="234" width="140" height="44" rx="10" fill="#1d2840" stroke="#94a3c0"/><text x="80.0" y="260.2" text-anchor="middle" style="font-size:12px">个人项目方案设计</text><rect x="165" y="234" width="225" height="44" rx="10" fill="#121929" stroke="#94a3c0"/><text x="277.5" y="260.2" text-anchor="middle" style="font-size:12px">网页端 GPT-6 Pro</text></svg><div><p>作者按任务分配模型。</p><ul><li>写代码交给 Codex。</li><li>规划交给 Astra。</li><li>简单需求用便宜快速的组合。</li><li>审查交给另一家的模型 Claude 5 Fable。</li></ul></div></div></section>
-<section class="card" data-t="常用 Skill"><h2>常用的 7 类 Skill</h2><span class="src">原文 · 一、我常用的 Skill</span><div class="row"><svg viewBox="0 0 400 295"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#94a3c0"/></marker><marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#f87171"/></marker></defs><rect x="5" y="5" width="390" height="35" rx="8" fill="#1d2840" stroke="#6ea8ff"/><text x="15" y="27" style="font-size:13px;font-weight:700;fill:#6ea8ff">think</text><text x="160" y="27" style="font-size:12px">方案对齐、头脑风暴（tw93）</text><rect x="5" y="46" width="390" height="35" rx="8" fill="#1d2840" stroke="#6ea8ff"/><text x="15" y="68" style="font-size:13px;font-weight:700;fill:#6ea8ff">grill me / with docs</text><text x="160" y="68" style="font-size:12px">连续追问，澄清需求</text><rect x="5" y="87" width="390" height="35" rx="8" fill="#1d2840" stroke="#6ea8ff"/><text x="15" y="109" style="font-size:13px;font-weight:700;fill:#6ea8ff">implement</text><text x="160" y="109" style="font-size:12px">实现已明确的计划（Matt Pocock）</text><rect x="5" y="128" width="390" height="35" rx="8" fill="#1d2840" stroke="#ffb86b"/><text x="15" y="150" style="font-size:13px;font-weight:700;fill:#ffb86b">ponytail</text><text x="160" y="150" style="font-size:12px">清理 AI 的过度设计</text><rect x="5" y="169" width="390" height="35" rx="8" fill="#1d2840" stroke="#6ee7b7"/><text x="15" y="191" style="font-size:13px;font-weight:700;fill:#6ee7b7">handoff</text><text x="160" y="191" style="font-size:12px">上下文整理成文件，换会话接着做</text><rect x="5" y="210" width="390" height="35" rx="8" fill="#1d2840" stroke="#f472b6"/><text x="15" y="232" style="font-size:13px;font-weight:700;fill:#f472b6">check</text><text x="160" y="232" style="font-size:12px">代码审查，提 MR 时用</text><rect x="5" y="251" width="390" height="35" rx="8" fill="#1d2840" stroke="#94a3c0"/><text x="15" y="273" style="font-size:13px;font-weight:700;fill:#94a3c0">自己沉淀的 Skill</text><text x="160" y="273" style="font-size:12px">可复用 SOP，如端到端测试</text></svg><div><ul><li><b>grill</b> 把目标、约束和取舍问清楚，写进 ADR 或 CONTEXT.md。它能挖出前期没想到的问题。</li><li><b>implement</b> 配合 grill 用。</li><li><b>ponytail</b> 作者常用，因为 GPT-5.6 Sol 常常过度设计。</li><li><b>handoff</b> 一般从 Codex 交接给 Claude Code 或 pi agent。</li><li>建议：一个流程重复超过三次，就让 Codex 整理成 Skill。</li></ul></div></div></section>
-<section class="card" data-t="Prompt 快捷键"><h2>短 Prompt 是模型的「思维快捷键」</h2><span class="src">原文 · 一、我常用的 Prompt</span><div class="row"><svg viewBox="0 0 400 300"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#94a3c0"/></marker><marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#f87171"/></marker></defs><rect x="20" y="30" width="150" height="90" rx="10" fill="#1d2840" stroke="#94a3c0"/><text x="95.0" y="63.949999999999996" text-anchor="middle" style="font-size:13px">手写几百行</text><text x="95.0" y="79.55" text-anchor="middle" style="font-size:13px">Workflow</text><text x="95.0" y="95.14999999999999" text-anchor="middle" style="font-size:13px">第一步… 第二步…</text><path d="M175 75H225" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><rect x="230" y="40" width="150" height="70" rx="10" fill="#1d2840" stroke="#ffb86b"/><text x="305.0" y="71.5" text-anchor="middle" style="font-size:14px">一句方法论</text><text x="305.0" y="88.3" text-anchor="middle" style="font-size:14px">“思维快捷键”</text><rect x="60" y="170" width="280" height="90" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="200.0" y="203.95000000000002" text-anchor="middle" style="font-size:13px">模型训练时见过大量</text><text x="200.0" y="219.55" text-anchor="middle" style="font-size:13px">论文、代码、设计文档</text><text x="200.0" y="235.15" text-anchor="middle" style="font-size:13px">→ 告诉它用哪套思考方式</text></svg><div><p>作者很少自己写大段 Prompt。需要长 Prompt 时，让 Codex 生成。比如让 Codex 写一份交接 Prompt，交给 GPT Pro 做方案设计。</p><p>短 Prompt 有时「一句话顶几千句话」。</p><p>它们不是魔法咒语，是人类知识里高度标准化的方法论。</p></div></div></section>
-<section class="card" data-t="情况→方法"><h2>遇到什么情况，用什么方法</h2><span class="src">原文 · 一、我常用的 Prompt（原文图 2）</span><div class="row"><svg viewBox="0 0 400 300"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#94a3c0"/></marker><marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#f87171"/></marker></defs><text x="10" y="18" style="fill:#94a3c0;font-size:12px">遇到的情况</text><text x="255" y="18" style="fill:#94a3c0;font-size:12px">可以使用的方法</text><rect x="5" y="28" width="200" height="42" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="105.0" y="53.2" text-anchor="middle" style="font-size:12px">怀疑解决方向选错了</text><path d="M207 49H243" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><rect x="248" y="28" width="145" height="42" rx="10" fill="#2d2a1d" stroke="#ffb86b"/><text x="320.5" y="53.55" text-anchor="middle" style="font-size:13px">第一性原理</text><rect x="5" y="82" width="200" height="42" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="105.0" y="107.2" text-anchor="middle" style="font-size:12px">想找方案的反例</text><path d="M207 103H243" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><rect x="248" y="82" width="145" height="42" rx="10" fill="#2d2a1d" stroke="#ffb86b"/><text x="320.5" y="107.55" text-anchor="middle" style="font-size:13px">对抗性审查</text><rect x="5" y="136" width="200" height="42" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="105.0" y="161.2" text-anchor="middle" style="font-size:12px">不清楚哪个机制产生收益</text><path d="M207 157H243" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><rect x="248" y="136" width="145" height="42" rx="10" fill="#2d2a1d" stroke="#ffb86b"/><text x="320.5" y="161.55" text-anchor="middle" style="font-size:13px">消融实验</text><rect x="5" y="190" width="200" height="42" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="105.0" y="215.2" text-anchor="middle" style="font-size:12px">方案越来越复杂</text><path d="M207 211H243" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><rect x="248" y="190" width="145" height="42" rx="10" fill="#2d2a1d" stroke="#ffb86b"/><text x="320.5" y="215.55" text-anchor="middle" style="font-size:13px">奥卡姆剃刀</text><rect x="5" y="244" width="200" height="42" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="105.0" y="269.2" text-anchor="middle" style="font-size:12px">职责和依赖混乱</text><path d="M207 265H243" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><rect x="248" y="244" width="145" height="42" rx="10" fill="#2d2a1d" stroke="#ffb86b"/><text x="320.5" y="269.55" text-anchor="middle" style="font-size:13px">高内聚、低耦合</text></svg><div><p>这张图是原文第 2 张图的重绘。</p><p>接下来 5 张卡片，每张讲一个方法，并引用原文的 Prompt。</p><p class="mute">第 24 张卡片可以点选情况，查看对应 Prompt。</p></div></div></section>
-<section class="card" data-t="第一性原理"><h2>第一性原理：不要沿既定方案优化，重新问该怎么解</h2><span class="src">原文 · 一、我常用的 Prompt</span><div class="row"><svg viewBox="0 0 400 300"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#94a3c0"/></marker><marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#f87171"/></marker></defs><rect x="20" y="20" width="160" height="50" rx="10" fill="#1d2840" stroke="#f87171"/><text x="100.0" y="49.55" text-anchor="middle" style="font-size:13px">加 Redis 缓存？</text><path d="M100 70V100" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><rect x="20" y="105" width="360" height="40" rx="10" fill="#1d2840" stroke="#ffb86b"/><text x="200.0" y="129.55" text-anchor="middle" style="font-size:13px">接口为什么慢？瓶颈在哪？</text><rect x="10" y="175" width="70" height="40" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="45.0" y="199.2" text-anchor="middle" style="font-size:12px">SQL</text><rect x="87" y="175" width="70" height="40" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="122.0" y="199.2" text-anchor="middle" style="font-size:12px">网络</text><rect x="164" y="175" width="70" height="40" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="199.0" y="199.2" text-anchor="middle" style="font-size:12px">序列化</text><rect x="241" y="175" width="70" height="40" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="276.0" y="199.2" text-anchor="middle" style="font-size:12px">锁竞争</text><rect x="318" y="175" width="70" height="40" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="353.0" y="199.2" text-anchor="middle" style="font-size:12px">重复计算</text><rect x="110" y="240" width="180" height="44" rx="10" fill="#1d2840" stroke="#6ee7b7"/><text x="200.0" y="266.55" text-anchor="middle" style="font-size:13px">加个索引就够？</text></svg><div><p>原文 Prompt：</p><blockquote>不要基于“加 Redis 缓存”这个既定方案继续设计。从第一性原理分析这个接口为什么慢，以及最小必要的解决方案。</blockquote><p>适合你怀疑「题目本身可能就问错了」的时候。</p></div></div></section>
-<section class="card" data-t="对抗性审查"><h2>对抗性审查：不帮方案找理由，想办法证明它是错的</h2><span class="src">原文 · 一、我常用的 Prompt</span><div class="row"><svg viewBox="0 0 400 300"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#94a3c0"/></marker><marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#f87171"/></marker></defs><rect x="110" y="15" width="180" height="46" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="200.0" y="42.55" text-anchor="middle" style="font-size:13px">方案：引入分布式锁</text><path d="M200 61L60 120" stroke="#f87171" stroke-width="2" marker-end="url(#ar3)"/><path d="M200 61L200 120" stroke="#f87171" stroke-width="2" marker-end="url(#ar3)"/><path d="M200 61L340 120" stroke="#f87171" stroke-width="2" marker-end="url(#ar3)"/><rect x="5" y="125" width="110" height="60" rx="10" fill="#1d2840" stroke="#f87171"/><text x="60.0" y="152.0" text-anchor="middle" style="font-size:12px">真的需要互斥？</text><text x="60.0" y="166.4" text-anchor="middle" style="font-size:12px">幂等能解决？</text><rect x="145" y="125" width="110" height="60" rx="10" fill="#1d2840" stroke="#f87171"/><text x="200.0" y="152.0" text-anchor="middle" style="font-size:12px">锁服务</text><text x="200.0" y="166.4" text-anchor="middle" style="font-size:12px">挂了怎么办？</text><rect x="285" y="125" width="110" height="60" rx="10" fill="#1d2840" stroke="#f87171"/><text x="340.0" y="152.0" text-anchor="middle" style="font-size:12px">锁过期了</text><text x="340.0" y="166.4" text-anchor="middle" style="font-size:12px">业务没跑完？</text><rect x="60" y="215" width="280" height="50" rx="10" fill="#1d2840" stroke="#ffb86b"/><text x="200.0" y="244.55" text-anchor="middle" style="font-size:13px">是否引入新的分布式故障点？</text></svg><div><p>原文 Prompt：</p><blockquote>对这个方案做一次对抗性审查，优先寻找能推翻核心假设的反例。</blockquote><p>普通问法是「帮我看看这个技术方案有没有问题」。这类 Prompt 适合方案评审和 Code Review。</p></div></div></section>
-<section class="card" data-t="消融实验"><h2>消融实验：系统变好了，不代表每样东西都有用</h2><span class="src">原文 · 一、我常用的 Prompt</span><div class="row"><svg viewBox="0 0 400 300"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#94a3c0"/></marker><marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#f87171"/></marker></defs><line x1="40" y1="260" x2="390" y2="260" stroke="#2a3550" stroke-width="2"/><rect x="50" y="10.0" width="60" height="250.0" rx="5" fill="#f87171"/><text x="80" y="2.0" text-anchor="middle" style="font-size:12px">800ms</text><text x="80" y="282" text-anchor="middle" style="font-size:11px;fill:#94a3c0">Baseline</text><rect x="135" y="222.5" width="60" height="37.5" rx="5" fill="#6ee7b7"/><text x="165" y="214.5" text-anchor="middle" style="font-size:12px">120ms</text><text x="165" y="282" text-anchor="middle" style="font-size:11px;fill:#94a3c0">只加索引</text><rect x="220" y="228.75" width="60" height="31.25" rx="5" fill="#6ea8ff"/><text x="250" y="220.75" text-anchor="middle" style="font-size:12px">100ms</text><text x="250" y="282" text-anchor="middle" style="font-size:11px;fill:#94a3c0">三项全加</text><text x="300" y="60" style="font-size:11px;fill:#94a3c0">原文数字</text></svg><div><p>原文 Prompt：</p><blockquote>给这三个优化设计消融实验，判断真正的收益来自哪里。</blockquote><p>例子：加索引、Redis 缓存、批量查询后，800ms 降到 100ms。消融后可能发现只加索引就降到 120ms，另外两个只贡献 20ms。</p></div></div></section>
-<section class="card" data-t="奥卡姆剃刀"><h2>奥卡姆剃刀：效果差不多时，选假设更少的方案</h2><span class="src">原文 · 一、我常用的 Prompt</span><div class="row"><svg viewBox="0 0 400 300"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#94a3c0"/></marker><marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#f87171"/></marker></defs><rect x="10" y="10" width="180" height="38" rx="10" fill="#1d2840" stroke="#f87171"/><text x="100.0" y="33.2" text-anchor="middle" style="font-size:12px">Kafka</text><rect x="10" y="58" width="180" height="38" rx="10" fill="#1d2840" stroke="#f87171"/><text x="100.0" y="81.2" text-anchor="middle" style="font-size:12px">Redis</text><rect x="10" y="106" width="180" height="38" rx="10" fill="#1d2840" stroke="#f87171"/><text x="100.0" y="129.2" text-anchor="middle" style="font-size:12px">分布式锁</text><rect x="10" y="154" width="180" height="38" rx="10" fill="#1d2840" stroke="#f87171"/><text x="100.0" y="177.2" text-anchor="middle" style="font-size:12px">状态机</text><rect x="10" y="202" width="180" height="38" rx="10" fill="#1d2840" stroke="#f87171"/><text x="100.0" y="225.2" text-anchor="middle" style="font-size:12px">定时补偿</text><path d="M195 130H235" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><rect x="240" y="95" width="150" height="70" rx="10" fill="#1d2840" stroke="#6ee7b7"/><text x="315.0" y="126.75" text-anchor="middle" style="font-size:13px">单库写入：</text><text x="315.0" y="142.35" text-anchor="middle" style="font-size:13px">事务 + 唯一索引</text></svg><div><p>原文 Prompt：</p><blockquote>用奥卡姆剃刀重新审查这个设计，在满足需求的前提下，删除所有非必要机制。</blockquote><p>模型容易为了「完整」过度设计。所以这句话对 Coding Agent 尤其有用。</p></div></div></section>
-<section class="card" data-t="高内聚低耦合"><h2>高内聚低耦合：重新检查代码的职责和边界</h2><span class="src">原文 · 一、我常用的 Prompt</span><div class="row"><svg viewBox="0 0 400 300"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#94a3c0"/></marker><marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#f87171"/></marker></defs><rect x="130" y="110" width="140" height="60" rx="10" fill="#1d2840" stroke="#f87171"/><text x="200.0" y="136.75" text-anchor="middle" style="font-size:13px">OrderService</text><text x="200.0" y="152.35" text-anchor="middle" style="font-size:13px">2000 行</text><rect x="10" y="15" width="90" height="36" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="55.0" y="37.2" text-anchor="middle" style="font-size:12px">库存</text><path d="M55 33L200 140" stroke="#2a3550" stroke-width="2"/><rect x="155" y="15" width="90" height="36" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="200.0" y="37.2" text-anchor="middle" style="font-size:12px">优惠券</text><path d="M200 33L200 140" stroke="#2a3550" stroke-width="2"/><rect x="300" y="15" width="90" height="36" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="345.0" y="37.2" text-anchor="middle" style="font-size:12px">短信</text><path d="M345 33L200 140" stroke="#2a3550" stroke-width="2"/><rect x="10" y="240" width="90" height="36" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="55.0" y="262.2" text-anchor="middle" style="font-size:12px">支付</text><path d="M55 258L200 140" stroke="#2a3550" stroke-width="2"/><rect x="300" y="240" width="90" height="36" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="345.0" y="262.2" text-anchor="middle" style="font-size:12px">报表</text><path d="M345 258L200 140" stroke="#2a3550" stroke-width="2"/></svg><div><p>原文 Prompt：</p><blockquote>按高内聚、低耦合原则审查 OrderService 的职责边界，不要为了拆而拆。</blockquote><p>模型会问：哪些逻辑属于订单领域？哪些应该通过稳定接口交给其他模块？它激活的不是「拆文件」，是模块化、信息隐藏、依赖方向的判断。</p></div></div></section>
-<section class="card" data-t="五个动作"><h2>几十个字，指定五种认知动作</h2><span class="src">原文 · 一、我常用的 Prompt</span><div class="row"><svg viewBox="0 0 400 300"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#94a3c0"/></marker><marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#f87171"/></marker></defs><rect x="10" y="10" width="380" height="44" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="200.0" y="36.9" text-anchor="middle" style="font-size:14px">1. 重新定义问题</text><rect x="10" y="66" width="380" height="44" rx="10" fill="#1d2840" stroke="#f87171"/><text x="200.0" y="92.9" text-anchor="middle" style="font-size:14px">2. 攻击假设</text><rect x="10" y="122" width="380" height="44" rx="10" fill="#1d2840" stroke="#6ee7b7"/><text x="200.0" y="148.9" text-anchor="middle" style="font-size:14px">3. 验证贡献</text><rect x="10" y="178" width="380" height="44" rx="10" fill="#1d2840" stroke="#ffb86b"/><text x="200.0" y="204.9" text-anchor="middle" style="font-size:14px">4. 删除复杂度</text><rect x="10" y="234" width="380" height="44" rx="10" fill="#1d2840" stroke="#f472b6"/><text x="200.0" y="260.9" text-anchor="middle" style="font-size:14px">5. 整理系统边界</text></svg><div><blockquote>从第一性原理重新分析，对当前方案做对抗性审查；核心机制必须通过消融实验验证；方案遵循奥卡姆剃刀，代码保持高内聚、低耦合。</blockquote><p>作者的看法：与其给模型写死整套流程，不如告诉它用什么方式思考，再补上必要的约束。</p></div></div></section>
-<section class="card" data-t="工作流全图"><h2>日常 AI 开发工作流全图</h2><span class="src">原文 · 二、日常工作流（原文图 1 / 封面）</span><div class="row"><svg viewBox="0 0 410 380"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#94a3c0"/></marker><marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#f87171"/></marker></defs><text x="10" y="14" style="font-size:12px;fill:#6ea8ff">① 需求与方案对齐</text><rect x="5" y="22" width="180" height="40" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="95.0" y="45.85" text-anchor="middle" style="font-size:11px">材料：PRD/纪要/聊天/需求</text><rect x="5" y="80" width="180" height="40" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="95.0" y="103.85" text-anchor="middle" style="font-size:11px">Wiki + 现有代码</text><rect x="5" y="138" width="180" height="40" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="95.0" y="161.85" text-anchor="middle" style="font-size:11px">Grill 需求澄清</text><rect x="5" y="196" width="180" height="40" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="95.0" y="219.85" text-anchor="middle" style="font-size:11px">方案设计（Astra）</text><rect x="5" y="254" width="180" height="40" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="95.0" y="277.85" text-anchor="middle" style="font-size:11px">对抗性审查（Fable）</text><rect x="5" y="312" width="180" height="40" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="95.0" y="335.85" text-anchor="middle" style="font-size:11px">Spec / CONTEXT.md</text><path d="M95 62V78" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><path d="M95 120V136" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><path d="M95 178V194" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><path d="M95 236V252" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><path d="M95 294V310" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><path d="M5 278 H0 V198" fill="none" stroke="#f87171" stroke-width="2" stroke-dasharray="4 3"/><text x="215" y="14" style="font-size:12px;fill:#6ee7b7">② 每个可验收的小增量</text><rect x="215" y="22" width="180" height="36" rx="10" fill="#1d2840" stroke="#6ee7b7"/><text x="305.0" y="43.85" text-anchor="middle" style="font-size:11px">Codex 拆解增量</text><rect x="215" y="72" width="180" height="36" rx="10" fill="#1d2840" stroke="#6ee7b7"/><text x="305.0" y="93.85" text-anchor="middle" style="font-size:11px">实现与集成</text><rect x="215" y="122" width="180" height="36" rx="10" fill="#1d2840" stroke="#6ee7b7"/><text x="305.0" y="143.85" text-anchor="middle" style="font-size:11px">编码 Agent 自测</text><rect x="215" y="172" width="180" height="36" rx="10" fill="#1d2840" stroke="#6ee7b7"/><text x="305.0" y="193.85" text-anchor="middle" style="font-size:11px">交叉对抗性审查</text><rect x="215" y="222" width="180" height="36" rx="10" fill="#1d2840" stroke="#6ee7b7"/><text x="305.0" y="243.85" text-anchor="middle" style="font-size:11px">端到端测试</text><rect x="215" y="272" width="180" height="36" rx="10" fill="#1d2840" stroke="#6ee7b7"/><text x="305.0" y="293.85" text-anchor="middle" style="font-size:11px">人工 Review</text><rect x="215" y="322" width="180" height="36" rx="10" fill="#1d2840" stroke="#6ee7b7"/><text x="305.0" y="343.85" text-anchor="middle" style="font-size:11px">提交小 MR</text><path d="M305 58V70" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><path d="M305 108V120" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><path d="M305 158V170" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><path d="M305 208V220" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><path d="M305 258V270" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><path d="M305 308V320" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><path d="M185 300 Q200 40 213 40" fill="none" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><path d="M395 240 H405 V90 H397" fill="none" stroke="#f87171" stroke-width="2" marker-end="url(#ar3)"/><text x="200" y="372" style="font-size:11px;fill:#f87171">红线：发现问题 → Codex 修复并重新验证</text></svg><div><p>分两部分：先对齐需求和方案，再按小增量循环交付。</p><p>红色回线：发现问题就交给 Codex 修复，然后重新验证。</p><p>底部标注：小 MR + 逐步端到端测试。</p><p class="mute">第 16 张卡片是这张图的模拟器。</p></div></div></section>
-<section class="card" data-t="需求对齐"><h2>需求对齐：问到不影响方向就停</h2><span class="src">原文 · 二、日常工作流</span><div class="row"><svg viewBox="0 0 400 300"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#94a3c0"/></marker><marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#f87171"/></marker></defs><rect x="5" y="15" width="120" height="38" rx="10" fill="#1d2840" stroke="#94a3c0"/><text x="65.0" y="38.2" text-anchor="middle" style="font-size:12px">PRD 没更新</text><rect x="5" y="65" width="120" height="38" rx="10" fill="#1d2840" stroke="#94a3c0"/><text x="65.0" y="88.2" text-anchor="middle" style="font-size:12px">会议补了限制</text><rect x="5" y="115" width="120" height="38" rx="10" fill="#1d2840" stroke="#94a3c0"/><text x="65.0" y="138.2" text-anchor="middle" style="font-size:12px">聊天改了优先级</text><rect x="5" y="165" width="120" height="38" rx="10" fill="#1d2840" stroke="#94a3c0"/><text x="65.0" y="188.2" text-anchor="middle" style="font-size:12px">你的隐含假设</text><path d="M128 110H170" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><rect x="175" y="80" width="100" height="60" rx="10" fill="#1d2840" stroke="#ffb86b"/><text x="225.0" y="106.75" text-anchor="middle" style="font-size:13px">grill</text><text x="225.0" y="122.35" text-anchor="middle" style="font-size:13px">连续追问</text><path d="M278 110H300" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><rect x="300" y="70" width="95" height="80" rx="10" fill="#1d2840" stroke="#6ee7b7"/><text x="347.5" y="107.0" text-anchor="middle" style="font-size:12px">Spec /</text><text x="347.5" y="121.4" text-anchor="middle" style="font-size:12px">CONTEXT.md</text><rect x="60" y="230" width="290" height="50" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="205.0" y="259.55" text-anchor="middle" style="font-size:13px">剩下的问题不改变方向和验收 → 开工</text></svg><div><ul><li>材料往往不完整、不一致。</li><li>Agent 结合团队 Wiki 和现有代码理解材料，再连续追问目标、边界和取舍。</li><li>有些问题当场答，有些要找产品或同学确认。</li><li>不要求提前规划所有细节，否则对齐又变成重流程。</li><li>Spec 记录问题、范围、关键决策和验收标准。后面的 Agent 共享这份上下文。</li></ul></div></div></section>
-<section class="card" data-t="增量执行"><h2>实现：简单直接做，复杂再并行</h2><span class="src">原文 · 二、日常工作流</span><div class="row"><svg viewBox="0 0 400 300"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#94a3c0"/></marker><marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#f87171"/></marker></defs><rect x="140" y="10" width="120" height="40" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="200.0" y="34.2" text-anchor="middle" style="font-size:12px">主 Agent 判断复杂度</text><path d="M170 50L90 90M230 50L310 90" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><rect x="20" y="95" width="140" height="44" rx="10" fill="#1d2840" stroke="#6ee7b7"/><text x="90.0" y="121.2" text-anchor="middle" style="font-size:12px">简单：直接实现</text><rect x="240" y="95" width="150" height="44" rx="10" fill="#1d2840" stroke="#ffb86b"/><text x="315.0" y="114.0" text-anchor="middle" style="font-size:12px">复杂：拆成可独立</text><text x="315.0" y="128.4" text-anchor="middle" style="font-size:12px">验收的 Issue</text><rect x="225" y="170" width="52" height="50" rx="10" fill="#1d2840" stroke="#ffb86b"/><text x="251.0" y="192.25" text-anchor="middle" style="font-size:11px">sub</text><text x="251.0" y="205.45" text-anchor="middle" style="font-size:11px">wt1</text><rect x="283" y="170" width="52" height="50" rx="10" fill="#1d2840" stroke="#ffb86b"/><text x="309.0" y="192.25" text-anchor="middle" style="font-size:11px">sub</text><text x="309.0" y="205.45" text-anchor="middle" style="font-size:11px">wt2</text><rect x="341" y="170" width="52" height="50" rx="10" fill="#1d2840" stroke="#ffb86b"/><text x="367.0" y="192.25" text-anchor="middle" style="font-size:11px">sub</text><text x="367.0" y="205.45" text-anchor="middle" style="font-size:11px">wt3</text><path d="M315 220V245" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><rect x="240" y="248" width="150" height="40" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="315.0" y="272.2" text-anchor="middle" style="font-size:12px">主 Agent 集成</text></svg><div><ul><li>只有能独立推进的部分，才交给 subagent 在不同 worktree 并行开发。</li><li>编码 Agent 先自测。它认为可交付时，再按复杂度引入其他 Agent 做交叉对抗性审查。</li><li>问题统一反馈给 Codex 修复并重新验证。</li><li>人工 Review 前先跑端到端测试。</li><li>作者不逐行读代码，看测试结果和核心业务逻辑。前提是每个 MR 足够小。</li></ul></div></div></section>
-<section class="card" data-t="工作流模拟器"><h2>动手：走一遍日常工作流</h2><span class="src extra">补充 · 按原文工作流编写，事件是示意</span>
-<div class="ctrl"><label><input type="checkbox" id="f1"> 方案审查发现问题</label><label><input type="checkbox" id="f2"> 交叉审查发现问题</label><label><input type="checkbox" id="f3"> 端到端测试失败</label>
-<label>增量数</label><select id="inc"><option>1</option><option selected>2</option><option>3</option></select>
-<button class="pri" id="step">下一步 ▶</button><button id="play">自动播放</button><button id="reset">重置</button><label>速度</label><input type="range" id="spd" min="300" max="2500" step="100" value="1200"></div>
-<div class="sim"><svg viewBox="0 0 380 380" id="flow"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#94a3c0"/></marker><marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#f87171"/></marker></defs><g><text x="5" y="14" style="font-size:12px;fill:#6ea8ff">① 对齐</text><g class="node" id="s0"><rect x="5" y="22" width="165" height="44" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="87.5" y="47.85" text-anchor="middle" style="font-size:11px">收集材料 + Wiki/代码</text></g><g class="node" id="s1"><rect x="5" y="88" width="165" height="44" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="87.5" y="113.85" text-anchor="middle" style="font-size:11px">Grill 需求澄清</text></g><g class="node" id="s2"><rect x="5" y="154" width="165" height="44" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="87.5" y="179.85" text-anchor="middle" style="font-size:11px">方案设计（Astra）</text></g><g class="node" id="s3"><rect x="5" y="220" width="165" height="44" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="87.5" y="245.85" text-anchor="middle" style="font-size:11px">对抗性审查（Fable）</text></g><g class="node" id="s4"><rect x="5" y="286" width="165" height="44" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="87.5" y="311.85" text-anchor="middle" style="font-size:11px">Spec / CONTEXT.md</text></g><path d="M87 66V86" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><path d="M87 132V152" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><path d="M87 198V218" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><path d="M87 264V284" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><path d="M5 242 H0 V176 H3" fill="none" stroke="#f87171" stroke-width="2" stroke-dasharray="4 3" marker-end="url(#ar3)"/><text x="190" y="14" style="font-size:12px;fill:#6ee7b7">② 每个小增量</text><g class="node" id="s5"><rect x="190" y="22" width="165" height="36" rx="10" fill="#1d2840" stroke="#6ee7b7"/><text x="272.5" y="43.85" text-anchor="middle" style="font-size:11px">Codex 拆解增量</text></g><g class="node" id="s6"><rect x="190" y="70" width="165" height="36" rx="10" fill="#1d2840" stroke="#6ee7b7"/><text x="272.5" y="91.85" text-anchor="middle" style="font-size:11px">实现与集成</text></g><g class="node" id="s7"><rect x="190" y="118" width="165" height="36" rx="10" fill="#1d2840" stroke="#6ee7b7"/><text x="272.5" y="139.85" text-anchor="middle" style="font-size:11px">编码 Agent 自测</text></g><g class="node" id="s8"><rect x="190" y="166" width="165" height="36" rx="10" fill="#1d2840" stroke="#6ee7b7"/><text x="272.5" y="187.85" text-anchor="middle" style="font-size:11px">交叉对抗性审查</text></g><g class="node" id="s9"><rect x="190" y="214" width="165" height="36" rx="10" fill="#1d2840" stroke="#6ee7b7"/><text x="272.5" y="235.85" text-anchor="middle" style="font-size:11px">端到端测试</text></g><g class="node" id="s10"><rect x="190" y="262" width="165" height="36" rx="10" fill="#1d2840" stroke="#6ee7b7"/><text x="272.5" y="283.85" text-anchor="middle" style="font-size:11px">人工 Review</text></g><g class="node" id="s11"><rect x="190" y="310" width="165" height="36" rx="10" fill="#1d2840" stroke="#6ee7b7"/><text x="272.5" y="331.85" text-anchor="middle" style="font-size:11px">提交小 MR</text></g><path d="M272 58V68" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><path d="M272 106V116" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><path d="M272 154V164" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><path d="M272 202V212" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><path d="M272 250V260" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><path d="M272 298V308" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><path d="M170 330 Q180 40 188 40" fill="none" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><path d="M355 200 H368 V88 H357" fill="none" stroke="#f87171" stroke-width="2" stroke-dasharray="4 3" marker-end="url(#ar3)"/><path d="M355 248 H368 V200" fill="none" stroke="#f87171" stroke-width="2" stroke-dasharray="4 3"/><path d="M355 334 H372 V40 H357" fill="none" stroke="#94a3c0" stroke-width="1.5" stroke-dasharray="2 4" marker-end="url(#ar)"/><text x="200" y="372" style="font-size:11px;fill:#94a3c0">红：返工 · 灰：下一增量</text></g></svg>
-<div><div class="mute" style="font-size:13px">工作日志 · 已合入 <span id="cnum">0</span> 个小 MR</div><div id="ctx"></div><div id="say">点「下一步」开始。勾选上面的选项，可以注入一次失败。</div></div></div></section>
-<section class="card" data-t="为什么要 E2E"><h2>测试多不等于放心：缺的是环境</h2><span class="src">原文 · 三、Agent 友好的端到端测试</span><div class="row"><svg viewBox="0 0 400 300"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#94a3c0"/></marker><marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#f87171"/></marker></defs><rect x="20" y="20" width="160" height="60" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="100.0" y="54.55" text-anchor="middle" style="font-size:13px">AI 写几百行测试</text><rect x="220" y="20" width="160" height="60" rx="10" fill="#1d2840" stroke="#f87171"/><text x="300.0" y="54.55" text-anchor="middle" style="font-size:13px">上线仍有意外错误</text><path d="M180 50H218" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><rect x="60" y="130" width="280" height="50" rx="10" fill="#1d2840" stroke="#ffb86b"/><text x="200.0" y="159.9" text-anchor="middle" style="font-size:14px">缺的是：端到端测试环境</text><path d="M200 180V215" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><rect x="20" y="220" width="360" height="56" rx="10" fill="#1d2840" stroke="#6ee7b7"/><text x="200.0" y="252.55" text-anchor="middle" style="font-size:13px">从真实入口执行 → 检查到用户要的结果</text></svg><div><ul><li>AI 很擅长写测试，常给一个 Bugfix 写几百行。</li><li>核心问题：Agent 没有端到端测试环境，编码和自测时发现不了问题。</li><li>作者的环境里，Agent 能查库表、查日志、连机器排查。</li><li>做法：能工具化的做成 MCP 或 CLI；可复用的流程写成 Skill。</li><li>前期花功夫，但能加快开发，减少返工和线上问题。</li></ul></div></div></section>
-<section class="card" data-t="E2E 验证图"><h2>Agent 如何完成端到端验证</h2><span class="src">原文 · 三、Agent 友好的端到端测试（原文图 3）</span><div class="row"><svg viewBox="0 0 400 345"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#94a3c0"/></marker><marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#f87171"/></marker></defs><rect x="70" y="5" width="260" height="40" rx="10" fill="#1d2840" stroke="#ffb86b"/><text x="200.0" y="29.2" text-anchor="middle" style="font-size:12px">业务契约 / 验收标准：什么结果算对</text><rect x="5" y="58" width="390" height="230" rx="12" fill="none" stroke="#2a3550" stroke-dasharray="5 4"/><text x="15" y="76" style="font-size:11px;fill:#94a3c0">执行、取证与验证</text><rect x="20" y="84" width="200" height="32" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="120.0" y="103.675" text-anchor="middle" style="font-size:10.5px">Coding Agent</text><rect x="20" y="124" width="200" height="32" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="120.0" y="143.675" text-anchor="middle" style="font-size:10.5px">测试 CLI/脚本：环境检查·数据准备</text><rect x="20" y="164" width="200" height="32" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="120.0" y="183.675" text-anchor="middle" style="font-size:10.5px">执行真实业务：浏览器/API → 测试环境</text><rect x="20" y="204" width="200" height="32" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="120.0" y="223.675" text-anchor="middle" style="font-size:10.5px">收集实际证据：页面/库状态·日志/Trace</text><rect x="20" y="244" width="200" height="32" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="120.0" y="263.675" text-anchor="middle" style="font-size:10.5px">对照预期：检查业务结果</text><path d="M120 116V123" stroke="#94a3c0" stroke-width="2"/><path d="M120 156V163" stroke="#94a3c0" stroke-width="2"/><path d="M120 196V203" stroke="#94a3c0" stroke-width="2"/><path d="M120 236V243" stroke="#94a3c0" stroke-width="2"/><path d="M220 260H255" stroke="#6ee7b7" stroke-width="2" marker-end="url(#ar)"/><text x="225" y="252" style="font-size:11px;fill:#6ee7b7">通过</text><rect x="258" y="235" width="132" height="48" rx="10" fill="#1d2840" stroke="#6ee7b7"/><text x="324.0" y="256.25" text-anchor="middle" style="font-size:11px">验收报告</text><text x="324.0" y="269.45" text-anchor="middle" style="font-size:11px">通过项/未验证项</text><path d="M225 262 Q350 230 350 160 Q350 105 224 100" fill="none" stroke="#f87171" stroke-width="2" marker-end="url(#ar3)"/><text x="232" y="92" style="font-size:11px;fill:#f87171">失败→定位、修复、重测</text><rect x="5" y="298" width="390" height="40" rx="10" fill="#1d2840" stroke="#f472b6"/><text x="200.0" y="321.85" text-anchor="middle" style="font-size:11px">Skill：什么时候测 · 怎么运行 · 结果怎么看 · 失败去哪查</text></svg><div><p>这张图是原文第 3 张图的重绘。</p><ul><li>顶部的验收标准定义「什么结果算对」。</li><li>Agent 跑真实业务，收集证据，再对照预期。</li><li>通过就出验收报告，写清通过项和未验证项。</li><li>失败就定位、修复、重测。</li><li>底部的 Skill 沉淀可复用的测试方法。</li></ul></div></div></section>
-<section class="card" data-t="E2E 四件事"><h2>搭建 E2E 环境的四件事</h2><span class="src">原文 · 三、Agent 友好的端到端测试</span><div class="row"><svg viewBox="0 0 400 300"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#94a3c0"/></marker><marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#f87171"/></marker></defs><rect x="5" y="10" width="190" height="130" rx="12" fill="#1d2840" stroke="#6ea8ff"/><text x="100" y="45" text-anchor="middle" style="font-size:15px;font-weight:700;fill:#6ea8ff">1. 熟悉环境</text><rect x="205" y="10" width="190" height="130" rx="12" fill="#1d2840" stroke="#ffb86b"/><text x="300" y="45" text-anchor="middle" style="font-size:15px;font-weight:700;fill:#ffb86b">2. 操作业务系统</text><rect x="5" y="155" width="190" height="130" rx="12" fill="#1d2840" stroke="#6ee7b7"/><text x="100" y="190" text-anchor="middle" style="font-size:15px;font-weight:700;fill:#6ee7b7">3. 查库表和日志</text><rect x="205" y="155" width="190" height="130" rx="12" fill="#1d2840" stroke="#f472b6"/><text x="300" y="190" text-anchor="middle" style="font-size:15px;font-weight:700;fill:#f472b6">4. 复用繁琐流程</text></svg><div><ol><li><b>熟悉环境</b>：一键启动、造测试数据、版本/账号/权限、清理与重置。</li><li><b>操作业务系统</b>：浏览器、API 或 CLI 跑真实流程。</li><li><b>查库表和日志</b>：只读数据库 MCP；日志 Skill + Trace。</li><li><b>复用繁琐流程</b>：稳定操作写脚本，入口和排障写 Skill。</li></ol></div></div></section>
-<section class="card" data-t="E2E 做法"><h2>四个有效做法：工具取证，契约判对错</h2><span class="src">原文 · 三、Agent 友好的端到端测试</span><div class="row"><svg viewBox="0 0 400 300"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#94a3c0"/></marker><marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#f87171"/></marker></defs><rect x="120" y="110" width="160" height="70" rx="10" fill="#2d2a1d" stroke="#ffb86b"/><text x="200.0" y="141.5" text-anchor="middle" style="font-size:14px">业务契约</text><text x="200.0" y="158.3" text-anchor="middle" style="font-size:14px">定义正确答案</text><rect x="5" y="15" width="150" height="50" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="80.0" y="44.2" text-anchor="middle" style="font-size:12px">DB 查询：确认状态</text><rect x="245" y="15" width="150" height="50" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="320.0" y="44.2" text-anchor="middle" style="font-size:12px">日志/Trace：解释失败</text><rect x="5" y="235" width="150" height="50" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="80.0" y="264.2" text-anchor="middle" style="font-size:12px">浏览器/API：执行</text><rect x="245" y="235" width="150" height="50" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="320.0" y="264.2" text-anchor="middle" style="font-size:12px">CLI：串起来</text><text x="200" y="210" text-anchor="middle" style="font-size:12px;fill:#94a3c0">工具取证据，不替我们定义答案</text></svg><div><ol><li><b>浏览器自动化</b>：推荐开源浏览器 ego lite；搭配 pi agent + DeepSeek V4 Flash 跑得快。</li><li><b>统一测试 CLI</b>：环境检查、数据准备、场景执行、结果查询、清理。</li><li><b>工具服务于验收</b>：预期结果来自业务契约，不能把系统返回当正确答案。</li><li><b>产品是 Agent 时</b>：还要检查答案质量，即 Agent Eval（原文不展开）。</li></ol><p class="mute">复杂业务里，系统可能返回一个看似合理、其实不符合需求的结果。</p></div></div></section>
-<section class="card" data-t="Review"><h2>Review AI 代码：开发者仍是第一责任人</h2><span class="src">原文 · 四、怎么 Review AI 写的代码</span><div class="row"><svg viewBox="0 0 400 300"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#94a3c0"/></marker><marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#f87171"/></marker></defs><rect x="5" y="10" width="390" height="60" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="200.0" y="37.0" text-anchor="middle" style="font-size:12px">先看验收标准，再看测试结果</text><text x="200.0" y="51.4" text-anchor="middle" style="font-size:12px">测试是否验证了需求真正关心的事</text><rect x="5" y="82" width="390" height="60" rx="10" fill="#1d2840" stroke="#f87171"/><text x="200.0" y="109.0" text-anchor="middle" style="font-size:12px">沿业务路径看，盯高风险</text><text x="200.0" y="123.4" text-anchor="middle" style="font-size:12px">权限、状态变化、并发、重试、一致性、迁移回滚</text><rect x="5" y="154" width="390" height="60" rx="10" fill="#1d2840" stroke="#ffb86b"/><text x="200.0" y="181.0" text-anchor="middle" style="font-size:12px">专查新增的抽象和机制</text><text x="200.0" y="195.4" text-anchor="middle" style="font-size:12px">用奥卡姆剃刀让 AI 再审一遍</text><rect x="5" y="226" width="390" height="60" rx="10" fill="#1d2840" stroke="#6ee7b7"/><text x="200.0" y="253.0" text-anchor="middle" style="font-size:12px">MR 多时建 Review Bot</text><text x="200.0" y="267.4" text-anchor="middle" style="font-size:12px">Git 变更 + 预设审查流程，可重复执行</text></svg><div><p>不做 Review，大型系统容易出问题。你也不想半夜被叫起来 On-call。</p><ul><li>不能只看测试通过了多少。</li><li>模式稳定的 CRUD 可以少看，作者现在已经不看了。</li><li>Review Bot 和直接调 pi agent / Claude Code 做对抗审查不同：它专门服务 MR。</li></ul></div></div></section>
-<section class="card" data-t="瓶颈"><h2>最大的瓶颈是 Review 速度</h2><span class="src">原文 · 五、总结和思考</span><div class="row"><svg viewBox="0 0 400 300"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#94a3c0"/></marker><marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#f87171"/></marker></defs><rect x="10" y="15" width="110" height="38" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="65.0" y="38.2" text-anchor="middle" style="font-size:12px">Agent 任务 1</text><path d="M120 34L215 140" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><rect x="10" y="65" width="110" height="38" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="65.0" y="88.2" text-anchor="middle" style="font-size:12px">Agent 任务 2</text><path d="M120 84L215 140" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><rect x="10" y="115" width="110" height="38" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="65.0" y="138.2" text-anchor="middle" style="font-size:12px">Agent 任务 3</text><path d="M120 134L215 140" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><rect x="10" y="165" width="110" height="38" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="65.0" y="188.2" text-anchor="middle" style="font-size:12px">Agent 任务 4</text><path d="M120 184L215 140" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><rect x="10" y="215" width="110" height="38" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="65.0" y="238.2" text-anchor="middle" style="font-size:12px">Agent 任务 5</text><path d="M120 234L215 140" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><path d="M220 100 L280 125 L280 155 L220 180Z" fill="#2d2a1d" stroke="#ffb86b"/><rect x="290" y="110" width="105" height="60" rx="10" fill="#1d2840" stroke="#f87171"/><text x="342.5" y="136.75" text-anchor="middle" style="font-size:13px">人工 Review</text><text x="342.5" y="152.35" text-anchor="middle" style="font-size:13px">瓶颈</text></svg><div><ul><li>Agent 能同时推进多个任务。人理解业务、确认交付的速度不会成倍增加。</li><li>只让它写更多，只会积压更多待审代码。</li><li>改进方向：类型检查、测试、业务断言能发现的问题，让 Agent 自己处理。</li><li>人只判断：需求理解对不对、关键逻辑是否成立、还有哪些风险没验证。</li><li>Review Bot 的价值看是否减少遗漏和人工负担，不看评论条数。</li></ul></div></div></section>
-<section class="card" data-t="Harness 与减法"><h2>Harness = 上下文 + 环境 + 判断依据；定期做减法</h2><span class="src">原文 · 五、总结和思考</span><div class="row"><svg viewBox="0 0 400 300"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#94a3c0"/></marker><marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#f87171"/></marker></defs><rect x="130" y="105" width="140" height="60" rx="10" fill="#2d2a1d" stroke="#ffb86b"/><text x="200.0" y="140.6" text-anchor="middle" style="font-size:16px">Harness</text><rect x="5" y="15" width="150" height="50" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="80.0" y="44.55" text-anchor="middle" style="font-size:13px">正确的上下文</text><rect x="245" y="15" width="150" height="50" rx="10" fill="#1d2840" stroke="#6ee7b7"/><text x="320.0" y="44.55" text-anchor="middle" style="font-size:13px">能执行的环境</text><rect x="125" y="225" width="150" height="50" rx="10" fill="#1d2840" stroke="#f472b6"/><text x="200.0" y="254.55" text-anchor="middle" style="font-size:13px">判断结果的依据</text><path d="M80 65L150 105M320 65L250 105M200 222V168" stroke="#94a3c0" stroke-width="2"/></svg><div><ul><li>工作流要定期做减法。有些步骤是在弥补旧模型的短板。Astra 更新后，作者删了 AGENTS.md 里一些过严的约束。</li><li>局限：代码和测试可能一起误解需求；E2E 只覆盖选定环境和场景，生产的流量、并发、数据分布仍可能出问题。</li><li>AI 少了亲自踩坑的机会，作者每天留时间学习和复盘。</li><li>建议：挑一条最常做的自测路径，让 Agent 独立跑通、保留证据，再沉淀下来。</li></ul></div></div></section>
-<section class="card" data-t="Prompt 选择器"><h2>动手：遇到这个情况，用哪句 Prompt？</h2><span class="src extra">补充 · 交互是补充，Prompt 原文引自「一、我常用的 Prompt」</span>
-<div class="row"><div id="sits"></div><div><svg viewBox="0 0 400 120" id="p2svg"></svg><div id="p2txt" class="mute">点左边一个情况。</div></div></div></section>
-<section class="card" data-t="小测"><h2>小测</h2><span class="src extra">补充 · 题目由学习搭子出</span><div id="quiz"></div><p id="score" class="mute"></p></section>
-</main><nav><button id="prev">← 上一张</button><div class="dots" id="dots"></div><button class="pri" id="next">下一张 →</button></nav>
-<script>window.onerror=(m,s,l)=>{document.body.insertAdjacentHTML('afterbegin','<div id="jserr" style="position:fixed;z-index:99;background:red;color:#fff">JS 错误：'+m+' @'+l+'</div>')};
-const cards=[...document.querySelectorAll('.card')];let cur=0;
-const dots=document.getElementById('dots');cards.forEach((c,i)=>{const d=document.createElement('i');d.title=(i+1)+' '+c.dataset.t;d.onclick=()=>go(i);dots.appendChild(d)});
-function go(i){cur=Math.max(0,Math.min(cards.length-1,i));cards.forEach((c,j)=>c.classList.toggle('on',j==cur));[...dots.children].forEach((d,j)=>d.classList.toggle('on',j==cur));
- document.getElementById('bar').style.width=((cur+1)/cards.length*100)+'%';document.getElementById('cnt').textContent=(cur+1)+' / '+cards.length+' · '+cards[cur].dataset.t;
- prev.disabled=cur==0;next.disabled=cur==cards.length-1;history.replaceState(null,'','#'+(cur+1))}
-prev.onclick=()=>go(cur-1);next.onclick=()=>go(cur+1);
-document.addEventListener('keydown',e=>{if(e.target.tagName=='SELECT'||e.target.tagName=='INPUT')return;if(e.key=='ArrowRight')go(cur+1);if(e.key=='ArrowLeft')go(cur-1)});
-let sx=null;document.addEventListener('touchstart',e=>sx=e.touches[0].clientX);document.addEventListener('touchend',e=>{if(sx==null)return;const dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>60)go(cur+(dx<0?1:-1));sx=null});
-// workflow simulator
-let plan=[],pi=0,timer=null,mrs=0;
-function build(){plan=[];const P=(n,say,log,c)=>plan.push({n,say,log:log||say,c});
- P(0,'把 PRD、会议纪要、聊天记录、用户反馈交给 Agent，再结合团队 Wiki 和现有代码。','收集材料');
- P(1,'用 grill 连续追问目标、边界和取舍。有些要回头找产品确认。','Grill 需求澄清');
- P(1,'剩下的问题已经不改变方向和验收结果，可以停了。','对齐到位');
- P(2,'Astra 做方案设计。','方案设计（Astra）');
- if(f1.checked){P(3,'Fable 做对抗性审查，找到一个推翻核心假设的反例。','✗ 方案审查发现问题','err');P(2,'回到方案设计，修订方案。','↺ 修订方案','err')}
- P(3,'Fable 做对抗性审查，没找到推翻方案的反例。','✓ 方案审查通过','ok');
- P(4,'结论写进 Spec / CONTEXT.md：问题、范围、关键决策、验收标准。','写入 Spec');
- const n=+inc.value;for(let k=1;k<=n;k++){const t='[增量 '+k+'] ';
-  P(5,'Codex 拆解当前增量。',t+'Codex 拆解');
-  P(6,'实现与集成：简单需求直接做；复杂需求用 subagent + worktree 并行。',t+'实现与集成');
-  P(7,'编码 Agent 自测。',t+'自测');
-  if(f2.checked&&k==1){P(8,'交叉审查发现问题。问题统一反馈给 Codex。',t+'✗ 交叉审查发现问题','err');P(6,'Codex 修复。',t+'↺ Codex 修复','err');P(7,'修复后重新验证。',t+'重新自测')}
-  P(8,'按复杂度选 Claude / Pi / Codex 做交叉对抗性审查。',t+'✓ 交叉审查通过','ok');
-  if(f3.checked&&k==1){P(9,'端到端测试失败：结果和验收标准对不上。',t+'✗ 端到端测试失败','err');P(6,'Codex 定位、修复。',t+'↺ Codex 修复','err');P(7,'重新自测。',t+'重新自测');P(8,'再次交叉审查。',t+'✓ 交叉审查通过','ok')}
-  P(9,'端到端测试验证当前业务增量。',t+'✓ 端到端测试通过','ok');
-  P(10,'人工 Review：看测试结果和核心业务逻辑，不逐行读。',t+'人工 Review');
-  plan.push({n:11,say:'提交小 MR。'+(k<n?'进入下一个增量。':'全部增量完成。'),log:t+'✓ 提交小 MR','c':'ok',mr:1})}}
-function hi(n){for(let i=0;i<12;i++)document.getElementById('s'+i).classList.toggle('act',i==n)}
-function reset(){stop();build();pi=0;mrs=0;ctx.innerHTML='';cnum.textContent=0;say.textContent='点「下一步」开始。勾选上面的选项，可以注入一次失败。';hi(-1);step.disabled=false}
-function doStep(){if(pi>=plan.length){stop();return}const s=plan[pi++];hi(s.n);say.textContent=s.say;
- const d=document.createElement('div');d.className='msg '+(s.c=='err'?'m-dev':s.c=='ok'?'m-tool':'m-user');d.textContent=s.log;ctx.appendChild(d);ctx.scrollTop=1e6;
- if(s.mr)cnum.textContent=++mrs;if(pi>=plan.length){step.disabled=true;stop()}}
-function stop(){clearInterval(timer);timer=null;play.textContent='自动播放'}
-step.onclick=doStep;reset.onclick=reset;[f1,f2,f3,inc].forEach(e=>e.onchange=reset);
-play.onclick=()=>{if(timer){stop();return}if(pi>=plan.length)reset();play.textContent='暂停';doStep();timer=setInterval(doStep,+spd.value)};
-spd.oninput=()=>{if(timer){clearInterval(timer);timer=setInterval(doStep,+spd.value)}};
-reset();
-// prompt picker
-const S=[['怀疑解决方向选错了','第一性原理','不要基于“加 Redis 缓存”这个既定方案继续设计。从第一性原理分析这个接口为什么慢，以及最小必要的解决方案。','#6ea8ff'],
-['想找方案的反例','对抗性审查','对这个方案做一次对抗性审查，优先寻找能推翻核心假设的反例。','#f87171'],
-['不清楚哪个机制产生收益','消融实验','给这三个优化设计消融实验，判断真正的收益来自哪里。','#6ee7b7'],
-['方案越来越复杂','奥卡姆剃刀','用奥卡姆剃刀重新审查这个设计，在满足需求的前提下，删除所有非必要机制。','#ffb86b'],
-['职责和依赖混乱','高内聚、低耦合','按高内聚、低耦合原则审查 OrderService 的职责边界，不要为了拆而拆。','#f472b6']];
-S.forEach((x,i)=>{const b=document.createElement('button');b.className='sit';b.textContent=x[0];b.onclick=()=>pick(i);sits.appendChild(b)});
-function pick(i){const x=S[i];[...sits.children].forEach((b,j)=>b.classList.toggle('on',j==i));
- p2svg.innerHTML=`<rect x="5" y="30" width="170" height="60" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="90" y="65" text-anchor="middle" style="font-size:13px">${x[0]}</text><path d="M178 60H220" stroke="${x[3]}" stroke-width="3"/><path d="M220 52L232 60L220 68z" fill="${x[3]}"/><rect x="235" y="30" width="160" height="60" rx="10" fill="#2d2a1d" stroke="${x[3]}"/><text x="315" y="66" text-anchor="middle" style="font-size:16px;font-weight:700;fill:${x[3]}">${x[1]}</text>`;
- p2txt.innerHTML='<p>原文 Prompt：</p><blockquote>'+x[2]+'</blockquote><button onclick="go('+(6+i)+')">看第 '+(7+i)+' 张卡片的讲解</button>'}
-// quiz
-const Q=[
- {q:'作者认为 Superpowers 这类重 Skill 的主要弊端是什么？',o:['不支持 TDD','Token 消耗快，步骤不需要了模型仍照流程走','只能在网页端用'],a:1,c:2,w:'模型变强后，一些约束变成了噪声。'},
- {q:'Agent 设计了「Kafka + Redis + 分布式锁 + 状态机 + 定时补偿」，最该用哪个方法？',o:['消融实验','奥卡姆剃刀','第一性原理'],a:1,c:10,w:'效果差不多时，选假设更少、复杂度更低的方案。'},
- {q:'三个优化后接口从 800ms 降到 100ms，想知道收益来自哪里，用什么？',o:['消融实验','对抗性审查','高内聚、低耦合'],a:0,c:9,w:'原文例子里，只加索引就降到 120ms。'},
- {q:'需求对齐什么时候可以停？',o:['所有实现细节都规划好','剩下的问题已经不会显著改变实现方向和验收结果','产品签字以后'],a:1,c:14,w:'规划过细，对齐本身会变成重流程。'},
- {q:'交叉审查或端到端测试发现问题后，原文怎么处理？',o:['人工直接改代码','统一反馈给 Codex，由它修复并重新验证','跳过，下一个增量再说'],a:1,c:16,w:'在模拟器里勾选失败选项可以看到这条回线。'},
- {q:'端到端测试里，「预期结果」应该来自哪里？',o:['系统实际返回的结果','数据库当前的状态','业务契约 / 验收标准'],a:2,c:20,w:'工具帮助获取证据，不替我们定义正确答案。'},
- {q:'作者说目前开发最明显的瓶颈是什么？',o:['模型写代码太慢','Review 的速度','Token 太贵'],a:1,c:22,w:'Agent 能并行，人确认交付的速度不会成倍增加。'}];
-let got={};const qz=document.getElementById('quiz');
-Q.forEach((x,i)=>{const b=document.createElement('div');b.className='q';b.innerHTML='<b>'+(i+1)+'. '+x.q+'</b>';
- x.o.forEach((o,j)=>{const bt=document.createElement('button');bt.className='opt';bt.textContent=o;bt.onclick=()=>{if(got[i]!==undefined)return;got[i]=j==x.a;
-  bt.classList.add(j==x.a?'ok':'no');const f=document.createElement('div');f.className='fb';
-  if(j==x.a)f.innerHTML='✓ 正确。'+x.w;else{f.innerHTML='✗ 不对。 ';const back=document.createElement('button');back.textContent='回到第 '+x.c+' 张「'+cards[x.c-1].dataset.t+'」';back.onclick=()=>go(x.c-1);f.appendChild(back);
-   const rt=document.createElement('button');rt.textContent='重答';rt.style.marginLeft='6px';rt.onclick=()=>{delete got[i];b.querySelectorAll('.opt').forEach(o=>o.classList.remove('ok','no'));f.remove();sc()};f.appendChild(rt)}
-  b.appendChild(f);sc()};b.appendChild(bt)});qz.appendChild(b)});
-function sc(){const n=Object.keys(got).length,k=Object.values(got).filter(Boolean).length;score.textContent=n?`已答 ${n} / ${Q.length}，答对 ${k}。`+(n==Q.length?' 答完后，请用自己的话复述一遍作者的日常工作流。':''):''}
-go((parseInt(location.hash.slice(1))||1)-1);
-const qs=new URLSearchParams(location.search);if(qs.has('shot')){document.head.insertAdjacentHTML('beforeend','<style>*{animation:none!important}</style>');
- if(qs.get('err')){f1.checked=f2.checked=f3.checked=true;reset()}for(let i=0;i<+(qs.get('steps')||0);i++)doStep();
- if(qs.get('pick'))pick(+qs.get('pick'));
- if(qs.get('quiz')){document.querySelectorAll('.q')[0].querySelectorAll('.opt')[1].click();document.querySelectorAll('.q')[1].querySelectorAll('.opt')[0].click()}}
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>黄同学h · 入职大厂两个月的 AI 开发心得</title><style>
+/* 学习搭子 固定设计系统 — 不要在课程里改这个文件。只改 lesson.html 的内容。 */
+:root{
+  --paper:#F2F4F7; --sheet:#FFFFFF; --ink:#16202C; --ink2:#4A5868; --hair:#D9DFE7;
+  --blue:#2550D9;  --blue-soft:#E3EAFD;   /* 主角：当前步骤 / 重点 */
+  --amber:#C77A00; --amber-soft:#FBEFD9; /* 数据 / 消息 */
+  --green:#16875A; --green-soft:#DDF3E9; /* 成功 / 工具结果 */
+  --red:#C8372D;   --red-soft:#FBE3E1;   /* 出错 */
+  --r-lg:20px; --r-sm:10px;
+  --font:"PingFang SC","Noto Sans CJK SC","Source Han Sans SC","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--paper);color:var(--ink);font:17px/1.65 var(--font);-webkit-font-smoothing:antialiased}
+.top{position:fixed;inset:0 0 auto 0;height:56px;display:flex;align-items:center;gap:16px;padding:0 28px;z-index:5}
+.top .course{font-weight:700;font-size:15px}
+.top .track{flex:1;height:6px;background:var(--hair);border-radius:99px;overflow:hidden}
+.top .track i{display:block;height:100%;width:0;background:var(--blue);transition:width .35s ease}
+.top .count{font:600 14px var(--mono);color:var(--ink2);min-width:60px;text-align:right}
+.deck{position:fixed;inset:56px 0 76px 0;display:grid;place-items:center;padding:0 24px}
+.card{display:none;width:min(1120px,100%);height:100%;max-height:640px;background:var(--sheet);border-radius:var(--r-lg);
+  box-shadow:0 1px 0 var(--hair),0 18px 40px -24px rgba(22,32,44,.25);overflow:hidden}
+.card.on{display:grid;grid-template-columns:1.45fr 1fr}
+.card.full.on{grid-template-columns:1fr}
+.stage{background:var(--paper);margin:14px 0 14px 14px;border-radius:14px;display:grid;place-items:center;padding:18px;overflow:hidden;position:relative}
+.card.full .stage{margin:14px}
+.stage svg{width:100%;height:100%;max-height:560px}
+.say{padding:40px 40px 32px;display:flex;flex-direction:column;justify-content:center;gap:14px;overflow:auto}
+.say .kicker{font-size:14px;color:var(--blue);font-weight:700}
+.say h2{margin:0;font-size:32px;line-height:1.25;letter-spacing:.01em}
+.say p{margin:0;color:var(--ink2)}
+.say p b{color:var(--ink)}
+.src{margin-top:auto;font-size:13px;color:var(--ink2);border-top:1px solid var(--hair);padding-top:12px}
+.src.extra::before{content:"补充";background:var(--amber-soft);color:var(--amber);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
+.src.official::before{content:"官方";background:var(--green-soft);color:var(--green);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
+code{font:14px var(--mono);background:var(--blue-soft);color:var(--blue);padding:1px 6px;border-radius:6px}
+pre{margin:0;font:13.5px/1.6 var(--mono);background:#101826;color:#DCE3EE;border-radius:12px;padding:16px 18px;overflow:auto;width:100%}
+pre .k{color:#8FB1FF}pre .s{color:#9BE0B4}pre .c{color:#71819A}pre .f{color:#FFC86B}pre .hl{background:rgba(143,177,255,.16);display:block;margin:0 -18px;padding:0 18px}
+.bottom{position:fixed;inset:auto 0 0 0;height:76px;display:flex;align-items:center;justify-content:center;gap:14px}
+.btn{font:600 15px var(--font);border:0;border-radius:99px;padding:11px 22px;cursor:pointer;background:var(--sheet);color:var(--ink);box-shadow:0 0 0 1px var(--hair)}
+.btn:hover{box-shadow:0 0 0 2px var(--blue)}
+.btn.main{background:var(--blue);color:#fff;box-shadow:none}
+.btn:disabled{opacity:.35;cursor:default;box-shadow:0 0 0 1px var(--hair)}
+.btn:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.btn.sm{padding:7px 14px;font-size:14px}
+/* ---- 图元（flow 组件生成） ---- */
+.fl-node rect{fill:var(--sheet);stroke:var(--hair);stroke-width:2;transition:all .3s}
+.fl-node text{font:600 17px var(--font);fill:var(--ink)}
+.fl-node .sub{font:400 13px var(--font);fill:var(--ink2)}
+.fl-node.blue rect{stroke:var(--blue)} .fl-node.amber rect{stroke:var(--amber)} .fl-node.green rect{stroke:var(--green)} .fl-node.red rect{stroke:var(--red)}
+.fl-node.act rect{fill:var(--blue-soft);stroke:var(--blue);stroke-width:3}
+.fl-node.dim{opacity:.35}
+.fl-edge{fill:none;stroke:#AEB8C6;stroke-width:2.2;transition:all .3s}
+.fl-edge.act{stroke:var(--blue);stroke-width:3.5;stroke-dasharray:8 6;animation:dash .8s linear infinite}
+.fl-elab{font:500 13px var(--font);fill:var(--ink2)}
+.fl-elab.act{fill:var(--blue);font-weight:700}
+@keyframes dash{to{stroke-dashoffset:-28}}
+/* ---- 模拟器 ---- */
+.sim{display:grid;grid-template-rows:auto 1fr auto;gap:10px;width:100%;height:100%}
+.sim .ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.sim .ctl label{font-size:13px;color:var(--ink2);display:flex;align-items:center;gap:6px}
+.sim .body{display:grid;grid-template-columns:1.1fr 1fr;gap:12px;min-height:0}
+.sim .log{background:var(--sheet);border-radius:12px;padding:10px;overflow:auto;font:13px/1.5 var(--mono)}
+.sim .msg{border-left:4px solid var(--hair);padding:6px 10px;margin:0 0 8px;border-radius:6px;background:var(--paper);white-space:pre-wrap;word-break:break-word;animation:pop .25s ease}
+.sim .msg b{font-family:var(--font);display:block;font-size:12px;color:var(--ink2)}
+.msg.user{border-color:var(--blue)} .msg.asst{border-color:var(--amber)} .msg.tool{border-color:var(--green)} .msg.err{border-color:var(--red);background:var(--red-soft)} .msg.sys{border-color:var(--ink2)}
+.sim .narr{background:var(--blue-soft);color:var(--ink);border-radius:12px;padding:10px 14px;font-size:15px;min-height:48px}
+@keyframes pop{from{opacity:0;transform:translateY(6px)}}
+/* ---- 小测 ---- */
+.quiz{width:100%;max-width:760px;display:flex;flex-direction:column;gap:12px}
+.quiz .qn{font:600 13px var(--mono);color:var(--ink2)}
+.quiz .qt{font-size:22px;font-weight:700;line-height:1.4}
+.quiz .opt{display:block;width:100%;text-align:left;font:16px var(--font);background:var(--sheet);border:2px solid var(--hair);border-radius:12px;padding:12px 16px;cursor:pointer;color:var(--ink)}
+.quiz .opt:hover{border-color:var(--blue)}
+.quiz .opt.ok{border-color:var(--green);background:var(--green-soft)} .quiz .opt.no{border-color:var(--red);background:var(--red-soft)}
+.quiz .fb{min-height:52px;font-size:15px;color:var(--ink2)}
+.quiz .fb a{color:var(--blue);font-weight:700;cursor:pointer}
+.quiz .nav{display:flex;gap:8px;align-items:center}
+@media (max-width:820px){
+  .card.full.on{grid-template-rows:1fr}.card.full .stage{overflow:auto;place-items:start center}
+  .card.on{grid-template-columns:1fr;grid-template-rows:minmax(220px,48%) 1fr}
+  .stage{margin:10px 10px 0}.say{padding:18px 20px}.say h2{font-size:24px}
+  .sim .body{grid-template-columns:1fr}.top{padding:0 14px}.top .course{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* ---- 展开细节 ---- */
+details.more{border-top:1px solid var(--hair);padding-top:10px;font-size:15px;color:var(--ink2)}
+details.more summary{cursor:pointer;font-weight:700;color:var(--blue);list-style:none}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary::before{content:"＋ 展开细节";}
+details.more[open] summary::before{content:"－ 收起细节";}
+details.more>*:not(summary){margin:8px 0 0}
+details.more ul{padding-left:18px}details.more li{margin:4px 0}
+details.more table{border-collapse:collapse;width:100%;font-size:14px}
+details.more td,details.more th{border-bottom:1px solid var(--hair);padding:5px 6px;text-align:left;vertical-align:top}
+/* ---- 对话列表（状态追踪）---- */
+.stack{width:100%;display:flex;flex-direction:column;gap:6px;font:13px/1.45 var(--mono)}
+.stack .row{display:grid;grid-template-columns:28px 92px 1fr;gap:8px;align-items:start;background:var(--sheet);border-radius:8px;padding:7px 10px;border-left:4px solid var(--hair)}
+.stack .row .i{color:var(--ink2)}.stack .row .r{font-weight:700}
+.stack .row.developer{border-color:var(--ink2)}.stack .row.user{border-color:var(--blue)}.stack .row.assistant{border-color:var(--amber)}.stack .row.result{border-color:var(--green)}
+.stack .row.new{background:var(--blue-soft)}.stack .row.bad{border-color:var(--red);background:var(--red-soft)}
+.stack .row .t{white-space:pre-wrap;word-break:break-word}
+/* ---- 对比/误区 ---- */
+.pairs{width:100%;display:grid;gap:10px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pair>div{background:var(--sheet);border-radius:12px;padding:12px 14px;font-size:15px}
+.pair .no{border-left:5px solid var(--red)}.pair .yes{border-left:5px solid var(--green)}
+.pair b{display:block;font-size:12px;color:var(--ink2);margin-bottom:4px}
+.say .more code{font-size:13px}
+@media (max-width:820px){.pair{grid-template-columns:1fr}.stack .row{grid-template-columns:22px 70px 1fr}}
+.pair .a{border-left:5px solid var(--blue)}.pair .b{border-left:5px solid var(--amber)}
+/* ===== v3：填满面板、原文标签、要点、条形图、分支 ===== */
+.stage{padding:10px}
+.stage svg.flow{width:100%;height:100%;max-height:none}
+.say p{font-size:17px}
+p.key{background:var(--blue-soft);color:var(--ink);border-radius:12px;padding:10px 14px;font-size:16px}
+p.key::before{content:"关键 ";font-weight:800;color:var(--blue)}
+.src.article::before{content:"原文";background:var(--blue-soft);color:var(--blue);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
+.stage>.stack{height:100%;justify-content:center;font-size:14.5px}
+.stage>.stack .row{padding:11px 12px;flex:0 1 auto}
+.stack .head{font:700 13px var(--font);color:var(--ink2);margin:8px 0 0}
+.stage>.pairs{height:100%;grid-auto-rows:minmax(0,1fr);align-content:stretch}
+.pair>div{font-size:16px;display:flex;flex-direction:column;justify-content:center}
+.bars{width:100%;display:flex;flex-direction:column;gap:16px;justify-content:center;height:100%;padding:0 10px}
+.bar{display:grid;grid-template-columns:150px 1fr 76px;gap:12px;align-items:center;font-size:15px}
+.bar .bl{font-weight:700;text-align:right}
+.bar .bt{height:30px;background:var(--sheet);border-radius:8px;overflow:hidden}
+.bar .bt i{display:block;height:100%;background:var(--ink2);border-radius:8px}
+.bar.blue .bt i{background:var(--blue)}.bar.amber .bt i{background:var(--amber)}.bar.green .bt i{background:var(--green)}.bar.red .bt i{background:var(--red)}
+.bar .bv{font:700 15px var(--mono)}
+.bar .bn{grid-column:2/4;font-size:13px;color:var(--ink2);margin-top:-8px}
+.bars .bc{font-size:13px;color:var(--ink2);text-align:center}
+.sim .branches{gap:14px;background:var(--sheet);border-radius:10px;padding:6px 10px}
+.sim .branches label{font-size:13.5px;color:var(--ink)}
+@media (max-width:820px){.bar{grid-template-columns:90px 1fr 60px}}
+.sim{grid-template-rows:auto auto 1fr auto}
+.sim.wide .body{grid-template-columns:1fr;grid-template-rows:minmax(0,1.1fr) minmax(0,1fr)}
+.sim:not(:has(.branches)){grid-template-rows:auto 1fr auto}
+.bar .bt.none{background:repeating-linear-gradient(45deg,var(--sheet) 0 8px,var(--hair) 8px 10px)}
+.say h2{font-size:28px;line-height:1.3}
+.sim .body{overflow:hidden}
+.sim .body>svg{min-height:0;height:100%;width:100%}
+.sim .narr{min-height:0}
+.stage>.stack{font-size:15.5px;gap:8px}
+.stage>.stack .row{padding:13px 14px}
+.stack .row .t{font-family:var(--font)}
+.stage:has(>.sim){place-items:stretch}
+.sim{min-height:0;height:100%;overflow:hidden}
+.sim.wide .body{grid-template-rows:minmax(0,55%) minmax(0,45%)}
+/* 讲解条放在图上方，永远可见 */
+.sim{grid-template-rows:auto auto auto minmax(0,1fr)}
+.sim:not(:has(.branches)){grid-template-rows:auto auto minmax(0,1fr)}
+.sim .ctl{order:0}.sim .branches{order:1}.sim .narr{order:2}.sim .body{order:3;min-height:0}
+/* ===== v4 ===== */
+.fl-node .sub{font-size:13.5px;fill:#3E4B5B}
+.fl-elab{font-size:13px;fill:#3E4B5B}
+.fl-edge.red{stroke:var(--red)}.fl-edge.amber{stroke:var(--amber)}.fl-edge.green{stroke:var(--green)}
+.fl-elab.red{fill:var(--red);font-weight:700}.fl-elab.amber{fill:var(--amber);font-weight:700}.fl-elab.green{fill:var(--green);font-weight:700}
+.stage{margin:10px 0 10px 10px;padding:4px}.card.full .stage{margin:0 10px 10px}
+.bar .bt i{background:#B8C2CF}
+.bar .bmiss{grid-column:2/4;color:var(--ink2);font-size:14px;font-style:italic}
+.sim .btn{background:transparent;box-shadow:0 0 0 1.5px var(--blue);color:var(--blue)}
+.sim .btn:hover{background:var(--blue-soft)}
+.say{justify-content:center}
+.src{margin-top:6px}
+.top .count{font-size:16px;color:var(--ink);font-weight:700}
+.top .track{height:6px}
+.card.full.on{grid-template-rows:auto minmax(0,1fr)}
+.head-full{padding:18px 26px 8px;display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
+.head-full .kicker{font-size:14px;color:var(--blue);font-weight:700}
+.head-full h2{margin:0;font-size:24px;line-height:1.3}
+.sim.wide .body{grid-template-rows:minmax(0,64%) minmax(0,36%)}
+@media (max-width:820px){.head-full{padding:12px 14px 6px}.head-full h2{font-size:19px}}
+.say{justify-content:safe center}
+@media (max-width:820px){.bars{gap:8px}.bar{font-size:13px;grid-template-columns:84px 1fr 56px}.bar .bt{height:20px}.bar .bn{font-size:12px;margin-top:-4px}.bars .bc{font-size:12px}
+ .sim .ctl .btn{padding:5px 10px}.sim .branches{flex-direction:column;align-items:flex-start;gap:2px}}
+</style></head><body>
+<header class="top"><span class="course">黄同学h · 入职大厂两个月的 AI 开发心得</span><span class="track"><i></i></span><span class="count"></span></header>
+<main class="deck">
+<section class="card">
+  <div class="stage"><svg class="flow" data-act="agent" data-flow='{"nodes":[{"id":"ctx","x":120,"y":60,"t":"正确的上下文","s":"CONTEXT.md","c":"blue","w":190},{"id":"env","x":120,"y":200,"t":"能执行任务的环境","s":"测试 CLI / MCP / Skill","c":"green","w":190},{"id":"judge","x":120,"y":340,"t":"判断结果的依据","s":"业务契约 / 验收标准","c":"amber","w":190},{"id":"agent","x":390,"y":200,"t":"Agent","s":"写代码、自测、修复"},{"id":"human","x":610,"y":200,"t":"人","s":"判断需求和核心逻辑","c":"blue","w":170}],"edges":[{"f":"ctx","t":"agent"},{"f":"env","t":"agent"},{"f":"judge","t":"agent"},{"f":"agent","t":"human","l":"小 MR"}]}'></svg></div>
+  <div class="say"><span class="kicker">这篇文章讲什么？</span><h2>少写死工作流，多给 Agent 上下文、环境和判断依据</h2>
+  <p>模型能力增强后，一些原本被认为有用的约束和工作流（规定 Agent 每一步做什么的固定步骤），正在变成模型的噪声。</p>
+  <p class="key">作者对 Harness 的理解：正确的上下文 + 能执行任务的环境 + 判断结果的依据。</p>
+  <details class="more"><summary></summary><p>作者入职约两个月，做 Agent 开发，同时维护后端业务。工具分工：Codex + GPT-5.6 Sol 写代码；Astra 做规划；pi + DeepSeek V4 Flash 做简单需求；Claude 5 Fable 做对抗性审查和代码审查。</p></details>
+  <div class="src article">「背景」「五、一些总结和思考」</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="pairs">
+   <div class="pair"><div class="b"><b>不少开发者用过的重 Skill（例：Superpowers）</b>围绕规格和测试驱动（TDD），用大量固定步骤约束模型的下一步</div><div class="a"><b>作者现在的做法</b>简单任务直接做；复杂任务再加规划、拆分和交叉审查</div></div>
+   <div class="pair"><div class="no"><b>弊端 1</b>Token 消耗快</div><div class="no"><b>弊端 2</b>上下文已经够了，模型仍沿着既定步骤继续执行</div></div>
+   <div class="pair"><div class="b"><b>原因</b>模型变强后，一些原本有用的约束变成噪声</div><div class="a"><b>例</b>OpenAI 发布 Astra 时写博客，介绍怎么清理不必要的 Skill 和系统提示词</div></div>
+  </div></div>
+  <div class="say"><span class="kicker">为什么要换做法？</span><h2>模型变强后，写死的工作流变成噪声</h2>
+  <p>重 Skill 用固定步骤约束模型的下一步。</p>
+  <p class="key">步骤已经没必要时，模型仍可能照着走，浪费 Token。</p>
+  <div class="src article">「背景」；重 Skill 是不少开发者用过的做法</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="pairs">
+   <div class="pair"><div class="b"><b>第 1 讲：模型请求工具，程序执行，结果写回对话</b></div><div class="a"><b>本文</b>给这个循环接上查库表、查日志、跑真实业务的工具</div></div>
+   <div class="pair"><div class="b"><b>第 1 讲：错误写回对话，模型才能修正</b></div><div class="a"><b>本文</b>测试失败的证据交还给 Codex，修复后重测</div></div>
+   <div class="pair"><div class="b"><b>第 1 讲：对话列表越长，每次调用越贵</b></div><div class="a"><b>本文</b>handoff 把当前上下文整理成文件，方便在新会话中继续任务（例：从 Codex 交接给 Claude Code 或 pi agent）</div></div>
+  </div></div>
+  <div class="say"><span class="kicker">和学过的内容怎么连？</span><h2>第 1 讲的智能体循环，在团队里这样用</h2>
+  <p>左边是第 1 讲的机制，右边是作者工作里对应的做法。</p>
+  <p class="key">原文给 handoff 的理由是在新会话中继续任务；「省调用成本」这个角度来自第 1 讲，是补充。</p>
+  <div class="src extra">衔接为补充；handoff 用途见原文「我常用的 Skill」</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><svg class="flow" data-act="grill" data-edge="grill>design" data-flow='{"nodes":[{"id":"mat","x":100,"y":80,"t":"零散材料","s":"PRD·会议·聊天·反馈","w":170},{"id":"wiki","x":100,"y":250,"t":"团队 Wiki + 代码","s":"帮 Agent 理解材料","w":170},{"id":"grill","x":300,"y":165,"t":"Grill 追问","s":"目标·边界·取舍","c":"blue","w":150},{"id":"design","x":480,"y":165,"t":"方案设计","s":"Astra","c":"amber","w":130},{"id":"adv","x":650,"y":165,"t":"对抗性审查","s":"Fable","c":"red","w":140},{"id":"ctx","x":650,"y":330,"t":"CONTEXT.md","s":"问题·范围·决策·验收","c":"green","w":190}],"edges":[{"f":"mat","t":"grill"},{"f":"wiki","t":"grill"},{"f":"grill","t":"design"},{"f":"design","t":"adv"},{"f":"adv","t":"design","l":"修订方案","route":"top"},{"f":"adv","t":"ctx","l":"通过"}]}'></svg></div>
+  <div class="say"><span class="kicker">需求对齐怎么做？</span><h2>追问到不改变方向为止，结论写进文件</h2>
+  <p>材料常常互相矛盾：PRD 没更新，会上补了限制，聊天里改了优先级。</p>
+  <p>作者自己对需求的理解，也可能包含一些没有说出来的假设。</p>
+  <p class="key">停止条件：剩下的问题不会显著改变实现方向和验收结果，就开始开发。</p>
+  <details class="more"><summary></summary><p>CONTEXT.md（对齐结论文件）记录问题、范围、关键决策和验收标准。后面实现和审查的 Agent 共享这份文件，不用重读全部对话。</p><p>作者不要求提前规划所有细节，否则对齐本身又会变成一套重的工作流。有些问题他当场答，有些要回头找产品确认。</p></details>
+  <div class="src article">「二、我的日常开发工作流」第 1–4 段及配图</div></div>
+</section>
+
+<section class="card full">
+  <div class="head-full"><span class="kicker">一个增量怎么走完全程？</span><h2>每个小增量都走一遍：对齐、实现、审查、端到端测试、小 MR</h2></div>
+  <div class="stage"><div class="sim" data-sim='{"layout":"wide","label":"正常路径","note":"失败分支是串起来的教学示例，不是原文的真实事故。","flow":{"pad":16,"nodes":[{"id":"align","x":70,"y":60,"t":"需求对齐","s":"→ CONTEXT.md","c":"blue","w":130},{"id":"split","x":225,"y":60,"t":"拆解增量","s":"Codex","w":120},{"id":"impl","x":380,"y":60,"t":"实现 + 自测","s":"Codex","c":"green","w":130},{"id":"cross","x":535,"y":60,"t":"交叉审查","s":"Claude/Pi/Codex","c":"amber","w":140},{"id":"e2e","x":695,"y":60,"t":"端到端测试","s":"当前增量","c":"green","w":130},{"id":"mr","x":850,"y":60,"t":"人工审查","s":"→ 小 MR","c":"blue","w":130}],"edges":[{"f":"align","t":"split"},{"f":"split","t":"impl"},{"f":"impl","t":"cross"},{"f":"cross","t":"e2e"},{"f":"e2e","t":"mr"},{"f":"cross","t":"impl","l":"审查发现问题 → Codex 修复","route":"top","oa":-30,"ob":30,"c":"amber"},{"f":"e2e","t":"impl","l":"测试失败 → 定位、修复、重测","route":"top","lane":1,"oa":0,"ob":-30,"c":"red"},{"f":"mr","t":"split","l":"下一个增量","route":"bottom"}]},
+  "steps":[
+   {"act":"align","msg":{"r":"user","n":"作者","t":"用 Grill 和 Agent 对齐需求"},"say":"追问目标、边界和取舍。"},
+   {"act":"align","msg":{"r":"asst","n":"Astra","t":"方案设计"},"say":"Astra 做规划。"},
+   {"act":"align","msg":{"r":"asst","n":"Fable","t":"对抗性审查：通过"},"say":"没有找到能推翻核心假设的反例。"},
+   {"act":"align","msg":{"r":"tool","n":"文件","t":"写入 CONTEXT.md"},"say":"结论沉淀成文件，后续 Agent 共享。"},
+   {"act":"split","edge":"align>split","msg":{"r":"asst","n":"Codex","t":"拆出第 1 个可验收的小增量"},"say":"简单需求直接实现；复杂需求拆成可独立验收的 Issue。"},
+   {"act":"impl","edge":"split>impl","msg":{"r":"asst","n":"Codex","t":"实现，并先完成测试"},"say":"只有能独立推进的部分，才交给 subagent 在不同 worktree 并行，最后由主 Agent 负责集成。"},
+   {"act":"cross","edge":"impl>cross","msg":{"r":"asst","n":"Claude","t":"交叉审查：没有发现问题"},"say":"按任务复杂度选择审查的 Agent。"},
+   {"act":"e2e","edge":"cross>e2e","msg":{"r":"tool","n":"测试 CLI","t":"真实入口执行 → 查库表和日志 → 对照验收标准：通过"},"say":"检查这个增量放进真实业务流程后是否成立。"},
+   {"act":"mr","edge":"e2e>mr","msg":{"r":"user","n":"作者","t":"看测试结果和核心业务逻辑，提交小 MR"},"say":"作者不逐行读代码。前提是 MR 足够小。"},
+   {"act":"split","edge":"mr>split","msg":{"r":"sys","n":"循环","t":"下一个增量"},"say":"每个增量重复同一个循环。"}],
+  "alts":[
+   {"label":"分支 A：方案被对抗性审查推翻","steps":[
+     {"act":"align","msg":{"r":"asst","n":"Astra","t":"方案：用分布式锁防止重复请求"},"say":"示例取自原文的锁例子。"},
+     {"act":"align","msg":{"r":"err","n":"Fable","t":"反例：接口幂等能不能解决？锁服务挂了怎么办？"},"say":"对抗性审查攻击核心假设。"},
+     {"act":"align","msg":{"r":"asst","n":"Astra","t":"修订方案后再审查，通过；写 CONTEXT.md"},"say":"修订发生在对齐阶段，不进入实现。"},
+     {"act":"split","edge":"align>split","msg":{"r":"asst","n":"Codex","t":"按修订后的方案拆增量"},"say":"之后和正常路径相同。"}]},
+   {"label":"分支 B：交叉审查发现问题","steps":[
+     {"act":"impl","msg":{"r":"asst","n":"Codex","t":"实现并自测：测试通过"},"say":"编码 Agent 认为可以交付。"},
+     {"act":"cross","edge":"impl>cross","msg":{"r":"err","n":"Claude","t":"发现问题（示例：重试时状态变化没有保护）"},"say":"问题统一反馈给主编码 Agent。"},
+     {"act":"impl","edge":"cross>impl","msg":{"r":"asst","n":"Codex","t":"修复并重新验证"},"say":"沿外圈回到实现。"},
+     {"act":"cross","edge":"impl>cross","msg":{"r":"asst","n":"Claude","t":"再次审查：通过"},"say":"进入端到端测试。"}]},
+   {"label":"分支 C：端到端测试失败","steps":[
+     {"act":"e2e","msg":{"r":"err","n":"测试 CLI","t":"落库结果和业务契约不符；日志和 Trace 给出失败位置"},"say":"预期来自业务契约，不来自系统返回。"},
+     {"act":"impl","edge":"e2e>impl","msg":{"r":"asst","n":"Codex","t":"定位、修复"},"say":"失败证据交还 Codex。"},
+     {"act":"e2e","edge":"cross>e2e","msg":{"r":"tool","n":"测试 CLI","t":"重测：通过，生成验收报告"},"say":"定位、修复、重测：通过。"}]}]}'></div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><svg class="flow" data-act="check" data-edge="contract>check" data-flow='{"nodes":[{"id":"cli","x":90,"y":220,"t":"测试 CLI","s":"环境检查·造数据","c":"green","w":150},{"id":"run","x":270,"y":220,"t":"执行真实业务","s":"浏览器 / API","c":"green","w":150},{"id":"evi","x":450,"y":220,"t":"收集证据","s":"库表·日志·Trace","c":"green","w":150},{"id":"check","x":630,"y":220,"t":"对照预期","s":"通过 → 验收报告","c":"blue","w":150},{"id":"contract","x":630,"y":70,"t":"业务契约","s":"定义什么结果算对","c":"amber","w":170}],"edges":[{"f":"cli","t":"run"},{"f":"run","t":"evi"},{"f":"evi","t":"check"},{"f":"contract","t":"check","l":"预期"},{"f":"check","t":"cli","l":"失败：定位、修复、重测","route":"bottom"}]}'></svg></div>
+  <div class="say"><span class="kicker">端到端测试为什么能拦住问题？</span><h2>Agent 从真实入口跑到结果，自己找证据</h2>
+  <p>测试写得多，上线仍会出错；缺的是让 Agent 在自测阶段跑真实环境。</p>
+  <p class="key">Agent 能查库表、查日志，也能连接机器排查问题。</p>
+  <details class="more"><summary></summary><ul><li>被测产品本身是 Agent 时，流程跑通还不够，还要检查答案质量（Agent Eval，原文点到为止）。</li><li>四件事：一键起测试环境、造数据、明确账号权限、可清理重置；用浏览器、API 或 CLI 跑真实流程；只读数据库 MCP 查落库，日志 Skill 和 Trace 查链路；稳定操作写成脚本，入口和排障写成 Skill。</li><li>能工具化的做成 MCP 或 CLI，可复用的步骤写成 Skill，最后统一成一个测试 CLI。</li><li>浏览器自动化：作者推荐 ego lite，配 pi + DeepSeek V4 Flash。</li></ul></details>
+  <div class="src article">「三、怎么构建 Agent 友好的端到端测试」及配图</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="stack">
+   <div class="row user"><span class="i">1</span><span class="r">方向选错?</span><span class="t">第一性原理：重新问这个问题该怎么解</span></div>
+   <div class="row user"><span class="i">2</span><span class="r">找反例</span><span class="t">对抗性审查：优先找能推翻核心假设的反例</span></div>
+   <div class="row user"><span class="i">3</span><span class="r">收益从哪来?</span><span class="t">消融实验：用对照组合判断收益来源</span></div>
+   <div class="row user"><span class="i">4</span><span class="r">越来越复杂</span><span class="t">奥卡姆剃刀：删除所有非必要机制</span></div>
+   <div class="row user"><span class="i">5</span><span class="r">职责混乱</span><span class="t">高内聚、低耦合：检查职责和边界</span></div>
+  </div></div>
+  <div class="say"><span class="kicker">一句短 Prompt 为什么有用？</span><h2>说出方法名，模型就按学过的做法分析</h2>
+  <p>这些方法在论文、代码和设计文档里高度标准化，模型训练时见过很多。</p>
+  <p class="key">一句组合 Prompt 指定五个动作：重新定义问题；攻击假设；验证贡献；删除复杂度；整理系统边界。</p>
+  <details class="more"><summary></summary><p>作者的组合句：「从第一性原理重新分析，对当前方案做对抗性审查；核心机制必须通过消融实验验证；方案遵循奥卡姆剃刀，代码保持高内聚、低耦合。」</p><p>作者原话：它们不是魔法咒语。说出方法名之后，还要补上当前任务真正必要的约束。</p></details>
+  <div class="src article">「我常用的 Prompt」及配图</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="bars" data-bars='{"unit":"ms","items":[{"l":"Baseline","v":800},{"l":"只加索引","v":120,"c":"blue","note":"原文：只加索引就从 800ms 降到 120ms"},{"l":"索引 + 缓存","v":null},{"l":"三项全加","v":100,"note":"索引 + Redis 缓存 + 批量查询"}],"caption":"原文用「比如」举例，结果写的是「最后可能发现」。数字不是实测报告。"}'></div></div>
+  <div class="say"><span class="kicker">实例：消融实验怎么用？</span><h2>系统变快了，不代表每项改动都有用</h2>
+  <p>模型从 Baseline 起，比较逐步叠加的组合：只加索引、索引 + 缓存、三项全加。</p>
+  <p>原文的例子：最后可能发现，剩下两个复杂方案只贡献了 20ms。</p>
+  <p class="key">这样能看清哪些代码值得保留，哪些复杂度可能没有必要。</p>
+  <div class="src article">「消融实验」一段</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="pairs">
+   <div class="pair"><div class="no"><b>普通问法</b>帮我看看这个技术方案有没有问题。</div><div class="yes"><b>换成</b>对这个方案做一次对抗性审查，优先寻找能推翻核心假设的反例。</div></div>
+   <div class="pair"><div class="b"><b>方案：引入分布式锁，解决重复请求</b>普通问法 → 模型讨论锁的超时时间怎么设</div><div class="a"><b>对抗性审查 → 模型追问</b>重复请求真的需要互斥吗？接口幂等能不能解决？锁服务挂了怎么办？锁过期了业务没执行完怎么办？</div></div>
+  </div></div>
+  <div class="say"><span class="kicker">实例：换一句话，模型关注什么？</span><h2>让模型推翻方案，而不是替方案找理由</h2>
+  <p>普通问法让模型在方案内部调细节。</p>
+  <p>对抗性审查让模型先找能推翻核心假设的反例。</p>
+  <p class="key">作者说这类 Prompt 特别适合方案评审和代码审查。</p>
+  <details class="more"><summary></summary><p>同类方法：奥卡姆剃刀。例：Agent 设计了「Kafka + Redis + 分布式锁 + 状态机 + 定时补偿」，用奥卡姆剃刀重审后，它很多时候会发现单库写入时一个事务加唯一索引就够了。</p><p>作者常用 ponytail Skill 清理过度设计，因为 GPT-5.6 Sol 很多时候会过度设计。</p></details>
+  <div class="src article">「对抗性审查」「奥卡姆剃刀」「我常用的 Skill」</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="stack">
+   <div class="head">作者要避开的旧问题</div>
+   <div class="row developer"><span class="i">—</span><span class="r">见前文</span><span class="t">重 Skill 走不必要的步骤（第 2 张）；测试写很多，上线仍出错（第 6 张）</span></div>
+   <div class="head">用这套做法时仍会犯的错</div>
+   <div class="row bad"><span class="i">1</span><span class="r">过度设计</span><span class="t">模型很容易为了「完整」而过度设计</span></div>
+   <div class="row bad"><span class="i">2</span><span class="r">以系统返回为准</span><span class="t">结果看似合理，实际不符合需求</span></div>
+   <div class="row bad"><span class="i">3</span><span class="r">只数通过数</span><span class="t">审查时只看通过了多少，不看测试是否验证了需求关心的事</span></div>
+   <div class="head">作者承认仍在的限制</div>
+   <div class="row bad"><span class="i">4</span><span class="r">一起误解</span><span class="t">验收标准本身错了：代码和测试互相对得上，但一起误解了需求</span></div>
+   <div class="row bad"><span class="i">5</span><span class="r">场景有限</span><span class="t">端到端测试只覆盖选定环境和场景；生产环境里的流量、并发和数据分布，仍然可能带来新的问题</span></div>
+   <div class="row bad"><span class="i">6</span><span class="r">审查速度</span><span class="t">人的审查速度是瓶颈</span></div>
+  </div></div>
+  <div class="say"><span class="kicker">旧问题、仍会犯的错、仍在的限制</span><h2>工具能取证，但「什么算对」要由业务契约来定</h2>
+  <p>「以系统返回为准」和「代码和测试一起误解需求」都说明：测试和代码一致，不等于符合需求。</p>
+  <p class="key">验收标准仍然要由人给出。</p>
+  <div class="src article">「背景」「三」「四」「五」</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="pairs">
+   <div class="pair"><div class="b"><b>放弃</b>逐行阅读所有生成的代码</div><div class="a"><b>换来</b>只看测试结果和核心业务逻辑</div></div>
+   <div class="pair"><div class="b"><b>前提 1：小 MR</b>每次要理解和判断的改动保持可控</div><div class="a"><b>前提 2：端到端测试</b>逐步验证完整业务路径</div></div>
+   <div class="pair"><div class="b"><b>重点看</b>权限、状态变化、并发、重试、数据一致性、迁移和回滚</div><div class="a"><b>少看</b>模式稳定的 CRUD（作者现在已经不看）</div></div>
+   <div class="pair"><div class="b"><b>新增的抽象和机制</b>让 AI 用奥卡姆剃刀再审一遍</div><div class="a"><b>问三件事</b>真的有必要吗？有没有更简单的实现？是否为局部问题引入了过多复杂度？</div></div>
+  </div></div>
+  <div class="say"><span class="kicker">作者做了什么取舍？</span><h2>不逐行读代码，靠小 MR 和端到端测试换来</h2>
+  <p>审查顺序：先看验收标准，再看端到端测试结果，最后沿业务路径看高风险部分。</p>
+  <p class="key">代价：开发者仍要对业务需求负责，高风险部分必须亲自看。</p>
+  <details class="more"><summary></summary><p>原文：业务需求的第一责任人仍然是开发者。如果不做审查，在大型系统里很容易出问题。作者的说法：你也不希望半夜被叫起来 On-call，最后发现是 AI 写的代码出了问题。</p></details>
+  <div class="src article">「二」末段、「四、怎么 Review AI 写的代码」</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><svg class="flow" data-act="shift" data-edge="shift>human" data-flow='{"nodes":[{"id":"agents","x":110,"y":90,"t":"Agent","s":"可同时推进多个任务","c":"green","w":180},{"id":"queue","x":360,"y":90,"t":"待审代码","s":"只让它多写就会积压","c":"red","w":180},{"id":"human","x":610,"y":90,"t":"人工审查","s":"速度不会成倍增加","c":"red","w":170},{"id":"shift","x":360,"y":290,"t":"问题前移","s":"类型检查·测试·业务断言","c":"blue","w":220}],"edges":[{"f":"agents","t":"queue"},{"f":"queue","t":"human"},{"f":"agents","t":"shift","l":"自己发现、自己修"},{"f":"shift","t":"human","l":"只剩需要人判断的"}]}'></svg></div>
+  <div class="say"><span class="kicker">深入一层：下一步改哪里？</span><h2>下一步该提速的是审查，不是写代码</h2>
+  <p>Agent 可同时推进多个任务；只让它多写，待审代码会积压。</p>
+  <p>作者接下来想改进的：让重复问题在交到他手里之前，就被发现和修复。</p>
+  <p class="key">工作流要定期做减法：Astra 更新后，作者删了 AGENTS.md 里过严的约束。</p>
+  <details class="more"><summary></summary><p>这是作者的下一步目标，不是已经做到的结果。人只集中判断：需求有没有理解对、关键业务逻辑是否成立、还有哪些风险没验证。</p><p>MR 多时可以建 Review Bot，把 Git 变更和预设的审查步骤结合起来。它的价值看能否减少有效问题的遗漏和人工负担，不看它评论了多少条。</p></details>
+  <div class="src article">「四」第 4 条、「五、一些总结和思考」</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="stack">
+   <div class="row result"><span class="i">1</span><span class="r">沉淀</span><span class="t">一个步骤重复超过三次，就让 Codex 整理成 Skill</span></div>
+   <div class="row result"><span class="i">2</span><span class="r">复用</span><span class="t">自测里反复做的操作整理成 CLI、脚本和 Skill，交给同事复用</span></div>
+   <div class="row assistant"><span class="i">3</span><span class="r">学习</span><span class="t">AI 减少了亲自踩坑的机会；每天留一部分时间学习和复盘</span></div>
+   <div class="row user new"><span class="i">4</span><span class="r">第一步</span><span class="t">挑一条最常做的自测路径，让 Agent 独立跑通、保留证据，再把有效步骤沉淀下来</span></div>
+  </div></div>
+  <div class="say"><span class="kicker">读完先做什么？</span><h2>先挑一条自测路径，让 Agent 跑通留证据</h2>
+  <p>作者把有效的步骤一点点沉淀成 Skill 和 CLI。</p>
+  <p class="key">第一步：挑一条最常做的自测路径，让 Agent 独立跑通、保留证据。</p>
+  <details class="more"><summary></summary><p>作者也提醒：有些经验原本要经历问题、排查原因才能获得，现在可能变成 AI 的一句「我错了，现在修改一下」。所以他每天留出一部分时间学习和复盘。</p></details>
+  <div class="src article">「我常用的 Skill」第 7 条、「五」末段</div></div>
+</section>
+
+<section class="card full">
+  <div class="head-full"><span class="kicker">小测</span><h2>用 6 个新场景检查你会不会用</h2></div>
+  <div class="stage"><div class="quiz" data-quiz='[
+   {"q":"同事让 Agent 设计了「消息队列 + 缓存 + 定时任务」来同步两张表。你只能加一句话，按原文最合适的是？","opts":["再详细写一遍每一步该怎么做","用奥卡姆剃刀重新审查，在满足需求的前提下删除所有非必要机制","让它把每个组件的配置写完整"],"a":1,"why":"误区：工作流越完整越好。方案越来越复杂时，用奥卡姆剃刀删机制。","back":9},
+   {"q":"一次改了三处，接口快了很多。要判断三处是否都值得保留，该让模型做什么？","opts":["消融实验：从 Baseline 起比较不同组合","对抗性审查","高内聚、低耦合"],"a":0,"why":"不清楚哪个机制产生收益时，用消融实验。","back":8},
+   {"q":"需求对齐时还剩 5 个问题，但都不影响实现方向和验收结果。按原文应该？","opts":["全部问清再开发","开始开发，结论写进 CONTEXT.md","交给 Agent 自己猜"],"a":1,"why":"作者的停止条件：剩下的问题不会显著改变方向和验收结果。","back":4},
+   {"q":"端到端测试里，Agent 查库看到订单状态是「已关闭」，就判定通过。问题在哪？","opts":["没有问题","应该再查一遍日志","预期结果必须来自业务契约，不能以系统返回为准"],"a":2,"why":"误区：系统返回什么，什么就是对的。工具获取证据，不定义正确答案。","back":10},
+   {"q":"全部测试通过，覆盖率很高。按原文，还要先确认什么？","opts":["测试数量是否够多","验收标准对不对，测试是否验证了需求真正关心的事","代码风格是否统一"],"a":1,"why":"误区：测试全通过就可以上线。代码和测试可能一起误解需求。","back":11},
+   {"q":"你开了 4 个 Agent 并行，一周后待审 MR 堆成山。按原文，下一步最该改什么？","opts":["再加 2 个 Agent","让类型检查、测试和业务断言在交给你之前发现并修掉问题","把多个 MR 合成一个大 MR"],"a":1,"why":"瓶颈是人的审查速度，要把问题前移。","back":12}]'></div></div>
+</section>
+</main>
+<nav class="bottom"><button class="btn" id="prev">上一张</button><button class="btn main" id="next">下一张</button></nav>
+<script>
+/* 学习搭子 固定组件库 — 不要在课程里改这个文件。 */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const NS='http://www.w3.org/2000/svg';
+const el=(t,a={},p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p&&p.appendChild(e);return e};
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+/* ---------- 卡片翻页 ---------- */
+const cards=$$('.card');let cur=0;
+function go(i){i=Math.max(0,Math.min(cards.length-1,i));cards[cur].classList.remove('on');cur=i;cards[cur].classList.add('on');
+  $('.track i').style.width=((cur+1)/cards.length*100)+'%';$('.count').textContent=(cur+1)+' / '+cards.length;
+  $('#prev').disabled=cur===0;$('#next').disabled=cur===cards.length-1;history.replaceState(null,'','#'+(cur+1));}
+window.goCard=n=>go(n-1);
+$('#prev').onclick=()=>go(cur-1);$('#next').onclick=()=>go(cur+1);
+addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.key==='ArrowRight')go(cur+1);if(e.key==='ArrowLeft')go(cur-1)});
+let sx=null;addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
+addEventListener('touchend',e=>{if(sx===null)return;const d=e.changedTouches[0].clientX-sx;if(Math.abs(d)>60)go(cur+(d<0?1:-1));sx=null});
+
+/* ---------- flow：用 JSON 画流程图 ----------
+ spec = {w,h,nodes:[{id,x,y,t,s?,c?,w?}],edges:[{f,t,l?,bend?}]}  节点坐标是中心点 */
+function drawFlow(svg,spec){
+  svg.innerHTML='';
+  const defs=el('defs',{},svg);
+  [['a','#AEB8C6'],['b','#2550D9'],['red','#C8372D'],['amber','#C77A00'],['green','#16875A']].forEach(([id,c])=>{const m=el('marker',{id:'ar'+id+svg.dataset.uid,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:7,markerHeight:7,orient:'auto-start-reverse'},defs);el('path',{d:'M0,0L10,5L0,10z',fill:c},m)});
+  const N={};spec.nodes.forEach(n=>N[n.id]={...n,w:n.w||150,h:n.s?70:56});
+  const ns=Object.values(N);
+  let x0=Math.min(...ns.map(n=>n.x-n.w/2)),x1=Math.max(...ns.map(n=>n.x+n.w/2)),y0=Math.min(...ns.map(n=>n.y-n.h/2)),y1=Math.max(...ns.map(n=>n.y+n.h/2));
+  const B={x0,x1,y0,y1};
+  const eg=el('g',{},svg),ng=el('g',{},svg);svg._edges={};svg._nodes={};
+  const clip=(a,b)=>{const dx=b.x-a.x,dy=b.y-a.y;const s=Math.min(Math.abs((a.w/2+6)/(dx||1e-9)),Math.abs((a.h/2+6)/(dy||1e-9)));return[a.x+dx*s,a.y+dy*s]};
+  spec.edges.forEach(e=>{const a=N[e.f],b=N[e.t];let d,lx,ly;
+    if(e.route){ /* 沿外圈走的直角线：top|bottom|left|right，lane 控制离外框的距离 */
+      const g=30+(e.lane||0)*30,oa=e.oa||0,ob=e.ob||0;
+      if(e.route==='top'||e.route==='bottom'){const t=e.route==='top',Y=t?B.y0-g:B.y1+g,ya=a.y+(t?-1:1)*(a.h/2+2),yb=b.y+(t?-1:1)*(b.h/2+8);
+        d=`M${a.x+oa},${ya} V${Y} H${b.x+ob} V${yb}`;lx=(a.x+oa+b.x+ob)/2;ly=Y+(t?-8:18);
+        t?(y0=Math.min(y0,Y-26)):(y1=Math.max(y1,Y+26));}
+      else{const l=e.route==='left',X=l?B.x0-g:B.x1+g,xa=a.x+(l?-1:1)*(a.w/2+2),xb=b.x+(l?-1:1)*(b.w/2+8);
+        d=`M${xa},${a.y+oa} H${X} V${b.y+ob} H${xb}`;lx=X+(l?-8:8);ly=(a.y+b.y)/2;
+        l?(x0=Math.min(x0,X-90)):(x1=Math.max(x1,X+90));}
+    }else{const[p1,q1]=clip(a,b),[p2,q2]=clip(b,a);const mx=(p1+p2)/2,my=(q1+q2)/2,len=Math.hypot(p2-p1,q2-q1)||1,bd=e.bend||0;
+      const cx=mx-(q2-q1)/len*bd,cy=my+(p2-p1)/len*bd;d=`M${p1},${q1} Q${cx},${cy} ${p2},${q2}`;
+      const qx=.25*p1+.5*cx+.25*p2,qy=.25*q1+.5*cy+.25*q2,sg=bd>=0?1:-1;lx=qx-(q2-q1)/len*sg*14;ly=qy+(p2-p1)/len*sg*14+4;}
+    const mk=e.c||'a';const p=el('path',{d,class:'fl-edge '+(e.c||''),'marker-end':`url(#ar${mk}${svg.dataset.uid})`},eg);p._mk=mk;
+    let lab=null;if(e.l){const anc=e.route==='left'?'end':e.route==='right'?'start':'middle';lab=el('text',{x:lx,y:ly,'text-anchor':anc,class:'fl-elab '+(e.c||''),stroke:'#F2F4F7','stroke-width':5,'paint-order':'stroke'},eg);lab.textContent=e.l}
+    svg._edges[e.f+'>'+e.t]={p,lab}});
+  ns.forEach(n=>{const g=el('g',{class:'fl-node '+(n.c||'')},ng);
+    el('rect',{x:n.x-n.w/2,y:n.y-n.h/2,width:n.w,height:n.h,rx:14},g);
+    const t=el('text',{x:n.x,y:n.y+(n.s?-4:6),'text-anchor':'middle'},g);t.textContent=n.t;
+    if(n.s){const s=el('text',{x:n.x,y:n.y+18,'text-anchor':'middle',class:'sub'},g);s.textContent=n.s}
+    svg._nodes[n.id]=g});
+  /* 自动贴合：viewBox 只包住内容，图会放大填满面板 */
+  const P=spec.pad??8;svg.setAttribute('viewBox',`${x0-P} ${y0-P-10} ${x1-x0+2*P} ${y1-y0+2*P+20}`);
+  svg._set=(act,edge)=>{for(const k in svg._nodes)svg._nodes[k].classList.toggle('act',k===act);
+    for(const k in svg._edges){const on=k===edge,E=svg._edges[k];E.p.classList.toggle('act',on);E.p.setAttribute('marker-end',`url(#ar${on?'b':E.p._mk}${svg.dataset.uid})`);E.lab&&E.lab.classList.toggle('act',on)}};
+  svg._set(svg.dataset.act,svg.dataset.edge);
+}
+let uid=0;
+$$('svg.flow').forEach(s=>{s.dataset.uid=++uid;drawFlow(s,JSON.parse(s.dataset.flow))});
+
+/* ---------- sim：一步步走的模拟器 ----------
+ data-sim = {flow:{...}, steps:[{act,edge,msg:{r:user|asst|tool|err|sys,n?,t},say}], alt?:{label,steps:[...]}} */
+$$('.sim').forEach(box=>{
+  const spec=JSON.parse(box.dataset.sim);if(spec.alt&&!spec.alts)spec.alts=[spec.alt];const AL=spec.alts||[];const gname='br'+(++uid);
+  box.innerHTML=`<div class="ctl"><button class="btn sm" data-a="step">下一步</button><button class="btn sm" data-a="play">▶ 自动</button><button class="btn sm" data-a="reset">重置</button>
+   <label>速度 <input type="range" min="300" max="2500" step="100" value="1200"></label></div>${AL.length?`<div class="ctl branches"><label><input type="radio" name="${gname}" value="-1" checked> ${esc(spec.label||'正常路径')}</label>${AL.map((a,j)=>`<label><input type="radio" name="${gname}" value="${j}"> ${esc(a.label)}</label>`).join('')}</div>`:''}
+   <div class="body"><svg class="flow"></svg><div class="log"></div></div><div class="narr"></div>`;
+  if(spec.layout==='wide')box.classList.add('wide');
+  const svg=$('svg',box);svg.dataset.uid=++uid;drawFlow(svg,spec.flow);
+  const log=$('.log',box),narr=$('.narr',box),radios=$$('input[type=radio]',box),spd=$('input[type=range]',box),play=$('[data-a=play]',box);
+  let i=0,timer=null;const sel=()=>{const r=radios.find(r=>r.checked);return r?+r.value:-1};const steps=()=>sel()>=0?AL[sel()].steps:spec.steps;
+  const hint=spec.note?esc(spec.note)+'　点「下一步」开始。':'点「下一步」开始。';const reset=()=>{i=0;log.innerHTML='';narr.innerHTML=hint;svg._set(null,null);stop()};
+  const stop=()=>{clearTimeout(timer);timer=null;play.textContent='▶ 自动'};
+  const step=()=>{const S=steps();if(i>=S.length){narr.textContent='流程结束。点「重置」再走一遍。';stop();return false}
+    const s=S[i++];svg._set(s.act,s.edge);if(s.msg){const d=document.createElement('div');d.className='msg '+s.msg.r;
+      d.innerHTML=`<b>${esc(s.msg.n||({user:'用户',asst:'模型',tool:'工具结果',err:'出错',sys:'系统提示词'}[s.msg.r]))}</b>${esc(s.msg.t)}`;log.appendChild(d);log.scrollTop=1e9}
+    narr.innerHTML=`<b>第 ${i}/${S.length} 步</b>　${esc(s.say)}`;return true};
+  const loop=()=>{if(step())timer=setTimeout(loop,+spd.value);else stop()};
+  box.onclick=e=>{const a=e.target.dataset.a;if(a==='step'){stop();step()}if(a==='reset')reset();if(a==='play'){if(timer)stop();else{play.textContent='❚❚ 暂停';loop()}}};
+  narr.innerHTML=hint;radios.forEach(r=>r.onchange=reset);
+  const P=new URLSearchParams(location.search);if(P.get('alt')&&radios[+P.get('alt')]){radios[+P.get('alt')].checked=true}for(let n=+P.get('sim')||0;n>0;n--)step(); /* 自查用：?sim=5&alt=1 */
+});
+
+/* ---------- bars：横向条形图 ----------
+ data-bars = {unit, items:[{l,v,c?:blue|amber|green|red,note?}], caption?}  数字必须来自原文 */
+$$('.bars').forEach(box=>{const B=JSON.parse(box.dataset.bars),mx=Math.max(...B.items.filter(i=>i.v!=null).map(i=>i.v));
+  box.innerHTML=B.items.map(i=>`<div class="bar ${i.c||''}"><span class="bl">${esc(i.l)}</span>${i.v==null?`<span class="bmiss">${esc(i.miss||'原文未给数字')}</span>`:`<span class="bt"><i style="width:${(i.v/mx*100).toFixed(1)}%"></i></span><span class="bv">${esc(i.v)}${esc(B.unit||'')}</span>`}${i.note?`<span class="bn">${esc(i.note)}</span>`:''}</div>`).join('')+(B.caption?`<div class="bc">${esc(B.caption)}</div>`:'')});
+
+/* ---------- quiz：页内小测 ----------
+ data-quiz = [{q,opts:[...],a:正确下标,why,back:答错时回到第几张卡片}] */
+$$('.quiz').forEach(box=>{
+  const Q=JSON.parse(box.dataset.quiz);let k=0,score=0;const done=new Set();
+  const render=()=>{const q=Q[k];box.innerHTML=`<div class="qn">第 ${k+1} / ${Q.length} 题　·　已答对 ${score}</div><div class="qt">${esc(q.q)}</div>
+    ${q.opts.map((o,j)=>`<button class="opt" data-j="${j}">${String.fromCharCode(65+j)}. ${esc(o)}</button>`).join('')}
+    <div class="fb"></div><div class="nav"><button class="btn sm" data-n="-1" ${k?'':'disabled'}>上一题</button><button class="btn sm main" data-n="1" ${k<Q.length-1?'':'disabled'}>下一题</button></div>`};
+  box.onclick=e=>{const t=e.target;if(t.dataset.n){k+=+t.dataset.n;render();return}
+    if(t.dataset.j===undefined||done.has(k))return;const q=Q[k],j=+t.dataset.j,fb=$('.fb',box);done.add(k);
+    $$('.opt',box)[q.a].classList.add('ok');
+    if(j===q.a){score++;fb.innerHTML='✓ 对。'+esc(q.why)}else{t.classList.add('no');fb.innerHTML='✗ 不对。'+esc(q.why)+(q.back?` <a onclick="goCard(${q.back})">回到第 ${q.back} 张再看看</a>`:'')}
+    $('.qn',box).textContent=`第 ${k+1} / ${Q.length} 题　·　已答对 ${score}`};
+  render();
+  const pk=new URLSearchParams(location.search).get('pick');if(pk!==null)$$('.opt',box)[+pk].click(); /* 自查用：?pick=0 */
+});
+
+go(Math.max(0,(parseInt(location.hash.slice(1))||1)-1));
+})();
 </script></body></html>

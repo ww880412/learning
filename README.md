@@ -1,6 +1,6 @@
 # 王玮的学习知识库
 
-静态网站，中文界面。本地直接用浏览器打开 `index.html`（file:// 可用），也能整体放到 GitHub Pages 子路径（如 `/learning/`）下，所有内部链接都是相对路径。**目前只在本地构建，尚未发布。**
+静态网站，中文界面。本地直接用浏览器打开 `index.html`（file:// 可用），也能整体放到 GitHub Pages 子路径（如 `/learning/`）下，所有内部链接都是相对路径。已发布：https://ww880412.github.io/learning/（仓库 ww880412/learning，推到 main 即更新）。
 
 ## 路径速查（给学习搭子 / 记忆用）
 - 根目录：`/workspace/learning/`
@@ -30,5 +30,5 @@ node build.mjs
 ## 复习打卡
 把 `data/review.json` 里对应的 `"done": false` 改成 `true`，再 `node build.mjs`。首页「今天该复习」按浏览器当天日期计算：今天到期标黄，逾期标红。
 
-## 发布（尚未进行）
-`.gitignore` 已排除 `_private/` 和指向它的快捷方式；`.nojekyll` 已放好。发布到 GitHub Pages 需要用户在私聊里登录 GitHub 后再做。
+## 发布
+`.gitignore` 已排除 `_private/` 和指向它的快捷方式；`.nojekyll` 已放好。改完后 `node build.mjs`，再 `git push` 到 main。L01 的 lesson.html 源文件在 `_private/cs146s/L01-lesson/`（不发布）。
