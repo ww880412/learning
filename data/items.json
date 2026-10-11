@@ -1,43 +1,309 @@
 {
- "groups": [
-  {
-   "id": "cs146s",
-   "column": "courses",
-   "dir": "courses/cs146s",
-   "title": "Stanford CS146S · The Modern Software Developer",
-   "desc": "2026 秋。用 AI 做现代软件开发，逐讲学习。",
-   "source": "https://themodernsoftware.dev"
-  }
- ],
- "items": [
-  {
-   "id": "cs146s-L01",
-   "column": "courses",
-   "group": "cs146s",
-   "order": 1,
-   "label": "L01",
-   "title": "用 200 行代码写一个 Claude Code（智能体循环）",
-   "href": "courses/cs146s/L01-agent-loop.html",
-   "preview": "courses/cs146s/L01-sim-preview.png",
-   "status": "进行中",
-   "start": "2026-10-11",
-   "cards": 14,
-   "note": "14 张卡片 · 循环模拟器（含 old_str 出错分支）· 6 道小测。待：小测 + 复述。",
-   "source": "https://themodernsoftware.dev"
-  },
-  {
-   "id": "huangtongxueh-ai-dev",
-   "column": "x-posts",
-   "order": 1,
-   "label": "黄同学h",
-   "title": "入职大厂两个月，我的 AI 开发心得",
-   "href": "x-posts/huangtongxueh-ai-dev/huangtongxueh-ai-dev.html",
-   "preview": "x-posts/huangtongxueh-ai-dev/huangtongxueh-ai-dev-preview.png",
-   "status": "进行中",
-   "start": "2026-10-11",
-   "cards": 14,
-   "note": "14 张卡片 · 增量工作流模拟器（3 个失败分支）· 6 道小测。",
-   "source": "https://x.com/huangtongxueh/status/2108577165306687938"
-  }
- ]
+  "groups": [
+    {
+      "id": "cs146s",
+      "column": "courses",
+      "dir": "courses/cs146s",
+      "title": "Stanford CS146S · The Modern Software Developer",
+      "desc": "2026 秋。用 AI 做现代软件开发，逐讲学习。",
+      "source": "https://themodernsoftware.dev"
+    },
+    {
+      "id": "eecs498-aase",
+      "column": "courses",
+      "dir": "courses/eecs498-aase",
+      "title": "UMich EECS 498-016 · Applied Agentic Software Engineering",
+      "desc": "2026 秋，密歇根大学，Marcus Darden 主讲。一个编码智能体，用它、拆它、造一个值得留下的。",
+      "source": "https://eecs498-aase.github.io/",
+      "planNote": "官方仓库已发布 L01–L11（后续讲次随授课发布）。日期按官方课表推算（周二、周四上课）；L07 起实际讲义题目与大纲有调整，以讲义为准。点一行打开官方 slides.md，同目录还有 PDF 和 PPTX。",
+      "intro": [
+        {
+          "text": "4 学分，无考试、无教材，按项目、实验和 demo 评分；课程全程在笔记本上跑，用 Ollama 自己部署小模型（qwen3.5）。",
+          "cite": "https://eecs498-aase.github.io/"
+        },
+        {
+          "text": "三个阶段：Apply（第 1–3 周，L01–L06，用 Aider 做结对程序员，18%）→ Analyze（第 4–7 周，L07–L14，直接调 LLM API 自己写智能体循环、审批层、停止条件和评测，22.5%）→ Create（第 8–15 周，L15–L28，把智能体长成值得留下的助手，49.5%）。",
+          "cite": "https://eecs498-aase.github.io/"
+        },
+        {
+          "text": "核心诊断框架 The Big Three：上下文、模型、提示词（L03）。",
+          "cite": "https://github.com/eecs498-aase/materials/blob/main/lectures/L03/slides.md"
+        },
+        {
+          "text": "官方仓库 materials：lectures/ 每讲一个目录（slides.md + PDF + PPTX），labs/ 实验，demos/ 现场演示代码（带 reset 脚本），egm/ 五个可安装的 Skill。",
+          "cite": "https://github.com/eecs498-aase/materials"
+        },
+        {
+          "text": "课程 8 月 31 日开课，12 月 10 日 Showcase；课表与大纲以官网 syllabus 为准。",
+          "cite": "https://eecs498-aase.github.io/syllabus.html"
+        }
+      ],
+      "sections": [
+        {
+          "kicker": "EGM 五个 Skill 流水线",
+          "sub": "/peanuts → /elephant → /goldfish → /egm-implement → /mean-review",
+          "rows": [
+            {
+              "tag": "1",
+              "title": "/peanuts · 遗留大代码库自底向上建 README 树",
+              "note": "每一层都有人工审查关口；写出每个目录的 README.md 和 PEANUTS.md。仅用于大型遗留代码库。",
+              "href": "https://github.com/eecs498-aase/materials/tree/main/egm/skills/peanuts"
+            },
+            {
+              "tag": "2",
+              "title": "/elephant · 不写代码的设计对话 → 四节式设计文档",
+              "note": "写出 docs/designs/<slug>.md 和 ELEPHANT.md",
+              "href": "https://github.com/eecs498-aase/materials/tree/main/egm/skills/elephant"
+            },
+            {
+              "tag": "3",
+              "title": "/goldfish · 三个全新会话并行评审，改到只剩小问题",
+              "note": "写出 GOLDFISH.md 和评审报告",
+              "href": "https://github.com/eecs498-aase/materials/tree/main/egm/skills/goldfish"
+            },
+            {
+              "tag": "4",
+              "title": "/egm-implement · 只建文档列出的文件，现实和文档不符就停",
+              "note": "写出代码和 IMPLEMENT.md",
+              "href": "https://github.com/eecs498-aase/materials/tree/main/egm/skills/egm-implement"
+            },
+            {
+              "tag": "5",
+              "title": "/mean-review · 尽可能严苛地审 diff，四项扫描由脚本强制",
+              "note": "写出 MEAN-REVIEW.md，每轮一张问题清单",
+              "href": "https://github.com/eecs498-aase/materials/tree/main/egm/skills/mean-review"
+            },
+            {
+              "tag": "总览",
+              "tagc": "blue",
+              "title": "egm/skills 目录 + egm/README.md（先读这个）",
+              "note": "另有 walkthroughs/ 逐个拆解，anatomy-of-a-skill.md 讲一个 Skill 怎么搭起来。对应 L10。",
+              "href": "https://github.com/eecs498-aase/materials/tree/main/egm/skills"
+            }
+          ],
+          "note": "方法出自 Dave Rensin 的 Elephant-Goldfish Model；每一步都由人手动发起下一步，/peanuts 只在大型遗留代码库时才用。"
+        },
+        {
+          "kicker": "实验",
+          "sub": "官方 labs/ 目录",
+          "rows": [
+            {
+              "tag": "Lab00",
+              "title": "Setup Lab",
+              "href": "https://github.com/eecs498-aase/materials/tree/main/labs/Lab00"
+            },
+            {
+              "tag": "Lab01",
+              "title": "How Aider works",
+              "href": "https://github.com/eecs498-aase/materials/tree/main/labs/Lab01"
+            },
+            {
+              "tag": "Lab02",
+              "title": "Hackathon 1, and Hackathon 1.5（仅 PDF，9/28–29）",
+              "href": "https://github.com/eecs498-aase/materials/tree/main/labs/Lab02"
+            },
+            {
+              "tag": "Lab03",
+              "title": "Where we are, and starting on Aider",
+              "href": "https://github.com/eecs498-aase/materials/tree/main/labs/Lab03"
+            }
+          ]
+        },
+        {
+          "kicker": "推荐来源",
+          "sub": "从这里发现的这门课（第三方解读，以官方资料为准）",
+          "rows": [
+            {
+              "tag": "X",
+              "tagc": "amber",
+              "title": "@shao__meng：把方法论做成了五个 Skills（EGM 流水线概览）",
+              "d": "2026-10-11",
+              "href": "https://x.com/shao__meng/status/2109305199357784357"
+            },
+            {
+              "tag": "X 长文",
+              "tagc": "amber",
+              "title": "@shao__meng：「Applied Agentic Software Engineering」深度解读（L01–L11 + EGM）",
+              "d": "2026-10-08",
+              "href": "https://x.com/shao__meng/status/2108384062796873888"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "items": [
+    {
+      "id": "cs146s-L01",
+      "column": "courses",
+      "group": "cs146s",
+      "order": 1,
+      "label": "L01",
+      "title": "用 200 行代码写一个 Claude Code（智能体循环）",
+      "href": "courses/cs146s/L01-agent-loop.html",
+      "preview": "courses/cs146s/L01-sim-preview.png",
+      "status": "进行中",
+      "start": "2026-10-11",
+      "cards": 14,
+      "note": "14 张卡片 · 循环模拟器（含 old_str 出错分支）· 6 道小测。待：小测 + 复述。",
+      "source": "https://themodernsoftware.dev"
+    },
+    {
+      "id": "huangtongxueh-ai-dev",
+      "column": "x-posts",
+      "order": 1,
+      "label": "黄同学h",
+      "title": "入职大厂两个月，我的 AI 开发心得",
+      "href": "x-posts/huangtongxueh-ai-dev/huangtongxueh-ai-dev.html",
+      "preview": "x-posts/huangtongxueh-ai-dev/huangtongxueh-ai-dev-preview.png",
+      "status": "进行中",
+      "start": "2026-10-11",
+      "cards": 14,
+      "note": "14 张卡片 · 增量工作流模拟器（3 个失败分支）· 6 道小测。",
+      "source": "https://x.com/huangtongxueh/status/2108577165306687938"
+    },
+    {
+      "id": "eecs498-aase-L01",
+      "column": "courses",
+      "group": "eecs498-aase",
+      "order": 1,
+      "label": "L01",
+      "title": "Course intro + the AI coding landscape",
+      "href": "https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md",
+      "status": "未开始",
+      "date": "约 09/01（按课表推算）",
+      "note": "官方讲义（slides.md / PDF / PPTX）",
+      "source": "https://github.com/eecs498-aase/materials/tree/main/lectures/L01"
+    },
+    {
+      "id": "eecs498-aase-L02",
+      "column": "courses",
+      "group": "eecs498-aase",
+      "order": 2,
+      "label": "L02",
+      "title": "How LLMs Code (Under the Hood)",
+      "href": "https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.md",
+      "status": "未开始",
+      "date": "约 09/03（按课表推算）",
+      "note": "官方讲义（slides.md / PDF / PPTX）",
+      "source": "https://github.com/eecs498-aase/materials/tree/main/lectures/L02"
+    },
+    {
+      "id": "eecs498-aase-L03",
+      "column": "courses",
+      "group": "eecs498-aase",
+      "order": 3,
+      "label": "L03",
+      "title": "The Big Three: Context, Model, Prompt",
+      "href": "https://github.com/eecs498-aase/materials/blob/main/lectures/L03/slides.md",
+      "status": "未开始",
+      "date": "约 09/08（按课表推算）",
+      "note": "官方讲义（slides.md / PDF / PPTX）",
+      "source": "https://github.com/eecs498-aase/materials/tree/main/lectures/L03"
+    },
+    {
+      "id": "eecs498-aase-L04",
+      "column": "courses",
+      "group": "eecs498-aase",
+      "order": 4,
+      "label": "L04",
+      "title": "Spec-Driven Development",
+      "href": "https://github.com/eecs498-aase/materials/blob/main/lectures/L04/slides.md",
+      "status": "未开始",
+      "date": "约 09/10（按课表推算）",
+      "note": "官方讲义（slides.md / PDF / PPTX）",
+      "source": "https://github.com/eecs498-aase/materials/tree/main/lectures/L04"
+    },
+    {
+      "id": "eecs498-aase-L05",
+      "column": "courses",
+      "group": "eecs498-aase",
+      "order": 5,
+      "label": "L05",
+      "title": "Modern agentic CLIs",
+      "href": "https://github.com/eecs498-aase/materials/blob/main/lectures/L05/slides.md",
+      "status": "未开始",
+      "date": "约 09/15（按课表推算）",
+      "note": "官方讲义（slides.md / PDF / PPTX）",
+      "source": "https://github.com/eecs498-aase/materials/tree/main/lectures/L05"
+    },
+    {
+      "id": "eecs498-aase-L06",
+      "column": "courses",
+      "group": "eecs498-aase",
+      "order": 6,
+      "label": "L06",
+      "title": "From pair-coding to agent orchestration",
+      "href": "https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md",
+      "status": "未开始",
+      "date": "约 09/17（按课表推算）",
+      "note": "官方讲义（slides.md / PDF / PPTX）",
+      "source": "https://github.com/eecs498-aase/materials/tree/main/lectures/L06"
+    },
+    {
+      "id": "eecs498-aase-L07",
+      "column": "courses",
+      "group": "eecs498-aase",
+      "order": 7,
+      "label": "L07",
+      "title": "Inside the Call: Messages, Streams, and Tool Calls",
+      "href": "https://github.com/eecs498-aase/materials/blob/main/lectures/L07/slides.md",
+      "status": "未开始",
+      "date": "约 09/22（按课表推算）",
+      "note": "官方讲义 · 大纲原题：LLM APIs: Opening the Client You Were Handed",
+      "source": "https://github.com/eecs498-aase/materials/tree/main/lectures/L07"
+    },
+    {
+      "id": "eecs498-aase-L08",
+      "column": "courses",
+      "group": "eecs498-aase",
+      "order": 8,
+      "label": "L08",
+      "title": "Hackathon 1 Briefing",
+      "href": "https://github.com/eecs498-aase/materials/blob/main/lectures/L08/slides.md",
+      "status": "未开始",
+      "date": "约 09/24（按课表推算）",
+      "note": "官方讲义 · 大纲原题：Tool Use, Function Calling, and the Agent Loop；Hackathon 1 在当晚",
+      "source": "https://github.com/eecs498-aase/materials/tree/main/lectures/L08"
+    },
+    {
+      "id": "eecs498-aase-L09",
+      "column": "courses",
+      "group": "eecs498-aase",
+      "order": 9,
+      "label": "L09",
+      "title": "Stop conditions and the approval layer",
+      "href": "https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md",
+      "status": "未开始",
+      "date": "约 09/29（按课表推算）",
+      "note": "官方讲义（slides.md / PDF / PPTX）",
+      "source": "https://github.com/eecs498-aase/materials/tree/main/lectures/L09"
+    },
+    {
+      "id": "eecs498-aase-L10",
+      "column": "courses",
+      "group": "eecs498-aase",
+      "order": 10,
+      "label": "L10",
+      "title": "Skills and the Elephant-Goldfish Model",
+      "href": "https://github.com/eecs498-aase/materials/blob/main/lectures/L10/slides.md",
+      "status": "未开始",
+      "date": "约 10/01（按课表推算）",
+      "note": "官方讲义 · 大纲原题：Serving a Local Model（EGM 原排在 L16）",
+      "source": "https://github.com/eecs498-aase/materials/tree/main/lectures/L10"
+    },
+    {
+      "id": "eecs498-aase-L11",
+      "column": "courses",
+      "group": "eecs498-aase",
+      "order": 11,
+      "label": "L11",
+      "title": "Guardrails: Errors, Retries and Approval Gates",
+      "href": "https://github.com/eecs498-aase/materials/blob/main/lectures/L11/slides.md",
+      "status": "未开始",
+      "date": "约 10/06（按课表推算）",
+      "note": "官方讲义 · 大纲原题：Edit Formats, Measured Against Your Own Parser",
+      "source": "https://github.com/eecs498-aase/materials/tree/main/lectures/L11"
+    }
+  ]
 }

@@ -8,13 +8,16 @@ const TPL = '/workspace/skills-src/xuexi-template/styles.css';
 const J = f => JSON.parse(fs.readFileSync(path.join(ROOT, 'data', f), 'utf8'));
 const columns = J('columns.json'), { groups, items } = J('items.json'), concepts = J('concepts.json'), inbox = J('inbox.json');
 const INTERVALS = [1, 3, 7, 14, 30];
+// status「未开始」= 只列在主题页的待学讲次（href 指向官方原始资料），不算学习页、不进复习队列、不进正在学/最近学过
+const isPage = i => i.status !== '未开始';
+const pages = items.filter(isPage);
 
 // ---- 复习队列：保留已有记录（含 done），为新条目补排期 ----
 const reviewPath = path.join(ROOT, 'data', 'review.json');
 let review = fs.existsSync(reviewPath) ? JSON.parse(fs.readFileSync(reviewPath, 'utf8')) : { intervals: INTERVALS, queue: [] };
 const addDays = (d, n) => { const t = new Date(d + 'T00:00:00Z'); t.setUTCDate(t.getUTCDate() + n); return t.toISOString().slice(0, 10); };
 for (const it of items) {
-  if (!it.start || review.queue.some(q => q.item === it.id)) continue;
+  if (!isPage(it) || !it.start || review.queue.some(q => q.item === it.id)) continue;
   review.queue.push({ item: it.id, start: it.start, reviews: INTERVALS.map(n => ({ day: n, date: addDays(it.start, n), done: false })) });
 }
 fs.writeFileSync(reviewPath, JSON.stringify(review, null, 2) + '\n');
@@ -110,15 +113,15 @@ const itemConcepts = id => concepts.filter(c => c.refs.some(r => r.item === id))
 // ---- 首页 ----
 {
   const f = 'index.html';
-  const colCards = columns.map((c, k) => { const n = items.filter(i => i.column === c.id).length;
+  const colCards = columns.map((c, k) => { const n = pages.filter(i => i.column === c.id).length;
     return `<a class="card c${k % 4 + 1}" href="${c.dir}/index.html"><span class="go">→</span><div class="ic">${c.icon}</div><h3>${esc(c.title)}</h3><p>${esc(c.desc)}</p><div class="meta">${n ? `<span class="tag blue">${n} 篇</span>` : '<span class="tag">还没有内容</span>'}</div></a>`; }).join('');
   const doing = items.filter(i => i.status === '进行中');
-  const recent = [...items].sort((a, b) => (b.start || '').localeCompare(a.start || '')).slice(0, 6);
+  const recent = [...pages].sort((a, b) => (b.start || '').localeCompare(a.start || '')).slice(0, 6);
   const inboxHtml = inbox.length ? `<div class="list">${inbox.map(x => `<div class="row"><span class="tag">${esc(colById[x.column]?.title || '未分类')}</span><span class="t"><a href="${esc(x.url)}">${esc(x.title || x.url)}</a></span><span class="d">${esc(x.added || '')}</span></div>`).join('')}</div>`
     : emptyBox('收件箱是空的', '看到想学的链接，丢到群里给学习搭子，它会先放在这里（data/inbox.json）。');
   const revData = JSON.stringify({ queue: review.queue, items: Object.fromEntries(items.map(i => [i.id, { title: i.title, label: i.label, href: i.href }])) }).replace(/</g, '\\u003c');
   const body = `<section class="hero sheet"><div class="say"><span class="kk">个人学习知识库</span><h1>一屏一个要点，学完就能动手</h1><p>按来源分栏目。每篇学习页都可以翻页、点模拟器、做小测，学完按第 1、3、7、14、30 天复习。</p></div>
-<div class="stage"><div class="stat blue"><b>${items.length}</b><span>篇学习页</span></div><div class="stat amber"><b id="due-big">…</b><span>今天该复习</span></div><div class="stat green"><b>${concepts.length}</b><span>张概念卡</span></div><div class="stat"><b>${columns.length}</b><span>个栏目</span></div></div></section>
+<div class="stage"><div class="stat blue"><b>${pages.length}</b><span>篇学习页</span></div><div class="stat amber"><b id="due-big">…</b><span>今天该复习</span></div><div class="stat green"><b>${concepts.length}</b><span>张概念卡</span></div><div class="stat"><b>${columns.length}</b><span>个栏目</span></div></div></section>
 <div class="kicker">栏目</div><div class="sub">按来源找内容</div><div class="grid">${colCards}</div>
 <div class="kicker">今天该复习 <span class="n" id="due-n">…</span></div><div class="sub">到期的先复习，再学新的</div><div id="review"></div>
 <div class="kicker">正在学</div><div class="sub">从上次停下的地方继续</div>${doing.length ? `<div class="grid wide">${doing.map(i => itemCard(f, i)).join('')}</div>` : emptyBox('现在没有进行中的内容', '')}
@@ -137,20 +140,25 @@ if(soon.length)h+=soon.map(r=>row(r,'','即将')).join('');el.innerHTML='<div cl
 }
 // ---- 栏目页 + 主题页 ----
 for (const c of columns) {
-  const f = `${c.dir}/index.html`; const its = items.filter(i => i.column === c.id); const gs = groups.filter(g => g.column === c.id);
+  const f = `${c.dir}/index.html`; const its = pages.filter(i => i.column === c.id); const gs = groups.filter(g => g.column === c.id);
   let body = `<div class="crumb"><a href="${rel(f, 'index.html')}">首页</a> / ${esc(c.title)}</div><section class="hero sheet"><div class="say"><span class="kk">栏目</span><h1>${c.icon} ${esc(c.title)}</h1><p>${esc(c.desc)}</p></div><div class="stage"><div class="stat blue"><b>${its.length}</b><span>篇学习页</span></div><div class="stat green"><b>${its.filter(i => i.status === '已学').length}</b><span>已学完</span></div><div class="stat amber"><b>${its.filter(i => i.status === '进行中').length}</b><span>进行中</span></div><div class="stat"><b>${gs.length}</b><span>个主题</span></div></div></section>`;
-  if (!its.length) body += `<div style="margin-top:28px">${emptyBox('还没有内容', `以后学到${esc(c.title)}的内容，会出现在这里。`)}</div>`;
-  for (const g of gs) { const gi = its.filter(i => i.group === g.id);
-    body += `<div class="kicker">主题</div><div class="sub">${esc(g.title)}</div><div class="grid wide"><a class="card c1" href="${rel(f, g.dir + '/index.html')}"><span class="go">→</span><div class="ic">${c.icon}</div><h3>${esc(g.title)}</h3><p>${esc(g.desc)}</p><div class="meta"><span class="tag blue">${gi.length} 讲</span></div></a></div>`; }
+  if (!its.length && !gs.length) body += `<div style="margin-top:28px">${emptyBox('还没有内容', `以后学到${esc(c.title)}的内容，会出现在这里。`)}</div>`;
+  for (const g of gs) { const gi = its.filter(i => i.group === g.id); const gp = items.filter(i => i.group === g.id && !isPage(i));
+    body += `<div class="kicker">主题</div><div class="sub">${esc(g.title)}</div><div class="grid wide"><a class="card c1" href="${rel(f, g.dir + '/index.html')}"><span class="go">→</span><div class="ic">${c.icon}</div><h3>${esc(g.title)}</h3><p>${esc(g.desc)}</p><div class="meta"><span class="tag blue">${gi.length} 篇学习页</span>${gp.length ? `<span class="tag">${gp.length} 讲未开始</span>` : ''}</div></a></div>`; }
   const loose = its.filter(i => !i.group);
   if (loose.length) body += `<div class="kicker">文章 <span class="n">${loose.length}</span></div><div class="sub">一篇一页，点开就学</div><div class="grid wide">${loose.map(i => itemCard(f, i)).join('')}</div>`;
   write(f, page(f, c.title, c.id, body));
 }
 for (const g of groups) {
-  const f = `${g.dir}/index.html`; const c = colById[g.column]; const gi = items.filter(i => i.group === g.id).sort((a, b) => a.order - b.order);
+  const f = `${g.dir}/index.html`; const c = colById[g.column]; const gall = items.filter(i => i.group === g.id).sort((a, b) => a.order - b.order); const gi = gall.filter(isPage), gp = gall.filter(i => !isPage(i));
+  const ext = h => /^https?:/.test(h) ? h : rel(f, h);
+  const rowsHtml = rs => `<div class="list">${rs.map(r => `<div class="row">${r.tag ? `<span class="tag ${r.tagc || ''}">${esc(r.tag)}</span>` : ''}<span class="t"><a href="${esc(ext(r.href))}">${esc(r.title)}</a>${r.note ? `<div style="font-weight:400;font-size:14px;color:var(--ink2)">${esc(r.note)}</div>` : ''}</span>${r.d ? `<span class="d">${esc(r.d)}</span>` : ''}</div>`).join('')}</div>`;
   const body = `<div class="crumb"><a href="${rel(f, 'index.html')}">首页</a> / <a href="${rel(f, c.dir + '/index.html')}">${esc(c.title)}</a> / ${esc(g.title)}</div>
-<section class="hero sheet"><div class="say"><span class="kk">${esc(c.title)} · 主题</span><h1>${esc(g.title)}</h1><p>${esc(g.desc)}</p><p style="font-size:14px">课程网站：<a href="${esc(g.source)}">${esc(g.source.replace(/^https?:\/\//, ''))}</a></p></div><div class="stage"><div class="stat blue"><b>${gi.length}</b><span>讲已做成学习页</span></div><div class="stat green"><b>${gi.filter(i => i.status === '已学').length}</b><span>已学完</span></div><div class="stat amber"><b>${gi.filter(i => i.status === '进行中').length}</b><span>进行中</span></div><div class="stat"><b>${new Set(gi.flatMap(i => itemConcepts(i.id).map(x => x.id))).size}</b><span>张相关概念卡</span></div></div></section>
-<div class="kicker">按讲次 <span class="n">${gi.length}</span></div><div class="sub">一讲一页，按顺序学</div><div class="grid wide">${gi.map(i => itemCard(f, i)).join('')}</div>
+<section class="hero sheet"><div class="say"><span class="kk">${esc(c.title)} · 主题</span><h1>${esc(g.title)}</h1><p>${esc(g.desc)}</p><p style="font-size:14px">课程网站：<a href="${esc(g.source)}">${esc(g.source.replace(/^https?:\/\//, ''))}</a></p></div><div class="stage"><div class="stat blue"><b>${gi.length}</b><span>讲已做成学习页</span></div><div class="stat green"><b>${gi.filter(i => i.status === '已学').length}</b><span>已学完</span></div><div class="stat amber"><b>${gi.filter(i => i.status === '进行中').length}</b><span>进行中</span></div>${gp.length ? `<div class="stat"><b>${gp.length}</b><span>讲未开始</span></div>` : `<div class="stat"><b>${new Set(gi.flatMap(i => itemConcepts(i.id).map(x => x.id))).size}</b><span>张相关概念卡</span></div>`}</div></section>
+${(g.intro || []).length ? `<div class="kicker">课程简介</div><div class="sub">只写官方资料里有的</div><div class="list">${g.intro.map(x => `<div class="row"><span class="t" style="font-weight:400">${esc(x.text)}</span>${x.cite ? `<a class="tag blue" href="${esc(x.cite)}">出处</a>` : ''}</div>`).join('')}</div>` : ''}
+${gi.length ? `<div class="kicker">按讲次 <span class="n">${gi.length}</span></div><div class="sub">一讲一页，按顺序学</div><div class="grid wide">${gi.map(i => itemCard(f, i)).join('')}</div>` : ''}
+${gp.length ? `<div class="kicker">全部讲次 <span class="n">${gp.length} 讲未开始</span></div><div class="sub">还没做成学习页，先看官方原始资料</div>${g.planNote ? `<p style="margin:-6px 0 12px;color:var(--ink2);font-size:14px">${esc(g.planNote)}</p>` : ''}${rowsHtml(gp.map(i => ({ tag: i.label, title: i.title, href: i.href, note: i.note, d: i.date || '' })))}` : ''}
+${(g.sections || []).map(sec => `<div class="kicker">${esc(sec.kicker)}</div>${sec.sub ? `<div class="sub">${esc(sec.sub)}</div>` : ''}${sec.note ? `<p style="margin:-6px 0 12px;color:var(--ink2);font-size:14px">${esc(sec.note)}</p>` : ''}${rowsHtml(sec.rows)}`).join('')}
 ${gi.map(i => { const cs = itemConcepts(i.id); return cs.length ? `<div class="kicker">${esc(i.label)} 本课概念</div><div class="chips">${cs.map(x => `<a class="chip" href="${rel(f, 'concepts/' + x.id + '.html')}">${esc(x.term)}</a>`).join('')}</div>` : ''; }).join('')}`;
   write(f, page(f, g.title, c.id, body));
 }
@@ -168,7 +176,7 @@ ${c.related?.length ? `<div class="kicker">相关概念</div><div class="chips">
 }
 {
   const f = 'glossary.html';
-  const body = `<section class="hero sheet"><div class="say"><span class="kk">术语表</span><h1>一个术语一张卡，跨栏目串起来</h1><p>每张卡写一句定义，再列出它在哪几篇学习页的哪张卡片出现。</p></div><div class="stage"><div class="stat blue"><b>${concepts.length}</b><span>张概念卡</span></div><div class="stat green"><b>${concepts.reduce((n, c) => n + c.refs.length, 0)}</b><span>处出处</span></div><div class="stat amber"><b>${concepts.filter(c => new Set(c.refs.map(r => itemById[r.item]?.column)).size > 1).length}</b><span>张跨栏目</span></div><div class="stat"><b>${items.length}</b><span>篇学习页</span></div></div></section>
+  const body = `<section class="hero sheet"><div class="say"><span class="kk">术语表</span><h1>一个术语一张卡，跨栏目串起来</h1><p>每张卡写一句定义，再列出它在哪几篇学习页的哪张卡片出现。</p></div><div class="stage"><div class="stat blue"><b>${concepts.length}</b><span>张概念卡</span></div><div class="stat green"><b>${concepts.reduce((n, c) => n + c.refs.length, 0)}</b><span>处出处</span></div><div class="stat amber"><b>${concepts.filter(c => new Set(c.refs.map(r => itemById[r.item]?.column)).size > 1).length}</b><span>张跨栏目</span></div><div class="stat"><b>${pages.length}</b><span>篇学习页</span></div></div></section>
 <div class="kicker">全部 <span class="n">${concepts.length}</span></div><div class="sub">点卡片看定义和出处</div><div class="grid">${concepts.map(c => { const its = [...new Set(c.refs.map(r => r.item))].map(id => itemById[id]);
     return `<a class="card" href="concepts/${c.id}.html"><span class="go">→</span><h3>${esc(c.term)}</h3><div class="en">${esc(c.en)}</div><p>${esc(c.def.length > 60 ? c.def.slice(0, 60) + '…' : c.def)}</p><div class="meta">${its.map(i => `<span class="tag">${esc(i.label)}</span>`).join('')}</div></a>`; }).join('')}</div>`;
   write(f, page(f, '概念卡', 'glossary', body));
