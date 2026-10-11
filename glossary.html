@@ -1,0 +1,43 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>概念卡 · 王玮的学习库</title><style>:root{
+  --paper:#F2F4F7; --sheet:#FFFFFF; --ink:#16202C; --ink2:#4A5868; --hair:#D9DFE7;
+  --blue:#2550D9;  --blue-soft:#E3EAFD;   /* 主角：当前步骤 / 重点 */
+  --amber:#C77A00; --amber-soft:#FBEFD9; /* 数据 / 消息 */
+  --green:#16875A; --green-soft:#DDF3E9; /* 成功 / 工具结果 */
+  --red:#C8372D;   --red-soft:#FBE3E1;   /* 出错 */
+  --r-lg:20px; --r-sm:10px;
+  --font:"PingFang SC","Noto Sans CJK SC","Source Han Sans SC","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}html,body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.65 var(--font);-webkit-font-smoothing:antialiased}
+a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+.top{position:sticky;top:0;z-index:5;background:rgba(242,244,247,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--hair)}
+.top .in{max-width:1120px;margin:0 auto;padding:12px 24px;display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.top .brand{font-weight:800;color:var(--ink)}.top nav{display:flex;gap:14px;flex-wrap:wrap;font-size:14px}.top nav a{color:var(--ink2)}.top nav a.on{color:var(--blue);font-weight:700}
+main{max-width:1120px;margin:0 auto;padding:28px 24px 64px}
+.crumb{font-size:13px;color:var(--ink2);margin-bottom:6px}
+.hero h1{font-size:34px;line-height:1.25;margin:0 0 8px}.hero p{margin:0;color:var(--ink2)}
+.kicker{font-size:14px;color:var(--blue);font-weight:700;margin:36px 0 12px;display:flex;align-items:center;gap:8px}
+.kicker .n{background:var(--blue-soft);border-radius:99px;padding:0 9px;font-size:12px}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+.grid.wide{grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}
+.card{background:var(--sheet);border-radius:var(--r-lg);padding:20px 22px;box-shadow:0 1px 0 var(--hair),0 18px 40px -28px rgba(22,32,44,.3);display:flex;flex-direction:column;gap:8px;color:var(--ink);min-width:0}
+a.card:hover{text-decoration:none;outline:2px solid var(--blue-soft)}
+.card h3{margin:0;font-size:19px;line-height:1.35}.card p{margin:0;color:var(--ink2);font-size:14px}
+.card .ic{font-size:26px;line-height:1}.card .meta{font-size:13px;color:var(--ink2);margin-top:auto;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.card img{width:100%;aspect-ratio:16/9;object-fit:cover;object-position:top;border-radius:var(--r-sm);background:var(--paper);border:1px solid var(--hair)}
+.tag{display:inline-block;font-size:12px;font-weight:700;padding:1px 8px;border-radius:6px;background:var(--paper);color:var(--ink2)}
+.tag.blue{background:var(--blue-soft);color:var(--blue)}.tag.green{background:var(--green-soft);color:var(--green)}.tag.amber{background:var(--amber-soft);color:var(--amber)}.tag.red{background:var(--red-soft);color:var(--red)}
+.empty{background:var(--sheet);border:2px dashed var(--hair);border-radius:var(--r-lg);padding:28px;text-align:center;color:var(--ink2)}
+.empty b{display:block;color:var(--ink);font-size:18px;margin-bottom:4px}
+.list{background:var(--sheet);border-radius:var(--r-lg);overflow:hidden;box-shadow:0 1px 0 var(--hair)}
+.list .row{display:flex;gap:14px;align-items:center;padding:14px 20px;border-top:1px solid var(--hair);flex-wrap:wrap}.list .row:first-child{border-top:0}
+.list .row .t{flex:1;min-width:180px}.list .row .d{font:600 13px var(--mono);color:var(--ink2)}
+.list .row.due{background:var(--amber-soft)}.list .row.over{background:var(--red-soft)}
+.def{font-size:18px;line-height:1.75;margin:0}.en{font:600 14px var(--mono);color:var(--ink2)}
+.foot{margin-top:48px;font-size:13px;color:var(--ink2);border-top:1px solid var(--hair);padding-top:14px}
+@media(max-width:600px){main{padding:20px 16px 48px}.hero h1{font-size:27px}.top .in{padding:10px 16px;gap:8px 14px}.def{font-size:16px}.grid{grid-template-columns:1fr 1fr;gap:12px}.grid.wide{grid-template-columns:1fr}.grid .card{padding:16px}.card h3{font-size:17px}}
+</style></head><body>
+<header class="top"><div class="in"><a class="brand" href="index.html">📚 王玮的学习库</a><nav><a href="index.html">首页</a><a href="courses/index.html">公开课</a><a href="x-posts/index.html">X 好文</a><a href="research/index.html">技术研究</a><a href="wechat/index.html">微信公众号</a><a href="glossary.html" class="on">概念卡</a></nav></div></header>
+<main><section class="hero"><h1>概念卡</h1><p>一个术语一张卡，卡上列出它在哪几篇学习页里出现。点卡片看定义和出处。</p></section>
+<div class="kicker">全部 <span class="n">11</span></div><div class="grid"><a class="card" href="concepts/agent-loop.html"><h3>智能体循环</h3><div class="en">agent loop</div><p>编程智能体的核心是一个循环：客户端把对话发给大模型；大模型有时请求调用工具；客户端在大模型之外执行工具，把结果追加回对话…</p><div class="meta"><span class="tag">L01</span></div></a><a class="card" href="concepts/tool-calling.html"><h3>工具调用</h3><div class="en">tool calling</div><p>大模型自己碰不到电脑，只能请求调用工具，由客户端执行。CS146S 第 1 讲的官方代码只有 3 个工具（read_fi…</p><div class="meta"><span class="tag">L01</span></div></a><a class="card" href="concepts/system-prompt.html"><h3>系统提示词</h3><div class="en">system prompt</div><p>放在对话最前面、告诉模型身份和规则的提示词。第 1 讲的官方代码用它列出可用工具，并规定调用格式。黄同学h的文章提到：模…</p><div class="meta"><span class="tag">L01</span><span class="tag">黄同学h</span></div></a><a class="card" href="concepts/context.html"><h3>上下文</h3><div class="en">context</div><p>模型做事时能看到的全部信息：对话、文件内容、需求文档等。课件说「好上下文 → 好代码」；黄同学h把它列为 Harness…</p><div class="meta"><span class="tag">L01</span><span class="tag">黄同学h</span></div></a><a class="card" href="concepts/adversarial-review.html"><h3>对抗性审查</h3><div class="en">adversarial review</div><p>不帮方案找理由，而是想办法证明它是错的：优先寻找能推翻核心假设的反例。原文 Prompt：「对这个方案做一次对抗性审查，…</p><div class="meta"><span class="tag">黄同学h</span></div></a><a class="card" href="concepts/e2e-test.html"><h3>端到端测试</h3><div class="en">end-to-end test</div><p>从真实入口执行业务，再检查是否得到用户要的结果。黄同学h认为 Agent 写的测试多，缺的是端到端测试环境；预期结果要来…</p><div class="meta"><span class="tag">黄同学h</span></div></a><a class="card" href="concepts/skill.html"><h3>Skill</h3><div class="en">Skill</div><p>写给 Agent 的可复用流程说明（SOP），比如需求追问、交接、端到端测试怎么跑。黄同学h的建议：一个流程重复超过三次…</p><div class="meta"><span class="tag">黄同学h</span></div></a><a class="card" href="concepts/ablation.html"><h3>消融实验</h3><div class="en">ablation study</div><p>系统变好了，不代表每样东西都有用：逐项去掉改动，判断收益真正来自哪里。原文例子：三项优化让 800ms 降到 100ms…</p><div class="meta"><span class="tag">黄同学h</span></div></a><a class="card" href="concepts/occam.html"><h3>奥卡姆剃刀</h3><div class="en">Occam's razor</div><p>效果差不多时，选假设更少的方案。原文 Prompt：「用奥卡姆剃刀重新审查这个设计，在满足需求的前提下，删除所有非必要机…</p><div class="meta"><span class="tag">黄同学h</span></div></a><a class="card" href="concepts/first-principles.html"><h3>第一性原理</h3><div class="en">first principles</div><p>不沿既定方案继续优化，而是重新问问题该怎么解。原文例子：不要基于「加 Redis 缓存」继续设计，先分析接口为什么慢，再…</p><div class="meta"><span class="tag">黄同学h</span></div></a><a class="card" href="concepts/harness.html"><h3>Harness</h3><div class="en">harness</div><p>黄同学h的总结：Harness = 正确的上下文 + 能执行的环境 + 判断结果的依据。工作流要定期做减法，删掉只是在弥…</p><div class="meta"><span class="tag">黄同学h</span></div></a></div><div class="foot">由 build.mjs 从 data/ 生成 · 学习页模板：xuexi-template</div></main></body></html>

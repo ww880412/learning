@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CS146S 第 1 讲 · 用 200 行代码写一个 Claude Code</title>
+<style>
+:root{--bg:#0f1420;--card:#171e2e;--line:#2a3550;--text:#e6ebf5;--mute:#94a3c0;--a:#6ea8ff;--b:#ffb86b;--c:#6ee7b7;--d:#f472b6;--err:#f87171}
+*{box-sizing:border-box}html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:16px/1.6 -apple-system,"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif}
+#bar{position:fixed;top:0;left:0;height:4px;background:linear-gradient(90deg,var(--a),var(--c));transition:width .3s;z-index:9}
+header{position:fixed;top:4px;left:0;right:0;display:flex;justify-content:space-between;padding:8px 16px;color:var(--mute);font-size:13px;z-index:8;background:var(--bg)}
+main{height:100%;padding:44px 12px 72px;display:flex;align-items:center;justify-content:center}
+.card{display:none;width:100%;max-width:1040px;max-height:100%;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px 30px;animation:in .35s}
+.card.on{display:block}@keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1}}
+h2{margin:0 0 4px;font-size:24px}.src{display:inline-block;font-size:12px;color:var(--mute);border:1px solid var(--line);border-radius:99px;padding:1px 10px;margin-bottom:14px}
+.src.extra{color:var(--b);border-color:var(--b)}
+.row{display:grid;grid-template-columns:1.1fr 1fr;gap:26px;align-items:center}
+@media(max-width:760px){header span:first-child{display:none}nav button{padding:8px 10px;font-size:13px;white-space:nowrap}.dots i{width:6px;height:6px}.dots{gap:3px}.row{grid-template-columns:1fr}.card{padding:18px}h2{font-size:20px}}
+svg{width:100%;height:auto}svg text{fill:var(--text);font-size:14px;font-family:inherit}
+ul{padding-left:20px;margin:6px 0}li{margin:4px 0}.mute{color:var(--mute)}a{color:var(--a)}
+code{background:#0b0f18;border:1px solid var(--line);border-radius:5px;padding:0 5px;font:13px ui-monospace,Menlo,Consolas,monospace}
+pre{background:#0b0f18;border:1px solid var(--line);border-radius:10px;padding:12px 14px;overflow:auto;font:12.5px/1.55 ui-monospace,Menlo,Consolas,monospace;margin:0;max-height:430px;white-space:pre-wrap;word-break:break-word}
+.k{color:#c792ea}.s{color:#c3e88d}.cm{color:#697098;font-style:italic}.f{color:#82aaff}.n{color:#f78c6c}.hl{background:#2a3a1f;display:inline-block;width:100%}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;gap:10px;justify-content:center;align-items:center;padding:12px;background:var(--bg)}
+button{background:#22304d;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:8px 16px;font:inherit;font-size:14px;cursor:pointer}
+button:hover{border-color:var(--a)}button.pri{background:var(--a);color:#0b1020;border-color:var(--a);font-weight:600}button:disabled{opacity:.4;cursor:default}
+.dots{display:flex;gap:5px}.dots i{width:8px;height:8px;border-radius:50%;background:var(--line);cursor:pointer}.dots i.on{background:var(--a)}
+.chip{display:inline-block;border-radius:8px;padding:2px 10px;margin:3px;font-size:14px}
+.big{font-size:44px;font-weight:700}
+/* simulator */
+.sim{display:grid;grid-template-columns:300px 1fr;gap:16px}@media(max-width:820px){.sim{grid-template-columns:1fr}}
+.ctrl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}.ctrl label{font-size:13px;color:var(--mute)}
+select,input[type=range]{background:#0b0f18;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:4px}
+.node{transition:all .25s}.node.act rect{stroke:var(--b);stroke-width:3;filter:drop-shadow(0 0 6px var(--b))}
+#ctx{height:330px;overflow:auto;background:#0b0f18;border:1px solid var(--line);border-radius:10px;padding:8px}
+.msg{border-left:4px solid;border-radius:6px;padding:5px 9px;margin:6px 0;font:12.5px/1.5 ui-monospace,Menlo,monospace;white-space:pre-wrap;word-break:break-all;background:#121929;animation:in .3s}
+.msg b{font-family:inherit}.m-dev{border-color:var(--d)}.m-user{border-color:var(--a)}.m-asst{border-color:var(--b)}.m-tool{border-color:var(--c)}
+#say{min-height:48px;margin-top:8px;padding:8px 12px;border-radius:10px;background:#1d2840;font-size:14px}
+/* quiz */
+.q{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:10px 0}.opt{display:block;width:100%;text-align:left;margin:5px 0}
+.opt.ok{background:#11402d;border-color:var(--c)}.opt.no{background:#4a1a1f;border-color:var(--err)}.fb{font-size:14px;margin-top:4px}
+</style></head><body>
+<div id="bar"></div>
+<header><span>CS146S 2026 秋 · 第 1 讲 · 9 月 22 日 · Mihail Eric</span><span id="cnt"></span></header>
+<main>
+
+<section class="card" data-t="封面">
+ <div class="row"><div>
+  <div class="mute">Stanford CS146S · The Modern Software Developer</div>
+  <h2 style="font-size:32px;margin:6px 0 10px">用 200 行代码写一个 Claude Code</h2>
+  <p>编程智能体是一个循环：大模型请求工具，程序执行工具，结果回到对话，大模型再接着想。</p>
+  <p class="mute">用 ← → 键或下方按钮翻页。第 10 张是模拟器，第 13 张是小测。</p>
+  <p style="font-size:13px" class="mute">资料来源：S1 <a href="https://docs.google.com/presentation/d/1uztIhjHAG6O_9QOD1N_3wdhwhABml1fANXEN2dGwdbg/edit" target="_blank">官方课件</a> · S2 <a href="https://drive.google.com/file/d/1DxKa_autBOu9s8DvItodgUAwH_pBg7aR/view" target="_blank">官方代码</a> · S3 <a href="https://themodernsoftware.dev" target="_blank">课程网站</a> · S4 <a href="https://github.com/mihail911/modern-software-dev-assignments/tree/master/week1" target="_blank">第 1 周作业</a>。本讲没有公开课堂录像。</p>
+ </div>
+ <svg viewBox="0 0 360 300"><circle cx="180" cy="150" r="105" fill="none" stroke="#2a3550" stroke-width="14"/>
+  <circle cx="180" cy="150" r="105" fill="none" stroke="url(#g)" stroke-width="14" stroke-dasharray="500 160" stroke-linecap="round"><animateTransform attributeName="transform" type="rotate" from="0 180 150" to="360 180 150" dur="8s" repeatCount="indefinite"/></circle>
+  <defs><linearGradient id="g"><stop offset="0" stop-color="#6ea8ff"/><stop offset="1" stop-color="#6ee7b7"/></linearGradient></defs>
+  <text x="180" y="142" text-anchor="middle" style="font-size:30px;font-weight:700">~200</text><text x="180" y="170" text-anchor="middle" class="mute" style="fill:#94a3c0">行 Python</text>
+  <text x="180" y="30" text-anchor="middle">大模型</text><text x="315" y="155">工具</text><text x="180" y="290" text-anchor="middle">对话</text><text x="10" y="155">用户</text></svg>
+ </div>
+</section>
+
+<section class="card" data-t="2026 现状">
+ <h2>2026 年：从编程助手到真正的智能体</h2><span class="src">S1 课件</span>
+ <div class="row">
+ <svg viewBox="0 0 420 230"><line x1="20" y1="200" x2="400" y2="200" stroke="#2a3550" stroke-width="2"/>
+  <path d="M30 185 C150 180 210 170 250 120 S330 40 395 30" fill="none" stroke="#6ea8ff" stroke-width="4"/>
+  <circle cx="250" cy="120" r="7" fill="#ffb86b"/><text x="170" y="100">2025 年 12 月</text><text x="150" y="118" style="fill:#ffb86b">Claude Opus 4.5 发布</text>
+  <text x="30" y="222" style="fill:#94a3c0">编程助手</text><text x="300" y="222" style="fill:#94a3c0">真正的智能体</text>
+  <text x="300" y="22" style="fill:#94a3c0;font-size:12px">示意曲线</text></svg>
+ <ul><li>Opus 4.5 发布后，编程智能体的能力大幅提升。</li><li>在工作中使用 AI 已经是必须的。</li><li>智能体太强，也带来新的挑战。</li><li>门槛更高：企业期望开发者有系统层面的思考。</li></ul>
+ </div>
+</section>
+
+<section class="card" data-t="课程立场">
+ <h2>这门课讲原则，不讲工具</h2><span class="src">S1 课件</span>
+ <div class="row">
+ <svg viewBox="0 0 400 260"><g text-anchor="middle">
+  <rect x="130" y="95" width="140" height="70" rx="14" fill="#22304d" stroke="#6ea8ff" stroke-width="2"/><text x="200" y="125">人与智能体</text><text x="200" y="147">协作的工程</text>
+  <g style="font-size:13px"><rect x="10" y="10" width="150" height="44" rx="10" fill="#1d2840" stroke="#2a3550"/><text x="85" y="37">业务和产品理解</text>
+  <rect x="240" y="10" width="150" height="44" rx="10" fill="#1d2840" stroke="#2a3550"/><text x="315" y="37">做技术架构师</text>
+  <rect x="10" y="206" width="150" height="44" rx="10" fill="#1d2840" stroke="#2a3550"/><text x="85" y="233">好上下文 → 好代码</text>
+  <rect x="240" y="206" width="150" height="44" rx="10" fill="#1d2840" stroke="#2a3550"/><text x="315" y="233">防止 AI slop</text></g>
+  <path d="M85 54 L150 95 M315 54 L250 95 M85 206 L150 165 M315 206 L250 165" stroke="#2a3550" stroke-width="2"/></g></svg>
+ <ul><li>课程面向有经验的工程师。</li><li>沟通能力很关键。</li><li>大模型的水平取决于你的水平。</li><li>你看不懂自己的代码库，大模型也看不懂。</li><li>大胆实验。</li></ul>
+ </div>
+</section>
+
+<section class="card" data-t="评分">
+ <h2>课程安排和评分</h2><span class="src">S1 课件</span>
+ <div class="row">
+ <svg viewBox="0 0 300 260" id="pie"></svg>
+ <ul><li><b style="color:var(--a)">期末项目 50%</b>：一个开放项目。</li><li><b style="color:var(--c)">开源贡献 30%</b>：给 3 到 4 个开源仓库提交贡献，合作方有 15 个。</li><li><b style="color:var(--b)">作业 15%</b>：6 次，每周 1 次。</li><li><b style="color:var(--d)">课堂参与 5%</b>。</li><li class="mute">课件原话：This class is going to be hard。</li></ul>
+ </div>
+</section>
+
+<section class="card" data-t="循环">
+ <h2>核心：It's that simple</h2><span class="src">S1 课件 · S2 代码</span>
+ <div class="row">
+ <svg viewBox="0 0 420 300"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#94a3c0"/></marker></defs>
+  <g text-anchor="middle"><rect x="20" y="120" width="110" height="56" rx="12" fill="#1d2840" stroke="#6ea8ff"/><text x="75" y="145">客户端</text><text x="75" y="165" style="font-size:12px;fill:#94a3c0">Claude Code 等</text>
+  <rect x="290" y="20" width="110" height="56" rx="12" fill="#1d2840" stroke="#ffb86b"/><text x="345" y="53">大模型</text>
+  <rect x="290" y="220" width="110" height="56" rx="12" fill="#1d2840" stroke="#6ee7b7"/><text x="345" y="245">工具</text><text x="345" y="265" style="font-size:12px;fill:#94a3c0">在大模型之外执行</text>
+  <path d="M130 135 Q220 60 288 50" fill="none" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><text x="200" y="72" style="font-size:12px">发送对话</text>
+  <path d="M300 78 Q220 120 135 150" fill="none" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><text x="232" y="128" style="font-size:12px">请求工具</text>
+  <path d="M130 165 Q200 240 288 245" fill="none" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/><text x="190" y="228" style="font-size:12px">执行</text>
+  <path d="M300 222 Q240 190 135 172" fill="none" stroke="#94a3c0" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#ar)"/><text x="245" y="190" style="font-size:12px">返回结果</text></g></svg>
+ <div><p>用户和客户端交互。客户端和底层大模型跑一个循环。</p><p>大模型有时请求调用工具。客户端在大模型之外执行工具。</p><p class="mute">第 10 张卡片可以亲手走一遍这个循环。</p></div>
+ </div>
+</section>
+
+<section class="card" data-t="四步">
+ <h2>课件里的 4 个步骤</h2><span class="src">S1 课件</span>
+ <div class="row">
+ <svg viewBox="0 0 400 280"><g text-anchor="middle" style="font-size:14px">
+  <g><circle cx="40" cy="40" r="22" fill="#6ea8ff"/><text x="40" y="45" style="fill:#0b1020;font-weight:700">1</text><text x="210" y="45">读终端输入，持续追加到对话</text></g>
+  <g><circle cx="40" cy="105" r="22" fill="#ffb86b"/><text x="40" y="110" style="fill:#0b1020;font-weight:700">2</text><text x="200" y="110">告诉大模型有哪些工具</text></g>
+  <g><circle cx="40" cy="170" r="22" fill="#f472b6"/><text x="40" y="175" style="fill:#0b1020;font-weight:700">3</text><text x="200" y="175">大模型在需要时请求工具</text></g>
+  <g><circle cx="40" cy="235" r="22" fill="#6ee7b7"/><text x="40" y="240" style="fill:#0b1020;font-weight:700">4</text><text x="215" y="240">客户端执行工具，再返回结果</text></g>
+  <path d="M40 62V83M40 127V148M40 192V213" stroke="#2a3550" stroke-width="3"/></g></svg>
+ <div><p>第 2 步在系统提示词里完成（第 8 张卡片）。</p><p>第 3、4 步是循环的主体（第 9 张卡片）。</p></div>
+ </div>
+</section>
+
+<section class="card" data-t="三个工具">
+ <h2>官方代码只有 3 个工具</h2><span class="src">S2 代码</span>
+ <div class="row">
+ <svg viewBox="0 0 400 270"><g style="font-size:13px">
+  <rect x="10" y="10" width="380" height="72" rx="12" fill="#1d2840" stroke="#6ea8ff"/><text x="28" y="40" style="font-size:16px;font-weight:700;fill:#6ea8ff">read_file(filename)</text><text x="28" y="64">读取文件全部内容</text>
+  <rect x="10" y="98" width="380" height="72" rx="12" fill="#1d2840" stroke="#ffb86b"/><text x="28" y="128" style="font-size:16px;font-weight:700;fill:#ffb86b">list_files(path)</text><text x="28" y="152">列出目录里的文件和子目录</text>
+  <rect x="10" y="186" width="380" height="72" rx="12" fill="#1d2840" stroke="#6ee7b7"/><text x="28" y="216" style="font-size:16px;font-weight:700;fill:#6ee7b7">edit_file(path, old_str, new_str)</text><text x="28" y="240">替换第一处 old_str；old_str 为空时新建或覆盖</text></g></svg>
+ <div><ul><li>课件写的是 <code>List_dir</code>，代码里叫 <code>list_files</code>。</li><li>没有 <code>bash</code> 工具，也没有 <code>write_file</code>。</li><li><code>edit_file</code> 兼做新建文件。</li><li>找不到 <code>old_str</code> 时，返回 <code>"old_str not found"</code>，不报错。</li></ul></div>
+ </div>
+</section>
+
+<section class="card" data-t="系统提示词">
+ <h2>系统提示词告诉模型怎样调用工具</h2><span class="src">S2 代码 第 13–22 行、第 102–115 行</span>
+ <div class="row"><pre class="py">SYSTEM_PROMPT = """
+You are a helpful coding assistant whose goal is to help complete coding tasks.
+You have access to a series of tools you can execute. Here are the tools you have access to:
+
+{tool_list_str}
+
+When you want to use a tool reply with exactly one line in the format: 'tool: TOOL_NAME({{JSON_ARGS}})' and nothing else.
+Use compact single-line JSON with double quotes. After receiving a tool_result(...) message, continue the task.
+If no tool is needed, respond normally.
+"""</pre>
+ <svg viewBox="0 0 360 260"><g text-anchor="middle" style="font-size:13px">
+  <rect x="20" y="10" width="140" height="50" rx="10" fill="#1d2840" stroke="#6ee7b7"/><text x="90" y="40">工具函数的 docstring</text>
+  <rect x="200" y="10" width="140" height="50" rx="10" fill="#1d2840" stroke="#6ee7b7"/><text x="270" y="40">inspect.signature</text>
+  <path d="M90 60 L170 110 M270 60 L190 110" stroke="#94a3c0" stroke-width="2"/>
+  <rect x="80" y="110" width="200" height="50" rx="10" fill="#1d2840" stroke="#ffb86b"/><text x="180" y="140">{tool_list_str}</text>
+  <path d="M180 160 V195" stroke="#94a3c0" stroke-width="2"/>
+  <rect x="60" y="195" width="240" height="50" rx="10" fill="#22304d" stroke="#6ea8ff"/><text x="180" y="225">developer 角色的第一条消息</text></g></svg>
+ </div>
+</section>
+
+<section class="card" data-t="主循环">
+ <h2>主循环代码</h2><span class="src">S2 代码 第 161–188 行</span>
+ <div class="row"><pre class="py">while True:
+    assistant_resp = execute_llm_call(conversation)
+    tool_invocations = extract_tool_invocations(assistant_resp)
+@@if not tool_invocations:
+        print(f"Assistant: {assistant_resp}")
+        conversation.append({"role": "assistant", "content": assistant_resp})
+        break
+    conversation.append({"role": "assistant", "content": assistant_resp})
+    for name, args in tool_invocations:
+        tool = TOOL_REGISTRY[name]
+        resp = tool(...)  # 按 name 传入参数
+        conversation.append({
+            "role": "user",
+            "content": f"tool_result({json.dumps(resp)})"
+        })</pre>
+ <div><ul><li>高亮行：回复里没有工具请求时，内层循环结束。</li><li>工具结果用 <code>user</code> 角色追加，格式是 <code>tool_result(...)</code>。</li><li>代码不用 API 自带的工具调用功能，而是逐行解析 <code>tool: NAME({...})</code>。</li><li>格式不对的工具请求被直接忽略。</li></ul><p class="mute" style="font-size:13px">第 11 行为了排版做了简化，原代码按工具名分别取参数。</p></div>
+ </div>
+</section>
+
+<section class="card" data-t="模拟器">
+ <h2>动手：亲手走一遍循环</h2><span class="src extra">补充 · 按 S2 代码的逻辑编写，模型回复是预设的</span>
+ <div class="ctrl"><label>任务</label><select id="task"><option value="0">修改 README 的标题</option><option value="1">看看项目里有哪些文件</option></select>
+  <label><input type="checkbox" id="err"> 让 edit_file 第一次找不到 old_str</label>
+  <button class="pri" id="step">下一步 ▶</button><button id="play">自动播放</button><button id="reset">重置</button>
+  <label>速度</label><input type="range" id="spd" min="300" max="2500" step="100" value="1200"></div>
+ <div class="sim">
+  <svg viewBox="0 0 300 360" id="flow"><defs><marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#94a3c0"/></marker></defs>
+   <g text-anchor="middle" style="font-size:13px">
+   <g class="node" id="n0"><rect x="60" y="8" width="180" height="40" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="150" y="33">用户输入，追加到对话</text></g>
+   <g class="node" id="n1"><rect x="60" y="78" width="180" height="40" rx="10" fill="#1d2840" stroke="#ffb86b"/><text x="150" y="103">调用大模型</text></g>
+   <g class="node" id="n2"><rect x="60" y="148" width="180" height="40" rx="10" fill="#1d2840" stroke="#f472b6"/><text x="150" y="173">解析 tool: 行</text></g>
+   <g class="node" id="n3"><rect x="60" y="218" width="180" height="40" rx="10" fill="#1d2840" stroke="#6ee7b7"/><text x="150" y="243">执行工具</text></g>
+   <g class="node" id="n4"><rect x="60" y="288" width="180" height="40" rx="10" fill="#1d2840" stroke="#6ee7b7"/><text x="150" y="313">追加 tool_result</text></g>
+   <g class="node" id="n5"><rect x="250" y="148" width="46" height="40" rx="10" fill="#1d2840" stroke="#94a3c0"/><text x="273" y="173">结束</text></g>
+   <path d="M150 48V76M150 118V146M150 188V216M150 258V286" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar2)"/>
+   <path d="M60 308 H20 V98 H58" fill="none" stroke="#94a3c0" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#ar2)"/>
+   <path d="M240 168 H248" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar2)"/><text x="268" y="140" style="font-size:11px;fill:#94a3c0">无工具</text>
+   </g></svg>
+  <div><div class="mute" style="font-size:13px">对话（conversation 列表）· <span id="cnum">0</span> 条消息</div><div id="ctx"></div><div id="say">点「下一步」开始。</div></div>
+ </div>
+</section>
+
+<section class="card" data-t="作业">
+ <h2>第 1 周作业：解剖一次真实的 Claude Code 会话</h2><span class="src">S4 作业</span>
+ <div class="row">
+ <svg viewBox="0 0 400 200"><g text-anchor="middle" style="font-size:13px">
+  <rect x="5" y="70" width="110" height="56" rx="10" fill="#1d2840" stroke="#6ea8ff"/><text x="60" y="103">Claude Code</text>
+  <rect x="145" y="70" width="110" height="56" rx="10" fill="#22304d" stroke="#ffb86b"/><text x="200" y="96">mitmproxy</text><text x="200" y="114" style="font-size:11px;fill:#94a3c0">截获并保存请求</text>
+  <rect x="285" y="70" width="110" height="56" rx="10" fill="#1d2840" stroke="#6ee7b7"/><text x="340" y="96">Anthropic</text><text x="340" y="114">API</text>
+  <path d="M115 98H143M255 98H283" stroke="#94a3c0" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="200" y="165">分析 system、tools、messages 三部分</text></g></svg>
+ <ul><li>录一次会话：改至少两个文件、至少失败一次、有明确计划。</li><li>逐节注解系统提示词：换来什么行为，防止什么失败。</li><li>统计工具数量，分析两个工具的接口设计。</li><li>用证据回答错误恢复、计划、子智能体、上下文管理。</li><li class="mute">注意：引用片段前必须删掉密钥和私密内容。</li></ul>
+ </div>
+</section>
+
+<section class="card" data-t="延伸阅读">
+ <h2>延伸阅读</h2><span class="src">S3 课程网站</span>
+ <div class="row">
+ <svg viewBox="0 0 300 200"><g><rect x="30" y="40" width="70" height="120" rx="6" fill="#6ea8ff"/><rect x="115" y="25" width="70" height="135" rx="6" fill="#ffb86b"/><rect x="200" y="55" width="70" height="105" rx="6" fill="#6ee7b7"/><line x1="10" y1="162" x2="290" y2="162" stroke="#2a3550" stroke-width="4"/></g></svg>
+ <ul><li><a href="https://youtube.com/watch?v=s7ZzkdvCMDY" target="_blank">Building a Coding Agent</a>（视频）</li><li><a href="https://x.com/trq212/status/2027463795355095314" target="_blank">Lessons from Building Claude Code</a></li><li><a href="https://arxiv.org/pdf/2604.14228" target="_blank">Dive into Claude Code</a>（论文）</li><li class="mute">下一讲（9 月 24 日）：深入读顶尖编程智能体的系统提示词。</li></ul>
+ </div>
+</section>
+
+<section class="card" data-t="小测">
+ <h2>小测</h2><span class="src extra">补充 · 题目由学习搭子出</span>
+ <div id="quiz"></div><p id="score" class="mute"></p>
+</section>
+
+</main>
+<nav><button id="prev">← 上一张</button><div class="dots" id="dots"></div><button class="pri" id="next">下一张 →</button></nav>
+<script>
+window.onerror=(m,s,l)=>{document.body.insertAdjacentHTML('afterbegin','<div style="position:fixed;z-index:99;background:red;color:#fff">JS 错误：'+m+' @'+l+'</div>')};
+const cards=[...document.querySelectorAll('.card')];let cur=0;
+const dots=document.getElementById('dots');cards.forEach((c,i)=>{const d=document.createElement('i');d.title=(i+1)+' '+c.dataset.t;d.onclick=()=>go(i);dots.appendChild(d)});
+function go(i){cur=Math.max(0,Math.min(cards.length-1,i));cards.forEach((c,j)=>c.classList.toggle('on',j==cur));[...dots.children].forEach((d,j)=>d.classList.toggle('on',j==cur));
+ document.getElementById('bar').style.width=((cur+1)/cards.length*100)+'%';document.getElementById('cnt').textContent=(cur+1)+' / '+cards.length+' · '+cards[cur].dataset.t;
+ document.getElementById('prev').disabled=cur==0;document.getElementById('next').disabled=cur==cards.length-1;history.replaceState(null,'','#'+(cur+1))}
+prev.onclick=()=>go(cur-1);next.onclick=()=>go(cur+1);
+document.addEventListener('keydown',e=>{if(e.target.tagName=='SELECT'||e.target.tagName=='INPUT')return;if(e.key=='ArrowRight')go(cur+1);if(e.key=='ArrowLeft')go(cur-1)});
+let sx=null;document.addEventListener('touchstart',e=>sx=e.touches[0].clientX);document.addEventListener('touchend',e=>{if(sx==null)return;const dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>60)go(cur+(dx<0?1:-1));sx=null});
+// highlight
+document.querySelectorAll('pre.py').forEach(p=>{p.innerHTML=p.textContent.split('\n').map(l=>{let h=l.startsWith('@@');if(h)l='    '+l.slice(2);
+ l=l.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+ l=l.replace(/(#.*$)|("""|f?"[^"]*"|'[^']*')|\b(while|if|not|for|in|break|True|return|def)\b|\b(\w+)(?=\()/g,(m,c,s,k,f)=>c?'<span class="cm">'+c+'</span>':s?'<span class="s">'+s+'</span>':k?'<span class="k">'+k+'</span>':'<span class="f">'+f+'</span>');
+ return h?'<span class="hl">'+l+'</span>':l}).join('\n')});
+// pie
+(function(){const d=[[50,'#6ea8ff','项目'],[30,'#6ee7b7','开源'],[15,'#ffb86b','作业'],[5,'#f472b6','参与']];let a=-Math.PI/2,s='';const cx=150,cy=130,r=110;
+ d.forEach(([v,c,t])=>{const b=a+v/100*2*Math.PI,x1=cx+r*Math.cos(a),y1=cy+r*Math.sin(a),x2=cx+r*Math.cos(b),y2=cy+r*Math.sin(b),m=(a+b)/2;
+ s+=`<path d="M${cx} ${cy}L${x1} ${y1}A${r} ${r} 0 ${v>50?1:0} 1 ${x2} ${y2}Z" fill="${c}" stroke="#171e2e" stroke-width="3"/>`;
+ s+=`<text x="${cx+r*.62*Math.cos(m)}" y="${cy+r*.62*Math.sin(m)+5}" text-anchor="middle" style="fill:#0b1020;font-weight:700">${v}%</text>`;a=b});document.getElementById('pie').innerHTML=s})();
+// simulator
+const DEV='developer：系统提示词 + 3 个工具的说明';
+const T=[
+ {user:'把 README.md 的标题改成 "# My Agent"',turns:[
+  {resp:'tool: list_files({"path": "."})',tool:'list_files',res:'{"path": "/proj", "files": [{"filename": "README.md", "type": "file"}, {"filename": "agent.py", "type": "file"}]}'},
+  {resp:'tool: read_file({"filename": "README.md"})',tool:'read_file',res:'{"file_path": "/proj/README.md", "content": "# Demo\\nA tiny agent."}'},
+  {resp:'tool: edit_file({"path": "README.md", "old_str": "# Demo", "new_str": "# My Agent"})',tool:'edit_file',res:'{"path": "/proj/README.md", "action": "edited"}',
+   errResp:'tool: edit_file({"path": "README.md", "old_str": "# demo", "new_str": "# My Agent"})',errRes:'{"path": "/proj/README.md", "action": "old_str not found"}'},
+  {resp:'已把 README.md 的标题改成 "# My Agent"。'}]},
+ {user:'项目里有哪些文件？',turns:[
+  {resp:'tool: list_files({"path": "."})',tool:'list_files',res:'{"path": "/proj", "files": [{"filename": "README.md", "type": "file"}, {"filename": "agent.py", "type": "file"}, {"filename": "tests", "type": "dir"}]}'},
+  {resp:'项目里有 README.md、agent.py 两个文件，还有一个 tests 目录。'}]}];
+let plan=[],pi=0,timer=null;
+function build(){const t=T[+task.value],e=err.checked;plan=[];
+ plan.push({n:0,add:['dev',DEV],say:'对话的第一条消息是系统提示词，里面列出了 3 个工具。'});
+ plan.push({n:0,add:['user',t.user],say:'用户输入任务，程序把它追加到对话。'});
+ t.turns.forEach(x=>{const steps=[];
+  const one=(resp,res)=>{plan.push({n:1,add:['asst',resp],say:'程序把整个对话发给大模型。大模型回复这一行。'});
+   if(!x.tool){plan.push({n:2,say:'解析结果：回复里没有 tool: 行。'});plan.push({n:5,say:'内层循环结束（代码第 164 行），打印回复，等用户下一次输入。',end:1});return}
+   plan.push({n:2,say:'解析结果：工具名 '+x.tool+'，参数是 JSON。'});
+   plan.push({n:3,say:'程序在大模型之外执行 '+x.tool+'。'});
+   plan.push({n:4,add:['tool','tool_result('+res+')'],say:res.includes('not found')?'old_str 大小写不对，工具返回 "old_str not found"。结果照样追加回对话，模型下一轮会看到它。':'程序用 user 角色把结果追加到对话，然后回到「调用大模型」。'})};
+  if(e&&x.errResp)one(x.errResp,x.errRes);one(x.resp,x.res)});}
+function reset(){stop();build();pi=0;ctx.innerHTML='';cnum.textContent=0;say.textContent='点「下一步」开始。';hi(-1);step.disabled=false}
+function hi(n){for(let i=0;i<6;i++)document.getElementById('n'+i).classList.toggle('act',i==n)}
+const LB={dev:'developer',user:'user',asst:'assistant',tool:'user · 工具结果'};
+function doStep(){if(pi>=plan.length){stop();return}const s=plan[pi++];hi(s.n);say.textContent=s.say;
+ if(s.add){const d=document.createElement('div');d.className='msg m-'+s.add[0];d.innerHTML='<b>'+LB[s.add[0]]+'</b>\n'+s.add[1].replace(/</g,'&lt;');ctx.appendChild(d);ctx.scrollTop=1e6;cnum.textContent=ctx.children.length}
+ if(pi>=plan.length){step.disabled=true;stop()}}
+function stop(){clearInterval(timer);timer=null;play.textContent='自动播放'}
+step.onclick=doStep;reset.onclick=reset;task.onchange=reset;err.onchange=reset;
+play.onclick=()=>{if(timer){stop();return}if(pi>=plan.length)reset();play.textContent='暂停';doStep();timer=setInterval(doStep,+spd.value)};
+spd.oninput=()=>{if(timer){clearInterval(timer);timer=setInterval(doStep,+spd.value)}};
+reset();
+// quiz
+const Q=[
+ {q:'工具在哪里执行？',o:['在大模型内部','在客户端程序里，大模型之外','在 OpenAI 的服务器上'],a:1,c:5,w:'课件说工具在大模型之外执行（off-LLM）。'},
+ {q:'大模型怎样知道有哪些工具？',o:['大模型训练时就记住了','程序把工具的说明和参数签名写进系统提示词','用户每次输入时告诉它'],a:1,c:8,w:'create_full_system_prompt 把 docstring 和签名填进 {tool_list_str}。'},
+ {q:'内层循环在什么条件下结束？',o:['调用满 10 次工具','回复里没有 tool: 行','工具执行出错'],a:1,c:9,w:'第 164 行：if not tool_invocations 时 break。'},
+ {q:'删掉「追加 tool_result」这一步，会发生什么？',o:['没有影响','模型看不到工具结果，无法根据结果继续','程序会自动重试'],a:1,c:10,w:'模型每轮只看到对话列表。结果不在列表里，模型就不知道发生了什么。'},
+ {q:'官方代码没有 write_file。它怎样新建文件？',o:['用 bash','调用 edit_file，old_str 传空字符串','不能新建文件'],a:1,c:7,w:'old_str 为空时，edit_file 新建或覆盖文件。'},
+ {q:'edit_file 找不到 old_str 时会怎样？',o:['程序崩溃','返回 "old_str not found"，结果照样追加回对话','自动改成忽略大小写重试'],a:1,c:10,w:'可以在模拟器里勾选「让 edit_file 第一次找不到 old_str」看一遍。'}];
+let got={};const qz=document.getElementById('quiz');
+Q.forEach((x,i)=>{const b=document.createElement('div');b.className='q';b.innerHTML='<b>'+(i+1)+'. '+x.q+'</b>';
+ x.o.forEach((o,j)=>{const bt=document.createElement('button');bt.className='opt';bt.textContent=o;bt.onclick=()=>{if(got[i]!==undefined)return;got[i]=j==x.a;
+  bt.classList.add(j==x.a?'ok':'no');const f=document.createElement('div');f.className='fb';
+  if(j==x.a)f.innerHTML='✓ 正确。'+x.w;else{f.innerHTML='✗ 不对。 ';const back=document.createElement('button');back.textContent='回到第 '+x.c+' 张卡片「'+cards[x.c-1].dataset.t+'」';back.onclick=()=>go(x.c-1);f.appendChild(back);
+   const rt=document.createElement('button');rt.textContent='重答';rt.style.marginLeft='6px';rt.onclick=()=>{delete got[i];b.querySelectorAll('.opt').forEach(o=>o.classList.remove('ok','no'));f.remove();sc()};f.appendChild(rt)}
+  b.appendChild(f);sc()};b.appendChild(bt)});qz.appendChild(b)});
+function sc(){const n=Object.keys(got).length,k=Object.values(got).filter(Boolean).length;score.textContent=n?`已答 ${n} / ${Q.length}，答对 ${k}。`+(n==Q.length?' 答完后，请在群里用自己的话复述一遍智能体循环。':''):''}
+go((parseInt(location.hash.slice(1))||1)-1);
+const qs=new URLSearchParams(location.search);if(qs.has('shot')){document.head.insertAdjacentHTML('beforeend','<style>*{animation:none!important}</style>');if(qs.get('err'))err.checked=true,reset();for(let i=0;i<+(qs.get('steps')||0);i++)doStep();if(qs.get('quiz')){document.querySelectorAll('.q')[0].querySelectorAll('.opt')[0].click();document.querySelectorAll('.q')[1].querySelectorAll('.opt')[1].click()}}
+window.onerror=(m,s,l)=>{document.body.insertAdjacentHTML('afterbegin','<div id="jserr" style="position:fixed;z-index:99;background:red;color:#fff">JS 错误：'+m+' @'+l+'</div>')};
+</script></body></html>

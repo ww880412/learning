@@ -1,0 +1,47 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stanford CS146S · The Modern Software Developer · 王玮的学习库</title><style>:root{
+  --paper:#F2F4F7; --sheet:#FFFFFF; --ink:#16202C; --ink2:#4A5868; --hair:#D9DFE7;
+  --blue:#2550D9;  --blue-soft:#E3EAFD;   /* 主角：当前步骤 / 重点 */
+  --amber:#C77A00; --amber-soft:#FBEFD9; /* 数据 / 消息 */
+  --green:#16875A; --green-soft:#DDF3E9; /* 成功 / 工具结果 */
+  --red:#C8372D;   --red-soft:#FBE3E1;   /* 出错 */
+  --r-lg:20px; --r-sm:10px;
+  --font:"PingFang SC","Noto Sans CJK SC","Source Han Sans SC","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}html,body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.65 var(--font);-webkit-font-smoothing:antialiased}
+a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+.top{position:sticky;top:0;z-index:5;background:rgba(242,244,247,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--hair)}
+.top .in{max-width:1120px;margin:0 auto;padding:12px 24px;display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.top .brand{font-weight:800;color:var(--ink)}.top nav{display:flex;gap:14px;flex-wrap:wrap;font-size:14px}.top nav a{color:var(--ink2)}.top nav a.on{color:var(--blue);font-weight:700}
+main{max-width:1120px;margin:0 auto;padding:28px 24px 64px}
+.crumb{font-size:13px;color:var(--ink2);margin-bottom:6px}
+.hero h1{font-size:34px;line-height:1.25;margin:0 0 8px}.hero p{margin:0;color:var(--ink2)}
+.kicker{font-size:14px;color:var(--blue);font-weight:700;margin:36px 0 12px;display:flex;align-items:center;gap:8px}
+.kicker .n{background:var(--blue-soft);border-radius:99px;padding:0 9px;font-size:12px}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+.grid.wide{grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}
+.card{background:var(--sheet);border-radius:var(--r-lg);padding:20px 22px;box-shadow:0 1px 0 var(--hair),0 18px 40px -28px rgba(22,32,44,.3);display:flex;flex-direction:column;gap:8px;color:var(--ink);min-width:0}
+a.card:hover{text-decoration:none;outline:2px solid var(--blue-soft)}
+.card h3{margin:0;font-size:19px;line-height:1.35}.card p{margin:0;color:var(--ink2);font-size:14px}
+.card .ic{font-size:26px;line-height:1}.card .meta{font-size:13px;color:var(--ink2);margin-top:auto;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.card img{width:100%;aspect-ratio:16/9;object-fit:cover;object-position:top;border-radius:var(--r-sm);background:var(--paper);border:1px solid var(--hair)}
+.tag{display:inline-block;font-size:12px;font-weight:700;padding:1px 8px;border-radius:6px;background:var(--paper);color:var(--ink2)}
+.tag.blue{background:var(--blue-soft);color:var(--blue)}.tag.green{background:var(--green-soft);color:var(--green)}.tag.amber{background:var(--amber-soft);color:var(--amber)}.tag.red{background:var(--red-soft);color:var(--red)}
+.empty{background:var(--sheet);border:2px dashed var(--hair);border-radius:var(--r-lg);padding:28px;text-align:center;color:var(--ink2)}
+.empty b{display:block;color:var(--ink);font-size:18px;margin-bottom:4px}
+.list{background:var(--sheet);border-radius:var(--r-lg);overflow:hidden;box-shadow:0 1px 0 var(--hair)}
+.list .row{display:flex;gap:14px;align-items:center;padding:14px 20px;border-top:1px solid var(--hair);flex-wrap:wrap}.list .row:first-child{border-top:0}
+.list .row .t{flex:1;min-width:180px}.list .row .d{font:600 13px var(--mono);color:var(--ink2)}
+.list .row.due{background:var(--amber-soft)}.list .row.over{background:var(--red-soft)}
+.def{font-size:18px;line-height:1.75;margin:0}.en{font:600 14px var(--mono);color:var(--ink2)}
+.foot{margin-top:48px;font-size:13px;color:var(--ink2);border-top:1px solid var(--hair);padding-top:14px}
+@media(max-width:600px){main{padding:20px 16px 48px}.hero h1{font-size:27px}.top .in{padding:10px 16px;gap:8px 14px}.def{font-size:16px}.grid{grid-template-columns:1fr 1fr;gap:12px}.grid.wide{grid-template-columns:1fr}.grid .card{padding:16px}.card h3{font-size:17px}}
+</style></head><body>
+<header class="top"><div class="in"><a class="brand" href="../../index.html">📚 王玮的学习库</a><nav><a href="../../index.html">首页</a><a href="../index.html" class="on">公开课</a><a href="../../x-posts/index.html">X 好文</a><a href="../../research/index.html">技术研究</a><a href="../../wechat/index.html">微信公众号</a><a href="../../glossary.html">概念卡</a></nav></div></header>
+<main><div class="crumb"><a href="../../index.html">首页</a> / <a href="../index.html">公开课</a> / Stanford CS146S · The Modern Software Developer</div>
+<section class="hero"><h1>Stanford CS146S · The Modern Software Developer</h1><p>2026 秋。用 AI 做现代软件开发，逐讲学习。 课程网站：<a href="https://themodernsoftware.dev">https://themodernsoftware.dev</a></p></section>
+<div class="kicker">按讲次 <span class="n">1</span></div><div class="grid wide"><a class="card" href="L01-agent-loop.html"><img src="L01-sim-preview.png" alt="" loading="lazy">
+<div class="meta" style="margin-top:0"><span class="tag">L01</span><span class="tag blue">进行中</span></div><h3>用 200 行代码写一个 Claude Code（智能体循环）</h3><p>13 张卡片 · 循环模拟器 · 6 道小测。待：小测 + 复述。</p>
+<div class="meta">开始于 2026-10-11 · 13 张卡片</div></a></div>
+<div class="kicker">L01 本课概念</div><p style="margin:0"><a class="tag blue" style="margin:0 6px 6px 0" href="../../concepts/agent-loop.html">智能体循环</a><a class="tag blue" style="margin:0 6px 6px 0" href="../../concepts/tool-calling.html">工具调用</a><a class="tag blue" style="margin:0 6px 6px 0" href="../../concepts/system-prompt.html">系统提示词</a><a class="tag blue" style="margin:0 6px 6px 0" href="../../concepts/context.html">上下文</a></p><div class="foot">由 build.mjs 从 data/ 生成 · 学习页模板：xuexi-template</div></main></body></html>
