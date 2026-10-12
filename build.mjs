@@ -171,6 +171,8 @@ for (const c of columns) {
     body += `<div class="kicker">主题</div><div class="sub">${esc(g.title)}</div><div class="grid wide"><a class="card c1" href="${rel(f, g.dir + '/index.html')}"><span class="go">→</span><div class="ic">${c.icon}</div><h3>${esc(g.title)}</h3><p>${esc(g.desc)}</p><div class="meta"><span class="tag blue">${gi.length} 篇学习页</span>${gp.length ? `<span class="tag">${gp.length} 讲未开始</span>` : ''}</div>${progBar(items.filter(i => i.group === g.id))}</a></div>`; }
   const loose = its.filter(i => !i.group);
   if (loose.length) body += `<div class="kicker">文章 <span class="n">${loose.length}</span></div><div class="sub">一篇一页，点开就学</div><div class="grid wide">${loose.map(i => itemCard(f, i)).join('')}</div>`;
+  // 长文分主线：item.threads = [{label,title,href,cards,range,conclusion}]（全文导读在 item.href）
+  for (const i of loose.filter(x => x.threads?.length)) body += `<div class="kicker">${esc(i.label)} · 分主线学 <span class="n">${i.threads.length} 条</span></div><div class="sub">${esc(i.title)}</div><div class="list"><div class="row"><span class="tag blue">导读</span><span class="t"><a href="${rel(f, i.href)}">全文导读：主线怎么连起来</a></span></div>${i.threads.map(t => `<div class="row"><span class="tag">${esc(t.label)}</span><span class="t"><a href="${rel(f, t.href)}">${esc(t.title)}</a><div style="font-weight:400;font-size:14px;color:var(--ink2)">${esc(t.conclusion)}</div></span><span class="d">${esc(t.range)} · ${t.cards} 张</span></div>`).join('')}</div>`;
   if (pending.length) body += `<div class="kicker">待学 <span class="n">${pending.length}</span></div><div class="sub">还没做成学习页，先看原文</div><div class="list">${pending.map(i => `<div class="row">${statusTag('未开始')}<span class="tag">${esc(i.label)}</span><span class="t"><a href="${esc(i.href)}"${/^https?:/.test(i.href) ? ' target="_blank" rel="noopener"' : ''}>${esc(i.title)}</a>${i.note ? `<div style="font-weight:400;font-size:14px;color:var(--ink2)">${esc(i.note)}</div>` : ''}</span>${i.date ? `<span class="d">${esc(i.date)}</span>` : ''}</div>`).join('')}</div>`;
   write(f, page(f, c.title, c.id, body));
 }
@@ -190,7 +192,7 @@ ${gi.map(i => { const cs = itemConcepts(i.id); return cs.length ? `<div class="k
 // ---- 概念卡 + 术语表 ----
 for (const c of concepts) {
   const f = `concepts/${c.id}.html`;
-  const refs = c.refs.map(r => { const it = itemById[r.item]; return `<div class="row"><span class="tag">${esc(colById[it.column]?.title)}</span><span class="t"><a href="${rel(f, it.href)}#${r.card}">${esc(it.label)} · ${esc(r.note)}</a></span><span class="d">第 ${r.card} 张 →</span></div>`; }).join('');
+  const refs = c.refs.map(r => { const it = itemById[r.item]; const th = r.thread ? it.threads?.[r.thread - 1] : null; return `<div class="row"><span class="tag">${esc(colById[it.column]?.title)}</span><span class="t"><a href="${rel(f, th ? th.href : it.href)}#${r.card}">${esc(it.label)}${th ? ' · ' + esc(th.label) : ''} · ${esc(r.note)}</a></span><span class="d">第 ${r.card} 张 →</span></div>`; }).join('');
   const lessons = [...new Set(c.refs.map(r => r.item))].length;
   const body = `<div class="crumb"><a href="../index.html">首页</a> / <a href="../glossary.html">概念卡</a> / ${esc(c.term)}</div>
 <section class="defcard sheet"><div class="stage"><span class="tag blue" style="align-self:flex-start">概念卡</span><div class="term">${esc(c.term)}</div><div class="en" style="font:600 15px var(--mono);color:var(--ink2)">${esc(c.en)}</div></div>

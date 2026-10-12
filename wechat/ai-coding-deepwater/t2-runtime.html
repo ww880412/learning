@@ -1,0 +1,447 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<script>(function(){var s=localStorage.getItem("theme");if(s?s==="dark":matchMedia("(prefers-color-scheme: dark)").matches)document.documentElement.classList.add("dark")})()</script>
+<title>AI Coding 深水区 · 主线 2 编排的尽头是 runtime</title><style>
+/* 学习搭子 固定设计系统 — 不要在课程里改这个文件。只改 lesson.html 的内容。 */
+:root{
+  --paper:#F6F6F7; --sheet:#FFFFFF; --ink:#16202C; --ink2:#4A5868; --hair:#E2E2E3;
+  --blue:#2550D9;  --blue-soft:#E3EAFD;   /* 主角：当前步骤 / 重点 */
+  --amber:#C77A00; --amber-soft:#FBEFD9; /* 数据 / 消息 */
+  --green:#16875A; --green-soft:#DDF3E9; /* 成功 / 工具结果 */
+  --red:#C8372D;   --red-soft:#FBE3E1;   /* 出错 */
+  --r-lg:12px; --r-sm:10px;
+  --font:"PingFang SC","Noto Sans CJK SC","Source Han Sans SC","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--paper);color:var(--ink);font:17px/1.65 var(--font);-webkit-font-smoothing:antialiased}
+.top{position:fixed;inset:0 0 auto 0;height:56px;display:flex;align-items:center;gap:16px;padding:0 28px;z-index:5}
+.top .course{font-weight:700;font-size:15px}
+.top .track{flex:1;height:6px;background:var(--hair);border-radius:99px;overflow:hidden}
+.top .track i{display:block;height:100%;width:0;background:var(--blue);transition:width .35s ease}
+.top .count{font:600 14px var(--mono);color:var(--ink2);min-width:60px;text-align:right}
+.deck{position:fixed;inset:56px 0 76px 0;display:grid;place-items:center;padding:0 24px}
+.card{display:none;width:min(1120px,100%);height:100%;max-height:640px;background:var(--sheet);border-radius:var(--r-lg);
+  box-shadow:0 1px 0 var(--hair),0 18px 40px -24px rgba(22,32,44,.25);overflow:hidden}
+.card.on{display:grid;grid-template-columns:1.45fr 1fr}
+.card.full.on{grid-template-columns:1fr}
+.stage{background:var(--paper);margin:14px 0 14px 14px;border-radius:14px;display:grid;place-items:center;padding:18px;overflow:hidden;position:relative}
+.card.full .stage{margin:14px}
+.stage svg{width:100%;height:100%;max-height:560px}
+.say{padding:40px 40px 32px;display:flex;flex-direction:column;justify-content:center;gap:14px;overflow:auto}
+.say .kicker{font-size:14px;color:var(--blue);font-weight:700}
+.say h2{margin:0;font-size:32px;line-height:1.25;letter-spacing:.01em}
+.say p{margin:0;color:var(--ink2)}
+.say p b{color:var(--ink)}
+.src{margin-top:auto;font-size:13px;color:var(--ink2);border-top:1px solid var(--hair);padding-top:12px}
+.src.extra::before{content:"补充";background:var(--amber-soft);color:var(--amber);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
+.src.official::before{content:"官方";background:var(--green-soft);color:var(--green);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
+code{font:14px var(--mono);background:var(--blue-soft);color:var(--blue);padding:1px 6px;border-radius:6px}
+pre{margin:0;font:13.5px/1.6 var(--mono);background:#101826;color:#DCE3EE;border-radius:12px;padding:16px 18px;overflow:auto;width:100%}
+pre .k{color:#8FB1FF}pre .s{color:#9BE0B4}pre .c{color:#71819A}pre .f{color:#FFC86B}pre .hl{background:rgba(143,177,255,.16);display:block;margin:0 -18px;padding:0 18px}
+.bottom{position:fixed;inset:auto 0 0 0;height:76px;display:flex;align-items:center;justify-content:center;gap:14px}
+.btn{font:600 15px var(--font);border:0;border-radius:99px;padding:11px 22px;cursor:pointer;background:var(--sheet);color:var(--ink);box-shadow:0 0 0 1px var(--hair)}
+.btn:hover{box-shadow:0 0 0 2px var(--blue)}
+.btn.main{background:var(--blue);color:#fff;box-shadow:none}
+.btn:disabled{opacity:.35;cursor:default;box-shadow:0 0 0 1px var(--hair)}
+.btn:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.btn.sm{padding:7px 14px;font-size:14px}
+/* ---- 图元（flow 组件生成） ---- */
+.fl-node rect{fill:var(--sheet);stroke:var(--hair);stroke-width:2;transition:all .3s}
+.fl-node text{font:600 17px var(--font);fill:var(--ink)}
+.fl-node .sub{font:400 13px var(--font);fill:var(--ink2)}
+.fl-node.blue rect{stroke:var(--blue)} .fl-node.amber rect{stroke:var(--amber)} .fl-node.green rect{stroke:var(--green)} .fl-node.red rect{stroke:var(--red)}
+.fl-node.act rect{fill:var(--blue-soft);stroke:var(--blue);stroke-width:3}
+.fl-node.dim{opacity:.35}
+.fl-edge{fill:none;stroke:#AEB8C6;stroke-width:2.2;transition:all .3s}
+.fl-edge.act{stroke:var(--blue);stroke-width:3.5;stroke-dasharray:8 6;animation:dash .8s linear infinite}
+.fl-elab{font:500 13px var(--font);fill:var(--ink2)}
+.fl-elab.act{fill:var(--blue);font-weight:700}
+@keyframes dash{to{stroke-dashoffset:-28}}
+/* ---- 模拟器 ---- */
+.sim{display:grid;grid-template-rows:auto 1fr auto;gap:10px;width:100%;height:100%}
+.sim .ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.sim .ctl label{font-size:13px;color:var(--ink2);display:flex;align-items:center;gap:6px}
+.sim .body{display:grid;grid-template-columns:1.1fr 1fr;gap:12px;min-height:0}
+.sim .log{background:var(--sheet);border-radius:12px;padding:10px;overflow:auto;font:13px/1.5 var(--mono)}
+.sim .msg{border-left:4px solid var(--hair);padding:6px 10px;margin:0 0 8px;border-radius:6px;background:var(--paper);white-space:pre-wrap;word-break:break-word;animation:pop .25s ease}
+.sim .msg b{font-family:var(--font);display:block;font-size:12px;color:var(--ink2)}
+.msg.user{border-color:var(--blue)} .msg.asst{border-color:var(--amber)} .msg.tool{border-color:var(--green)} .msg.err{border-color:var(--red);background:var(--red-soft)} .msg.sys{border-color:var(--ink2)}
+.sim .narr{background:var(--blue-soft);color:var(--ink);border-radius:12px;padding:10px 14px;font-size:15px;min-height:48px}
+@keyframes pop{from{opacity:0;transform:translateY(6px)}}
+/* ---- 小测 ---- */
+.quiz{width:100%;max-width:760px;display:flex;flex-direction:column;gap:12px}
+.quiz .qn{font:600 13px var(--mono);color:var(--ink2)}
+.quiz .qt{font-size:22px;font-weight:700;line-height:1.4}
+.quiz .opt{display:block;width:100%;text-align:left;font:16px var(--font);background:var(--sheet);border:2px solid var(--hair);border-radius:12px;padding:12px 16px;cursor:pointer;color:var(--ink)}
+.quiz .opt:hover{border-color:var(--blue)}
+.quiz .opt.ok{border-color:var(--green);background:var(--green-soft)} .quiz .opt.no{border-color:var(--red);background:var(--red-soft)}
+.quiz .fb{min-height:52px;font-size:15px;color:var(--ink2)}
+.quiz .fb a{color:var(--blue);font-weight:700;cursor:pointer}
+.quiz .nav{display:flex;gap:8px;align-items:center}
+@media (max-width:820px){
+  .card.full.on{grid-template-rows:1fr}.card.full .stage{overflow:auto;place-items:start center}
+  .card.on{grid-template-columns:1fr;grid-template-rows:minmax(220px,48%) 1fr}
+  .stage{margin:10px 10px 0}.say{padding:18px 20px}.say h2{font-size:24px}
+  .sim .body{grid-template-columns:1fr}.top{padding:0 14px}.top .course{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* ---- 展开细节 ---- */
+details.more{border-top:1px solid var(--hair);padding-top:10px;font-size:15px;color:var(--ink2)}
+details.more summary{cursor:pointer;font-weight:700;color:var(--blue);list-style:none}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary::before{content:"＋ 展开细节";}
+details.more[open] summary::before{content:"－ 收起细节";}
+details.more>*:not(summary){margin:8px 0 0}
+details.more ul{padding-left:18px}details.more li{margin:4px 0}
+details.more table{border-collapse:collapse;width:100%;font-size:14px}
+details.more td,details.more th{border-bottom:1px solid var(--hair);padding:5px 6px;text-align:left;vertical-align:top}
+/* ---- 对话列表（状态追踪）---- */
+.stack{width:100%;display:flex;flex-direction:column;gap:6px;font:13px/1.45 var(--mono)}
+.stack .row{display:grid;grid-template-columns:28px 92px 1fr;gap:8px;align-items:start;background:var(--sheet);border-radius:8px;padding:7px 10px;border-left:4px solid var(--hair)}
+.stack .row .i{color:var(--ink2)}.stack .row .r{font-weight:700}
+.stack .row.developer{border-color:var(--ink2)}.stack .row.user{border-color:var(--blue)}.stack .row.assistant{border-color:var(--amber)}.stack .row.result{border-color:var(--green)}
+.stack .row.new{background:var(--blue-soft)}.stack .row.bad{border-color:var(--red);background:var(--red-soft)}
+.stack .row .t{white-space:pre-wrap;word-break:break-word}
+/* ---- 对比/误区 ---- */
+.pairs{width:100%;display:grid;gap:10px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pair>div{background:var(--sheet);border-radius:12px;padding:12px 14px;font-size:15px}
+.pair .no{border-left:5px solid var(--red)}.pair .yes{border-left:5px solid var(--green)}
+.pair b{display:block;font-size:12px;color:var(--ink2);margin-bottom:4px}
+.say .more code{font-size:13px}
+@media (max-width:820px){.pair{grid-template-columns:1fr}.stack .row{grid-template-columns:22px 70px 1fr}}
+.pair .a{border-left:5px solid var(--blue)}.pair .b{border-left:5px solid var(--amber)}
+/* ===== v3：填满面板、原文标签、要点、条形图、分支 ===== */
+.stage{padding:10px}
+.stage svg.flow{width:100%;height:100%;max-height:none}
+.say p{font-size:17px}
+p.key{background:var(--blue-soft);color:var(--ink);border-radius:12px;padding:10px 14px;font-size:16px}
+p.key::before{content:"关键 ";font-weight:800;color:var(--blue)}
+.src.article::before{content:"原文";background:var(--blue-soft);color:var(--blue);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
+.stage>.stack{height:100%;justify-content:center;font-size:14.5px}
+.stage>.stack .row{padding:11px 12px;flex:0 1 auto}
+.stack .head{font:700 13px var(--font);color:var(--ink2);margin:8px 0 0}
+.stage>.pairs{height:100%;grid-auto-rows:minmax(0,1fr);align-content:stretch}
+.pair>div{font-size:16px;display:flex;flex-direction:column;justify-content:center}
+.bars{width:100%;display:flex;flex-direction:column;gap:16px;justify-content:center;height:100%;padding:0 10px}
+.bar{display:grid;grid-template-columns:150px 1fr 76px;gap:12px;align-items:center;font-size:15px}
+.bar .bl{font-weight:700;text-align:right}
+.bar .bt{height:30px;background:var(--sheet);border-radius:8px;overflow:hidden}
+.bar .bt i{display:block;height:100%;background:var(--ink2);border-radius:8px}
+.bar.blue .bt i{background:var(--blue)}.bar.amber .bt i{background:var(--amber)}.bar.green .bt i{background:var(--green)}.bar.red .bt i{background:var(--red)}
+.bar .bv{font:700 15px var(--mono)}
+.bar .bn{grid-column:2/4;font-size:13px;color:var(--ink2);margin-top:-8px}
+.bars .bc{font-size:13px;color:var(--ink2);text-align:center}
+.sim .branches{gap:14px;background:var(--sheet);border-radius:10px;padding:6px 10px}
+.sim .branches label{font-size:13.5px;color:var(--ink)}
+@media (max-width:820px){.bar{grid-template-columns:90px 1fr 60px}}
+.sim{grid-template-rows:auto auto 1fr auto}
+.sim.wide .body{grid-template-columns:1fr;grid-template-rows:minmax(0,1.1fr) minmax(0,1fr)}
+.sim:not(:has(.branches)){grid-template-rows:auto 1fr auto}
+.bar .bt.none{background:repeating-linear-gradient(45deg,var(--sheet) 0 8px,var(--hair) 8px 10px)}
+.say h2{font-size:28px;line-height:1.3}
+.sim .body{overflow:hidden}
+.sim .body>svg{min-height:0;height:100%;width:100%}
+.sim .narr{min-height:0}
+.stage>.stack{font-size:15.5px;gap:8px}
+.stage>.stack .row{padding:13px 14px}
+.stack .row .t{font-family:var(--font)}
+.stage:has(>.sim){place-items:stretch}
+.sim{min-height:0;height:100%;overflow:hidden}
+.sim.wide .body{grid-template-rows:minmax(0,55%) minmax(0,45%)}
+/* 讲解条放在图上方，永远可见 */
+.sim{grid-template-rows:auto auto auto minmax(0,1fr)}
+.sim:not(:has(.branches)){grid-template-rows:auto auto minmax(0,1fr)}
+.sim .ctl{order:0}.sim .branches{order:1}.sim .narr{order:2}.sim .body{order:3;min-height:0}
+/* ===== v4 ===== */
+.fl-node .sub{font-size:13.5px;fill:#3E4B5B}
+.fl-elab{font-size:13px;fill:#3E4B5B}
+.fl-edge.red{stroke:var(--red)}.fl-edge.amber{stroke:var(--amber)}.fl-edge.green{stroke:var(--green)}
+.fl-elab.red{fill:var(--red);font-weight:700}.fl-elab.amber{fill:var(--amber);font-weight:700}.fl-elab.green{fill:var(--green);font-weight:700}
+.stage{margin:10px 0 10px 10px;padding:4px}.card.full .stage{margin:0 10px 10px}
+.bar .bt i{background:#B8C2CF}
+.bar .bmiss{grid-column:2/4;color:var(--ink2);font-size:14px;font-style:italic}
+.sim .btn{background:transparent;box-shadow:0 0 0 1.5px var(--blue);color:var(--blue)}
+.sim .btn:hover{background:var(--blue-soft)}
+.say{justify-content:center}
+.src{margin-top:6px}
+.top .count{font-size:16px;color:var(--ink);font-weight:700}
+.top .track{height:6px}
+.card.full.on{grid-template-rows:auto minmax(0,1fr)}
+.head-full{padding:18px 26px 8px;display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
+.head-full .kicker{font-size:14px;color:var(--blue);font-weight:700}
+.head-full h2{margin:0;font-size:24px;line-height:1.3}
+.sim.wide .body{grid-template-rows:minmax(0,64%) minmax(0,36%)}
+@media (max-width:820px){.head-full{padding:12px 14px 6px}.head-full h2{font-size:19px}}
+.say{justify-content:safe center}
+@media (max-width:820px){.bars{gap:8px}.bar{font-size:13px;grid-template-columns:84px 1fr 56px}.bar .bt{height:20px}.bar .bn{font-size:12px;margin-top:-4px}.bars .bc{font-size:12px}
+ .sim .ctl .btn{padding:5px 10px}.sim .branches{flex-direction:column;align-items:flex-start;gap:2px}}
+
+/* 与知识库首页（VitePress 风格）对齐：白底页面、12px 圆角、细边框卡片、深色模式 */
+html,body{background:var(--page,#fff)}
+.card{border:1px solid var(--hair);box-shadow:none}
+html.dark{--page:#1b1b1f;--paper:#2a2a31;--sheet:#202127;--ink:#fffff5;--ink2:rgba(235,235,245,.65);--hair:#3a3a40;
+--blue:#7c9cff;--blue-soft:rgba(124,156,255,.16);--amber:#f0b429;--amber-soft:rgba(240,180,41,.14);--green:#3dd68c;--green-soft:rgba(61,214,140,.14);--red:#f66f81;--red-soft:rgba(246,111,129,.14);color-scheme:dark}
+html.dark .btn.main{color:#16202c}
+html.dark .fl-node .sub,html.dark .fl-elab{fill:var(--ink2)}html.dark .fl-elab{stroke:var(--page)!important}html.dark .fl-edge{stroke:#6b7280}
+html.dark .fl-elab.act{fill:var(--blue)}
+</style></head><body>
+<header class="top"><span class="course">AI Coding 深水区 · 主线 2 编排的尽头是 runtime</span><span class="track"><i></i></span><span class="count"></span></header>
+<main class="deck">
+<section class="card">
+  <div class="stage"><svg class="flow" data-act="rt" data-edge="inc>rt" data-flow='{"nodes":[{"id":"exp","x":130,"y":80,"t":"两项编排实验","s":"机制残缺，skill 补不动","c":"amber","w":220},{"id":"inc","x":130,"y":280,"t":"三起黑盒事故","s":"每个环节都要可审计、可干预","c":"red","w":230},{"id":"rt","x":470,"y":180,"t":"自建 agent runtime","s":"主权的边界划在哪","c":"blue","w":220}],"edges":[{"f":"exp","t":"rt"},{"f":"inc","t":"rt"}]}'></svg></div>
+  <div class="say"><span class="kicker">这条主线讲什么？</span><h2>编排追到根上，是 runtime 主权问题</h2>
+  <p>编排（多个 agent 谁先谁后、怎么通信）问题，作者用两条线追到底，最后合流。</p>
+  <p class="key">作者说这个认知是两项实验、三起事故加一次源码审计一起买来的。</p>
+  <div class="src article">第二部分「本部分要点」、（五）末段</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="stack">
+   <div class="head">workflow-engine：主 agent 做成状态机，按固定流程 spawn 子 agent</div>
+   <div class="row bad"><span class="i">1</span><span class="r">token 消耗大</span><span class="t">子 agent 每次从干净上下文出发；review 打回三轮，implementer 就把相关代码读三遍</span></div>
+   <div class="row bad"><span class="i">2</span><span class="r">体验不佳</span><span class="t">编排逻辑复杂、上手门槛高；子 agent 过程不透明，没有掌控感</span></div>
+   <div class="row bad"><span class="i">3</span><span class="r">主 agent 浪费</span><span class="t">只维持秩序，最值钱的能力——直接和用户对话——闲置着</span></div>
+  </div></div>
+  <div class="say"><span class="kicker">原来的编排哪里不够？</span><h2>状态机编排换来了稳定，但光稳不够用</h2>
+  <p>上一篇的结论是「真正贵的不是 token，真正贵的是失控」，所以选了稳定。</p>
+  <p class="key">重新打开这扇门，不是因为「失控比 token 贵」错了，而是光有稳已经不够用。</p>
+  <div class="src article">第二部分（一）</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="pairs">
+   <div class="pair"><div class="b"><b>方案一（风险低）</b>需求分析、架构设计收回给主 agent 亲自做；拉子 agent 优先续接（resume）上一轮</div><div class="a"><b>状态</b>已经落进现在的 /dev 流程</div></div>
+   <div class="pair"><div class="b"><b>方案二（风险大）</b>agent teams：网状通信，成员常驻、互相直接发消息、共享任务看板</div><div class="a"><b>状态</b>官方标为实验特性，几乎没有公开实践——作者亲自蹚</div></div>
+  </div></div>
+  <div class="say"><span class="kicker">两个方案怎么选？</span><h2>低风险方案已落地，高风险的作者亲自蹚</h2>
+  <p>方案一的好处：交互多的环节体验向单 agent 看齐；派活能带更多有效上下文；子 agent 不用重新探索。</p>
+  <p class="key">方案二单看理论是解三个问题的绝佳方案：常驻适合多轮循环，网状通信让编排最灵活。</p>
+  <div class="src article">第二部分（一）末</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><svg class="flow" data-act="team" data-edge="bs>team" data-flow='{"nodes":[{"id":"bs","x":110,"y":90,"t":"brainstorming","s":"主 agent 交互设计","c":"blue","w":180},{"id":"doc","x":110,"y":270,"t":"arch.md · plan.md","s":"产物驱动状态，不用 state.json","c":"green","w":220},{"id":"team","x":420,"y":90,"t":"team-execution","s":"七个角色进 Team","c":"amber","w":190},{"id":"gd","x":420,"y":270,"t":"guardian","s":"异步盯需求有没有被曲解","c":"amber","w":200}],"edges":[{"f":"bs","t":"doc"},{"f":"bs","t":"team"},{"f":"doc","t":"team","l":"中断后查磁盘恢复"},{"f":"gd","t":"team"}]}'></svg></div>
+  <div class="say"><span class="kicker">第一项实验怎么设计的？</span><h2>实验一：去掉状态机，整个流程搬上 Team</h2>
+  <p>去掉 /dev 命令和 workflow-engine，换成两个 skill 串联。</p>
+  <p class="key">审查循环点对点直连：implementer 和 code-reviewer 互发消息对审，不经主 agent 中转。</p>
+  <details class="more"><summary></summary><p>七个角色：planner、implementer、reviewer（可多实例）、test-planner、test-engineer、explorer、guardian。</p><p>产物驱动状态：arch.md 不存在就从头开始；plan.md 存在就直接执行。</p><p>实验目录：experiments/2026-05-29-team-driven-dev（五月底）。设计在纸面上很美，实跑下来提交历史里全是补丁。</p></details>
+  <div class="src article">第二部分（二）前半</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="stack">
+   <div class="head">第一类：模型根本不认识这套机制</div>
+   <div class="row bad"><span class="i">1</span><span class="r">忘了建 Team</span><span class="t">补丁：「STEP 0 强制前置，不可跳过」</span></div>
+   <div class="row bad"><span class="i">2</span><span class="r">命名摇摆</span><span class="t">kebab-case、CamelCase、中文之间摇摆 → 占位符写死成 snake_case</span></div>
+   <div class="row bad"><span class="i">3</span><span class="r">找不到工具</span><span class="t">在内置工具里找 tracesift → 改成「tracesift 是 shell 命令，用 Bash 调用」</span></div>
+   <div class="head">第四类：机制本身反直觉</div>
+   <div class="row bad"><span class="i">4</span><span class="r">强杀不了</span><span class="t">强杀要 taskId，spawn 拿到的是 agentId；只能手改 ~/.claude/teams/ 下的 config.json</span></div>
+   <div class="row bad"><span class="i">5</span><span class="r">活没人接</span><span class="t">任务指派了归属成员，任务窃取就关掉；成员卡死后它名下的活没人接</span></div>
+  </div></div>
+  <div class="say"><span class="kicker">踩了哪些坑？（第一类、第四类）</span><h2>模型没学过这套机制，只能靠提示词现教</h2>
+  <p>Anthropic 没把 agent teams 训练进模型。</p>
+  <p class="key">每一条提示词补丁，都是一次失败会话换来的；第四类的坑没有文档，全靠翻源码和实机踩坑。</p>
+  <div class="src article">第二部分（二）第一类、第四类</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="bars" data-bars='{"unit":"token","items":[{"l":"第 1 轮","v":580},{"l":"第 2 轮","v":278},{"l":"最后","v":1,"c":"blue","note":"每条催促都打断在途的工具调用"}],"caption":"planner 每轮输出越来越少（原文给的三个数字）"}'></div></div>
+  <div class="say"><span class="kicker">栽得最狠的一个（第二类）</span><h2>每分钟催一次，planner 输出缩到 1</h2>
+  <p>主 agent 约一分钟催一次 planner，而 planner 单轮热身就要超过一分钟。</p>
+  <p class="key">主 agent 把它误判成「Team 在 resume 后失效」，重建团队接着催——活锁自己养活自己。</p>
+  <details class="more"><summary></summary><p>实跑约 2.5 小时的真实需求，planner 反复「莫名 idle」，产不出 plan.md。用 tracesift 解析会话记录才挖到根因。</p><p>planner 的原话：「我的 skill 加载和验证查询又被消息打断了。」</p><p>三条铁律（后来都进了 skill）：不催正在工作的 agent，只认显式 DONE/BLOCKED，idle 是正常态（PROTOCOL-A）；planner 这类角色任务来了一次性 spawn、自包含干完；测试断言从架构文档的验收标准提前冻结，实现完成后只填占位符。</p></details>
+  <div class="src article">第二部分（二）第二类</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="pairs">
+   <div class="pair"><div class="no"><b>不信</b>状态符号</div><div class="yes"><b>信</b>超时有没有消息（卡死判据）</div></div>
+   <div class="pair"><div class="no"><b>不信</b>活体成员还在（进程内成员随主进程消亡）</div><div class="yes"><b>信</b>磁盘上的 arch.md / test-plan.md，失联就无损重建成员</div></div>
+   <div class="pair"><div class="b"><b>限流</b>退避重试同一成员，绝不换人</div><div class="a"><b>认证失效</b>停手找人</div></div>
+  </div></div>
+  <div class="say"><span class="kicker">实验一留下了什么？（第三类）</span><h2>不信状态符号，信超时和磁盘产物</h2>
+  <p>完整流程的编排没有推广：不是跑不通，是太脆，作者没信心交给其他同学用。</p>
+  <p class="key">它留下了 agent-teams skill：从上百次失败会话里熬出来的运维知识库。</p>
+  <details class="more"><summary></summary><p>agent-teams skill 的内容：怎么读懂成员状态（idleReason 三态）；失败按 failureReason 语义分流；卡死判据用「超时没消息」；防消息风暴和中断活锁的通信纪律。</p><p>作者指出这几条纪律的共同点：全部是「不信声明，信事实」。</p></details>
+  <div class="src article">第二部分（二）第三类及末段</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><svg class="flow" data-act="te" data-edge="te>rv" data-flow='{"nodes":[{"id":"main","x":130,"y":90,"t":"主 agent","s":"亲自写 spec，只监督","c":"blue","w":180},{"id":"te","x":110,"y":290,"t":"test-engineer","s":"写计划、写代码、跑测试","c":"green","w":210},{"id":"rv","x":450,"y":290,"t":"reviewer","s":"独立审查","c":"amber","w":180},{"id":"user","x":450,"y":90,"t":"用户","s":"三轮不收敛就升级","c":"blue","w":170}],"edges":[{"f":"main","t":"te","l":"spec"},{"f":"te","t":"rv","bend":-30},{"f":"rv","t":"te","bend":-30},{"f":"main","t":"user","l":"升级"}]}'></svg></div>
+  <div class="say"><span class="kicker">第二项实验怎么收窄？</span><h2>只在测试流程用 Team，限定两个成员</h2>
+  <p>这就是现在的 /module-test：spec 是「自带答案的交接物」，验证点矩阵早早冻结，是审查的权威基准。</p>
+  <p class="key">测试红了且对应 spec 验证点，按代码 bug 处理，绝不软化断言求绿。</p>
+  <details class="more"><summary></summary><p>spec 里的协议锚点、读回方式、验证点矩阵全部代码核实过，不许留空。</p><p>主 agent 不中转、不代审，只按 agent-teams skill 监督进度、容错兜底。</p><p>作者跑了几十遍各类任务，有 agent-teams skill 和 test-generator skill 加持，能比较稳定地走完；还保住了 agent teams 最大的优点：随时能和任意 agent 直接对话、自由干预。</p></details>
+  <div class="src article">第二部分（三）</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="pairs">
+   <div class="pair"><div class="b"><b>每轮评审 spawn 新 agent</b>彻底解决「被上轮意见带着走」</div><div class="a"><b>常驻 reviewer（最终留下）</b>评审时长和 token 消耗更省</div></div>
+   <div class="pair"><div class="no"><b>常驻的代价</b>复审时只盯上轮问题，审不全</div><div class="yes"><b>作者的判断</b>agent teams 方向是对的；当前实现是残缺的</div></div>
+  </div></div>
+  <div class="say"><span class="kicker">作者做了什么取舍？</span><h2>留下常驻 reviewer，是明知有损的取舍</h2>
+  <p>残缺在于：模型没被训练过这套机制，工具的提示词和行为对 LLM 不友好。</p>
+  <p class="key">skill 能缓解机制的不完善，缓解不了机制的残缺。</p>
+  <div class="src article">第二部分（三）末段</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="stack">
+   <div class="row bad"><span class="i">1</span><span class="r">遥测</span><span class="t">原文：claude code 用隐蔽手段检测使用者是否来自中国，命中后在提示词和工具调用里投毒（细节原文不展开）</span></div>
+   <div class="row bad"><span class="i">2</span><span class="r">UTF-8 损坏</span><span class="t">37 份中文产出里 36 份损坏、累计 370 处 U+FFFD；CLI 拼接工具调用参数时按字节切断了多字节字符</span></div>
+   <div class="row bad"><span class="i">3</span><span class="r">11 小时空转</span><span class="t">只读探索任务：6556 次工具调用、1.23 亿 input token，一无所获；203 轮压缩 = 203 次从头再来</span></div>
+  </div></div>
+  <div class="say"><span class="kicker">「残缺」缺在哪？</span><h2>三起事故都在黑盒里，作者改不了</h2>
+  <p>作者的答案：缺在对 runtime 没有主权。</p>
+  <p class="key">空转的根因之一：压缩摘要把「生成摘要」当成用户请求，「当前进度」「待办事项」两节常只剩标题。</p>
+  <details class="more"><summary></summary><p>11 小时空转的四个因素：max_turns 限额没生效；压缩阈值卡在 100K，模型 200K 的窗口只用了一半；压缩摘要的问题（见卡面）；于是每轮压缩后 agent 都失忆，从同一组关键词重新 Grep。完整复盘见团队博客《一个 agent 空转 11 小时的复盘》。</p><p>遥测事件直接动摇了「把生产流程建在一个黑盒 CLI 上」的信任基础。这是原文作者的说法，本页未核实。</p></details>
+  <div class="src article">第二部分（四）</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="stack">
+   <div class="head">三起事故要求的可替换性，一层比一层深</div>
+   <div class="row result"><span class="i">1</span><span class="r">工具参数拼接</span><span class="t">UTF-8 按字节切断这种事，要能自己接管那段代码（最外层，多数底座够得着）</span></div>
+   <div class="row result"><span class="i">2</span><span class="r">注入与遥测</span><span class="t">模型看到的每一样东西，都能按来源回看（审计的底线）</span></div>
+   <div class="row result new"><span class="i">3</span><span class="r">上下文压缩</span><span class="t">压缩策略能整个换掉，不用猜阈值和摘要模板（最深，长在 agent loop 里）</span></div>
+  </div></div>
+  <div class="say"><span class="kicker">自建 runtime，选哪个底座？</span><h2>选型的真问题是主权的边界划在哪</h2>
+  <p>不是「选哪个产品」；落到实处，就是插件化能划到哪一层。</p>
+  <p class="key">codex 暴露了更隐蔽的问题：开源不等于主权。</p>
+  <details class="more"><summary></summary><p>作者摆开的选项：从 trpc-agent-go 写起（真重复造轮子）；基于 trpc-agent-go 薄封装（必然有别的团队在做）；基于 claude/codebuddy 的 agent SDK（底层还是黑盒）；codex CLI / SDK（开源可定制，但体量大）；pi agent；DeepSeek Harness。</p><p>codex：新版多 agent 通信把子 agent 任务载荷加密，只有 OpenAI 服务端解得开；子 agent 换别家模型就跨不过去，本地调试看不到真实任务文本。作者称之为「仓库开着，协议锁着」。</p><p>pi 把 loop 和压缩策略留在 core 里；DSH 连这两样都推成插件，元框架只管装卸，模型看到的一切进 append-only 会话日志。</p></details>
+  <div class="src article">第二部分（五）</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="pairs">
+   <div class="pair"><div class="b"><b>pi agent 先动</b>作者跟了几个月、上手试过；扩展门槛低；定位重心是上下文治理</div><div class="a"><b>DeepSeek Harness 跟进</b>「一切皆插件」，连 loop 都能换；但作者手上只有一篇官方博客</div></div>
+   <div class="pair"><div class="b"><b>路径</b>从最小 harness 起步，撞到 core 的边界就记一笔账</div><div class="a"><b>原则</b>元框架只管装卸，能力全部做成可替换的插件</div></div>
+  </div></div>
+  <div class="say"><span class="kicker">深入一层：先用哪个？</span><h2>按证据强度排序：pi 先动，DSH 跟进</h2>
+  <p>声明归声明，事实归事实：DSH「一切皆插件」目前还只是它自己的说法。</p>
+  <p class="key">这是作者的计划，不是已做到的结果：真正的垂类扩充还没排上工期。</p>
+  <details class="more"><summary></summary><p>作者的理由：核心插件和基础接口还在快速迭代，现在把整条生产流程押上 DSH，等于拿生产环境替它做测试。</p><p>记下的每一笔账，都是下一步的需求清单。怎么走，作者留给下一篇。</p></details>
+  <div class="src article">第二部分（五）后半</div></div>
+</section>
+
+<section class="card full">
+  <div class="head-full"><span class="kicker">小测</span><h2>用 6 个新场景检查：编排出问题时该信什么</h2></div>
+  <div class="stage"><div class="quiz" data-quiz='[
+   {"q":"你的 Team 里一个成员 3 分钟没动静，主 agent 想每 30 秒催它一次。按原文的铁律，该怎么做？","opts":["催得越勤越快","不催正在工作的 agent，只认显式 DONE/BLOCKED，idle 是正常态","马上重建团队"],"a":1,"why":"误区：idle 就是坏了。催促会打断在途的工具调用，造成中断活锁。","back":6},
+   {"q":"会话续接后，主 agent 还在给一个已经不存在的成员发消息。按原文，怎么恢复？","opts":["继续等它回复","以磁盘产物为准，用 arch.md / test-plan.md 重建成员","从头再做一遍需求分析"],"a":1,"why":"不信活体成员，信磁盘上的产物。","back":7},
+   {"q":"一个成员调用失败，failureReason 是限流。按 agent-teams skill，应该？","opts":["换另一个成员接手","退避后重试同一成员","停手找人"],"a":1,"why":"限流就退避重试同一成员、绝不换人；认证失效才停手找人。","back":7},
+   {"q":"/module-test 里测试红了，且对应 spec 的一个验证点。reviewer 建议把断言放宽一点。按原文？","opts":["放宽断言让测试变绿","按代码 bug 处理，不软化断言","删掉这个验证点"],"a":1,"why":"spec 的验证点矩阵是权威基准，早早冻结。","back":8},
+   {"q":"一个开源 agent 框架，源码都能看，但子 agent 之间的通信只有某家服务端能解密。按原文，它算有主权吗？","opts":["算，因为开源","不算：开源不等于主权，协议锁在别人手里","看 star 数"],"a":1,"why":"codex 的例子：仓库开着，协议锁着。","back":11},
+   {"q":"一个新框架官方博客说「什么都能换」，但你还没亲手试过。按原文，现在该怎么用它？","opts":["立刻把生产流程迁过去","先让有实际接触证据的底座先动，它跟进、自己去验","完全不管它"],"a":1,"why":"声明归声明，事实归事实；按证据强度排序。","back":12}]'></div></div>
+</section>
+</main>
+<nav class="bottom"><button class="btn" id="prev">上一张</button><button class="btn main" id="next">下一张</button></nav>
+<script>
+/* 学习搭子 固定组件库 — 不要在课程里改这个文件。 */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const NS='http://www.w3.org/2000/svg';
+const el=(t,a={},p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p&&p.appendChild(e);return e};
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+/* ---------- 卡片翻页 ---------- */
+const cards=$$('.card');let cur=0;
+function go(i){i=Math.max(0,Math.min(cards.length-1,i));cards[cur].classList.remove('on');cur=i;cards[cur].classList.add('on');
+  $('.track i').style.width=((cur+1)/cards.length*100)+'%';$('.count').textContent=(cur+1)+' / '+cards.length;
+  $('#prev').disabled=cur===0;$('#next').disabled=cur===cards.length-1;history.replaceState(null,'','#'+(cur+1));}
+window.goCard=n=>go(n-1);
+$('#prev').onclick=()=>go(cur-1);$('#next').onclick=()=>go(cur+1);
+addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.key==='ArrowRight')go(cur+1);if(e.key==='ArrowLeft')go(cur-1)});
+let sx=null;addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
+addEventListener('touchend',e=>{if(sx===null)return;const d=e.changedTouches[0].clientX-sx;if(Math.abs(d)>60)go(cur+(d<0?1:-1));sx=null});
+
+/* ---------- flow：用 JSON 画流程图 ----------
+ spec = {w,h,nodes:[{id,x,y,t,s?,c?,w?}],edges:[{f,t,l?,bend?}]}  节点坐标是中心点 */
+function drawFlow(svg,spec){
+  svg.innerHTML='';
+  const defs=el('defs',{},svg);
+  [['a','#AEB8C6'],['b','#2550D9'],['red','#C8372D'],['amber','#C77A00'],['green','#16875A']].forEach(([id,c])=>{const m=el('marker',{id:'ar'+id+svg.dataset.uid,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:7,markerHeight:7,orient:'auto-start-reverse'},defs);el('path',{d:'M0,0L10,5L0,10z',fill:c},m)});
+  const N={};spec.nodes.forEach(n=>N[n.id]={...n,w:n.w||150,h:n.s?70:56});
+  const ns=Object.values(N);
+  let x0=Math.min(...ns.map(n=>n.x-n.w/2)),x1=Math.max(...ns.map(n=>n.x+n.w/2)),y0=Math.min(...ns.map(n=>n.y-n.h/2)),y1=Math.max(...ns.map(n=>n.y+n.h/2));
+  const B={x0,x1,y0,y1};
+  const eg=el('g',{},svg),ng=el('g',{},svg);svg._edges={};svg._nodes={};
+  const clip=(a,b)=>{const dx=b.x-a.x,dy=b.y-a.y;const s=Math.min(Math.abs((a.w/2+6)/(dx||1e-9)),Math.abs((a.h/2+6)/(dy||1e-9)));return[a.x+dx*s,a.y+dy*s]};
+  spec.edges.forEach(e=>{const a=N[e.f],b=N[e.t];let d,lx,ly;
+    if(e.route){ /* 沿外圈走的直角线：top|bottom|left|right，lane 控制离外框的距离 */
+      const g=30+(e.lane||0)*30,oa=e.oa||0,ob=e.ob||0;
+      if(e.route==='top'||e.route==='bottom'){const t=e.route==='top',Y=t?B.y0-g:B.y1+g,ya=a.y+(t?-1:1)*(a.h/2+2),yb=b.y+(t?-1:1)*(b.h/2+8);
+        d=`M${a.x+oa},${ya} V${Y} H${b.x+ob} V${yb}`;lx=(a.x+oa+b.x+ob)/2;ly=Y+(t?-8:18);
+        t?(y0=Math.min(y0,Y-26)):(y1=Math.max(y1,Y+26));}
+      else{const l=e.route==='left',X=l?B.x0-g:B.x1+g,xa=a.x+(l?-1:1)*(a.w/2+2),xb=b.x+(l?-1:1)*(b.w/2+8);
+        d=`M${xa},${a.y+oa} H${X} V${b.y+ob} H${xb}`;lx=X+(l?-8:8);ly=(a.y+b.y)/2;
+        l?(x0=Math.min(x0,X-90)):(x1=Math.max(x1,X+90));}
+    }else{const[p1,q1]=clip(a,b),[p2,q2]=clip(b,a);const mx=(p1+p2)/2,my=(q1+q2)/2,len=Math.hypot(p2-p1,q2-q1)||1,bd=e.bend||0;
+      const cx=mx-(q2-q1)/len*bd,cy=my+(p2-p1)/len*bd;d=`M${p1},${q1} Q${cx},${cy} ${p2},${q2}`;
+      const qx=.25*p1+.5*cx+.25*p2,qy=.25*q1+.5*cy+.25*q2,sg=bd>=0?1:-1;lx=qx-(q2-q1)/len*sg*14;ly=qy+(p2-p1)/len*sg*14+4;}
+    const mk=e.c||'a';const p=el('path',{d,class:'fl-edge '+(e.c||''),'marker-end':`url(#ar${mk}${svg.dataset.uid})`},eg);p._mk=mk;
+    let lab=null;if(e.l){const anc=e.route==='left'?'end':e.route==='right'?'start':'middle';lab=el('text',{x:lx,y:ly,'text-anchor':anc,class:'fl-elab '+(e.c||''),stroke:'#F2F4F7','stroke-width':5,'paint-order':'stroke'},eg);lab.textContent=e.l}
+    svg._edges[e.f+'>'+e.t]={p,lab}});
+  ns.forEach(n=>{const g=el('g',{class:'fl-node '+(n.c||'')},ng);
+    el('rect',{x:n.x-n.w/2,y:n.y-n.h/2,width:n.w,height:n.h,rx:14},g);
+    const t=el('text',{x:n.x,y:n.y+(n.s?-4:6),'text-anchor':'middle'},g);t.textContent=n.t;
+    if(n.s){const s=el('text',{x:n.x,y:n.y+18,'text-anchor':'middle',class:'sub'},g);s.textContent=n.s}
+    svg._nodes[n.id]=g});
+  /* 自动贴合：viewBox 只包住内容，图会放大填满面板 */
+  const P=spec.pad??8;svg.setAttribute('viewBox',`${x0-P} ${y0-P-10} ${x1-x0+2*P} ${y1-y0+2*P+20}`);
+  svg._set=(act,edge)=>{for(const k in svg._nodes)svg._nodes[k].classList.toggle('act',k===act);
+    for(const k in svg._edges){const on=k===edge,E=svg._edges[k];E.p.classList.toggle('act',on);E.p.setAttribute('marker-end',`url(#ar${on?'b':E.p._mk}${svg.dataset.uid})`);E.lab&&E.lab.classList.toggle('act',on)}};
+  svg._set(svg.dataset.act,svg.dataset.edge);
+}
+let uid=0;
+$$('svg.flow').forEach(s=>{s.dataset.uid=++uid;drawFlow(s,JSON.parse(s.dataset.flow))});
+
+/* ---------- sim：一步步走的模拟器 ----------
+ data-sim = {flow:{...}, steps:[{act,edge,msg:{r:user|asst|tool|err|sys,n?,t},say}], alt?:{label,steps:[...]}} */
+$$('.sim').forEach(box=>{
+  const spec=JSON.parse(box.dataset.sim);if(spec.alt&&!spec.alts)spec.alts=[spec.alt];const AL=spec.alts||[];const gname='br'+(++uid);
+  box.innerHTML=`<div class="ctl"><button class="btn sm" data-a="step">下一步</button><button class="btn sm" data-a="play">▶ 自动</button><button class="btn sm" data-a="reset">重置</button>
+   <label>速度 <input type="range" min="300" max="2500" step="100" value="1200"></label></div>${AL.length?`<div class="ctl branches"><label><input type="radio" name="${gname}" value="-1" checked> ${esc(spec.label||'正常路径')}</label>${AL.map((a,j)=>`<label><input type="radio" name="${gname}" value="${j}"> ${esc(a.label)}</label>`).join('')}</div>`:''}
+   <div class="body"><svg class="flow"></svg><div class="log"></div></div><div class="narr"></div>`;
+  if(spec.layout==='wide')box.classList.add('wide');
+  const svg=$('svg',box);svg.dataset.uid=++uid;drawFlow(svg,spec.flow);
+  const log=$('.log',box),narr=$('.narr',box),radios=$$('input[type=radio]',box),spd=$('input[type=range]',box),play=$('[data-a=play]',box);
+  let i=0,timer=null;const sel=()=>{const r=radios.find(r=>r.checked);return r?+r.value:-1};const steps=()=>sel()>=0?AL[sel()].steps:spec.steps;
+  const hint=spec.note?esc(spec.note)+'　点「下一步」开始。':'点「下一步」开始。';const reset=()=>{i=0;log.innerHTML='';narr.innerHTML=hint;svg._set(null,null);stop()};
+  const stop=()=>{clearTimeout(timer);timer=null;play.textContent='▶ 自动'};
+  const step=()=>{const S=steps();if(i>=S.length){narr.textContent='流程结束。点「重置」再走一遍。';stop();return false}
+    const s=S[i++];svg._set(s.act,s.edge);if(s.msg){const d=document.createElement('div');d.className='msg '+s.msg.r;
+      d.innerHTML=`<b>${esc(s.msg.n||({user:'用户',asst:'模型',tool:'工具结果',err:'出错',sys:'系统提示词'}[s.msg.r]))}</b>${esc(s.msg.t)}`;log.appendChild(d);log.scrollTop=1e9}
+    narr.innerHTML=`<b>第 ${i}/${S.length} 步</b>　${esc(s.say)}`;return true};
+  const loop=()=>{if(step())timer=setTimeout(loop,+spd.value);else stop()};
+  box.onclick=e=>{const a=e.target.dataset.a;if(a==='step'){stop();step()}if(a==='reset')reset();if(a==='play'){if(timer)stop();else{play.textContent='❚❚ 暂停';loop()}}};
+  narr.innerHTML=hint;radios.forEach(r=>r.onchange=reset);
+  const P=new URLSearchParams(location.search);if(P.get('alt')&&radios[+P.get('alt')]){radios[+P.get('alt')].checked=true}for(let n=+P.get('sim')||0;n>0;n--)step(); /* 自查用：?sim=5&alt=1 */
+});
+
+/* ---------- bars：横向条形图 ----------
+ data-bars = {unit, items:[{l,v,c?:blue|amber|green|red,note?}], caption?}  数字必须来自原文 */
+$$('.bars').forEach(box=>{const B=JSON.parse(box.dataset.bars),mx=Math.max(...B.items.filter(i=>i.v!=null).map(i=>i.v));
+  box.innerHTML=B.items.map(i=>`<div class="bar ${i.c||''}"><span class="bl">${esc(i.l)}</span>${i.v==null?`<span class="bmiss">${esc(i.miss||'原文未给数字')}</span>`:`<span class="bt"><i style="width:${(i.v/mx*100).toFixed(1)}%"></i></span><span class="bv">${esc(i.v)}${esc(B.unit||'')}</span>`}${i.note?`<span class="bn">${esc(i.note)}</span>`:''}</div>`).join('')+(B.caption?`<div class="bc">${esc(B.caption)}</div>`:'')});
+
+/* ---------- quiz：页内小测 ----------
+ data-quiz = [{q,opts:[...],a:正确下标,why,back:答错时回到第几张卡片}] */
+$$('.quiz').forEach(box=>{
+  const Q=JSON.parse(box.dataset.quiz);let k=0,score=0;const done=new Set();
+  const render=()=>{const q=Q[k];box.innerHTML=`<div class="qn">第 ${k+1} / ${Q.length} 题　·　已答对 ${score}</div><div class="qt">${esc(q.q)}</div>
+    ${q.opts.map((o,j)=>`<button class="opt" data-j="${j}">${String.fromCharCode(65+j)}. ${esc(o)}</button>`).join('')}
+    <div class="fb"></div><div class="nav"><button class="btn sm" data-n="-1" ${k?'':'disabled'}>上一题</button><button class="btn sm main" data-n="1" ${k<Q.length-1?'':'disabled'}>下一题</button></div>`};
+  box.onclick=e=>{const t=e.target;if(t.dataset.n){k+=+t.dataset.n;render();return}
+    if(t.dataset.j===undefined||done.has(k))return;const q=Q[k],j=+t.dataset.j,fb=$('.fb',box);done.add(k);
+    $$('.opt',box)[q.a].classList.add('ok');
+    if(j===q.a){score++;fb.innerHTML='✓ 对。'+esc(q.why)}else{t.classList.add('no');fb.innerHTML='✗ 不对。'+esc(q.why)+(q.back?` <a onclick="goCard(${q.back})">回到第 ${q.back} 张再看看</a>`:'')}
+    $('.qn',box).textContent=`第 ${k+1} / ${Q.length} 题　·　已答对 ${score}`};
+  render();
+  const pk=new URLSearchParams(location.search).get('pick');if(pk!==null)$$('.opt',box)[+pk].click(); /* 自查用：?pick=0 */
+});
+
+go(Math.max(0,(parseInt(location.hash.slice(1))||1)-1));
+})();
+</script></body></html>

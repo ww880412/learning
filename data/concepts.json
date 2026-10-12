@@ -1,327 +1,539 @@
 [
- {
-  "id": "agent-loop",
-  "term": "智能体循环",
-  "en": "agent loop",
-  "def": "编程智能体的核心是一个循环：客户端把对话发给大模型；大模型有时请求调用工具；客户端在大模型之外执行工具，把结果追加回对话，大模型再接着想，直到回复里不再请求工具。课件的说法是 It's that simple。",
-  "refs": [
-   {
-    "item": "cs146s-L01",
-    "card": 1,
-    "note": "两层循环 + 一个对话列表"
-   },
-   {
-    "item": "cs146s-L01",
-    "card": 2,
-    "note": "It’s that simple：客户端在模型外执行工具"
-   },
-   {
-    "item": "cs146s-L01",
-    "card": 6,
-    "note": "主循环代码与停止条件"
-   },
-   {
-    "item": "cs146s-L01",
-    "card": 9,
-    "note": "模拟器：亲手走一遍循环"
-   }
-  ],
-  "related": [
-   "tool-calling",
-   "system-prompt",
-   "context"
-  ]
- },
- {
-  "id": "tool-calling",
-  "term": "工具调用",
-  "en": "tool calling",
-  "def": "大模型自己碰不到电脑，只能请求调用工具，由客户端执行。CS146S 第 1 讲的官方代码只有 3 个工具（read_file、list_files、edit_file），并且不用 API 自带的工具调用功能：模型回复一行 tool: NAME({JSON})，程序逐行解析后执行，结果以 tool_result(...) 追加回对话。",
-  "refs": [
-   {
-    "item": "cs146s-L01",
-    "card": 1,
-    "note": "官方代码只有 3 个工具"
-   },
-   {
-    "item": "cs146s-L01",
-    "card": 4,
-    "note": "系统提示词规定 tool: 调用格式"
-   },
-   {
-    "item": "cs146s-L01",
-    "card": 5,
-    "note": "逐行解析 tool: 行"
-   },
-   {
-    "item": "cs146s-L01",
-    "card": 10,
-    "note": "哪些工具错误能回到模型"
-   }
-  ],
-  "related": [
-   "agent-loop",
-   "system-prompt"
-  ]
- },
- {
-  "id": "system-prompt",
-  "term": "系统提示词",
-  "en": "system prompt",
-  "def": "放在对话最前面、告诉模型身份和规则的提示词。第 1 讲的官方代码用它列出可用工具，并规定调用格式。黄同学h的文章提到：模型变强后，一些约束变成噪声，要清理不必要的 Skill 和系统提示词。",
-  "refs": [
-   {
-    "item": "cs146s-L01",
-    "card": 4,
-    "note": "工具说明写进系统提示词"
-   },
-   {
-    "item": "cs146s-L01",
-    "card": 12,
-    "note": "作业：逐节注解真实系统提示词"
-   },
-   {
-    "item": "huangtongxueh-ai-dev",
-    "card": 2,
-    "note": "模型变强后，写死的工作流变成噪声"
-   }
-  ],
-  "related": [
-   "tool-calling",
-   "skill"
-  ]
- },
- {
-  "id": "context",
-  "term": "上下文",
-  "en": "context",
-  "def": "模型做事时能看到的全部信息：对话、文件内容、需求文档等。课件说「好上下文 → 好代码」；黄同学h把它列为 Harness 的第一项，并用 CONTEXT.md 让后面的 Agent 共享同一份上下文。",
-  "refs": [
-   {
-    "item": "cs146s-L01",
-    "card": 8,
-    "note": "对话列表越长，每次调用越长"
-   },
-   {
-    "item": "cs146s-L01",
-    "card": 13,
-    "note": "Good context leads to good code"
-   },
-   {
-    "item": "huangtongxueh-ai-dev",
-    "card": 4,
-    "note": "需求对齐的结论写进 CONTEXT.md"
-   },
-   {
-    "item": "huangtongxueh-ai-dev",
-    "card": 1,
-    "note": "少写死工作流，多给上下文、环境和判断依据"
-   }
-  ],
-  "related": [
-   "agent-loop",
-   "harness",
-   "big-three"
-  ]
- },
- {
-  "id": "adversarial-review",
-  "term": "对抗性审查",
-  "en": "adversarial review",
-  "def": "不帮方案找理由，而是想办法证明它是错的：优先寻找能推翻核心假设的反例。原文 Prompt：「对这个方案做一次对抗性审查，优先寻找能推翻核心假设的反例。」适合方案评审和 Code Review。",
-  "refs": [
-   {
-    "item": "huangtongxueh-ai-dev",
-    "card": 9,
-    "note": "让模型推翻方案，而不是替方案找理由"
-   },
-   {
-    "item": "huangtongxueh-ai-dev",
-    "card": 5,
-    "note": "工作流里的交叉审查"
-   },
-   {
-    "item": "huangtongxueh-ai-dev",
-    "card": 7,
-    "note": "组合 Prompt 里的对抗性审查"
-   }
-  ],
-  "related": [
-   "first-principles",
-   "occam"
-  ]
- },
- {
-  "id": "e2e-test",
-  "term": "端到端测试",
-  "en": "end-to-end test",
-  "def": "从真实入口执行业务，再检查是否得到用户要的结果。黄同学h认为 Agent 写的测试多，缺的是端到端测试环境；预期结果要来自业务契约，不能把系统返回当正确答案。",
-  "refs": [
-   {
-    "item": "huangtongxueh-ai-dev",
-    "card": 6,
-    "note": "Agent 从真实入口跑到结果，自己找证据"
-   },
-   {
-    "item": "huangtongxueh-ai-dev",
-    "card": 10,
-    "note": "「什么算对」由业务契约来定"
-   },
-   {
-    "item": "huangtongxueh-ai-dev",
-    "card": 11,
-    "note": "靠小 MR 和端到端测试换来少读代码"
-   }
-  ],
-  "related": [
-   "skill",
-   "harness"
-  ]
- },
- {
-  "id": "skill",
-  "term": "Skill",
-  "en": "Skill",
-  "def": "写给 Agent 的可复用流程说明（SOP），比如需求追问、交接、端到端测试怎么跑。黄同学h的建议：一个流程重复超过三次，就让 Codex 整理成 Skill；但过重的 Skill 会消耗 Token，还会让模型照流程走多余的步骤。",
-  "refs": [
-   {
-    "item": "huangtongxueh-ai-dev",
-    "card": 2,
-    "note": "写死的工作流变成噪声"
-   },
-   {
-    "item": "huangtongxueh-ai-dev",
-    "card": 6,
-    "note": "可复用步骤写成 Skill"
-   }
-  ],
-  "related": [
-   "system-prompt",
-   "e2e-test"
-  ]
- },
- {
-  "id": "ablation",
-  "term": "消融实验",
-  "en": "ablation study",
-  "def": "系统变好了，不代表每样东西都有用：逐项去掉改动，判断收益真正来自哪里。原文例子：三项优化让 800ms 降到 100ms，消融后可能发现只加索引就到了 120ms。",
-  "refs": [
-   {
-    "item": "huangtongxueh-ai-dev",
-    "card": 8,
-    "note": "实例：消融实验怎么用"
-   },
-   {
-    "item": "huangtongxueh-ai-dev",
-    "card": 7,
-    "note": "组合 Prompt：验证贡献"
-   }
-  ],
-  "related": [
-   "occam"
-  ]
- },
- {
-  "id": "occam",
-  "term": "奥卡姆剃刀",
-  "en": "Occam's razor",
-  "def": "效果差不多时，选假设更少的方案。原文 Prompt：「用奥卡姆剃刀重新审查这个设计，在满足需求的前提下，删除所有非必要机制。」模型容易为了「完整」过度设计，所以对 Coding Agent 尤其有用。",
-  "refs": [
-   {
-    "item": "huangtongxueh-ai-dev",
-    "card": 7,
-    "note": "组合 Prompt：删除复杂度"
-   },
-   {
-    "item": "huangtongxueh-ai-dev",
-    "card": 9,
-    "note": "换一句话，模型关注什么"
-   }
-  ],
-  "related": [
-   "ablation",
-   "adversarial-review"
-  ]
- },
- {
-  "id": "first-principles",
-  "term": "第一性原理",
-  "en": "first principles",
-  "def": "不沿既定方案继续优化，而是重新问问题该怎么解。原文例子：不要基于「加 Redis 缓存」继续设计，先分析接口为什么慢，再找最小必要的解决方案。",
-  "refs": [
-   {
-    "item": "huangtongxueh-ai-dev",
-    "card": 7,
-    "note": "组合 Prompt：重新定义问题"
-   }
-  ],
-  "related": [
-   "adversarial-review"
-  ]
- },
- {
-  "id": "harness",
-  "term": "Harness",
-  "en": "harness",
-  "def": "黄同学h的总结：Harness = 正确的上下文 + 能执行的环境 + 判断结果的依据。工作流要定期做减法，删掉只是在弥补旧模型短板的步骤和约束。",
-  "refs": [
-   {
-    "item": "huangtongxueh-ai-dev",
-    "card": 1,
-    "note": "少写死工作流，多给 Agent 上下文、环境和判断依据"
-   }
-  ],
-  "related": [
-   "context",
-   "e2e-test"
-  ]
- },
- {
-  "id": "code-curator",
-  "term": "代码把关人（Curator）",
-  "en": "Code Curator",
-  "def": "EECS 498 AASE 第 1 讲的思维模型。Typist 写代码行、把时间花在 HOW、对按键负责（正确 = 我打对了）；Curator 说明意图（做什么、为什么）、评估输出（审查、改方向、接受）、对结果负责（正确 = 能运行，而且我能为它辩护，不管是谁打的）。课程对应原则：If you can explain it, it’s yours。",
-  "refs": [
-   {
-    "item": "eecs498-aase-L01",
-    "card": 6,
-    "note": "Typist / Curator 两栏对比"
-   },
-   {
-    "item": "eecs498-aase-L01",
-    "card": 3,
-    "note": "能解释才是你的"
-   },
-   {
-    "item": "eecs498-aase-L01",
-    "card": 12,
-    "note": "模拟器：读 diff 再接受"
-   }
-  ],
-  "related": [
-   "big-three"
-  ]
- },
- {
-  "id": "big-three",
-  "term": "Big Three",
-  "en": "Context · Model · Prompt",
-  "def": "EECS 498 AASE 的诊断框架：Context（AI 开始时知道什么）、Model（用哪个 AI，能力、成本、速度的取舍）、Prompt（怎么说明你要什么）。第 1 讲预告，第 3 讲深入；课程目标是用它推理 AI 编码工具为什么失败。",
-  "refs": [
-   {
-    "item": "eecs498-aase-L01",
-    "card": 8,
-    "note": "Big Three 预告"
-   },
-   {
-    "item": "eecs498-aase-L01",
-    "card": 10,
-    "note": "选 Aider：Big Three 是显式的"
-   }
-  ],
-  "related": [
-   "context",
-   "code-curator"
-  ]
- }
+  {
+    "id": "agent-loop",
+    "term": "智能体循环",
+    "en": "agent loop",
+    "def": "编程智能体的核心是一个循环：客户端把对话发给大模型；大模型有时请求调用工具；客户端在大模型之外执行工具，把结果追加回对话，大模型再接着想，直到回复里不再请求工具。课件的说法是 It's that simple。",
+    "refs": [
+      {
+        "item": "cs146s-L01",
+        "card": 1,
+        "note": "两层循环 + 一个对话列表"
+      },
+      {
+        "item": "cs146s-L01",
+        "card": 2,
+        "note": "It’s that simple：客户端在模型外执行工具"
+      },
+      {
+        "item": "cs146s-L01",
+        "card": 6,
+        "note": "主循环代码与停止条件"
+      },
+      {
+        "item": "cs146s-L01",
+        "card": 9,
+        "note": "模拟器：亲手走一遍循环"
+      }
+    ],
+    "related": [
+      "tool-calling",
+      "system-prompt",
+      "context"
+    ]
+  },
+  {
+    "id": "tool-calling",
+    "term": "工具调用",
+    "en": "tool calling",
+    "def": "大模型自己碰不到电脑，只能请求调用工具，由客户端执行。CS146S 第 1 讲的官方代码只有 3 个工具（read_file、list_files、edit_file），并且不用 API 自带的工具调用功能：模型回复一行 tool: NAME({JSON})，程序逐行解析后执行，结果以 tool_result(...) 追加回对话。",
+    "refs": [
+      {
+        "item": "cs146s-L01",
+        "card": 1,
+        "note": "官方代码只有 3 个工具"
+      },
+      {
+        "item": "cs146s-L01",
+        "card": 4,
+        "note": "系统提示词规定 tool: 调用格式"
+      },
+      {
+        "item": "cs146s-L01",
+        "card": 5,
+        "note": "逐行解析 tool: 行"
+      },
+      {
+        "item": "cs146s-L01",
+        "card": 10,
+        "note": "哪些工具错误能回到模型"
+      }
+    ],
+    "related": [
+      "agent-loop",
+      "system-prompt"
+    ]
+  },
+  {
+    "id": "system-prompt",
+    "term": "系统提示词",
+    "en": "system prompt",
+    "def": "放在对话最前面、告诉模型身份和规则的提示词。第 1 讲的官方代码用它列出可用工具，并规定调用格式。黄同学h的文章提到：模型变强后，一些约束变成噪声，要清理不必要的 Skill 和系统提示词。",
+    "refs": [
+      {
+        "item": "cs146s-L01",
+        "card": 4,
+        "note": "工具说明写进系统提示词"
+      },
+      {
+        "item": "cs146s-L01",
+        "card": 12,
+        "note": "作业：逐节注解真实系统提示词"
+      },
+      {
+        "item": "huangtongxueh-ai-dev",
+        "card": 2,
+        "note": "模型变强后，写死的工作流变成噪声"
+      }
+    ],
+    "related": [
+      "tool-calling",
+      "skill"
+    ]
+  },
+  {
+    "id": "context",
+    "term": "上下文",
+    "en": "context",
+    "def": "模型做事时能看到的全部信息：对话、文件内容、需求文档等。课件说「好上下文 → 好代码」；黄同学h把它列为 Harness 的第一项，并用 CONTEXT.md 让后面的 Agent 共享同一份上下文。",
+    "refs": [
+      {
+        "item": "cs146s-L01",
+        "card": 8,
+        "note": "对话列表越长，每次调用越长"
+      },
+      {
+        "item": "cs146s-L01",
+        "card": 13,
+        "note": "Good context leads to good code"
+      },
+      {
+        "item": "huangtongxueh-ai-dev",
+        "card": 4,
+        "note": "需求对齐的结论写进 CONTEXT.md"
+      },
+      {
+        "item": "huangtongxueh-ai-dev",
+        "card": 1,
+        "note": "少写死工作流，多给上下文、环境和判断依据"
+      }
+    ],
+    "related": [
+      "agent-loop",
+      "harness",
+      "big-three"
+    ]
+  },
+  {
+    "id": "adversarial-review",
+    "term": "对抗性审查",
+    "en": "adversarial review",
+    "def": "不帮方案找理由，而是想办法证明它是错的：优先寻找能推翻核心假设的反例。原文 Prompt：「对这个方案做一次对抗性审查，优先寻找能推翻核心假设的反例。」适合方案评审和 Code Review。",
+    "refs": [
+      {
+        "item": "huangtongxueh-ai-dev",
+        "card": 9,
+        "note": "让模型推翻方案，而不是替方案找理由"
+      },
+      {
+        "item": "huangtongxueh-ai-dev",
+        "card": 5,
+        "note": "工作流里的交叉审查"
+      },
+      {
+        "item": "huangtongxueh-ai-dev",
+        "card": 7,
+        "note": "组合 Prompt 里的对抗性审查"
+      }
+    ],
+    "related": [
+      "first-principles",
+      "occam"
+    ]
+  },
+  {
+    "id": "e2e-test",
+    "term": "端到端测试",
+    "en": "end-to-end test",
+    "def": "从真实入口执行业务，再检查是否得到用户要的结果。黄同学h认为 Agent 写的测试多，缺的是端到端测试环境；预期结果要来自业务契约，不能把系统返回当正确答案。",
+    "refs": [
+      {
+        "item": "huangtongxueh-ai-dev",
+        "card": 6,
+        "note": "Agent 从真实入口跑到结果，自己找证据"
+      },
+      {
+        "item": "huangtongxueh-ai-dev",
+        "card": 10,
+        "note": "「什么算对」由业务契约来定"
+      },
+      {
+        "item": "huangtongxueh-ai-dev",
+        "card": 11,
+        "note": "靠小 MR 和端到端测试换来少读代码"
+      }
+    ],
+    "related": [
+      "skill",
+      "harness"
+    ]
+  },
+  {
+    "id": "skill",
+    "term": "Skill",
+    "en": "Skill",
+    "def": "写给 Agent 的可复用流程说明（SOP），比如需求追问、交接、端到端测试怎么跑。黄同学h的建议：一个流程重复超过三次，就让 Codex 整理成 Skill；但过重的 Skill 会消耗 Token，还会让模型照流程走多余的步骤。",
+    "refs": [
+      {
+        "item": "huangtongxueh-ai-dev",
+        "card": 2,
+        "note": "写死的工作流变成噪声"
+      },
+      {
+        "item": "huangtongxueh-ai-dev",
+        "card": 6,
+        "note": "可复用步骤写成 Skill"
+      }
+    ],
+    "related": [
+      "system-prompt",
+      "e2e-test"
+    ]
+  },
+  {
+    "id": "ablation",
+    "term": "消融实验",
+    "en": "ablation study",
+    "def": "系统变好了，不代表每样东西都有用：逐项去掉改动，判断收益真正来自哪里。原文例子：三项优化让 800ms 降到 100ms，消融后可能发现只加索引就到了 120ms。",
+    "refs": [
+      {
+        "item": "huangtongxueh-ai-dev",
+        "card": 8,
+        "note": "实例：消融实验怎么用"
+      },
+      {
+        "item": "huangtongxueh-ai-dev",
+        "card": 7,
+        "note": "组合 Prompt：验证贡献"
+      }
+    ],
+    "related": [
+      "occam"
+    ]
+  },
+  {
+    "id": "occam",
+    "term": "奥卡姆剃刀",
+    "en": "Occam's razor",
+    "def": "效果差不多时，选假设更少的方案。原文 Prompt：「用奥卡姆剃刀重新审查这个设计，在满足需求的前提下，删除所有非必要机制。」模型容易为了「完整」过度设计，所以对 Coding Agent 尤其有用。",
+    "refs": [
+      {
+        "item": "huangtongxueh-ai-dev",
+        "card": 7,
+        "note": "组合 Prompt：删除复杂度"
+      },
+      {
+        "item": "huangtongxueh-ai-dev",
+        "card": 9,
+        "note": "换一句话，模型关注什么"
+      }
+    ],
+    "related": [
+      "ablation",
+      "adversarial-review"
+    ]
+  },
+  {
+    "id": "first-principles",
+    "term": "第一性原理",
+    "en": "first principles",
+    "def": "不沿既定方案继续优化，而是重新问问题该怎么解。原文例子：不要基于「加 Redis 缓存」继续设计，先分析接口为什么慢，再找最小必要的解决方案。",
+    "refs": [
+      {
+        "item": "huangtongxueh-ai-dev",
+        "card": 7,
+        "note": "组合 Prompt：重新定义问题"
+      }
+    ],
+    "related": [
+      "adversarial-review"
+    ]
+  },
+  {
+    "id": "harness",
+    "term": "Harness",
+    "en": "harness",
+    "def": "黄同学h的总结：Harness = 正确的上下文 + 能执行的环境 + 判断结果的依据。工作流要定期做减法，删掉只是在弥补旧模型短板的步骤和约束。 黄迅（腾讯技术工程）一文：约束写在提示词里越厚模型越笨，写进框架越厚模型越省心；harness 之于 coding agent，犹如 IDE 之于人类程序员。",
+    "refs": [
+      {
+        "item": "huangtongxueh-ai-dev",
+        "card": 1,
+        "note": "少写死工作流，多给 Agent 上下文、环境和判断依据"
+      },
+      {
+        "item": "wechat-ai-coding-deepwater",
+        "card": 6,
+        "note": "写进提示词越厚越笨，写进框架越厚越强",
+        "thread": 1
+      },
+      {
+        "item": "wechat-ai-coding-deepwater",
+        "card": 6,
+        "note": "harness 之于 coding agent，犹如 IDE 之于人",
+        "thread": 4
+      }
+    ],
+    "related": [
+      "context",
+      "e2e-test"
+    ]
+  },
+  {
+    "id": "code-curator",
+    "term": "代码把关人（Curator）",
+    "en": "Code Curator",
+    "def": "EECS 498 AASE 第 1 讲的思维模型。Typist 写代码行、把时间花在 HOW、对按键负责（正确 = 我打对了）；Curator 说明意图（做什么、为什么）、评估输出（审查、改方向、接受）、对结果负责（正确 = 能运行，而且我能为它辩护，不管是谁打的）。课程对应原则：If you can explain it, it’s yours。",
+    "refs": [
+      {
+        "item": "eecs498-aase-L01",
+        "card": 6,
+        "note": "Typist / Curator 两栏对比"
+      },
+      {
+        "item": "eecs498-aase-L01",
+        "card": 3,
+        "note": "能解释才是你的"
+      },
+      {
+        "item": "eecs498-aase-L01",
+        "card": 12,
+        "note": "模拟器：读 diff 再接受"
+      }
+    ],
+    "related": [
+      "big-three"
+    ]
+  },
+  {
+    "id": "big-three",
+    "term": "Big Three",
+    "en": "Context · Model · Prompt",
+    "def": "EECS 498 AASE 的诊断框架：Context（AI 开始时知道什么）、Model（用哪个 AI，能力、成本、速度的取舍）、Prompt（怎么说明你要什么）。第 1 讲预告，第 3 讲深入；课程目标是用它推理 AI 编码工具为什么失败。",
+    "refs": [
+      {
+        "item": "eecs498-aase-L01",
+        "card": 8,
+        "note": "Big Three 预告"
+      },
+      {
+        "item": "eecs498-aase-L01",
+        "card": 10,
+        "note": "选 Aider：Big Three 是显式的"
+      }
+    ],
+    "related": [
+      "context",
+      "code-curator"
+    ]
+  },
+  {
+    "id": "facts-judgment",
+    "term": "机器提供事实，人做判断",
+    "en": "machines supply facts, humans judge",
+    "def": "黄迅文章的总原则：手上这件事是事实就交给机器，别让人核对，也别听 AI 声明；是判断就留给人，别指望机制替人拍板。原因之一：有些事实只有机器能取到（例：UTF-8 按字节切断，产物里出现 U+FFFD）。",
+    "refs": [
+      {
+        "item": "wechat-ai-coding-deepwater",
+        "card": 4,
+        "note": "一把尺子：是事实，还是判断？"
+      },
+      {
+        "item": "wechat-ai-coding-deepwater",
+        "card": 4,
+        "note": "有些错误人肉审查在原理上看不出来",
+        "thread": 4
+      },
+      {
+        "item": "wechat-ai-coding-deepwater",
+        "card": 8,
+        "note": "平台独立重跑，结果仅供参考，判断留给人",
+        "thread": 5
+      }
+    ],
+    "related": [
+      "hard-gate",
+      "harness"
+    ]
+  },
+  {
+    "id": "hard-gate",
+    "term": "硬门禁",
+    "en": "hard gate",
+    "def": "撞上就拦截的检查。黄迅文章的标准：判据是确定的事实（例：路径前缀比对），才能做硬门禁；判据是代理指标（例：扫会话记录看有没有读过规范），最多做提醒。信号要从外部取，误报会逼人把代码写得更差。",
+    "refs": [
+      {
+        "item": "wechat-ai-coding-deepwater",
+        "card": 7,
+        "note": "判据是事实才硬拦截，代理指标只提醒",
+        "thread": 1
+      },
+      {
+        "item": "wechat-ai-coding-deepwater",
+        "card": 8,
+        "note": "信号从外部取：覆盖率 0/0 直接判失败",
+        "thread": 1
+      },
+      {
+        "item": "wechat-ai-coding-deepwater",
+        "card": 3,
+        "note": "闸门只把例外递到人面前",
+        "thread": 5
+      }
+    ],
+    "related": [
+      "facts-judgment",
+      "harness"
+    ]
+  },
+  {
+    "id": "mutation-score",
+    "term": "变异击杀率",
+    "en": "mutation kill rate",
+    "def": "往业务代码里故意埋单点 bug（变异体，例：比较符翻转、删掉 or 0 兜底），测试在变异后的代码上失败就算杀死。黄迅团队用它替代覆盖率当主指标：覆盖率能靠无断言的测试刷出来，杀变异体必须有真断言。",
+    "refs": [
+      {
+        "item": "wechat-ai-coding-deepwater",
+        "card": 7,
+        "note": "覆盖率能刷，杀变异体必须有真断言",
+        "thread": 3
+      },
+      {
+        "item": "wechat-ai-coding-deepwater",
+        "card": 8,
+        "note": "模拟器：一份测试过五道闸门",
+        "thread": 3
+      },
+      {
+        "item": "wechat-ai-coding-deepwater",
+        "card": 5,
+        "note": "离线检查 AI 写的测试",
+        "thread": 4
+      }
+    ],
+    "related": [
+      "equivalent-mutant",
+      "facts-judgment"
+    ]
+  },
+  {
+    "id": "equivalent-mutant",
+    "term": "等价变异",
+    "en": "equivalent mutant",
+    "def": "改了代码但行为不变的「伪 bug」，混进分母就永远杀不死。黄迅团队的两条政策：日志差异不算可观测；可杀性以自然构造为准。三级验证：LLM 初审省机时，参照测试执行验证定生死，人工复核两边不一致的。",
+    "refs": [
+      {
+        "item": "wechat-ai-coding-deepwater",
+        "card": 10,
+        "note": "什么算真 bug 只有人能定",
+        "thread": 3
+      },
+      {
+        "item": "wechat-ai-coding-deepwater",
+        "card": 11,
+        "note": "LLM 审查省机时，执行验证定生死",
+        "thread": 3
+      }
+    ],
+    "related": [
+      "mutation-score"
+    ]
+  },
+  {
+    "id": "runtime-sovereignty",
+    "term": "runtime 主权",
+    "en": "runtime sovereignty",
+    "def": "对 agent loop 每个环节（上下文压缩、工具参数拼接、限额执行、遥测）能审计、能干预、能替换。黄迅的判断：编排问题追到根上是 runtime 主权问题；选型的真问题是主权边界划在哪，开源不等于主权。",
+    "refs": [
+      {
+        "item": "wechat-ai-coding-deepwater",
+        "card": 1,
+        "note": "编排追到根上是 runtime 主权问题",
+        "thread": 2
+      },
+      {
+        "item": "wechat-ai-coding-deepwater",
+        "card": 11,
+        "note": "选型的真问题是主权边界划在哪",
+        "thread": 2
+      },
+      {
+        "item": "wechat-ai-coding-deepwater",
+        "card": 12,
+        "note": "按证据强度排序：pi 先动，DSH 跟进",
+        "thread": 2
+      }
+    ],
+    "related": [
+      "agent-loop",
+      "harness"
+    ]
+  },
+  {
+    "id": "nested-loops",
+    "term": "嵌套环",
+    "en": "nested loops",
+    "def": "黄迅团队平台的设计思路：一次会话里的开发加自测是小环，会话结束后自动评审、checklist、全面测试是大环。每个环独立触发；环与环之间只传事实；人是环里的节点。",
+    "refs": [
+      {
+        "item": "wechat-ai-coding-deepwater",
+        "card": 1,
+        "note": "平台承载的不是功能，是嵌套的环",
+        "thread": 5
+      },
+      {
+        "item": "wechat-ai-coding-deepwater",
+        "card": 3,
+        "note": "每个环独立触发，说出来的才是新话",
+        "thread": 5
+      },
+      {
+        "item": "wechat-ai-coding-deepwater",
+        "card": 4,
+        "note": "环的接口只许传事实",
+        "thread": 5
+      }
+    ],
+    "related": [
+      "facts-judgment",
+      "named-failure"
+    ]
+  },
+  {
+    "id": "named-failure",
+    "term": "失败要有名字",
+    "en": "named failure",
+    "def": "每种失败都要有可见的状态，不能卡在中间态或和别的情况混成一个值。黄迅文章的例子：入库状态机最初漏掉「合并失败」，失败只能卡在「正在合并」；覆盖率看板把「采集失败」和「没有数据」显示成同一个 0%。",
+    "refs": [
+      {
+        "item": "wechat-ai-coding-deepwater",
+        "card": 3,
+        "note": "AI 交付功能强于交付「让失败可见」的纪律"
+      },
+      {
+        "item": "wechat-ai-coding-deepwater",
+        "card": 5,
+        "note": "没名字的失败，让环永远转不到头",
+        "thread": 5
+      },
+      {
+        "item": "wechat-ai-coding-deepwater",
+        "card": 6,
+        "note": "「合并失败」这一态，是事故买来的",
+        "thread": 5
+      }
+    ],
+    "related": [
+      "nested-loops"
+    ]
+  }
 ]

@@ -1,0 +1,480 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<script>(function(){var s=localStorage.getItem("theme");if(s?s==="dark":matchMedia("(prefers-color-scheme: dark)").matches)document.documentElement.classList.add("dark")})()</script>
+<title>AI Coding 深水区 · 主线 3 分数不可信，问题在题集</title><style>
+/* 学习搭子 固定设计系统 — 不要在课程里改这个文件。只改 lesson.html 的内容。 */
+:root{
+  --paper:#F6F6F7; --sheet:#FFFFFF; --ink:#16202C; --ink2:#4A5868; --hair:#E2E2E3;
+  --blue:#2550D9;  --blue-soft:#E3EAFD;   /* 主角：当前步骤 / 重点 */
+  --amber:#C77A00; --amber-soft:#FBEFD9; /* 数据 / 消息 */
+  --green:#16875A; --green-soft:#DDF3E9; /* 成功 / 工具结果 */
+  --red:#C8372D;   --red-soft:#FBE3E1;   /* 出错 */
+  --r-lg:12px; --r-sm:10px;
+  --font:"PingFang SC","Noto Sans CJK SC","Source Han Sans SC","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--paper);color:var(--ink);font:17px/1.65 var(--font);-webkit-font-smoothing:antialiased}
+.top{position:fixed;inset:0 0 auto 0;height:56px;display:flex;align-items:center;gap:16px;padding:0 28px;z-index:5}
+.top .course{font-weight:700;font-size:15px}
+.top .track{flex:1;height:6px;background:var(--hair);border-radius:99px;overflow:hidden}
+.top .track i{display:block;height:100%;width:0;background:var(--blue);transition:width .35s ease}
+.top .count{font:600 14px var(--mono);color:var(--ink2);min-width:60px;text-align:right}
+.deck{position:fixed;inset:56px 0 76px 0;display:grid;place-items:center;padding:0 24px}
+.card{display:none;width:min(1120px,100%);height:100%;max-height:640px;background:var(--sheet);border-radius:var(--r-lg);
+  box-shadow:0 1px 0 var(--hair),0 18px 40px -24px rgba(22,32,44,.25);overflow:hidden}
+.card.on{display:grid;grid-template-columns:1.45fr 1fr}
+.card.full.on{grid-template-columns:1fr}
+.stage{background:var(--paper);margin:14px 0 14px 14px;border-radius:14px;display:grid;place-items:center;padding:18px;overflow:hidden;position:relative}
+.card.full .stage{margin:14px}
+.stage svg{width:100%;height:100%;max-height:560px}
+.say{padding:40px 40px 32px;display:flex;flex-direction:column;justify-content:center;gap:14px;overflow:auto}
+.say .kicker{font-size:14px;color:var(--blue);font-weight:700}
+.say h2{margin:0;font-size:32px;line-height:1.25;letter-spacing:.01em}
+.say p{margin:0;color:var(--ink2)}
+.say p b{color:var(--ink)}
+.src{margin-top:auto;font-size:13px;color:var(--ink2);border-top:1px solid var(--hair);padding-top:12px}
+.src.extra::before{content:"补充";background:var(--amber-soft);color:var(--amber);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
+.src.official::before{content:"官方";background:var(--green-soft);color:var(--green);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
+code{font:14px var(--mono);background:var(--blue-soft);color:var(--blue);padding:1px 6px;border-radius:6px}
+pre{margin:0;font:13.5px/1.6 var(--mono);background:#101826;color:#DCE3EE;border-radius:12px;padding:16px 18px;overflow:auto;width:100%}
+pre .k{color:#8FB1FF}pre .s{color:#9BE0B4}pre .c{color:#71819A}pre .f{color:#FFC86B}pre .hl{background:rgba(143,177,255,.16);display:block;margin:0 -18px;padding:0 18px}
+.bottom{position:fixed;inset:auto 0 0 0;height:76px;display:flex;align-items:center;justify-content:center;gap:14px}
+.btn{font:600 15px var(--font);border:0;border-radius:99px;padding:11px 22px;cursor:pointer;background:var(--sheet);color:var(--ink);box-shadow:0 0 0 1px var(--hair)}
+.btn:hover{box-shadow:0 0 0 2px var(--blue)}
+.btn.main{background:var(--blue);color:#fff;box-shadow:none}
+.btn:disabled{opacity:.35;cursor:default;box-shadow:0 0 0 1px var(--hair)}
+.btn:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.btn.sm{padding:7px 14px;font-size:14px}
+/* ---- 图元（flow 组件生成） ---- */
+.fl-node rect{fill:var(--sheet);stroke:var(--hair);stroke-width:2;transition:all .3s}
+.fl-node text{font:600 17px var(--font);fill:var(--ink)}
+.fl-node .sub{font:400 13px var(--font);fill:var(--ink2)}
+.fl-node.blue rect{stroke:var(--blue)} .fl-node.amber rect{stroke:var(--amber)} .fl-node.green rect{stroke:var(--green)} .fl-node.red rect{stroke:var(--red)}
+.fl-node.act rect{fill:var(--blue-soft);stroke:var(--blue);stroke-width:3}
+.fl-node.dim{opacity:.35}
+.fl-edge{fill:none;stroke:#AEB8C6;stroke-width:2.2;transition:all .3s}
+.fl-edge.act{stroke:var(--blue);stroke-width:3.5;stroke-dasharray:8 6;animation:dash .8s linear infinite}
+.fl-elab{font:500 13px var(--font);fill:var(--ink2)}
+.fl-elab.act{fill:var(--blue);font-weight:700}
+@keyframes dash{to{stroke-dashoffset:-28}}
+/* ---- 模拟器 ---- */
+.sim{display:grid;grid-template-rows:auto 1fr auto;gap:10px;width:100%;height:100%}
+.sim .ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.sim .ctl label{font-size:13px;color:var(--ink2);display:flex;align-items:center;gap:6px}
+.sim .body{display:grid;grid-template-columns:1.1fr 1fr;gap:12px;min-height:0}
+.sim .log{background:var(--sheet);border-radius:12px;padding:10px;overflow:auto;font:13px/1.5 var(--mono)}
+.sim .msg{border-left:4px solid var(--hair);padding:6px 10px;margin:0 0 8px;border-radius:6px;background:var(--paper);white-space:pre-wrap;word-break:break-word;animation:pop .25s ease}
+.sim .msg b{font-family:var(--font);display:block;font-size:12px;color:var(--ink2)}
+.msg.user{border-color:var(--blue)} .msg.asst{border-color:var(--amber)} .msg.tool{border-color:var(--green)} .msg.err{border-color:var(--red);background:var(--red-soft)} .msg.sys{border-color:var(--ink2)}
+.sim .narr{background:var(--blue-soft);color:var(--ink);border-radius:12px;padding:10px 14px;font-size:15px;min-height:48px}
+@keyframes pop{from{opacity:0;transform:translateY(6px)}}
+/* ---- 小测 ---- */
+.quiz{width:100%;max-width:760px;display:flex;flex-direction:column;gap:12px}
+.quiz .qn{font:600 13px var(--mono);color:var(--ink2)}
+.quiz .qt{font-size:22px;font-weight:700;line-height:1.4}
+.quiz .opt{display:block;width:100%;text-align:left;font:16px var(--font);background:var(--sheet);border:2px solid var(--hair);border-radius:12px;padding:12px 16px;cursor:pointer;color:var(--ink)}
+.quiz .opt:hover{border-color:var(--blue)}
+.quiz .opt.ok{border-color:var(--green);background:var(--green-soft)} .quiz .opt.no{border-color:var(--red);background:var(--red-soft)}
+.quiz .fb{min-height:52px;font-size:15px;color:var(--ink2)}
+.quiz .fb a{color:var(--blue);font-weight:700;cursor:pointer}
+.quiz .nav{display:flex;gap:8px;align-items:center}
+@media (max-width:820px){
+  .card.full.on{grid-template-rows:1fr}.card.full .stage{overflow:auto;place-items:start center}
+  .card.on{grid-template-columns:1fr;grid-template-rows:minmax(220px,48%) 1fr}
+  .stage{margin:10px 10px 0}.say{padding:18px 20px}.say h2{font-size:24px}
+  .sim .body{grid-template-columns:1fr}.top{padding:0 14px}.top .course{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* ---- 展开细节 ---- */
+details.more{border-top:1px solid var(--hair);padding-top:10px;font-size:15px;color:var(--ink2)}
+details.more summary{cursor:pointer;font-weight:700;color:var(--blue);list-style:none}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary::before{content:"＋ 展开细节";}
+details.more[open] summary::before{content:"－ 收起细节";}
+details.more>*:not(summary){margin:8px 0 0}
+details.more ul{padding-left:18px}details.more li{margin:4px 0}
+details.more table{border-collapse:collapse;width:100%;font-size:14px}
+details.more td,details.more th{border-bottom:1px solid var(--hair);padding:5px 6px;text-align:left;vertical-align:top}
+/* ---- 对话列表（状态追踪）---- */
+.stack{width:100%;display:flex;flex-direction:column;gap:6px;font:13px/1.45 var(--mono)}
+.stack .row{display:grid;grid-template-columns:28px 92px 1fr;gap:8px;align-items:start;background:var(--sheet);border-radius:8px;padding:7px 10px;border-left:4px solid var(--hair)}
+.stack .row .i{color:var(--ink2)}.stack .row .r{font-weight:700}
+.stack .row.developer{border-color:var(--ink2)}.stack .row.user{border-color:var(--blue)}.stack .row.assistant{border-color:var(--amber)}.stack .row.result{border-color:var(--green)}
+.stack .row.new{background:var(--blue-soft)}.stack .row.bad{border-color:var(--red);background:var(--red-soft)}
+.stack .row .t{white-space:pre-wrap;word-break:break-word}
+/* ---- 对比/误区 ---- */
+.pairs{width:100%;display:grid;gap:10px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pair>div{background:var(--sheet);border-radius:12px;padding:12px 14px;font-size:15px}
+.pair .no{border-left:5px solid var(--red)}.pair .yes{border-left:5px solid var(--green)}
+.pair b{display:block;font-size:12px;color:var(--ink2);margin-bottom:4px}
+.say .more code{font-size:13px}
+@media (max-width:820px){.pair{grid-template-columns:1fr}.stack .row{grid-template-columns:22px 70px 1fr}}
+.pair .a{border-left:5px solid var(--blue)}.pair .b{border-left:5px solid var(--amber)}
+/* ===== v3：填满面板、原文标签、要点、条形图、分支 ===== */
+.stage{padding:10px}
+.stage svg.flow{width:100%;height:100%;max-height:none}
+.say p{font-size:17px}
+p.key{background:var(--blue-soft);color:var(--ink);border-radius:12px;padding:10px 14px;font-size:16px}
+p.key::before{content:"关键 ";font-weight:800;color:var(--blue)}
+.src.article::before{content:"原文";background:var(--blue-soft);color:var(--blue);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
+.stage>.stack{height:100%;justify-content:center;font-size:14.5px}
+.stage>.stack .row{padding:11px 12px;flex:0 1 auto}
+.stack .head{font:700 13px var(--font);color:var(--ink2);margin:8px 0 0}
+.stage>.pairs{height:100%;grid-auto-rows:minmax(0,1fr);align-content:stretch}
+.pair>div{font-size:16px;display:flex;flex-direction:column;justify-content:center}
+.bars{width:100%;display:flex;flex-direction:column;gap:16px;justify-content:center;height:100%;padding:0 10px}
+.bar{display:grid;grid-template-columns:150px 1fr 76px;gap:12px;align-items:center;font-size:15px}
+.bar .bl{font-weight:700;text-align:right}
+.bar .bt{height:30px;background:var(--sheet);border-radius:8px;overflow:hidden}
+.bar .bt i{display:block;height:100%;background:var(--ink2);border-radius:8px}
+.bar.blue .bt i{background:var(--blue)}.bar.amber .bt i{background:var(--amber)}.bar.green .bt i{background:var(--green)}.bar.red .bt i{background:var(--red)}
+.bar .bv{font:700 15px var(--mono)}
+.bar .bn{grid-column:2/4;font-size:13px;color:var(--ink2);margin-top:-8px}
+.bars .bc{font-size:13px;color:var(--ink2);text-align:center}
+.sim .branches{gap:14px;background:var(--sheet);border-radius:10px;padding:6px 10px}
+.sim .branches label{font-size:13.5px;color:var(--ink)}
+@media (max-width:820px){.bar{grid-template-columns:90px 1fr 60px}}
+.sim{grid-template-rows:auto auto 1fr auto}
+.sim.wide .body{grid-template-columns:1fr;grid-template-rows:minmax(0,1.1fr) minmax(0,1fr)}
+.sim:not(:has(.branches)){grid-template-rows:auto 1fr auto}
+.bar .bt.none{background:repeating-linear-gradient(45deg,var(--sheet) 0 8px,var(--hair) 8px 10px)}
+.say h2{font-size:28px;line-height:1.3}
+.sim .body{overflow:hidden}
+.sim .body>svg{min-height:0;height:100%;width:100%}
+.sim .narr{min-height:0}
+.stage>.stack{font-size:15.5px;gap:8px}
+.stage>.stack .row{padding:13px 14px}
+.stack .row .t{font-family:var(--font)}
+.stage:has(>.sim){place-items:stretch}
+.sim{min-height:0;height:100%;overflow:hidden}
+.sim.wide .body{grid-template-rows:minmax(0,55%) minmax(0,45%)}
+/* 讲解条放在图上方，永远可见 */
+.sim{grid-template-rows:auto auto auto minmax(0,1fr)}
+.sim:not(:has(.branches)){grid-template-rows:auto auto minmax(0,1fr)}
+.sim .ctl{order:0}.sim .branches{order:1}.sim .narr{order:2}.sim .body{order:3;min-height:0}
+/* ===== v4 ===== */
+.fl-node .sub{font-size:13.5px;fill:#3E4B5B}
+.fl-elab{font-size:13px;fill:#3E4B5B}
+.fl-edge.red{stroke:var(--red)}.fl-edge.amber{stroke:var(--amber)}.fl-edge.green{stroke:var(--green)}
+.fl-elab.red{fill:var(--red);font-weight:700}.fl-elab.amber{fill:var(--amber);font-weight:700}.fl-elab.green{fill:var(--green);font-weight:700}
+.stage{margin:10px 0 10px 10px;padding:4px}.card.full .stage{margin:0 10px 10px}
+.bar .bt i{background:#B8C2CF}
+.bar .bmiss{grid-column:2/4;color:var(--ink2);font-size:14px;font-style:italic}
+.sim .btn{background:transparent;box-shadow:0 0 0 1.5px var(--blue);color:var(--blue)}
+.sim .btn:hover{background:var(--blue-soft)}
+.say{justify-content:center}
+.src{margin-top:6px}
+.top .count{font-size:16px;color:var(--ink);font-weight:700}
+.top .track{height:6px}
+.card.full.on{grid-template-rows:auto minmax(0,1fr)}
+.head-full{padding:18px 26px 8px;display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
+.head-full .kicker{font-size:14px;color:var(--blue);font-weight:700}
+.head-full h2{margin:0;font-size:24px;line-height:1.3}
+.sim.wide .body{grid-template-rows:minmax(0,64%) minmax(0,36%)}
+@media (max-width:820px){.head-full{padding:12px 14px 6px}.head-full h2{font-size:19px}}
+.say{justify-content:safe center}
+@media (max-width:820px){.bars{gap:8px}.bar{font-size:13px;grid-template-columns:84px 1fr 56px}.bar .bt{height:20px}.bar .bn{font-size:12px;margin-top:-4px}.bars .bc{font-size:12px}
+ .sim .ctl .btn{padding:5px 10px}.sim .branches{flex-direction:column;align-items:flex-start;gap:2px}}
+
+/* 与知识库首页（VitePress 风格）对齐：白底页面、12px 圆角、细边框卡片、深色模式 */
+html,body{background:var(--page,#fff)}
+.card{border:1px solid var(--hair);box-shadow:none}
+html.dark{--page:#1b1b1f;--paper:#2a2a31;--sheet:#202127;--ink:#fffff5;--ink2:rgba(235,235,245,.65);--hair:#3a3a40;
+--blue:#7c9cff;--blue-soft:rgba(124,156,255,.16);--amber:#f0b429;--amber-soft:rgba(240,180,41,.14);--green:#3dd68c;--green-soft:rgba(61,214,140,.14);--red:#f66f81;--red-soft:rgba(246,111,129,.14);color-scheme:dark}
+html.dark .btn.main{color:#16202c}
+html.dark .fl-node .sub,html.dark .fl-elab{fill:var(--ink2)}html.dark .fl-elab{stroke:var(--page)!important}html.dark .fl-edge{stroke:#6b7280}
+html.dark .fl-elab.act{fill:var(--blue)}
+</style></head><body>
+<header class="top"><span class="course">AI Coding 深水区 · 主线 3 分数不可信，问题在题集</span><span class="track"><i></i></span><span class="count"></span></header>
+<main class="deck">
+<section class="card">
+  <div class="stage"><div class="pairs">
+   <div class="pair"><div class="no"><b>重平台：107 天、十七万行</b>留下两个分数，没有变成任何一次改动</div><div class="yes"><b>小实验：16 次跑数、一天跑完</b>改掉了一个至今在用的检索策略</div></div>
+   <div class="pair"><div class="b"><b>小实验的结论</b>不再让 agent 先读路由文档再跳转，改成直接 grep 知识库</div><div class="a"><b>效果（原文数字）</b>寻路步数从 12 步降到 2 步</div></div>
+  </div></div>
+  <div class="say"><span class="kicker">这条主线讲什么？</span><h2>差别不在工程量，在判据能不能执行</h2>
+  <p>判据（凭什么说这次做得对）能执行，结论才能变成一次提交。</p>
+  <p class="key">作者的结论：评测的核心工作是构建题集，不是搭平台。</p>
+  <div class="src article">第三部分「本部分要点」、（一）末段</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="stack">
+   <div class="head">三月底到七月中，给编码 agent 建的评测系统</div>
+   <div class="row developer"><span class="i">1</span><span class="r">规模</span><span class="t">107 天，评测目录累计增加十七万行（其中三万多行是参考实现）</span></div>
+   <div class="row developer"><span class="i">2</span><span class="r">流水线</span><span class="t">建隔离工作区到上传 trace 的六阶段；四层加权评分</span></div>
+   <div class="row developer"><span class="i">3</span><span class="r">平台</span><span class="t">React + FastAPI Web 平台；自部署六个容器看 trace；综合分低于 90 触发七类根因归因</span></div>
+   <div class="row developer"><span class="i">4</span><span class="r">题集</span><span class="t">25 道真实需求；答案是人写的百分制评分表，LLM 逐项判</span></div>
+   <div class="row bad new"><span class="i">5</span><span class="r">结果</span><span class="t">能核实的完整跑数只有两次：69.9（D）和 51.9（F）；二十天后作为「清理冗余」被删</span></div>
+  </div></div>
+  <div class="say"><span class="kicker">撞墙的那次长什么样？</span><h2>建得很完整，却只留下两次跑数</h2>
+  <p>做评测的判断本身是对的：没有度量就没法迭代，作者也是其中一票。</p>
+  <p class="key">方向没错，错的是形态。</p>
+  <div class="src article">第三部分（一）前半</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="bars" data-bars='{"unit":"%","items":[{"l":"确定性判分占比（设计）","v":65},{"l":"确定性判分占比（实际）","v":40,"note":"25 道题里 22 道没有冻结单测"},{"l":"LLM 判分影响力","v":60,"c":"blue","note":"裁判的 Cohen’s Kappa 只有 0.10–0.21"}],"caption":"数字来自作者后来的方法论审计"}'></div></div>
+  <div class="say"><span class="kicker">病因一：判据不能执行</span><h2>主指标落到了一个几乎不一致的裁判上</h2>
+  <p>先用参考实现逐行比对：agent 换一种合理架构，就被判「重大偏离」；改成 checklist 后，主指标落在 LLM 的语义判断上。</p>
+  <p class="key">Kappa 0.10 到 0.21 在统计学上叫「几乎不存在一致性」。</p>
+  <details class="more"><summary></summary><p>同一个代码库里早就写着答案：说明文档解释过为什么不给需求和架构文档打分——「LLM 打分误差大于信号」。作者说这个判断对代码同样成立，只是当时没人想到。</p></details>
+  <div class="src article">第三部分（一）「第一」</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="stack">
+   <div class="row bad"><span class="i">2</span><span class="r">判分器有 bug</span><span class="t">checklist 提取格式错，得分 0；修好后同一份日志判成 98 分</span></div>
+   <div class="row bad"><span class="i">3</span><span class="r">维持就是全职</span><span class="t">运维文档全是它自己的事故：日志管道死锁、SIGTTIN 卡死 23 分钟、子进程变僵尸</span></div>
+   <div class="row bad"><span class="i">4</span><span class="r">卷子追不上考生</span><span class="t">评测目录搬了三次家，判分方式换了三套；被评的命令已经被合并进另一个命令</span></div>
+   <div class="row result new"><span class="i">→</span><span class="r">新纪律</span><span class="t">给测试线做评测：一行平台代码都不写，只有题集、配置、脚本和跑数记录</span></div>
+  </div></div>
+  <div class="say"><span class="kicker">病因二到四</span><h2>平台越重，越追不上被评的 agent</h2>
+  <p>前三个病因是技术性的，第四个不是：agent 的迭代速度是这个领域最快的变量。</p>
+  <p class="key">平台越重，想往里改一个方案就越难。</p>
+  <details class="more"><summary></summary><p>方案三月底就成型：pass@k 与 pass^k、能力评测和回归评测两套题库、编辑振荡检测、越界修改检测、文件命中率；四天后有了第一笔代码。到六月审计时 pass@k 还挂在「待改进」，重复跑数一次没跑成——光维持流水线就占满了手。</p><p>作者把它和前言删 spec 联系起来：值钱的是想清楚，不是承载它的载体。</p></details>
+  <div class="src article">第三部分（一）「第二」至末段</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><svg class="flow" data-act="grader" data-edge="run>grader" data-flow='{"nodes":[{"id":"cut","x":110,"y":90,"t":"挖空回填","s":"每个模块删掉 5 个条目","c":"amber","w":200},{"id":"run","x":110,"y":270,"t":"agent 覆盖审计","s":"找到了，写进同模块另一个文件","c":"green","w":250},{"id":"grader","x":450,"y":270,"t":"评分器按文件核对","s":"放错文件 = 没找到","c":"red","w":210},{"id":"score","x":450,"y":90,"t":"召回率 100% → 40%","s":"连改两轮 skill，纹丝不动","c":"red","w":220}],"edges":[{"f":"cut","t":"run"},{"f":"run","t":"grader"},{"f":"grader","t":"score"}]}'></svg></div>
+  <div class="say"><span class="kicker">V1 为什么卡死？</span><h2>召回率跌到 40%，病根在评分器</h2>
+  <p>改 skill 改不动，就该怀疑分数本身。</p>
+  <p class="key">每模块只挖 5 条，召回率按 20% 一跳；之前「单点回归 → 定向改 skill」一半是在追噪声。</p>
+  <details class="more"><summary></summary><p>V1 两条轨道：闸门漏斗（照 Meta TestGen-LLM：lint 干净、能跑、连跑三次稳定、覆盖率达标）；挖空回填（召回率就是分数）。</p><p>第一天立下的纪律：考卷和答案独立存仓（考卷不能和课本放一起）；插件、业务代码、测试框架版本和模型全部锁死在一个配置文件；主指标全部确定性判分。</p><p>同一批跑数里一个模块跌 40 个百分点，另一个涨 20 个。作者：错误的评测信号比没有更危险。</p></details>
+  <div class="src article">第三部分（二）</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="pairs">
+   <div class="pair"><div class="yes"><b>有顶会论文支撑的三个方法</b>全站得住</div><div class="no"><b>唯一自研的挖空回填</b>恰恰塌掉</div></div>
+   <div class="pair"><div class="b"><b>构造效度研究</b>模糊测试工具杀死了 100% 的人工注入 bug，却没发现任何一个真实 bug</div><div class="a"><b>挖空回填的两个毛病</b>考「猜我删了什么」是合成任务；召回率能靠全量上报刷满，没有惩罚</div></div>
+  </div></div>
+  <div class="say"><span class="kicker">调研查出了什么？</span><h2>唯一没有业界对标的方法，恰好塌了</h2>
+  <p>五十多篇论文和基准过了一遍：SWE-Bench、Meta TestGen-LLM、TestGenEval、SWT-Bench。</p>
+  <p class="key">V2 的主张：判据必须是执行结果，不能是合成清单。</p>
+  <details class="more"><summary></summary><p>不再问「你找没找到我藏的东西」，改问「你写的测试实际能发现多少 bug」。</p><p>Anthropic 的 Demystifying evals for AI agents 把判分器分成基于代码、基于模型、人工三类，指出基于代码的客观、可复现、易调试；作者说这和他们「确定性判分」的纪律是同一个结论。</p></details>
+  <div class="src article">第三部分（三）</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="bars" data-bars='{"unit":"%","items":[{"l":"覆盖率","v":35.2},{"l":"变异分数","v":18.8,"c":"blue"}],"caption":"TestGenEval 实测：GPT-4o 生成的测试（原文引用的数字）"}'></div></div>
+  <div class="say"><span class="kicker">V2 用什么当主指标？</span><h2>覆盖率能刷，杀变异体必须有真断言</h2>
+  <p>变异体是故意埋进业务代码的单点 bug；测试在变异后的代码上失败，算杀死。</p>
+  <p class="key">五道闸门：有产出 → lint 干净 → 能跑 → 连跑三次稳定 → 杀死多少变异体；最后一道才是真正的区分闸。</p>
+  <details class="more"><summary></summary><p>算子例子：比较符翻转、and/or 互换、删掉 <code>or 0</code> 这类兜底、把状态写入整句注释掉。后四种直接取自他们的代码评审 checklist——项目真实 bug 的分类学。</p><p>前四道闸门沿用 Meta TestGen-LLM 的范式。</p></details>
+  <div class="src article">第三部分（四）前半</div></div>
+</section>
+
+<section class="card full">
+  <div class="head-full"><span class="kicker">动手：一份 AI 写的测试怎么过五道闸门？</span><h2>测试全绿还不够，要看它杀死了多少变异体</h2></div>
+  <div class="stage"><div class="sim" data-sim='{"label":"正常路径：杀死一个、漏掉一个","note":"串起来的示例，不是原文的真实跑数：闸门顺序、变异算子、五类短板和对应的 skill 规则来自原文；具体函数和测试是补充。","flow":{"pad":16,"nodes":[{"id":"out","x":90,"y":60,"t":"有产出","s":"AI 交出测试","c":"amber","w":140},{"id":"lint","x":270,"y":60,"t":"lint 干净","s":"ut-lint","c":"green","w":140},{"id":"run","x":450,"y":60,"t":"能跑","s":"在原代码上全过","c":"green","w":140},{"id":"stable","x":450,"y":210,"t":"连跑三次","s":"结果稳定","c":"green","w":140},{"id":"mut","x":270,"y":210,"t":"杀变异体","s":"跑在变异代码上","c":"blue","w":150},{"id":"score","x":90,"y":210,"t":"击杀率","s":"存活的聚类归因","c":"blue","w":140}],"edges":[{"f":"out","t":"lint"},{"f":"lint","t":"run"},{"f":"run","t":"stable"},{"f":"stable","t":"mut"},{"f":"mut","t":"score"},{"f":"score","t":"out","l":"存活 → 转成 skill 规则","c":"amber"}]},
+  "steps":[
+   {"act":"out","msg":{"r":"asst","n":"测试 agent","t":"为发奖函数写好 4 条单测（示例）"},"say":"第一道闸门只看有没有产出。"},
+   {"act":"lint","edge":"out>lint","msg":{"r":"tool","n":"ut-lint","t":"没有问题"},"say":"第二道：静态检查干净。"},
+   {"act":"run","edge":"lint>run","msg":{"r":"tool","n":"runner","t":"4/4 通过"},"say":"第三道：在原业务代码上能跑通。"},
+   {"act":"stable","edge":"run>stable","msg":{"r":"tool","n":"runner","t":"连跑三次，三次结果一致"},"say":"第四道：排除时好时坏的测试。到这里，覆盖率可能已经很好看。"},
+   {"act":"mut","edge":"stable>mut","msg":{"r":"sys","n":"脚本","t":"变异体 #1：比较符翻转（>= 改成 >）"},"say":"变异体是故意埋进业务代码的单点 bug。"},
+   {"act":"mut","msg":{"r":"tool","n":"runner","t":"有 1 条测试失败 → 变异体 #1 被杀死"},"say":"测试跑在变异后的代码上失败，算杀死。"},
+   {"act":"mut","msg":{"r":"sys","n":"脚本","t":"变异体 #2：删掉 x or 0 里的 or 0 兜底"},"say":"这个算子来自代码评审 checklist。"},
+   {"act":"mut","msg":{"r":"err","n":"runner","t":"4/4 照常通过 → 变异体 #2 存活"},"say":"照常通过，说明断言没盯住这个点。"},
+   {"act":"score","edge":"mut>score","msg":{"r":"tool","n":"统计","t":"把存活变异体聚类：归入「不测缺省兜底」"},"say":"原文里这是五类通病中最大的一簇。"},
+   {"act":"out","edge":"score>out","msg":{"r":"sys","n":"skill 规则","t":"每个 x or default，写一条字段缺失用例"},"say":"失败归因比分数本身更值钱。"}],
+  "alts":[
+   {"label":"分支 A：覆盖率很高，但没有断言","steps":[
+     {"act":"run","msg":{"r":"asst","n":"测试 agent","t":"测试调用了每个分支，但不写断言（示例）"},"say":"覆盖率能靠无断言的测试刷出来。"},
+     {"act":"stable","edge":"run>stable","msg":{"r":"tool","n":"runner","t":"连跑三次都通过；覆盖率很高"},"say":"前四道闸门全过。"},
+     {"act":"mut","edge":"stable>mut","msg":{"r":"err","n":"runner","t":"所有变异体都存活"},"say":"没有断言，变异后的代码也照样通过。"},
+     {"act":"score","edge":"mut>score","msg":{"r":"err","n":"统计","t":"击杀率为 0"},"say":"这就是 V2 不用覆盖率当主指标的原因。"}]},
+   {"label":"分支 B：只断言返回值，不查状态写入","steps":[
+     {"act":"mut","msg":{"r":"sys","n":"脚本","t":"变异体：把状态写入整句注释掉"},"say":"另一个来自评审 checklist 的算子。"},
+     {"act":"mut","msg":{"r":"err","n":"runner","t":"返回值没变，测试照常通过 → 存活"},"say":"测试只看了返回值。"},
+     {"act":"score","edge":"mut>score","msg":{"r":"tool","n":"统计","t":"归入「只断言返回值不查状态写入」"},"say":"五类通病之一。"},
+     {"act":"out","edge":"score>out","msg":{"r":"sys","n":"skill 规则","t":"有状态写入的函数，二次调用读回断言"},"say":"转成通用规则，不写具体函数名。"}]},
+   {"label":"分支 C：连跑三次不稳定","steps":[
+     {"act":"run","msg":{"r":"tool","n":"runner","t":"第一次全过"},"say":"能跑。"},
+     {"act":"stable","edge":"run>stable","msg":{"r":"err","n":"runner","t":"第二次有 1 条失败（示例：依赖了当前时间）"},"say":"结果不稳定的测试，在这道闸门被拦下。"},
+     {"act":"stable","msg":{"r":"sys","n":"闸门","t":"不进入变异测试"},"say":"不稳定的测试拿去杀变异体，结果没有意义。"}]}]}'></div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="stack">
+   <div class="head">V2 选题三层 + 硬门槛</div>
+   <div class="row user"><span class="i">1</span><span class="r">场景</span><span class="t">定业务代表性：发奖、任务、活动、成就、排行榜、聊天</span></div>
+   <div class="row user"><span class="i">2</span><span class="r">原型</span><span class="t">定失效模式覆盖：校验闸门、资源结算、时间窗口、状态机、兼容兜底、遍历聚合</span></div>
+   <div class="row user"><span class="i">3</span><span class="r">四轴</span><span class="t">定难度配平：分支复杂度、依赖构造成本、副作用、函数可见性</span></div>
+   <div class="row result"><span class="i">✓</span><span class="r">硬门槛</span><span class="t">函数体 15~80 行；分支密度不低于 3；依赖可 mock；可变异点不少于 6 个</span></div>
+   <div class="row bad"><span class="i">×</span><span class="r">不入题</span><span class="t">并发和性能——单测考不了</span></div>
+  </div></div>
+  <div class="say"><span class="kicker">变异体埋在哪？</span><h2>选什么函数，就是在考什么能力</h2>
+  <p>埋什么、埋在哪，才是整套评测真正费工夫的地方。</p>
+  <p class="key">V1 按「长相」选函数，偏科纯计算函数，成绩虚高。</p>
+  <details class="more"><summary></summary><p>V1 的三个后果：偏科纯计算函数（LLM 最擅长的题型）；现成用例全是 AI 生成的，「对标人写测试」不成立；没考虑代码活跃度，一个函数被重构，挂在它上面的 12 个变异体一次团灭。</p><p>原文说硬门槛共六道，每条都写明教训来源；原文列出的是本卡这几条，外加「并发和性能不入题」。</p></details>
+  <div class="src article">第三部分（四）后半</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><svg class="flow" data-act="final" data-edge="agent>final" data-flow='{"nodes":[{"id":"plan","x":100,"y":80,"t":"人给方案","c":"blue","w":150},{"id":"agent","x":330,"y":80,"t":"六个 sonnet 子 agent","s":"取素材，交回 34 个候选","c":"amber","w":230},{"id":"final","x":590,"y":80,"t":"人终审定稿","s":"34 选 16，排除理由留痕","c":"blue","w":220},{"id":"mut","x":330,"y":260,"t":"脚本造变异体","s":"按算子轮转配额","c":"green","w":200},{"id":"verify","x":590,"y":260,"t":"三级验证","s":"再由 deepseek-v4-pro 答题","c":"green","w":230}],"edges":[{"f":"plan","t":"agent"},{"f":"agent","t":"final"},{"f":"final","t":"mut"},{"f":"mut","t":"verify"}]}'></svg></div>
+  <div class="say"><span class="kicker">出题链上人和机器各站在哪？</span><h2>机器取素材，人复核事实、定政策</h2>
+  <p>检索交给 agent：叫 check_ 的可能是纯转发，叫 update_ 的反而是真校验，规则匹配不出来。</p>
+  <p class="key">agent 报「文件近一年改了 48 次」，落到候选函数上其实一年不超过 1 次：它交付的事实常常失真。</p>
+  <details class="more"><summary></summary><p>「什么算真 bug」只有人能定。等价变异（改了代码但行为不变的伪 bug）的两条政策：日志差异不算可观测；可杀性以自然构造为准。作者说这两条是纯粹的价值判断，机器只能在拍板之后照着执行。</p><p>同一道题答三遍取平均。</p></details>
+  <div class="src article">第三部分（五）前半</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="stack">
+   <div class="head">验证者自己也会错</div>
+   <div class="row bad"><span class="i">1</span><span class="r">LLM 初审</span><span class="t">and/or 翻转后短路保护失效、运行时报错其实可观测——判错三个；多分支条件只分析一支</span></div>
+   <div class="row bad"><span class="i">2</span><span class="r">指错位置</span><span class="t">同一行两个相同符号，理由指着隔壁那个 → 审查提示词要求按列号指认变异点</span></div>
+   <div class="row bad"><span class="i">3</span><span class="r">参照测试</span><span class="t">8 个没被杀死：5 个是参照测试写错（pcall 闭包外读局部变量恒为 nil，假 PASS），3 个真等价</span></div>
+   <div class="row result new"><span class="i">✓</span><span class="r">终裁</span><span class="t">184 个变异体：172 个可杀入题，12 个等价剔除；以人工复核那层为准</span></div>
+  </div></div>
+  <div class="say"><span class="kicker">三级验证为什么不能倒过来？</span><h2>LLM 审查省机时，执行验证定生死</h2>
+  <p>顺序：sonnet 初审剔掉明显等价的 → 参照测试执行验证定生死 → 人工只复核两边不一致的。</p>
+  <p class="key">每一条判定都带 LLM 初评和人工复核两层留痕。</p>
+  <details class="more"><summary></summary><p>开考前用 deepseek-v4-pro 把 16 道题各跑一遍校准区分度：击杀率跨度 12% 到 100%，宏平均 61%——题不太难也不太简单，才敢开考。</p></details>
+  <div class="src article">第三部分（五）后半</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="bars" data-bars='{"unit":"%","items":[{"l":"校验闸门 · 题 A","v":91},{"l":"校验闸门 · 题 B","v":14,"c":"blue"},{"l":"时间窗口 · 题 A","v":91},{"l":"时间窗口 · 题 B","v":12,"c":"blue"}],"caption":"同一原型标签下两道题的击杀率（原文数字；题 A/B 是本页的称呼）"}'></div></div>
+  <div class="say"><span class="kicker">数据推翻了什么？</span><h2>精心设计的原型分类，预测不了成绩</h2>
+  <p>真正决定分数的，是杀死它需不需要构造缺省值、边界值、状态型输入。</p>
+  <p class="key">作者认为：一套自认为合理的分类学被自己的数据推翻，是评测最该产出的东西。</p>
+  <details class="more"><summary></summary><p>跑数纪律：16 题 × 3 遍 = 48 次跑数、约 19 小时机时；只看均值；参照 Anthropic 约 6 个百分点的基础设施噪声，差距小于 3 个百分点不下方向性结论，3 到 6 标「可能显著」，超过 6 才拿来改 skill。</p><p>五类通病：不测缺省兜底（最大一簇）、不测边界相等值、只断言返回值不查状态写入、不踩非法入参、不枚举模式常量。作者坦言这些方向出题时就想到了，数据的作用是排轻重。</p><p>用考题练考题：照存活变异体改 skill 再用同一批题跑，提升一定被高估；要么只改不含函数名的通用规则并披露，要么留出集。</p><p>统计 agent 有没有自己跑测试，只认会话记录里的工具调用，不认文字自述。他们自己的命令配置声明剔除了 Task 工具，实际工具列表里它还在。</p></details>
+  <div class="src article">第三部分（六）（七）</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="pairs">
+   <div class="pair"><div class="b"><b>保值（是不是常）</b>真实 bug 变成的变异体、考纲、三级验证流水线、两条政策——换什么模型都接着用</div><div class="a"><b>投入产出（值不值得做）</b>一轮校准 500 多块、10 多个小时；题集光 token 就数千美元</div></div>
+   <div class="pair"><div class="yes"><b>值得上评测</b>两个方案之间做高成本取舍；要向别人证明改进真实存在</div><div class="no"><b>日常迭代不必</b>靠真实需求反复跑、靠会话分析定位短板，一样走得动</div></div>
+  </div></div>
+  <div class="say"><span class="kicker">取舍：业务团队要不要做评测？</span><h2>题集是本体，但保值不等于现在就该投</h2>
+  <p>跑数、判分、报告是一堆脚本；凡是能脚本化的环节，都不值得当成工程去建设。</p>
+  <p class="key">设计评测前先想清楚目的：目的决定要回答什么问题，也决定哪些可以不答。</p>
+  <details class="more"><summary></summary><p>例：评审指出缺少裸模型基线。目的是向别人证明插件价值，缺基线是硬伤；目的是优化 agent，多跑一个基线没有任何输入。</p><p>作者引用姚顺雨《The Second Half》：AI 下半场重心从「解决问题」转向「定义问题」。作者的说法：出题就是定义问题。</p><p>作者的话（他说可能得罪人）：不做评测一样能优化 agent，评测的成本业务团队很难扛。</p></details>
+  <div class="src article">第三部分（六）末、（八）</div></div>
+</section>
+
+<section class="card full">
+  <div class="head-full"><span class="kicker">小测</span><h2>用 6 个新场景检查：这个分数能不能信</h2></div>
+  <div class="stage"><div class="quiz" data-quiz='[
+   {"q":"你连改两轮 skill，某个评测分数纹丝不动。按原文，下一步先做什么？","opts":["再改第三轮 skill","怀疑分数本身：扒开评分器，对照会话记录复盘","换一个模型"],"a":1,"why":"改 skill 改不动，就该怀疑分数本身；V1 的病根在评分器。","back":5},
+   {"q":"AI 写的测试覆盖率 80%，但变异击杀率很低。最可能的原因是？","opts":["测试跑得太慢","断言没盯住行为，测试只是把代码走了一遍","变异体太多"],"a":1,"why":"覆盖率能靠无断言的测试刷出来，杀变异体必须有真断言。","back":7},
+   {"q":"一次改动后，均值从 60% 升到 64%。按原文的跑数纪律，该怎么写结论？","opts":["改动有效，马上推广","标「可能显著」，还不能当改 skill 的依据","差距太小，不用记"],"a":1,"why":"3 到 6 个百分点标「可能显著」，超过 6 个才当改 skill 的依据。","back":12},
+   {"q":"老板问：「这套插件到底比裸模型强多少？」你的评测一直带着完整 skill 跑。按原文？","opts":["现有数据就能回答","目的变成向别人证明价值，就必须补裸模型基线","评测没法回答这类问题"],"a":1,"why":"目的决定要回答什么问题；做优化可以不答，做证明就不行。","back":13},
+   {"q":"你照着存活变异体改了 skill，再用同一批 16 道题跑分，分数大涨。问题在哪？","opts":["没有问题","用考题练考题，提升被高估；应只改通用规则并披露，或留出集","应该多跑几遍"],"a":1,"why":"这是评测最容易自欺的地方，而机器不会主动提醒你。","back":12},
+   {"q":"LLM 初审说某个变异体等价，建议剔除。按原文的三级验证，接下来？","opts":["直接剔除，省时间","用参照测试执行验证定生死；两边不一致时人工复核","让另一个 LLM 再判一次"],"a":1,"why":"LLM 审查省的是机时，执行验证定的是生死；顺序不能颠倒。","back":11}]'></div></div>
+</section>
+</main>
+<nav class="bottom"><button class="btn" id="prev">上一张</button><button class="btn main" id="next">下一张</button></nav>
+<script>
+/* 学习搭子 固定组件库 — 不要在课程里改这个文件。 */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const NS='http://www.w3.org/2000/svg';
+const el=(t,a={},p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p&&p.appendChild(e);return e};
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+/* ---------- 卡片翻页 ---------- */
+const cards=$$('.card');let cur=0;
+function go(i){i=Math.max(0,Math.min(cards.length-1,i));cards[cur].classList.remove('on');cur=i;cards[cur].classList.add('on');
+  $('.track i').style.width=((cur+1)/cards.length*100)+'%';$('.count').textContent=(cur+1)+' / '+cards.length;
+  $('#prev').disabled=cur===0;$('#next').disabled=cur===cards.length-1;history.replaceState(null,'','#'+(cur+1));}
+window.goCard=n=>go(n-1);
+$('#prev').onclick=()=>go(cur-1);$('#next').onclick=()=>go(cur+1);
+addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.key==='ArrowRight')go(cur+1);if(e.key==='ArrowLeft')go(cur-1)});
+let sx=null;addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
+addEventListener('touchend',e=>{if(sx===null)return;const d=e.changedTouches[0].clientX-sx;if(Math.abs(d)>60)go(cur+(d<0?1:-1));sx=null});
+
+/* ---------- flow：用 JSON 画流程图 ----------
+ spec = {w,h,nodes:[{id,x,y,t,s?,c?,w?}],edges:[{f,t,l?,bend?}]}  节点坐标是中心点 */
+function drawFlow(svg,spec){
+  svg.innerHTML='';
+  const defs=el('defs',{},svg);
+  [['a','#AEB8C6'],['b','#2550D9'],['red','#C8372D'],['amber','#C77A00'],['green','#16875A']].forEach(([id,c])=>{const m=el('marker',{id:'ar'+id+svg.dataset.uid,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:7,markerHeight:7,orient:'auto-start-reverse'},defs);el('path',{d:'M0,0L10,5L0,10z',fill:c},m)});
+  const N={};spec.nodes.forEach(n=>N[n.id]={...n,w:n.w||150,h:n.s?70:56});
+  const ns=Object.values(N);
+  let x0=Math.min(...ns.map(n=>n.x-n.w/2)),x1=Math.max(...ns.map(n=>n.x+n.w/2)),y0=Math.min(...ns.map(n=>n.y-n.h/2)),y1=Math.max(...ns.map(n=>n.y+n.h/2));
+  const B={x0,x1,y0,y1};
+  const eg=el('g',{},svg),ng=el('g',{},svg);svg._edges={};svg._nodes={};
+  const clip=(a,b)=>{const dx=b.x-a.x,dy=b.y-a.y;const s=Math.min(Math.abs((a.w/2+6)/(dx||1e-9)),Math.abs((a.h/2+6)/(dy||1e-9)));return[a.x+dx*s,a.y+dy*s]};
+  spec.edges.forEach(e=>{const a=N[e.f],b=N[e.t];let d,lx,ly;
+    if(e.route){ /* 沿外圈走的直角线：top|bottom|left|right，lane 控制离外框的距离 */
+      const g=30+(e.lane||0)*30,oa=e.oa||0,ob=e.ob||0;
+      if(e.route==='top'||e.route==='bottom'){const t=e.route==='top',Y=t?B.y0-g:B.y1+g,ya=a.y+(t?-1:1)*(a.h/2+2),yb=b.y+(t?-1:1)*(b.h/2+8);
+        d=`M${a.x+oa},${ya} V${Y} H${b.x+ob} V${yb}`;lx=(a.x+oa+b.x+ob)/2;ly=Y+(t?-8:18);
+        t?(y0=Math.min(y0,Y-26)):(y1=Math.max(y1,Y+26));}
+      else{const l=e.route==='left',X=l?B.x0-g:B.x1+g,xa=a.x+(l?-1:1)*(a.w/2+2),xb=b.x+(l?-1:1)*(b.w/2+8);
+        d=`M${xa},${a.y+oa} H${X} V${b.y+ob} H${xb}`;lx=X+(l?-8:8);ly=(a.y+b.y)/2;
+        l?(x0=Math.min(x0,X-90)):(x1=Math.max(x1,X+90));}
+    }else{const[p1,q1]=clip(a,b),[p2,q2]=clip(b,a);const mx=(p1+p2)/2,my=(q1+q2)/2,len=Math.hypot(p2-p1,q2-q1)||1,bd=e.bend||0;
+      const cx=mx-(q2-q1)/len*bd,cy=my+(p2-p1)/len*bd;d=`M${p1},${q1} Q${cx},${cy} ${p2},${q2}`;
+      const qx=.25*p1+.5*cx+.25*p2,qy=.25*q1+.5*cy+.25*q2,sg=bd>=0?1:-1;lx=qx-(q2-q1)/len*sg*14;ly=qy+(p2-p1)/len*sg*14+4;}
+    const mk=e.c||'a';const p=el('path',{d,class:'fl-edge '+(e.c||''),'marker-end':`url(#ar${mk}${svg.dataset.uid})`},eg);p._mk=mk;
+    let lab=null;if(e.l){const anc=e.route==='left'?'end':e.route==='right'?'start':'middle';lab=el('text',{x:lx,y:ly,'text-anchor':anc,class:'fl-elab '+(e.c||''),stroke:'#F2F4F7','stroke-width':5,'paint-order':'stroke'},eg);lab.textContent=e.l}
+    svg._edges[e.f+'>'+e.t]={p,lab}});
+  ns.forEach(n=>{const g=el('g',{class:'fl-node '+(n.c||'')},ng);
+    el('rect',{x:n.x-n.w/2,y:n.y-n.h/2,width:n.w,height:n.h,rx:14},g);
+    const t=el('text',{x:n.x,y:n.y+(n.s?-4:6),'text-anchor':'middle'},g);t.textContent=n.t;
+    if(n.s){const s=el('text',{x:n.x,y:n.y+18,'text-anchor':'middle',class:'sub'},g);s.textContent=n.s}
+    svg._nodes[n.id]=g});
+  /* 自动贴合：viewBox 只包住内容，图会放大填满面板 */
+  const P=spec.pad??8;svg.setAttribute('viewBox',`${x0-P} ${y0-P-10} ${x1-x0+2*P} ${y1-y0+2*P+20}`);
+  svg._set=(act,edge)=>{for(const k in svg._nodes)svg._nodes[k].classList.toggle('act',k===act);
+    for(const k in svg._edges){const on=k===edge,E=svg._edges[k];E.p.classList.toggle('act',on);E.p.setAttribute('marker-end',`url(#ar${on?'b':E.p._mk}${svg.dataset.uid})`);E.lab&&E.lab.classList.toggle('act',on)}};
+  svg._set(svg.dataset.act,svg.dataset.edge);
+}
+let uid=0;
+$$('svg.flow').forEach(s=>{s.dataset.uid=++uid;drawFlow(s,JSON.parse(s.dataset.flow))});
+
+/* ---------- sim：一步步走的模拟器 ----------
+ data-sim = {flow:{...}, steps:[{act,edge,msg:{r:user|asst|tool|err|sys,n?,t},say}], alt?:{label,steps:[...]}} */
+$$('.sim').forEach(box=>{
+  const spec=JSON.parse(box.dataset.sim);if(spec.alt&&!spec.alts)spec.alts=[spec.alt];const AL=spec.alts||[];const gname='br'+(++uid);
+  box.innerHTML=`<div class="ctl"><button class="btn sm" data-a="step">下一步</button><button class="btn sm" data-a="play">▶ 自动</button><button class="btn sm" data-a="reset">重置</button>
+   <label>速度 <input type="range" min="300" max="2500" step="100" value="1200"></label></div>${AL.length?`<div class="ctl branches"><label><input type="radio" name="${gname}" value="-1" checked> ${esc(spec.label||'正常路径')}</label>${AL.map((a,j)=>`<label><input type="radio" name="${gname}" value="${j}"> ${esc(a.label)}</label>`).join('')}</div>`:''}
+   <div class="body"><svg class="flow"></svg><div class="log"></div></div><div class="narr"></div>`;
+  if(spec.layout==='wide')box.classList.add('wide');
+  const svg=$('svg',box);svg.dataset.uid=++uid;drawFlow(svg,spec.flow);
+  const log=$('.log',box),narr=$('.narr',box),radios=$$('input[type=radio]',box),spd=$('input[type=range]',box),play=$('[data-a=play]',box);
+  let i=0,timer=null;const sel=()=>{const r=radios.find(r=>r.checked);return r?+r.value:-1};const steps=()=>sel()>=0?AL[sel()].steps:spec.steps;
+  const hint=spec.note?esc(spec.note)+'　点「下一步」开始。':'点「下一步」开始。';const reset=()=>{i=0;log.innerHTML='';narr.innerHTML=hint;svg._set(null,null);stop()};
+  const stop=()=>{clearTimeout(timer);timer=null;play.textContent='▶ 自动'};
+  const step=()=>{const S=steps();if(i>=S.length){narr.textContent='流程结束。点「重置」再走一遍。';stop();return false}
+    const s=S[i++];svg._set(s.act,s.edge);if(s.msg){const d=document.createElement('div');d.className='msg '+s.msg.r;
+      d.innerHTML=`<b>${esc(s.msg.n||({user:'用户',asst:'模型',tool:'工具结果',err:'出错',sys:'系统提示词'}[s.msg.r]))}</b>${esc(s.msg.t)}`;log.appendChild(d);log.scrollTop=1e9}
+    narr.innerHTML=`<b>第 ${i}/${S.length} 步</b>　${esc(s.say)}`;return true};
+  const loop=()=>{if(step())timer=setTimeout(loop,+spd.value);else stop()};
+  box.onclick=e=>{const a=e.target.dataset.a;if(a==='step'){stop();step()}if(a==='reset')reset();if(a==='play'){if(timer)stop();else{play.textContent='❚❚ 暂停';loop()}}};
+  narr.innerHTML=hint;radios.forEach(r=>r.onchange=reset);
+  const P=new URLSearchParams(location.search);if(P.get('alt')&&radios[+P.get('alt')]){radios[+P.get('alt')].checked=true}for(let n=+P.get('sim')||0;n>0;n--)step(); /* 自查用：?sim=5&alt=1 */
+});
+
+/* ---------- bars：横向条形图 ----------
+ data-bars = {unit, items:[{l,v,c?:blue|amber|green|red,note?}], caption?}  数字必须来自原文 */
+$$('.bars').forEach(box=>{const B=JSON.parse(box.dataset.bars),mx=Math.max(...B.items.filter(i=>i.v!=null).map(i=>i.v));
+  box.innerHTML=B.items.map(i=>`<div class="bar ${i.c||''}"><span class="bl">${esc(i.l)}</span>${i.v==null?`<span class="bmiss">${esc(i.miss||'原文未给数字')}</span>`:`<span class="bt"><i style="width:${(i.v/mx*100).toFixed(1)}%"></i></span><span class="bv">${esc(i.v)}${esc(B.unit||'')}</span>`}${i.note?`<span class="bn">${esc(i.note)}</span>`:''}</div>`).join('')+(B.caption?`<div class="bc">${esc(B.caption)}</div>`:'')});
+
+/* ---------- quiz：页内小测 ----------
+ data-quiz = [{q,opts:[...],a:正确下标,why,back:答错时回到第几张卡片}] */
+$$('.quiz').forEach(box=>{
+  const Q=JSON.parse(box.dataset.quiz);let k=0,score=0;const done=new Set();
+  const render=()=>{const q=Q[k];box.innerHTML=`<div class="qn">第 ${k+1} / ${Q.length} 题　·　已答对 ${score}</div><div class="qt">${esc(q.q)}</div>
+    ${q.opts.map((o,j)=>`<button class="opt" data-j="${j}">${String.fromCharCode(65+j)}. ${esc(o)}</button>`).join('')}
+    <div class="fb"></div><div class="nav"><button class="btn sm" data-n="-1" ${k?'':'disabled'}>上一题</button><button class="btn sm main" data-n="1" ${k<Q.length-1?'':'disabled'}>下一题</button></div>`};
+  box.onclick=e=>{const t=e.target;if(t.dataset.n){k+=+t.dataset.n;render();return}
+    if(t.dataset.j===undefined||done.has(k))return;const q=Q[k],j=+t.dataset.j,fb=$('.fb',box);done.add(k);
+    $$('.opt',box)[q.a].classList.add('ok');
+    if(j===q.a){score++;fb.innerHTML='✓ 对。'+esc(q.why)}else{t.classList.add('no');fb.innerHTML='✗ 不对。'+esc(q.why)+(q.back?` <a onclick="goCard(${q.back})">回到第 ${q.back} 张再看看</a>`:'')}
+    $('.qn',box).textContent=`第 ${k+1} / ${Q.length} 题　·　已答对 ${score}`};
+  render();
+  const pk=new URLSearchParams(location.search).get('pick');if(pk!==null)$$('.opt',box)[+pk].click(); /* 自查用：?pick=0 */
+});
+
+go(Math.max(0,(parseInt(location.hash.slice(1))||1)-1));
+})();
+</script></body></html>

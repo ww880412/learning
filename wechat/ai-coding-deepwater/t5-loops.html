@@ -1,0 +1,440 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<script>(function(){var s=localStorage.getItem("theme");if(s?s==="dark":matchMedia("(prefers-color-scheme: dark)").matches)document.documentElement.classList.add("dark")})()</script>
+<title>AI Coding 深水区 · 主线 5 把判据变成流程</title><style>
+/* 学习搭子 固定设计系统 — 不要在课程里改这个文件。只改 lesson.html 的内容。 */
+:root{
+  --paper:#F6F6F7; --sheet:#FFFFFF; --ink:#16202C; --ink2:#4A5868; --hair:#E2E2E3;
+  --blue:#2550D9;  --blue-soft:#E3EAFD;   /* 主角：当前步骤 / 重点 */
+  --amber:#C77A00; --amber-soft:#FBEFD9; /* 数据 / 消息 */
+  --green:#16875A; --green-soft:#DDF3E9; /* 成功 / 工具结果 */
+  --red:#C8372D;   --red-soft:#FBE3E1;   /* 出错 */
+  --r-lg:12px; --r-sm:10px;
+  --font:"PingFang SC","Noto Sans CJK SC","Source Han Sans SC","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--paper);color:var(--ink);font:17px/1.65 var(--font);-webkit-font-smoothing:antialiased}
+.top{position:fixed;inset:0 0 auto 0;height:56px;display:flex;align-items:center;gap:16px;padding:0 28px;z-index:5}
+.top .course{font-weight:700;font-size:15px}
+.top .track{flex:1;height:6px;background:var(--hair);border-radius:99px;overflow:hidden}
+.top .track i{display:block;height:100%;width:0;background:var(--blue);transition:width .35s ease}
+.top .count{font:600 14px var(--mono);color:var(--ink2);min-width:60px;text-align:right}
+.deck{position:fixed;inset:56px 0 76px 0;display:grid;place-items:center;padding:0 24px}
+.card{display:none;width:min(1120px,100%);height:100%;max-height:640px;background:var(--sheet);border-radius:var(--r-lg);
+  box-shadow:0 1px 0 var(--hair),0 18px 40px -24px rgba(22,32,44,.25);overflow:hidden}
+.card.on{display:grid;grid-template-columns:1.45fr 1fr}
+.card.full.on{grid-template-columns:1fr}
+.stage{background:var(--paper);margin:14px 0 14px 14px;border-radius:14px;display:grid;place-items:center;padding:18px;overflow:hidden;position:relative}
+.card.full .stage{margin:14px}
+.stage svg{width:100%;height:100%;max-height:560px}
+.say{padding:40px 40px 32px;display:flex;flex-direction:column;justify-content:center;gap:14px;overflow:auto}
+.say .kicker{font-size:14px;color:var(--blue);font-weight:700}
+.say h2{margin:0;font-size:32px;line-height:1.25;letter-spacing:.01em}
+.say p{margin:0;color:var(--ink2)}
+.say p b{color:var(--ink)}
+.src{margin-top:auto;font-size:13px;color:var(--ink2);border-top:1px solid var(--hair);padding-top:12px}
+.src.extra::before{content:"补充";background:var(--amber-soft);color:var(--amber);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
+.src.official::before{content:"官方";background:var(--green-soft);color:var(--green);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
+code{font:14px var(--mono);background:var(--blue-soft);color:var(--blue);padding:1px 6px;border-radius:6px}
+pre{margin:0;font:13.5px/1.6 var(--mono);background:#101826;color:#DCE3EE;border-radius:12px;padding:16px 18px;overflow:auto;width:100%}
+pre .k{color:#8FB1FF}pre .s{color:#9BE0B4}pre .c{color:#71819A}pre .f{color:#FFC86B}pre .hl{background:rgba(143,177,255,.16);display:block;margin:0 -18px;padding:0 18px}
+.bottom{position:fixed;inset:auto 0 0 0;height:76px;display:flex;align-items:center;justify-content:center;gap:14px}
+.btn{font:600 15px var(--font);border:0;border-radius:99px;padding:11px 22px;cursor:pointer;background:var(--sheet);color:var(--ink);box-shadow:0 0 0 1px var(--hair)}
+.btn:hover{box-shadow:0 0 0 2px var(--blue)}
+.btn.main{background:var(--blue);color:#fff;box-shadow:none}
+.btn:disabled{opacity:.35;cursor:default;box-shadow:0 0 0 1px var(--hair)}
+.btn:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.btn.sm{padding:7px 14px;font-size:14px}
+/* ---- 图元（flow 组件生成） ---- */
+.fl-node rect{fill:var(--sheet);stroke:var(--hair);stroke-width:2;transition:all .3s}
+.fl-node text{font:600 17px var(--font);fill:var(--ink)}
+.fl-node .sub{font:400 13px var(--font);fill:var(--ink2)}
+.fl-node.blue rect{stroke:var(--blue)} .fl-node.amber rect{stroke:var(--amber)} .fl-node.green rect{stroke:var(--green)} .fl-node.red rect{stroke:var(--red)}
+.fl-node.act rect{fill:var(--blue-soft);stroke:var(--blue);stroke-width:3}
+.fl-node.dim{opacity:.35}
+.fl-edge{fill:none;stroke:#AEB8C6;stroke-width:2.2;transition:all .3s}
+.fl-edge.act{stroke:var(--blue);stroke-width:3.5;stroke-dasharray:8 6;animation:dash .8s linear infinite}
+.fl-elab{font:500 13px var(--font);fill:var(--ink2)}
+.fl-elab.act{fill:var(--blue);font-weight:700}
+@keyframes dash{to{stroke-dashoffset:-28}}
+/* ---- 模拟器 ---- */
+.sim{display:grid;grid-template-rows:auto 1fr auto;gap:10px;width:100%;height:100%}
+.sim .ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.sim .ctl label{font-size:13px;color:var(--ink2);display:flex;align-items:center;gap:6px}
+.sim .body{display:grid;grid-template-columns:1.1fr 1fr;gap:12px;min-height:0}
+.sim .log{background:var(--sheet);border-radius:12px;padding:10px;overflow:auto;font:13px/1.5 var(--mono)}
+.sim .msg{border-left:4px solid var(--hair);padding:6px 10px;margin:0 0 8px;border-radius:6px;background:var(--paper);white-space:pre-wrap;word-break:break-word;animation:pop .25s ease}
+.sim .msg b{font-family:var(--font);display:block;font-size:12px;color:var(--ink2)}
+.msg.user{border-color:var(--blue)} .msg.asst{border-color:var(--amber)} .msg.tool{border-color:var(--green)} .msg.err{border-color:var(--red);background:var(--red-soft)} .msg.sys{border-color:var(--ink2)}
+.sim .narr{background:var(--blue-soft);color:var(--ink);border-radius:12px;padding:10px 14px;font-size:15px;min-height:48px}
+@keyframes pop{from{opacity:0;transform:translateY(6px)}}
+/* ---- 小测 ---- */
+.quiz{width:100%;max-width:760px;display:flex;flex-direction:column;gap:12px}
+.quiz .qn{font:600 13px var(--mono);color:var(--ink2)}
+.quiz .qt{font-size:22px;font-weight:700;line-height:1.4}
+.quiz .opt{display:block;width:100%;text-align:left;font:16px var(--font);background:var(--sheet);border:2px solid var(--hair);border-radius:12px;padding:12px 16px;cursor:pointer;color:var(--ink)}
+.quiz .opt:hover{border-color:var(--blue)}
+.quiz .opt.ok{border-color:var(--green);background:var(--green-soft)} .quiz .opt.no{border-color:var(--red);background:var(--red-soft)}
+.quiz .fb{min-height:52px;font-size:15px;color:var(--ink2)}
+.quiz .fb a{color:var(--blue);font-weight:700;cursor:pointer}
+.quiz .nav{display:flex;gap:8px;align-items:center}
+@media (max-width:820px){
+  .card.full.on{grid-template-rows:1fr}.card.full .stage{overflow:auto;place-items:start center}
+  .card.on{grid-template-columns:1fr;grid-template-rows:minmax(220px,48%) 1fr}
+  .stage{margin:10px 10px 0}.say{padding:18px 20px}.say h2{font-size:24px}
+  .sim .body{grid-template-columns:1fr}.top{padding:0 14px}.top .course{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* ---- 展开细节 ---- */
+details.more{border-top:1px solid var(--hair);padding-top:10px;font-size:15px;color:var(--ink2)}
+details.more summary{cursor:pointer;font-weight:700;color:var(--blue);list-style:none}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary::before{content:"＋ 展开细节";}
+details.more[open] summary::before{content:"－ 收起细节";}
+details.more>*:not(summary){margin:8px 0 0}
+details.more ul{padding-left:18px}details.more li{margin:4px 0}
+details.more table{border-collapse:collapse;width:100%;font-size:14px}
+details.more td,details.more th{border-bottom:1px solid var(--hair);padding:5px 6px;text-align:left;vertical-align:top}
+/* ---- 对话列表（状态追踪）---- */
+.stack{width:100%;display:flex;flex-direction:column;gap:6px;font:13px/1.45 var(--mono)}
+.stack .row{display:grid;grid-template-columns:28px 92px 1fr;gap:8px;align-items:start;background:var(--sheet);border-radius:8px;padding:7px 10px;border-left:4px solid var(--hair)}
+.stack .row .i{color:var(--ink2)}.stack .row .r{font-weight:700}
+.stack .row.developer{border-color:var(--ink2)}.stack .row.user{border-color:var(--blue)}.stack .row.assistant{border-color:var(--amber)}.stack .row.result{border-color:var(--green)}
+.stack .row.new{background:var(--blue-soft)}.stack .row.bad{border-color:var(--red);background:var(--red-soft)}
+.stack .row .t{white-space:pre-wrap;word-break:break-word}
+/* ---- 对比/误区 ---- */
+.pairs{width:100%;display:grid;gap:10px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pair>div{background:var(--sheet);border-radius:12px;padding:12px 14px;font-size:15px}
+.pair .no{border-left:5px solid var(--red)}.pair .yes{border-left:5px solid var(--green)}
+.pair b{display:block;font-size:12px;color:var(--ink2);margin-bottom:4px}
+.say .more code{font-size:13px}
+@media (max-width:820px){.pair{grid-template-columns:1fr}.stack .row{grid-template-columns:22px 70px 1fr}}
+.pair .a{border-left:5px solid var(--blue)}.pair .b{border-left:5px solid var(--amber)}
+/* ===== v3：填满面板、原文标签、要点、条形图、分支 ===== */
+.stage{padding:10px}
+.stage svg.flow{width:100%;height:100%;max-height:none}
+.say p{font-size:17px}
+p.key{background:var(--blue-soft);color:var(--ink);border-radius:12px;padding:10px 14px;font-size:16px}
+p.key::before{content:"关键 ";font-weight:800;color:var(--blue)}
+.src.article::before{content:"原文";background:var(--blue-soft);color:var(--blue);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
+.stage>.stack{height:100%;justify-content:center;font-size:14.5px}
+.stage>.stack .row{padding:11px 12px;flex:0 1 auto}
+.stack .head{font:700 13px var(--font);color:var(--ink2);margin:8px 0 0}
+.stage>.pairs{height:100%;grid-auto-rows:minmax(0,1fr);align-content:stretch}
+.pair>div{font-size:16px;display:flex;flex-direction:column;justify-content:center}
+.bars{width:100%;display:flex;flex-direction:column;gap:16px;justify-content:center;height:100%;padding:0 10px}
+.bar{display:grid;grid-template-columns:150px 1fr 76px;gap:12px;align-items:center;font-size:15px}
+.bar .bl{font-weight:700;text-align:right}
+.bar .bt{height:30px;background:var(--sheet);border-radius:8px;overflow:hidden}
+.bar .bt i{display:block;height:100%;background:var(--ink2);border-radius:8px}
+.bar.blue .bt i{background:var(--blue)}.bar.amber .bt i{background:var(--amber)}.bar.green .bt i{background:var(--green)}.bar.red .bt i{background:var(--red)}
+.bar .bv{font:700 15px var(--mono)}
+.bar .bn{grid-column:2/4;font-size:13px;color:var(--ink2);margin-top:-8px}
+.bars .bc{font-size:13px;color:var(--ink2);text-align:center}
+.sim .branches{gap:14px;background:var(--sheet);border-radius:10px;padding:6px 10px}
+.sim .branches label{font-size:13.5px;color:var(--ink)}
+@media (max-width:820px){.bar{grid-template-columns:90px 1fr 60px}}
+.sim{grid-template-rows:auto auto 1fr auto}
+.sim.wide .body{grid-template-columns:1fr;grid-template-rows:minmax(0,1.1fr) minmax(0,1fr)}
+.sim:not(:has(.branches)){grid-template-rows:auto 1fr auto}
+.bar .bt.none{background:repeating-linear-gradient(45deg,var(--sheet) 0 8px,var(--hair) 8px 10px)}
+.say h2{font-size:28px;line-height:1.3}
+.sim .body{overflow:hidden}
+.sim .body>svg{min-height:0;height:100%;width:100%}
+.sim .narr{min-height:0}
+.stage>.stack{font-size:15.5px;gap:8px}
+.stage>.stack .row{padding:13px 14px}
+.stack .row .t{font-family:var(--font)}
+.stage:has(>.sim){place-items:stretch}
+.sim{min-height:0;height:100%;overflow:hidden}
+.sim.wide .body{grid-template-rows:minmax(0,55%) minmax(0,45%)}
+/* 讲解条放在图上方，永远可见 */
+.sim{grid-template-rows:auto auto auto minmax(0,1fr)}
+.sim:not(:has(.branches)){grid-template-rows:auto auto minmax(0,1fr)}
+.sim .ctl{order:0}.sim .branches{order:1}.sim .narr{order:2}.sim .body{order:3;min-height:0}
+/* ===== v4 ===== */
+.fl-node .sub{font-size:13.5px;fill:#3E4B5B}
+.fl-elab{font-size:13px;fill:#3E4B5B}
+.fl-edge.red{stroke:var(--red)}.fl-edge.amber{stroke:var(--amber)}.fl-edge.green{stroke:var(--green)}
+.fl-elab.red{fill:var(--red);font-weight:700}.fl-elab.amber{fill:var(--amber);font-weight:700}.fl-elab.green{fill:var(--green);font-weight:700}
+.stage{margin:10px 0 10px 10px;padding:4px}.card.full .stage{margin:0 10px 10px}
+.bar .bt i{background:#B8C2CF}
+.bar .bmiss{grid-column:2/4;color:var(--ink2);font-size:14px;font-style:italic}
+.sim .btn{background:transparent;box-shadow:0 0 0 1.5px var(--blue);color:var(--blue)}
+.sim .btn:hover{background:var(--blue-soft)}
+.say{justify-content:center}
+.src{margin-top:6px}
+.top .count{font-size:16px;color:var(--ink);font-weight:700}
+.top .track{height:6px}
+.card.full.on{grid-template-rows:auto minmax(0,1fr)}
+.head-full{padding:18px 26px 8px;display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
+.head-full .kicker{font-size:14px;color:var(--blue);font-weight:700}
+.head-full h2{margin:0;font-size:24px;line-height:1.3}
+.sim.wide .body{grid-template-rows:minmax(0,64%) minmax(0,36%)}
+@media (max-width:820px){.head-full{padding:12px 14px 6px}.head-full h2{font-size:19px}}
+.say{justify-content:safe center}
+@media (max-width:820px){.bars{gap:8px}.bar{font-size:13px;grid-template-columns:84px 1fr 56px}.bar .bt{height:20px}.bar .bn{font-size:12px;margin-top:-4px}.bars .bc{font-size:12px}
+ .sim .ctl .btn{padding:5px 10px}.sim .branches{flex-direction:column;align-items:flex-start;gap:2px}}
+
+/* 与知识库首页（VitePress 风格）对齐：白底页面、12px 圆角、细边框卡片、深色模式 */
+html,body{background:var(--page,#fff)}
+.card{border:1px solid var(--hair);box-shadow:none}
+html.dark{--page:#1b1b1f;--paper:#2a2a31;--sheet:#202127;--ink:#fffff5;--ink2:rgba(235,235,245,.65);--hair:#3a3a40;
+--blue:#7c9cff;--blue-soft:rgba(124,156,255,.16);--amber:#f0b429;--amber-soft:rgba(240,180,41,.14);--green:#3dd68c;--green-soft:rgba(61,214,140,.14);--red:#f66f81;--red-soft:rgba(246,111,129,.14);color-scheme:dark}
+html.dark .btn.main{color:#16202c}
+html.dark .fl-node .sub,html.dark .fl-elab{fill:var(--ink2)}html.dark .fl-elab{stroke:var(--page)!important}html.dark .fl-edge{stroke:#6b7280}
+html.dark .fl-elab.act{fill:var(--blue)}
+</style></head><body>
+<header class="top"><span class="course">AI Coding 深水区 · 主线 5 把判据变成流程</span><span class="track"><i></i></span><span class="count"></span></header>
+<main class="deck">
+<section class="card">
+  <div class="stage"><svg class="flow" data-act="big" data-edge="small>big" data-flow='{"nodes":[{"id":"small","x":120,"y":90,"t":"小环 · 一次会话","s":"AI 写，AI 自己跑，人在会话里看","c":"amber","w":250},{"id":"big","x":460,"y":90,"t":"大环 · 会话结束后","s":"自动评审、checklist、静态检查、全面测试","c":"green","w":270},{"id":"human","x":300,"y":280,"t":"人","s":"只看例外，做判断","c":"blue","w":170}],"edges":[{"f":"small","t":"big"},{"f":"big","t":"human","l":"例外"},{"f":"human","t":"small","l":"判断回流"}]}'></svg></div>
+  <div class="say"><span class="kicker">这条主线讲什么？</span><h2>平台承载的不是功能，是嵌套的环</h2>
+  <p>环由人、agent、资产编织成，转速各异。</p>
+  <p class="key">原文声明：平台还在建设中，这一部分讲的是建设思路，不是建成报告。</p>
+  <div class="src article">第五部分 开头、（一）</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="pairs">
+   <div class="pair"><div class="no"><b>不可靠 1：AI 的单次产出</b>出错的绝对数量由累积量决定；一次会话写得再好，也不能指望无瑕</div><div class="no"><b>不可靠 2：人的单次注意</b>代码不是人写的，细节超出人的观测；长会话里注意力会疲劳、变形</div></div>
+   <div class="pair"><div class="b"><b>推不出</b>「更认真地检查一次」</div><div class="a"><b>推出</b>用多重独立检查叠加出可靠性</div></div>
+  </div></div>
+  <div class="say"><span class="kicker">为什么要多个环？</span><h2>AI 的产出和人的注意，单次都不可靠</h2>
+  <p>让人在一个环里盯到底，和让 AI 在一个环里写到底，是同一种侥幸心理。</p>
+  <p class="key">两个不可靠合在一起，推出多重独立检查。</p>
+  <div class="src article">第五部分 开头、（一）</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="stack">
+   <div class="row result"><span class="i">1</span><span class="r">每个环独立</span><span class="t">评审靠轮询提交触发，与会话无关；测试用平台自己的容器重跑，与自报无关</span></div>
+   <div class="row result"><span class="i">2</span><span class="r">拆解注意力</span><span class="t">同一件事拆到多个场景、多个时机触发；每个场景主题单一</span></div>
+   <div class="row result new"><span class="i">3</span><span class="r">闸门</span><span class="t">确定性的规则和 checklist，不消耗人的注意力，只把例外递到人面前</span></div>
+  </div></div>
+  <div class="say"><span class="kicker">大环要成立，靠什么？</span><h2>每个环独立触发，说出来的才是新话</h2>
+  <p>大环不消灭注意力问题，它拆解注意力问题：被反复暴露的问题，比被凝视一次的更容易被发现。</p>
+  <p class="key">闸门的判据必须是事实：是事实就硬拦截，是代理指标最多提醒（主线 1 的标准）。</p>
+  <div class="src article">第五部分（一）</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><svg class="flow" data-act="queue" data-edge="review>queue" data-flow='{"nodes":[{"id":"gen","x":100,"y":90,"t":"AI 生成候选","s":"只提交，不写仓库","c":"amber","w":180},{"id":"review","x":340,"y":90,"t":"人工审查","s":"改内容、挪归属、整条丢弃","c":"blue","w":220},{"id":"queue","x":600,"y":90,"t":"串行入库","s":"平台是唯一写者","c":"green","w":180},{"id":"asset","x":600,"y":270,"t":"沉淀为资产","s":"合并，不是追加","c":"green","w":180}],"edges":[{"f":"gen","t":"review"},{"f":"review","t":"queue"},{"f":"queue","t":"asset"}]}'></svg></div>
+  <div class="say"><span class="kicker">环和环之间传什么？机制一</span><h2>环的接口只许传事实，不许传声明</h2>
+  <p>接口处传一次声明，下游所有环都在验一个假东西。</p>
+  <p class="key">机制一：生产者不是写者——AI 负责快，人负责对；每个受治理的仓一条串行队列。</p>
+  <details class="more"><summary></summary><p>审批期间仓库可能已被别的入库推进，所以入库是合并：能自动合的自动合，合不了的标出来交给人。人只在真冲突时介入。</p><p>入库时平台把不再被引用的公共代码一并裁掉，不让垃圾进仓。</p><p>三个机制都从测试用例这条环上长出来：它是第一条转完整圈的环。</p></details>
+  <div class="src article">第五部分（二）机制一</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="stack">
+   <div class="head">一批用例卡在「正在合并」，四次恢复都失败：三层原因</div>
+   <div class="row bad"><span class="i">1</span><span class="r">能力没透传</span><span class="t">仓库对象能判断「有没有实际改动」，生产实现没透传；探测失败默认「有改动」→ 提交空 commit</span></div>
+   <div class="row bad"><span class="i">2</span><span class="r">没有失败态</span><span class="t">普通错误没有对应的失败状态，网关只记日志、不改状态</span></div>
+   <div class="row bad"><span class="i">3</span><span class="r">恢复逻辑</span><span class="t">重启后只重投「正在合并」的任务 → 同一个空 commit 循环</span></div>
+   <div class="row bad new"><span class="i">!</span><span class="r">测试</span><span class="t">替身实现直接实现了那个可选能力，测试永远绿，测不到生产漏接线</span></div>
+  </div></div>
+  <div class="say"><span class="kicker">机制二从哪来？</span><h2>没名字的失败，让环永远转不到头</h2>
+  <p>环跨天、跨容器、跨进程转；卡住时，人要一眼看到卡在哪一节。</p>
+  <p class="key">一个没有名字的失败，对人来说等于没有事实。</p>
+  <div class="src article">第五部分（二）机制二</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="stack">
+   <div class="head">修法三处</div>
+   <div class="row result"><span class="i">1</span><span class="r">必需方法</span><span class="t">把那个能力变成必需方法，漏接就编译不过</span></div>
+   <div class="row result"><span class="i">2</span><span class="r">直接收口</span><span class="t">没有实际差异就跳过提交</span></div>
+   <div class="row result"><span class="i">3</span><span class="r">失败入态</span><span class="t">普通失败、超时、panic 一律进可重试的「合并失败」；恢复逻辑不再自动重试失败态</span></div>
+   <div class="head">状态机：七态</div>
+   <div class="row developer"><span class="i">→</span><span class="r">状态</span><span class="t">待审 · 正在合并 · 已入库 · 已丢弃 · 冲突 · 推送失败</span></div>
+   <div class="row result new"><span class="i">7</span><span class="r">新增</span><span class="t">合并失败</span></div>
+  </div></div>
+  <div class="say"><span class="kicker">怎么修？</span><h2>「合并失败」这一态，是事故买来的</h2>
+  <p>停机取消保留原状态。</p>
+  <p class="key">失败必须有名字：前言里「这个失败必须有名字」的判断，在这里落成了状态机。</p>
+  <div class="src article">第五部分（二）机制二修法；前言（三）</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><pre><span class="c">-- 用例文件路径 = 被测函数归属的事实源</span>
+<span class="hl">ucases/<span class="s">&lt;被测文件路径&gt;</span>/<span class="f">&lt;被测函数名&gt;</span>_unit.lua</span>
+<span class="c">-- 覆盖率事实的两条判断</span>
+<span class="k">合并</span>  多用例按行取并集
+<span class="k">区分</span>  「没跑过」≠「跑了没覆盖」
+      分母只含实际跑到的函数，两种都不显示 0%</pre></div>
+  <div class="say"><span class="kicker">机制三：事实源唯一、可推导</span><h2>归属从路径推导，因为声明会撒谎</h2>
+  <p>不让 AI 在元数据里声明被测函数归属：声明会撒谎，路径不会。</p>
+  <p class="key">诚实的注脚：代码里还保留「库里已有值就先用它」的分支，AI 真填了还是会被信——这一半是明确的技术债。</p>
+  <details class="more"><summary></summary><p>现网有两千多条单测的归属字段本来就是空的，作者说他们其实没得选。</p><p>多用例按行取并集：单测逐条单独跑，每条快照只反映自己覆盖的分支，取任何一条都会低估。</p><p>「没跑过」和「跑了没覆盖」的区分，立在平台曾把「采集失败」显示成「没有数据」的废墟上。作者说这是同一个教训的第四次，这次撒谎的是「事实」本身。</p></details>
+  <div class="src article">第五部分（二）机制三</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><svg class="flow" data-act="page" data-edge="pool>page" data-flow='{"nodes":[{"id":"self","x":120,"y":80,"t":"生成侧自报","s":"跑过测试 + 覆盖率报告","c":"red","w":210},{"id":"pool","x":120,"y":270,"t":"平台容器池","s":"对待审用例独立重跑","c":"green","w":210},{"id":"page","x":450,"y":270,"t":"审批页","s":"逐条执行结果","c":"blue","w":190},{"id":"h","x":450,"y":80,"t":"人","s":"做判断","c":"blue","w":150}],"edges":[{"f":"pool","t":"page"},{"f":"page","t":"h","l":"仅供参考，不阻塞"}]}'></svg></div>
+  <div class="say"><span class="kicker">环的入口信不信上一环？</span><h2>平台自己重跑，结果摆上审批页</h2>
+  <p>生成侧的结果不能信：它可能声称成功而覆盖率为空。</p>
+  <p class="key">结果仅供参考、不阻塞审批——机器提供事实，人做判断。</p>
+  <details class="more"><summary></summary><p>容器池：管理员把自己的开发容器贡献进池子；每个容器若干执行槽位，槽位内严格串行、槽位间并行；执行记录只追加不修改；失败换槽位重试。手动触发跑在触发者的私有池，平台自动验证跑公共池。</p></details>
+  <div class="src article">第五部分（三）</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="pairs">
+   <div class="pair"><div class="no"><b>不治理</b>用例散落、没人知道哪些能跑；评审意见发完企微就沉了，同样的误报下周再来；错误经验写进正式知识</div><div class="yes"><b>治理</b>进仓前一律是「候选」；人做过判断才入库，入库才成为资产</div></div>
+   <div class="pair"><div class="b"><b>人的判断也是数据</b>丢弃、标无价值、拒绝的原因结构化落库，回流给生产端</div><div class="a"><b>需求上下文要活过两个版本</b>上线版本 + 在研版本；patch 期在意最小改动、兼容性、数据修复、可观测</div></div>
+  </div></div>
+  <div class="say"><span class="kicker">环上流动的是什么？</span><h2>资产不是文件，是活的生命周期</h2>
+  <p>patch 期那几条是「价值观型」约束，要做成挂在需求状态机上的判据，不能写进提示词指望自觉。</p>
+  <p class="key">回灌要克制：先把人的判断攒成可信的数据，再谈自动回灌。</p>
+  <details class="more"><summary></summary><p>作者的理由：拿一批没校准的标签去改提示词，等于用脏数据训练上游——主线 3 错误评分器的翻版，只是污染的是生产者。</p><p>作者说这是「为什么必须是平台而不是仓库」最硬的回答：仓库存得下文件，存不下要活过两个版本、两期纪律完全不同的上下文。</p></details>
+  <div class="src article">第五部分（四）</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="stack">
+   <div class="head">降低人做判断的成本：目前的三个例子</div>
+   <div class="row result"><span class="i">1</span><span class="r">HTML 产物</span><span class="t">测试报告、覆盖率报告、trace 语义视图已是自包含 HTML；需求文档、知识条目、评审意见还是 Markdown</span></div>
+   <div class="row assistant"><span class="i">2</span><span class="r">标注回灌</span><span class="t">平台里还没有；/dev 插件里跑通了小回路：划词批注当场变成结构化输入</span></div>
+   <div class="row result"><span class="i">3</span><span class="r">数字不许模型碰</span><span class="t">LLM 只命名、归组、写解释；数字由脚本从原始证据重算；守恒校验不过就退回原始视图</span></div>
+  </div></div>
+  <div class="say"><span class="kicker">人在环里干什么？</span><h2>人是环里的节点，平台要降低判断成本</h2>
+  <p>平台起初的边界是「只做外环，不做云端编码环境」，后来自己推翻了，做了浏览器里的会话工作台 AgentUI。</p>
+  <p class="key">人不是环外面的验收员；节点要批权限、定稿、审批、随时和任意 agent 对话。</p>
+  <details class="more"><summary></summary><p>作者引用 Claude Code 团队的文章：用 HTML 之后，人重新回到了循环里；自定义 HTML 界面必须以「导出」结尾（copy as JSON、copy as prompt），让判断一键变回给 AI 的输入。</p><p>这也是主线 2 那个需求的重演：workflow-engine 给不了的掌控感，环系统必须给。</p></details>
+  <div class="src article">第五部分（五）</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="pairs">
+   <div class="pair"><div class="b"><b>环的骨架只有一副</b>触发 · 生产 · 闸门 · 人审 · 入库 · 复用</div><div class="a"><b>最近的三个环（研发最前段）</b>需求预分析（核心价值是待澄清清单）；bug 预分析（真值免费回流，可校准）；评审预分析</div></div>
+   <div class="pair"><div class="b"><b>不自建（可替代的壳）</b>容器用 AnyDev，CLI 用现成的，需求单从 TAPD 同步</div><div class="a"><b>自建（本体）</b>判据、资产模型、环的接线</div></div>
+  </div></div>
+  <div class="say"><span class="kicker">深入一层：业务团队该自建这么重的平台吗？</span><h2>凡是本体都不通用，凡是通用的都不是本体</h2>
+  <p>中台能给壳（算力、会话、通用 CI），给不了本体。</p>
+  <p class="key">平台最值钱的产出是判据、题集、资产模型、环的设计和失败史；它们跟着团队走，不跟着平台代码走。</p>
+  <details class="more"><summary></summary><p>需求预分析的产出：待澄清清单是核心价值，方案只是 AI 的一种自洽——不标注清楚，看的人会把它当推荐。</p><p>作者说：哪天通用平台把壳做得更好，换掉就是。环的目标是整个研发周期：需求、开发、评审、测试、上线、patch。</p></details>
+  <div class="src article">第五部分（六）（七）</div></div>
+</section>
+
+<section class="card full">
+  <div class="head-full"><span class="kicker">小测</span><h2>用 6 个新场景检查：环怎么接、信什么</h2></div>
+  <div class="stage"><div class="quiz" data-quiz='[
+   {"q":"你的评审 agent 在开发会话结束时，由同一个会话顺手触发。按原文，这个环的问题是？","opts":["没有问题","不独立：触发源和被验对象有因果关系，说出来的可能只是复述","评审太慢"],"a":1,"why":"每个环必须独立，才说得出新话。","back":3},
+   {"q":"一个任务失败后一直显示「处理中」。按原文，最该补的是什么？","opts":["多打几行日志","给这个失败一个名字：一个可见的失败状态","让恢复逻辑自动重试所有任务"],"a":1,"why":"一个没有名字的失败，对人来说等于没有事实。","back":5},
+   {"q":"让 AI 在测试的元数据里自己填「我测的是哪个函数」。按原文，更好的做法是？","opts":["让 AI 填得更认真","按路径规范推导归属：声明会撒谎，路径不会","让人逐条核对"],"a":1,"why":"事实源唯一，而且要能被推导。","back":7},
+   {"q":"AI 上传了覆盖率报告，显示全部通过。审批前平台该做什么？","opts":["直接采信","用平台自己的容器独立重跑，把逐条结果摆到审批页","直接拒绝"],"a":1,"why":"环的入口不信上一环的自报；结果仅供参考，判断留给人。","back":8},
+   {"q":"你攒了 200 条「人为什么丢弃这个用例」的标注，还没校准过，想马上拿去自动改提示词。按原文？","opts":["马上回灌，越快越好","先把判断攒成可信的数据，再谈自动回灌","扔掉这些标注"],"a":1,"why":"没校准的标签去改提示词，等于用脏数据训练上游。","back":9},
+   {"q":"中台推出了更好的容器和 CI 服务。按原文，你们自建平台该怎么办？","opts":["整体废弃","换掉壳，留下判据、资产模型和环的接线","拒绝迁移"],"a":1,"why":"凡是通用的都不是本体；本体跟着团队走。","back":11}]'></div></div>
+</section>
+</main>
+<nav class="bottom"><button class="btn" id="prev">上一张</button><button class="btn main" id="next">下一张</button></nav>
+<script>
+/* 学习搭子 固定组件库 — 不要在课程里改这个文件。 */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const NS='http://www.w3.org/2000/svg';
+const el=(t,a={},p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p&&p.appendChild(e);return e};
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+/* ---------- 卡片翻页 ---------- */
+const cards=$$('.card');let cur=0;
+function go(i){i=Math.max(0,Math.min(cards.length-1,i));cards[cur].classList.remove('on');cur=i;cards[cur].classList.add('on');
+  $('.track i').style.width=((cur+1)/cards.length*100)+'%';$('.count').textContent=(cur+1)+' / '+cards.length;
+  $('#prev').disabled=cur===0;$('#next').disabled=cur===cards.length-1;history.replaceState(null,'','#'+(cur+1));}
+window.goCard=n=>go(n-1);
+$('#prev').onclick=()=>go(cur-1);$('#next').onclick=()=>go(cur+1);
+addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.key==='ArrowRight')go(cur+1);if(e.key==='ArrowLeft')go(cur-1)});
+let sx=null;addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
+addEventListener('touchend',e=>{if(sx===null)return;const d=e.changedTouches[0].clientX-sx;if(Math.abs(d)>60)go(cur+(d<0?1:-1));sx=null});
+
+/* ---------- flow：用 JSON 画流程图 ----------
+ spec = {w,h,nodes:[{id,x,y,t,s?,c?,w?}],edges:[{f,t,l?,bend?}]}  节点坐标是中心点 */
+function drawFlow(svg,spec){
+  svg.innerHTML='';
+  const defs=el('defs',{},svg);
+  [['a','#AEB8C6'],['b','#2550D9'],['red','#C8372D'],['amber','#C77A00'],['green','#16875A']].forEach(([id,c])=>{const m=el('marker',{id:'ar'+id+svg.dataset.uid,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:7,markerHeight:7,orient:'auto-start-reverse'},defs);el('path',{d:'M0,0L10,5L0,10z',fill:c},m)});
+  const N={};spec.nodes.forEach(n=>N[n.id]={...n,w:n.w||150,h:n.s?70:56});
+  const ns=Object.values(N);
+  let x0=Math.min(...ns.map(n=>n.x-n.w/2)),x1=Math.max(...ns.map(n=>n.x+n.w/2)),y0=Math.min(...ns.map(n=>n.y-n.h/2)),y1=Math.max(...ns.map(n=>n.y+n.h/2));
+  const B={x0,x1,y0,y1};
+  const eg=el('g',{},svg),ng=el('g',{},svg);svg._edges={};svg._nodes={};
+  const clip=(a,b)=>{const dx=b.x-a.x,dy=b.y-a.y;const s=Math.min(Math.abs((a.w/2+6)/(dx||1e-9)),Math.abs((a.h/2+6)/(dy||1e-9)));return[a.x+dx*s,a.y+dy*s]};
+  spec.edges.forEach(e=>{const a=N[e.f],b=N[e.t];let d,lx,ly;
+    if(e.route){ /* 沿外圈走的直角线：top|bottom|left|right，lane 控制离外框的距离 */
+      const g=30+(e.lane||0)*30,oa=e.oa||0,ob=e.ob||0;
+      if(e.route==='top'||e.route==='bottom'){const t=e.route==='top',Y=t?B.y0-g:B.y1+g,ya=a.y+(t?-1:1)*(a.h/2+2),yb=b.y+(t?-1:1)*(b.h/2+8);
+        d=`M${a.x+oa},${ya} V${Y} H${b.x+ob} V${yb}`;lx=(a.x+oa+b.x+ob)/2;ly=Y+(t?-8:18);
+        t?(y0=Math.min(y0,Y-26)):(y1=Math.max(y1,Y+26));}
+      else{const l=e.route==='left',X=l?B.x0-g:B.x1+g,xa=a.x+(l?-1:1)*(a.w/2+2),xb=b.x+(l?-1:1)*(b.w/2+8);
+        d=`M${xa},${a.y+oa} H${X} V${b.y+ob} H${xb}`;lx=X+(l?-8:8);ly=(a.y+b.y)/2;
+        l?(x0=Math.min(x0,X-90)):(x1=Math.max(x1,X+90));}
+    }else{const[p1,q1]=clip(a,b),[p2,q2]=clip(b,a);const mx=(p1+p2)/2,my=(q1+q2)/2,len=Math.hypot(p2-p1,q2-q1)||1,bd=e.bend||0;
+      const cx=mx-(q2-q1)/len*bd,cy=my+(p2-p1)/len*bd;d=`M${p1},${q1} Q${cx},${cy} ${p2},${q2}`;
+      const qx=.25*p1+.5*cx+.25*p2,qy=.25*q1+.5*cy+.25*q2,sg=bd>=0?1:-1;lx=qx-(q2-q1)/len*sg*14;ly=qy+(p2-p1)/len*sg*14+4;}
+    const mk=e.c||'a';const p=el('path',{d,class:'fl-edge '+(e.c||''),'marker-end':`url(#ar${mk}${svg.dataset.uid})`},eg);p._mk=mk;
+    let lab=null;if(e.l){const anc=e.route==='left'?'end':e.route==='right'?'start':'middle';lab=el('text',{x:lx,y:ly,'text-anchor':anc,class:'fl-elab '+(e.c||''),stroke:'#F2F4F7','stroke-width':5,'paint-order':'stroke'},eg);lab.textContent=e.l}
+    svg._edges[e.f+'>'+e.t]={p,lab}});
+  ns.forEach(n=>{const g=el('g',{class:'fl-node '+(n.c||'')},ng);
+    el('rect',{x:n.x-n.w/2,y:n.y-n.h/2,width:n.w,height:n.h,rx:14},g);
+    const t=el('text',{x:n.x,y:n.y+(n.s?-4:6),'text-anchor':'middle'},g);t.textContent=n.t;
+    if(n.s){const s=el('text',{x:n.x,y:n.y+18,'text-anchor':'middle',class:'sub'},g);s.textContent=n.s}
+    svg._nodes[n.id]=g});
+  /* 自动贴合：viewBox 只包住内容，图会放大填满面板 */
+  const P=spec.pad??8;svg.setAttribute('viewBox',`${x0-P} ${y0-P-10} ${x1-x0+2*P} ${y1-y0+2*P+20}`);
+  svg._set=(act,edge)=>{for(const k in svg._nodes)svg._nodes[k].classList.toggle('act',k===act);
+    for(const k in svg._edges){const on=k===edge,E=svg._edges[k];E.p.classList.toggle('act',on);E.p.setAttribute('marker-end',`url(#ar${on?'b':E.p._mk}${svg.dataset.uid})`);E.lab&&E.lab.classList.toggle('act',on)}};
+  svg._set(svg.dataset.act,svg.dataset.edge);
+}
+let uid=0;
+$$('svg.flow').forEach(s=>{s.dataset.uid=++uid;drawFlow(s,JSON.parse(s.dataset.flow))});
+
+/* ---------- sim：一步步走的模拟器 ----------
+ data-sim = {flow:{...}, steps:[{act,edge,msg:{r:user|asst|tool|err|sys,n?,t},say}], alt?:{label,steps:[...]}} */
+$$('.sim').forEach(box=>{
+  const spec=JSON.parse(box.dataset.sim);if(spec.alt&&!spec.alts)spec.alts=[spec.alt];const AL=spec.alts||[];const gname='br'+(++uid);
+  box.innerHTML=`<div class="ctl"><button class="btn sm" data-a="step">下一步</button><button class="btn sm" data-a="play">▶ 自动</button><button class="btn sm" data-a="reset">重置</button>
+   <label>速度 <input type="range" min="300" max="2500" step="100" value="1200"></label></div>${AL.length?`<div class="ctl branches"><label><input type="radio" name="${gname}" value="-1" checked> ${esc(spec.label||'正常路径')}</label>${AL.map((a,j)=>`<label><input type="radio" name="${gname}" value="${j}"> ${esc(a.label)}</label>`).join('')}</div>`:''}
+   <div class="body"><svg class="flow"></svg><div class="log"></div></div><div class="narr"></div>`;
+  if(spec.layout==='wide')box.classList.add('wide');
+  const svg=$('svg',box);svg.dataset.uid=++uid;drawFlow(svg,spec.flow);
+  const log=$('.log',box),narr=$('.narr',box),radios=$$('input[type=radio]',box),spd=$('input[type=range]',box),play=$('[data-a=play]',box);
+  let i=0,timer=null;const sel=()=>{const r=radios.find(r=>r.checked);return r?+r.value:-1};const steps=()=>sel()>=0?AL[sel()].steps:spec.steps;
+  const hint=spec.note?esc(spec.note)+'　点「下一步」开始。':'点「下一步」开始。';const reset=()=>{i=0;log.innerHTML='';narr.innerHTML=hint;svg._set(null,null);stop()};
+  const stop=()=>{clearTimeout(timer);timer=null;play.textContent='▶ 自动'};
+  const step=()=>{const S=steps();if(i>=S.length){narr.textContent='流程结束。点「重置」再走一遍。';stop();return false}
+    const s=S[i++];svg._set(s.act,s.edge);if(s.msg){const d=document.createElement('div');d.className='msg '+s.msg.r;
+      d.innerHTML=`<b>${esc(s.msg.n||({user:'用户',asst:'模型',tool:'工具结果',err:'出错',sys:'系统提示词'}[s.msg.r]))}</b>${esc(s.msg.t)}`;log.appendChild(d);log.scrollTop=1e9}
+    narr.innerHTML=`<b>第 ${i}/${S.length} 步</b>　${esc(s.say)}`;return true};
+  const loop=()=>{if(step())timer=setTimeout(loop,+spd.value);else stop()};
+  box.onclick=e=>{const a=e.target.dataset.a;if(a==='step'){stop();step()}if(a==='reset')reset();if(a==='play'){if(timer)stop();else{play.textContent='❚❚ 暂停';loop()}}};
+  narr.innerHTML=hint;radios.forEach(r=>r.onchange=reset);
+  const P=new URLSearchParams(location.search);if(P.get('alt')&&radios[+P.get('alt')]){radios[+P.get('alt')].checked=true}for(let n=+P.get('sim')||0;n>0;n--)step(); /* 自查用：?sim=5&alt=1 */
+});
+
+/* ---------- bars：横向条形图 ----------
+ data-bars = {unit, items:[{l,v,c?:blue|amber|green|red,note?}], caption?}  数字必须来自原文 */
+$$('.bars').forEach(box=>{const B=JSON.parse(box.dataset.bars),mx=Math.max(...B.items.filter(i=>i.v!=null).map(i=>i.v));
+  box.innerHTML=B.items.map(i=>`<div class="bar ${i.c||''}"><span class="bl">${esc(i.l)}</span>${i.v==null?`<span class="bmiss">${esc(i.miss||'原文未给数字')}</span>`:`<span class="bt"><i style="width:${(i.v/mx*100).toFixed(1)}%"></i></span><span class="bv">${esc(i.v)}${esc(B.unit||'')}</span>`}${i.note?`<span class="bn">${esc(i.note)}</span>`:''}</div>`).join('')+(B.caption?`<div class="bc">${esc(B.caption)}</div>`:'')});
+
+/* ---------- quiz：页内小测 ----------
+ data-quiz = [{q,opts:[...],a:正确下标,why,back:答错时回到第几张卡片}] */
+$$('.quiz').forEach(box=>{
+  const Q=JSON.parse(box.dataset.quiz);let k=0,score=0;const done=new Set();
+  const render=()=>{const q=Q[k];box.innerHTML=`<div class="qn">第 ${k+1} / ${Q.length} 题　·　已答对 ${score}</div><div class="qt">${esc(q.q)}</div>
+    ${q.opts.map((o,j)=>`<button class="opt" data-j="${j}">${String.fromCharCode(65+j)}. ${esc(o)}</button>`).join('')}
+    <div class="fb"></div><div class="nav"><button class="btn sm" data-n="-1" ${k?'':'disabled'}>上一题</button><button class="btn sm main" data-n="1" ${k<Q.length-1?'':'disabled'}>下一题</button></div>`};
+  box.onclick=e=>{const t=e.target;if(t.dataset.n){k+=+t.dataset.n;render();return}
+    if(t.dataset.j===undefined||done.has(k))return;const q=Q[k],j=+t.dataset.j,fb=$('.fb',box);done.add(k);
+    $$('.opt',box)[q.a].classList.add('ok');
+    if(j===q.a){score++;fb.innerHTML='✓ 对。'+esc(q.why)}else{t.classList.add('no');fb.innerHTML='✗ 不对。'+esc(q.why)+(q.back?` <a onclick="goCard(${q.back})">回到第 ${q.back} 张再看看</a>`:'')}
+    $('.qn',box).textContent=`第 ${k+1} / ${Q.length} 题　·　已答对 ${score}`};
+  render();
+  const pk=new URLSearchParams(location.search).get('pick');if(pk!==null)$$('.opt',box)[+pk].click(); /* 自查用：?pick=0 */
+});
+
+go(Math.max(0,(parseInt(location.hash.slice(1))||1)-1));
+})();
+</script></body></html>
