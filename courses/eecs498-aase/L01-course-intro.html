@@ -1,0 +1,448 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>EECS 498 AASE · L01</title><style>
+/* 学习搭子 固定设计系统 — 不要在课程里改这个文件。只改 lesson.html 的内容。 */
+:root{
+  --paper:#F2F4F7; --sheet:#FFFFFF; --ink:#16202C; --ink2:#4A5868; --hair:#D9DFE7;
+  --blue:#2550D9;  --blue-soft:#E3EAFD;   /* 主角：当前步骤 / 重点 */
+  --amber:#C77A00; --amber-soft:#FBEFD9; /* 数据 / 消息 */
+  --green:#16875A; --green-soft:#DDF3E9; /* 成功 / 工具结果 */
+  --red:#C8372D;   --red-soft:#FBE3E1;   /* 出错 */
+  --r-lg:20px; --r-sm:10px;
+  --font:"PingFang SC","Noto Sans CJK SC","Source Han Sans SC","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--paper);color:var(--ink);font:17px/1.65 var(--font);-webkit-font-smoothing:antialiased}
+.top{position:fixed;inset:0 0 auto 0;height:56px;display:flex;align-items:center;gap:16px;padding:0 28px;z-index:5}
+.top .course{font-weight:700;font-size:15px}
+.top .track{flex:1;height:6px;background:var(--hair);border-radius:99px;overflow:hidden}
+.top .track i{display:block;height:100%;width:0;background:var(--blue);transition:width .35s ease}
+.top .count{font:600 14px var(--mono);color:var(--ink2);min-width:60px;text-align:right}
+.deck{position:fixed;inset:56px 0 76px 0;display:grid;place-items:center;padding:0 24px}
+.card{display:none;width:min(1120px,100%);height:100%;max-height:640px;background:var(--sheet);border-radius:var(--r-lg);
+  box-shadow:0 1px 0 var(--hair),0 18px 40px -24px rgba(22,32,44,.25);overflow:hidden}
+.card.on{display:grid;grid-template-columns:1.45fr 1fr}
+.card.full.on{grid-template-columns:1fr}
+.stage{background:var(--paper);margin:14px 0 14px 14px;border-radius:14px;display:grid;place-items:center;padding:18px;overflow:hidden;position:relative}
+.card.full .stage{margin:14px}
+.stage svg{width:100%;height:100%;max-height:560px}
+.say{padding:40px 40px 32px;display:flex;flex-direction:column;justify-content:center;gap:14px;overflow:auto}
+.say .kicker{font-size:14px;color:var(--blue);font-weight:700}
+.say h2{margin:0;font-size:32px;line-height:1.25;letter-spacing:.01em}
+.say p{margin:0;color:var(--ink2)}
+.say p b{color:var(--ink)}
+.src{margin-top:auto;font-size:13px;color:var(--ink2);border-top:1px solid var(--hair);padding-top:12px}
+.src.extra::before{content:"补充";background:var(--amber-soft);color:var(--amber);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
+.src.official::before{content:"官方";background:var(--green-soft);color:var(--green);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
+code{font:14px var(--mono);background:var(--blue-soft);color:var(--blue);padding:1px 6px;border-radius:6px}
+pre{margin:0;font:13.5px/1.6 var(--mono);background:#101826;color:#DCE3EE;border-radius:12px;padding:16px 18px;overflow:auto;width:100%}
+pre .k{color:#8FB1FF}pre .s{color:#9BE0B4}pre .c{color:#71819A}pre .f{color:#FFC86B}pre .hl{background:rgba(143,177,255,.16);display:block;margin:0 -18px;padding:0 18px}
+.bottom{position:fixed;inset:auto 0 0 0;height:76px;display:flex;align-items:center;justify-content:center;gap:14px}
+.btn{font:600 15px var(--font);border:0;border-radius:99px;padding:11px 22px;cursor:pointer;background:var(--sheet);color:var(--ink);box-shadow:0 0 0 1px var(--hair)}
+.btn:hover{box-shadow:0 0 0 2px var(--blue)}
+.btn.main{background:var(--blue);color:#fff;box-shadow:none}
+.btn:disabled{opacity:.35;cursor:default;box-shadow:0 0 0 1px var(--hair)}
+.btn:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.btn.sm{padding:7px 14px;font-size:14px}
+/* ---- 图元（flow 组件生成） ---- */
+.fl-node rect{fill:var(--sheet);stroke:var(--hair);stroke-width:2;transition:all .3s}
+.fl-node text{font:600 17px var(--font);fill:var(--ink)}
+.fl-node .sub{font:400 13px var(--font);fill:var(--ink2)}
+.fl-node.blue rect{stroke:var(--blue)} .fl-node.amber rect{stroke:var(--amber)} .fl-node.green rect{stroke:var(--green)} .fl-node.red rect{stroke:var(--red)}
+.fl-node.act rect{fill:var(--blue-soft);stroke:var(--blue);stroke-width:3}
+.fl-node.dim{opacity:.35}
+.fl-edge{fill:none;stroke:#AEB8C6;stroke-width:2.2;transition:all .3s}
+.fl-edge.act{stroke:var(--blue);stroke-width:3.5;stroke-dasharray:8 6;animation:dash .8s linear infinite}
+.fl-elab{font:500 13px var(--font);fill:var(--ink2)}
+.fl-elab.act{fill:var(--blue);font-weight:700}
+@keyframes dash{to{stroke-dashoffset:-28}}
+/* ---- 模拟器 ---- */
+.sim{display:grid;grid-template-rows:auto 1fr auto;gap:10px;width:100%;height:100%}
+.sim .ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.sim .ctl label{font-size:13px;color:var(--ink2);display:flex;align-items:center;gap:6px}
+.sim .body{display:grid;grid-template-columns:1.1fr 1fr;gap:12px;min-height:0}
+.sim .log{background:var(--sheet);border-radius:12px;padding:10px;overflow:auto;font:13px/1.5 var(--mono)}
+.sim .msg{border-left:4px solid var(--hair);padding:6px 10px;margin:0 0 8px;border-radius:6px;background:var(--paper);white-space:pre-wrap;word-break:break-word;animation:pop .25s ease}
+.sim .msg b{font-family:var(--font);display:block;font-size:12px;color:var(--ink2)}
+.msg.user{border-color:var(--blue)} .msg.asst{border-color:var(--amber)} .msg.tool{border-color:var(--green)} .msg.err{border-color:var(--red);background:var(--red-soft)} .msg.sys{border-color:var(--ink2)}
+.sim .narr{background:var(--blue-soft);color:var(--ink);border-radius:12px;padding:10px 14px;font-size:15px;min-height:48px}
+@keyframes pop{from{opacity:0;transform:translateY(6px)}}
+/* ---- 小测 ---- */
+.quiz{width:100%;max-width:760px;display:flex;flex-direction:column;gap:12px}
+.quiz .qn{font:600 13px var(--mono);color:var(--ink2)}
+.quiz .qt{font-size:22px;font-weight:700;line-height:1.4}
+.quiz .opt{display:block;width:100%;text-align:left;font:16px var(--font);background:var(--sheet);border:2px solid var(--hair);border-radius:12px;padding:12px 16px;cursor:pointer;color:var(--ink)}
+.quiz .opt:hover{border-color:var(--blue)}
+.quiz .opt.ok{border-color:var(--green);background:var(--green-soft)} .quiz .opt.no{border-color:var(--red);background:var(--red-soft)}
+.quiz .fb{min-height:52px;font-size:15px;color:var(--ink2)}
+.quiz .fb a{color:var(--blue);font-weight:700;cursor:pointer}
+.quiz .nav{display:flex;gap:8px;align-items:center}
+@media (max-width:820px){
+  .card.full.on{grid-template-rows:1fr}.card.full .stage{overflow:auto;place-items:start center}
+  .card.on{grid-template-columns:1fr;grid-template-rows:minmax(220px,48%) 1fr}
+  .stage{margin:10px 10px 0}.say{padding:18px 20px}.say h2{font-size:24px}
+  .sim .body{grid-template-columns:1fr}.top{padding:0 14px}.top .course{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* ---- 展开细节 ---- */
+details.more{border-top:1px solid var(--hair);padding-top:10px;font-size:15px;color:var(--ink2)}
+details.more summary{cursor:pointer;font-weight:700;color:var(--blue);list-style:none}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary::before{content:"＋ 展开细节";}
+details.more[open] summary::before{content:"－ 收起细节";}
+details.more>*:not(summary){margin:8px 0 0}
+details.more ul{padding-left:18px}details.more li{margin:4px 0}
+details.more table{border-collapse:collapse;width:100%;font-size:14px}
+details.more td,details.more th{border-bottom:1px solid var(--hair);padding:5px 6px;text-align:left;vertical-align:top}
+/* ---- 对话列表（状态追踪）---- */
+.stack{width:100%;display:flex;flex-direction:column;gap:6px;font:13px/1.45 var(--mono)}
+.stack .row{display:grid;grid-template-columns:28px 92px 1fr;gap:8px;align-items:start;background:var(--sheet);border-radius:8px;padding:7px 10px;border-left:4px solid var(--hair)}
+.stack .row .i{color:var(--ink2)}.stack .row .r{font-weight:700}
+.stack .row.developer{border-color:var(--ink2)}.stack .row.user{border-color:var(--blue)}.stack .row.assistant{border-color:var(--amber)}.stack .row.result{border-color:var(--green)}
+.stack .row.new{background:var(--blue-soft)}.stack .row.bad{border-color:var(--red);background:var(--red-soft)}
+.stack .row .t{white-space:pre-wrap;word-break:break-word}
+/* ---- 对比/误区 ---- */
+.pairs{width:100%;display:grid;gap:10px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pair>div{background:var(--sheet);border-radius:12px;padding:12px 14px;font-size:15px}
+.pair .no{border-left:5px solid var(--red)}.pair .yes{border-left:5px solid var(--green)}
+.pair b{display:block;font-size:12px;color:var(--ink2);margin-bottom:4px}
+.say .more code{font-size:13px}
+@media (max-width:820px){.pair{grid-template-columns:1fr}.stack .row{grid-template-columns:22px 70px 1fr}}
+.pair .a{border-left:5px solid var(--blue)}.pair .b{border-left:5px solid var(--amber)}
+/* ===== v3：填满面板、原文标签、要点、条形图、分支 ===== */
+.stage{padding:10px}
+.stage svg.flow{width:100%;height:100%;max-height:none}
+.say p{font-size:17px}
+p.key{background:var(--blue-soft);color:var(--ink);border-radius:12px;padding:10px 14px;font-size:16px}
+p.key::before{content:"关键 ";font-weight:800;color:var(--blue)}
+.src.article::before{content:"原文";background:var(--blue-soft);color:var(--blue);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
+.stage>.stack{height:100%;justify-content:center;font-size:14.5px}
+.stage>.stack .row{padding:11px 12px;flex:0 1 auto}
+.stack .head{font:700 13px var(--font);color:var(--ink2);margin:8px 0 0}
+.stage>.pairs{height:100%;grid-auto-rows:minmax(0,1fr);align-content:stretch}
+.pair>div{font-size:16px;display:flex;flex-direction:column;justify-content:center}
+.bars{width:100%;display:flex;flex-direction:column;gap:16px;justify-content:center;height:100%;padding:0 10px}
+.bar{display:grid;grid-template-columns:150px 1fr 76px;gap:12px;align-items:center;font-size:15px}
+.bar .bl{font-weight:700;text-align:right}
+.bar .bt{height:30px;background:var(--sheet);border-radius:8px;overflow:hidden}
+.bar .bt i{display:block;height:100%;background:var(--ink2);border-radius:8px}
+.bar.blue .bt i{background:var(--blue)}.bar.amber .bt i{background:var(--amber)}.bar.green .bt i{background:var(--green)}.bar.red .bt i{background:var(--red)}
+.bar .bv{font:700 15px var(--mono)}
+.bar .bn{grid-column:2/4;font-size:13px;color:var(--ink2);margin-top:-8px}
+.bars .bc{font-size:13px;color:var(--ink2);text-align:center}
+.sim .branches{gap:14px;background:var(--sheet);border-radius:10px;padding:6px 10px}
+.sim .branches label{font-size:13.5px;color:var(--ink)}
+@media (max-width:820px){.bar{grid-template-columns:90px 1fr 60px}}
+.sim{grid-template-rows:auto auto 1fr auto}
+.sim.wide .body{grid-template-columns:1fr;grid-template-rows:minmax(0,1.1fr) minmax(0,1fr)}
+.sim:not(:has(.branches)){grid-template-rows:auto 1fr auto}
+.bar .bt.none{background:repeating-linear-gradient(45deg,var(--sheet) 0 8px,var(--hair) 8px 10px)}
+.say h2{font-size:28px;line-height:1.3}
+.sim .body{overflow:hidden}
+.sim .body>svg{min-height:0;height:100%;width:100%}
+.sim .narr{min-height:0}
+.stage>.stack{font-size:15.5px;gap:8px}
+.stage>.stack .row{padding:13px 14px}
+.stack .row .t{font-family:var(--font)}
+.stage:has(>.sim){place-items:stretch}
+.sim{min-height:0;height:100%;overflow:hidden}
+.sim.wide .body{grid-template-rows:minmax(0,55%) minmax(0,45%)}
+/* 讲解条放在图上方，永远可见 */
+.sim{grid-template-rows:auto auto auto minmax(0,1fr)}
+.sim:not(:has(.branches)){grid-template-rows:auto auto minmax(0,1fr)}
+.sim .ctl{order:0}.sim .branches{order:1}.sim .narr{order:2}.sim .body{order:3;min-height:0}
+/* ===== v4 ===== */
+.fl-node .sub{font-size:13.5px;fill:#3E4B5B}
+.fl-elab{font-size:13px;fill:#3E4B5B}
+.fl-edge.red{stroke:var(--red)}.fl-edge.amber{stroke:var(--amber)}.fl-edge.green{stroke:var(--green)}
+.fl-elab.red{fill:var(--red);font-weight:700}.fl-elab.amber{fill:var(--amber);font-weight:700}.fl-elab.green{fill:var(--green);font-weight:700}
+.stage{margin:10px 0 10px 10px;padding:4px}.card.full .stage{margin:0 10px 10px}
+.bar .bt i{background:#B8C2CF}
+.bar .bmiss{grid-column:2/4;color:var(--ink2);font-size:14px;font-style:italic}
+.sim .btn{background:transparent;box-shadow:0 0 0 1.5px var(--blue);color:var(--blue)}
+.sim .btn:hover{background:var(--blue-soft)}
+.say{justify-content:center}
+.src{margin-top:6px}
+.top .count{font-size:16px;color:var(--ink);font-weight:700}
+.top .track{height:6px}
+.card.full.on{grid-template-rows:auto minmax(0,1fr)}
+.head-full{padding:18px 26px 8px;display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
+.head-full .kicker{font-size:14px;color:var(--blue);font-weight:700}
+.head-full h2{margin:0;font-size:24px;line-height:1.3}
+.sim.wide .body{grid-template-rows:minmax(0,64%) minmax(0,36%)}
+@media (max-width:820px){.head-full{padding:12px 14px 6px}.head-full h2{font-size:19px}}
+.say{justify-content:safe center}
+@media (max-width:820px){.bars{gap:8px}.bar{font-size:13px;grid-template-columns:84px 1fr 56px}.bar .bt{height:20px}.bar .bn{font-size:12px;margin-top:-4px}.bars .bc{font-size:12px}
+ .sim .ctl .btn{padding:5px 10px}.sim .branches{flex-direction:column;align-items:flex-start;gap:2px}}
+</style></head><body>
+<header class="top"><span class="course">EECS 498 AASE · L01</span><span class="track"><i></i></span><span class="count"></span></header>
+<main class="deck">
+<section class="card">
+  <div class="stage"><svg class="flow" data-act="create" data-edge="analyze>create" data-flow='{"nodes":[{"id":"obj","x":330,"y":70,"t":"一个编码智能体","s":"同一个仓库，第 1–15 周","c":"blue","w":240},{"id":"apply","x":110,"y":300,"t":"Apply 用","s":"第 1–3 周"},{"id":"analyze","x":330,"y":300,"t":"Analyze 拆","s":"第 4–7 周"},{"id":"create","x":550,"y":300,"t":"Create 造","s":"第 8–15 周","c":"amber"}],"edges":[{"f":"obj","t":"apply"},{"f":"obj","t":"analyze"},{"f":"obj","t":"create"},{"f":"apply","t":"analyze"},{"f":"analyze","t":"create"}]}'></svg></div>
+  <div class="say"><span class="kicker">这门课一句话讲什么？</span><h2>一个对象，三个动词：用、拆、造</h2>
+  <p>Apply 用编码智能体做结对程序员；Analyze 把人移出循环再测量；Create 把它长成助手。</p>
+  <p class="key">全程是同一个仓库，同一个不断长大的作品。</p>
+  <details class="more"><summary></summary><ul><li>Apply：用 Aider 连你自己部署的模型端点，做一个 pair-programmer（结对程序员）。</li><li>Analyze：工具、停止条件，然后测量坏掉的地方。</li><li>Create：记忆、方法，以及一个不是终端的使用渠道。</li><li>讲师备注：要说出「这全是一个仓库，第 1 周到第 15 周」。</li></ul></details>
+  <div class="src official">S1 L01 slides「One object. Three verbs.」；S2 syllabus「Description」</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="bars" data-bars='{"unit":"%","items":[{"l":"Administrative 出勤与加分","v":10},{"l":"Apply 第 1–3 周","v":18},{"l":"Analyze 第 4–7 周","v":22.5},{"l":"Create 第 8–15 周","v":49.5,"c":"blue"}],"caption":"三个阶段按 20 / 25 / 55 分剩下的 90%。没有考试。"}'></div></div>
+  <div class="say"><span class="kicker">分数怎么算？</span><h2>没有考试，一半分数在 Create 阶段</h2>
+  <p>出勤占 10%，其中讲课 60%、实验 40%；出勤达到 70% 就拿满分。</p>
+  <p class="key">迟交每天扣 10%，3 天后记零分；没有宽限日。</p>
+  <details class="more"><summary></summary><ul><li>五个地方：课程网站（日期和政策以它为准）、Ed（提问和通知）、GitHub aase-student（每个作业一个你自己的仓库）、Canvas（成绩）、可选播客。</li><li>日历：28 讲、13 次实验、3 个晚间 Hackathon（第 4、7、15 周，第一次 9 月 24 日周四）。</li><li>个人作业：可以自由讨论想法，不得分享代码或提示词。</li><li>费用：零。没有教材，没有大模型花费；笔记本跑不动模型时由 CAEN 提供。</li></ul></details>
+  <div class="src official">S1 L01 slides「How you’re graded」「The short version」「Where things live」「28 lectures · 13 labs · 3 evenings」</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="pairs">
+   <div class="pair"><div class="no"><b>误解</b>用 AI 写代码算作弊，最好少用。</div><div class="yes"><b>实际</b>本课要求使用 AI，不只是容忍。</div></div>
+   <div class="pair"><div class="no"><b>误解</b>交上去的代码能跑就算数。</div><div class="yes"><b>实际</b>评分看理解：你要能解释交上去的每一行。</div></div>
+   <div class="pair"><div class="no"><b>误解</b>用了什么工具不用说。</div><div class="yes"><b>实际</b>要记录用到的工具、模型和提示词。</div></div>
+  </div></div>
+  <div class="say"><span class="kicker">今天最重要的一句话是什么？</span><h2>你能解释它，它才是你的</h2>
+  <p>课件原句：If you can explain it, it’s yours.</p>
+  <p class="key">解释不了你交的代码，它就不是你的，这属于荣誉准则（Honor Code）问题。</p>
+  <div class="src official">S1 L01 slides 讲师备注「THE slide of the day」；S2 syllabus「If you can’t explain it, you didn’t build it.」</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><svg class="flow" data-act="w4" data-edge="w3>w4" data-flow='{"nodes":[{"id":"w1","x":110,"y":80,"t":"1 自动补全","s":"2021–22 · Copilot"},{"id":"w2","x":450,"y":80,"t":"2 对话","s":"2022–23 · ChatGPT"},{"id":"w3","x":110,"y":300,"t":"3 智能体工具","s":"2023–25 · Cursor、Aider","c":"green"},{"id":"w4","x":450,"y":300,"t":"4 编排","s":"2025– · 多个智能体","c":"amber"}],"edges":[{"f":"w1","t":"w2"},{"f":"w2","t":"w3"},{"f":"w3","t":"w4","l":"Create 带你到这里"}]}'></svg></div>
+  <div class="say"><span class="kicker">AI 编程走到哪一步了？</span><h2>四波浪潮，现在是第 4 波：编排</h2>
+  <p>每一波，人做的事都在变：从自己写一个文件，到监督多个长时间运行的智能体。</p>
+  <p class="key">大多数学生从第 3 波入门；课程要在 12 月走到第 4 波。</p>
+  <details class="more"><summary></summary><ul><li>第 1 波 自动补全：一个文件，你来开。</li><li>第 2 波 对话：ChatGPT，然后是 IDE 里的对话；提问、粘贴、修改。</li><li>第 3 波 智能体工具：Cursor 和 Aider，然后是 Claude Code 和 Codex；多文件编辑，工具会执行命令。</li><li>第 4 波 编排：多个智能体，长时间运行，有人监督。</li><li>讲师备注：Kite、TabNine 比第 1 波早，但 Copilot 才让自动补全真正被依赖，所以从它算起。</li></ul></details>
+  <div class="src official">S1 L01 slides「A brief history」及讲师备注</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="pairs">
+   <div class="pair"><div class="a"><b>炒作</b>AI 会取代程序员。</div><div class="b"><b>现实</b>没有取代。出现了一类新的工作流。</div></div>
+   <div class="pair"><div class="a"><b>Take Five 讨论题</b>上次用 AI 写代码（或不用）时，什么让你觉得高效？什么让你沮丧？</div><div class="b"><b>追问</b>写完以后，你觉得自己「学到了东西」，还是只是「拿到了答案」？</div></div>
+  </div></div>
+  <div class="say"><span class="kicker">这和你自己的经验怎么连起来？</span><h2>炒作很陡，现实更有意思</h2>
+  <p>讲师备注：学会和 AI 一起工作的开发者，生产力明显提高。</p>
+  <p class="key">「学到了」还是「拿到答案」，课件说这个问题贯穿整门课。</p>
+  <div class="src official">S1 L01 slides「The hype was steep」「Compare notes」</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="pairs">
+   <div class="pair"><div class="a"><b>Typist：写代码行</b>语法、格式、样板代码。</div><div class="b"><b>Curator：说明意图</b>写做什么、为什么，不写怎么做。</div></div>
+   <div class="pair"><div class="a"><b>Typist：时间花在 HOW</b>实现的具体操作。</div><div class="b"><b>Curator：评估输出</b>审查、改方向、接受。</div></div>
+   <div class="pair"><div class="a"><b>Typist：拥有按键</b>「正确」= 我打对了。</div><div class="b"><b>Curator：拥有结果</b>「正确」= 能运行，而且我能为它辩护，不管是谁打的。</div></div>
+  </div></div>
+  <div class="say"><span class="kicker">这门课的思维模型是什么？</span><h2>从 Typist 变成 Curator</h2>
+  <p>Typist（写代码的人）对按键负责。Curator（代码把关人）对结果负责。</p>
+  <p class="key">讲师备注：同一个工程师，只是时间分配不同。</p>
+  <div class="src official">S1 L01 slides「Code Curator · The Philosophy」Typist / Curator 两栏</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="pairs">
+   <div class="pair"><div class="no"><b>Bad · 写新东西</b>Please could you help me write a Python function that iterates through a list of integers… actually I think a list comprehension is cleaner but I’m not sure…</div><div class="yes"><b>Good</b>Write a function that extracts the even numbers from a list.</div></div>
+   <div class="pair"><div class="no"><b>Bad · 追一个失败</b>The tests are failing. Something with dates? Or the timezone maybe? Can you look at it and just make it work.</div><div class="yes"><b>Good</b>test_parse_date fails on "2026-02-30". Make parse_date raise ValueError on invalid dates instead of returning None.</div></div>
+  </div></div>
+  <div class="say"><span class="kicker">提示词该写多长？</span><h2>KISS：提示词要聚焦，别过度解释</h2>
+  <p>讲师备注：Good 一栏几乎总是得到更好的结果，模型会推断剩下的部分。</p>
+  <p class="key">多加的附带说明会叠加歧义，而不是消除歧义。</p>
+  <details class="more"><summary></summary><p>KISS 在本课的意思是「清晰胜过啰嗦」，不是网络协议。追失败的 Good 例子写出了：哪个测试、哪个输入、期望行为（抛 <code>ValueError</code>）和现在的错误行为（返回 <code>None</code>）。</p></details>
+  <div class="src official">S1 L01 slides「KISS」及 Bad / Good 两栏和讲师备注</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><svg class="flow" data-act="prompt" data-edge="model>prompt" data-flow='{"nodes":[{"id":"ctx","x":110,"y":110,"t":"Context 上下文","s":"AI 开始时知道什么？"},{"id":"model","x":330,"y":300,"t":"Model 模型","s":"能力 / 成本 / 速度"},{"id":"prompt","x":550,"y":110,"t":"Prompt 提示词","s":"怎么说明你要什么？","c":"amber"}],"edges":[{"f":"ctx","t":"model"},{"f":"model","t":"prompt"},{"f":"prompt","t":"ctx"}]}'></svg></div>
+  <div class="say"><span class="kicker">下一步用什么框架诊断？</span><h2>Big Three：上下文、模型、提示词</h2>
+  <p>本讲只预告；第 3 讲（L03）深入讲。</p>
+  <p class="key">课程目标之一：用 Big Three 推理 AI 编码工具为什么失败。</p>
+  <div class="src official">S1 L01 slides「Preview · L03 The Big Three」；S2 syllabus 学习目标 /01</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="pairs">
+   <div class="pair"><div class="a"><b>问题 1</b>既然 AI 能写代码，为什么还要学 EECS 281？</div><div class="b"><b>讲师备注要点</b>计算机基础仍然重要：你要评估输出。</div></div>
+   <div class="pair"><div class="a"><b>问题 2</b>什么时候你不想用 AI 写代码？</div><div class="b"><b>讲师备注要点</b>学习时、安全关键的代码、深度维护。</div></div>
+  </div></div>
+  <div class="say"><span class="kicker">AI 能写代码，基础还有用吗？</span><h2>基础仍然重要，因为要评估输出</h2>
+  <p>两个讨论题用来检验 Curator 原则。</p>
+  <p class="key">Curator 要评估输出，评估靠的就是计算机基础。</p>
+  <div class="src official">S1 L01 slides「Two questions」及讲师备注</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><svg class="flow" data-act="aider" data-edge="aider>ep" data-flow='{"nodes":[{"id":"you","x":110,"y":80,"t":"你","s":"决定 Big Three","c":"blue"},{"id":"aider","x":330,"y":200,"t":"Aider","s":"没有 GUI 藏起决定"},{"id":"ep","x":550,"y":80,"t":"你部署的模型","s":"OpenAI 兼容 API","c":"amber"},{"id":"own","x":550,"y":330,"t":"你自己的版本","s":"第 3 周开始重建","c":"green"}],"edges":[{"f":"you","t":"aider","l":"上下文 / 模型 / 提示词"},{"f":"aider","t":"ep","l":"一行配置"},{"f":"aider","t":"own","l":"小到能重写"}]}'></svg></div>
+  <div class="say"><span class="kicker">为什么 Apply 阶段用 Aider？</span><h2>选 Aider 是教学理由：决定都摆在明面上</h2>
+  <p>它讲 OpenAI 兼容 API，所以能连你自己部署的模型；它也小到你能重建它。</p>
+  <p class="key">模型只是一行配置，不是依赖，所以这门课不花钱。</p>
+  <details class="more"><summary></summary><ul><li>三条理由：Big Three 是显式的；讲 OpenAI 兼容 API；小到能重建，从第 3 周开始。</li><li>讲师备注：Claude Code 在 L05 作为演示出现，不需要账号。</li></ul></details>
+  <div class="src official">S1 L01 slides「Why Aider in Apply?」及讲师备注</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><pre><span class="k">def</span> <span class="f">parse_args</span>(argv):
+    <span class="s">"""Split argv into a command and its arguments."""</span>
+<span class="hl">    <span class="k">return</span> argv[0], argv[1:]</span>
+<span class="k">def</span> <span class="f">dispatch</span>(command, args):
+<span class="hl">    <span class="k">if</span> command == <span class="s">"add"</span>:</span>        <span class="k">return</span> cmd_add(args)
+    <span class="k">elif</span> command == <span class="s">"list"</span>:
+        <span class="k">return</span> cmd_list(args)
+    <span class="k">elif</span> command == <span class="s">"count"</span>:
+        <span class="k">return</span> cmd_count(args)
+    <span class="c"># else: unknown command</span></pre></div>
+  <div class="say"><span class="kicker">现场演示改的是什么代码？</span><h2>四个测试全过，代码仍有两处缺陷</h2>
+  <p>没有参数时 <code>argv[0]</code> 抛 <code>IndexError</code>；<code>dispatch()</code> 是一串 if。</p>
+  <p class="key">测试全绿不等于代码好。</p>
+  <details class="more"><summary></summary><p>演示代码在官方仓库 <code>demos/L01-notes-cli</code>：<code>notes.py</code> 是约 60 行的笔记命令行，<code>test_notes.py</code> 有 4 个测试。<code>./reset</code> 生成一个可丢弃的副本，并做成 git 仓库，所以 Aider 的 <code>/undo</code> 能用。</p></details>
+  <div class="src official">S3 demos/L01-notes-cli/src/notes.py:13–15、48–59；README「The two flaws」</div></div>
+</section>
+
+<section class="card full">
+  <div class="head-full"><span class="kicker">动手：用 Curator 的方式走一遍现场演示</span><h2>三个提示词：你说结果，模型改代码，你判断</h2></div>
+  <div class="stage"><div class="sim" data-sim='{"label":"正常路径（课件演示）","note":"串起来的示例：三个提示词照课件和 README；每一步的分工照 Curator 一栏。具体 diff 内容没有写出，官方材料没给。","flow":{"nodes":[{"id":"you","x":110,"y":80,"t":"你（Curator）","s":"说明意图 · 评估 · 负责","c":"blue","w":220},{"id":"ai","x":480,"y":80,"t":"Aider + 模型","s":"生成修改","c":"amber"},{"id":"diff","x":480,"y":300,"t":"diff","s":"先读再接受"},{"id":"test","x":110,"y":300,"t":"测试","s":"/run pytest -q","c":"green"}],"edges":[{"f":"you","t":"ai","l":"提示词"},{"f":"ai","t":"diff","l":"修改"},{"f":"diff","t":"you","l":"你读 diff"},{"f":"you","t":"test","l":"运行"},{"f":"test","t":"you","bend":-30}]},
+  "steps":[
+   {"act":"you","edge":"you>ai","msg":{"r":"user","t":"Refactor parse_args() to handle the no-args case — print usage and exit cleanly."},"say":"提示词 1。你只说结果（WHAT），不说怎么写。"},
+   {"act":"ai","edge":"ai>diff","msg":{"r":"asst","t":"（模型给出对 notes.py 的修改）"},"say":"模型产出修改。打字的是模型。"},
+   {"act":"diff","edge":"diff>you","say":"README：每个提示词之后，接受前先读 diff。这是 Curator 的「评估输出」。"},
+   {"act":"test","edge":"you>test","msg":{"r":"tool","t":"/run pytest -q"},"say":"在看得见的地方跑测试。"},
+   {"act":"you","edge":"you>ai","msg":{"r":"user","t":"Add a unit test for the no-args path."},"say":"提示词 2：给无参数路径加单元测试。照样读 diff。"},
+   {"act":"you","edge":"you>ai","msg":{"r":"user","t":"Replace the if-chain in dispatch() with a dictionary lookup."},"say":"提示词 3：把 if 链换成字典查找。照样读 diff、跑测试。"},
+   {"act":"you","edge":"test>you","msg":{"r":"tool","t":"Tests pass. I wrote zero lines of code."},"say":"课件：三个协同修改，测试通过，讲师一行代码都没写。"},
+   {"act":"you","say":"课件：I described outcomes. The model produced them. I judged. Curator 拥有结果。"}],
+  "alts":[{"label":"分支：diff 不是你要的（补充示例）","steps":[
+   {"act":"you","edge":"you>ai","msg":{"r":"user","t":"Replace the if-chain in dispatch() with a dictionary lookup."},"say":"同样的提示词 3。"},
+   {"act":"diff","edge":"diff>you","msg":{"r":"err","t":"（假设）diff 里改动超出了 dispatch()"},"say":"教学假设，不是官方演示的结果。你读 diff 时发现它不符合意图。"},
+   {"act":"you","msg":{"r":"user","t":"/undo"},"say":"Curator 的「改方向」：撤销。reset 把副本做成 git 仓库，所以 /undo 能用。"},
+   {"act":"ai","edge":"you>ai","msg":{"r":"user","t":"（更聚焦地重说一次提示词）"},"say":"按 KISS 重写提示词：聚焦，不加附带说明。"},
+   {"act":"test","edge":"you>test","msg":{"r":"tool","t":"/run pytest -q"},"say":"读完新 diff 再跑测试；你能解释，才接受。"}]}]}'></div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><svg class="flow" data-act="build" data-edge="p2>build" data-flow='{"nodes":[{"id":"p1","x":110,"y":80,"t":"Part 1 第 1–10 课","s":"taskr 命令行 · qwen3.5:4b"},{"id":"p2","x":450,"y":80,"t":"Part 2 第 11–16 课","s":"网页前端 · 建议 9b"},{"id":"gate","x":110,"y":300,"t":"9 月 11 日截止","s":"setup gate + 16 课","c":"red"},{"id":"build","x":450,"y":300,"t":"结对程序员","s":"第 3–6 周 · 10 月 6 日交","c":"amber"}],"edges":[{"f":"p1","t":"p2"},{"f":"p2","t":"gate"},{"f":"p2","t":"build"}]}'></svg></div>
+  <div class="say"><span class="kicker">这周要做什么？</span><h2>每一课都是一个失败的测试</h2>
+  <p><code>aider-practice</code> 共 16 课：你驱动 Aider，直到测试通过。你不用猜自己是不是做完了。</p>
+  <p class="key">结对程序员要做 7 个固定功能，只凭一份给定规格从零写；规格在 L03 发布。</p>
+  <details class="more"><summary></summary><ul><li>交付：通过 feature gate 的代码，加上规格、会话日志和一份简短反思。</li><li>Lab01（9 月 14/15 日）是「转折实验」。</li><li>结尾页：Aider will be gone. The principles won’t. 讲师备注：Claude Code 和 Codex 已经是它的后继者。</li></ul></details>
+  <div class="src official">S1 L01 slides「Every lesson is a failing test」「Your first project」「Aider will be gone」</div></div>
+</section>
+
+<section class="card full">
+  <div class="head-full"><span class="kicker">小测（补充：题目由学习搭子出）</span><h2>用 6 个场景检查你是不是 Curator</h2></div>
+  <div class="stage"><div class="quiz" data-quiz='[
+   {"q":"你用 AI 生成了一段排序代码，测试全过，但你说不清它为什么对。按本课标准，这段代码算谁的？","opts":["算你的，测试过了","不算你的：解释不了就不是你的","算模型的，所以不用负责"],"a":1,"why":"If you can explain it, it’s yours。评分看理解，不看生成。误区：测试全过就够了。","back":3},
+   {"q":"同学说：「代码是 AI 打的，出了 bug 不怪我。」这是哪种角色的想法？","opts":["Curator：拥有结果","Typist：只对按键负责","两者都不是"],"a":1,"why":"Curator 的「正确」是能运行且能为它辩护，不管是谁打的。","back":6},
+   {"q":"测试 test_parse_date 失败了。哪个提示词更符合 KISS？","opts":["测试挂了，可能是日期或时区？帮我弄好","test_parse_date fails on \"2026-02-30\". Make parse_date raise ValueError on invalid dates instead of returning None.","请详细解释你的思路，再考虑所有可能原因，然后修好"],"a":1,"why":"聚焦：写出哪个测试、哪个输入、期望行为。附带说明会叠加歧义。","back":7},
+   {"q":"notes.py 的 4 个测试全过。能说明代码没问题吗？","opts":["能","不能：无参数时仍会 IndexError，dispatch 仍是 if 链","不能：测试本身一定写错了"],"a":1,"why":"README：测试全绿不等于代码好。","back":11},
+   {"q":"模型给出了提示词 3 的修改。Curator 下一步先做什么？","opts":["直接接受，再写下一个提示词","读 diff，再决定接受、改方向还是撤销","自己手动重写 dispatch"],"a":1,"why":"Curator 评估输出：审查、改方向、接受。README：接受前先读 diff。","back":12},
+   {"q":"为什么 Apply 阶段选 Aider，而不是有图形界面的工具？","opts":["Aider 生成的代码最好","Big Three 是显式的，能连你自己的模型，小到能重建","Aider 是唯一免费的工具"],"a":1,"why":"课件给的是教学理由。工具会消失，原则不会。","back":10}]'></div></div>
+</section>
+</main>
+<nav class="bottom"><button class="btn" id="prev">上一张</button><button class="btn main" id="next">下一张</button></nav>
+<script>
+/* 学习搭子 固定组件库 — 不要在课程里改这个文件。 */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const NS='http://www.w3.org/2000/svg';
+const el=(t,a={},p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p&&p.appendChild(e);return e};
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+/* ---------- 卡片翻页 ---------- */
+const cards=$$('.card');let cur=0;
+function go(i){i=Math.max(0,Math.min(cards.length-1,i));cards[cur].classList.remove('on');cur=i;cards[cur].classList.add('on');
+  $('.track i').style.width=((cur+1)/cards.length*100)+'%';$('.count').textContent=(cur+1)+' / '+cards.length;
+  $('#prev').disabled=cur===0;$('#next').disabled=cur===cards.length-1;history.replaceState(null,'','#'+(cur+1));}
+window.goCard=n=>go(n-1);
+$('#prev').onclick=()=>go(cur-1);$('#next').onclick=()=>go(cur+1);
+addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.key==='ArrowRight')go(cur+1);if(e.key==='ArrowLeft')go(cur-1)});
+let sx=null;addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
+addEventListener('touchend',e=>{if(sx===null)return;const d=e.changedTouches[0].clientX-sx;if(Math.abs(d)>60)go(cur+(d<0?1:-1));sx=null});
+
+/* ---------- flow：用 JSON 画流程图 ----------
+ spec = {w,h,nodes:[{id,x,y,t,s?,c?,w?}],edges:[{f,t,l?,bend?}]}  节点坐标是中心点 */
+function drawFlow(svg,spec){
+  svg.innerHTML='';
+  const defs=el('defs',{},svg);
+  [['a','#AEB8C6'],['b','#2550D9'],['red','#C8372D'],['amber','#C77A00'],['green','#16875A']].forEach(([id,c])=>{const m=el('marker',{id:'ar'+id+svg.dataset.uid,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:7,markerHeight:7,orient:'auto-start-reverse'},defs);el('path',{d:'M0,0L10,5L0,10z',fill:c},m)});
+  const N={};spec.nodes.forEach(n=>N[n.id]={...n,w:n.w||150,h:n.s?70:56});
+  const ns=Object.values(N);
+  let x0=Math.min(...ns.map(n=>n.x-n.w/2)),x1=Math.max(...ns.map(n=>n.x+n.w/2)),y0=Math.min(...ns.map(n=>n.y-n.h/2)),y1=Math.max(...ns.map(n=>n.y+n.h/2));
+  const B={x0,x1,y0,y1};
+  const eg=el('g',{},svg),ng=el('g',{},svg);svg._edges={};svg._nodes={};
+  const clip=(a,b)=>{const dx=b.x-a.x,dy=b.y-a.y;const s=Math.min(Math.abs((a.w/2+6)/(dx||1e-9)),Math.abs((a.h/2+6)/(dy||1e-9)));return[a.x+dx*s,a.y+dy*s]};
+  spec.edges.forEach(e=>{const a=N[e.f],b=N[e.t];let d,lx,ly;
+    if(e.route){ /* 沿外圈走的直角线：top|bottom|left|right，lane 控制离外框的距离 */
+      const g=30+(e.lane||0)*30,oa=e.oa||0,ob=e.ob||0;
+      if(e.route==='top'||e.route==='bottom'){const t=e.route==='top',Y=t?B.y0-g:B.y1+g,ya=a.y+(t?-1:1)*(a.h/2+2),yb=b.y+(t?-1:1)*(b.h/2+8);
+        d=`M${a.x+oa},${ya} V${Y} H${b.x+ob} V${yb}`;lx=(a.x+oa+b.x+ob)/2;ly=Y+(t?-8:18);
+        t?(y0=Math.min(y0,Y-26)):(y1=Math.max(y1,Y+26));}
+      else{const l=e.route==='left',X=l?B.x0-g:B.x1+g,xa=a.x+(l?-1:1)*(a.w/2+2),xb=b.x+(l?-1:1)*(b.w/2+8);
+        d=`M${xa},${a.y+oa} H${X} V${b.y+ob} H${xb}`;lx=X+(l?-8:8);ly=(a.y+b.y)/2;
+        l?(x0=Math.min(x0,X-90)):(x1=Math.max(x1,X+90));}
+    }else{const[p1,q1]=clip(a,b),[p2,q2]=clip(b,a);const mx=(p1+p2)/2,my=(q1+q2)/2,len=Math.hypot(p2-p1,q2-q1)||1,bd=e.bend||0;
+      const cx=mx-(q2-q1)/len*bd,cy=my+(p2-p1)/len*bd;d=`M${p1},${q1} Q${cx},${cy} ${p2},${q2}`;
+      const qx=.25*p1+.5*cx+.25*p2,qy=.25*q1+.5*cy+.25*q2,sg=bd>=0?1:-1;lx=qx-(q2-q1)/len*sg*14;ly=qy+(p2-p1)/len*sg*14+4;}
+    const mk=e.c||'a';const p=el('path',{d,class:'fl-edge '+(e.c||''),'marker-end':`url(#ar${mk}${svg.dataset.uid})`},eg);p._mk=mk;
+    let lab=null;if(e.l){const anc=e.route==='left'?'end':e.route==='right'?'start':'middle';lab=el('text',{x:lx,y:ly,'text-anchor':anc,class:'fl-elab '+(e.c||''),stroke:'#F2F4F7','stroke-width':5,'paint-order':'stroke'},eg);lab.textContent=e.l}
+    svg._edges[e.f+'>'+e.t]={p,lab}});
+  ns.forEach(n=>{const g=el('g',{class:'fl-node '+(n.c||'')},ng);
+    el('rect',{x:n.x-n.w/2,y:n.y-n.h/2,width:n.w,height:n.h,rx:14},g);
+    const t=el('text',{x:n.x,y:n.y+(n.s?-4:6),'text-anchor':'middle'},g);t.textContent=n.t;
+    if(n.s){const s=el('text',{x:n.x,y:n.y+18,'text-anchor':'middle',class:'sub'},g);s.textContent=n.s}
+    svg._nodes[n.id]=g});
+  /* 自动贴合：viewBox 只包住内容，图会放大填满面板 */
+  const P=spec.pad??8;svg.setAttribute('viewBox',`${x0-P} ${y0-P-10} ${x1-x0+2*P} ${y1-y0+2*P+20}`);
+  svg._set=(act,edge)=>{for(const k in svg._nodes)svg._nodes[k].classList.toggle('act',k===act);
+    for(const k in svg._edges){const on=k===edge,E=svg._edges[k];E.p.classList.toggle('act',on);E.p.setAttribute('marker-end',`url(#ar${on?'b':E.p._mk}${svg.dataset.uid})`);E.lab&&E.lab.classList.toggle('act',on)}};
+  svg._set(svg.dataset.act,svg.dataset.edge);
+}
+let uid=0;
+$$('svg.flow').forEach(s=>{s.dataset.uid=++uid;drawFlow(s,JSON.parse(s.dataset.flow))});
+
+/* ---------- sim：一步步走的模拟器 ----------
+ data-sim = {flow:{...}, steps:[{act,edge,msg:{r:user|asst|tool|err|sys,n?,t},say}], alt?:{label,steps:[...]}} */
+$$('.sim').forEach(box=>{
+  const spec=JSON.parse(box.dataset.sim);if(spec.alt&&!spec.alts)spec.alts=[spec.alt];const AL=spec.alts||[];const gname='br'+(++uid);
+  box.innerHTML=`<div class="ctl"><button class="btn sm" data-a="step">下一步</button><button class="btn sm" data-a="play">▶ 自动</button><button class="btn sm" data-a="reset">重置</button>
+   <label>速度 <input type="range" min="300" max="2500" step="100" value="1200"></label></div>${AL.length?`<div class="ctl branches"><label><input type="radio" name="${gname}" value="-1" checked> ${esc(spec.label||'正常路径')}</label>${AL.map((a,j)=>`<label><input type="radio" name="${gname}" value="${j}"> ${esc(a.label)}</label>`).join('')}</div>`:''}
+   <div class="body"><svg class="flow"></svg><div class="log"></div></div><div class="narr"></div>`;
+  if(spec.layout==='wide')box.classList.add('wide');
+  const svg=$('svg',box);svg.dataset.uid=++uid;drawFlow(svg,spec.flow);
+  const log=$('.log',box),narr=$('.narr',box),radios=$$('input[type=radio]',box),spd=$('input[type=range]',box),play=$('[data-a=play]',box);
+  let i=0,timer=null;const sel=()=>{const r=radios.find(r=>r.checked);return r?+r.value:-1};const steps=()=>sel()>=0?AL[sel()].steps:spec.steps;
+  const hint=spec.note?esc(spec.note)+'　点「下一步」开始。':'点「下一步」开始。';const reset=()=>{i=0;log.innerHTML='';narr.innerHTML=hint;svg._set(null,null);stop()};
+  const stop=()=>{clearTimeout(timer);timer=null;play.textContent='▶ 自动'};
+  const step=()=>{const S=steps();if(i>=S.length){narr.textContent='流程结束。点「重置」再走一遍。';stop();return false}
+    const s=S[i++];svg._set(s.act,s.edge);if(s.msg){const d=document.createElement('div');d.className='msg '+s.msg.r;
+      d.innerHTML=`<b>${esc(s.msg.n||({user:'用户',asst:'模型',tool:'工具结果',err:'出错',sys:'系统提示词'}[s.msg.r]))}</b>${esc(s.msg.t)}`;log.appendChild(d);log.scrollTop=1e9}
+    narr.innerHTML=`<b>第 ${i}/${S.length} 步</b>　${esc(s.say)}`;return true};
+  const loop=()=>{if(step())timer=setTimeout(loop,+spd.value);else stop()};
+  box.onclick=e=>{const a=e.target.dataset.a;if(a==='step'){stop();step()}if(a==='reset')reset();if(a==='play'){if(timer)stop();else{play.textContent='❚❚ 暂停';loop()}}};
+  narr.innerHTML=hint;radios.forEach(r=>r.onchange=reset);
+  const P=new URLSearchParams(location.search);if(P.get('alt')&&radios[+P.get('alt')]){radios[+P.get('alt')].checked=true}for(let n=+P.get('sim')||0;n>0;n--)step(); /* 自查用：?sim=5&alt=1 */
+});
+
+/* ---------- bars：横向条形图 ----------
+ data-bars = {unit, items:[{l,v,c?:blue|amber|green|red,note?}], caption?}  数字必须来自原文 */
+$$('.bars').forEach(box=>{const B=JSON.parse(box.dataset.bars),mx=Math.max(...B.items.filter(i=>i.v!=null).map(i=>i.v));
+  box.innerHTML=B.items.map(i=>`<div class="bar ${i.c||''}"><span class="bl">${esc(i.l)}</span>${i.v==null?`<span class="bmiss">${esc(i.miss||'原文未给数字')}</span>`:`<span class="bt"><i style="width:${(i.v/mx*100).toFixed(1)}%"></i></span><span class="bv">${esc(i.v)}${esc(B.unit||'')}</span>`}${i.note?`<span class="bn">${esc(i.note)}</span>`:''}</div>`).join('')+(B.caption?`<div class="bc">${esc(B.caption)}</div>`:'')});
+
+/* ---------- quiz：页内小测 ----------
+ data-quiz = [{q,opts:[...],a:正确下标,why,back:答错时回到第几张卡片}] */
+$$('.quiz').forEach(box=>{
+  const Q=JSON.parse(box.dataset.quiz);let k=0,score=0;const done=new Set();
+  const render=()=>{const q=Q[k];box.innerHTML=`<div class="qn">第 ${k+1} / ${Q.length} 题　·　已答对 ${score}</div><div class="qt">${esc(q.q)}</div>
+    ${q.opts.map((o,j)=>`<button class="opt" data-j="${j}">${String.fromCharCode(65+j)}. ${esc(o)}</button>`).join('')}
+    <div class="fb"></div><div class="nav"><button class="btn sm" data-n="-1" ${k?'':'disabled'}>上一题</button><button class="btn sm main" data-n="1" ${k<Q.length-1?'':'disabled'}>下一题</button></div>`};
+  box.onclick=e=>{const t=e.target;if(t.dataset.n){k+=+t.dataset.n;render();return}
+    if(t.dataset.j===undefined||done.has(k))return;const q=Q[k],j=+t.dataset.j,fb=$('.fb',box);done.add(k);
+    $$('.opt',box)[q.a].classList.add('ok');
+    if(j===q.a){score++;fb.innerHTML='✓ 对。'+esc(q.why)}else{t.classList.add('no');fb.innerHTML='✗ 不对。'+esc(q.why)+(q.back?` <a onclick="goCard(${q.back})">回到第 ${q.back} 张再看看</a>`:'')}
+    $('.qn',box).textContent=`第 ${k+1} / ${Q.length} 题　·　已答对 ${score}`};
+  render();
+  const pk=new URLSearchParams(location.search).get('pick');if(pk!==null)$$('.opt',box)[+pk].click(); /* 自查用：?pick=0 */
+});
+
+go(Math.max(0,(parseInt(location.hash.slice(1))||1)-1));
+})();
+</script></body></html>
