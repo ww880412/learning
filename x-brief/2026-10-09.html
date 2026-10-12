@@ -1,0 +1,83 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>X 简报 · 2026-10-09（周五） · X 简报</title><style>/* 学习搭子 固定设计系统 — 不要在课程里改这个文件。只改 lesson.html 的内容。 */
+:root{
+  --paper:#F2F4F7; --sheet:#FFFFFF; --ink:#16202C; --ink2:#4A5868; --hair:#D9DFE7;
+  --blue:#2550D9;  --blue-soft:#E3EAFD;   /* 主角：当前步骤 / 重点 */
+  --amber:#C77A00; --amber-soft:#FBEFD9; /* 数据 / 消息 */
+  --green:#16875A; --green-soft:#DDF3E9; /* 成功 / 工具结果 */
+  --red:#C8372D;   --red-soft:#FBE3E1;   /* 出错 */
+  --r-lg:20px; --r-sm:10px;
+  --font:"PingFang SC","Noto Sans CJK SC","Source Han Sans SC","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}html,body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.7 var(--font);-webkit-font-smoothing:antialiased}
+a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+.top{position:sticky;top:0;background:rgba(242,244,247,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--hair);z-index:5}
+.top .in{max-width:980px;margin:0 auto;padding:10px 20px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.brand{font-weight:800;color:var(--ink)}.brand i{font-style:normal;display:inline-grid;place-items:center;width:28px;height:28px;border-radius:9px;background:var(--blue);color:#fff;margin-right:8px}
+.top nav{display:flex;gap:6px;flex-wrap:wrap;font-size:14px}.top nav a{padding:4px 10px;border-radius:99px;color:var(--ink2)}.top nav a.on{background:var(--blue-soft);color:var(--blue);font-weight:700}
+main{max-width:980px;margin:0 auto;padding:22px 20px 60px}
+.sheet{background:var(--sheet);border-radius:var(--r-lg);padding:24px 26px;box-shadow:0 1px 0 var(--hair),0 18px 40px -26px rgba(22,32,44,.28);margin-bottom:18px}
+.kk{font:700 13px var(--mono);color:var(--blue);letter-spacing:.04em}
+h1{font-size:28px;line-height:1.35;margin:6px 0 12px}
+h2{font-size:20px;margin:28px 0 10px;padding-left:12px;border-left:4px solid var(--blue);scroll-margin-top:110px}
+.quick{list-style:none;padding:0;margin:0;display:grid;gap:10px;counter-reset:q}
+.quick li{background:var(--blue-soft);border-radius:var(--r-sm);padding:12px 14px 12px 48px;position:relative;counter-increment:q}
+.quick li::before{content:counter(q);position:absolute;left:14px;top:12px;width:24px;height:24px;border-radius:50%;background:var(--blue);color:#fff;font:700 13px/24px var(--mono);text-align:center}
+.tabs{position:sticky;top:52px;z-index:4;display:flex;gap:8px;overflow-x:auto;padding:10px 0;background:var(--paper);margin-bottom:6px}
+.tabs a{flex:none;padding:6px 14px;border-radius:99px;background:var(--sheet);border:1px solid var(--hair);color:var(--ink);font-size:14px;font-weight:600}
+.tabs a:hover{border-color:var(--blue);text-decoration:none}
+ul{padding-left:20px}li{margin:8px 0}
+.star{filter:saturate(1.2)}li:has(.star){background:var(--amber-soft);border-radius:var(--r-sm);padding:8px 12px;list-style:none;margin-left:-20px}
+.more{background:var(--paper);border-radius:var(--r-sm);padding:10px 14px;font-size:14.5px;color:var(--ink2)}
+.muted{font-size:13.5px;color:var(--ink2)}
+.row{display:flex;gap:12px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--hair)}.row:last-child{border:0}
+.row .d{font:600 14px var(--mono);color:var(--ink2);min-width:96px}.row .t{flex:1;min-width:0}
+.tag{font-size:12px;padding:2px 9px;border-radius:99px;background:var(--paper);color:var(--ink2);font-weight:600}.tag.blue{background:var(--blue-soft);color:var(--blue)}.tag.green{background:var(--green-soft);color:var(--green)}
+.empty{border:2px dashed var(--hair);border-radius:var(--r-lg);padding:20px;color:var(--ink2)}.empty b{display:block;color:var(--ink);margin-bottom:4px}
+.pn{display:flex;justify-content:space-between;gap:10px;margin-top:20px;font-weight:700}
+.foot{margin-top:30px;font-size:13px;color:var(--ink2);text-align:center}
+@media(max-width:640px){main{padding:14px 12px 40px}.sheet{padding:18px 16px}h1{font-size:22px}.row{flex-wrap:wrap;gap:4px 10px}.row .d{min-width:0}}
+</style></head><body>
+<header class="top"><div class="in"><a class="brand" href="./index.html"><i>𝕏</i>X 简报</a><nav><a href="../index.html">学习库首页</a><a href="index.html" class=on>X 简报</a><a href="index.html#weekly">周趋势</a></nav></div></header>
+<main><section class="sheet"><span class="kk">DAILY · 2026-10-09（周五）</span><h1>X 简报 · 2026-10-09（周五）</h1></section>
+<nav class="tabs"><a href="#s1">最重要的一件事</a><a href="#s2">主题</a><a href="#s3">大家在争什么</a><a href="#s4">值得读全文</a><a href="#s5">没发帖的账号</a><a href="#s6">打不开的内容</a></nav><section class="sheet"><p>时间窗：10/8 12:50 AM ET – 10/9 12:50 AM ET</p>
+<p><b>读了 35 个账号，共 299 条帖子，选出 12 条。</b></p>
+<h2 id="s1">最重要的一件事</h2>
+<p>Anthropic 一年多来第一次改 Claude 的使用政策，11/12 生效：除了大家都在聊的「不得持续无端辱骂模型」，AI 问诊、理财这类产品今后都要先经专业人士审核才能交给用户。中文圈正赶上一波 Claude 封号，这条和你的账号、产品都有直接关系。</p>
+<h2 id="s2">主题</h2>
+<p><b>Anthropic：政策、新品、价格一起来</b></p>
+<ul>
+<li>@dotey：Claude 使用政策更新，禁止持续无端辱骂虐待模型；还收紧了虚假宣传、选举、武器、监控方面的规定，医疗和金融建议改为必须人工审核 <a href="https://x.com/dotey/status/2108255984703475733" target="_blank" rel="noopener">原帖</a> · 10/8 1:59 PM ET</li>
+<li>@dotey：Claude 上线 Dashboards（数据看板）和 Motion（动画讲解），都还在测试；Docs、Slides、Design 结束测试，包括免费版在内所有套餐都能用 <a href="https://x.com/dotey/status/2108409240847016347" target="_blank" rel="noopener">原帖</a> · 10/9 12:08 AM ET</li>
+<li>@trq212：Max 套餐现在每月附送 Claude API 额度（$100 或 $200，跟套餐挂钩）；他用 Managed Agents 和 Sonnet 5.5 做了一个每天自动生成的浏览器新标签页，每次运行约 $0.75，插件已开源 <a href="https://x.com/trq212/status/2108301668828004396" target="_blank" rel="noopener">原帖</a> · 10/8 5:01 PM ET</li>
+<li>@dotey：提醒一下，Haiku 5.5 只有上下文在 100K 以内才便宜，超过 100K 价格涨到 5 倍，这一点价格页上不太显眼 <a href="https://x.com/dotey/status/2108215552993055187" target="_blank" rel="noopener">原帖</a> · 10/8 11:18 AM ET</li>
+</ul>
+<p><b>OpenAI：Codex 提速，安全团队又有人离开</b></p>
+<ul>
+<li>@thsottiaux：Codex 的「方向调整」改为即时生效，模型能马上按你的修改调整方向；同时发布 GPT-6.1 Sol ultrafast，官方说速度最高是 Sol 标准版的 8 倍 <a href="https://x.com/thsottiaux/status/2108275041276420573" target="_blank" rel="noopener">原帖</a> · 10/8 3:15 PM ET</li>
+<li>@jeremyphoward：OpenAI 安全研究员 Jasmine Wang 说自己和两位同事上周被开除，给出的理由是她访问了一位高管的邮箱；他追问：是她早就要求收回这项权限，IT 一直没处理 <a href="https://x.com/jeremyphoward/status/2108371259612708921" target="_blank" rel="noopener">原帖</a> · 10/8 9:37 PM ET</li>
+</ul>
+<p><b>Agent 安全与沙箱</b></p>
+<ul>
+<li>@simonw：微软开源了跨平台（Windows/macOS/Linux）的 Agent 沙箱库，他认为很有前景；同一天 AWS 也开源了沙箱 Strands Box <a href="https://x.com/simonw/status/2108216753604248000" target="_blank" rel="noopener">原帖</a> · 10/8 11:23 AM ET</li>
+<li>@wquguru：韩国多家金融机构遭网络攻击，攻击者在 Claude Code 的提示词里留下了自己的年龄、籍贯、学校和联系方式；整个过程主要靠 DeepSeek v4.1-flash 驱动开源渗透平台 <a href="https://x.com/wquguru/status/2108156413495419088" target="_blank" rel="noopener">原帖</a> · 10/8 7:23 AM ET</li>
+</ul>
+<p><b>AI 编程实践</b></p>
+<ul>
+<li>@LinearUncle：Kun Chen 在 DeepSWE 上测 Sonnet 5.5，发现不让 Agent 自己写单元测试和集成测试，成功率反而略高，还更省 token；用 TDD 时成功率下降更多 <a href="https://x.com/LinearUncle/status/2108085292834099476" target="_blank" rel="noopener">原帖</a> · 10/8 2:41 AM ET</li>
+</ul>
+<h2 id="s3">大家在争什么</h2>
+<ul>
+<li>Haiku 5.5 定价是不是专门冲着国产模型去的：@op7418 说「恶心」，评论区很多人反驳，他反问是不是模型一便宜就忘了 Anthropic 之前做过什么 <a href="https://x.com/op7418/status/2108126537044353334" target="_blank" rel="noopener">原帖</a> · 10/8 5:25 AM ET</li>
+<li>Claude 封号潮：@servasyy_ai 说连着被封了 2 个号，照着各种攻略做也没用，最后改成通过 API 中转来用 Claude <a href="https://x.com/servasyy_ai/status/2108393595640377397" target="_blank" rel="noopener">原帖</a> · 10/8 11:06 PM ET</li>
+</ul>
+<h2 id="s4">值得读全文</h2>
+<ul>
+<li>@shao__meng 解读 Matt Pocock 的思路：改动小就直接写，中大型改动先把需求问清楚，只有规划失控时才换成重型规划流程 <a href="https://x.com/shao__meng/status/2108394238845354137" target="_blank" rel="noopener">原帖</a> · 10/8 11:08 PM ET</li>
+<li>也建议读一下上面 @dotey 那条政策解读的全文，做 AI 问诊或理财类产品的话尤其要看</li>
+</ul>
+<h2 id="s5">没发帖的账号</h2>
+<p>@Khazix0918、@karpathy、@AndrewYNg、@DrJimFan、@lijigang 这个时间段里没有原创帖。这几个账号最近 30 天内都发过原创，仍算活跃。</p>
+<h2 id="s6">打不开的内容</h2>
+<p>没有。一开始 X 读取被限流，等了一会儿重试，所有账号都完整读到了。</p></section><div class="pn"><a href="2026-10-10.html">← 2026-10-10</a><a href="index.html">往期目录</a><span></span></div><div class="foot">王玮的 X 简报 · 每天由 X Brief 生成 · 链接打开 X 原帖</div></main></body></html>

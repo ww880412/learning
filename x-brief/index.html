@@ -1,0 +1,46 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>X 简报 · X 简报</title><style>/* 学习搭子 固定设计系统 — 不要在课程里改这个文件。只改 lesson.html 的内容。 */
+:root{
+  --paper:#F2F4F7; --sheet:#FFFFFF; --ink:#16202C; --ink2:#4A5868; --hair:#D9DFE7;
+  --blue:#2550D9;  --blue-soft:#E3EAFD;   /* 主角：当前步骤 / 重点 */
+  --amber:#C77A00; --amber-soft:#FBEFD9; /* 数据 / 消息 */
+  --green:#16875A; --green-soft:#DDF3E9; /* 成功 / 工具结果 */
+  --red:#C8372D;   --red-soft:#FBE3E1;   /* 出错 */
+  --r-lg:20px; --r-sm:10px;
+  --font:"PingFang SC","Noto Sans CJK SC","Source Han Sans SC","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}html,body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.7 var(--font);-webkit-font-smoothing:antialiased}
+a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+.top{position:sticky;top:0;background:rgba(242,244,247,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--hair);z-index:5}
+.top .in{max-width:980px;margin:0 auto;padding:10px 20px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.brand{font-weight:800;color:var(--ink)}.brand i{font-style:normal;display:inline-grid;place-items:center;width:28px;height:28px;border-radius:9px;background:var(--blue);color:#fff;margin-right:8px}
+.top nav{display:flex;gap:6px;flex-wrap:wrap;font-size:14px}.top nav a{padding:4px 10px;border-radius:99px;color:var(--ink2)}.top nav a.on{background:var(--blue-soft);color:var(--blue);font-weight:700}
+main{max-width:980px;margin:0 auto;padding:22px 20px 60px}
+.sheet{background:var(--sheet);border-radius:var(--r-lg);padding:24px 26px;box-shadow:0 1px 0 var(--hair),0 18px 40px -26px rgba(22,32,44,.28);margin-bottom:18px}
+.kk{font:700 13px var(--mono);color:var(--blue);letter-spacing:.04em}
+h1{font-size:28px;line-height:1.35;margin:6px 0 12px}
+h2{font-size:20px;margin:28px 0 10px;padding-left:12px;border-left:4px solid var(--blue);scroll-margin-top:110px}
+.quick{list-style:none;padding:0;margin:0;display:grid;gap:10px;counter-reset:q}
+.quick li{background:var(--blue-soft);border-radius:var(--r-sm);padding:12px 14px 12px 48px;position:relative;counter-increment:q}
+.quick li::before{content:counter(q);position:absolute;left:14px;top:12px;width:24px;height:24px;border-radius:50%;background:var(--blue);color:#fff;font:700 13px/24px var(--mono);text-align:center}
+.tabs{position:sticky;top:52px;z-index:4;display:flex;gap:8px;overflow-x:auto;padding:10px 0;background:var(--paper);margin-bottom:6px}
+.tabs a{flex:none;padding:6px 14px;border-radius:99px;background:var(--sheet);border:1px solid var(--hair);color:var(--ink);font-size:14px;font-weight:600}
+.tabs a:hover{border-color:var(--blue);text-decoration:none}
+ul{padding-left:20px}li{margin:8px 0}
+.star{filter:saturate(1.2)}li:has(.star){background:var(--amber-soft);border-radius:var(--r-sm);padding:8px 12px;list-style:none;margin-left:-20px}
+.more{background:var(--paper);border-radius:var(--r-sm);padding:10px 14px;font-size:14.5px;color:var(--ink2)}
+.muted{font-size:13.5px;color:var(--ink2)}
+.row{display:flex;gap:12px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--hair)}.row:last-child{border:0}
+.row .d{font:600 14px var(--mono);color:var(--ink2);min-width:96px}.row .t{flex:1;min-width:0}
+.tag{font-size:12px;padding:2px 9px;border-radius:99px;background:var(--paper);color:var(--ink2);font-weight:600}.tag.blue{background:var(--blue-soft);color:var(--blue)}.tag.green{background:var(--green-soft);color:var(--green)}
+.empty{border:2px dashed var(--hair);border-radius:var(--r-lg);padding:20px;color:var(--ink2)}.empty b{display:block;color:var(--ink);margin-bottom:4px}
+.pn{display:flex;justify-content:space-between;gap:10px;margin-top:20px;font-weight:700}
+.foot{margin-top:30px;font-size:13px;color:var(--ink2);text-align:center}
+@media(max-width:640px){main{padding:14px 12px 40px}.sheet{padding:18px 16px}h1{font-size:22px}.row{flex-wrap:wrap;gap:4px 10px}.row .d{min-width:0}}
+</style></head><body>
+<header class="top"><div class="in"><a class="brand" href="./index.html"><i>𝕏</i>X 简报</a><nav><a href="../index.html">学习库首页</a><a href="index.html" class=on>X 简报</a><a href="index.html#weekly">周趋势</a></nav></div></header>
+<main><section class="sheet"><span class="kk">最新一期 · 2026-10-11（周日）</span><h1>X 简报 · 10/11（周日）</h1><ol class="quick"><li>OpenAI 的 Codex 正在搞「28 天里每天上一个新功能，没有就全员重置用量」，周六（第 6 天）又宣布了全局重置，但 shao__meng 这类重度用户并不买账，认为模型本身比活动更重要。</li><li>周末最热的玩法是用 Opus 5.5 做视频：花叔两句提示词做出了周杰伦《七里香》MV，AYi 找到一个收录 475 条爆款视频和原提示词的网站，LinearUncle 说 ManimGX 把数学动画渲染提速了约 90 倍。</li><li>对你更直接的是，xiaomovps 发现自己的 Grok Bot 里有内容丢失、日志里有过一次重置，建议马上设定时备份；他另一篇讲额度掉得快的帖子，第一条原因就是 routine 触发太频繁。</li></ol>
+<p style="margin:14px 0 0"><a href="2026-10-11.html"><b>读全文 →</b></a></p></section><nav class="tabs"><a href="2026-10-11.html#s1">新闻</a><a href="2026-10-11.html#s2">趋势</a><a href="2026-10-11.html#s3">技术</a><a href="2026-10-11.html#s4">学术</a></nav>
+<h2 id="archive">往期</h2><section class="sheet" style="padding:6px 12px"><div class="row"><span class="d">2026-10-11（周日）</span><span class="t"><a href="2026-10-11.html">X 简报 · 10/11（周日）</a></span><span class="tag blue">最新</span></div><div class="row"><span class="d">2026-10-10（周六）</span><span class="t"><a href="2026-10-10.html">X 简报 · 10/10（周六）· 改版</a></span></div><div class="row"><span class="d">2026-10-09（周五）</span><span class="t"><a href="2026-10-09.html">X 简报 · 2026-10-09（周五）</a></span></div></section>
+<h2 id="weekly">周趋势</h2><div class="empty"><b>即将上线</b>每周一份趋势监控，汇总一周里反复出现的话题和走向，会放在 <code>x-brief/weekly/</code>。</div><div class="foot">王玮的 X 简报 · 每天由 X Brief 生成 · 链接打开 X 原帖</div></main></body></html>

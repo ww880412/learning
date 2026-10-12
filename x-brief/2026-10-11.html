@@ -1,0 +1,105 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>X 简报 · 10/11（周日） · X 简报</title><style>/* 学习搭子 固定设计系统 — 不要在课程里改这个文件。只改 lesson.html 的内容。 */
+:root{
+  --paper:#F2F4F7; --sheet:#FFFFFF; --ink:#16202C; --ink2:#4A5868; --hair:#D9DFE7;
+  --blue:#2550D9;  --blue-soft:#E3EAFD;   /* 主角：当前步骤 / 重点 */
+  --amber:#C77A00; --amber-soft:#FBEFD9; /* 数据 / 消息 */
+  --green:#16875A; --green-soft:#DDF3E9; /* 成功 / 工具结果 */
+  --red:#C8372D;   --red-soft:#FBE3E1;   /* 出错 */
+  --r-lg:20px; --r-sm:10px;
+  --font:"PingFang SC","Noto Sans CJK SC","Source Han Sans SC","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}html,body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.7 var(--font);-webkit-font-smoothing:antialiased}
+a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+.top{position:sticky;top:0;background:rgba(242,244,247,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--hair);z-index:5}
+.top .in{max-width:980px;margin:0 auto;padding:10px 20px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.brand{font-weight:800;color:var(--ink)}.brand i{font-style:normal;display:inline-grid;place-items:center;width:28px;height:28px;border-radius:9px;background:var(--blue);color:#fff;margin-right:8px}
+.top nav{display:flex;gap:6px;flex-wrap:wrap;font-size:14px}.top nav a{padding:4px 10px;border-radius:99px;color:var(--ink2)}.top nav a.on{background:var(--blue-soft);color:var(--blue);font-weight:700}
+main{max-width:980px;margin:0 auto;padding:22px 20px 60px}
+.sheet{background:var(--sheet);border-radius:var(--r-lg);padding:24px 26px;box-shadow:0 1px 0 var(--hair),0 18px 40px -26px rgba(22,32,44,.28);margin-bottom:18px}
+.kk{font:700 13px var(--mono);color:var(--blue);letter-spacing:.04em}
+h1{font-size:28px;line-height:1.35;margin:6px 0 12px}
+h2{font-size:20px;margin:28px 0 10px;padding-left:12px;border-left:4px solid var(--blue);scroll-margin-top:110px}
+.quick{list-style:none;padding:0;margin:0;display:grid;gap:10px;counter-reset:q}
+.quick li{background:var(--blue-soft);border-radius:var(--r-sm);padding:12px 14px 12px 48px;position:relative;counter-increment:q}
+.quick li::before{content:counter(q);position:absolute;left:14px;top:12px;width:24px;height:24px;border-radius:50%;background:var(--blue);color:#fff;font:700 13px/24px var(--mono);text-align:center}
+.tabs{position:sticky;top:52px;z-index:4;display:flex;gap:8px;overflow-x:auto;padding:10px 0;background:var(--paper);margin-bottom:6px}
+.tabs a{flex:none;padding:6px 14px;border-radius:99px;background:var(--sheet);border:1px solid var(--hair);color:var(--ink);font-size:14px;font-weight:600}
+.tabs a:hover{border-color:var(--blue);text-decoration:none}
+ul{padding-left:20px}li{margin:8px 0}
+.star{filter:saturate(1.2)}li:has(.star){background:var(--amber-soft);border-radius:var(--r-sm);padding:8px 12px;list-style:none;margin-left:-20px}
+.more{background:var(--paper);border-radius:var(--r-sm);padding:10px 14px;font-size:14.5px;color:var(--ink2)}
+.muted{font-size:13.5px;color:var(--ink2)}
+.row{display:flex;gap:12px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--hair)}.row:last-child{border:0}
+.row .d{font:600 14px var(--mono);color:var(--ink2);min-width:96px}.row .t{flex:1;min-width:0}
+.tag{font-size:12px;padding:2px 9px;border-radius:99px;background:var(--paper);color:var(--ink2);font-weight:600}.tag.blue{background:var(--blue-soft);color:var(--blue)}.tag.green{background:var(--green-soft);color:var(--green)}
+.empty{border:2px dashed var(--hair);border-radius:var(--r-lg);padding:20px;color:var(--ink2)}.empty b{display:block;color:var(--ink);margin-bottom:4px}
+.pn{display:flex;justify-content:space-between;gap:10px;margin-top:20px;font-weight:700}
+.foot{margin-top:30px;font-size:13px;color:var(--ink2);text-align:center}
+@media(max-width:640px){main{padding:14px 12px 40px}.sheet{padding:18px 16px}h1{font-size:22px}.row{flex-wrap:wrap;gap:4px 10px}.row .d{min-width:0}}
+</style></head><body>
+<header class="top"><div class="in"><a class="brand" href="./index.html"><i>𝕏</i>X 简报</a><nav><a href="../index.html">学习库首页</a><a href="index.html" class=on>X 简报</a><a href="index.html#weekly">周趋势</a></nav></div></header>
+<main><section class="sheet"><span class="kk">DAILY · 2026-10-11（周日）</span><h1>X 简报 · 10/11（周日）</h1><div class="kk" style="color:var(--ink2);margin-bottom:8px">30 秒版</div><ol class="quick"><li>OpenAI 的 Codex 正在搞「28 天里每天上一个新功能，没有就全员重置用量」，周六（第 6 天）又宣布了全局重置，但 shao__meng 这类重度用户并不买账，认为模型本身比活动更重要。</li><li>周末最热的玩法是用 Opus 5.5 做视频：花叔两句提示词做出了周杰伦《七里香》MV，AYi 找到一个收录 475 条爆款视频和原提示词的网站，LinearUncle 说 ManimGX 把数学动画渲染提速了约 90 倍。</li><li>对你更直接的是，xiaomovps 发现自己的 Grok Bot 里有内容丢失、日志里有过一次重置，建议马上设定时备份；他另一篇讲额度掉得快的帖子，第一条原因就是 routine 触发太频繁。</li></ol></section>
+<nav class="tabs"><a href="#s1">新闻</a><a href="#s2">趋势</a><a href="#s3">技术</a><a href="#s4">学术</a></nav><section class="sheet"><h2 id="s1">新闻</h2>
+<ul>
+<li><span class="star">⭐</span> btibor91 的第 41 周汇总：OpenAI 正在做 28 天、每天一项 Codex 和 ChatGPT Work 改进，没有就全员重置用量，GPT-6（带 Intelligent UI）向所有人推送，Anthropic 这边有 Haiku 5.5。<a href="https://x.com/btibor91/status/2109211203847495798" target="_blank" rel="noopener">原帖</a></li>
+<li>Codex 现在能在你明确要求、且当前额度只剩 10% 以下时，自己替你用一次重置，用量吃紧时可以直接对它说。<a href="https://x.com/testingcatalog/status/2109055151163965917" target="_blank" rel="noopener">原帖</a></li>
+<li>Claude 里发现隐藏的「语音」预览标签，另有疑似 Claude Health 网页版的 Arborio 和一个叫 Iggy 的功能在开发中，都还没发布，来源是 TestingCatalog 的拆包观察。<a href="https://x.com/testingcatalog/status/2109206986189410469" target="_blank" rel="noopener">原帖</a></li>
+<li>Anthropic 的透明度数据显示 2026 年上半年封禁了 1140 万个账号，收到 39.8 万次申诉，只有约 4.2 万个被撤销，账号安全还是要多留一手备份。<a href="https://x.com/xiaohu/status/2108955802480615551" target="_blank" rel="noopener">原帖</a></li>
+</ul>
+<p class="more">另外还有：</p>
+<ul>
+<li>Tibo 宣布第 6 天全局重置，说当天结束前对所有人生效。<a href="https://x.com/thsottiaux/status/2109045392684032299" target="_blank" rel="noopener">原帖</a></li>
+<li>据 shao__meng 的帖子，SpaceXAI 被改名成了 SpaceXSI，语气带调侃，我没看到官方来源。<a href="https://x.com/shao__meng/status/2109105278084128867" target="_blank" rel="noopener">原帖</a></li>
+<li>Gorden_Sun 的「大肥鱼小课堂」这期讲 OpenAI 和 Anthropic 分家始末。<a href="https://x.com/Gorden_Sun/status/2109240667390296126" target="_blank" rel="noopener">原帖</a></li>
+</ul>
+<h2 id="s2">趋势</h2>
+<ul>
+<li>shao__meng 很不看好 Tibo 的 28 天活动：他说 Claude 5.5 系列出来后大量用户从 Codex 跑去了 Claude Code，重置已经没有吸引力，说明现在用户看的是模型而不是福利。<a href="https://x.com/shao__meng/status/2109185598510805106" target="_blank" rel="noopener">原帖</a></li>
+<li>花叔用「莫奈风格给《七里香》做 MV」加他的 huashu-art-motion skill，Opus 5.5 迭代两版、不到 100 万 token 就做完，连音频都是 Claude Code 自己找的。<a href="https://x.com/AlchainHust/status/2109133024239714779" target="_blank" rel="noopener">原帖</a></li>
+<li>LinearUncle 转述 REA 作者 Matthew 的观点：只要输出是确定的，就能让 AI 反推出输入，所以复刻 Photoshop、数学突破都可以这样理解，这也是逆向热还在发酵的原因。<a href="https://x.com/LinearUncle/status/2109116176966287829" target="_blank" rel="noopener">原帖</a></li>
+<li>据 AYi 转述，Alexandr Wang 认为现在是建十亿美元公司的最好时机，因为瓶颈已经不是模型不够强，而是世界用得太慢，这道落地鸿沟就是新公司的机会。<a href="https://x.com/AYi_AInotes/status/2109141804620619953" target="_blank" rel="noopener">原帖</a></li>
+<li>Deedy 用 Opus 把 OpenRouter 的公开 token 数据折成金额（他自己的估算）：年化约 15 亿美元，约占全部推理的 1%，本周 Anthropic 占 36%、开源模型占 26%、OpenAI 占 18%。<a href="https://x.com/deedydas/status/2109118089438896576" target="_blank" rel="noopener">原帖</a></li>
+</ul>
+<p class="more">另外还有：</p>
+<ul>
+<li>levelsio 说去年那批「AI 不会取代工作，只会创造工作」的说法漏掉了过渡期：旧岗位先被替代，新岗位还没出现。<a href="https://x.com/levelsio/status/2109244652519903397" target="_blank" rel="noopener">原帖</a></li>
+<li>wquguru 画了一条「互联网信息消化链」：一手信息先出现在 X，再被搬到微博、知乎、B 站，最后被切成抖音和小红书成品，价值密度一路变稀。<a href="https://x.com/wquguru/status/2109235495020699869" target="_blank" rel="noopener">原帖</a></li>
+<li>AYi 说有个网站收录了 475 条用 Opus 5.5 做的爆款视频，每条都附完整提示词，可以免费复制。<a href="https://x.com/AYi_AInotes/status/2109121659982553156" target="_blank" rel="noopener">原帖</a></li>
+<li>dingyi 说 GPT sol 6.1 现在又慢又差，前端审美也不行，问「一天重置一万次有什么意义」。<a href="https://x.com/dingyi/status/2109136204021350622" target="_blank" rel="noopener">原帖</a></li>
+<li>Next Token 播客只播了 5 期订阅就超过 7000。<a href="https://x.com/op7418/status/2108917380600791463" target="_blank" rel="noopener">原帖</a></li>
+</ul>
+<h2 id="s3">技术</h2>
+<ul>
+<li><span class="star">⭐</span> xiaomovps 发现自己的 Grok Bot 里有一部分内容缺失，查日志发现中间有过一次重置，而官方没有保证数据一定不丢，所以他建议让 Grok Bot 开启定时备份、把重要内容传到 GitHub。<a href="https://x.com/xiaomovps/status/2109247597278044293" target="_blank" rel="noopener">原帖</a></li>
+<li>xiaomovps 列了 Grok Bot 额度掉得快的三个原因，第一条是 routine 触发太频繁：额度按 agent 步数和 token 算，每小时甚至更短间隔的触发器、或监听很忙的 Slack 频道，可能一天用掉一周额度。<a href="https://x.com/xiaomovps/status/2109097215277044079" target="_blank" rel="noopener">原帖</a></li>
+<li>AYi 提醒：Claude Code 放进脚本或 CI 的无头模式时，如果不加 bare 参数，会跳过确认直接加载仓库里的 hooks 和 MCP，用在不可信仓库上有风险，建议检查启动参数。<a href="https://x.com/AYi_AInotes/status/2109158911756447852" target="_blank" rel="noopener">原帖</a></li>
+<li>servasyy_ai 让 Muse 装 Pi Agent，再通过阿里云中转接到自己本地 V100 上的 Qwen3.8-flash-next，不再受 API 额度限制；AYi 也转述了同一做法，要有一张能跑该模型的显卡。<a href="https://x.com/servasyy_ai/status/2108940683428118896" target="_blank" rel="noopener">原帖</a></li>
+<li>op7418 让 Grok Bot 把一条很长的推文串拉全、补上生僻概念的解释和链接，再排成一篇中文长文，方便在手机上读，你看英文长串时可以照着用。<a href="https://x.com/op7418/status/2108966708740505828" target="_blank" rel="noopener">原帖</a></li>
+</ul>
+<p class="more">另外还有：</p>
+<ul>
+<li>Clef-Omni 是 Cloudflare 开源的多模态版「选项打概率」模型，基于 Qwen3-Omni 微调，一次看完文字、表格、图片、音频或视频后给每个选项一个概率。<a href="https://x.com/Gorden_Sun/status/2108926990505959632" target="_blank" rel="noopener">原帖</a></li>
+<li>ManimGX 兼容 Manim 语法，底层换成 Rust 加 GPU，36 秒 1080p60 视频 3 秒渲完。<a href="https://x.com/LinearUncle/status/2109230458450174055" target="_blank" rel="noopener">原帖</a></li>
+<li>EmbeddingGemma-2 是 Google 的 865M 本地免费多模态嵌入模型，LinearUncle 用文字就搜到了自己视频里的企鹅游泳片段。<a href="https://x.com/LinearUncle/status/2109249653749449122" target="_blank" rel="noopener">原帖</a></li>
+<li>华为开源多智能体框架 JiuwenSwarm，由 Leader 智能体拆任务、组专家团队，不内置模型。<a href="https://x.com/shao__meng/status/2109083154682351988" target="_blank" rel="noopener">原帖</a></li>
+<li>mobile-mcp 让 Agent 直接操作 iOS 和 Android 的模拟器与真机，还能拉日志和崩溃报告。<a href="https://x.com/GitHub_Daily/status/2109071564968734755" target="_blank" rel="noopener">原帖</a></li>
+<li>big-arrow-on-the-screen 让 Agent 在 Mac 屏幕上画箭头指给你看该点哪里，用于授权弹窗和验证码这类必须人来做的步骤。<a href="https://x.com/GitHub_Daily/status/2109222520284987638" target="_blank" rel="noopener">原帖</a></li>
+<li>yibie 更新 strata-mlx：16GB Mac 上回答速度从每秒 6 到 7 个 token 提到 11 到 12 个，代价是多占内存。<a href="https://x.com/yibie/status/2109096677844173259" target="_blank" rel="noopener">原帖</a></li>
+<li>vista8 说有个一台 MacBook Pro 就能跑的本地音乐模型，质量堪比 Suno，开源。<a href="https://x.com/vista8/status/2109133236244996263" target="_blank" rel="noopener">原帖</a></li>
+</ul>
+<h2 id="s4">学术</h2>
+<ul>
+<li>Sakana AI 的 MASS（omarsar0 推荐）：不需要外部验证器，让一个基础模型自己提出多智能体工作流、运行并打分，再用自己的轨迹微调；两轮后 Qwen3.6-27B 在四个开放式基准上的单位输出 token 表现从 1.2 倍提到 1.6 倍。<a href="https://x.com/omarsar0/status/2108934334589857850" target="_blank" rel="noopener">原帖</a></li>
+<li>HarnessSQL：把模型放在和部署时相同的执行环境里训练，Qwen3-14B 在 Spider 2.0-SQLite 上从 22.2% 升到 54.8%，Qwen3-8B 从 15.5% 升到 45.2%，说明自己搭的 Agent 外壳值得拿来训练而不只是推理时用。<a href="https://x.com/omarsar0/status/2109026263453294956" target="_blank" rel="noopener">原帖</a></li>
+<li>Nathan Lambert 发现他们追踪的头部开源大模型在 HuggingFace 上的下载量降了约 30%，可能与计数方式变化有关，但下降还在持续，他在征求其他解释。<a href="https://x.com/natolambert/status/2108954173316178231" target="_blank" rel="noopener">原帖</a></li>
+</ul>
+<p class="more">另外还有：</p>
+<ul>
+<li>Sebastian Raschka 的「Reasoning From Scratch」第二期讲 RLVR，覆盖 GRPO 的 clipped policy ratio、KL 项和格式奖励。<a href="https://x.com/rasbt/status/2108908657786355788" target="_blank" rel="noopener">原帖</a></li>
+<li>Hamel Husain 采访 Ben Hylak，讲怎么用模拟做 Agent 评测。<a href="https://x.com/HamelHusain/status/2109063317427978553" target="_blank" rel="noopener">原帖</a></li>
+<li>Jerry Liu 说 Mistral OCR 上线 OpenDocRouter，表格和阅读顺序表现不错，每页 p50 约 1.8 秒。<a href="https://x.com/jerryjliu0/status/2108996530204205463" target="_blank" rel="noopener">原帖</a></li>
+<li>Ethan Mollick 转了一位数学家用 Opus 5.5 做的音乐视频，作为对 OpenAI 数学证明的回应。<a href="https://x.com/emollick/status/2108975457748341138" target="_blank" rel="noopener">原帖</a></li>
+</ul>
+<p class="muted">没发新帖：@trq212、@karpathy、@simonw、@swyx、@AndrewYNg、@DrJimFan、@hwchase17、@jeremyphoward、@OfficialLoganK、@_akhaliq、@lijigang、@arankomatsuzaki、@jxmnop、@Swarooprm7、@sama、@demishassabis、@steph_palazzolo、@eladgil、@GaryMarcus、@mitchellh、@bcherny</p></section><div class="pn"><span></span><a href="index.html">往期目录</a><a href="2026-10-10.html">2026-10-10 →</a></div><div class="foot">王玮的 X 简报 · 每天由 X Brief 生成 · 链接打开 X 原帖</div></main></body></html>
