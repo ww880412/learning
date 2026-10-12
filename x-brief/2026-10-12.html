@@ -1,0 +1,136 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>X 简报 · 10/12（周一） · X 简报</title><style>/* 学习搭子 固定设计系统 — 不要在课程里改这个文件。只改 lesson.html 的内容。 */
+:root{
+  --paper:#F6F6F7; --sheet:#FFFFFF; --ink:#16202C; --ink2:#4A5868; --hair:#E2E2E3;
+  --blue:#2550D9;  --blue-soft:#E3EAFD;   /* 主角：当前步骤 / 重点 */
+  --amber:#C77A00; --amber-soft:#FBEFD9; /* 数据 / 消息 */
+  --green:#16875A; --green-soft:#DDF3E9; /* 成功 / 工具结果 */
+  --red:#C8372D;   --red-soft:#FBE3E1;   /* 出错 */
+  --r-lg:12px; --r-sm:10px;
+  --font:"PingFang SC","Noto Sans CJK SC","Source Han Sans SC","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}html,body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.7 var(--font);-webkit-font-smoothing:antialiased}
+a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+.top{position:sticky;top:0;background:rgba(242,244,247,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--hair);z-index:5}
+.top .in{max-width:980px;margin:0 auto;padding:10px 20px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.brand{font-weight:800;color:var(--ink)}.brand i{font-style:normal;display:inline-grid;place-items:center;width:28px;height:28px;border-radius:9px;background:var(--blue);color:#fff;margin-right:8px}
+.top nav{display:flex;gap:6px;flex-wrap:wrap;font-size:14px}.top nav a{padding:4px 10px;border-radius:99px;color:var(--ink2)}.top nav a.on{background:var(--blue-soft);color:var(--blue);font-weight:700}
+main{max-width:980px;margin:0 auto;padding:22px 20px 60px}
+.sheet{background:var(--sheet);border-radius:var(--r-lg);padding:24px 26px;box-shadow:0 1px 0 var(--hair),0 18px 40px -26px rgba(22,32,44,.28);margin-bottom:18px}
+.kk{font:700 13px var(--mono);color:var(--blue);letter-spacing:.04em}
+h1{font-size:28px;line-height:1.35;margin:6px 0 12px}
+h2{font-size:20px;margin:28px 0 10px;padding-left:12px;border-left:4px solid var(--blue);scroll-margin-top:110px}
+.quick{list-style:none;padding:0;margin:0;display:grid;gap:10px;counter-reset:q}
+.quick li{background:var(--blue-soft);border-radius:var(--r-sm);padding:12px 14px 12px 48px;position:relative;counter-increment:q}
+.quick li::before{content:counter(q);position:absolute;left:14px;top:12px;width:24px;height:24px;border-radius:50%;background:var(--blue);color:#fff;font:700 13px/24px var(--mono);text-align:center}
+.tabs{position:sticky;top:52px;z-index:4;display:flex;gap:8px;overflow-x:auto;padding:10px 0;background:var(--paper);margin-bottom:6px}
+.tabs a{flex:none;padding:6px 14px;border-radius:99px;background:var(--sheet);border:1px solid var(--hair);color:var(--ink);font-size:14px;font-weight:600}
+.tabs a:hover{border-color:var(--blue);text-decoration:none}
+ul{padding-left:20px}li{margin:8px 0}
+.star{filter:saturate(1.2)}li:has(.star){background:var(--amber-soft);border-radius:var(--r-sm);padding:8px 12px;list-style:none;margin-left:-20px}
+.more{background:var(--paper);border-radius:var(--r-sm);padding:10px 14px;font-size:14.5px;color:var(--ink2)}
+.muted{font-size:13.5px;color:var(--ink2)}
+.row{display:flex;gap:12px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--hair)}.row:last-child{border:0}
+.row .d{font:600 14px var(--mono);color:var(--ink2);min-width:96px}.row .t{flex:1;min-width:0}
+.tag{font-size:12px;padding:2px 9px;border-radius:99px;background:var(--paper);color:var(--ink2);font-weight:600}.tag.blue{background:var(--blue-soft);color:var(--blue)}.tag.green{background:var(--green-soft);color:var(--green)}
+.empty{border:2px dashed var(--hair);border-radius:var(--r-lg);padding:20px;color:var(--ink2)}.empty b{display:block;color:var(--ink);margin-bottom:4px}
+.pn{display:flex;justify-content:space-between;gap:10px;margin-top:20px;font-weight:700}
+.foot{margin-top:30px;font-size:13px;color:var(--ink2);text-align:center}
+@media(max-width:640px){main{padding:14px 12px 40px}.sheet{padding:18px 16px}h1{font-size:22px}.row{flex-wrap:wrap;gap:4px 10px}.row .d{min-width:0}}
+/* VitePress 默认主题风格（配色/间距/卡片思路改编自 VitePress，MIT License, Copyright (c) 2019-present Yuxi (Evan) You；见 CREDITS.md）。品牌色 = 学习页蓝 #2550D9 */
+:root{--paper:#fff;--sheet:#f6f6f7;--ink:#213547;--ink2:rgba(60,60,67,.75);--hair:#e2e2e3;--blue:#2550D9;--blue-soft:rgba(37,80,217,.10);
+--amber-soft:rgba(234,179,8,.14);--green-soft:rgba(16,185,129,.14);--red-soft:rgba(244,63,94,.12);--r-lg:12px;--r-sm:8px;
+--font:"Inter",-apple-system,"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;--grad:linear-gradient(120deg,#2550D9 25%,#41a8ff)}
+html.dark{--paper:#1b1b1f;--sheet:#202127;--ink:#fffff5;--ink2:rgba(235,235,245,.6);--hair:#2e2e32;--blue:#7c9cff;--blue-soft:rgba(124,156,255,.16);
+--amber:#f0b429;--amber-soft:rgba(240,180,41,.14);--green:#3dd68c;--green-soft:rgba(61,214,140,.14);--red:#f66f81;--red-soft:rgba(246,111,129,.14);--grad:linear-gradient(120deg,#7c9cff 25%,#5ec8ff);color-scheme:dark}
+html,body{background:var(--paper);color:var(--ink)}
+.top{background:color-mix(in srgb,var(--paper) 88%,transparent)!important;border-bottom:1px solid var(--hair)}
+.top nav a.on{background:var(--blue-soft)!important;color:var(--blue)!important}.top nav a:hover{background:var(--sheet)}
+.brand i{background:var(--grad)!important}
+.sheet,.card,.list .row,.chip,.empty{box-shadow:none!important;border:1px solid var(--sheet)}
+.sheet,.card{background:var(--sheet)}
+a.card:hover,.list .row:has(a:hover),.chip:hover{border-color:var(--blue)!important;transform:none!important}
+.hero h1,main>section.sheet:first-of-type h1{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800}
+.hero .stage,.defcard .stage,.thumb,.more,.tabs a{background:var(--paper)}.stat{background:var(--sheet);border:1px solid var(--hair)}
+.chip{background:var(--blue-soft)!important;color:var(--blue)!important;border-color:transparent}
+.empty{border:1px dashed var(--hair)!important;background:var(--sheet)}
+.tabs{background:var(--paper)!important}.tabs a{border-color:var(--hair)}
+.quick li{background:var(--blue-soft)}h2{border-left-color:var(--blue)}
+.dm{margin-left:8px;flex:none;width:34px;height:34px;border-radius:50%;border:1px solid var(--hair);background:var(--sheet);color:var(--ink);cursor:pointer;font-size:15px}
+code{background:var(--sheet)}
+@media(max-width:600px){.top .in{flex-direction:row!important;flex-wrap:wrap}.top nav{order:3;width:100%}}
+/* 状态体系 */
+:root{--purple:#7c3aed;--purple-soft:rgba(124,58,237,.12)}html.dark{--purple:#c4a5ff;--purple-soft:rgba(196,165,255,.16)}
+.tag.purple{background:var(--purple-soft);color:var(--purple)}.stat.purple{border-color:var(--purple)}.stat.purple b{color:var(--purple)}
+.tag.st:not(.blue):not(.green):not(.purple){background:var(--paper);color:var(--ink2);border:1px solid var(--hair)}
+.states{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.states .stat{border-left-width:4px}
+.prog{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink2);margin-top:8px}.prog span{white-space:nowrap;font-weight:600}
+.prog .bar{flex:1;min-width:80px;height:8px;border-radius:99px;background:var(--hair);display:flex;overflow:hidden}
+.prog .bar i{display:block;height:100%}.prog .g{background:var(--purple)}.prog .l{background:var(--green)}.prog .b{background:var(--blue)}
+/* 手机导航：两行换行，全部可见 */
+@media(max-width:600px){.top nav{flex-wrap:wrap!important;overflow:visible!important;gap:4px 2px}.top nav a{padding:4px 10px!important;font-size:13px!important}.states{grid-template-columns:1fr 1fr}.prog{flex-wrap:wrap}}
+</style><script>(function(){var k='theme',s=localStorage.getItem(k);if(s?s==='dark':matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark');
+window.__tt=function(){var d=document.documentElement.classList.toggle('dark');localStorage.setItem(k,d?'dark':'light')}})();
+</script></head><body>
+<header class="top"><div class="in"><a class="brand" href="./index.html"><i>𝕏</i>X 简报</a><nav><a href="../index.html">学习库首页</a><a href="index.html" class=on>X 简报</a><a href="index.html#weekly">周趋势</a></nav><button class="dm" onclick="__tt()" aria-label="切换深色模式">◐</button></div></header>
+<main><section class="sheet"><span class="kk">DAILY · 2026-10-12（周一）</span><h1>X 简报 · 10/12（周一）</h1><div class="kk" style="color:var(--ink2);margin-bottom:8px">30 秒版</div><ol class="quick"><li>OpenAI 的 Codex 活动第 7 天：GPT-6.1 Sol 在 Codex 和 ChatGPT Work 里的默认上下文从 272k 提到 500k，订阅用量不再收长上下文加价，上限仍是 1M。</li><li>REA 逆向潮还在烧：作者 morluto 被挖出是解决过 33 年数学难题的硬核工程师；宝玉把最新 Claude Design 逆向后接到 GPT-6.1 Sol 和开源 BaoCut 上，设计能力明显抬升。</li><li>Meta Muse 留存几乎追平 ChatGPT（D7 超 30%、D14 约 22%）；Karpathy 说大家对 LLM 能力的认知差距正在拉成漏斗；Meta 的 GitSwarm 论文用共享 Git 仓库让几百个异步 Agent 互相接力。</li></ol></section>
+<nav class="tabs"><a href="#s1">新闻</a><a href="#s2">趋势</a><a href="#s3">技术</a><a href="#s4">学术</a></nav><section class="sheet"><h2 id="s1">新闻</h2>
+<ul>
+<li><span class="star">⭐</span> Tibo 宣布第 7 天：GPT-6.1 Sol 在 Codex 与 ChatGPT Work 的默认上下文提到 500k（原 272k，约 +80%），订阅用量不再收长上下文费，仍可手动调到最高 1M，目标是少触发 compaction。<a href="https://x.com/thsottiaux/status/2109430343346581527" target="_blank" rel="noopener">原帖</a></li>
+<li>deedydas 晒出 Meta Muse 留存：D7 高于 ChatGPT（超 30%），D14 约 22%、略低于 ChatGPT，已是留存最高的一批 AI 产品之一。<a href="https://x.com/deedydas/status/2109474596366004417" target="_blank" rel="noopener">原帖</a></li>
+<li>Anthropic 的 Thariq 赞同陶哲轩方向：不该接受不透明的超级智能，智能的一个关键信号是能与人沟通、共建理解，而不是把人甩开。<a href="https://x.com/trq212/status/2109329495341867391" target="_blank" rel="noopener">原帖</a></li>
+<li>Ethan Mollick 说不少大公司上个月还押宝自定义 GPT，OpenAI 突然下线后计划全乱了；各家实验室的突然改动让大型组织很难跟上。<a href="https://x.com/emollick/status/2109472254417318335" target="_blank" rel="noopener">原帖</a></li>
+<li>Tibo 另发：这次改动后，从订阅里抽 GPT-6.1 Sol 用量时不再收长上下文费用。<a href="https://x.com/thsottiaux/status/2109430894604026039" target="_blank" rel="noopener">原帖</a></li>
+</ul>
+<p class="more">另外还有：</p>
+<ul>
+<li>TestingCatalog 同步报道了 500k 默认上下文上调。<a href="https://x.com/testingcatalog/status/2109431898691031316" target="_blank" rel="noopener">原帖</a></li>
+<li>Tibo 对「愿不愿用 2 倍额度换回 5 小时限额」的投票结果表示意外，多数人并不买账。<a href="https://x.com/thsottiaux/status/2109439315570999598" target="_blank" rel="noopener">原帖</a></li>
+</ul>
+<h2 id="s2">趋势</h2>
+<ul>
+<li><span class="star">⭐</span> Karpathy 重发并加长四月那条：对 LLM 能力的认知差距在拉成漏斗——约 60 亿人几乎没碰过，10–20 亿人只当更好的搜索，真正在数学与编程里一手体验前沿 Agent 的大约只有 2000 万人（0.2%）。<a href="https://x.com/karpathy/status/2109361546505966046" target="_blank" rel="noopener">原帖</a></li>
+<li>AYi 转述 Alexandr Wang：Muse 惊艳原型一两周就拉出来了，但他们按住七个月打磨稳定性；消费级市场里偶尔坏一次，在用户眼里就是垃圾。<a href="https://x.com/AYi_AInotes/status/2109442976149577863" target="_blank" rel="noopener">原帖</a></li>
+<li>宝玉说 AI 初创现在最想要又最难招的是「长期在线 + 有品味能创作 + 懂 AI 技术 + 能高质量执行」的复合岗，技术理解和内容能力的象限图里几乎没人落在右上角。<a href="https://x.com/dotey/status/2109526616778895753" target="_blank" rel="noopener">原帖</a></li>
+<li>LinearUncle 解释 REA 为何爆：作者 morluto 不是普通自媒体，解决过困扰数学家 33 年的问题，还参与过大量知名开源项目。<a href="https://x.com/LinearUncle/status/2109479168165466347" target="_blank" rel="noopener">原帖</a></li>
+<li>宝玉转述丰田式规矩：改善省出的人手不能拿去裁；AI 一提效就裁员的公司，员工再也不会主动琢磨怎么用好 AI。<a href="https://x.com/dotey/status/2109413992280039441" target="_blank" rel="noopener">原帖</a></li>
+</ul>
+<p class="more">另外还有：</p>
+<ul>
+<li>oran_ge：大部分人不用大模型，是因为对他们没用、没有 ROI。<a href="https://x.com/oran_ge/status/2109435789549715933" target="_blank" rel="noopener">原帖</a></li>
+<li>Rauch 转发 Anatomy：一句话描述一台机器，Claude 就能生成可旋转、可拆解的交互等距线框和真实 3D 动效。<a href="https://x.com/rauchg/status/2109297685392175488" target="_blank" rel="noopener">原帖</a></li>
+<li>Mollick：实验室里约 5000 个能摸到先进模型的人，多数还只用在网络安全、数学和 AI 研发，其他领域远未铺开。<a href="https://x.com/emollick/status/2109422437616029941" target="_blank" rel="noopener">原帖</a></li>
+</ul>
+<h2 id="s3">技术</h2>
+<ul>
+<li>宝玉用 REA 逆向了最新 Claude Design，接到 GPT-6.1 Sol 后设计能力明显提升，并把 Claude Design / Slides 集成进开源 BaoCut（原本只做视频剪辑）。<a href="https://x.com/dotey/status/2109482425722057154" target="_blank" rel="noopener">原帖</a></li>
+<li>Oh My Pi 作者 Can Bölük 新开 Stencil Labs，推出 Rust 写的新终端 Tern（neoterminal），目前封闭测试可排队；dingyi 也很期待。<a href="https://x.com/xiaomovps/status/2109269231573549114" target="_blank" rel="noopener">原帖</a></li>
+<li>歸藏让 Grok Bot 从复杂推文串剪出 3 分钟学习视频，全程在床上、不用电脑，额度消耗不到 4%。<a href="https://x.com/op7418/status/2109467496298516760" target="_blank" rel="noopener">原帖</a></li>
+<li>歸藏试了 Opus 5.5 + 即梦 CLI 做故事片：编排、特效、提示词、剪辑全由 Opus 决定，即梦负责分镜图和视频。<a href="https://x.com/op7418/status/2109515395749310821" target="_blank" rel="noopener">原帖</a></li>
+<li>GitHubDaily 推荐 CosmoEdge：给摄像头接一套开源 AI 视频分析，不只是识别模型，还管视频接入、规则和通知。<a href="https://x.com/GitHub_Daily/status/2109494331270688891" target="_blank" rel="noopener">原帖</a></li>
+</ul>
+<p class="more">另外还有：</p>
+<ul>
+<li>宝玉用 REA 分析 Codex 内置浏览器如何标记发评论，不必自己反编译。<a href="https://x.com/dotey/status/2109417222724600172" target="_blank" rel="noopener">原帖</a></li>
+<li>密歇根大学「Applied Agentic Software Engineering」课把方法论做成五个 Skills：/peanuts → /elephant → /goldfish → /egm-implement → /mean-review。<a href="https://x.com/shao__meng/status/2109305199357784357" target="_blank" rel="noopener">原帖</a></li>
+<li>向阳乔木的剪藏插件上架 Chrome 商店：三按 a 阅读模式、三按 i 笔记，B 站/YouTube/X 可进学习模式。<a href="https://x.com/vista8/status/2109475522858135755" target="_blank" rel="noopener">原帖</a></li>
+<li>Jerry Liu：Unlimited OCR 是小参数、极快的文档 OCR，阅读顺序和版面不错，表格略好于 PaddleOCR。<a href="https://x.com/jerryjliu0/status/2109391596743716963" target="_blank" rel="noopener">原帖</a></li>
+<li>Gorden_Sun：其他 Agent 可经 Cursor 后台创建的原生 API 调用云端 Grok Bot 做视频和搜 X，省视频/X API 费用。<a href="https://x.com/Gorden_Sun/status/2109508218288513335" target="_blank" rel="noopener">原帖</a></li>
+<li>servasyy_ai：Strata v0.1.43 在单张 4090（48G）上跑 Qwen3.8-Flash-Next / IQ3_S，Decode 超 205 tok/s。<a href="https://x.com/servasyy_ai/status/2109493547158417826" target="_blank" rel="noopener">原帖</a></li>
+<li>xiaomovps 推荐 Pi 插件 billion-context，目标用约 100K 上下文撑住连跑数天的长会话。<a href="https://x.com/xiaomovps/status/2109520824072016214" target="_blank" rel="noopener">原帖</a></li>
+<li>ArXivHub 把 116 个 arXiv 相关入口收成一站（翻译、AI 解读、开源代码等）。<a href="https://x.com/GitHub_Daily/status/2109275356779712823" target="_blank" rel="noopener">原帖</a></li>
+<li>Harrison Chase 贴出「未来 Agent 长什么样」总览幻灯，对齐他们 managed deepagents 的方向。<a href="https://x.com/hwchase17/status/2109307704346853833" target="_blank" rel="noopener">原帖</a></li>
+<li>范凯用外包临时工 vs 全职员工打比方，解释 Agent 和 Bot 的差别。<a href="https://x.com/fankaishuoai/status/2109339427101442540" target="_blank" rel="noopener">原帖</a></li>
+</ul>
+<h2 id="s4">学术</h2>
+<ul>
+<li>omarsar0 推荐 Meta Superintelligence Labs 的 GitSwarm：几百个异步 Agent 共享一个 Git 仓库接力，无中心规划；GPT-5.5 Codex worker 一次跑通 IMOProofBench-Advanced 全部 30 题，ProgramBench 79.4%（单 Agent 同预算约 65.1%）。<a href="https://x.com/omarsar0/status/2109287161199812802" target="_blank" rel="noopener">原帖</a></li>
+<li>Ethan Mollick：赛博格（人+AI）正在突然主导数学研究。<a href="https://x.com/emollick/status/2109327353088287057" target="_blank" rel="noopener">原帖</a></li>
+<li>Gorden_Sun 反驳陶哲轩「不该用无法解释的黑盒 AI 药方」思想实验：阿司匹林用了几十年才搞清机制，全身麻醉和碳酸锂至今机制也不完全清楚。<a href="https://x.com/Gorden_Sun/status/2109310400806482186" target="_blank" rel="noopener">原帖</a></li>
+</ul>
+<p class="more">另外还有：</p>
+<ul>
+<li>Mollick：GPT-6 Pro 经常在顺带工作里发现论文疑似错误，但确认与处置机制还跟不上纠正洪水。<a href="https://x.com/emollick/status/2109497942717632662" target="_blank" rel="noopener">原帖</a></li>
+</ul>
+<p class="muted">没发新帖（窗口内无原创）：@AndrewYNg、@DrJimFan、@_akhaliq、@alexeheath、@bcherny、@btibor91、@demishassabis、@eladgil、@jeremyphoward、@jxmnop、@kyliebytes、@natolambert、@rasbt、@sama、@sarahookr、@simonw、@steipete、@steph_palazzolo、@Swarooprm7</p></section><div class="pn"><span></span><a href="index.html">往期目录</a><a href="2026-10-11.html">2026-10-11 →</a></div><div class="foot">王玮的 X 简报 · 每天由 X Brief 生成 · 链接打开 X 原帖 · 风格改编自 <a href="https://github.com/vuejs/vitepress">VitePress</a>（MIT）</div></main></body></html>
