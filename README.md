@@ -32,3 +32,19 @@ node build.mjs
 
 ## 发布
 `.gitignore` 已排除 `_private/` 和指向它的快捷方式；`.nojekyll` 已放好。改完后 `node build.mjs`，再 `git push` 到 main。L01 的 lesson.html 源文件在 `_private/cs146s/L01-lesson/`（不发布）。
+
+## 学习状态体系
+
+由 `build.mjs` 的 `stateOf()` 按 `data/items.json` 和 `data/review.json` 自动算出，不要手写状态标签。
+
+| 状态 | 颜色 | 规则 |
+|---|---|---|
+| 未开始 | 灰 | 条目 `status: "未开始"`，还没有学习页（只列官方资料） |
+| 进行中 | 蓝 | 学习页已上线，但小测或复述还没过 |
+| 已学完 | 绿 | 小测答对 ≥ 5/6（`quiz: {"correct": 5, "total": 6}`）**且** 复述通过（`retell: true`） |
+| 已掌握 | 紫 | 已学完，**且** `review.json` 里第 14 天复习 `done: true`，期间没有因答错重置（`reset` 为空或 0） |
+
+- 学完小测：在 items.json 对应条目写 `quiz`；复述通过写 `retell: true`；运行 `node build.mjs`。
+- 复习答错重置时：把 `reset` 加 1，并重排 review.json 里该条目的日期。
+- 首页显示四种状态的计数；课程主题页和课程卡显示进度条（例：已学完 3/11）。
+- 旧的「已学」统一改叫「已学完」。

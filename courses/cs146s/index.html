@@ -1,11 +1,11 @@
 <!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Stanford CS146S · The Modern Software Developer · 王玮的学习库</title><style>:root{
-  --paper:#F2F4F7; --sheet:#FFFFFF; --ink:#16202C; --ink2:#4A5868; --hair:#D9DFE7;
+  --paper:#F6F6F7; --sheet:#FFFFFF; --ink:#16202C; --ink2:#4A5868; --hair:#E2E2E3;
   --blue:#2550D9;  --blue-soft:#E3EAFD;   /* 主角：当前步骤 / 重点 */
   --amber:#C77A00; --amber-soft:#FBEFD9; /* 数据 / 消息 */
   --green:#16875A; --green-soft:#DDF3E9; /* 成功 / 工具结果 */
   --red:#C8372D;   --red-soft:#FBE3E1;   /* 出错 */
-  --r-lg:20px; --r-sm:10px;
+  --r-lg:12px; --r-sm:10px;
   --font:"PingFang SC","Noto Sans CJK SC","Source Han Sans SC","Microsoft YaHei",system-ui,sans-serif;
   --mono:"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;
 }
@@ -93,15 +93,25 @@ a.card:hover,.list .row:has(a:hover),.chip:hover{border-color:var(--blue)!import
 .dm{margin-left:8px;flex:none;width:34px;height:34px;border-radius:50%;border:1px solid var(--hair);background:var(--sheet);color:var(--ink);cursor:pointer;font-size:15px}
 code{background:var(--sheet)}
 @media(max-width:600px){.top .in{flex-direction:row!important;flex-wrap:wrap}.top nav{order:3;width:100%}}
+/* 状态体系 */
+:root{--purple:#7c3aed;--purple-soft:rgba(124,58,237,.12)}html.dark{--purple:#c4a5ff;--purple-soft:rgba(196,165,255,.16)}
+.tag.purple{background:var(--purple-soft);color:var(--purple)}.stat.purple{border-color:var(--purple)}.stat.purple b{color:var(--purple)}
+.tag.st:not(.blue):not(.green):not(.purple){background:var(--paper);color:var(--ink2);border:1px solid var(--hair)}
+.states{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.states .stat{border-left-width:4px}
+.prog{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink2);margin-top:8px}.prog span{white-space:nowrap;font-weight:600}
+.prog .bar{flex:1;min-width:80px;height:8px;border-radius:99px;background:var(--hair);display:flex;overflow:hidden}
+.prog .bar i{display:block;height:100%}.prog .g{background:var(--purple)}.prog .l{background:var(--green)}.prog .b{background:var(--blue)}
+/* 手机导航：两行换行，全部可见 */
+@media(max-width:600px){.top nav{flex-wrap:wrap!important;overflow:visible!important;gap:4px 2px}.top nav a{padding:4px 10px!important;font-size:13px!important}.states{grid-template-columns:1fr 1fr}.prog{flex-wrap:wrap}}
 </style><script>(function(){var k='theme',s=localStorage.getItem(k);if(s?s==='dark':matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark');
 window.__tt=function(){var d=document.documentElement.classList.toggle('dark');localStorage.setItem(k,d?'dark':'light')}})();
 </script></head><body>
 <header class="top"><div class="in"><a class="brand" href="../../index.html"><i>学</i>王玮的学习库</a><nav><a href="../../index.html">首页</a><a href="../index.html" class="on">公开课</a><a href="../../x-posts/index.html">X 好文</a><a href="../../research/index.html">技术研究</a><a href="../../wechat/index.html">微信公众号</a><a href="../../glossary.html">概念卡</a><a href="../../x-brief/index.html">X 简报</a></nav><button class="dm" onclick="__tt()" aria-label="切换深色模式">◐</button></div></header>
 <main><div class="crumb"><a href="../../index.html">首页</a> / <a href="../index.html">公开课</a> / Stanford CS146S · The Modern Software Developer</div>
-<section class="hero sheet"><div class="say"><span class="kk">公开课 · 主题</span><h1>Stanford CS146S · The Modern Software Developer</h1><p>2026 秋。用 AI 做现代软件开发，逐讲学习。</p><p style="font-size:14px">课程网站：<a href="https://themodernsoftware.dev">themodernsoftware.dev</a></p></div><div class="stage"><div class="stat blue"><b>1</b><span>讲已做成学习页</span></div><div class="stat green"><b>0</b><span>已学完</span></div><div class="stat amber"><b>1</b><span>进行中</span></div><div class="stat"><b>4</b><span>张相关概念卡</span></div></div></section>
+<section class="hero sheet"><div class="say"><span class="kk">公开课 · 主题</span><h1>Stanford CS146S · The Modern Software Developer</h1><p>2026 秋。用 AI 做现代软件开发，逐讲学习。</p><p style="font-size:14px">课程网站：<a href="https://themodernsoftware.dev">themodernsoftware.dev</a></p><div class="prog"><div class="bar"><i class="g" style="width:0%"></i><i class="l" style="width:0%"></i><i class="b" style="width:100%"></i></div><span>已学完 0/1 · 进行中 1</span></div></div><div class="stage"><div class="stat blue"><b>1</b><span>讲已做成学习页</span></div><div class="stat green"><b>0</b><span>已学完</span></div><div class="stat blue"><b>1</b><span>进行中</span></div><div class="stat"><b>4</b><span>张相关概念卡</span></div></div></section>
 
 <div class="kicker">按讲次 <span class="n">1</span></div><div class="sub">一讲一页，按顺序学</div><div class="grid wide"><a class="card item" href="L01-agent-loop.html"><div class="thumb"><img src="L01-sim-preview.png" alt="" loading="lazy"></div>
-<div class="meta" style="margin-top:0;padding-top:0"><span class="tag">L01</span><span class="tag blue">进行中</span></div><h3>用 200 行代码写一个 Claude Code（智能体循环）</h3><p>14 张卡片 · 循环模拟器（含 old_str 出错分支）· 6 道小测。待：小测 + 复述。</p>
+<div class="meta" style="margin-top:0;padding-top:0"><span class="tag">L01</span><span class="tag st blue">进行中</span></div><h3>用 200 行代码写一个 Claude Code（智能体循环）</h3><p>14 张卡片 · 循环模拟器（含 old_str 出错分支）· 6 道小测。待：小测 + 复述。</p>
 <div class="meta">开始于 2026-10-11 · 14 张卡片<span style="margin-left:auto;color:var(--blue);font-weight:700">开始学 →</span></div></a></div>
 
 
