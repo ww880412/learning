@@ -503,8 +503,14 @@ btn.onclick=()=>{const q=quiz();const m=document.createElement('div');m.classNam
   document.body.appendChild(m);const ta=m.querySelector('textarea');ta.oninput=()=>localStorage.setItem(key,ta.value);
   m.onclick=async e=>{const a=e.target.dataset.a;if(e.target===m||a==='x'){m.remove();return}
     if(a==='g'){const d=new Date();const txt=`【学完了】${title}\n页面：${location.href.split('#')[0]}\n小测：${q?q.c+'/'+q.t:'无'}\n时间：${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}\n复述：${ta.value.trim()||'（未填）'}`;
-      m.querySelector('.fin-out').innerHTML='<p class="fin-note">复制后贴到「学习搭子」群里，我会检查并更新进度：</p><pre></pre>';m.querySelector('pre').textContent=txt;
-      e.target.textContent='复制';e.target.dataset.a='c';m.__t=txt}
+      m.querySelector('.fin-out').innerHTML='<p class="fin-note">点「一键发送」直接交给学习搭子，它检查后会在群里发结果：</p><pre></pre>';m.querySelector('pre').textContent=txt;
+      e.target.textContent='一键发送';e.target.dataset.a='s';m.__t=txt;const c=document.createElement('button');c.textContent='复制';c.dataset.a='c';e.target.before(c)}
+    if(a==='s'){let u=localStorage.getItem('fin:url'),k=localStorage.getItem('fin:key');
+      if(!u||!k){u=prompt('第一次使用：粘贴「收学习记录」的 Webhook 网址');if(!u)return;k=prompt('再粘贴 Webhook 密钥（只存在这台设备的浏览器里）');if(!k)return;localStorage.setItem('fin:url',u.trim());localStorage.setItem('fin:key',k.trim().replace(/^Bearer\s+/i,''))}
+      e.target.textContent='发送中…';
+      try{const r=await fetch(localStorage.getItem('fin:url'),{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+localStorage.getItem('fin:key')},body:JSON.stringify({record:m.__t})});
+        if(!r.ok)throw new Error(r.status);e.target.textContent='已发送 ✓ 结果会发到群里'}
+      catch(err){e.target.textContent='发送失败，请点复制贴到群里';if(String(err.message)==='401'||String(err.message)==='403'){localStorage.removeItem('fin:key')}}}
     if(a==='c'){try{await navigator.clipboard.writeText(m.__t);e.target.textContent='已复制 ✓'}catch(_){const r=document.createRange();r.selectNode(m.querySelector('pre'));getSelection().removeAllRanges();getSelection().addRange(r);e.target.textContent='已选中，请手动复制'}}};
 };})();
 </script></body></html>
