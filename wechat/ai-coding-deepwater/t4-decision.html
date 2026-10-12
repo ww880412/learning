@@ -408,12 +408,12 @@ btn.onclick=()=>{const q=quiz();const m=document.createElement('div');m.classNam
   <p style="margin:10px 0 4px">用你自己的话复述这一讲（几句话就行）：</p>
   <textarea placeholder="这一讲讲的是……它为什么重要……举个例子……">${localStorage.getItem(key)||''}</textarea>
   <div class="fin-out"></div>
-  <div class="fin-row"><button data-a="x">关闭</button><button class="p" data-a="g">生成学习记录</button></div></div>`;
+  <div class="fin-row"><button data-a="x">关闭</button><button data-a="g">只生成、不发送</button><button class="p" data-a="g" data-send="1">一键发送</button></div></div>`;
   document.body.appendChild(m);const ta=m.querySelector('textarea');ta.oninput=()=>localStorage.setItem(key,ta.value);
   m.onclick=async e=>{const a=e.target.dataset.a;if(e.target===m||a==='x'){m.remove();return}
     if(a==='g'){const d=new Date();const txt=`【学完了】${title}\n页面：${location.href.split('#')[0]}\n小测：${q?q.c+'/'+q.t:'无'}\n时间：${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}\n复述：${ta.value.trim()||'（未填）'}`;
       m.querySelector('.fin-out').innerHTML='<p class="fin-note">点「一键发送」直接交给学习搭子，它检查后会在群里发结果：</p><pre></pre>';m.querySelector('pre').textContent=txt;
-      e.target.textContent='一键发送';e.target.dataset.a='s';m.__t=txt;const c=document.createElement('button');c.textContent='复制';c.dataset.a='c';e.target.before(c)}
+      m.__t=txt;m.querySelectorAll('.fin-row [data-a=g]').forEach(b=>b.remove());const row=m.querySelector('.fin-row');const c=document.createElement('button');c.textContent='复制';c.dataset.a='c';const sb=document.createElement('button');sb.className='p';sb.textContent='一键发送';sb.dataset.a='s';row.append(c,sb);if(e.target.dataset.send){sb.click()}}
     if(a==='s'){let u=localStorage.getItem('fin:url'),k=localStorage.getItem('fin:key');
       if(!u||!k){u=prompt('第一次使用：粘贴「收学习记录」的 Webhook 网址');if(!u)return;k=prompt('再粘贴 Webhook 密钥（只存在这台设备的浏览器里）');if(!k)return;localStorage.setItem('fin:url',u.trim());localStorage.setItem('fin:key',k.trim().replace(/^Bearer\s+/i,''))}
       e.target.textContent='发送中…';
