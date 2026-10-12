@@ -444,4 +444,34 @@ $$('.quiz').forEach(box=>{
 
 go(Math.max(0,(parseInt(location.hash.slice(1))||1)-1));
 })();
+</script><script>/* ---------- 学完了：生成学习记录，复制后贴回群里 ---------- */
+(function(){if(window.__finish)return;window.__finish=1;
+if(!document.querySelector('.deck'))return;
+const css=`.fin-btn{position:fixed;right:16px;bottom:76px;z-index:50;padding:10px 16px;border-radius:999px;border:0;background:#16a34a;color:#fff;font:600 15px system-ui;box-shadow:0 4px 14px rgba(0,0,0,.18);cursor:pointer}
+.fin-mask{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:60;display:flex;align-items:center;justify-content:center;padding:16px}
+.fin-box{background:#fff;color:#1f2937;border-radius:16px;max-width:520px;width:100%;padding:20px;font:15px/1.6 system-ui;max-height:90vh;overflow:auto}
+.fin-box h3{margin:0 0 8px;font-size:18px}.fin-box textarea{width:100%;min-height:120px;box-sizing:border-box;border:1px solid #d1d5db;border-radius:10px;padding:10px;font:inherit}
+.fin-box pre{color:#111827!important;opacity:1!important;animation:none!important;white-space:pre-wrap;word-break:break-word;background:#f3f4f6;border-radius:10px;padding:10px;font:13px/1.5 ui-monospace,monospace}
+.fin-row{display:flex;gap:8px;justify-content:flex-end;margin-top:12px;flex-wrap:wrap}.fin-row button{padding:8px 14px;border-radius:10px;border:1px solid #d1d5db;background:#fff;font:inherit;cursor:pointer}.fin-row .p{background:#16a34a;color:#fff;border-color:#16a34a}
+.fin-note{font-size:13px;color:#6b7280}`;
+const st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
+const quiz=()=>{const qs=[...document.querySelectorAll('.quiz')];if(!qs.length)return null;let c=0,t=0,ans=0;
+  qs.forEach(b=>{try{t+=JSON.parse(b.dataset.quiz).length}catch(e){}const m=(b.querySelector('.qn')||{}).textContent||'';const r=m.match(/已答对\s*(\d+)/);if(r)c+=+r[1];ans+=b.querySelectorAll('.opt.ok').length?0:0});return{c,t}};
+const title=(document.querySelector('.top .course')||{}).textContent||document.title;
+const key='fin:'+location.pathname;
+const btn=document.createElement('button');btn.className='fin-btn';btn.textContent='✓ 学完了';document.body.appendChild(btn);
+btn.onclick=()=>{const q=quiz();const m=document.createElement('div');m.className='fin-mask';
+  m.innerHTML=`<div class="fin-box"><h3>学完了：${title.replace(/</g,'&lt;')}</h3>
+  <div>${q?`小测：答对 <b>${q.c}</b> / ${q.t}${q.c<5&&q.t>=6?'<span class="fin-note">（6 题对 5 题算过，可以回去再做）</span>':''}`:'本页没有小测'}</div>
+  <p style="margin:10px 0 4px">用你自己的话复述这一讲（几句话就行）：</p>
+  <textarea placeholder="这一讲讲的是……它为什么重要……举个例子……">${localStorage.getItem(key)||''}</textarea>
+  <div class="fin-out"></div>
+  <div class="fin-row"><button data-a="x">关闭</button><button class="p" data-a="g">生成学习记录</button></div></div>`;
+  document.body.appendChild(m);const ta=m.querySelector('textarea');ta.oninput=()=>localStorage.setItem(key,ta.value);
+  m.onclick=async e=>{const a=e.target.dataset.a;if(e.target===m||a==='x'){m.remove();return}
+    if(a==='g'){const d=new Date();const txt=`【学完了】${title}\n页面：${location.href.split('#')[0]}\n小测：${q?q.c+'/'+q.t:'无'}\n时间：${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}\n复述：${ta.value.trim()||'（未填）'}`;
+      m.querySelector('.fin-out').innerHTML='<p class="fin-note">复制后贴到「学习搭子」群里，我会检查并更新进度：</p><pre></pre>';m.querySelector('pre').textContent=txt;
+      e.target.textContent='复制';e.target.dataset.a='c';m.__t=txt}
+    if(a==='c'){try{await navigator.clipboard.writeText(m.__t);e.target.textContent='已复制 ✓'}catch(_){const r=document.createRange();r.selectNode(m.querySelector('pre'));getSelection().removeAllRanges();getSelection().addRange(r);e.target.textContent='已选中，请手动复制'}}};
+};})();
 </script></body></html>
