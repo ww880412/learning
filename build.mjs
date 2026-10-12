@@ -29,6 +29,7 @@ const itemById = Object.fromEntries(items.map(i => [i.id, i]));
 const colById = Object.fromEntries(columns.map(c => [c.id, c]));
 const conById = Object.fromEntries(concepts.map(c => [c.id, c]));
 const rootVars = (() => { try { const css = fs.readFileSync(TPL, 'utf8'); return css.match(/:root\{[\s\S]*?\}/)[0]; } catch { return ':root{--paper:#F2F4F7;--sheet:#fff;--ink:#16202C;--ink2:#4A5868;--hair:#D9DFE7;--blue:#2550D9;--blue-soft:#E3EAFD;--amber:#C77A00;--amber-soft:#FBEFD9;--green:#16875A;--green-soft:#DDF3E9;--red:#C8372D;--red-soft:#FBE3E1;--r-lg:20px;--r-sm:10px;--font:system-ui,sans-serif;--mono:monospace}'; } })();
+const THEME = fs.readFileSync(path.join(ROOT,'assets/vp-theme.css'),'utf8'), HEADJS = fs.readFileSync(path.join(ROOT,'assets/vp-head.js'),'utf8');
 const CSS = rootVars + `
 *{box-sizing:border-box}html,body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.65 var(--font);-webkit-font-smoothing:antialiased}
 a{color:var(--blue);text-decoration:none}
@@ -98,9 +99,9 @@ function page(file, title, active, body, script = '') {
   const nav = [['index.html', '首页', 'home'], ...columns.map(c => [`${c.dir}/index.html`, c.title, c.id]), ['glossary.html', '概念卡', 'glossary'], ['x-brief/index.html', 'X 简报', 'x-brief']]
     .map(([h, t, id]) => `<a href="${r(h)}"${id === active ? ' class="on"' : ''}>${esc(t)}</a>`).join('');
   return `<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${esc(title)} · 王玮的学习库</title><style>${CSS}</style></head><body>
-<header class="top"><div class="in"><a class="brand" href="${r('index.html')}"><i>学</i>王玮的学习库</a><nav>${nav}</nav></div></header>
-<main>${body}<div class="foot"><span>王玮的学习库 · 每篇都是可翻页、可动手、带小测的学习页</span><span>由 build.mjs 从 data/ 生成</span></div></main>${script ? `<script>${script}</script>` : ''}</body></html>`;
+<title>${esc(title)} · 王玮的学习库</title><style>${CSS}${THEME}</style><script>${HEADJS}</script></head><body>
+<header class="top"><div class="in"><a class="brand" href="${r('index.html')}"><i>学</i>王玮的学习库</a><nav>${nav}</nav><button class="dm" onclick="__tt()" aria-label="切换深色模式">◐</button></div></header>
+<main>${body}<div class="foot"><span>王玮的学习库 · 每篇都是可翻页、可动手、带小测的学习页</span><span>由 build.mjs 从 data/ 生成 · 风格改编自 <a href="https://github.com/vuejs/vitepress">VitePress</a>（MIT）</span></div></main>${script ? `<script>${script}</script>` : ''}</body></html>`;
 }
 const write = (f, s) => { fs.mkdirSync(path.dirname(path.join(ROOT, f)), { recursive: true }); fs.writeFileSync(path.join(ROOT, f), s); console.log('wrote', f); };
 const statusTag = s => `<span class="tag ${s === '进行中' ? 'blue' : s === '已学' ? 'green' : 'amber'}">${esc(s)}</span>`;

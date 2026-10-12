@@ -38,9 +38,33 @@ ul{padding-left:20px}li{margin:8px 0}
 .pn{display:flex;justify-content:space-between;gap:10px;margin-top:20px;font-weight:700}
 .foot{margin-top:30px;font-size:13px;color:var(--ink2);text-align:center}
 @media(max-width:640px){main{padding:14px 12px 40px}.sheet{padding:18px 16px}h1{font-size:22px}.row{flex-wrap:wrap;gap:4px 10px}.row .d{min-width:0}}
-</style></head><body>
-<header class="top"><div class="in"><a class="brand" href="./index.html"><i>𝕏</i>X 简报</a><nav><a href="../index.html">学习库首页</a><a href="index.html" class=on>X 简报</a><a href="index.html#weekly">周趋势</a></nav></div></header>
+/* VitePress 默认主题风格（配色/间距/卡片思路改编自 VitePress，MIT License, Copyright (c) 2019-present Yuxi (Evan) You；见 CREDITS.md）。品牌色 = 学习页蓝 #2550D9 */
+:root{--paper:#fff;--sheet:#f6f6f7;--ink:#213547;--ink2:rgba(60,60,67,.75);--hair:#e2e2e3;--blue:#2550D9;--blue-soft:rgba(37,80,217,.10);
+--amber-soft:rgba(234,179,8,.14);--green-soft:rgba(16,185,129,.14);--red-soft:rgba(244,63,94,.12);--r-lg:12px;--r-sm:8px;
+--font:"Inter",-apple-system,"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;--grad:linear-gradient(120deg,#2550D9 25%,#41a8ff)}
+html.dark{--paper:#1b1b1f;--sheet:#202127;--ink:#fffff5;--ink2:rgba(235,235,245,.6);--hair:#2e2e32;--blue:#7c9cff;--blue-soft:rgba(124,156,255,.16);
+--amber:#f0b429;--amber-soft:rgba(240,180,41,.14);--green:#3dd68c;--green-soft:rgba(61,214,140,.14);--red:#f66f81;--red-soft:rgba(246,111,129,.14);--grad:linear-gradient(120deg,#7c9cff 25%,#5ec8ff);color-scheme:dark}
+html,body{background:var(--paper);color:var(--ink)}
+.top{background:color-mix(in srgb,var(--paper) 88%,transparent)!important;border-bottom:1px solid var(--hair)}
+.top nav a.on{background:var(--blue-soft)!important;color:var(--blue)!important}.top nav a:hover{background:var(--sheet)}
+.brand i{background:var(--grad)!important}
+.sheet,.card,.list .row,.chip,.empty{box-shadow:none!important;border:1px solid var(--sheet)}
+.sheet,.card{background:var(--sheet)}
+a.card:hover,.list .row:has(a:hover),.chip:hover{border-color:var(--blue)!important;transform:none!important}
+.hero h1,main>section.sheet:first-of-type h1{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800}
+.hero .stage,.defcard .stage,.thumb,.more,.tabs a{background:var(--paper)}.stat{background:var(--sheet);border:1px solid var(--hair)}
+.chip{background:var(--blue-soft)!important;color:var(--blue)!important;border-color:transparent}
+.empty{border:1px dashed var(--hair)!important;background:var(--sheet)}
+.tabs{background:var(--paper)!important}.tabs a{border-color:var(--hair)}
+.quick li{background:var(--blue-soft)}h2{border-left-color:var(--blue)}
+.dm{margin-left:8px;flex:none;width:34px;height:34px;border-radius:50%;border:1px solid var(--hair);background:var(--sheet);color:var(--ink);cursor:pointer;font-size:15px}
+code{background:var(--sheet)}
+@media(max-width:600px){.top .in{flex-direction:row!important;flex-wrap:wrap}.top nav{order:3;width:100%}}
+</style><script>(function(){var k='theme',s=localStorage.getItem(k);if(s?s==='dark':matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark');
+window.__tt=function(){var d=document.documentElement.classList.toggle('dark');localStorage.setItem(k,d?'dark':'light')}})();
+</script></head><body>
+<header class="top"><div class="in"><a class="brand" href="./index.html"><i>𝕏</i>X 简报</a><nav><a href="../index.html">学习库首页</a><a href="index.html" class=on>X 简报</a><a href="index.html#weekly">周趋势</a></nav><button class="dm" onclick="__tt()" aria-label="切换深色模式">◐</button></div></header>
 <main><section class="sheet"><span class="kk">最新一期 · 2026-10-11（周日）</span><h1>X 简报 · 10/11（周日）</h1><ol class="quick"><li>OpenAI 的 Codex 正在搞「28 天里每天上一个新功能，没有就全员重置用量」，周六（第 6 天）又宣布了全局重置，但 shao__meng 这类重度用户并不买账，认为模型本身比活动更重要。</li><li>周末最热的玩法是用 Opus 5.5 做视频：花叔两句提示词做出了周杰伦《七里香》MV，AYi 找到一个收录 475 条爆款视频和原提示词的网站，LinearUncle 说 ManimGX 把数学动画渲染提速了约 90 倍。</li><li>对你更直接的是，xiaomovps 发现自己的 Grok Bot 里有内容丢失、日志里有过一次重置，建议马上设定时备份；他另一篇讲额度掉得快的帖子，第一条原因就是 routine 触发太频繁。</li></ol>
 <p style="margin:14px 0 0"><a href="2026-10-11.html"><b>读全文 →</b></a></p></section><nav class="tabs"><a href="2026-10-11.html#s1">新闻</a><a href="2026-10-11.html#s2">趋势</a><a href="2026-10-11.html#s3">技术</a><a href="2026-10-11.html#s4">学术</a></nav>
 <h2 id="archive">往期</h2><section class="sheet" style="padding:6px 12px"><div class="row"><span class="d">2026-10-11（周日）</span><span class="t"><a href="2026-10-11.html">X 简报 · 10/11（周日）</a></span><span class="tag blue">最新</span></div><div class="row"><span class="d">2026-10-10（周六）</span><span class="t"><a href="2026-10-10.html">X 简报 · 10/10（周六）· 改版</a></span></div><div class="row"><span class="d">2026-10-09（周五）</span><span class="t"><a href="2026-10-09.html">X 简报 · 2026-10-09（周五）</a></span></div></section>
-<h2 id="weekly">周趋势</h2><div class="empty"><b>即将上线</b>每周一份趋势监控，汇总一周里反复出现的话题和走向，会放在 <code>x-brief/weekly/</code>。</div><div class="foot">王玮的 X 简报 · 每天由 X Brief 生成 · 链接打开 X 原帖</div></main></body></html>
+<h2 id="weekly">周趋势</h2><div class="empty"><b>即将上线</b>每周一份趋势监控，汇总一周里反复出现的话题和走向，会放在 <code>x-brief/weekly/</code>。</div><div class="foot">王玮的 X 简报 · 每天由 X Brief 生成 · 链接打开 X 原帖 · 风格改编自 <a href="https://github.com/vuejs/vitepress">VitePress</a>（MIT）</div></main></body></html>
