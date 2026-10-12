@@ -1,0 +1,740 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<script>(function(){var s=localStorage.getItem("theme");if(s?s==="dark":matchMedia("(prefers-color-scheme: dark)").matches)document.documentElement.classList.add("dark")})()</script>
+<title>AI Coding 深水区 · 主线 1 精读版</title><style>
+/* 学习搭子 固定设计系统 — 不要在课程里改这个文件。只改 lesson.html 的内容。 */
+:root{
+  --paper:#F6F6F7; --sheet:#FFFFFF; --ink:#16202C; --ink2:#4A5868; --hair:#E2E2E3;
+  --blue:#2550D9;  --blue-soft:#E3EAFD;   /* 主角：当前步骤 / 重点 */
+  --amber:#C77A00; --amber-soft:#FBEFD9; /* 数据 / 消息 */
+  --green:#16875A; --green-soft:#DDF3E9; /* 成功 / 工具结果 */
+  --red:#C8372D;   --red-soft:#FBE3E1;   /* 出错 */
+  --r-lg:12px; --r-sm:10px;
+  --font:"PingFang SC","Noto Sans CJK SC","Source Han Sans SC","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--paper);color:var(--ink);font:17px/1.65 var(--font);-webkit-font-smoothing:antialiased}
+.top{position:fixed;inset:0 0 auto 0;height:56px;display:flex;align-items:center;gap:16px;padding:0 28px;z-index:5}
+.top .course{font-weight:700;font-size:15px}
+.top .track{flex:1;height:6px;background:var(--hair);border-radius:99px;overflow:hidden}
+.top .track i{display:block;height:100%;width:0;background:var(--blue);transition:width .35s ease}
+.top .count{font:600 14px var(--mono);color:var(--ink2);min-width:60px;text-align:right}
+.deck{position:fixed;inset:56px 0 76px 0;display:grid;place-items:center;padding:0 24px}
+.card{display:none;width:min(1120px,100%);height:100%;max-height:640px;background:var(--sheet);border-radius:var(--r-lg);
+  box-shadow:0 1px 0 var(--hair),0 18px 40px -24px rgba(22,32,44,.25);overflow:hidden}
+.card.on{display:grid;grid-template-columns:1.45fr 1fr}
+.card.full.on{grid-template-columns:1fr}
+.stage{background:var(--paper);margin:14px 0 14px 14px;border-radius:14px;display:grid;place-items:center;padding:18px;overflow:hidden;position:relative}
+.card.full .stage{margin:14px}
+.stage svg{width:100%;height:100%;max-height:560px}
+.say{padding:40px 40px 32px;display:flex;flex-direction:column;justify-content:center;gap:14px;overflow:auto}
+.say .kicker{font-size:14px;color:var(--blue);font-weight:700}
+.say h2{margin:0;font-size:32px;line-height:1.25;letter-spacing:.01em}
+.say p{margin:0;color:var(--ink2)}
+.say p b{color:var(--ink)}
+.src{margin-top:auto;font-size:13px;color:var(--ink2);border-top:1px solid var(--hair);padding-top:12px}
+.src.extra::before{content:"补充";background:var(--amber-soft);color:var(--amber);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
+.src.official::before{content:"官方";background:var(--green-soft);color:var(--green);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
+code{font:14px var(--mono);background:var(--blue-soft);color:var(--blue);padding:1px 6px;border-radius:6px}
+pre{margin:0;font:13.5px/1.6 var(--mono);background:#101826;color:#DCE3EE;border-radius:12px;padding:16px 18px;overflow:auto;width:100%}
+pre .k{color:#8FB1FF}pre .s{color:#9BE0B4}pre .c{color:#71819A}pre .f{color:#FFC86B}pre .hl{background:rgba(143,177,255,.16);display:block;margin:0 -18px;padding:0 18px}
+.bottom{position:fixed;inset:auto 0 0 0;height:76px;display:flex;align-items:center;justify-content:center;gap:14px}
+.btn{font:600 15px var(--font);border:0;border-radius:99px;padding:11px 22px;cursor:pointer;background:var(--sheet);color:var(--ink);box-shadow:0 0 0 1px var(--hair)}
+.btn:hover{box-shadow:0 0 0 2px var(--blue)}
+.btn.main{background:var(--blue);color:#fff;box-shadow:none}
+.btn:disabled{opacity:.35;cursor:default;box-shadow:0 0 0 1px var(--hair)}
+.btn:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.btn.sm{padding:7px 14px;font-size:14px}
+/* ---- 图元（flow 组件生成） ---- */
+.fl-node rect{fill:var(--sheet);stroke:var(--hair);stroke-width:2;transition:all .3s}
+.fl-node text{font:600 17px var(--font);fill:var(--ink)}
+.fl-node .sub{font:400 13px var(--font);fill:var(--ink2)}
+.fl-node.blue rect{stroke:var(--blue)} .fl-node.amber rect{stroke:var(--amber)} .fl-node.green rect{stroke:var(--green)} .fl-node.red rect{stroke:var(--red)}
+.fl-node.act rect{fill:var(--blue-soft);stroke:var(--blue);stroke-width:3}
+.fl-node.dim{opacity:.35}
+.fl-edge{fill:none;stroke:#AEB8C6;stroke-width:2.2;transition:all .3s}
+.fl-edge.act{stroke:var(--blue);stroke-width:3.5;stroke-dasharray:8 6;animation:dash .8s linear infinite}
+.fl-elab{font:500 13px var(--font);fill:var(--ink2)}
+.fl-elab.act{fill:var(--blue);font-weight:700}
+@keyframes dash{to{stroke-dashoffset:-28}}
+/* ---- 模拟器 ---- */
+.sim{display:grid;grid-template-rows:auto 1fr auto;gap:10px;width:100%;height:100%}
+.sim .ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.sim .ctl label{font-size:13px;color:var(--ink2);display:flex;align-items:center;gap:6px}
+.sim .body{display:grid;grid-template-columns:1.1fr 1fr;gap:12px;min-height:0}
+.sim .log{background:var(--sheet);border-radius:12px;padding:10px;overflow:auto;font:13px/1.5 var(--mono)}
+.sim .msg{border-left:4px solid var(--hair);padding:6px 10px;margin:0 0 8px;border-radius:6px;background:var(--paper);white-space:pre-wrap;word-break:break-word;animation:pop .25s ease}
+.sim .msg b{font-family:var(--font);display:block;font-size:12px;color:var(--ink2)}
+.msg.user{border-color:var(--blue)} .msg.asst{border-color:var(--amber)} .msg.tool{border-color:var(--green)} .msg.err{border-color:var(--red);background:var(--red-soft)} .msg.sys{border-color:var(--ink2)}
+.sim .narr{background:var(--blue-soft);color:var(--ink);border-radius:12px;padding:10px 14px;font-size:15px;min-height:48px}
+@keyframes pop{from{opacity:0;transform:translateY(6px)}}
+/* ---- 小测 ---- */
+.quiz{width:100%;max-width:760px;display:flex;flex-direction:column;gap:12px}
+.quiz .qn{font:600 13px var(--mono);color:var(--ink2)}
+.quiz .qt{font-size:22px;font-weight:700;line-height:1.4}
+.quiz .opt{display:block;width:100%;text-align:left;font:16px var(--font);background:var(--sheet);border:2px solid var(--hair);border-radius:12px;padding:12px 16px;cursor:pointer;color:var(--ink)}
+.quiz .opt:hover{border-color:var(--blue)}
+.quiz .opt.ok{border-color:var(--green);background:var(--green-soft)} .quiz .opt.no{border-color:var(--red);background:var(--red-soft)}
+.quiz .fb{min-height:52px;font-size:15px;color:var(--ink2)}
+.quiz .fb a{color:var(--blue);font-weight:700;cursor:pointer}
+.quiz .nav{display:flex;gap:8px;align-items:center}
+@media (max-width:820px){
+  .card.full.on{grid-template-rows:1fr}.card.full .stage{overflow:auto;place-items:start center}
+  .card.on{grid-template-columns:1fr;grid-template-rows:minmax(220px,48%) 1fr}
+  .stage{margin:10px 10px 0}.say{padding:18px 20px}.say h2{font-size:24px}
+  .sim .body{grid-template-columns:1fr}.top{padding:0 14px}.top .course{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* ---- 展开细节 ---- */
+details.more{border-top:1px solid var(--hair);padding-top:10px;font-size:15px;color:var(--ink2)}
+details.more summary{cursor:pointer;font-weight:700;color:var(--blue);list-style:none}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary::before{content:"＋ 展开细节";}
+details.more[open] summary::before{content:"－ 收起细节";}
+details.more>*:not(summary){margin:8px 0 0}
+details.more ul{padding-left:18px}details.more li{margin:4px 0}
+details.more table{border-collapse:collapse;width:100%;font-size:14px}
+details.more td,details.more th{border-bottom:1px solid var(--hair);padding:5px 6px;text-align:left;vertical-align:top}
+/* ---- 对话列表（状态追踪）---- */
+.stack{width:100%;display:flex;flex-direction:column;gap:6px;font:13px/1.45 var(--mono)}
+.stack .row{display:grid;grid-template-columns:28px 92px 1fr;gap:8px;align-items:start;background:var(--sheet);border-radius:8px;padding:7px 10px;border-left:4px solid var(--hair)}
+.stack .row .i{color:var(--ink2)}.stack .row .r{font-weight:700}
+.stack .row.developer{border-color:var(--ink2)}.stack .row.user{border-color:var(--blue)}.stack .row.assistant{border-color:var(--amber)}.stack .row.result{border-color:var(--green)}
+.stack .row.new{background:var(--blue-soft)}.stack .row.bad{border-color:var(--red);background:var(--red-soft)}
+.stack .row .t{white-space:pre-wrap;word-break:break-word}
+/* ---- 对比/误区 ---- */
+.pairs{width:100%;display:grid;gap:10px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pair>div{background:var(--sheet);border-radius:12px;padding:12px 14px;font-size:15px}
+.pair .no{border-left:5px solid var(--red)}.pair .yes{border-left:5px solid var(--green)}
+.pair b{display:block;font-size:12px;color:var(--ink2);margin-bottom:4px}
+.say .more code{font-size:13px}
+@media (max-width:820px){.pair{grid-template-columns:1fr}.stack .row{grid-template-columns:22px 70px 1fr}}
+.pair .a{border-left:5px solid var(--blue)}.pair .b{border-left:5px solid var(--amber)}
+/* ===== v3：填满面板、原文标签、要点、条形图、分支 ===== */
+.stage{padding:10px}
+.stage svg.flow{width:100%;height:100%;max-height:none}
+.say p{font-size:17px}
+p.key{background:var(--blue-soft);color:var(--ink);border-radius:12px;padding:10px 14px;font-size:16px}
+p.key::before{content:"关键 ";font-weight:800;color:var(--blue)}
+.src.article::before{content:"原文";background:var(--blue-soft);color:var(--blue);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
+.stage>.stack{height:100%;justify-content:center;font-size:14.5px}
+.stage>.stack .row{padding:11px 12px;flex:0 1 auto}
+.stack .head{font:700 13px var(--font);color:var(--ink2);margin:8px 0 0}
+.stage>.pairs{height:100%;grid-auto-rows:minmax(0,1fr);align-content:stretch}
+.pair>div{font-size:16px;display:flex;flex-direction:column;justify-content:center}
+.bars{width:100%;display:flex;flex-direction:column;gap:16px;justify-content:center;height:100%;padding:0 10px}
+.bar{display:grid;grid-template-columns:150px 1fr 76px;gap:12px;align-items:center;font-size:15px}
+.bar .bl{font-weight:700;text-align:right}
+.bar .bt{height:30px;background:var(--sheet);border-radius:8px;overflow:hidden}
+.bar .bt i{display:block;height:100%;background:var(--ink2);border-radius:8px}
+.bar.blue .bt i{background:var(--blue)}.bar.amber .bt i{background:var(--amber)}.bar.green .bt i{background:var(--green)}.bar.red .bt i{background:var(--red)}
+.bar .bv{font:700 15px var(--mono)}
+.bar .bn{grid-column:2/4;font-size:13px;color:var(--ink2);margin-top:-8px}
+.bars .bc{font-size:13px;color:var(--ink2);text-align:center}
+.sim .branches{gap:14px;background:var(--sheet);border-radius:10px;padding:6px 10px}
+.sim .branches label{font-size:13.5px;color:var(--ink)}
+@media (max-width:820px){.bar{grid-template-columns:90px 1fr 60px}}
+.sim{grid-template-rows:auto auto 1fr auto}
+.sim.wide .body{grid-template-columns:1fr;grid-template-rows:minmax(0,1.1fr) minmax(0,1fr)}
+.sim:not(:has(.branches)){grid-template-rows:auto 1fr auto}
+.bar .bt.none{background:repeating-linear-gradient(45deg,var(--sheet) 0 8px,var(--hair) 8px 10px)}
+.say h2{font-size:28px;line-height:1.3}
+.sim .body{overflow:hidden}
+.sim .body>svg{min-height:0;height:100%;width:100%}
+.sim .narr{min-height:0}
+.stage>.stack{font-size:15.5px;gap:8px}
+.stage>.stack .row{padding:13px 14px}
+.stack .row .t{font-family:var(--font)}
+.stage:has(>.sim){place-items:stretch}
+.sim{min-height:0;height:100%;overflow:hidden}
+.sim.wide .body{grid-template-rows:minmax(0,55%) minmax(0,45%)}
+/* 讲解条放在图上方，永远可见 */
+.sim{grid-template-rows:auto auto auto minmax(0,1fr)}
+.sim:not(:has(.branches)){grid-template-rows:auto auto minmax(0,1fr)}
+.sim .ctl{order:0}.sim .branches{order:1}.sim .narr{order:2}.sim .body{order:3;min-height:0}
+/* ===== v4 ===== */
+.fl-node .sub{font-size:13.5px;fill:#3E4B5B}
+.fl-elab{font-size:13px;fill:#3E4B5B}
+.fl-edge.red{stroke:var(--red)}.fl-edge.amber{stroke:var(--amber)}.fl-edge.green{stroke:var(--green)}
+.fl-elab.red{fill:var(--red);font-weight:700}.fl-elab.amber{fill:var(--amber);font-weight:700}.fl-elab.green{fill:var(--green);font-weight:700}
+.stage{margin:10px 0 10px 10px;padding:4px}.card.full .stage{margin:0 10px 10px}
+.bar .bt i{background:#B8C2CF}
+.bar .bmiss{grid-column:2/4;color:var(--ink2);font-size:14px;font-style:italic}
+.sim .btn{background:transparent;box-shadow:0 0 0 1.5px var(--blue);color:var(--blue)}
+.sim .btn:hover{background:var(--blue-soft)}
+.say{justify-content:center}
+.src{margin-top:6px}
+.top .count{font-size:16px;color:var(--ink);font-weight:700}
+.top .track{height:6px}
+.card.full.on{grid-template-rows:auto minmax(0,1fr)}
+.head-full{padding:18px 26px 8px;display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
+.head-full .kicker{font-size:14px;color:var(--blue);font-weight:700}
+.head-full h2{margin:0;font-size:24px;line-height:1.3}
+.sim.wide .body{grid-template-rows:minmax(0,64%) minmax(0,36%)}
+@media (max-width:820px){.head-full{padding:12px 14px 6px}.head-full h2{font-size:19px}}
+.say{justify-content:safe center}
+@media (max-width:820px){.bars{gap:8px}.bar{font-size:13px;grid-template-columns:84px 1fr 56px}.bar .bt{height:20px}.bar .bn{font-size:12px;margin-top:-4px}.bars .bc{font-size:12px}
+ .sim .ctl .btn{padding:5px 10px}.sim .branches{flex-direction:column;align-items:flex-start;gap:2px}}
+
+/* 与知识库首页（VitePress 风格）对齐：白底页面、12px 圆角、细边框卡片、深色模式 */
+html,body{background:var(--page,#fff)}
+.card{border:1px solid var(--hair);box-shadow:none}
+html.dark{--page:#1b1b1f;--paper:#2a2a31;--sheet:#202127;--ink:#fffff5;--ink2:rgba(235,235,245,.65);--hair:#3a3a40;
+--blue:#7c9cff;--blue-soft:rgba(124,156,255,.16);--amber:#f0b429;--amber-soft:rgba(240,180,41,.14);--green:#3dd68c;--green-soft:rgba(61,214,140,.14);--red:#f66f81;--red-soft:rgba(246,111,129,.14);color-scheme:dark}
+html.dark .btn.main{color:#16202c}
+html.dark .fl-node .sub,html.dark .fl-elab{fill:var(--ink2)}html.dark .fl-elab{stroke:var(--page)!important}html.dark .fl-edge{stroke:#6b7280}
+html.dark .fl-elab.act{fill:var(--blue)}
+/* ---- 精读模式（close-reading）：只在 lesson.html 第一行写 <!-- mode: close-reading --> 时由 build.sh 拼进来 ---- */
+html.read,html.read body{height:auto}
+html.read body{padding:72px 0 40px}
+html.read .top{background:color-mix(in srgb,var(--paper) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--hair)}
+html.read .top .count{min-width:110px;cursor:pointer}
+html.read .bottom{display:none}
+.rd{max-width:760px;margin:0 auto;padding:0 20px}
+.rd-hero{background:var(--sheet);border-radius:var(--r-lg);padding:28px 30px;box-shadow:0 1px 0 var(--hair)}
+.rd-hero .kicker{font-size:14px;color:var(--blue);font-weight:700}
+.rd-hero h1{font-size:30px;line-height:1.3;margin:6px 0 12px}
+.rd-hero p{margin:8px 0;color:var(--ink2)}
+.rd-hero .mode{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.rd-hero .mode a{font-size:14px;font-weight:700;color:var(--blue);background:var(--blue-soft);border-radius:99px;padding:5px 14px;text-decoration:none}
+.rd h2.part{font-size:22px;margin:40px 0 12px;display:flex;gap:10px;align-items:baseline}
+.rd h2.part small{font-size:14px;color:var(--ink2);font-weight:500}
+/* 目录 */
+.toc{background:var(--sheet);border-radius:var(--r-lg);padding:18px 22px;margin-top:16px;box-shadow:0 1px 0 var(--hair)}
+.toc b{font-size:14px;color:var(--ink2)}
+.toc ol{margin:8px 0 0;padding-left:0;list-style:none;counter-reset:t}
+.toc li{counter-increment:t;margin:3px 0}
+.toc a{display:flex;gap:10px;text-decoration:none;color:var(--ink);border-radius:8px;padding:4px 8px;font-size:15px}
+.toc a::before{content:counter(t);font:600 13px var(--mono);color:var(--ink2);min-width:20px;padding-top:2px}
+.toc a:hover,.toc a.on{background:var(--blue-soft);color:var(--blue)}
+.toc .tsub{color:var(--ink2);font-size:13px;margin-left:auto;white-space:nowrap;padding-left:8px}
+@media (min-width:1240px){
+  html.read .toc.side{position:fixed;top:84px;left:calc(50% + 400px);width:300px;max-height:calc(100vh - 110px);overflow:auto;margin:0}
+  html.read .toc.inline{display:none}}
+@media (max-width:1239px){html.read .toc.side{display:none}}
+/* 论证链图 */
+.chain{background:var(--sheet);border-radius:var(--r-lg);padding:20px 22px;margin-top:16px;box-shadow:0 1px 0 var(--hair)}
+.chain .ct{font-size:14px;color:var(--ink2);font-weight:700;margin-bottom:10px}
+.chain .grp{border-radius:12px;padding:10px 12px;background:var(--paper);border-left:5px solid var(--hair)}
+.chain .grp.blue{border-color:var(--blue)}.chain .grp.amber{border-color:var(--amber)}.chain .grp.green{border-color:var(--green)}.chain .grp.red{border-color:var(--red)}
+.chain .grp .gl{font-size:13px;font-weight:700;color:var(--ink2)}
+.chain .grp a{display:block;color:var(--ink);text-decoration:none;font-size:15px;padding:2px 0}
+.chain .grp a:hover{color:var(--blue)}
+.chain .grp a i{font:normal 600 12px var(--mono);color:var(--ink2);margin-right:6px}
+.chain .cn{text-align:center;font-weight:800;color:var(--blue);font-size:14px;padding:4px 0;position:relative}
+.chain .cn::before{content:"↓ "}
+/* 论证步骤 */
+.step{background:var(--sheet);border-radius:var(--r-lg);padding:24px 28px;margin:16px 0;box-shadow:0 1px 0 var(--hair);scroll-margin-top:72px}
+.step .tag{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--ink2);font-weight:700}
+.step .tag .no{font:700 13px var(--mono);background:var(--blue);color:#fff;border-radius:6px;padding:1px 8px}
+html.dark .step .tag .no{color:#16202c}
+.step h3{font-size:21px;line-height:1.4;margin:8px 0 12px}
+.step p{margin:10px 0}
+.cn-w{font-weight:800;color:var(--blue);background:var(--blue-soft);border-radius:6px;padding:0 6px;margin-right:2px}
+.cn-w.but{color:var(--red);background:var(--red-soft)}
+.num{font-weight:700;color:var(--amber);background:var(--amber-soft);border-radius:5px;padding:0 5px}
+.ev{background:var(--paper);border-radius:12px;padding:12px 16px;margin:12px 0}
+.ev::before{content:"作者的证据";display:block;font-size:12px;font-weight:800;color:var(--green);margin-bottom:4px}
+.ev.case::before{content:"案例"}.ev.data::before{content:"数据"}.ev.incident::before{content:"事故 / 翻车"}.ev.design::before{content:"设计细节"}
+.ev ul{margin:4px 0;padding-left:20px}.ev li{margin:4px 0}
+blockquote.q{margin:14px 0;padding:8px 16px;border-left:4px solid var(--amber);color:var(--ink);font-size:16px;background:var(--amber-soft);border-radius:0 10px 10px 0}
+blockquote.q::before{content:"原文引用";display:block;font-size:12px;font-weight:800;color:var(--amber)}
+blockquote.q cite{display:block;font-style:normal;font-size:12px;color:var(--ink2);margin-top:2px}
+.step .so{background:var(--blue-soft);border-radius:12px;padding:10px 14px;margin-top:12px}
+.step .so::before{content:"这一步推出 ";font-weight:800;color:var(--blue)}
+.step .add{border:1px dashed var(--amber);border-radius:12px;padding:10px 14px;margin-top:12px;font-size:15px;color:var(--ink2)}
+.step .add::before{content:"补充";background:var(--amber-soft);color:var(--amber);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
+.step .src{margin-top:14px}
+/* 消化区：卡片全部摊开成纵向排列 */
+.digest{max-width:1120px;margin:56px auto 0;padding:0 20px}
+.digest-head{background:var(--sheet);border-radius:var(--r-lg);padding:20px 26px;box-shadow:0 1px 0 var(--hair);scroll-margin-top:72px}
+.digest-head .kicker{font-size:14px;color:var(--amber);font-weight:700}
+.digest-head h2{margin:4px 0 6px;font-size:24px}
+.digest-head p{margin:0;color:var(--ink2)}
+html.read .deck{position:static;display:block;padding:0;counter-reset:cd}
+html.read .card{display:grid;grid-template-columns:1.45fr 1fr;height:600px;max-height:none;margin:18px 0;scroll-margin-top:72px;counter-increment:cd;position:relative}
+html.read .card.full{grid-template-columns:1fr;height:auto;min-height:520px}
+html.read .card::after{content:"消化 " counter(cd);position:absolute;top:10px;right:14px;font:600 12px var(--mono);color:var(--ink2)}
+html.read .card.full .stage{min-height:440px}
+.rd-end{max-width:760px;margin:30px auto 0;padding:0 20px;color:var(--ink2);font-size:14px;text-align:center}
+@media (max-width:820px){
+  html.read body{padding-top:64px}
+  html.read .top{padding:0 14px;gap:10px}html.read .top .course{max-width:42vw;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:13px}
+  .rd{padding:0 12px}.rd-hero{padding:20px 18px}.rd-hero h1{font-size:23px}
+  .step{padding:18px 16px}.step h3{font-size:19px}
+  .digest{padding:0 12px}
+  html.read .card,html.read .card.on{grid-template-columns:1fr;grid-template-rows:auto auto;height:auto}
+  html.read .card .stage{margin:14px 14px 0;min-height:240px;overflow:auto}
+  html.read .card.full .stage{margin:14px;min-height:0}}
+html.read.indigest .toc.side{opacity:0;pointer-events:none}
+html.read .toc.side{transition:opacity .2s}
+</style></head><body>
+<header class="top"><span class="course">AI Coding 深水区 · 主线 1 精读版</span><span class="track"><i></i></span><span class="count"></span></header>
+<main class="deck">
+<!-- mode: close-reading -->
+<article class="rd">
+<header class="rd-hero">
+ <span class="kicker">AI Coding 深水区 · 主线 1 · 精读版（样稿）</span>
+ <h1>提示词的尽头是基础设施：作者是怎么一步步推出来的</h1>
+ <p>这一页按原文第一部分的顺序，把作者的推理拆成 12 步。每一步写清楚：他说了什么、拿什么证明（案例、数字、事故）、原文关键句，以及这一步和上一步是「因为 / 所以 / 但是」的哪种关系。</p>
+ <p>读完论证链，再往下是「消化」：原来的 9 张卡片和 6 道小测，用来动手巩固。</p>
+ <div class="mode"><a href="#chain">看论证链图</a><a href="#digest">直接去消化 / 小测</a><a href="t1-infra.html">对比：卡片版</a><a href="index.html">回全文导读</a></div>
+</header>
+
+<nav class="toc inline"><b>论证步骤</b><ol>
+ <li><a href="#s1">提示词调了数月，撞上边际收益的墙<span class="tsub">开头</span></a></li>
+ <li><a href="#s2">例一：说一半次也漏，框架自动还原就不漏<span class="tsub">（一）</span></a></li>
+ <li><a href="#s3">例二：超时报错直接告诉 AI 卡在哪一行<span class="tsub">（二）</span></a></li>
+ <li><a href="#s4">于是发现：报错通道就是提示词通道<span class="tsub">（二）</span></a></li>
+ <li><a href="#s5">但是：带偏的反馈比没有更糟<span class="tsub">（二）</span></a></li>
+ <li><a href="#s6">共同点：框架能「取消这个错误的存在」<span class="tsub">（三）</span></a></li>
+ <li><a href="#s7">反面证据：注意点加到加不下去<span class="tsub">（四）</span></a></li>
+ <li><a href="#s8">所以：两种「厚」，别混<span class="tsub">（四）</span></a></li>
+ <li><a href="#s9">但不是什么都该沉：事实才硬拦<span class="tsub">（五）</span></a></li>
+ <li><a href="#s10">一是：信号要从外部取<span class="tsub">（五）</span></a></li>
+ <li><a href="#s11">二是：门禁误报会逼出更差的代码<span class="tsub">（五）</span></a></li>
+ <li><a href="#s12">最后：能不能沉，取决于脚下那层<span class="tsub">（五）</span></a></li>
+ <li><a href="#digest">消化：9 张卡片 + 小测<span class="tsub">消化</span></a></li>
+</ol></nav>
+<nav class="toc side"><b>论证步骤</b><ol>
+ <li><a href="#s1">撞上边际收益的墙</a></li><li><a href="#s2">例一 mock 还原</a></li><li><a href="#s3">例二 trace 分析包</a></li><li><a href="#s4">报错通道 = 提示词通道</a></li><li><a href="#s5">带偏的反馈更糟</a></li><li><a href="#s6">取消错误的存在</a></li><li><a href="#s7">注意点加不下去</a></li><li><a href="#s8">两种「厚」</a></li><li><a href="#s9">事实才硬拦</a></li><li><a href="#s10">信号从外部取</a></li><li><a href="#s11">误报的代价</a></li><li><a href="#s12">取决于脚下那层</a></li><li><a href="#digest">消化 + 小测</a></li>
+</ol></nav>
+
+<div class="chain" id="chain">
+ <div class="ct">论证链图（结构是学习搭子整理的，节点内容都来自原文）</div>
+ <div class="grp amber"><div class="gl">现象 · 开头</div><a href="#s1"><i>1</i>提示词调了数月，效果到顶</a></div>
+ <div class="cn">为什么解不掉？摊开会话看两个例子</div>
+ <div class="grp blue"><div class="gl">证据 · （一）（二）</div><a href="#s2"><i>2</i>mock 还原：框架层消掉一类错</a><a href="#s3"><i>3</i>trace 分析包：报错直接给原因</a><a href="#s4"><i>4</i>于是：报错通道 = 提示词通道</a><a href="#s5"><i>5</i>但是：带偏的反馈更糟</a></div>
+ <div class="cn">所以</div>
+ <div class="grp green"><div class="gl">结论 · （三）（四）</div><a href="#s6"><i>6</i>框架能取消错误的存在（纪律作废）</a><a href="#s7"><i>7</i>反面：skill 注意点加不下去</a><a href="#s8"><i>8</i>所以：提示词越厚越笨，框架越厚越强</a></div>
+ <div class="cn">但是，不是什么都该沉</div>
+ <div class="grp red"><div class="gl">边界 · （五）</div><a href="#s9"><i>9</i>判据是事实才硬拦，代理指标只提醒</a><a href="#s10"><i>10</i>信号要从外部取</a><a href="#s11"><i>11</i>误报逼出更差的代码</a><a href="#s12"><i>12</i>能不能沉，取决于底座给不给接口</a></div>
+ <div class="cn">引出第二部分：编排的尽头是 runtime</div>
+</div>
+
+<h2 class="part">现象 <small>第一部分 开头</small></h2>
+<section class="step" id="s1">
+ <div class="tag"><span class="no">1</span>第一部分 开头</div>
+ <h3>提示词调了数月，撞上边际收益的墙</h3>
+ <p>作者先交代起点：他们的测试 agent 底子并不差。项目技术栈特殊，团队专门开发了端到端测试框架，内部先用了<span class="num">数月</span>，成熟了才交给 AI；测试 agent 的提示词和流程编排又打磨了<span class="num">数月</span>。</p>
+ <p><span class="cn-w but">但是</span>很快进入瓶颈期：不管怎么调提示词，都调不出初期那种立竿见影的效果。</p>
+ <div class="ev case"><ul>
+  <li>第一反应仍是继续写提示词：措辞再强硬一点，规则再细一点，例子再多给一个。这个方向「撞了很久的墙」。</li>
+  <li>转折点：用自研的会话分析工具 tracesift，把手头所有测试会话摊开来分析。</li>
+ </ul></div>
+ <blockquote class="q">「剩下的问题在提示词和流程层面根本解不掉。」<cite>第一部分 开头</cite></blockquote>
+ <p class="so">提示词的边际收益会耗尽。要知道问题出在哪一层，先看会话证据，而不是凭感觉再加一句提示词。</p>
+ <div class="src article">第一部分 开头</div>
+</section>
+
+<h2 class="part">证据：两个例子 <small>（一）（二）</small></h2>
+<section class="step" id="s2">
+ <div class="tag"><span class="no">2</span>第一部分（一）例一：mock 还原</div>
+ <h3>说了一半次也漏，框架自动还原就不漏</h3>
+ <p>测试的经典范式是 setup/teardown：开始前 mock，结束后还原。</p>
+ <div class="ev data"><ul>
+  <li>提示词里反复强调「setup/teardown 必须成对出现」，AI 仍有<span class="num">约一半</span>概率漏掉 teardown。</li>
+  <li>后果：用例互相污染，整个验证过程乱到不可控。</li>
+ </ul></div>
+ <p><span class="cn-w">于是</span>先想到常规思路：加 lint hook。<span class="cn-w but">但是</span>这个问题很难用规则式 lint 查出来，AI 也仍有概率绕过。</p>
+ <p><span class="cn-w">所以</span>作者换了个层：像自动 GC 一样，给框架补了「声明式 mock 和自动还原」——mock 声明出来，用例结束时框架自动还原。之后 AI 在这里几乎不再犯错。</p>
+ <blockquote class="q">「用框架消掉一整类错误，等于把 AI 的注意力还给主任务。」<cite>第一部分（一）</cite></blockquote>
+ <p class="so">写测试要同时顾的点太多，这个任务对 AI 本来就重；少一件要记的事，主任务就多一份注意力。</p>
+ <div class="src article">第一部分（一）</div>
+</section>
+
+<section class="step" id="s3">
+ <div class="tag"><span class="no">3</span>第一部分（二）例二：trace 链路分析</div>
+ <h3>超时报错直接告诉 AI 原因和卡住的那一行</h3>
+ <p>AI 跑测试最常撞的问题是链路超时。<span class="cn-w">因为</span>查它要读大量代码、追调用链，而写测试、跑测试本来就是重任务，再塞进重度分析，AI 经常耗时极长，还有一定概率上下文过载、注意力涣散，彻底解不出来。</p>
+ <p><span class="cn-w">于是</span>作者重构了框架里的 trace：链路超时报错时，自动返回准确原因和链路分析包。</p>
+ <div class="ev design"><ul>
+  <li>裸超时只能说「没等到回包」。框架在超时那一刻反向探测各个服务的队列和限频登记表，按现场把超时分成<span class="num">4</span>类：还在排队；出队了但业务代码没回包；在分发层被限频丢掉；回包到了但当时没人接。</li>
+  <li>每一类后面跟的不是现象描述，是下一步动作，比如「检查前置请求是否用完了限频配额」，连该看哪个配置字段都点出来。</li>
+  <li>分析包里还有一节「代码执行路径」：框架打开业务源码，把这条链路最后执行到的那几行原样贴进报错，末行标一个箭头。</li>
+ </ul></div>
+ <blockquote class="q">「AI 不必再猜卡在哪，它直接看到卡在哪一行。」<cite>第一部分（二）</cite></blockquote>
+ <p class="so">把「追调用链」这件重活从 AI 的任务里拿走，交给框架在出错那一刻做完。</p>
+ <div class="src article">第一部分（二）</div>
+</section>
+
+<section class="step" id="s4">
+ <div class="tag"><span class="no">4</span>第一部分（二）副产品</div>
+ <h3>于是发现：报错通道本身就是提示词通道</h3>
+ <p>作者说这个设计有个「值得单独说」的副产品。<span class="cn-w">因为</span>报错是框架返回给 AI 的，顺着它可以返回任何 AI 需要的信息；<span class="cn-w">而且</span>时机精准，它正好在 AI 卡住的那一刻到达。</p>
+ <blockquote class="q">「报错通道本身就是提示词注入通道。」<cite>第一部分（二）</cite></blockquote>
+ <blockquote class="q">「最好的提示词，是恰到好处的反馈。」<cite>第一部分（二）</cite></blockquote>
+ <p class="so">与其在开头的提示词里预先叮嘱所有情况，不如在出事的那一刻，把恰好需要的信息送到。</p>
+ <div class="add">对照第 2 步：开头叮嘱是「事前、全量」，报错反馈是「事中、按需」。这句对照是学习搭子的归纳，原文没有这样并列。</div>
+ <div class="src article">第一部分（二）</div>
+</section>
+
+<section class="step" id="s5">
+ <div class="tag"><span class="no">5</span>第一部分（二）后半</div>
+ <h3>但是：带偏方向的反馈，比没有反馈更糟</h3>
+ <p><span class="cn-w but">但是</span>这条通道也会反噬。作者用一条被删掉的告警说明。</p>
+ <div class="ev incident"><ul>
+  <li>告警的内容：AI 等一个不在协议表里的协议名，框架就提醒它一句。</li>
+  <li>删掉的理由写在文档里：协议表是按线上流量生成的，冷门协议本来就收不全，登陆窗口期的协议更是全都不在表里。</li>
+  <li><span class="cn-w">所以</span>这个告警信噪比很差，还会把 AI 带偏。</li>
+ </ul></div>
+ <blockquote class="q">「注入的信息不是越多越好」<cite>第一部分（二）</cite></blockquote>
+ <p class="so">反馈通道要讲信噪比：判断依据本身不全，就别往里塞提醒。（这个思路在第 9 步变成一条通用标准。）</p>
+ <div class="src article">第一部分（二）后半</div>
+</section>
+
+<h2 class="part">结论 <small>（三）（四）</small></h2>
+<section class="step" id="s6">
+ <div class="tag"><span class="no">6</span>第一部分（三）两个例子的共同点</div>
+ <h3>共同点：提示词只能叮嘱，框架能取消错误</h3>
+ <p><span class="cn-w">所以</span>两个例子的解法都不在 agent 层，而在 agent 底下的框架层。</p>
+ <blockquote class="q">「提示词层面你只能"叮嘱"，框架层面你可以"取消这个错误的存在"。」<cite>第一部分（三）</cite></blockquote>
+ <p>作者给的「最直接的证据」，是一条纪律的消失：</p>
+ <div class="ev case"><ul>
+  <li>自动还原上线之前：会改脏环境的那批用例必须排到最后跑，跑完还得重启服务——靠人肉纪律维持秩序。</li>
+  <li>自动还原和静态闸门都到位之后：交接文档里写下，这条纪律「自此作废」。</li>
+ </ul></div>
+ <p class="so">不是 AI 变听话了，是这类错误不再可能发生，纪律也就没有存在的理由。</p>
+ <div class="src article">第一部分（三）</div>
+</section>
+
+<section class="step" id="s7">
+ <div class="tag"><span class="no">7</span>第一部分（四）注意点加不下去了</div>
+ <h3>反面证据：skill 里的注意点加到加不下去</h3>
+ <p>第 6 步是从正面看框架有用；这一步从反面看提示词的上限。</p>
+ <div class="ev data"><ul>
+  <li>测试 agent 的 skill 叫 ut-tester。SKILL.md <span class="num">四百多行</span>，排坑、模板、注意点铺了<span class="num">十几份</span>文档。</li>
+  <li><span class="num">2 月到 6 月</span>每个月都在往里加；<span class="num">7 月</span>之后几乎停了——不是做完了，是加不下去了。</li>
+ </ul></div>
+ <p><span class="cn-w">因为</span>注意点越多，模型要同时记住的事越多，注意力越碎，写测试这个主任务反而越差。作者说，这就是「harness 越厚，agent 越笨」真正成立的地方。</p>
+ <p>他没有说约束都不该写：领域里稳定的事实、能力边界，不写模型就不知道。<span class="cn-w but">但是</span>它有上限。</p>
+ <blockquote class="q">「再厚，厚的是模型的工作记忆。」<cite>第一部分（四）</cite></blockquote>
+ <div class="ev incident"><ul>
+  <li>打补丁这一档尤其不要写：模型走错一次，就加一条「以后必须走这条路」。</li>
+  <li>他们写过「严禁 mock ss，只有一种正确写法」，<span class="num">八天</span>后对着仓库里<span class="num">529</span>个存量单测才发现，这条从落笔那天就和事实相反。</li>
+ </ul></div>
+ <blockquote class="q">「生来就在拿有限规则覆盖无限问题。」<cite>第一部分（四）</cite></blockquote>
+ <div class="src article">第一部分（四）</div>
+</section>
+
+<section class="step" id="s8">
+ <div class="tag"><span class="no">8</span>第一部分（四）后半</div>
+ <h3>所以：两种「厚」，别混</h3>
+ <p><span class="cn-w">于是</span>同一时期，力气转到了 ut 框架。作者用提交记录说明这次转向：</p>
+ <div class="ev data"><ul>
+  <li><span class="num">6 月</span>框架侧的提交大约是 skill 的<span class="num">四倍</span>。</li>
+  <li><span class="num">7、8 月</span>还在加覆盖率制品、把 trace hook 往更底层沉、给隔离运行补协议。</li>
+  <li>ut-tester 最后一次实质改动，标题就是「对齐 UT 框架近期改动」。</li>
+ </ul></div>
+ <p>mock 自动还原、超时分析包，都是把原来写在 skill 里的叮嘱从模型脑子里挪走；挪走一件，主任务就清静一点。</p>
+ <p><span class="cn-w">所以</span>有两种「厚」：写在提示词里，越厚模型越笨；写进框架，越厚模型越省心，主任务上反而更强。</p>
+ <p>作者还划了一条线：验证是第三件事，发生在产出之后，核测试是不是真能抓 bug、报告有没有撒谎。那是后面评测和验收的事（主线 3、主线 5），不是开发环节的 SOP。</p>
+ <blockquote class="q">「生产级 agent 建设，最终都归到基础设施建设。」<cite>第一部分（四）</cite></blockquote>
+ <p class="so">框架设计、编译原理、协议栈这些硬功夫不会过时，它们决定 agent 能不能走出深水区。</p>
+ <div class="src article">第一部分（四）</div>
+</section>
+
+<h2 class="part">边界：不是什么都该沉 <small>（五）</small></h2>
+<section class="step" id="s9">
+ <div class="tag"><span class="no">9</span>第一部分（五）那是不是什么都该往下沉？</div>
+ <h3>但不是什么都该沉：判据是事实才硬拦</h3>
+ <p><span class="cn-w but">但是</span>注意点不该无限堆，不等于能沉的都该立刻沉。作者的判断标准来自他们自己的一个 hook 文件：同一个拦截器里的两条规则，待遇完全不同。</p>
+ <div class="ev case"><ul>
+  <li>规则 A「禁止读 protocols 目录」：判据是路径前缀比对，目标路径要么在那个目录下，要么不在。它至今是硬拦截。</li>
+  <li>规则 B「编辑 .lua 之前必须先读编码规范」：一开始也是硬拦截，判据是扫会话记录，看 AI 有没有读过那两份规范文件。上线<span class="num">两周</span>后降成了警告。</li>
+ </ul></div>
+ <p><span class="cn-w">因为</span>规则 B 的判据不是事实，是代理指标：读过不等于遵守，没扫到也不等于没读过。</p>
+ <div class="ev incident"><ul><li>它还翻过一次车，结论留在代码注释里：主会话累积了所有历史 Read，会把「已读」这个状态污染给之后的每一个子 agent。</li></ul></div>
+ <blockquote class="q">「判据是确定的事实，才能做硬门禁；判据是代理指标，最多做提醒。」<cite>第一部分（五）</cite></blockquote>
+ <p>作者说，这和前言那把尺子是同一把：前言分的是「交给机器还是留给人」，这里分的是「做成机制还是留在提示词」。</p>
+ <div class="src article">第一部分（五）</div>
+</section>
+
+<section class="step" id="s10">
+ <div class="tag"><span class="no">10</span>第一部分（五）「一是」</div>
+ <h3>顺着标准推：信号要从外部取，不能靠 AI 自述</h3>
+ <div class="ev case"><ul>
+  <li>前言那个平台的测试跑批上有一道硬失败：脚本报告成功、报告文件也生成了，但覆盖率是<span class="num">0/0</span>行——直接判失败。</li>
+  <li>它防的是一类很隐蔽的假测试：AI 把被测函数的内部逻辑抄出来，用本地变量重算一遍再断言。断言全过，覆盖率零，测不出任何回归。</li>
+ </ul></div>
+ <p><span class="cn-w">为什么</span>提示词防不住？<span class="cn-w">因为</span>AI 自查也会认为自己做对了。<span class="cn-w">所以</span>只有从外面看「被测函数的行一次都没被执行到」，才戳得穿。</p>
+ <p class="so">「覆盖率是不是 0/0」是一个机器能核的事实，正好符合第 9 步的硬门禁标准。</p>
+ <div class="src article">第一部分（五）</div>
+</section>
+
+<section class="step" id="s11">
+ <div class="tag"><span class="no">11</span>第一部分（五）「二是」</div>
+ <h3>门禁误报的代价，比想象的高</h3>
+ <div class="ev case"><ul>
+  <li>ut-lint 是他们写的 Lua 测试静态检查。里面有<span class="num">两条</span>规则明知易误报，始终没敢改成阻断。</li>
+  <li>替代做法：只在 reviewer 的提示词里要求，每条 lint 结果都要读源码二次确认，采纳还是判为误报，都得写明理由。</li>
+ </ul></div>
+ <p><span class="cn-w">因为</span>误报的真实代价他们见过：改进其中一条规则时，目的写得很直白——不再为了过 lint 把 helper 拆开内联。</p>
+ <blockquote class="q">「是逼着人和 AI 为了过检查，把代码写得更差。」<cite>第一部分（五）</cite></blockquote>
+ <p class="so">易误报的规则（判据不是事实）只做提醒，并要求逐条核对、写明理由。</p>
+ <div class="src article">第一部分（五）</div>
+</section>
+
+<section class="step" id="s12">
+ <div class="tag"><span class="no">12</span>第一部分（五）末段</div>
+ <h3>最后：能不能沉，一半取决于脚下那层</h3>
+ <p>作者补了一件「不太顺利的事」，说明下沉本身也有阻力。</p>
+ <div class="ev incident"><ul>
+  <li>ut-lint 最早只写在 reviewer 的提示词里，要求评审前先跑一遍——还在约束层，靠模型记得去跑。</li>
+  <li>第一个想法：做成 SubagentStop hook，子 agent 一结束就自动跑，结果塞回上下文。<span class="cn-w but">但是</span>做不成：Claude Code 和 codebuddy 的 hook 协议里，SubagentStop 只支持「阻断并给出理由」，不支持往上下文里注入内容。作者要的是提示，协议只给阻断。</li>
+  <li><span class="cn-w">于是</span>改方向：把 lint 触发塞进测试执行脚本本身，跑测试就自动跑 lint，脱离 agent 框架，CI 也一起受益。这条还没落地。</li>
+ </ul></div>
+ <p>作者认为这条路比 hook 更彻底：同一套规则，从「叮嘱模型去跑」变成「环境里跑测试就会跑」。</p>
+ <blockquote class="q">「能不能往下沉，一半不由我说了算，取决于我脚下那层给不给接口。」<cite>第一部分（五）</cite></blockquote>
+ <p class="so">这个问题引出第二部分：编排的尽头是 runtime。</p>
+ <div class="src article">第一部分（五）末段</div>
+</section>
+<p class="rd-end">论证链到这里结束。下面的卡片不再讲新内容，用来回顾和动手。</p>
+</article>
+
+<div class="digest">
+<div class="digest-head" id="digest"><span class="kicker">消化</span><h2>用 9 张卡片回顾，最后做 6 道小测</h2>
+<p>卡片就是原来卡片版的内容。小测答错时，「回到第 N 张」会滚动到对应卡片。</p></div>
+<section class="card">
+  <div class="stage"><svg class="flow" data-act="fw" data-edge="fw>main" data-flow='{"nodes":[{"id":"pr","x":130,"y":80,"t":"提示词层","s":"只能叮嘱：再强调一遍","c":"amber","w":210},{"id":"fw","x":130,"y":280,"t":"框架层","s":"取消这个错误的存在","c":"green","w":210},{"id":"main","x":450,"y":180,"t":"AI 的主任务","s":"写测试、跑测试","c":"blue","w":190}],"edges":[{"f":"pr","t":"main","l":"注意点越堆越碎"},{"f":"fw","t":"main","l":"注意力还给主任务"}]}'></svg></div>
+  <div class="say"><span class="kicker">这条主线讲什么？</span><h2>提示词只能叮嘱，框架能取消一类错误</h2>
+  <p>提示词的边际收益会耗尽：注意点越多，模型注意力越碎，主任务越差。</p>
+  <p class="key">两个例子的解法都不在 agent 层，在 agent 底下的框架层。</p>
+  <p><a href="t1-infra-close.html">📖 精读版样稿：按原文顺序看完整论证链 →</a></p>
+  <div class="src article">第一部分「本部分要点」、（三）</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="stack">
+   <div class="row developer"><span class="i">1</span><span class="r">背景</span><span class="t">项目技术栈特殊，专门开发了端到端测试框架；内部用了数月、成熟后才交给 AI</span></div>
+   <div class="row developer"><span class="i">2</span><span class="r">打磨</span><span class="t">测试 agent 的提示词和流程编排又打磨了数月</span></div>
+   <div class="row bad"><span class="i">3</span><span class="r">瓶颈</span><span class="t">怎么调提示词，都调不出初期那种立竿见影的效果</span></div>
+   <div class="row bad"><span class="i">4</span><span class="r">第一反应</span><span class="t">措辞再强硬、规则再细、例子再多给一个——撞了很久的墙</span></div>
+   <div class="row result new"><span class="i">5</span><span class="r">转折</span><span class="t">用自研会话分析工具 tracesift 把所有测试会话摊开分析</span></div>
+  </div></div>
+  <div class="say"><span class="kicker">为什么要往下沉？</span><h2>提示词调了数月，撞上边际收益的墙</h2>
+  <p>分析完会话才看清：剩下的问题在提示词和流程层面根本解不掉。</p>
+  <p class="key">先看会话证据，再决定在哪一层解决。</p>
+  <div class="src article">第一部分 开头</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="pairs">
+   <div class="pair"><div class="no"><b>提示词层</b>反复强调「setup/teardown 必须成对出现」；AI 仍有约一半概率漏掉 teardown，用例互相污染</div><div class="yes"><b>框架层</b>声明式 mock + 自动还原：mock 声明出来，用例结束框架自动还原</div></div>
+   <div class="pair"><div class="b"><b>常规思路</b>加 lint hook；但规则式 lint 很难查出来，AI 也仍有概率绕过</div><div class="a"><b>结果</b>AI 在这里几乎不再犯错</div></div>
+  </div></div>
+  <div class="say"><span class="kicker">例一：mock 还原</span><h2>框架自动还原 mock，AI 不再漏 teardown</h2>
+  <p>作者的类比：就像自动 GC 一样。</p>
+  <p class="key">写测试要同时顾的点太多；用框架消掉一整类错误，等于把 AI 的注意力还给主任务。</p>
+  <div class="src article">第一部分（一）</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="stack">
+   <div class="head">超时那一刻，框架反向探测各服务的队列和限频登记表</div>
+   <div class="row result"><span class="i">1</span><span class="r">还在排队</span><span class="t">按现场分类</span></div>
+   <div class="row result"><span class="i">2</span><span class="r">出队未回包</span><span class="t">出队了，但业务代码没回包</span></div>
+   <div class="row result new"><span class="i">3</span><span class="r">被限频丢掉</span><span class="t">在分发层被限频丢掉 → 下一步：检查前置请求是否用完了限频配额</span></div>
+   <div class="row result"><span class="i">4</span><span class="r">回包没人接</span><span class="t">回包到了，但当时没人接</span></div>
+   <div class="head">代码执行路径：链路最后执行到的那几行原样贴进报错，末行标箭头</div>
+  </div></div>
+  <div class="say"><span class="kicker">例二：trace 链路分析</span><h2>超时报错直接给出原因和卡住的那一行</h2>
+  <p>裸超时只能告诉你「没等到回包」；AI 要读大量代码追调用链，常常耗时极长、上下文过载。</p>
+  <p class="key">每一类后面跟的不是现象描述，是下一步动作，连该看哪个配置字段都点出来。</p>
+  <div class="src article">第一部分（二）</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="pairs">
+   <div class="pair"><div class="yes"><b>报错通道 = 提示词注入通道</b>可以返回任何 AI 需要的信息；时机精准，正好在 AI 卡住的那一刻到达</div><div class="no"><b>被删掉的告警</b>AI 等一个不在协议表里的协议名，就提醒一句</div></div>
+   <div class="pair"><div class="b"><b>删掉的理由（写在文档里）</b>协议表按线上流量生成，冷门协议本来收不全，登陆窗口期的协议全都不在表里</div><div class="a"><b>结果</b>告警信噪比很差，还会把 AI 带偏</div></div>
+  </div></div>
+  <div class="say"><span class="kicker">报错通道还能做什么？</span><h2>报错通道是提示词通道，带偏的反馈更糟</h2>
+  <p>作者的说法：最好的提示词，是恰到好处的反馈。</p>
+  <p class="key">注入的信息不是越多越好；会带错方向的反馈，比没有反馈更糟。</p>
+  <div class="src article">第一部分（二）后半</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="pairs">
+   <div class="pair"><div class="no"><b>写在提示词里</b>越厚，模型要同时记住的事越多，越笨</div><div class="yes"><b>写进框架</b>越厚，模型越省心，主任务反而更强</div></div>
+   <div class="pair"><div class="b"><b>ut-tester（测试 skill）</b>SKILL.md 四百多行；2 月到 6 月每月都在加，7 月之后几乎停了——加不下去了</div><div class="a"><b>ut 框架</b>6 月框架侧的提交大约是 skill 的四倍</div></div>
+   <div class="pair"><div class="no"><b>打补丁的规则</b>「严禁 mock ss，只有一种正确写法」</div><div class="yes"><b>八天后</b>对着仓库里 529 个存量单测发现，这条从落笔那天就和事实相反</div></div>
+  </div></div>
+  <div class="say"><span class="kicker">harness 越厚，agent 越笨吗？</span><h2>写进提示词越厚越笨，写进框架越厚越强</h2>
+  <p>领域里稳定的事实、能力边界要写，但写在提示词里有上限：再厚，厚的是模型的工作记忆。</p>
+  <p class="key">打补丁这一档尤其不要写：它生来就在拿有限规则覆盖无限问题。</p>
+  <details class="more"><summary></summary><p>纪律的消失：自动还原上线前，会改脏环境的用例必须排到最后跑，跑完还得重启服务。自动还原和静态闸门到位后，交接文档写下这条纪律「自此作废」。</p><p>ut-tester 最后一次实质改动，标题是「对齐 UT 框架近期改动」。</p><p>验证是第三件事，发生在产出之后：核测试能不能抓 bug、报告有没有撒谎（见主线 3、主线 5）。</p><p>作者的判断：生产级 agent 建设最终都归到基础设施；框架设计、编译原理、协议栈这些硬功夫不会过时。</p></details>
+  <div class="src article">第一部分（三）（四）</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><svg class="flow" data-act="a" data-edge="a>ha" data-flow='{"nodes":[{"id":"a","x":120,"y":80,"t":"禁止读 protocols 目录","s":"判据：路径前缀比对","c":"blue","w":220},{"id":"ha","x":470,"y":80,"t":"至今是硬拦截","s":"要么在要么不在 = 事实","c":"green","w":220},{"id":"b","x":120,"y":260,"t":"编辑 .lua 前先读规范","s":"判据：扫会话记录","c":"blue","w":220},{"id":"hb","x":470,"y":260,"t":"两周后降成警告","s":"读过 ≠ 遵守 = 代理指标","c":"amber","w":220}],"edges":[{"f":"a","t":"ha"},{"f":"b","t":"hb"}]}'></svg></div>
+  <div class="say"><span class="kicker">那是不是什么都该往下沉？</span><h2>判据是事实才硬拦截，代理指标只提醒</h2>
+  <p>同一个 hook 拦截器里的两条规则，待遇完全不同。</p>
+  <p class="key">读过不等于遵守，没扫到也不等于没读过。</p>
+  <details class="more"><summary></summary><p>第二条还翻过一次车：主会话累积了所有历史 Read，会把「已读」这个状态污染给之后的每一个子 agent（结论留在代码注释里）。</p><p>作者说这和前言的尺子是同一把：前言分「交给机器还是留给人」，这里分「做成机制还是留在提示词」。</p></details>
+  <div class="src article">第一部分（五）</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="pairs">
+   <div class="pair"><div class="no"><b>假测试</b>AI 把被测函数的内部逻辑抄出来，用本地变量重算一遍再断言：断言全过，覆盖率零</div><div class="yes"><b>硬失败</b>脚本报告成功、报告文件也生成了，但覆盖率 0/0 行 → 直接判失败</div></div>
+   <div class="pair"><div class="b"><b>ut-lint 两条易误报规则</b>始终没改成阻断；reviewer 提示词要求每条结果读源码二次确认，写明理由</div><div class="a"><b>误报的真实代价</b>为了过 lint 把 helper 拆开内联</div></div>
+  </div></div>
+  <div class="say"><span class="kicker">下沉时还要注意什么？</span><h2>信号要从外部取，误报会逼出更差的代码</h2>
+  <p>假测试提示词防不住，因为 AI 自查也会认为自己做对了。</p>
+  <p class="key">门禁误报的后果不是浪费一次提醒，是逼着人和 AI 为了过检查把代码写得更差。</p>
+  <div class="src article">第一部分（五）「一是」「二是」</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><svg class="flow" data-act="script" data-edge="lint>script" data-flow='{"nodes":[{"id":"lint","x":110,"y":90,"t":"ut-lint","s":"最早写在 reviewer 提示词里","c":"amber","w":210},{"id":"hook","x":440,"y":90,"t":"SubagentStop hook","s":"做不成：只支持阻断+理由","c":"red","w":230},{"id":"script","x":440,"y":270,"t":"塞进测试执行脚本","s":"跑测试就跑 lint · 还没落地","c":"blue","w":230}],"edges":[{"f":"lint","t":"hook","l":"第一个想法"},{"f":"lint","t":"script","l":"改方向"}]}'></svg></div>
+  <div class="say"><span class="kicker">一件不太顺利的事</span><h2>能不能往下沉，取决于底座给不给接口</h2>
+  <p>Claude Code 和 codebuddy 的 hook 协议里，SubagentStop 不支持往上下文里注入内容；作者要的是提示，协议只给阻断。</p>
+  <p class="key">改进方向（还没落地）：脱离 agent 框架，CI 也一起受益。</p>
+  <details class="more"><summary></summary><p>作者说这条路比 hook 更彻底：同一套规则，从「叮嘱模型去跑」变成「环境里跑测试就会跑」。</p><p>衔接主线 2：能不能往下沉，一半不由作者说了算——这就引出编排和 runtime 的问题。</p></details>
+  <div class="src article">第一部分（五）末段</div></div>
+</section>
+
+<section class="card full">
+  <div class="head-full"><span class="kicker">小测</span><h2>用 6 个新场景检查：这件事该放在哪一层？</h2></div>
+  <div class="stage"><div class="quiz" data-quiz='[
+   {"q":"你的测试 agent 有约一半概率忘了删掉临时数据，SKILL.md 里已经写了三遍。按原文的思路，下一步最该做什么？","opts":["再写得更强硬一点，加粗","在框架层让用例结束时自动清理","加一条 lint hook 检查"],"a":1,"why":"误区：再强调一遍 AI 就该记住。提示词层只能叮嘱，框架层能取消这类错误。","back":3},
+   {"q":"你想加一条硬拦截：「提交前必须跑过测试」，判据是扫会话记录里有没有出现测试命令。按原文标准，它应该？","opts":["做成硬拦截","最多做成提醒，因为判据是代理指标","不用管"],"a":1,"why":"判据是确定的事实，才能做硬门禁；扫会话记录是代理指标。","back":7},
+   {"q":"agent 报告「测试全部通过」，报告文件也生成了，但被测函数的行一次都没执行到。该怎么判？","opts":["通过，报告说成功了","判失败，信号要从外部取","让 AI 自查一遍"],"a":1,"why":"AI 自查也会认为自己做对了；从外部看覆盖率 0/0，才戳得穿假测试。","back":8},
+   {"q":"你想在报错里加一句提醒：AI 读到一个未登记的配置项就警告。可登记表本来就收不全。按原文，该怎么做？","opts":["加上，信息越多越好","先想清楚：信噪比差的反馈会把 AI 带偏，比没有更糟","改成硬拦截"],"a":1,"why":"这和被删掉的协议名告警是同一个问题。","back":5},
+   {"q":"AI 跑测试总是卡在超时。按原文，报错里最该补的是什么？","opts":["「请求超时」四个字","按现场分类的原因、下一步动作和最后执行到的代码行","一份完整的服务列表"],"a":1,"why":"报错正好在 AI 卡住的那一刻到达，是最好的提示词。","back":4},
+   {"q":"一条 lint 规则明知易误报，同事想把它改成阻断。按原文，最可能的后果是？","opts":["代码质量更好","人和 AI 为了过检查，把代码写得更差","没有影响"],"a":1,"why":"误报的真实代价：为了过 lint 把 helper 拆开内联。","back":8}]'></div></div>
+</section>
+</div>
+</main>
+<nav class="bottom"><button class="btn" id="prev">上一张</button><button class="btn main" id="next">下一张</button></nav>
+<script>
+var __H=location.hash;
+/* 学习搭子 固定组件库 — 不要在课程里改这个文件。 */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const NS='http://www.w3.org/2000/svg';
+const el=(t,a={},p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p&&p.appendChild(e);return e};
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+/* ---------- 卡片翻页 ---------- */
+const cards=$$('.card');let cur=0;
+function go(i){i=Math.max(0,Math.min(cards.length-1,i));cards[cur].classList.remove('on');cur=i;cards[cur].classList.add('on');
+  $('.track i').style.width=((cur+1)/cards.length*100)+'%';$('.count').textContent=(cur+1)+' / '+cards.length;
+  $('#prev').disabled=cur===0;$('#next').disabled=cur===cards.length-1;history.replaceState(null,'','#'+(cur+1));}
+window.goCard=n=>go(n-1);
+$('#prev').onclick=()=>go(cur-1);$('#next').onclick=()=>go(cur+1);
+addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.key==='ArrowRight')go(cur+1);if(e.key==='ArrowLeft')go(cur-1)});
+let sx=null;addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
+addEventListener('touchend',e=>{if(sx===null)return;const d=e.changedTouches[0].clientX-sx;if(Math.abs(d)>60)go(cur+(d<0?1:-1));sx=null});
+
+/* ---------- flow：用 JSON 画流程图 ----------
+ spec = {w,h,nodes:[{id,x,y,t,s?,c?,w?}],edges:[{f,t,l?,bend?}]}  节点坐标是中心点 */
+function drawFlow(svg,spec){
+  svg.innerHTML='';
+  const defs=el('defs',{},svg);
+  [['a','#AEB8C6'],['b','#2550D9'],['red','#C8372D'],['amber','#C77A00'],['green','#16875A']].forEach(([id,c])=>{const m=el('marker',{id:'ar'+id+svg.dataset.uid,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:7,markerHeight:7,orient:'auto-start-reverse'},defs);el('path',{d:'M0,0L10,5L0,10z',fill:c},m)});
+  const N={};spec.nodes.forEach(n=>N[n.id]={...n,w:n.w||150,h:n.s?70:56});
+  const ns=Object.values(N);
+  let x0=Math.min(...ns.map(n=>n.x-n.w/2)),x1=Math.max(...ns.map(n=>n.x+n.w/2)),y0=Math.min(...ns.map(n=>n.y-n.h/2)),y1=Math.max(...ns.map(n=>n.y+n.h/2));
+  const B={x0,x1,y0,y1};
+  const eg=el('g',{},svg),ng=el('g',{},svg);svg._edges={};svg._nodes={};
+  const clip=(a,b)=>{const dx=b.x-a.x,dy=b.y-a.y;const s=Math.min(Math.abs((a.w/2+6)/(dx||1e-9)),Math.abs((a.h/2+6)/(dy||1e-9)));return[a.x+dx*s,a.y+dy*s]};
+  spec.edges.forEach(e=>{const a=N[e.f],b=N[e.t];let d,lx,ly;
+    if(e.route){ /* 沿外圈走的直角线：top|bottom|left|right，lane 控制离外框的距离 */
+      const g=30+(e.lane||0)*30,oa=e.oa||0,ob=e.ob||0;
+      if(e.route==='top'||e.route==='bottom'){const t=e.route==='top',Y=t?B.y0-g:B.y1+g,ya=a.y+(t?-1:1)*(a.h/2+2),yb=b.y+(t?-1:1)*(b.h/2+8);
+        d=`M${a.x+oa},${ya} V${Y} H${b.x+ob} V${yb}`;lx=(a.x+oa+b.x+ob)/2;ly=Y+(t?-8:18);
+        t?(y0=Math.min(y0,Y-26)):(y1=Math.max(y1,Y+26));}
+      else{const l=e.route==='left',X=l?B.x0-g:B.x1+g,xa=a.x+(l?-1:1)*(a.w/2+2),xb=b.x+(l?-1:1)*(b.w/2+8);
+        d=`M${xa},${a.y+oa} H${X} V${b.y+ob} H${xb}`;lx=X+(l?-8:8);ly=(a.y+b.y)/2;
+        l?(x0=Math.min(x0,X-90)):(x1=Math.max(x1,X+90));}
+    }else{const[p1,q1]=clip(a,b),[p2,q2]=clip(b,a);const mx=(p1+p2)/2,my=(q1+q2)/2,len=Math.hypot(p2-p1,q2-q1)||1,bd=e.bend||0;
+      const cx=mx-(q2-q1)/len*bd,cy=my+(p2-p1)/len*bd;d=`M${p1},${q1} Q${cx},${cy} ${p2},${q2}`;
+      const qx=.25*p1+.5*cx+.25*p2,qy=.25*q1+.5*cy+.25*q2,sg=bd>=0?1:-1;lx=qx-(q2-q1)/len*sg*14;ly=qy+(p2-p1)/len*sg*14+4;}
+    const mk=e.c||'a';const p=el('path',{d,class:'fl-edge '+(e.c||''),'marker-end':`url(#ar${mk}${svg.dataset.uid})`},eg);p._mk=mk;
+    let lab=null;if(e.l){const anc=e.route==='left'?'end':e.route==='right'?'start':'middle';lab=el('text',{x:lx,y:ly,'text-anchor':anc,class:'fl-elab '+(e.c||''),stroke:'#F2F4F7','stroke-width':5,'paint-order':'stroke'},eg);lab.textContent=e.l}
+    svg._edges[e.f+'>'+e.t]={p,lab}});
+  ns.forEach(n=>{const g=el('g',{class:'fl-node '+(n.c||'')},ng);
+    el('rect',{x:n.x-n.w/2,y:n.y-n.h/2,width:n.w,height:n.h,rx:14},g);
+    const t=el('text',{x:n.x,y:n.y+(n.s?-4:6),'text-anchor':'middle'},g);t.textContent=n.t;
+    if(n.s){const s=el('text',{x:n.x,y:n.y+18,'text-anchor':'middle',class:'sub'},g);s.textContent=n.s}
+    svg._nodes[n.id]=g});
+  /* 自动贴合：viewBox 只包住内容，图会放大填满面板 */
+  const P=spec.pad??8;svg.setAttribute('viewBox',`${x0-P} ${y0-P-10} ${x1-x0+2*P} ${y1-y0+2*P+20}`);
+  svg._set=(act,edge)=>{for(const k in svg._nodes)svg._nodes[k].classList.toggle('act',k===act);
+    for(const k in svg._edges){const on=k===edge,E=svg._edges[k];E.p.classList.toggle('act',on);E.p.setAttribute('marker-end',`url(#ar${on?'b':E.p._mk}${svg.dataset.uid})`);E.lab&&E.lab.classList.toggle('act',on)}};
+  svg._set(svg.dataset.act,svg.dataset.edge);
+}
+let uid=0;
+$$('svg.flow').forEach(s=>{s.dataset.uid=++uid;drawFlow(s,JSON.parse(s.dataset.flow))});
+
+/* ---------- sim：一步步走的模拟器 ----------
+ data-sim = {flow:{...}, steps:[{act,edge,msg:{r:user|asst|tool|err|sys,n?,t},say}], alt?:{label,steps:[...]}} */
+$$('.sim').forEach(box=>{
+  const spec=JSON.parse(box.dataset.sim);if(spec.alt&&!spec.alts)spec.alts=[spec.alt];const AL=spec.alts||[];const gname='br'+(++uid);
+  box.innerHTML=`<div class="ctl"><button class="btn sm" data-a="step">下一步</button><button class="btn sm" data-a="play">▶ 自动</button><button class="btn sm" data-a="reset">重置</button>
+   <label>速度 <input type="range" min="300" max="2500" step="100" value="1200"></label></div>${AL.length?`<div class="ctl branches"><label><input type="radio" name="${gname}" value="-1" checked> ${esc(spec.label||'正常路径')}</label>${AL.map((a,j)=>`<label><input type="radio" name="${gname}" value="${j}"> ${esc(a.label)}</label>`).join('')}</div>`:''}
+   <div class="body"><svg class="flow"></svg><div class="log"></div></div><div class="narr"></div>`;
+  if(spec.layout==='wide')box.classList.add('wide');
+  const svg=$('svg',box);svg.dataset.uid=++uid;drawFlow(svg,spec.flow);
+  const log=$('.log',box),narr=$('.narr',box),radios=$$('input[type=radio]',box),spd=$('input[type=range]',box),play=$('[data-a=play]',box);
+  let i=0,timer=null;const sel=()=>{const r=radios.find(r=>r.checked);return r?+r.value:-1};const steps=()=>sel()>=0?AL[sel()].steps:spec.steps;
+  const hint=spec.note?esc(spec.note)+'　点「下一步」开始。':'点「下一步」开始。';const reset=()=>{i=0;log.innerHTML='';narr.innerHTML=hint;svg._set(null,null);stop()};
+  const stop=()=>{clearTimeout(timer);timer=null;play.textContent='▶ 自动'};
+  const step=()=>{const S=steps();if(i>=S.length){narr.textContent='流程结束。点「重置」再走一遍。';stop();return false}
+    const s=S[i++];svg._set(s.act,s.edge);if(s.msg){const d=document.createElement('div');d.className='msg '+s.msg.r;
+      d.innerHTML=`<b>${esc(s.msg.n||({user:'用户',asst:'模型',tool:'工具结果',err:'出错',sys:'系统提示词'}[s.msg.r]))}</b>${esc(s.msg.t)}`;log.appendChild(d);log.scrollTop=1e9}
+    narr.innerHTML=`<b>第 ${i}/${S.length} 步</b>　${esc(s.say)}`;return true};
+  const loop=()=>{if(step())timer=setTimeout(loop,+spd.value);else stop()};
+  box.onclick=e=>{const a=e.target.dataset.a;if(a==='step'){stop();step()}if(a==='reset')reset();if(a==='play'){if(timer)stop();else{play.textContent='❚❚ 暂停';loop()}}};
+  narr.innerHTML=hint;radios.forEach(r=>r.onchange=reset);
+  const P=new URLSearchParams(location.search);if(P.get('alt')&&radios[+P.get('alt')]){radios[+P.get('alt')].checked=true}for(let n=+P.get('sim')||0;n>0;n--)step(); /* 自查用：?sim=5&alt=1 */
+});
+
+/* ---------- bars：横向条形图 ----------
+ data-bars = {unit, items:[{l,v,c?:blue|amber|green|red,note?}], caption?}  数字必须来自原文 */
+$$('.bars').forEach(box=>{const B=JSON.parse(box.dataset.bars),mx=Math.max(...B.items.filter(i=>i.v!=null).map(i=>i.v));
+  box.innerHTML=B.items.map(i=>`<div class="bar ${i.c||''}"><span class="bl">${esc(i.l)}</span>${i.v==null?`<span class="bmiss">${esc(i.miss||'原文未给数字')}</span>`:`<span class="bt"><i style="width:${(i.v/mx*100).toFixed(1)}%"></i></span><span class="bv">${esc(i.v)}${esc(B.unit||'')}</span>`}${i.note?`<span class="bn">${esc(i.note)}</span>`:''}</div>`).join('')+(B.caption?`<div class="bc">${esc(B.caption)}</div>`:'')});
+
+/* ---------- quiz：页内小测 ----------
+ data-quiz = [{q,opts:[...],a:正确下标,why,back:答错时回到第几张卡片}] */
+$$('.quiz').forEach(box=>{
+  const Q=JSON.parse(box.dataset.quiz);let k=0,score=0;const done=new Set();
+  const render=()=>{const q=Q[k];box.innerHTML=`<div class="qn">第 ${k+1} / ${Q.length} 题　·　已答对 ${score}</div><div class="qt">${esc(q.q)}</div>
+    ${q.opts.map((o,j)=>`<button class="opt" data-j="${j}">${String.fromCharCode(65+j)}. ${esc(o)}</button>`).join('')}
+    <div class="fb"></div><div class="nav"><button class="btn sm" data-n="-1" ${k?'':'disabled'}>上一题</button><button class="btn sm main" data-n="1" ${k<Q.length-1?'':'disabled'}>下一题</button></div>`};
+  box.onclick=e=>{const t=e.target;if(t.dataset.n){k+=+t.dataset.n;render();return}
+    if(t.dataset.j===undefined||done.has(k))return;const q=Q[k],j=+t.dataset.j,fb=$('.fb',box);done.add(k);
+    $$('.opt',box)[q.a].classList.add('ok');
+    if(j===q.a){score++;fb.innerHTML='✓ 对。'+esc(q.why)}else{t.classList.add('no');fb.innerHTML='✗ 不对。'+esc(q.why)+(q.back?` <a onclick="goCard(${q.back})">回到第 ${q.back} 张再看看</a>`:'')}
+    $('.qn',box).textContent=`第 ${k+1} / ${Q.length} 题　·　已答对 ${score}`};
+  render();
+  const pk=new URLSearchParams(location.search).get('pick');if(pk!==null)$$('.opt',box)[+pk].click(); /* 自查用：?pick=0 */
+});
+
+go(Math.max(0,(parseInt(location.hash.slice(1))||1)-1));
+})();
+/* 精读模式：滚动进度、目录高亮、「回到第 N 张」改成滚动定位。只在精读页拼进来。 */
+(()=>{
+document.documentElement.classList.add('read');
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const cards=$$('.card'),steps=$$('.step'),bar=$('.track i'),cnt=$('.count');
+cards.forEach((c,i)=>c.id='c'+(i+1));
+window.goCard=n=>{const c=cards[n-1];c&&c.scrollIntoView({behavior:'smooth'})};
+const links=$$('.toc a');
+function upd(){const h=document.documentElement,max=h.scrollHeight-innerHeight;bar.style.width=(max>0?scrollY/max*100:100)+'%';
+  const y=scrollY+innerHeight*0.3;let lab='导读',on=null;
+  steps.forEach((s,i)=>{if(s.offsetTop<=y){lab='论证 '+(i+1)+' / '+steps.length;on=s.id}});
+  cards.forEach((c,i)=>{if(c.offsetTop<=y){lab='消化 '+(i+1)+' / '+cards.length;on='digest'}});
+  cnt.textContent=lab;const dg=document.getElementById('digest');document.documentElement.classList.toggle('indigest',!!dg&&dg.offsetTop-innerHeight*0.6<=scrollY);links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+on))}
+addEventListener('scroll',upd,{passive:true});addEventListener('resize',upd);
+cnt.title='回到目录';cnt.onclick=()=>{const t=$('.toc.inline');(t&&t.offsetParent?t:document.body).scrollIntoView({behavior:'smooth'})};
+/* main.js 会把 #3 当卡片号；精读页的锚点是 #s3 / #c3 / #digest，自己定位 */
+history.replaceState(null,'',location.pathname+location.search+(window.__H||''));const h=(window.__H||'').slice(1);if(h){const t=/^\d+$/.test(h)?cards[+h-1]:document.getElementById(h);t&&setTimeout(()=>t.scrollIntoView(),0)}
+upd();
+})();
+</script></body></html>
