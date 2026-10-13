@@ -116,7 +116,7 @@ function page(file, title, active, body, script = '') {
   return `<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${esc(title)} · 王玮的学习库</title><style>${CSS}${THEME}</style><script>${HEADJS}</script></head><body>
 <header class="top"><div class="in"><a class="brand" href="${r('index.html')}"><i>学</i>王玮的学习库</a><nav>${nav}</nav><button class="dm" onclick="__tt()" aria-label="切换深色模式">◐</button></div></header>
-<main>${body}<div class="foot"><span>王玮的学习库 · 每篇都是可翻页、可动手、带小测的学习页</span><span>由 build.mjs 从 data/ 生成 · 风格改编自 <a href="https://github.com/vuejs/vitepress">VitePress</a>（MIT）</span></div></main>${script ? `<script>${script}</script>` : ''}</body></html>`;
+<main>${body}<div class="foot"><span>王玮的学习库 · 每篇都是可翻页、可动手、带小测的学习页</span><span>由 build.mjs 从 data/ 生成 · 风格改编自 <a href="https://github.com/vuejs/vitepress">VitePress</a>（MIT）</span></div></main>${script ? `<script>${script}</script>` : ''}<script>(function(){const T=new Map();document.querySelectorAll('a[href]').forEach(a=>{let k;try{k='done:'+new URL(a.getAttribute('href'),location.href).pathname}catch(e){return}const d=localStorage.getItem(k);if(!d)return;const box=a.closest('.row,.card');if(!box)return;let t=box.querySelector('.tag.st');if(t&&!/已掌握/.test(t.textContent)){t.textContent='已学完';t.className='tag st green'}else if(!t&&box.classList.contains('card')&&!box.querySelector('.fin-done')){const s=document.createElement('span');s.className='tag st green fin-done';s.textContent='✓ 已学完 '+d;(box.querySelector('.body,div:last-child')||box).appendChild(s)}})})();</script></body></html>`;
 }
 const write = (f, s) => { fs.mkdirSync(path.dirname(path.join(ROOT, f)), { recursive: true }); fs.writeFileSync(path.join(ROOT, f), s); console.log('wrote', f); };
 const statusTag = s => `<span class="tag st ${STATE_CLS[s] ?? ''}">${esc(s)}</span>`;
@@ -152,6 +152,8 @@ const itemConcepts = id => concepts.filter(c => c.refs.some(r => r.item === id))
 <div class="kicker">待学收件箱 <span class="n">${inbox.length}</span></div>${inboxHtml}
 <div class="kicker">概念卡</div><div class="sub">一个术语一张卡，跨栏目串起来</div><div class="chips">${concepts.map(c => `<a class="chip" href="concepts/${c.id}.html">${esc(c.term)}</a>`).join('')}<a class="chip more" href="glossary.html">全部概念卡 →</a></div>`;
   const script = `const R=${revData};const p=n=>String(n).padStart(2,'0');const d=new Date();const today=new URLSearchParams(location.search).get('today')||(d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())); /* 自查用：?today=2026-10-14 */
+const DK=h=>'done:'+new URL(h,location.href).pathname;const add=(t,n)=>{const x=new Date(t+'T12:00:00');x.setDate(x.getDate()+n);return x.getFullYear()+'-'+p(x.getMonth()+1)+'-'+p(x.getDate())};
+for(const q of R.queue){const it=R.items[q.item];const dd=it&&localStorage.getItem(DK(it.href));if(dd){q.start=dd;for(const r of q.reviews)r.date=add(dd,r.day)}}
 const all=[];for(const q of R.queue)for(const r of q.reviews)if(!r.done)all.push({...r,item:q.item});all.sort((a,b)=>a.date.localeCompare(b.date));
 const due=all.filter(r=>r.date<=today),soon=all.filter(r=>r.date>today).slice(0,4);const el=document.getElementById('review');
 document.getElementById('due-n').textContent=due.length+' 项到期';document.getElementById('due-big').textContent=due.length;
