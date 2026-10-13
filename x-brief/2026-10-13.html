@@ -1,0 +1,151 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>X 简报 · 10/13（周二） · X 简报</title><style>/* 学习搭子 固定设计系统 — 不要在课程里改这个文件。只改 lesson.html 的内容。 */
+:root{
+  --paper:#F6F6F7; --sheet:#FFFFFF; --ink:#16202C; --ink2:#4A5868; --hair:#E2E2E3;
+  --blue:#2550D9;  --blue-soft:#E3EAFD;   /* 主角：当前步骤 / 重点 */
+  --amber:#C77A00; --amber-soft:#FBEFD9; /* 数据 / 消息 */
+  --green:#16875A; --green-soft:#DDF3E9; /* 成功 / 工具结果 */
+  --red:#C8372D;   --red-soft:#FBE3E1;   /* 出错 */
+  --r-lg:12px; --r-sm:10px;
+  --font:"PingFang SC","Noto Sans CJK SC","Source Han Sans SC","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}html,body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.7 var(--font);-webkit-font-smoothing:antialiased}
+a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+.top{position:sticky;top:0;background:rgba(242,244,247,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--hair);z-index:5}
+.top .in{max-width:980px;margin:0 auto;padding:10px 20px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.brand{font-weight:800;color:var(--ink)}.brand i{font-style:normal;display:inline-grid;place-items:center;width:28px;height:28px;border-radius:9px;background:var(--blue);color:#fff;margin-right:8px}
+.top nav{display:flex;gap:6px;flex-wrap:wrap;font-size:14px}.top nav a{padding:4px 10px;border-radius:99px;color:var(--ink2)}.top nav a.on{background:var(--blue-soft);color:var(--blue);font-weight:700}
+main{max-width:980px;margin:0 auto;padding:22px 20px 60px}
+.sheet{background:var(--sheet);border-radius:var(--r-lg);padding:24px 26px;box-shadow:0 1px 0 var(--hair),0 18px 40px -26px rgba(22,32,44,.28);margin-bottom:18px}
+.kk{font:700 13px var(--mono);color:var(--blue);letter-spacing:.04em}
+h1{font-size:28px;line-height:1.35;margin:6px 0 12px}
+h2{font-size:20px;margin:28px 0 10px;padding-left:12px;border-left:4px solid var(--blue);scroll-margin-top:110px}
+.quick{list-style:none;padding:0;margin:0;display:grid;gap:10px;counter-reset:q}
+.quick li{background:var(--blue-soft);border-radius:var(--r-sm);padding:12px 14px 12px 48px;position:relative;counter-increment:q}
+.quick li::before{content:counter(q);position:absolute;left:14px;top:12px;width:24px;height:24px;border-radius:50%;background:var(--blue);color:#fff;font:700 13px/24px var(--mono);text-align:center}
+.tabs{position:sticky;top:52px;z-index:4;display:flex;gap:8px;overflow-x:auto;padding:10px 0;background:var(--paper);margin-bottom:6px}
+.tabs a{flex:none;padding:6px 14px;border-radius:99px;background:var(--sheet);border:1px solid var(--hair);color:var(--ink);font-size:14px;font-weight:600}
+.tabs a:hover{border-color:var(--blue);text-decoration:none}
+ul{padding-left:20px}li{margin:8px 0}
+.star{filter:saturate(1.2)}li:has(.star){background:var(--amber-soft);border-radius:var(--r-sm);padding:8px 12px;list-style:none;margin-left:-20px}
+.more{background:var(--paper);border-radius:var(--r-sm);padding:10px 14px;font-size:14.5px;color:var(--ink2)}
+.muted{font-size:13.5px;color:var(--ink2)}
+.row{display:flex;gap:12px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--hair)}.row:last-child{border:0}
+.row .d{font:600 14px var(--mono);color:var(--ink2);min-width:96px}.row .t{flex:1;min-width:0}
+.tag{font-size:12px;padding:2px 9px;border-radius:99px;background:var(--paper);color:var(--ink2);font-weight:600}.tag.blue{background:var(--blue-soft);color:var(--blue)}.tag.green{background:var(--green-soft);color:var(--green)}
+.empty{border:2px dashed var(--hair);border-radius:var(--r-lg);padding:20px;color:var(--ink2)}.empty b{display:block;color:var(--ink);margin-bottom:4px}
+.pn{display:flex;justify-content:space-between;gap:10px;margin-top:20px;font-weight:700}
+.foot{margin-top:30px;font-size:13px;color:var(--ink2);text-align:center}
+@media(max-width:640px){main{padding:14px 12px 40px}.sheet{padding:18px 16px}h1{font-size:22px}.row{flex-wrap:wrap;gap:4px 10px}.row .d{min-width:0}}
+/* VitePress 默认主题风格（配色/间距/卡片思路改编自 VitePress，MIT License, Copyright (c) 2019-present Yuxi (Evan) You；见 CREDITS.md）。品牌色 = 学习页蓝 #2550D9 */
+:root{--paper:#fff;--sheet:#f6f6f7;--ink:#213547;--ink2:rgba(60,60,67,.75);--hair:#e2e2e3;--blue:#2550D9;--blue-soft:rgba(37,80,217,.10);
+--amber-soft:rgba(234,179,8,.14);--green-soft:rgba(16,185,129,.14);--red-soft:rgba(244,63,94,.12);--r-lg:12px;--r-sm:8px;
+--font:"Inter",-apple-system,"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;--grad:linear-gradient(120deg,#2550D9 25%,#41a8ff)}
+html.dark{--paper:#1b1b1f;--sheet:#202127;--ink:#fffff5;--ink2:rgba(235,235,245,.6);--hair:#2e2e32;--blue:#7c9cff;--blue-soft:rgba(124,156,255,.16);
+--amber:#f0b429;--amber-soft:rgba(240,180,41,.14);--green:#3dd68c;--green-soft:rgba(61,214,140,.14);--red:#f66f81;--red-soft:rgba(246,111,129,.14);--grad:linear-gradient(120deg,#7c9cff 25%,#5ec8ff);color-scheme:dark}
+html,body{background:var(--paper);color:var(--ink)}
+.top{background:color-mix(in srgb,var(--paper) 88%,transparent)!important;border-bottom:1px solid var(--hair)}
+.top nav a.on{background:var(--blue-soft)!important;color:var(--blue)!important}.top nav a:hover{background:var(--sheet)}
+.brand i{background:var(--grad)!important}
+.sheet,.card,.list .row,.chip,.empty{box-shadow:none!important;border:1px solid var(--sheet)}
+.sheet,.card{background:var(--sheet)}
+a.card:hover,.list .row:has(a:hover),.chip:hover{border-color:var(--blue)!important;transform:none!important}
+.hero h1,main>section.sheet:first-of-type h1{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800}
+.hero .stage,.defcard .stage,.thumb,.more,.tabs a{background:var(--paper)}.stat{background:var(--sheet);border:1px solid var(--hair)}
+.chip{background:var(--blue-soft)!important;color:var(--blue)!important;border-color:transparent}
+.empty{border:1px dashed var(--hair)!important;background:var(--sheet)}
+.tabs{background:var(--paper)!important}.tabs a{border-color:var(--hair)}
+.quick li{background:var(--blue-soft)}h2{border-left-color:var(--blue)}
+.dm{margin-left:8px;flex:none;width:34px;height:34px;border-radius:50%;border:1px solid var(--hair);background:var(--sheet);color:var(--ink);cursor:pointer;font-size:15px}
+code{background:var(--sheet)}
+@media(max-width:600px){.top .in{flex-direction:row!important;flex-wrap:wrap}.top nav{order:3;width:100%}}
+/* 状态体系 */
+:root{--purple:#7c3aed;--purple-soft:rgba(124,58,237,.12)}html.dark{--purple:#c4a5ff;--purple-soft:rgba(196,165,255,.16)}
+.tag.purple{background:var(--purple-soft);color:var(--purple)}.stat.purple{border-color:var(--purple)}.stat.purple b{color:var(--purple)}
+.tag.st:not(.blue):not(.green):not(.purple){background:var(--paper);color:var(--ink2);border:1px solid var(--hair)}
+.states{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.states .stat{border-left-width:4px}
+.prog{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink2);margin-top:8px}.prog span{white-space:nowrap;font-weight:600}
+.prog .bar{flex:1;min-width:80px;height:8px;border-radius:99px;background:var(--hair);display:flex;overflow:hidden}
+.prog .bar i{display:block;height:100%}.prog .g{background:var(--purple)}.prog .l{background:var(--green)}.prog .b{background:var(--blue)}
+/* 手机导航：两行换行，全部可见 */
+@media(max-width:600px){.top nav{flex-wrap:wrap!important;overflow:visible!important;gap:4px 2px}.top nav a{padding:4px 10px!important;font-size:13px!important}.states{grid-template-columns:1fr 1fr}.prog{flex-wrap:wrap}}
+</style><script>(function(){var k='theme',s=localStorage.getItem(k);if(s?s==='dark':matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark');
+window.__tt=function(){var d=document.documentElement.classList.toggle('dark');localStorage.setItem(k,d?'dark':'light')}})();
+</script></head><body>
+<header class="top"><div class="in"><a class="brand" href="./index.html"><i>𝕏</i>X 简报</a><nav><a href="../index.html">学习库首页</a><a href="index.html" class=on>X 简报</a><a href="index.html#weekly">周趋势</a></nav><button class="dm" onclick="__tt()" aria-label="切换深色模式">◐</button></div></header>
+<main><section class="sheet"><span class="kk">DAILY · 2026-10-13（周二）</span><h1>X 简报 · 10/13（周二）</h1><div class="kk" style="color:var(--ink2);margin-bottom:8px">30 秒版</div><ol class="quick"><li>Meta 发布 Muse Wonder：Full 版在 Artificial Analysis 指数上排第二，只比 Claude Opus 5.5 低 2 分。API 价格是每百万 token 输入 $4、输出 $20。Nathan Lambert 说 Meta 回到了前沿，也有人认为它的真实水平在 Sonnet 5.5 一档。</li><li>SpaceXSI 推出 The X Subscription，把 Grok、Grok Bot、Cursor 和 X Premium 合成 $8/$30/$100/$200 四档。要注意的是，新计划里 Cursor 的 Claude、GPT 等第三方模型要按 API 原价另付，老用户可以保留原计划。</li><li>Anthropic 一天发了两篇：一篇公开点名智谱、月之暗面蒸馏 Claude 的思维链，并加强防御；另一篇是前沿红队测 AI 在廉价设备上自我复制，结论是小模型目前还做不到。另外，Codex 第 8 天全局重置，Gemini 4 Argon 今天向 Ultra 订阅用户上线。</li></ol></section>
+<nav class="tabs"><a href="#s1">新闻</a><a href="#s2">趋势</a><a href="#s3">技术</a><a href="#s4">学术</a></nav><section class="sheet"><h2 id="s1">新闻</h2>
+<ul>
+<li><span class="star">⭐</span> TestingCatalog：Meta Muse Wonder Full 在 Artificial Analysis 指数上排第二，只比 Claude Opus 5.5 低 2 分，DeepSWE 79 分是目前最高。Muse Wonder 已经上了 Meta Model API 和 Muse Code，Full 版只给 Muse Code 订阅用户。<a href="https://x.com/testingcatalog/status/2109693532592013798" target="_blank" rel="noopener">原帖</a></li>
+<li><span class="star">⭐</span> 宝玉拆解 Cursor 并入 The X Subscription：老订阅不会被强制迁移；新计划的月费不含 Claude、GPT、Gemini 额度，用多少按 API 原价付多少。主要用 Claude、GPT 写代码的人留在原计划更划算，主要用 Grok 的人切过去更值。<a href="https://x.com/dotey/status/2109804948611326229" target="_blank" rel="noopener">原帖</a></li>
+<li>Anthropic 发文加强防蒸馏，公开点名智谱和月之暗面。AYi 转述：几十万个假账号通过代理网络向 Claude 发了数百万次请求，目标不是答案，而是 Claude 的完整思维链。<a href="https://x.com/AYi_AInotes/status/2109816068462256394" target="_blank" rel="noopener">原帖</a></li>
+<li>宝玉解读 Anthropic 前沿红队的自我复制测试：开源模型里只有智谱 GLM-5.2 走完了全流程，但它太大，塞不进电视盒子这类小设备；按小模型的进步速度，年底可能就有小模型追上。<a href="https://x.com/dotey/status/2109843015833374800" target="_blank" rel="noopener">原帖</a></li>
+<li>Character.AI 10/12 深夜申请破产保护，迪士尼出 2000 万美元做保底竞买人；两年前谷歌为了技术授权和请回创始人，花了 20 多亿美元。<a href="https://x.com/AYi_AInotes/status/2109954651298635980" target="_blank" rel="noopener">原帖</a></li>
+</ul>
+<p class="more">另外还有：</p>
+<ul>
+<li>Tibo 宣布 Codex 第 8 天全局重置，太平洋时间当天结束前全部到位。<a href="https://x.com/thsottiaux/status/2109812216212099456" target="_blank" rel="noopener">原帖</a></li>
+<li>Tibo 又说手上有个简单的计划，能让所有人的用量明显增加，希望很快落地。<a href="https://x.com/thsottiaux/status/2109892247580000595" target="_blank" rel="noopener">原帖</a></li>
+<li>TestingCatalog：Google 官方确认 Gemini 4 Argon 今天向 Ultra 订阅用户上线。<a href="https://x.com/testingcatalog/status/2109878567337439634" target="_blank" rel="noopener">原帖</a></li>
+<li>歸藏提醒：X Subscription 最便宜的 $8 档不含 Grok Bot。<a href="https://x.com/op7418/status/2109848153650495617" target="_blank" rel="noopener">原帖</a></li>
+<li>WquGuru 列出 AA 指数：Opus 5.5 58、Sonnet 5.5 56、Muse Wonder Full 56、Muse Wonder 52，他认为 Muse Wonder 的实际能力大约在 Sonnet 5.5 一档。<a href="https://x.com/wquguru/status/2109890853489783019" target="_blank" rel="noopener">原帖</a></li>
+<li>Stephanie Palazzolo（The Information）：Katzenberg 和前 Sora 负责人 Bill Peebles 合办的一家隐身创业公司正在和 OpenAI 谈，想把 Sora 改造后卖给电影公司。<a href="https://x.com/steph_palazzolo/status/2109654612760248694" target="_blank" rel="noopener">原帖</a></li>
+<li>TestingCatalog：微软 Maia 芯片 2027 年将扩到数吉瓦级部署，同时发布新一代 Maia 300，Maia 200 已经在跑 Copilot 等生产负载。<a href="https://x.com/testingcatalog/status/2109642870982316042" target="_blank" rel="noopener">原帖</a></li>
+<li>TestingCatalog：Google 在准备基于 Gemini 4 的 Nano Banana 3 Pro，预计 11–12 月推出。<a href="https://x.com/testingcatalog/status/2109761567675838548" target="_blank" rel="noopener">原帖</a></li>
+<li>AYi：MLH 的 Hacktoberfest 活动送一年 Cursor Pro，北京时间 10/15 截止。<a href="https://x.com/AYi_AInotes/status/2109621079501320541" target="_blank" rel="noopener">原帖</a></li>
+</ul>
+<h2 id="s2">趋势</h2>
+<ul>
+<li>Ethan Mollick：GPT-4 当年稳坐世界第一整整一年，现在已经有 19 个能在手机上跑的模型比它强。<a href="https://x.com/emollick/status/2109851162518425779" target="_blank" rel="noopener">原帖</a></li>
+<li>Gary Marcus 引用 The Information 的数据：质量最高的十个模型只占开发者 token 的 14%，去年还是 55%，便宜又「够用」的模型在靠量取胜。<a href="https://x.com/GaryMarcus/status/2109775449429877229" target="_blank" rel="noopener">原帖</a></li>
+<li>levelsio 列出 AI 时代还剩下的护城河：专有数据或内容、网络效应与社区、受众与分发、实体业务、资本，以及牌照等监管壁垒。<a href="https://x.com/levelsio/status/2109653584706990506" target="_blank" rel="noopener">原帖</a></li>
+<li>levelsio：帮线下企业转向 AI、把业务全自动化能赚大钱，因为一家用了 AI，同行都得跟上；但他也说这只是几年的窗口期。<a href="https://x.com/levelsio/status/2109723310762123704" target="_blank" rel="noopener">原帖</a></li>
+<li>Nathan Lambert：只公布跑分、不放出模型（权重、产品、API 都说「稍后」）的，几乎注定在上线前就被同类更好的模型抢先。<a href="https://x.com/natolambert/status/2109695575000248754" target="_blank" rel="noopener">原帖</a></li>
+</ul>
+<p class="more">另外还有：</p>
+<ul>
+<li>Mollick：大家把 Artificial Analysis 指数和它的单项分数看得太重了。<a href="https://x.com/emollick/status/2109783789425799272" target="_blank" rel="noopener">原帖</a></li>
+<li>Mollick 提醒所有账号都开两步验证，并和家人约好暗号，以防有人打语音电话要钱；AI 正在压低大规模精准诈骗的成本。<a href="https://x.com/emollick/status/2109683365045739888" target="_blank" rel="noopener">原帖</a></li>
+<li>Sarah Guo 发长文谈个人 Agent：摩擦消失了，那些一直拖着「终于去做」的事会带来什么经济后果。<a href="https://x.com/saranormous/status/2109659238809395333" target="_blank" rel="noopener">原帖</a></li>
+<li>Nathan Lambert 推荐一篇讲中国 LLM 数据经济、并和美国对比的文章，称是他读过最好的。<a href="https://x.com/natolambert/status/2109750198675390499" target="_blank" rel="noopener">原帖</a></li>
+<li>steipete 再次表态：「vibe coding」是个贬称。<a href="https://x.com/steipete/status/2109724776168300631" target="_blank" rel="noopener">原帖</a></li>
+<li>花叔：初创公司别想着定义新品类了。年初 OpenClaw 那么火，现在的 personal agent 还是 Grok Bot、Muse、dots；模型公司只要订阅里的 token 单价远低于 API 价就够了。<a href="https://x.com/AlchainHust/status/2109966734769995838" target="_blank" rel="noopener">原帖</a></li>
+</ul>
+<h2 id="s3">技术</h2>
+<ul>
+<li>yetone 分享自己的开发流程：就是 Claude Code 用官方的 Opus 5.5 跑 loop，同时并行 3 个，每晚抽点时间收拾 UI/UX 问题，然后就没别的活了。<a href="https://x.com/yetone/status/2109855710444237018" target="_blank" rel="noopener">原帖</a></li>
+<li>歸藏从 Anthropic 的防蒸馏文章里总结了避免误封的做法：别诱导 Claude 展示或吐出思维链；账号和付款渠道要干净，别用代理或转售号；别在同一个 Agent 环境里混用国产模型和 Claude。<a href="https://x.com/op7418/status/2109852753875075242" target="_blank" rel="noopener">原帖</a></li>
+<li>Harrison Chase 说 deepagents 要做成原生异步。子 agent 完成后怎么通知父 agent，他们在考虑两种默认方式：打断父 agent 立即应用（类似 steer），或者等父 agent 这轮跑完再批量合并（类似 queue）。<a href="https://x.com/hwchase17/status/2109938151472890070" target="_blank" rel="noopener">原帖</a></li>
+<li>Rauch 推出 fx.sh：一个 6MB、毫秒级启动、不绑定模型的极简编程 CLI，内置 MCP、Skills、Subagents 和 ACP。<a href="https://x.com/rauchg/status/2109734766107099312" target="_blank" rel="noopener">原帖</a></li>
+<li>LinearUncle 推荐开源 iPhone Use 库 ICTRL：电脑或手机上的 Agent 能直接操控 iPhone 里的 App，比通过 Mac 的「iPhone 镜像」间接操作快很多。<a href="https://x.com/LinearUncle/status/2109834927521055108" target="_blank" rel="noopener">原帖</a></li>
+</ul>
+<p class="more">另外还有：</p>
+<ul>
+<li>yetone 补充：一定要给 Agent 真实的运行环境，比如一台 macOS、一台 Windows，再加一个 Linux 虚拟机，让它每次都在三端真实复现 bug 后再修。<a href="https://x.com/yetone/status/2109856834010132602" target="_blank" rel="noopener">原帖</a></li>
+<li>steipete：GPT-6.1 Sol ultrafast 远胜 GPT-6 Astra，成本差不多，250 tpm 的速度让体验完全不同。<a href="https://x.com/steipete/status/2109730774593487009" target="_blank" rel="noopener">原帖</a></li>
+<li>Mitchell Hashimoto：Rex 的第一个 iOS 版已提交审核，是 100% 原生应用，员工已经内部用了几个月。<a href="https://x.com/mitchellh/status/2109710988383752299" target="_blank" rel="noopener">原帖</a></li>
+<li>Simon Willison 写了 Python 3.15 的笔记，讲怎么配合 uv 使用，以及最低版本不再是 3.10 后可以用上的 3.11 特性。<a href="https://x.com/simonw/status/2109711203077619768" target="_blank" rel="noopener">原帖</a></li>
+<li>LinearUncle：另一种控制 iPhone 的方案只要一块 40 多元的 ESP32 开发板，不用开发者账号、不用 Xcode、也不用越狱。<a href="https://x.com/LinearUncle/status/2109855583335825795" target="_blank" rel="noopener">原帖</a></li>
+<li>Orange AI 转发：有用户用 Codex 跑 REA 做逆向，结果被封了号。<a href="https://x.com/oran_ge/status/2109821043506610569" target="_blank" rel="noopener">原帖</a></li>
+<li>宝玉的 REA 案例：用 Codex + REA 下载微信视频号视频，一轮对话搞不定，要按提示多走几步。<a href="https://x.com/dotey/status/2109923163580567614" target="_blank" rel="noopener">原帖</a></li>
+<li>花叔的 huashu-chrome：Agent 需要用户接管时，浏览器会自动切到前台，并直接在页面上提示怎么操作。<a href="https://x.com/AlchainHust/status/2109862063787151811" target="_blank" rel="noopener">原帖</a></li>
+<li>向阳乔木开源了一个 Skill（qiaomu-screen2video），能给任意录屏加双语字幕、花字、梗图和配乐，并自动出横竖两版封面。<a href="https://x.com/vista8/status/2109906565742616924" target="_blank" rel="noopener">原帖</a></li>
+<li>meng shao：LiteLLM 开源了 Agent 传输层 SDK agentchat，任何框架写的 Agent 都能统一接入 Slack、Teams、iMessage、WhatsApp、Discord。<a href="https://x.com/shao__meng/status/2109819186893766721" target="_blank" rel="noopener">原帖</a></li>
+</ul>
+<h2 id="s4">学术</h2>
+<ul>
+<li>omarsar0 推荐 NVIDIA 的 LoGRA：RL 后训练时更新全部权重，内存反而比 LoRA 还省。1.5B 模型平均 7.2 GiB，rank-256 LoRA 要 13.2 GiB；Pass@4 基本持平（81.8% 对 81.4%），Pass@1 低约 2 个点。<a href="https://x.com/omarsar0/status/2109771098120450299" target="_blank" rel="noopener">原帖</a></li>
+<li>omarsar0 推荐一篇检验「多 Agent + 持久记忆」的论文：把长上下文拆给多个 agent，每题的峰值 KV cache 降到 14.3 MiB（单遍和 RAG 约 35 MiB）；但持久化的轨迹回忆层只让准确率变化 +0.015，置信区间跨过了零。<a href="https://x.com/omarsar0/status/2109643758228869175" target="_blank" rel="noopener">原帖</a></li>
+<li>Demis Hassabis 祝贺 Google 的 AMIE 研究登上《柳叶刀》。这是首个在真实门诊里做的、面向患者的对话式诊断前瞻研究：75% 的情况下医生认为摘要帮他们做好了就诊准备，AMIE 的鉴别诊断有 90% 与医生最终诊断一致。<a href="https://x.com/demishassabis/status/2109813775377563908" target="_blank" rel="noopener">原帖</a></li>
+<li>Gorden_Sun：荷兰莱顿大学的 472 页教材《Agentic Large Language Models》上了 arXiv，从大模型原理讲到 Agent 原理。<a href="https://x.com/Gorden_Sun/status/2109937184900063249" target="_blank" rel="noopener">原帖</a></li>
+<li>yibie 介绍 Google DeepMind 的论文《Agentic Economies for Autonomous Scientific Discovery》：多智能体 AI 科研的瓶颈不在想法而在资源，验证假设、做实验都很贵。<a href="https://x.com/yibie/status/2109951294144422282" target="_blank" rel="noopener">原帖</a></li>
+</ul>
+<p class="more">另外还有：</p>
+<ul>
+<li>AK：BudgetPix，给像素空间图像扩散做按算力自适应的 tokenization。<a href="https://x.com/_akhaliq/status/2109711696944300535" target="_blank" rel="noopener">原帖</a></li>
+<li>Gorden_Sun：《柳叶刀》一份 35 位专家联合完成的报告列出 17 种严重威胁人类健康的风险，AI 也在其中。<a href="https://x.com/Gorden_Sun/status/2109834391870636350" target="_blank" rel="noopener">原帖</a></li>
+<li>TestingCatalog：Nature Will 发布物理世界基础模型 Natura-1，用 100 万小时第一人称视频训练，能处理没见过的物体和任务。<a href="https://x.com/testingcatalog/status/2109963128242868302" target="_blank" rel="noopener">原帖</a></li>
+<li>Gorden_Sun：Prompteina 能用日常自然语言描述形状、折叠和表面性质，直接生成全原子蛋白质结构。<a href="https://x.com/Gorden_Sun/status/2109924507469393955" target="_blank" rel="noopener">原帖</a></li>
+</ul>
+<p class="muted">没发新帖（窗口内无原创）：@Khazix0918、@karpathy、@AndrewYNg、@DrJimFan、@lijigang、@rasbt、@sama、@alexeheath、@eladgil、@bcherny</p></section><div class="pn"><span></span><a href="index.html">往期目录</a><a href="2026-10-12.html">2026-10-12 →</a></div><div class="foot">王玮的 X 简报 · 每天由 X Brief 生成 · 链接打开 X 原帖 · 风格改编自 <a href="https://github.com/vuejs/vitepress">VitePress</a>（MIT）</div></main></body></html>
