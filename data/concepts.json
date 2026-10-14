@@ -24,6 +24,11 @@
         "item": "cs146s-L01",
         "card": 9,
         "note": "模拟器：亲手走一遍循环"
+      },
+      {
+        "item": "managed-agents-workshop",
+        "card": 3,
+        "note": "a model in a loop with tools"
       }
     ],
     "related": [
@@ -281,6 +286,16 @@
         "card": 6,
         "note": "harness 之于 coding agent，犹如 IDE 之于人",
         "thread": 4
+      },
+      {
+        "item": "managed-agents-workshop",
+        "card": 2,
+        "note": "harness 编码对模型的假设，假设会过期"
+      },
+      {
+        "item": "managed-agents-workshop",
+        "card": 6,
+        "note": "harness 无状态，挂了读回会话日志继续"
       }
     ],
     "related": [
@@ -534,6 +549,50 @@
     ],
     "related": [
       "nested-loops"
+    ]
+  },
+  {
+    "id": "session-log",
+    "term": "会话日志",
+    "en": "session (append-only event log)",
+    "def": "Claude Managed Agents 把 agent 拆成三个接口：会话日志（只追加的事件记录）、大脑（Claude + harness，无状态）、手（沙箱和工具，按需创建）。会话日志是唯一要保护的部件：harness 挂了，新 harness 读回日志从最后一个事件继续；上下文压缩策略可以随模型换，日志不受影响。",
+    "refs": [
+      {
+        "item": "managed-agents-workshop",
+        "card": 1,
+        "note": "三个接口"
+      },
+      {
+        "item": "managed-agents-workshop",
+        "card": 8,
+        "note": "会话日志比上下文窗口活得久"
+      },
+      {
+        "item": "managed-agents-workshop",
+        "card": 10,
+        "note": "模拟器：harness 挂了怎么恢复"
+      }
+    ],
+    "related": [
+      "harness",
+      "context"
+    ]
+  },
+  {
+    "id": "credential-proxy",
+    "term": "凭证代理",
+    "en": "credential proxy / vault",
+    "def": "Claude Managed Agents 不把 token 放进沙箱：沙箱的外呼经过代理，代理从 vault 取凭证并代为调用，agent 和 harness 都看不到 token，提示注入也偷不到。",
+    "refs": [
+      {
+        "item": "managed-agents-workshop",
+        "card": 7,
+        "note": "凭证不进沙箱"
+      }
+    ],
+    "related": [
+      "session-log",
+      "harness"
     ]
   }
 ]
