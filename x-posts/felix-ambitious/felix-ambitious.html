@@ -1,0 +1,458 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<script>(function(){var s=localStorage.getItem("theme");if(s?s==="dark":matchMedia("(prefers-color-scheme: dark)").matches)document.documentElement.classList.add("dark")})()</script>
+<title>Felix · 如何变得更有雄心</title><style>
+/* 学习搭子 固定设计系统 — 不要在课程里改这个文件。只改 lesson.html 的内容。 */
+:root{
+  --paper:#F6F6F7; --sheet:#FFFFFF; --ink:#16202C; --ink2:#4A5868; --hair:#E2E2E3;
+  --blue:#2550D9;  --blue-soft:#E3EAFD;   /* 主角：当前步骤 / 重点 */
+  --amber:#C77A00; --amber-soft:#FBEFD9; /* 数据 / 消息 */
+  --green:#16875A; --green-soft:#DDF3E9; /* 成功 / 工具结果 */
+  --red:#C8372D;   --red-soft:#FBE3E1;   /* 出错 */
+  --r-lg:12px; --r-sm:10px;
+  --font:"PingFang SC","Noto Sans CJK SC","Source Han Sans SC","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--paper);color:var(--ink);font:17px/1.65 var(--font);-webkit-font-smoothing:antialiased}
+.top{position:fixed;inset:0 0 auto 0;height:56px;display:flex;align-items:center;gap:16px;padding:0 28px;z-index:5}
+.top .course{font-weight:700;font-size:15px}
+.top .track{flex:1;height:6px;background:var(--hair);border-radius:99px;overflow:hidden}
+.top .track i{display:block;height:100%;width:0;background:var(--blue);transition:width .35s ease}
+.top .count{font:600 14px var(--mono);color:var(--ink2);min-width:60px;text-align:right}
+.deck{position:fixed;inset:56px 0 76px 0;display:grid;place-items:center;padding:0 24px}
+.card{display:none;width:min(1120px,100%);height:100%;max-height:640px;background:var(--sheet);border-radius:var(--r-lg);
+  box-shadow:0 1px 0 var(--hair),0 18px 40px -24px rgba(22,32,44,.25);overflow:hidden}
+.card.on{display:grid;grid-template-columns:1.45fr 1fr}
+.card.full.on{grid-template-columns:1fr}
+.stage{background:var(--paper);margin:14px 0 14px 14px;border-radius:14px;display:grid;place-items:center;padding:18px;overflow:hidden;position:relative}
+.card.full .stage{margin:14px}
+.stage svg{width:100%;height:100%;max-height:560px}
+.say{padding:40px 40px 32px;display:flex;flex-direction:column;justify-content:center;gap:14px;overflow:auto}
+.say .kicker{font-size:14px;color:var(--blue);font-weight:700}
+.say h2{margin:0;font-size:32px;line-height:1.25;letter-spacing:.01em}
+.say p{margin:0;color:var(--ink2)}
+.say p b{color:var(--ink)}
+.src{margin-top:auto;font-size:13px;color:var(--ink2);border-top:1px solid var(--hair);padding-top:12px}
+.src.extra::before{content:"补充";background:var(--amber-soft);color:var(--amber);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
+.src.official::before{content:"官方";background:var(--green-soft);color:var(--green);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
+code{font:14px var(--mono);background:var(--blue-soft);color:var(--blue);padding:1px 6px;border-radius:6px}
+pre{margin:0;font:13.5px/1.6 var(--mono);background:#101826;color:#DCE3EE;border-radius:12px;padding:16px 18px;overflow:auto;width:100%}
+pre .k{color:#8FB1FF}pre .s{color:#9BE0B4}pre .c{color:#71819A}pre .f{color:#FFC86B}pre .hl{background:rgba(143,177,255,.16);display:block;margin:0 -18px;padding:0 18px}
+.bottom{position:fixed;inset:auto 0 0 0;height:76px;display:flex;align-items:center;justify-content:center;gap:14px}
+.btn{font:600 15px var(--font);border:0;border-radius:99px;padding:11px 22px;cursor:pointer;background:var(--sheet);color:var(--ink);box-shadow:0 0 0 1px var(--hair)}
+.btn:hover{box-shadow:0 0 0 2px var(--blue)}
+.btn.main{background:var(--blue);color:#fff;box-shadow:none}
+.btn:disabled{opacity:.35;cursor:default;box-shadow:0 0 0 1px var(--hair)}
+.btn:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.btn.sm{padding:7px 14px;font-size:14px}
+/* ---- 图元（flow 组件生成） ---- */
+.fl-node rect{fill:var(--sheet);stroke:var(--hair);stroke-width:2;transition:all .3s}
+.fl-node text{font:600 17px var(--font);fill:var(--ink)}
+.fl-node .sub{font:400 13px var(--font);fill:var(--ink2)}
+.fl-node.blue rect{stroke:var(--blue)} .fl-node.amber rect{stroke:var(--amber)} .fl-node.green rect{stroke:var(--green)} .fl-node.red rect{stroke:var(--red)}
+.fl-node.act rect{fill:var(--blue-soft);stroke:var(--blue);stroke-width:3}
+.fl-node.dim{opacity:.35}
+.fl-edge{fill:none;stroke:#AEB8C6;stroke-width:2.2;transition:all .3s}
+.fl-edge.act{stroke:var(--blue);stroke-width:3.5;stroke-dasharray:8 6;animation:dash .8s linear infinite}
+.fl-elab{font:500 13px var(--font);fill:var(--ink2)}
+.fl-elab.act{fill:var(--blue);font-weight:700}
+@keyframes dash{to{stroke-dashoffset:-28}}
+/* ---- 模拟器 ---- */
+.sim{display:grid;grid-template-rows:auto 1fr auto;gap:10px;width:100%;height:100%}
+.sim .ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.sim .ctl label{font-size:13px;color:var(--ink2);display:flex;align-items:center;gap:6px}
+.sim .body{display:grid;grid-template-columns:1.1fr 1fr;gap:12px;min-height:0}
+.sim .log{background:var(--sheet);border-radius:12px;padding:10px;overflow:auto;font:13px/1.5 var(--mono)}
+.sim .msg{border-left:4px solid var(--hair);padding:6px 10px;margin:0 0 8px;border-radius:6px;background:var(--paper);white-space:pre-wrap;word-break:break-word;animation:pop .25s ease}
+.sim .msg b{font-family:var(--font);display:block;font-size:12px;color:var(--ink2)}
+.msg.user{border-color:var(--blue)} .msg.asst{border-color:var(--amber)} .msg.tool{border-color:var(--green)} .msg.err{border-color:var(--red);background:var(--red-soft)} .msg.sys{border-color:var(--ink2)}
+.sim .narr{background:var(--blue-soft);color:var(--ink);border-radius:12px;padding:10px 14px;font-size:15px;min-height:48px}
+@keyframes pop{from{opacity:0;transform:translateY(6px)}}
+/* ---- 小测 ---- */
+.quiz{width:100%;max-width:760px;display:flex;flex-direction:column;gap:12px}
+.quiz .qn{font:600 13px var(--mono);color:var(--ink2)}
+.quiz .qt{font-size:22px;font-weight:700;line-height:1.4}
+.quiz .opt{display:block;width:100%;text-align:left;font:16px var(--font);background:var(--sheet);border:2px solid var(--hair);border-radius:12px;padding:12px 16px;cursor:pointer;color:var(--ink)}
+.quiz .opt:hover{border-color:var(--blue)}
+.quiz .opt.ok{border-color:var(--green);background:var(--green-soft)} .quiz .opt.no{border-color:var(--red);background:var(--red-soft)}
+.quiz .fb{min-height:52px;font-size:15px;color:var(--ink2)}
+.quiz .fb a{color:var(--blue);font-weight:700;cursor:pointer}
+.quiz .nav{display:flex;gap:8px;align-items:center}
+@media (max-width:820px){
+  .card.full.on{grid-template-rows:1fr}.card.full .stage{overflow:auto;place-items:start center}
+  .card.on{grid-template-columns:1fr;grid-template-rows:minmax(220px,48%) 1fr}
+  .stage{margin:10px 10px 0}.say{padding:18px 20px}.say h2{font-size:24px}
+  .sim .body{grid-template-columns:1fr}.top{padding:0 14px}.top .course{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* ---- 展开细节 ---- */
+details.more{border-top:1px solid var(--hair);padding-top:10px;font-size:15px;color:var(--ink2)}
+details.more summary{cursor:pointer;font-weight:700;color:var(--blue);list-style:none}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary::before{content:"＋ 展开细节";}
+details.more[open] summary::before{content:"－ 收起细节";}
+details.more>*:not(summary){margin:8px 0 0}
+details.more ul{padding-left:18px}details.more li{margin:4px 0}
+details.more table{border-collapse:collapse;width:100%;font-size:14px}
+details.more td,details.more th{border-bottom:1px solid var(--hair);padding:5px 6px;text-align:left;vertical-align:top}
+/* ---- 对话列表（状态追踪）---- */
+.stack{width:100%;display:flex;flex-direction:column;gap:6px;font:13px/1.45 var(--mono)}
+.stack .row{display:grid;grid-template-columns:28px 92px 1fr;gap:8px;align-items:start;background:var(--sheet);border-radius:8px;padding:7px 10px;border-left:4px solid var(--hair)}
+.stack .row .i{color:var(--ink2)}.stack .row .r{font-weight:700}
+.stack .row.developer{border-color:var(--ink2)}.stack .row.user{border-color:var(--blue)}.stack .row.assistant{border-color:var(--amber)}.stack .row.result{border-color:var(--green)}
+.stack .row.new{background:var(--blue-soft)}.stack .row.bad{border-color:var(--red);background:var(--red-soft)}
+.stack .row .t{white-space:pre-wrap;word-break:break-word}
+/* ---- 对比/误区 ---- */
+.pairs{width:100%;display:grid;gap:10px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pair>div{background:var(--sheet);border-radius:12px;padding:12px 14px;font-size:15px}
+.pair .no{border-left:5px solid var(--red)}.pair .yes{border-left:5px solid var(--green)}
+.pair b{display:block;font-size:12px;color:var(--ink2);margin-bottom:4px}
+.say .more code{font-size:13px}
+@media (max-width:820px){.pair{grid-template-columns:1fr}.stack .row{grid-template-columns:22px 70px 1fr}}
+.pair .a{border-left:5px solid var(--blue)}.pair .b{border-left:5px solid var(--amber)}
+/* ===== v3：填满面板、原文标签、要点、条形图、分支 ===== */
+.stage{padding:10px}
+.stage svg.flow{width:100%;height:100%;max-height:none}
+.say p{font-size:17px}
+p.key{background:var(--blue-soft);color:var(--ink);border-radius:12px;padding:10px 14px;font-size:16px}
+p.key::before{content:"关键 ";font-weight:800;color:var(--blue)}
+.src.article::before{content:"原文";background:var(--blue-soft);color:var(--blue);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
+.stage>.stack{height:100%;justify-content:center;font-size:14.5px}
+.stage>.stack .row{padding:11px 12px;flex:0 1 auto}
+.stack .head{font:700 13px var(--font);color:var(--ink2);margin:8px 0 0}
+.stage>.pairs{height:100%;grid-auto-rows:minmax(0,1fr);align-content:stretch}
+.pair>div{font-size:16px;display:flex;flex-direction:column;justify-content:center}
+.bars{width:100%;display:flex;flex-direction:column;gap:16px;justify-content:center;height:100%;padding:0 10px}
+.bar{display:grid;grid-template-columns:150px 1fr 76px;gap:12px;align-items:center;font-size:15px}
+.bar .bl{font-weight:700;text-align:right}
+.bar .bt{height:30px;background:var(--sheet);border-radius:8px;overflow:hidden}
+.bar .bt i{display:block;height:100%;background:var(--ink2);border-radius:8px}
+.bar.blue .bt i{background:var(--blue)}.bar.amber .bt i{background:var(--amber)}.bar.green .bt i{background:var(--green)}.bar.red .bt i{background:var(--red)}
+.bar .bv{font:700 15px var(--mono)}
+.bar .bn{grid-column:2/4;font-size:13px;color:var(--ink2);margin-top:-8px}
+.bars .bc{font-size:13px;color:var(--ink2);text-align:center}
+.sim .branches{gap:14px;background:var(--sheet);border-radius:10px;padding:6px 10px}
+.sim .branches label{font-size:13.5px;color:var(--ink)}
+@media (max-width:820px){.bar{grid-template-columns:90px 1fr 60px}}
+.sim{grid-template-rows:auto auto 1fr auto}
+.sim.wide .body{grid-template-columns:1fr;grid-template-rows:minmax(0,1.1fr) minmax(0,1fr)}
+.sim:not(:has(.branches)){grid-template-rows:auto 1fr auto}
+.bar .bt.none{background:repeating-linear-gradient(45deg,var(--sheet) 0 8px,var(--hair) 8px 10px)}
+.say h2{font-size:28px;line-height:1.3}
+.sim .body{overflow:hidden}
+.sim .body>svg{min-height:0;height:100%;width:100%}
+.sim .narr{min-height:0}
+.stage>.stack{font-size:15.5px;gap:8px}
+.stage>.stack .row{padding:13px 14px}
+.stack .row .t{font-family:var(--font)}
+.stage:has(>.sim){place-items:stretch}
+.sim{min-height:0;height:100%;overflow:hidden}
+.sim.wide .body{grid-template-rows:minmax(0,55%) minmax(0,45%)}
+/* 讲解条放在图上方，永远可见 */
+.sim{grid-template-rows:auto auto auto minmax(0,1fr)}
+.sim:not(:has(.branches)){grid-template-rows:auto auto minmax(0,1fr)}
+.sim .ctl{order:0}.sim .branches{order:1}.sim .narr{order:2}.sim .body{order:3;min-height:0}
+/* ===== v4 ===== */
+.fl-node .sub{font-size:13.5px;fill:#3E4B5B}
+.fl-elab{font-size:13px;fill:#3E4B5B}
+.fl-edge.red{stroke:var(--red)}.fl-edge.amber{stroke:var(--amber)}.fl-edge.green{stroke:var(--green)}
+.fl-elab.red{fill:var(--red);font-weight:700}.fl-elab.amber{fill:var(--amber);font-weight:700}.fl-elab.green{fill:var(--green);font-weight:700}
+.stage{margin:10px 0 10px 10px;padding:4px}.card.full .stage{margin:0 10px 10px}
+.bar .bt i{background:#B8C2CF}
+.bar .bmiss{grid-column:2/4;color:var(--ink2);font-size:14px;font-style:italic}
+.sim .btn{background:transparent;box-shadow:0 0 0 1.5px var(--blue);color:var(--blue)}
+.sim .btn:hover{background:var(--blue-soft)}
+.say{justify-content:center}
+.src{margin-top:6px}
+.top .count{font-size:16px;color:var(--ink);font-weight:700}
+.top .track{height:6px}
+.card.full.on{grid-template-rows:auto minmax(0,1fr)}
+.head-full{padding:18px 26px 8px;display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
+.head-full .kicker{font-size:14px;color:var(--blue);font-weight:700}
+.head-full h2{margin:0;font-size:24px;line-height:1.3}
+.sim.wide .body{grid-template-rows:minmax(0,64%) minmax(0,36%)}
+@media (max-width:820px){.head-full{padding:12px 14px 6px}.head-full h2{font-size:19px}}
+.say{justify-content:safe center}
+@media (max-width:820px){.bars{gap:8px}.bar{font-size:13px;grid-template-columns:84px 1fr 56px}.bar .bt{height:20px}.bar .bn{font-size:12px;margin-top:-4px}.bars .bc{font-size:12px}
+ .sim .ctl .btn{padding:5px 10px}.sim .branches{flex-direction:column;align-items:flex-start;gap:2px}}
+
+/* 与知识库首页（VitePress 风格）对齐：白底页面、12px 圆角、细边框卡片、深色模式 */
+html,body{background:var(--page,#fff)}
+.card{border:1px solid var(--hair);box-shadow:none}
+html.dark{--page:#1b1b1f;--paper:#2a2a31;--sheet:#202127;--ink:#fffff5;--ink2:rgba(235,235,245,.65);--hair:#3a3a40;
+--blue:#7c9cff;--blue-soft:rgba(124,156,255,.16);--amber:#f0b429;--amber-soft:rgba(240,180,41,.14);--green:#3dd68c;--green-soft:rgba(61,214,140,.14);--red:#f66f81;--red-soft:rgba(246,111,129,.14);color-scheme:dark}
+html.dark .btn.main{color:#16202c}
+html.dark .fl-node .sub,html.dark .fl-elab{fill:var(--ink2)}html.dark .fl-elab{stroke:var(--page)!important}html.dark .fl-edge{stroke:#6b7280}
+html.dark .fl-elab.act{fill:var(--blue)}
+</style></head><body>
+<header class="top"><span class="course">Felix · 如何变得更有雄心</span><span class="track"><i></i></span><span class="count"></span></header>
+<main class="deck">
+<section class="card">
+  <div class="stage"><svg class="flow" data-act="alt" data-flow='{"nodes":[{"id":"task","x":330,"y":200,"t":"手上的任务","s":"例：Acme 季度业务回顾","c":"amber","w":200},{"id":"sp","x":110,"y":60,"t":"速度","s":"同样的事更快（本文略过）","w":200},{"id":"alt","x":550,"y":60,"t":"高度","s":"往上：目标背后的目标","c":"blue","w":190},{"id":"dep","x":550,"y":340,"t":"深度","s":"往下：专家的工具和原始数据","c":"blue","w":210},{"id":"rng","x":110,"y":340,"t":"广度","s":"往外：引入别的学科","c":"blue","w":190}],"edges":[{"f":"task","t":"sp"},{"f":"task","t":"alt"},{"f":"task","t":"dep"},{"f":"task","t":"rng"}]}'></svg></div>
+  <div class="say"><span class="kicker">这篇文章讲什么？</span><h2>「更有雄心」可以拆成四个可操作的方向</h2>
+  <p>作者 Felix Rieseberg 在 Anthropic 做 Claude 的工程负责人。</p>
+  <p class="key">四个方向：速度、高度、深度、广度。速度大家都会，文章只讲后三个。</p>
+  <details class="more"><summary></summary><p>作者说自己主要用 Claude，但建议不限于某个模型。</p><p>英文原文为准；中文用词参考 thomaszhou_ 的译文。</p></details>
+  <div class="src article">原文开头 "four types: Speed, Altitude, Depth, and Range"</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="pairs">
+   <div class="pair"><div class="b"><b>有人</b>驾驭了模型惊人的能力，像在飞</div><div class="a"><b>更多人</b>只会问「法国首都是哪」「把邮件写得别那么生气」</div></div>
+   <div class="pair"><div class="no"><b>口号</b>「我们的雄心还不够」，转发容易</div><div class="yes"><b>本文</b>给出具体做法和可直接用的提示词</div></div>
+  </div></div>
+  <div class="say"><span class="kicker">为什么要写这篇？</span><h2>「要更有雄心」是好口号，但很难照着做</h2>
+  <p>作者引陶哲轩：模型在某些方向惊人，在另一些方向不足。</p>
+  <p class="key">能力不均衡，所以要有方法把任务推到模型强的那一边。</p>
+  <div class="src article">原文开头两段</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><svg class="flow" data-act="goal" data-edge="fix>goal" data-flow='{"nodes":[{"id":"fix","x":130,"y":90,"t":"修这一个崩溃","s":"去年年初的做法","c":"amber","w":180},{"id":"goal","x":430,"y":90,"t":"让我们的应用零崩溃","s":"后来的做法","c":"blue","w":210},{"id":"q","x":280,"y":270,"t":"问自己","s":"接下来想发生什么？","c":"green","w":200}],"edges":[{"f":"fix","t":"goal","l":"往上一层"},{"f":"q","t":"goal"}]}'></svg></div>
+  <div class="say"><span class="kicker">高度是什么？</span><h2>别只交代任务，交代任务背后的目标</h2>
+  <p>你给模型的任务，只是你对「怎么达到目标」的最佳猜测。</p>
+  <p class="key">作者问的是 "the goal beyond the goal"（目标背后的目标）。</p>
+  <div class="src article">Altitude 第 1 段</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="stack">
+   <div class="row developer"><span class="i">0</span><span class="r">起点</span><span class="t">给数据，让 Claude 做几张幻灯片 / 填模板</span></div>
+   <div class="row user"><span class="i">1</span><span class="r">基础</span><span class="t">给尽可能多的原始数据：这季度变了什么、为什么、该怎么办</span></div>
+   <div class="row user"><span class="i">2</span><span class="r">进阶</span><span class="t">找出最紧迫的三个决策，各列正反论据</span></div>
+   <div class="row user new"><span class="i">3</span><span class="r">高阶</span><span class="t">设计比季度 PPT 更好的机制，用历史证明它更早发现问题，并行跑一个季度</span></div>
+  </div></div>
+  <div class="say"><span class="kicker">高度的例子：季度业务回顾</span><h2>同一个回顾任务，可以一级级往上抬</h2>
+  <p>第三级先说出回顾存在的原因：让管理层早发现问题，把钱和人调到对的地方。</p>
+  <p class="key">第三级要求用自家历史数据证明，并和旧做法并行跑。</p>
+  <div class="src article">Altitude 的 Acme Inc 例子（三级提示词为意译）</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><svg class="flow" data-act="cl" data-edge="cr>cl" data-flow='{"nodes":[{"id":"cl","x":330,"y":200,"t":"Claude","s":"目标：应用零崩溃","c":"amber","w":180},{"id":"cr","x":110,"y":70,"t":"崩溃报告","s":"能轻松拉取","c":"green","w":150},{"id":"git","x":550,"y":70,"t":"版本 ↔ git 提交","s":"能对上","c":"green","w":170},{"id":"os","x":330,"y":360,"t":"Windows / macOS / Linux","s":"自己复现并验证修复","c":"green","w":240}],"edges":[{"f":"cr","t":"cl"},{"f":"git","t":"cl"},{"f":"os","t":"cl"}]}'></svg></div>
+  <div class="say"><span class="kicker">高度要什么前提？</span><h2>想把人移出循环，先给模型自己验证的条件</h2>
+  <p>高度是找到持久工作流的地方，不用一个任务一个任务地喂。</p>
+  <p class="key">作者为了零崩溃，先改了自己的工作流，给齐右图三样。</p>
+  <details class="more"><summary></summary><p>适用：真的在追求某个最终结果时；创意类任务效果差一些。</p><p>信号：如果你要为这件事开会讨论，就适合往高度走。</p><p>限制：作者说 2026 年「Claude，去赚钱」对多数公司单独还不行，但模型越强越能处理高层抽象。</p></details>
+  <div class="src article">Altitude 后两段</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="pairs">
+   <div class="pair"><div class="no"><b>只换词汇</b>「像专业人士一样」→ 模型换了行话，方法没变</div><div class="yes"><b>换工具</b>想用 markdown 表格时，坚持要数据库和统计模型</div></div>
+   <div class="pair"><div class="b"><b>常规目标</b>加载从 10 秒到 5 秒</div><div class="a"><b>离谱目标</b>直接要 200 毫秒；说不可能就重申可解</div></div>
+  </div></div>
+  <div class="say"><span class="kicker">深度是什么？</span><h2>让模型用顶尖专家的工具，而不是专家的口吻</h2>
+  <p>深度就是按领域顶尖专家的方式做事，做到专家也能学到新东西。</p>
+  <p class="key">你不必知道专家用什么工具，作者说 Claude 通常知道。</p>
+  <div class="src article">Depth 前两条技巧</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><svg class="flow" data-act="new" data-edge="chk>new" data-flow='{"nodes":[{"id":"raw","x":110,"y":200,"t":"原始数据","s":"日志、明细","c":"green","w":150},{"id":"chk","x":330,"y":90,"t":"挑战已知","s":"「流失是上手引导问题」能复现吗？","c":"amber","w":250},{"id":"new","x":330,"y":310,"t":"产出新知识","s":"模拟客户，找没发现的最早流失信号","c":"blue","w":260},{"id":"judge","x":580,"y":310,"t":"外部裁判","s":"在没见过的数据上预测","c":"green","w":180}],"edges":[{"f":"raw","t":"chk"},{"f":"chk","t":"new"},{"f":"new","t":"judge"}]}'></svg></div>
+  <div class="say"><span class="kicker">深度的例子：用户流失</span><h2>先拿原始数据挑战假设，再让它找新信号</h2>
+  <p>作者说很多商业上的「事实」只是对现实的粗略近似。</p>
+  <p class="key">新信号要在模型没见过的数据上证明能预测。</p>
+  <div class="src article">Depth：Challenge what you know / Produce new knowledge</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="stack">
+   <div class="row developer"><span class="i">0</span><span class="r">开头</span><span class="t">要更深的版本，不要更大的版本。改写前先列出：</span></div>
+   <div class="row user"><span class="i">1</span><span class="r">专家</span><span class="t">顶尖专家会做、但我没要求的事</span></div>
+   <div class="row user"><span class="i">2</span><span class="r">材料</span><span class="t">他们会从哪种最原始的材料开始</span></div>
+   <div class="row user"><span class="i">3</span><span class="r">方法</span><span class="t">具体用什么方法和工具</span></div>
+   <div class="row user new"><span class="i">4</span><span class="r">裁判</span><span class="t">除了你和我，什么能证明结果对</span></div>
+   <div class="row result"><span class="i">5</span><span class="r">最后</span><span class="t">按这些改写我的提示词</span></div>
+  </div></div>
+  <div class="say"><span class="kicker">深度怎么落地？</span><h2>不让模型给自己打分，要找外部裁判</h2>
+  <p>作者假设这个问题终会随模型变聪明解决，但在 2026 年 10 月仍坚持外部验证。</p>
+  <p class="key">最好是模型能自己运行、马上拿到反馈的工具。</p>
+  <div class="src article">Depth：Use an outside judge + 作者常用提示词（左图为意译要点）</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="pairs">
+   <div class="pair"><div class="b"><b>名词</b>季度回顾是「一套 PPT」</div><div class="a"><b>动词</b>30 分钟内让忙碌的人相信一个因果故事，并在不确定中做决定</div></div>
+   <div class="pair"><div class="b"><b>动词带出的学科</b>数据分析师、记者、编辑</div><div class="a"><b>要演讲时再加</b>动态与音频设计师</div></div>
+   <div class="pair"><div class="b"><b>红队</b>做空研究员、法务会计</div><div class="a"><b>来源</b>《The Art of Innovation》的老技巧</div></div>
+  </div></div>
+  <div class="say"><span class="kicker">广度是什么？</span><h2>把任务的名词换成动词，就看得出该请哪些学科</h2>
+  <p>广度是从比过去更多的学科看同一件事；多 Agent 让这变便宜了。</p>
+  <p class="key">作者说这是他见到「最多魔法」的地方，但最需要创造力。</p>
+  <details class="more"><summary></summary><p>作者的例子：看到同事 Alex Albert 用 Blender 渲染室内设计，他才想到用 Claude 给个人主页做 3D 环境，尽管他以前做过游戏。</p><p>作者打的比方：每部盗窃片前 30 分钟都在组一支各有绝活的团队。</p></details>
+  <div class="src article">Range 全节</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="pairs">
+   <div class="pair"><div class="no"><b>角色扮演</b>让模型「写一个做空者」</div><div class="yes"><b>学科方法</b>让它做做空者研究仓位时会做的事</div></div>
+   <div class="pair"><div class="no"><b>结果</b>对话记录变怪，产出没变好</div><div class="yes"><b>结果</b>真的引入了另一个领域的技术</div></div>
+  </div></div>
+  <div class="say"><span class="kicker">广度最容易犯什么错？</span><h2>组队是为了找方法，不是让模型演角色</h2>
+  <p>作者提醒：组队这一招很容易不小心变成角色扮演。</p>
+  <p class="key">三个方向都要求模型有能装软件的电脑和相关数据权限（如 MCP 连接器）。</p>
+  <div class="src article">Range "Assemble the crew" 及其后一段</div></div>
+</section>
+
+<section class="card full">
+  <div class="head-full"><span class="kicker">同一个任务怎么一步步变得更有雄心？</span><h2>用 Acme 季度回顾，走一遍高度、深度、广度</h2></div>
+  <div class="stage"><div class="sim" data-sim='{"layout":"wide","label":"正常路径","note":"串起来的示例：提示词意译自原文的 Acme 例子；出错分支是教学示例，不是原文真实事故。","flow":{"pad":16,"nodes":[{"id":"t","x":80,"y":60,"t":"填模板","s":"起点","c":"amber","w":120},{"id":"a","x":250,"y":60,"t":"高度","s":"目标背后的目标","c":"blue","w":140},{"id":"d","x":430,"y":60,"t":"深度","s":"专家工具 + 原始数据","c":"blue","w":170},{"id":"r","x":620,"y":60,"t":"广度","s":"动词 → 学科","c":"blue","w":140},{"id":"j","x":800,"y":60,"t":"外部裁判","s":"可运行的验证","c":"green","w":140}],"edges":[{"f":"t","t":"a"},{"f":"a","t":"d"},{"f":"d","t":"r"},{"f":"r","t":"j"}]},
+  "steps":[
+   {"act":"t","msg":{"r":"user","n":"你","t":"把这季度数字填进 PPT 模板"},"say":"模型很乐意做，但这离「发现新行星」很远。"},
+   {"act":"a","edge":"t>a","msg":{"r":"user","n":"你","t":"回顾是为了早发现问题、调配钱和人。设计更好的机制，用历史证明，并行跑一季"},"say":"往上抬到最终目标。"},
+   {"act":"d","edge":"a>d","msg":{"r":"user","n":"你","t":"用数据库和统计模型；从原始日志复现「流失是上手引导问题」"},"say":"换工具，挑战假设。"},
+   {"act":"r","edge":"d>r","msg":{"r":"user","n":"你","t":"任务是在 30 分钟里让人信一个因果故事；请分析师、记者、编辑、做空研究员的方法"},"say":"名词换动词，引入学科。"},
+   {"act":"j","edge":"r>j","msg":{"r":"tool","n":"验证","t":"新信号在没见过的数据上做预测"},"say":"不让模型给自己打分。"}],
+  "alts":[
+   {"label":"分支 A：只换了口吻","steps":[
+     {"act":"d","msg":{"r":"user","n":"你","t":"请像资深数据科学家一样分析"},"say":"只要求身份。"},
+     {"act":"d","msg":{"r":"err","n":"Claude","t":"满篇行话，仍是 markdown 表格"},"say":"原文说模型常只换词汇不换方法。改为坚持要数据库和统计模型。"}]},
+   {"label":"分支 B：让模型自己评分","steps":[
+     {"act":"j","msg":{"r":"user","n":"你","t":"你觉得这个结论靠谱吗？"},"say":"模型给自己打分。"},
+     {"act":"j","msg":{"r":"err","n":"Claude","t":"很靠谱"},"say":"作者明确反对。改为可运行的外部验证。"}]},
+   {"label":"分支 C：组队变角色扮演","steps":[
+     {"act":"r","msg":{"r":"user","n":"你","t":"你现在是一个做空者，说说看法"},"say":"在演角色。"},
+     {"act":"r","msg":{"r":"err","n":"Claude","t":"一段戏剧化的独白"},"say":"对话变怪，产出没变好。改为做做空者研究仓位会做的事。"}]}]}'></div></div>
+  <div class="src extra">补充：教学示例；四个方向与提示词意译自原文</div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="bars" data-bars='{"unit":"天","items":[{"l":"班尼斯特独享 4 分钟一英里纪录","v":46,"c":"blue","note":"1954 年 5 月破纪录后"}],"caption":"原文给的数字只有这一个；其余例子没有数字"}'></div></div>
+  <div class="say"><span class="kicker">为什么现在更需要？</span><h2>限制人的常是「觉得不可能」，不是能力</h2>
+  <p>心理学叫它自我效能感（相信自己能做到的程度）；作者引 Locke 和 Latham 35 年的研究：具体的难目标胜过「尽力而为」。</p>
+  <p class="key">三个被记录的办法：相信可行；看到别人做到；允许自己失败。</p>
+  <details class="more"><summary></summary><p>相信可行：1939 年 Dantzig 迟到，把黑板上两道题当作业做出来，那是两道统计学未解问题。</p><p>看到别人做到：班尼斯特之后 46 天就有人追上；今年 4 月伦敦马拉松 Sawe 首个官方破 2，同场亚军也破 2。</p><p>允许失败：《The Inner Game of Tennis》；Linux 发布时说「只是个爱好」。</p><p>作者结论：能力每隔几周跃进一次，我们需要让自己敢做没想过的事的方法。</p></details>
+  <div class="src article">"We have been here before" 全节</div></div>
+</section>
+
+<section class="card full">
+  <div class="head-full"><span class="kicker">小测</span><h2>用新场景检验：该往哪个方向推？</h2></div>
+  <div class="stage"><div class="quiz" data-quiz='[
+  {"q":"你一直让 Claude 一个个修线上 Bug。按「高度」，下一步更像？","opts":["让它修得更快","让它负责「某模块零 Bug」，并给它拉报告、复现、验证的条件","让它扮演资深工程师"],"a":1,"why":"高度是交代目标背后的目标，并给模型自己验证的条件，正如零崩溃的例子。","back":5},
+  {"q":"你写「像顶级统计学家一样分析」，结果只多了术语。原文建议？","opts":["换一个更厉害的身份","坚持用数据库和统计模型等专家工具","把目标降低"],"a":1,"why":"误区：要求专家口吻只会换词汇不换方法。","back":6},
+  {"q":"Claude 说 200ms 加载时间做不到。原文的做法？","opts":["接受，改回 5 秒","重申这完全可解，让它继续","换模型"],"a":1,"why":"挑离谱目标，并告诉模型它很合理。","back":6},
+  {"q":"Claude 做完分析后，怎样验证最符合作者的建议？","opts":["问它有多大把握","用它能运行、在没见过的数据上检验的工具","再让它重写一遍"],"a":1,"why":"外部裁判：不让模型给自己打分。","back":8},
+  {"q":"做一场产品发布会准备，按「广度」第一步做什么？","opts":["把「发布会 PPT」改写成动词：要让谁在多长时间里相信什么、做什么决定","让模型扮演乔布斯","加更多页"],"a":0,"why":"名词换动词，才能看出该引入哪些学科。扮演角色是原文提醒的坑。","back":9},
+  {"q":"「高度」最不适合哪种任务？","opts":["要开会讨论的业务决策","追求明确最终结果的工程目标","纯创意类创作"],"a":2,"why":"原文：高度适合追求最终结果，对创意类效果差一些。","back":5}]'></div></div>
+  <div class="src extra">补充：小测场景为教学示例</div>
+</section>
+</main>
+<nav class="bottom"><button class="btn" id="prev">上一张</button><button class="btn main" id="next">下一张</button></nav>
+<script>
+/* 学习搭子 固定组件库 — 不要在课程里改这个文件。 */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const NS='http://www.w3.org/2000/svg';
+const el=(t,a={},p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p&&p.appendChild(e);return e};
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+/* ---------- 卡片翻页 ---------- */
+const cards=$$('.card');let cur=0;
+function go(i){i=Math.max(0,Math.min(cards.length-1,i));cards[cur].classList.remove('on');cur=i;cards[cur].classList.add('on');
+  $('.track i').style.width=((cur+1)/cards.length*100)+'%';$('.count').textContent=(cur+1)+' / '+cards.length;
+  $('#prev').disabled=cur===0;$('#next').disabled=cur===cards.length-1;history.replaceState(null,'','#'+(cur+1));}
+window.goCard=n=>go(n-1);
+$('#prev').onclick=()=>go(cur-1);$('#next').onclick=()=>go(cur+1);
+addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.key==='ArrowRight')go(cur+1);if(e.key==='ArrowLeft')go(cur-1)});
+let sx=null;addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
+addEventListener('touchend',e=>{if(sx===null)return;const d=e.changedTouches[0].clientX-sx;if(Math.abs(d)>60)go(cur+(d<0?1:-1));sx=null});
+
+/* ---------- flow：用 JSON 画流程图 ----------
+ spec = {w,h,nodes:[{id,x,y,t,s?,c?,w?}],edges:[{f,t,l?,bend?}]}  节点坐标是中心点 */
+function drawFlow(svg,spec){
+  svg.innerHTML='';
+  const defs=el('defs',{},svg);
+  [['a','#AEB8C6'],['b','#2550D9'],['red','#C8372D'],['amber','#C77A00'],['green','#16875A']].forEach(([id,c])=>{const m=el('marker',{id:'ar'+id+svg.dataset.uid,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:7,markerHeight:7,orient:'auto-start-reverse'},defs);el('path',{d:'M0,0L10,5L0,10z',fill:c},m)});
+  const N={};spec.nodes.forEach(n=>N[n.id]={...n,w:n.w||150,h:n.s?70:56});
+  const ns=Object.values(N);
+  let x0=Math.min(...ns.map(n=>n.x-n.w/2)),x1=Math.max(...ns.map(n=>n.x+n.w/2)),y0=Math.min(...ns.map(n=>n.y-n.h/2)),y1=Math.max(...ns.map(n=>n.y+n.h/2));
+  const B={x0,x1,y0,y1};
+  const eg=el('g',{},svg),ng=el('g',{},svg);svg._edges={};svg._nodes={};
+  const clip=(a,b)=>{const dx=b.x-a.x,dy=b.y-a.y;const s=Math.min(Math.abs((a.w/2+6)/(dx||1e-9)),Math.abs((a.h/2+6)/(dy||1e-9)));return[a.x+dx*s,a.y+dy*s]};
+  spec.edges.forEach(e=>{const a=N[e.f],b=N[e.t];let d,lx,ly;
+    if(e.route){ /* 沿外圈走的直角线：top|bottom|left|right，lane 控制离外框的距离 */
+      const g=30+(e.lane||0)*30,oa=e.oa||0,ob=e.ob||0;
+      if(e.route==='top'||e.route==='bottom'){const t=e.route==='top',Y=t?B.y0-g:B.y1+g,ya=a.y+(t?-1:1)*(a.h/2+2),yb=b.y+(t?-1:1)*(b.h/2+8);
+        d=`M${a.x+oa},${ya} V${Y} H${b.x+ob} V${yb}`;lx=(a.x+oa+b.x+ob)/2;ly=Y+(t?-8:18);
+        t?(y0=Math.min(y0,Y-26)):(y1=Math.max(y1,Y+26));}
+      else{const l=e.route==='left',X=l?B.x0-g:B.x1+g,xa=a.x+(l?-1:1)*(a.w/2+2),xb=b.x+(l?-1:1)*(b.w/2+8);
+        d=`M${xa},${a.y+oa} H${X} V${b.y+ob} H${xb}`;lx=X+(l?-8:8);ly=(a.y+b.y)/2;
+        l?(x0=Math.min(x0,X-90)):(x1=Math.max(x1,X+90));}
+    }else{const[p1,q1]=clip(a,b),[p2,q2]=clip(b,a);const mx=(p1+p2)/2,my=(q1+q2)/2,len=Math.hypot(p2-p1,q2-q1)||1,bd=e.bend||0;
+      const cx=mx-(q2-q1)/len*bd,cy=my+(p2-p1)/len*bd;d=`M${p1},${q1} Q${cx},${cy} ${p2},${q2}`;
+      const qx=.25*p1+.5*cx+.25*p2,qy=.25*q1+.5*cy+.25*q2,sg=bd>=0?1:-1;lx=qx-(q2-q1)/len*sg*14;ly=qy+(p2-p1)/len*sg*14+4;}
+    const mk=e.c||'a';const p=el('path',{d,class:'fl-edge '+(e.c||''),'marker-end':`url(#ar${mk}${svg.dataset.uid})`},eg);p._mk=mk;
+    let lab=null;if(e.l){const anc=e.route==='left'?'end':e.route==='right'?'start':'middle';lab=el('text',{x:lx,y:ly,'text-anchor':anc,class:'fl-elab '+(e.c||''),stroke:'#F2F4F7','stroke-width':5,'paint-order':'stroke'},eg);lab.textContent=e.l}
+    svg._edges[e.f+'>'+e.t]={p,lab}});
+  ns.forEach(n=>{const g=el('g',{class:'fl-node '+(n.c||'')},ng);
+    el('rect',{x:n.x-n.w/2,y:n.y-n.h/2,width:n.w,height:n.h,rx:14},g);
+    const t=el('text',{x:n.x,y:n.y+(n.s?-4:6),'text-anchor':'middle'},g);t.textContent=n.t;
+    if(n.s){const s=el('text',{x:n.x,y:n.y+18,'text-anchor':'middle',class:'sub'},g);s.textContent=n.s}
+    svg._nodes[n.id]=g});
+  /* 自动贴合：viewBox 只包住内容，图会放大填满面板 */
+  const P=spec.pad??8;svg.setAttribute('viewBox',`${x0-P} ${y0-P-10} ${x1-x0+2*P} ${y1-y0+2*P+20}`);
+  svg._set=(act,edge)=>{for(const k in svg._nodes)svg._nodes[k].classList.toggle('act',k===act);
+    for(const k in svg._edges){const on=k===edge,E=svg._edges[k];E.p.classList.toggle('act',on);E.p.setAttribute('marker-end',`url(#ar${on?'b':E.p._mk}${svg.dataset.uid})`);E.lab&&E.lab.classList.toggle('act',on)}};
+  svg._set(svg.dataset.act,svg.dataset.edge);
+}
+let uid=0;
+$$('svg.flow').forEach(s=>{s.dataset.uid=++uid;drawFlow(s,JSON.parse(s.dataset.flow))});
+
+/* ---------- sim：一步步走的模拟器 ----------
+ data-sim = {flow:{...}, steps:[{act,edge,msg:{r:user|asst|tool|err|sys,n?,t},say}], alt?:{label,steps:[...]}} */
+$$('.sim').forEach(box=>{
+  const spec=JSON.parse(box.dataset.sim);if(spec.alt&&!spec.alts)spec.alts=[spec.alt];const AL=spec.alts||[];const gname='br'+(++uid);
+  box.innerHTML=`<div class="ctl"><button class="btn sm" data-a="step">下一步</button><button class="btn sm" data-a="play">▶ 自动</button><button class="btn sm" data-a="reset">重置</button>
+   <label>速度 <input type="range" min="300" max="2500" step="100" value="1200"></label></div>${AL.length?`<div class="ctl branches"><label><input type="radio" name="${gname}" value="-1" checked> ${esc(spec.label||'正常路径')}</label>${AL.map((a,j)=>`<label><input type="radio" name="${gname}" value="${j}"> ${esc(a.label)}</label>`).join('')}</div>`:''}
+   <div class="body"><svg class="flow"></svg><div class="log"></div></div><div class="narr"></div>`;
+  if(spec.layout==='wide')box.classList.add('wide');
+  const svg=$('svg',box);svg.dataset.uid=++uid;drawFlow(svg,spec.flow);
+  const log=$('.log',box),narr=$('.narr',box),radios=$$('input[type=radio]',box),spd=$('input[type=range]',box),play=$('[data-a=play]',box);
+  let i=0,timer=null;const sel=()=>{const r=radios.find(r=>r.checked);return r?+r.value:-1};const steps=()=>sel()>=0?AL[sel()].steps:spec.steps;
+  const hint=spec.note?esc(spec.note)+'　点「下一步」开始。':'点「下一步」开始。';const reset=()=>{i=0;log.innerHTML='';narr.innerHTML=hint;svg._set(null,null);stop()};
+  const stop=()=>{clearTimeout(timer);timer=null;play.textContent='▶ 自动'};
+  const step=()=>{const S=steps();if(i>=S.length){narr.textContent='流程结束。点「重置」再走一遍。';stop();return false}
+    const s=S[i++];svg._set(s.act,s.edge);if(s.msg){const d=document.createElement('div');d.className='msg '+s.msg.r;
+      d.innerHTML=`<b>${esc(s.msg.n||({user:'用户',asst:'模型',tool:'工具结果',err:'出错',sys:'系统提示词'}[s.msg.r]))}</b>${esc(s.msg.t)}`;log.appendChild(d);log.scrollTop=1e9}
+    narr.innerHTML=`<b>第 ${i}/${S.length} 步</b>　${esc(s.say)}`;return true};
+  const loop=()=>{if(step())timer=setTimeout(loop,+spd.value);else stop()};
+  box.onclick=e=>{const a=e.target.dataset.a;if(a==='step'){stop();step()}if(a==='reset')reset();if(a==='play'){if(timer)stop();else{play.textContent='❚❚ 暂停';loop()}}};
+  narr.innerHTML=hint;radios.forEach(r=>r.onchange=reset);
+  const P=new URLSearchParams(location.search);if(P.get('alt')&&radios[+P.get('alt')]){radios[+P.get('alt')].checked=true}for(let n=+P.get('sim')||0;n>0;n--)step(); /* 自查用：?sim=5&alt=1 */
+});
+
+/* ---------- bars：横向条形图 ----------
+ data-bars = {unit, items:[{l,v,c?:blue|amber|green|red,note?}], caption?}  数字必须来自原文 */
+$$('.bars').forEach(box=>{const B=JSON.parse(box.dataset.bars),mx=Math.max(...B.items.filter(i=>i.v!=null).map(i=>i.v));
+  box.innerHTML=B.items.map(i=>`<div class="bar ${i.c||''}"><span class="bl">${esc(i.l)}</span>${i.v==null?`<span class="bmiss">${esc(i.miss||'原文未给数字')}</span>`:`<span class="bt"><i style="width:${(i.v/mx*100).toFixed(1)}%"></i></span><span class="bv">${esc(i.v)}${esc(B.unit||'')}</span>`}${i.note?`<span class="bn">${esc(i.note)}</span>`:''}</div>`).join('')+(B.caption?`<div class="bc">${esc(B.caption)}</div>`:'')});
+
+/* ---------- quiz：页内小测 ----------
+ data-quiz = [{q,opts:[...],a:正确下标,why,back:答错时回到第几张卡片}] */
+$$('.quiz').forEach(box=>{
+  const Q=JSON.parse(box.dataset.quiz);let k=0,score=0;const done=new Set();
+  const render=()=>{const q=Q[k];box.innerHTML=`<div class="qn">第 ${k+1} / ${Q.length} 题　·　已答对 ${score}</div><div class="qt">${esc(q.q)}</div>
+    ${q.opts.map((o,j)=>`<button class="opt" data-j="${j}">${String.fromCharCode(65+j)}. ${esc(o)}</button>`).join('')}
+    <div class="fb"></div><div class="nav"><button class="btn sm" data-n="-1" ${k?'':'disabled'}>上一题</button><button class="btn sm main" data-n="1" ${k<Q.length-1?'':'disabled'}>下一题</button></div>`};
+  box.onclick=e=>{const t=e.target;if(t.dataset.n){k+=+t.dataset.n;render();return}
+    if(t.dataset.j===undefined||done.has(k))return;const q=Q[k],j=+t.dataset.j,fb=$('.fb',box);done.add(k);
+    $$('.opt',box)[q.a].classList.add('ok');
+    if(j===q.a){score++;fb.innerHTML='✓ 对。'+esc(q.why)}else{t.classList.add('no');fb.innerHTML='✗ 不对。'+esc(q.why)+(q.back?` <a onclick="goCard(${q.back})">回到第 ${q.back} 张再看看</a>`:'')}
+    $('.qn',box).textContent=`第 ${k+1} / ${Q.length} 题　·　已答对 ${score}`};
+  render();
+  const pk=new URLSearchParams(location.search).get('pick');if(pk!==null)$$('.opt',box)[+pk].click(); /* 自查用：?pick=0 */
+});
+
+go(Math.max(0,(parseInt(location.hash.slice(1))||1)-1));
+})();
+/* ---------- 学完了：点一下记为已学完（存在本机浏览器） ---------- */
+(function(){if(window.__finish)return;window.__finish=1;
+if(!document.querySelector('.deck'))return;
+const st=document.createElement('style');st.textContent=`.fin-btn{position:fixed;right:16px;bottom:76px;z-index:50;padding:10px 16px;border-radius:999px;border:0;background:#16a34a;color:#fff;font:600 15px system-ui;box-shadow:0 4px 14px rgba(0,0,0,.18);cursor:pointer}.fin-btn.done{background:#e5e7eb;color:#166534}`;document.head.appendChild(st);
+const key='done:'+location.pathname,p=n=>String(n).padStart(2,'0');
+const b=document.createElement('button');b.className='fin-btn';document.body.appendChild(b);
+const show=()=>{const d=localStorage.getItem(key);b.classList.toggle('done',!!d);b.textContent=d?'✓ 已学完 '+d:'✓ 学完了';b.title=d?'再点一下取消':''};show();
+b.onclick=()=>{if(localStorage.getItem(key)){if(confirm('取消「已学完」记录？'))localStorage.removeItem(key)}else{const x=new Date();localStorage.setItem(key,x.getFullYear()+'-'+p(x.getMonth()+1)+'-'+p(x.getDate()))}show()};
+})();
+</script></body></html>

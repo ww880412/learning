@@ -594,5 +594,73 @@
       "session-log",
       "harness"
     ]
+  },
+  {
+    "id": "verification-deficit",
+    "term": "验收赤字",
+    "en": "verification deficit",
+    "def": "Holon 博客的说法：AI 让代码产出变快，但证明改动没有破坏性的能力跟不上，PR 堆积却没人敢上线。文章的解法是四道防线：主干角色分工与 QA 分流、客诉自动排查、长周期巡检、端到端测试自愈与语义裁决，结论以执行证据为准。",
+    "refs": [
+      {
+        "item": "holon-ai-delivery",
+        "card": 2,
+        "note": "只自动化写代码，时间耗在下游"
+      },
+      {
+        "item": "holon-ai-delivery",
+        "card": 3,
+        "note": "单 Agent 自写自审共享盲区"
+      },
+      {
+        "item": "holon-ai-delivery",
+        "card": 8,
+        "note": "模拟器：哪道防线拦哪类缺陷"
+      }
+    ],
+    "related": [
+      "agent-loop"
+    ]
+  },
+  {
+    "id": "outside-judge",
+    "term": "外部裁判",
+    "en": "outside judge",
+    "def": "不让模型给自己的结果打分，用模型之外的东西验证：可运行的测试或评估工具、没见过的数据。Felix 在 2026 年 10 月强烈建议这样做；Holon 博客的 Reviewer/QA 分离也是同一思路。",
+    "refs": [
+      {
+        "item": "felix-ambitious",
+        "card": 8,
+        "note": "Use an outside judge + 四问提示词"
+      },
+      {
+        "item": "holon-ai-delivery",
+        "card": 5,
+        "note": "QA Agent 不依赖作者自述"
+      }
+    ],
+    "related": [
+      "verification-deficit"
+    ]
+  },
+  {
+    "id": "ambition-dimensions",
+    "term": "雄心四方向",
+    "en": "speed / altitude / depth / range",
+    "def": "Felix Rieseberg 把用 AI 时的雄心拆成四个方向：速度（更快）、高度（交代目标背后的目标）、深度（用顶尖专家的工具和原始数据）、广度（把名词换成动词，引入更多学科）。",
+    "refs": [
+      {
+        "item": "felix-ambitious",
+        "card": 1,
+        "note": "全貌"
+      },
+      {
+        "item": "felix-ambitious",
+        "card": 11,
+        "note": "模拟器：Acme 季度回顾"
+      }
+    ],
+    "related": [
+      "outside-judge"
+    ]
   }
 ]
