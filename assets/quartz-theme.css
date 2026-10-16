@@ -1,0 +1,21 @@
+/* Quartz 风格覆盖层（配色思路改编自 Quartz v4 默认主题，MIT License, Copyright (c) 2021 jackyzha0；见 CREDITS.md）：宋体标题、窄栏、笔记式 */
+:root{--paper:#faf8f8;--sheet:rgba(143,159,169,.12);--ink:#2b2b2b;--ink2:#6b6b6b;--hair:#e5e5e5;--blue:#284b63;--blue-soft:rgba(143,159,169,.18);--q3:#84a59d;
+--font:"Source Sans Pro",-apple-system,"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;--serif:"Songti SC","Noto Serif CJK SC","Source Han Serif SC",serif;--grad:none;--r-lg:6px;--r-sm:4px}
+html.dark{--paper:#161618;--sheet:rgba(143,159,169,.10);--ink:#ebebec;--ink2:#a0a0a4;--hair:#393639;--blue:#7b97aa;--blue-soft:rgba(143,159,169,.16)}
+html,body{font-size:17px;line-height:1.8}
+main{max-width:860px!important}.top .in{max-width:860px!important}
+.top{background:color-mix(in srgb,var(--paper) 92%,transparent)!important;border-bottom:1px solid var(--hair);backdrop-filter:none!important}
+.top .brand{font-family:var(--serif);font-size:19px;font-weight:700}.brand i{display:none!important}
+.top nav a{color:var(--blue)!important;background:none!important;border-radius:0!important;padding:4px 8px!important;font-weight:500}
+.top nav a.on{color:var(--ink)!important;text-decoration:underline;text-decoration-color:var(--q3);text-underline-offset:6px;text-decoration-thickness:2px}
+h1,h2,h3,.hero h1,main>section.sheet:first-of-type h1{font-family:var(--serif)!important;background:none!important;-webkit-background-clip:initial!important;background-clip:initial!important;color:var(--ink)!important;font-weight:700;letter-spacing:0}
+h2{border-left:none!important;padding-left:0!important}
+.sheet{background:transparent!important;border:none!important;padding-left:0!important;padding-right:0!important}
+.card{background:var(--sheet)!important;border:none!important;border-radius:6px!important}
+.card b,.card h3{color:var(--blue)!important}
+a{color:var(--blue)}
+.list .row{background:transparent!important;border:none!important;border-bottom:1px dashed var(--hair)!important;border-radius:0!important}
+.chip{background:none!important;color:var(--q3)!important;border:none!important}.chip::before{content:"#"}
+.quick li{background:var(--sheet)}.dm{background:none!important;border:none!important;font-size:18px}
+.stat{background:var(--sheet)!important;border:none}
+.top nav a.on,.top nav a:hover{background:none!important}

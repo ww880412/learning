@@ -44,7 +44,7 @@ const itemById = Object.fromEntries(items.map(i => [i.id, i]));
 const colById = Object.fromEntries(columns.map(c => [c.id, c]));
 const conById = Object.fromEntries(concepts.map(c => [c.id, c]));
 const rootVars = (() => { try { const css = fs.readFileSync(TPL, 'utf8'); return css.match(/:root\{[\s\S]*?\}/)[0]; } catch { return ':root{--paper:#F2F4F7;--sheet:#fff;--ink:#16202C;--ink2:#4A5868;--hair:#D9DFE7;--blue:#2550D9;--blue-soft:#E3EAFD;--amber:#C77A00;--amber-soft:#FBEFD9;--green:#16875A;--green-soft:#DDF3E9;--red:#C8372D;--red-soft:#FBE3E1;--r-lg:20px;--r-sm:10px;--font:system-ui,sans-serif;--mono:monospace}'; } })();
-const THEME = fs.readFileSync(path.join(ROOT,'assets/vp-theme.css'),'utf8'), HEADJS = fs.readFileSync(path.join(ROOT,'assets/vp-head.js'),'utf8');
+const THEME = fs.readFileSync(path.join(ROOT,'assets/vp-theme.css'),'utf8') + fs.readFileSync(path.join(ROOT,'assets/quartz-theme.css'),'utf8'), HEADJS = fs.readFileSync(path.join(ROOT,'assets/vp-head.js'),'utf8');
 const CSS = rootVars + `
 *{box-sizing:border-box}html,body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.65 var(--font);-webkit-font-smoothing:antialiased}
 a{color:var(--blue);text-decoration:none}
