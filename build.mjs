@@ -139,17 +139,28 @@ const itemConcepts = id => concepts.filter(c => c.refs.some(r => r.item === id))
     + `<a class="card c1" href="x-brief/index.html"><span class="go">→</span><div class="ic">📰</div><h3>X 简报</h3><p>每天一期的 X 中文简报，按日期翻往期。</p><div class="meta"><span class="tag blue">每日更新</span></div></a>`
     + `<a class="card c2" href="x-posters/index.html"><span class="go">→</span><div class="ic">🖼</div><h3>X 海报</h3><p>每天从 X 挑技术帖做成康奈尔笔记海报，附原帖信息。</p><div class="meta"><span class="tag blue">每日更新</span></div></a>`;
   const doing = items.filter(i => stateOf(i) === '进行中');
+  const doneIts = items.filter(i => ['已学完','已掌握'].includes(stateOf(i)));
+  const byCol = (arr, emptyT) => { const out = columns.map(c => { const its = arr.filter(i => i.column === c.id); if (!its.length) return '';
+    const gs = [...new Set(its.map(i => i.group).filter(Boolean))];
+    const sub = gs.length ? gs.map(g => { const G = groups.find(x => x.id === g); const all = items.filter(i => i.group === g); return `<div style="margin:6px 0 2px;font-weight:700"><a href="${G?.dir ? G.dir + '/index.html' : c.dir + '/index.html'}">${esc(G?.title || g)}</a></div>${progBar(all)}`; }).join('') : progBar(items.filter(i => i.column === c.id && isPage(i)));
+    return `<div style="margin:14px 0 4px"><b style="font-family:var(--serif);font-size:18px">${c.icon} ${esc(c.title)}</b> <a href="${c.dir}/index.html" style="font-size:13px">全部 →</a></div>${sub}<div class="list">${its.map(i => `<div class="row"><span class="tag">${esc(i.label)}</span><span class="t"><a href="${i.href}">${esc(i.title)}</a></span>${tagOf(i)}<span class="d">${i.quiz ? `小测 ${i.quiz.correct ?? 0}/${i.quiz.total ?? 6} · ` : ''}${i.retell ? '复述 ✓ · ' : ''}${esc(i.start || '')}</span></div>`).join('')}</div>`; }).join('');
+    return out || emptyBox(emptyT, ''); };
+  const H1 = fp => { try { const m = fs.readFileSync(path.join(ROOT, fp), 'utf8').match(/<h1>([\s\S]*?)<\/h1>/); return m ? m[1].replace(/<[^>]+>/g, '') : ''; } catch { return ''; } };
+  const briefs = (fs.existsSync(path.join(ROOT, 'x-brief')) ? fs.readdirSync(path.join(ROOT, 'x-brief')) : []).filter(x => /^\d{4}-\d\d-\d\d\.html$/.test(x)).sort().reverse().slice(0, 5).map(x => ({ d: x.slice(0, 10), t: H1('x-brief/' + x) }));
+  const posters = (fs.existsSync(path.join(ROOT, 'x-posters')) ? fs.readdirSync(path.join(ROOT, 'x-posters')) : []).filter(x => /^\d{4}-\d\d-\d\d$/.test(x)).sort().reverse().slice(0, 5).map(x => { const h = fs.existsSync(path.join(ROOT, 'x-posters', x, 'index.html')) ? fs.readFileSync(path.join(ROOT, 'x-posters', x, 'index.html'), 'utf8') : ''; const ts = [...h.matchAll(/<h3>([\s\S]*?)<\/h3>/g)].map(m => m[1]); return { d: x, n: ts.length, t: ts.slice(0, 3).join('；') + (ts.length > 3 ? '…' : '') }; });
   const recent = [...pages].sort((a, b) => (b.start || '').localeCompare(a.start || '')).slice(0, 6);
   const inboxHtml = inbox.length ? `<div class="list">${inbox.map(x => `<div class="row"><span class="tag">${esc(colById[x.column]?.title || '未分类')}</span><span class="t"><a href="${esc(x.url)}">${esc(x.title || x.url)}</a></span><span class="d">${esc(x.added || '')}</span></div>`).join('')}</div>`
     : emptyBox('收件箱是空的', '看到想学的链接，丢到群里给学习搭子，它会先放在这里（data/inbox.json）。');
   const revData = JSON.stringify({ queue: review.queue, items: Object.fromEntries(items.map(i => [i.id, { title: i.title, label: i.label, href: i.href }])) }).replace(/</g, '\\u003c');
   const body = `<section class="hero sheet"><div class="say"><span class="kk">个人学习知识库</span><h1>一屏一个要点，学完就能动手</h1><p>按来源分栏目。每篇学习页都可以翻页、点模拟器、做小测，学完按第 1、3、7、14、30 天复习。</p></div>
 <div class="stage"><div class="stat blue"><b>${pages.length}</b><span>篇学习页</span></div><div class="stat amber"><b id="due-big">…</b><span>今天该复习</span></div><div class="stat green"><b>${concepts.length}</b><span>张概念卡</span></div><div class="stat"><b>${columns.length}</b><span>个栏目</span></div></div></section>
-<div class="kicker">学习状态</div><div class="sub">未开始 → 进行中 → 已学完 → 已掌握</div><div class="states">${stateStats(items)}</div>
-<div class="kicker">栏目</div><div class="sub">按来源找内容</div><div class="grid">${colCards}</div>
 <div class="kicker">今天该复习 <span class="n" id="due-n">…</span></div><div class="sub">到期的先复习，再学新的</div><div id="review"></div>
-<div class="kicker">正在学</div><div class="sub">从上次停下的地方继续</div>${doing.length ? `<div class="grid wide" data-doing>${doing.map(i => itemCard(f, i)).join('')}</div>` : emptyBox('现在没有进行中的内容', '')}
-<div class="kicker">最近学过</div><div class="list">${recent.map(i => `<div class="row"><span class="tag">${esc(colById[i.column]?.title)}</span><span class="t"><a href="${i.href}">${esc(i.label)} · ${esc(i.title)}</a></span>${tagOf(i)}<span class="d">${esc(i.start)}</span></div>`).join('')}</div>
+<div class="kicker">正在学 <span class="n">${doing.length}</span></div><div class="sub">按栏目分，从上次停下的地方继续</div>${byCol(doing, '现在没有进行中的内容')}
+<div class="kicker">已学完 <span class="n">${doneIts.length}</span></div><div class="sub">到了复习日会出现在最上面</div>${byCol(doneIts, '还没有学完的内容')}
+<div class="kicker">X 简报 <a class="n" href="x-brief/index.html">全部 →</a></div><div class="sub">每天一期，按日期倒序</div><div class="list">${briefs.map(x => `<div class="row"><span class="d">${x.d}</span><span class="t"><a href="x-brief/${x.d}.html">${esc(x.t)}</a></span></div>`).join('') || '<div class="row"><span class="t">还没有简报</span></div>'}</div>
+<div class="kicker">X 海报 <a class="n" href="x-posters/index.html">全部 →</a></div><div class="sub">每天几张技术海报，附 X 原帖信息</div><div class="list">${posters.map(x => `<div class="row"><span class="d">${x.d}</span><span class="t"><a href="x-posters/${x.d}/index.html">${x.n} 张海报</a> · ${esc(x.t)}</span></div>`).join('') || '<div class="row"><span class="t">还没有海报</span></div>'}</div>
+<div class="kicker">我的收藏 <a class="n" href="favorites/index.html">全部 →</a></div><div class="sub">在任意页面点 ☆ 收藏，这里显示最近 5 条</div><div class="list" id="home-fav"><div class="row"><span class="t">加载中…</span></div></div>
+<div class="kicker">栏目</div><div class="sub">按来源找内容</div><div class="grid">${colCards}</div>
 <div class="kicker">待学收件箱 <span class="n">${inbox.length}</span></div>${inboxHtml}
 <div class="kicker">概念卡</div><div class="sub">一个术语一张卡，跨栏目串起来</div><div class="chips">${concepts.map(c => `<a class="chip" href="concepts/${c.id}.html">${esc(c.term)}</a>`).join('')}<a class="chip more" href="glossary.html">全部概念卡 →</a></div>`;
   const script = `const R=${revData};const p=n=>String(n).padStart(2,'0');const d=new Date();const today=new URLSearchParams(location.search).get('today')||(d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())); /* 自查用：?today=2026-10-14 */
@@ -161,7 +172,8 @@ document.getElementById('due-n').textContent=due.length+' 项到期';document.ge
 const row=(r,cls,lab)=>{const it=R.items[r.item]||{};return '<div class="row '+cls+'"><span class="tag '+(cls==='over'?'red':cls==='due'?'amber':'')+'">'+lab+'</span><span class="t"><a href="'+it.href+'">'+it.label+' · '+it.title+'</a></span><span class="d">第 '+r.day+' 天 · '+r.date+'</span></div>'};
 let h=due.map(r=>row(r,r.date<today?'over':'due',r.date<today?'已逾期':'今天')).join('');
 if(!due.length)h='<div class="row ok"><span class="t">今天（'+today+'）没有到期的复习 🎉</span></div>';
-if(soon.length)h+=soon.map(r=>row(r,'','即将')).join('');el.innerHTML='<div class="list">'+h+'</div>';`;
+if(soon.length)h+=soon.map(r=>row(r,'','即将')).join('');el.innerHTML='<div class="list">'+h+'</div>';
+window.__favRender=function(L){var el=document.getElementById('home-fav');if(!el)return;var E=s=>String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);var TN={'x-brief':'X 简报','poster':'X 海报','concept':'概念卡','course':'公开课','page':'页面'};el.innerHTML=L.length?L.slice(0,5).map(x=>'<div class="row"><span class="tag">'+E(TN[x.type]||'页面')+'</span><span class="t"><a href="'+E(x.url)+'">'+E(x.title)+'</a></span><span class="d">'+E((x.added_at||'').slice(0,10))+'</span></div>').join(''):'<div class="row"><span class="t">还没有收藏，在任意页面点 ☆ 就能收藏</span></div>'};`;
   write(f, page(f, '首页', 'home', body, script));
 }
 // ---- 栏目页 + 主题页 ----
