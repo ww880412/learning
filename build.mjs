@@ -111,7 +111,7 @@ a.card:hover{transform:translateY(-3px);box-shadow:0 0 0 2px var(--blue),0 24px 
 `;
 function page(file, title, active, body, script = '') {
   const r = p => rel(file, p);
-  const nav = [['index.html', '首页', 'home'], ...columns.map(c => [`${c.dir}/index.html`, c.title, c.id]), ['glossary.html', '概念卡', 'glossary'], ['x-brief/index.html', 'X 简报', 'x-brief']]
+  const nav = [['index.html', '首页', 'home'], ...columns.map(c => [`${c.dir}/index.html`, c.title, c.id]), ['glossary.html', '概念卡', 'glossary'], ['x-brief/index.html', 'X 简报', 'x-brief'], ['x-posters/index.html', 'X 海报', 'x-posters']]
     .map(([h, t, id]) => `<a href="${r(h)}"${id === active ? ' class="on"' : ''}>${esc(t)}</a>`).join('');
   return `<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${esc(title)} · 王玮的学习库</title><style>${CSS}${THEME}</style><script>${HEADJS}</script></head><body>
@@ -136,7 +136,8 @@ const itemConcepts = id => concepts.filter(c => c.refs.some(r => r.item === id))
   const colCards = columns.map((c, k) => { const n = pages.filter(i => i.column === c.id).length; const pend = items.filter(i => i.column === c.id && !isPage(i)).length;
     const meta = n ? `<span class="tag blue">${n} 篇</span>` : (pend ? `<span class="tag">${pend} 篇未开始</span>` : '<span class="tag">还没有内容</span>');
     return `<a class="card c${k % 4 + 1}" href="${c.dir}/index.html"><span class="go">→</span><div class="ic">${c.icon}</div><h3>${esc(c.title)}</h3><p>${esc(c.desc)}</p><div class="meta">${meta}</div></a>`; }).join('')
-    + `<a class="card c1" href="x-brief/index.html"><span class="go">→</span><div class="ic">📰</div><h3>X 简报</h3><p>每天一期的 X 中文简报，按日期翻往期。</p><div class="meta"><span class="tag blue">每日更新</span></div></a>`;
+    + `<a class="card c1" href="x-brief/index.html"><span class="go">→</span><div class="ic">📰</div><h3>X 简报</h3><p>每天一期的 X 中文简报，按日期翻往期。</p><div class="meta"><span class="tag blue">每日更新</span></div></a>`
+    + `<a class="card c2" href="x-posters/index.html"><span class="go">→</span><div class="ic">🖼</div><h3>X 海报</h3><p>每天从 X 挑技术帖做成康奈尔笔记海报，附原帖信息。</p><div class="meta"><span class="tag blue">每日更新</span></div></a>`;
   const doing = items.filter(i => stateOf(i) === '进行中');
   const recent = [...pages].sort((a, b) => (b.start || '').localeCompare(a.start || '')).slice(0, 6);
   const inboxHtml = inbox.length ? `<div class="list">${inbox.map(x => `<div class="row"><span class="tag">${esc(colById[x.column]?.title || '未分类')}</span><span class="t"><a href="${esc(x.url)}">${esc(x.title || x.url)}</a></span><span class="d">${esc(x.added || '')}</span></div>`).join('')}</div>`
