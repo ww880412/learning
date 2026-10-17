@@ -1,0 +1,234 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>2026-10-15 · X 海报日报</title><style>/* 学习搭子 固定设计系统 — 不要在课程里改这个文件。只改 lesson.html 的内容。 */
+:root{
+  --paper:#F6F6F7; --sheet:#FFFFFF; --ink:#16202C; --ink2:#4A5868; --hair:#E2E2E3;
+  --blue:#2550D9;  --blue-soft:#E3EAFD;   /* 主角：当前步骤 / 重点 */
+  --amber:#C77A00; --amber-soft:#FBEFD9; /* 数据 / 消息 */
+  --green:#16875A; --green-soft:#DDF3E9; /* 成功 / 工具结果 */
+  --red:#C8372D;   --red-soft:#FBE3E1;   /* 出错 */
+  --r-lg:12px; --r-sm:10px;
+  --font:"PingFang SC","Noto Sans CJK SC","Source Han Sans SC","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}html,body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.7 var(--font);-webkit-font-smoothing:antialiased}
+a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+.top{position:sticky;top:0;background:rgba(242,244,247,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--hair);z-index:5}
+.top .in{max-width:980px;margin:0 auto;padding:10px 20px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.brand{font-weight:800;color:var(--ink)}.brand i{font-style:normal;display:inline-grid;place-items:center;width:28px;height:28px;border-radius:9px;background:var(--blue);color:#fff;margin-right:8px}
+.top nav{display:flex;gap:6px;flex-wrap:wrap;font-size:14px}.top nav a{padding:4px 10px;border-radius:99px;color:var(--ink2)}.top nav a.on{background:var(--blue-soft);color:var(--blue);font-weight:700}
+main{max-width:980px;margin:0 auto;padding:22px 20px 60px}
+.sheet{background:var(--sheet);border-radius:var(--r-lg);padding:24px 26px;box-shadow:0 1px 0 var(--hair),0 18px 40px -26px rgba(22,32,44,.28);margin-bottom:18px}
+.kk{font:700 13px var(--mono);color:var(--blue);letter-spacing:.04em}
+h1{font-size:28px;line-height:1.35;margin:6px 0 12px}
+h2{font-size:20px;margin:28px 0 10px;padding-left:12px;border-left:4px solid var(--blue);scroll-margin-top:110px}
+.quick{list-style:none;padding:0;margin:0;display:grid;gap:10px;counter-reset:q}
+.quick li{background:var(--blue-soft);border-radius:var(--r-sm);padding:12px 14px 12px 48px;position:relative;counter-increment:q}
+.quick li::before{content:counter(q);position:absolute;left:14px;top:12px;width:24px;height:24px;border-radius:50%;background:var(--blue);color:#fff;font:700 13px/24px var(--mono);text-align:center}
+.tabs{position:sticky;top:52px;z-index:4;display:flex;gap:8px;overflow-x:auto;padding:10px 0;background:var(--paper);margin-bottom:6px}
+.tabs a{flex:none;padding:6px 14px;border-radius:99px;background:var(--sheet);border:1px solid var(--hair);color:var(--ink);font-size:14px;font-weight:600}
+.tabs a:hover{border-color:var(--blue);text-decoration:none}
+h4{font-size:15px;margin:14px 0 4px;color:var(--ink2);font-weight:700}h3{font-size:16.5px;margin:20px 0 6px;color:var(--ink)}h3::before{content:'';display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--blue);margin-right:8px;vertical-align:middle}
+ul{padding-left:20px}li{margin:8px 0}
+.star{filter:saturate(1.2)}li:has(.star){background:var(--amber-soft);border-radius:var(--r-sm);padding:8px 12px;list-style:none;margin-left:-20px}
+.more{background:var(--paper);border-radius:var(--r-sm);padding:10px 14px;font-size:14.5px;color:var(--ink2)}
+.tip{background:var(--amber-soft);border-radius:var(--r-sm);padding:8px 12px;font-size:14.5px}
+.muted{font-size:13.5px;color:var(--ink2)}
+.row{display:flex;gap:12px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--hair)}.row:last-child{border:0}
+.row .d{font:600 14px var(--mono);color:var(--ink2);min-width:96px}.row .t{flex:1;min-width:0}
+.tag{font-size:12px;padding:2px 9px;border-radius:99px;background:var(--paper);color:var(--ink2);font-weight:600}.tag.blue{background:var(--blue-soft);color:var(--blue)}.tag.green{background:var(--green-soft);color:var(--green)}
+.empty{border:2px dashed var(--hair);border-radius:var(--r-lg);padding:20px;color:var(--ink2)}.empty b{display:block;color:var(--ink);margin-bottom:4px}
+.pn{display:flex;justify-content:space-between;gap:10px;margin-top:20px;font-weight:700}
+.foot{margin-top:30px;font-size:13px;color:var(--ink2);text-align:center}
+@media(max-width:640px){main{padding:14px 12px 40px}.sheet{padding:18px 16px}h1{font-size:22px}.row{flex-wrap:wrap;gap:4px 10px}.row .d{min-width:0}}
+/* VitePress 默认主题风格（配色/间距/卡片思路改编自 VitePress，MIT License, Copyright (c) 2019-present Yuxi (Evan) You；见 CREDITS.md）。品牌色 = 学习页蓝 #2550D9 */
+:root{--paper:#fff;--sheet:#f6f6f7;--ink:#213547;--ink2:rgba(60,60,67,.75);--hair:#e2e2e3;--blue:#2550D9;--blue-soft:rgba(37,80,217,.10);
+--amber-soft:rgba(234,179,8,.14);--green-soft:rgba(16,185,129,.14);--red-soft:rgba(244,63,94,.12);--r-lg:12px;--r-sm:8px;
+--font:"Inter",-apple-system,"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;--grad:linear-gradient(120deg,#2550D9 25%,#41a8ff)}
+html.dark{--paper:#1b1b1f;--sheet:#202127;--ink:#fffff5;--ink2:rgba(235,235,245,.6);--hair:#2e2e32;--blue:#7c9cff;--blue-soft:rgba(124,156,255,.16);
+--amber:#f0b429;--amber-soft:rgba(240,180,41,.14);--green:#3dd68c;--green-soft:rgba(61,214,140,.14);--red:#f66f81;--red-soft:rgba(246,111,129,.14);--grad:linear-gradient(120deg,#7c9cff 25%,#5ec8ff);color-scheme:dark}
+html,body{background:var(--paper);color:var(--ink)}
+.top{background:color-mix(in srgb,var(--paper) 88%,transparent)!important;border-bottom:1px solid var(--hair)}
+.top nav a.on{background:var(--blue-soft)!important;color:var(--blue)!important}.top nav a:hover{background:var(--sheet)}
+.brand i{background:var(--grad)!important}
+.sheet,.card,.list .row,.chip,.empty{box-shadow:none!important;border:1px solid var(--sheet)}
+.sheet,.card{background:var(--sheet)}
+a.card:hover,.list .row:has(a:hover),.chip:hover{border-color:var(--blue)!important;transform:none!important}
+.hero h1,main>section.sheet:first-of-type h1{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800}
+.hero .stage,.defcard .stage,.thumb,.more,.tabs a{background:var(--paper)}.stat{background:var(--sheet);border:1px solid var(--hair)}
+.chip{background:var(--blue-soft)!important;color:var(--blue)!important;border-color:transparent}
+.empty{border:1px dashed var(--hair)!important;background:var(--sheet)}
+.tabs{background:var(--paper)!important}.tabs a{border-color:var(--hair)}
+.quick li{background:var(--blue-soft)}h2{border-left-color:var(--blue)}
+.dm{margin-left:8px;flex:none;width:34px;height:34px;border-radius:50%;border:1px solid var(--hair);background:var(--sheet);color:var(--ink);cursor:pointer;font-size:15px}
+code{background:var(--sheet)}
+@media(max-width:600px){.top .in{flex-direction:row!important;flex-wrap:wrap}.top nav{order:3;width:100%}}
+/* 状态体系 */
+:root{--purple:#7c3aed;--purple-soft:rgba(124,58,237,.12)}html.dark{--purple:#c4a5ff;--purple-soft:rgba(196,165,255,.16)}
+.tag.purple{background:var(--purple-soft);color:var(--purple)}.stat.purple{border-color:var(--purple)}.stat.purple b{color:var(--purple)}
+.tag.st:not(.blue):not(.green):not(.purple){background:var(--paper);color:var(--ink2);border:1px solid var(--hair)}
+.states{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.states .stat{border-left-width:4px}
+.prog{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink2);margin-top:8px}.prog span{white-space:nowrap;font-weight:600}
+.prog .bar{flex:1;min-width:80px;height:8px;border-radius:99px;background:var(--hair);display:flex;overflow:hidden}
+.prog .bar i{display:block;height:100%}.prog .g{background:var(--purple)}.prog .l{background:var(--green)}.prog .b{background:var(--blue)}
+/* 手机导航：两行换行，全部可见 */
+@media(max-width:600px){.top nav{flex-wrap:wrap!important;overflow:visible!important;gap:4px 2px}.top nav a{padding:4px 10px!important;font-size:13px!important}.states{grid-template-columns:1fr 1fr}.prog{flex-wrap:wrap}}
+/* Quartz 风格覆盖层（配色思路改编自 Quartz v4 默认主题，MIT License, Copyright (c) 2021 jackyzha0；见 CREDITS.md）：宋体标题、窄栏、笔记式 */
+:root{--paper:#faf8f8;--sheet:rgba(143,159,169,.12);--ink:#2b2b2b;--ink2:#6b6b6b;--hair:#e5e5e5;--blue:#284b63;--blue-soft:rgba(143,159,169,.18);--q3:#84a59d;
+--font:"Source Sans Pro",-apple-system,"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;--serif:"Songti SC","Noto Serif CJK SC","Source Han Serif SC",serif;--grad:none;--r-lg:6px;--r-sm:4px}
+html.dark{--paper:#161618;--sheet:rgba(143,159,169,.10);--ink:#ebebec;--ink2:#a0a0a4;--hair:#393639;--blue:#7b97aa;--blue-soft:rgba(143,159,169,.16)}
+html,body{font-size:17px;line-height:1.8}
+main{max-width:860px!important}.top .in{max-width:860px!important}
+.top{background:color-mix(in srgb,var(--paper) 92%,transparent)!important;border-bottom:1px solid var(--hair);backdrop-filter:none!important}
+.top .brand{font-family:var(--serif);font-size:19px;font-weight:700}.brand i{display:none!important}
+.top nav a{color:var(--blue)!important;background:none!important;border-radius:0!important;padding:4px 8px!important;font-weight:500}
+.top nav a.on{color:var(--ink)!important;text-decoration:underline;text-decoration-color:var(--q3);text-underline-offset:6px;text-decoration-thickness:2px}
+h1,h2,h3,.hero h1,main>section.sheet:first-of-type h1{font-family:var(--serif)!important;background:none!important;-webkit-background-clip:initial!important;background-clip:initial!important;color:var(--ink)!important;font-weight:700;letter-spacing:0}
+h2{border-left:none!important;padding-left:0!important}
+.sheet{background:transparent!important;border:none!important;padding-left:0!important;padding-right:0!important}
+.card{background:var(--sheet)!important;border:none!important;border-radius:6px!important}
+.card b,.card h3{color:var(--blue)!important}
+a{color:var(--blue)}
+.list .row{background:transparent!important;border:none!important;border-bottom:1px dashed var(--hair)!important;border-radius:0!important}
+.chip{background:none!important;color:var(--q3)!important;border:none!important}.chip::before{content:"#"}
+.quick li{background:var(--sheet)}.dm{background:none!important;border:none!important;font-size:18px}
+.stat{background:var(--sheet)!important;border:none}
+.top nav a.on,.top nav a:hover{background:none!important}
+.pgrid{display:grid;gap:18px}.pc{display:grid;grid-template-columns:300px 1fr;gap:20px;align-items:start}
+.pc img{width:100%;border-radius:12px;border:1px solid var(--hair);display:block}.pc h3{margin-top:0}
+.xi{font-size:14.5px}.xi .who{font-weight:700}.xi .h{color:var(--ink2)}.xi blockquote{margin:10px 0;padding:10px 14px;background:var(--paper);border-radius:10px;white-space:pre-wrap;font-size:14px}
+.thumbs{display:flex;gap:6px;overflow-x:auto}.thumbs img{height:120px;border-radius:6px;border:1px solid var(--hair)}
+@media(max-width:700px){.pc{grid-template-columns:1fr}}</style><script>(function(){var k='theme',s=localStorage.getItem(k);if(s?s==='dark':matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark');
+window.__tt=function(){var d=document.documentElement.classList.toggle('dark');localStorage.setItem(k,d?'dark':'light')}})();
+</script></head><body>
+<header class="top"><div class="in"><a class="brand" href="../index.html"><i>🖼</i>X 海报日报</a><nav><a href="../../index.html">学习库首页</a><a href="../index.html" class=on>X 海报</a><a href="../../x-brief/index.html">X 简报</a></nav><button class="dm" onclick="__tt()" aria-label="切换深色模式">◐</button></div></header>
+<main><section class="sheet"><span class="kk">DAILY · 2026-10-15（周四）</span><h1>6 张技术海报</h1><p class="muted">点海报看原图；每张右侧是 X 原帖信息（时间为美东 ET）。</p></section><div class="pgrid"><section class="sheet pc" id="p1"><a href="img/02-claude-code-desktop-manage-agents.png" target="_blank"><img src="img/02-claude-code-desktop-manage-agents.webp" alt="Claude Code 桌面更新：管一群 AI 的多会话工作流" loading="lazy"></a>
+<div><span class="kk">#1 · X 原帖信息</span><h3>Claude Code 桌面更新：管一群 AI 的多会话工作流</h3><div class="xi"><span class="who">Xiao Tan</span> <span class="h">@tvytlx</span><br>发帖时间：2026-10-14 18:25 ET<br>原帖：<a href="https://x.com/tvytlx/status/2110497124492484857" target="_blank" rel="noopener">https://x.com/tvytlx/status/2110497124492484857</a><blockquote>### X post (https://x.com/tvytlx/status/2110497124492484857)
+Published: 2026-10-14T22:25:00.000Z
+
+Claude Code 桌面版这次更新，我翻了一遍，几乎没有一个功能是关于写代码的。
+
+全是关于怎么管一群 AI。
+
+几个新东西：
+
+让它并行跑任务，每个任务会单独开一个嵌套 session，干完把结果汇报回主 session，主线程不会被刷屏。
+
+干活过程中它会主动提议后续可以做什么，点一下就单开一个 session 去做。
+
+临时想问点别的，用 /btw，在新标签页里问，主任务继续跑。
+
+侧边栏直接显示哪些 session 在干活、哪些在等你。
+Claude 需要你拍板的时候，会弹一张 recap 卡片，把这一轮干了啥总结好。
+
+连起来看就挺好玩的：
+嵌套汇报，是层级
+主动提后续，是下属自己找活干
+recap 卡片，是给老板的一页纸
+“哪些在等你”，是待审批列表
+
+我觉得瓶颈已经挪地方了。
+AI 写代码够快了，同时开五个 session，真正卡住的是你：在哪个窗口，记不记得每个在干嘛，哪个已经等你十分钟了。
+
+所以这次几乎每个功能，都在帮你省注意力。
+
+也有边界。有人翻了文档，目前跨 session 的视图只覆盖桌面端的本地、SSH 和 WSL，云端和 CLI 里跑的 session…</blockquote></div><p class="muted"><a href="img/02-claude-code-desktop-manage-agents.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p2"><a href="img/04-agent-api-opentelemetry.png" target="_blank"><img src="img/04-agent-api-opentelemetry.webp" alt="Agent API 接入 OpenTelemetry：可观测性比新模型更能说明进度" loading="lazy"></a>
+<div><span class="kk">#2 · X 原帖信息</span><h3>Agent API 接入 OpenTelemetry：可观测性比新模型更能说明进度</h3><div class="xi"><span class="who">Xiao Tan</span> <span class="h">@tvytlx</span><br>发帖时间：2026-10-14 20:16 ET<br>原帖：<a href="https://x.com/tvytlx/status/2110525058527719696" target="_blank" rel="noopener">https://x.com/tvytlx/status/2110525058527719696</a><blockquote>### X post (https://x.com/tvytlx/status/2110525058527719696)
+Published: 2026-10-15T00:16:00.000Z
+
+Anthropic 今天发了条挺无聊的更新。
+评论区有人直接回：Anthropic，我们等的那条推文还没来。
+
+但我觉得这条比发个新模型更能说明，Agent 现在走到哪一步了。
+
+内容很简单：
+Claude 的 Messages API、Managed Agents、SDK，现在都能把 OpenTelemetry trace 直接推到你自己的监控系统里。目前是公开测试。
+
+说人话就是：
+Agent 每一步花了多久、成功还是失败、烧了多少 token、用的哪个模型、调了哪个工具，全都留痕。
+愿意的话，提示词、模型回复、工具的输入和返回结果，也能一起导出来。
+
+这玩意为什么重要？
+
+Agent 做 demo 的时候，跑通一次就够了。
+真放进公司业务里，第一个问题马上变成：它昨天下午 3 点为什么把那张单子处理错了？
+没有 trace，你只能回答“不知道，模型抽风了吧”。
+这句话在老板和法务那里是过不了关的。
+
+还有个细节我挺在意。
+它走的是 OpenTelemetry 的 gen_ai 规范，一个跨厂商的通用标准。
+也就是说，Claude 的数据和别家模型的数据，可以放在同一个看板上比。
+哪个…</blockquote></div><p class="muted"><a href="img/04-agent-api-opentelemetry.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p3"><a href="img/05-cachelink-cross-model-kv.png" target="_blank"><img src="img/05-cachelink-cross-model-kv.webp" alt="CacheLink：跨模型交接长上下文 KV cache" loading="lazy"></a>
+<div><span class="kk">#3 · X 原帖信息</span><h3>CacheLink：跨模型交接长上下文 KV cache</h3><div class="xi"><span class="who">恒星sun</span> <span class="h">@vintcessun</span><br>发帖时间：2026-10-14 21:12 ET<br>原帖：<a href="https://x.com/vintcessun/status/2110539164169191829" target="_blank" rel="noopener">https://x.com/vintcessun/status/2110539164169191829</a><blockquote>### X post (https://x.com/vintcessun/status/2110539164169191829)
+Published: 2026-10-15T01:12:03.000Z
+
+跨模型交接长上下文，最容易忽略的不是 cache 长得像不像，而是接收模型用起来对不对。
+
+https://t.co/j56Asklnp0
+
+CacheLink先用按头 Ridge 回归初始化 KV，再通过联合校正，让冻结的接收模型直接用交接后的 cache，并以注意力和预测行为指导优化。4组模型对、7个评测面板中，它多数情况下胜过 Ridge；32K 上下文下，交接延迟最高降低 7.27 倍。对 Agent 的模型路由很有启发：省掉重放前缀，不能只看张量误差，还得看下游行为。
+
+### arXiv abstract (https://arxiv.org/abs/2610.15509)
+Title: CacheLink: Functional KV Transport for Zero-Prefill Cross-Model Context Handoff
+Authors: Haomiao Qiu, Yining Tang, Zijia Song, Ruizi Han, Ziyue Qiao, Miao Zhang
+Published: 2026-10-11T10:19:31Z…</blockquote></div><p class="muted"><a href="img/05-cachelink-cross-model-kv.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p4"><a href="img/06-design-creativity-bench.png" target="_blank"><img src="img/06-design-creativity-bench.webp" alt="Design Creativity Bench：评测 AI 的 UI 设计创造力" loading="lazy"></a>
+<div><span class="kk">#4 · X 原帖信息</span><h3>Design Creativity Bench：评测 AI 的 UI 设计创造力</h3><div class="xi"><span class="who">meng shao</span> <span class="h">@shao__meng</span><br>发帖时间：2026-10-14 21:24 ET<br>原帖：<a href="https://x.com/shao__meng/status/2110542220709540193" target="_blank" rel="noopener">https://x.com/shao__meng/status/2110542220709540193</a><blockquote>### X post (https://x.com/shao__meng/status/2110542220709540193)
+Published: 2026-10-15T01:24:12.000Z
+
+模型创造力排行 GPT-6 Astra 排第一、Claude Opus 5.5 第八 ？而且最强模型还是远低于人类 ？ 
+
+@Kombaico 发布了 Design Creativity Bench：一个专门评估 AI 模型在 UI 设计任务上“创造力”的基准，可以看具体评测情况和数据，以及背后的论文和代码支撑：
+https://t.co/LVp1ljlgIC
+
+# 测试基准怎么建立的 ？
+
+任务设计：80 个开放式 UI 任务，每个任务适配两个不同产品领域（共 160 份设计简报），并配有人类设计师的参考作品作为基线。
+
+评估对象：34 个模型（推文聚焦其中 16 个前沿模型）。
+
+三个创造力维度（理论根基是“创造力 = 新颖性 + 适切性”）：
+· 原创性：不同模型面对同一提示时，产出之间差异有多大；
+· 创意广度：同一 UI 目标换到另一个产品领域时，模型能否做出真正不同的设计决策；
+· 适切性：设计满足简报验收标准的程度。
+
+# 测试结果很意外！
+
+创造力总分差距悬殊：最佳模型 GPT-6 Astra 得 65.5，人类设计师参考为 92.3，差距近 30 分。前几名为 G…</blockquote></div><p class="muted"><a href="img/06-design-creativity-bench.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p5"><a href="img/07-stanford-cs329z-agent-memory.png" target="_blank"><img src="img/07-stanford-cs329z-agent-memory.webp" alt="Stanford CS329Z：Agent Memory 从模型到系统" loading="lazy"></a>
+<div><span class="kk">#5 · X 原帖信息</span><h3>Stanford CS329Z：Agent Memory 从模型到系统</h3><div class="xi"><span class="who">meng shao</span> <span class="h">@shao__meng</span><br>发帖时间：2026-10-14 21:34 ET<br>原帖：<a href="https://x.com/shao__meng/status/2110544704286970338" target="_blank" rel="noopener">https://x.com/shao__meng/status/2110544704286970338</a><blockquote>### X post (https://x.com/shao__meng/status/2110544704286970338)
+Published: 2026-10-15T01:34:04.000Z
+
+CS 329Z: Engineering AI Agents
+Stanford / Fall 2026 @stanfordnlp
+https://t.co/Ko6UarsQff 
+
+课程定位：从&quot;模型&quot;到&quot;系统&quot;的工程学覆盖：简单 LLM 流水线 → 复合 AI 系统 → 自主 Agent。
+
+@Diyi_Yang @michaelryan207 @jyangballin 三位老师主讲，今天第 7 讲「Agent Memory Architectures」讲义公开：
+https://t.co/B36NqiMjio
+
+### Course page (https://cs329z.stanford.edu)
+
+cute, reflection), and scaffolds as design decisions. Slides Readings : Yao et al. &quot;ReAct: Synergizing Reasoning and Acting in Language Models.&quot; ICLR (2023). 4 Wed Oct 14 Memory &amp; Multi-Agen…</blockquote></div><p class="muted"><a href="img/07-stanford-cs329z-agent-memory.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p6"><a href="img/08-pi-agent-code-mode.png" target="_blank"><img src="img/08-pi-agent-code-mode.webp" alt="Pi Agent 1.0 Code Mode：用 JavaScript 编排工具调用" loading="lazy"></a>
+<div><span class="kk">#6 · X 原帖信息</span><h3>Pi Agent 1.0 Code Mode：用 JavaScript 编排工具调用</h3><div class="xi"><span class="who">VerySmallWoods</span> <span class="h">@verysmallwoods</span><br>发帖时间：2026-10-14 18:44 ET<br>原帖：<a href="https://x.com/verysmallwoods/status/2110502104557048205" target="_blank" rel="noopener">https://x.com/verysmallwoods/status/2110502104557048205</a><blockquote>### X post (https://x.com/verysmallwoods/status/2110502104557048205)
+Published: 2026-10-14T22:44:47.000Z
+
+新视频做好了：《Pi Agent 1.0 Code Mode：用 JavaScript 编排工具调用》
+
+视频制作花了两天。反复的调整中，首先还是让自己看懂 pi codemode 到底干了什么，并且把视频内容梳理清楚，确保每个场景讲述的内容都合理。
+
+视频制作用了我新的 Skills - https://t.co/tMQCfO9pHB
+
+Pi Agent 1.0 加入了 Code Mode。模型可以生成一段 JavaScript，再由这段程序调用工具、处理返回值，只把整理后的结果交回模型。
+
+一些要点：
+- Javascript代码运行于QuickJS/WASM 沙箱
+- 代码运行时通过 tools.* 桥接的方式调用本地的工具，比如 bash，read
+- 目前需要 pi 启动时指定 codemode，使用它
+
+⏱ 章节
+0:00 任务与普通工具调用
+2:38 怎么启用 Code Mode
+4:19 QuickJS 沙箱与宿主工具
+5:42 真实 Pi CLI 实战
+9:14 什么时候适合使用
+
+### Related skill repo README (https:…</blockquote></div><p class="muted"><a href="img/08-pi-agent-code-mode.png" target="_blank">查看原图 PNG →</a></p></div></section></div><div class="pn"><a href="../2026-10-16/index.html">← 2026-10-16</a><a href="../index.html">往期目录</a><a href="../2026-10-14/index.html">2026-10-14 →</a></div><div class="foot">王玮的 X 海报日报 · 每天从 X 推荐流挑技术帖，用 ChatGPT 生成康奈尔笔记海报 · 每张都附 X 原帖信息 · 风格改编自 <a href="https://github.com/vuejs/vitepress">VitePress</a>（MIT）</div></main></body></html>

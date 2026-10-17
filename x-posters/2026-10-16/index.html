@@ -1,0 +1,182 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>2026-10-16 · X 海报日报</title><style>/* 学习搭子 固定设计系统 — 不要在课程里改这个文件。只改 lesson.html 的内容。 */
+:root{
+  --paper:#F6F6F7; --sheet:#FFFFFF; --ink:#16202C; --ink2:#4A5868; --hair:#E2E2E3;
+  --blue:#2550D9;  --blue-soft:#E3EAFD;   /* 主角：当前步骤 / 重点 */
+  --amber:#C77A00; --amber-soft:#FBEFD9; /* 数据 / 消息 */
+  --green:#16875A; --green-soft:#DDF3E9; /* 成功 / 工具结果 */
+  --red:#C8372D;   --red-soft:#FBE3E1;   /* 出错 */
+  --r-lg:12px; --r-sm:10px;
+  --font:"PingFang SC","Noto Sans CJK SC","Source Han Sans SC","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}html,body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.7 var(--font);-webkit-font-smoothing:antialiased}
+a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+.top{position:sticky;top:0;background:rgba(242,244,247,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--hair);z-index:5}
+.top .in{max-width:980px;margin:0 auto;padding:10px 20px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.brand{font-weight:800;color:var(--ink)}.brand i{font-style:normal;display:inline-grid;place-items:center;width:28px;height:28px;border-radius:9px;background:var(--blue);color:#fff;margin-right:8px}
+.top nav{display:flex;gap:6px;flex-wrap:wrap;font-size:14px}.top nav a{padding:4px 10px;border-radius:99px;color:var(--ink2)}.top nav a.on{background:var(--blue-soft);color:var(--blue);font-weight:700}
+main{max-width:980px;margin:0 auto;padding:22px 20px 60px}
+.sheet{background:var(--sheet);border-radius:var(--r-lg);padding:24px 26px;box-shadow:0 1px 0 var(--hair),0 18px 40px -26px rgba(22,32,44,.28);margin-bottom:18px}
+.kk{font:700 13px var(--mono);color:var(--blue);letter-spacing:.04em}
+h1{font-size:28px;line-height:1.35;margin:6px 0 12px}
+h2{font-size:20px;margin:28px 0 10px;padding-left:12px;border-left:4px solid var(--blue);scroll-margin-top:110px}
+.quick{list-style:none;padding:0;margin:0;display:grid;gap:10px;counter-reset:q}
+.quick li{background:var(--blue-soft);border-radius:var(--r-sm);padding:12px 14px 12px 48px;position:relative;counter-increment:q}
+.quick li::before{content:counter(q);position:absolute;left:14px;top:12px;width:24px;height:24px;border-radius:50%;background:var(--blue);color:#fff;font:700 13px/24px var(--mono);text-align:center}
+.tabs{position:sticky;top:52px;z-index:4;display:flex;gap:8px;overflow-x:auto;padding:10px 0;background:var(--paper);margin-bottom:6px}
+.tabs a{flex:none;padding:6px 14px;border-radius:99px;background:var(--sheet);border:1px solid var(--hair);color:var(--ink);font-size:14px;font-weight:600}
+.tabs a:hover{border-color:var(--blue);text-decoration:none}
+h4{font-size:15px;margin:14px 0 4px;color:var(--ink2);font-weight:700}h3{font-size:16.5px;margin:20px 0 6px;color:var(--ink)}h3::before{content:'';display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--blue);margin-right:8px;vertical-align:middle}
+ul{padding-left:20px}li{margin:8px 0}
+.star{filter:saturate(1.2)}li:has(.star){background:var(--amber-soft);border-radius:var(--r-sm);padding:8px 12px;list-style:none;margin-left:-20px}
+.more{background:var(--paper);border-radius:var(--r-sm);padding:10px 14px;font-size:14.5px;color:var(--ink2)}
+.tip{background:var(--amber-soft);border-radius:var(--r-sm);padding:8px 12px;font-size:14.5px}
+.muted{font-size:13.5px;color:var(--ink2)}
+.row{display:flex;gap:12px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--hair)}.row:last-child{border:0}
+.row .d{font:600 14px var(--mono);color:var(--ink2);min-width:96px}.row .t{flex:1;min-width:0}
+.tag{font-size:12px;padding:2px 9px;border-radius:99px;background:var(--paper);color:var(--ink2);font-weight:600}.tag.blue{background:var(--blue-soft);color:var(--blue)}.tag.green{background:var(--green-soft);color:var(--green)}
+.empty{border:2px dashed var(--hair);border-radius:var(--r-lg);padding:20px;color:var(--ink2)}.empty b{display:block;color:var(--ink);margin-bottom:4px}
+.pn{display:flex;justify-content:space-between;gap:10px;margin-top:20px;font-weight:700}
+.foot{margin-top:30px;font-size:13px;color:var(--ink2);text-align:center}
+@media(max-width:640px){main{padding:14px 12px 40px}.sheet{padding:18px 16px}h1{font-size:22px}.row{flex-wrap:wrap;gap:4px 10px}.row .d{min-width:0}}
+/* VitePress 默认主题风格（配色/间距/卡片思路改编自 VitePress，MIT License, Copyright (c) 2019-present Yuxi (Evan) You；见 CREDITS.md）。品牌色 = 学习页蓝 #2550D9 */
+:root{--paper:#fff;--sheet:#f6f6f7;--ink:#213547;--ink2:rgba(60,60,67,.75);--hair:#e2e2e3;--blue:#2550D9;--blue-soft:rgba(37,80,217,.10);
+--amber-soft:rgba(234,179,8,.14);--green-soft:rgba(16,185,129,.14);--red-soft:rgba(244,63,94,.12);--r-lg:12px;--r-sm:8px;
+--font:"Inter",-apple-system,"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;--grad:linear-gradient(120deg,#2550D9 25%,#41a8ff)}
+html.dark{--paper:#1b1b1f;--sheet:#202127;--ink:#fffff5;--ink2:rgba(235,235,245,.6);--hair:#2e2e32;--blue:#7c9cff;--blue-soft:rgba(124,156,255,.16);
+--amber:#f0b429;--amber-soft:rgba(240,180,41,.14);--green:#3dd68c;--green-soft:rgba(61,214,140,.14);--red:#f66f81;--red-soft:rgba(246,111,129,.14);--grad:linear-gradient(120deg,#7c9cff 25%,#5ec8ff);color-scheme:dark}
+html,body{background:var(--paper);color:var(--ink)}
+.top{background:color-mix(in srgb,var(--paper) 88%,transparent)!important;border-bottom:1px solid var(--hair)}
+.top nav a.on{background:var(--blue-soft)!important;color:var(--blue)!important}.top nav a:hover{background:var(--sheet)}
+.brand i{background:var(--grad)!important}
+.sheet,.card,.list .row,.chip,.empty{box-shadow:none!important;border:1px solid var(--sheet)}
+.sheet,.card{background:var(--sheet)}
+a.card:hover,.list .row:has(a:hover),.chip:hover{border-color:var(--blue)!important;transform:none!important}
+.hero h1,main>section.sheet:first-of-type h1{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800}
+.hero .stage,.defcard .stage,.thumb,.more,.tabs a{background:var(--paper)}.stat{background:var(--sheet);border:1px solid var(--hair)}
+.chip{background:var(--blue-soft)!important;color:var(--blue)!important;border-color:transparent}
+.empty{border:1px dashed var(--hair)!important;background:var(--sheet)}
+.tabs{background:var(--paper)!important}.tabs a{border-color:var(--hair)}
+.quick li{background:var(--blue-soft)}h2{border-left-color:var(--blue)}
+.dm{margin-left:8px;flex:none;width:34px;height:34px;border-radius:50%;border:1px solid var(--hair);background:var(--sheet);color:var(--ink);cursor:pointer;font-size:15px}
+code{background:var(--sheet)}
+@media(max-width:600px){.top .in{flex-direction:row!important;flex-wrap:wrap}.top nav{order:3;width:100%}}
+/* 状态体系 */
+:root{--purple:#7c3aed;--purple-soft:rgba(124,58,237,.12)}html.dark{--purple:#c4a5ff;--purple-soft:rgba(196,165,255,.16)}
+.tag.purple{background:var(--purple-soft);color:var(--purple)}.stat.purple{border-color:var(--purple)}.stat.purple b{color:var(--purple)}
+.tag.st:not(.blue):not(.green):not(.purple){background:var(--paper);color:var(--ink2);border:1px solid var(--hair)}
+.states{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.states .stat{border-left-width:4px}
+.prog{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink2);margin-top:8px}.prog span{white-space:nowrap;font-weight:600}
+.prog .bar{flex:1;min-width:80px;height:8px;border-radius:99px;background:var(--hair);display:flex;overflow:hidden}
+.prog .bar i{display:block;height:100%}.prog .g{background:var(--purple)}.prog .l{background:var(--green)}.prog .b{background:var(--blue)}
+/* 手机导航：两行换行，全部可见 */
+@media(max-width:600px){.top nav{flex-wrap:wrap!important;overflow:visible!important;gap:4px 2px}.top nav a{padding:4px 10px!important;font-size:13px!important}.states{grid-template-columns:1fr 1fr}.prog{flex-wrap:wrap}}
+/* Quartz 风格覆盖层（配色思路改编自 Quartz v4 默认主题，MIT License, Copyright (c) 2021 jackyzha0；见 CREDITS.md）：宋体标题、窄栏、笔记式 */
+:root{--paper:#faf8f8;--sheet:rgba(143,159,169,.12);--ink:#2b2b2b;--ink2:#6b6b6b;--hair:#e5e5e5;--blue:#284b63;--blue-soft:rgba(143,159,169,.18);--q3:#84a59d;
+--font:"Source Sans Pro",-apple-system,"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;--serif:"Songti SC","Noto Serif CJK SC","Source Han Serif SC",serif;--grad:none;--r-lg:6px;--r-sm:4px}
+html.dark{--paper:#161618;--sheet:rgba(143,159,169,.10);--ink:#ebebec;--ink2:#a0a0a4;--hair:#393639;--blue:#7b97aa;--blue-soft:rgba(143,159,169,.16)}
+html,body{font-size:17px;line-height:1.8}
+main{max-width:860px!important}.top .in{max-width:860px!important}
+.top{background:color-mix(in srgb,var(--paper) 92%,transparent)!important;border-bottom:1px solid var(--hair);backdrop-filter:none!important}
+.top .brand{font-family:var(--serif);font-size:19px;font-weight:700}.brand i{display:none!important}
+.top nav a{color:var(--blue)!important;background:none!important;border-radius:0!important;padding:4px 8px!important;font-weight:500}
+.top nav a.on{color:var(--ink)!important;text-decoration:underline;text-decoration-color:var(--q3);text-underline-offset:6px;text-decoration-thickness:2px}
+h1,h2,h3,.hero h1,main>section.sheet:first-of-type h1{font-family:var(--serif)!important;background:none!important;-webkit-background-clip:initial!important;background-clip:initial!important;color:var(--ink)!important;font-weight:700;letter-spacing:0}
+h2{border-left:none!important;padding-left:0!important}
+.sheet{background:transparent!important;border:none!important;padding-left:0!important;padding-right:0!important}
+.card{background:var(--sheet)!important;border:none!important;border-radius:6px!important}
+.card b,.card h3{color:var(--blue)!important}
+a{color:var(--blue)}
+.list .row{background:transparent!important;border:none!important;border-bottom:1px dashed var(--hair)!important;border-radius:0!important}
+.chip{background:none!important;color:var(--q3)!important;border:none!important}.chip::before{content:"#"}
+.quick li{background:var(--sheet)}.dm{background:none!important;border:none!important;font-size:18px}
+.stat{background:var(--sheet)!important;border:none}
+.top nav a.on,.top nav a:hover{background:none!important}
+.pgrid{display:grid;gap:18px}.pc{display:grid;grid-template-columns:300px 1fr;gap:20px;align-items:start}
+.pc img{width:100%;border-radius:12px;border:1px solid var(--hair);display:block}.pc h3{margin-top:0}
+.xi{font-size:14.5px}.xi .who{font-weight:700}.xi .h{color:var(--ink2)}.xi blockquote{margin:10px 0;padding:10px 14px;background:var(--paper);border-radius:10px;white-space:pre-wrap;font-size:14px}
+.thumbs{display:flex;gap:6px;overflow-x:auto}.thumbs img{height:120px;border-radius:6px;border:1px solid var(--hair)}
+@media(max-width:700px){.pc{grid-template-columns:1fr}}</style><script>(function(){var k='theme',s=localStorage.getItem(k);if(s?s==='dark':matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark');
+window.__tt=function(){var d=document.documentElement.classList.toggle('dark');localStorage.setItem(k,d?'dark':'light')}})();
+</script></head><body>
+<header class="top"><div class="in"><a class="brand" href="../index.html"><i>🖼</i>X 海报日报</a><nav><a href="../../index.html">学习库首页</a><a href="../index.html" class=on>X 海报</a><a href="../../x-brief/index.html">X 简报</a></nav><button class="dm" onclick="__tt()" aria-label="切换深色模式">◐</button></div></header>
+<main><section class="sheet"><span class="kk">DAILY · 2026-10-16（周五）</span><h1>6 张技术海报</h1><p class="muted">点海报看原图；每张右侧是 X 原帖信息（时间为美东 ET）。</p></section><div class="pgrid"><section class="sheet pc" id="p1"><a href="img/01-claude-code-btw-prompt-cache.png" target="_blank"><img src="img/01-claude-code-btw-prompt-cache.webp" alt="Claude Code /btw 拆解：旁路提问如何复用 prompt cache" loading="lazy"></a>
+<div><span class="kk">#1 · X 原帖信息</span><h3>Claude Code /btw 拆解：旁路提问如何复用 prompt cache</h3><div class="xi"><span class="who">KC</span> <span class="h">@ScarletKc</span><br>发帖时间：2026-10-15 10:44 ET<br>原帖：<a href="https://x.com/ScarletKc/status/2110743554486423802" target="_blank" rel="noopener">https://x.com/ScarletKc/status/2110743554486423802</a><blockquote>研究了一下 Claude Code 的 /btw。这个旁路提问是不能用工具的，但它其实没有把工具从请求里拿掉。
+
+请求里还是主对话那一整套 system prompt、工具定义和历史消息，只在最后追加一段提醒，告诉模型这是旁路问题，你没有工具。模型真去调工具的话，执行层会全部拒绝，也只给一轮。
+
+这么绕是为了缓存。Anthropic 的 prompt cache 按前缀匹配，删掉工具定义整个缓存就失效了，改 tool_choice 也会让对话历史那部分失效。现在前缀和主对话一模一样，btw 能直接吃主对话的缓存，还是只读不写，一次性的问题不用多付写缓存的钱。
+
+Agent 工具里的 fork 子代理也是这个思路，system prompt、工具、模型全部继承父代理。所以 fork 不能单独换模型，缓存本来就是按模型分开的。
+
+Codex 也有 /btw，不过它是 /side 的别名，会开一个临时的 fork 线程。可以多轮聊，也能用工具，靠提示词约束它别改文件。这个新线程还会换一个 prompt_cache_key，前缀虽然一样，能不能命中缓存就没保证了。</blockquote></div><p class="muted"><a href="img/01-claude-code-btw-prompt-cache.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p2"><a href="img/02-open-claude-ui.png" target="_blank"><img src="img/02-open-claude-ui.webp" alt="Open Claude UI：Claude 桌面端 UI 逆向拆解与开源组件" loading="lazy"></a>
+<div><span class="kk">#2 · X 原帖信息</span><h3>Open Claude UI：Claude 桌面端 UI 逆向拆解与开源组件</h3><div class="xi"><span class="who">Kxians</span> <span class="h">@xulijian1994</span><br>发帖时间：2026-10-15 00:34 ET<br>原帖：<a href="https://x.com/xulijian1994/status/2110590027453669498" target="_blank" rel="noopener">https://x.com/xulijian1994/status/2110590027453669498</a><br>原文链接：<a href="https://github.com/Caho1/open-claude-ui" target="_blank" rel="noopener">https://github.com/Caho1/open-claude-ui</a><blockquote>有人把 Claude 桌面客户端的 UI 几乎扒了个底朝天，还直接开源了。
+
+项目叫 Open Claude UI，利用 REA 逆向工程框架，对 Claude 桌面端进行了深度拆解。
+
+最有价值的不是复刻了 Claude 的外观，而是连背后的交互逻辑和动效算法都研究了一遍。
+
+项目包含：
+
+1. 30 个独立 React 组件，基本可以直接拿来用
+2. 8 项核心交互算法，包括弹簧动画、滚动渐隐、图片缩放等
+3. 3000 多行逆向分析文档，覆盖 31 个技术小节
+4. Claude 风格的聊天输入框、模型切换器、MCP 授权卡片
+5. macOS 毛玻璃效果、侧边栏拖拽、Cowork 多 Agent 协作界面
+
+甚至连中文输入法按回车误发送、AI 输出时自动滚动抢屏幕这种细节，都有对应的实现方案。
+
+我觉得这个项目真正值得收藏的，其实是那份逆向分析文档。
+
+对于想开发 AI 客户端、Agent 工作台或者 Claude 风格产品的开发者来说，相当于有人把一套成熟产品的前端设计思路和交互细节整理成了开源教材。
+
+以后想做一个有 Claude 那种质感的 AI 产品，确实可以少走不少弯路。
+
+项目地址：
+https://t.co/bgbicb26xr</blockquote></div><p class="muted"><a href="img/02-open-claude-ui.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p3"><a href="img/03-claude-code-review-ga.png" target="_blank"><img src="img/03-claude-code-review-ga.webp" alt="Claude Code Review 正式可用：多 Agent 审 PR 的流程与三档深度" loading="lazy"></a>
+<div><span class="kk">#3 · X 原帖信息</span><h3>Claude Code Review 正式可用：多 Agent 审 PR 的流程与三档深度</h3><div class="xi"><span class="who">ClaudeDevs</span> <span class="h">@ClaudeDevs</span><br>发帖时间：2026-10-15 18:51 ET<br>原帖：<a href="https://x.com/ClaudeDevs/status/2110866210573386065" target="_blank" rel="noopener">https://x.com/ClaudeDevs/status/2110866210573386065</a><br>原文链接：<a href="https://code.claude.com/docs/en/code-review" target="_blank" rel="noopener">https://code.claude.com/docs/en/code-review</a><blockquote>Code Review is now generally available for Claude Team and Enterprise plans. 
+
+Reviews are now faster, catch more of the bugs that matter, and admins can pick from Quick, Standard, or Deep review levels for each repo. https://t.co/RO4tDC4U1U</blockquote></div><p class="muted"><a href="img/03-claude-code-review-ga.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p4"><a href="img/04-magpie-plugin-system.png" target="_blank"><img src="img/04-magpie-plugin-system.webp" alt="Magpie 全面插件化：这次新在哪（七类插件扩展点）" loading="lazy"></a>
+<div><span class="kk">#4 · X 原帖信息</span><h3>Magpie 全面插件化：这次新在哪（七类插件扩展点）</h3><div class="xi"><span class="who">yetone</span> <span class="h">@yetone</span><br>发帖时间：2026-10-15 17:09 ET<br>原帖：<a href="https://x.com/yetone/status/2110840519156965691" target="_blank" rel="noopener">https://x.com/yetone/status/2110840519156965691</a><br>原文链接：<a href="https://usemagpie.ai/docs/plugins" target="_blank" rel="noopener">https://usemagpie.ai/docs/plugins</a><blockquote>Magpie 现在全面插件化了 🧩
+
+以前社区插件只能接入新的订阅；现在 Magpie 自己的几乎每一层都向社区开放，一个 npm 包就能扩展：
+
+• 订阅 / Provider：登录、刷新、模型、请求、用量全由插件负责
+• 网关中间件：改写经过 Magpie 的请求和响应
+• 路由策略：自己决定请求怎么在多个账号、多个模型之间分配
+• onUsage：每一条用量记录插件都能收到
+• 工具：插件写的工具通过 Magpie 的 MCP 服务器，给每一个接入的 Agent 用
+• Agent：让 Magpie 支持一个新的 Agent
+• 页面：插件在 Magpie 窗口里有自己的页面，跑在沙盒里
+
+入口：Magpie › 插件 › 发现，每类插件各有分区；点「编写插件」直接打开文档。
+
+文档：https://t.co/ckQuIZlQAs
+社区仓库：https://t.co/tbFsM25lE0
+
+三个示例已经发到 npm：tools-calc（精确计算、单位换算、日期计算工具）、page-usage（用量一览页面）、middleware-reserve（留余量的路由策略）。
+
+magpie plugin add @magpie-community/tools-calc 一行装好。来写插件吧 👇</blockquote></div><p class="muted"><a href="img/04-magpie-plugin-system.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p5"><a href="img/05-taste-skill-v2.png" target="_blank"><img src="img/05-taste-skill-v2.webp" alt="TasteSkill v2（老项目 + 这次新在哪）：给 AI 生成网站做设计体检" loading="lazy"></a>
+<div><span class="kk">#5 · X 原帖信息</span><h3>TasteSkill v2（老项目 + 这次新在哪）：给 AI 生成网站做设计体检</h3><p class="tip">老项目 + 这次新在哪：见海报</p><div class="xi"><span class="who">Vox</span> <span class="h">@Voxyz_ai</span><br>发帖时间：2026-10-15 13:00 ET<br>原帖：<a href="https://x.com/Voxyz_ai/status/2110777729658581409" target="_blank" rel="noopener">https://x.com/Voxyz_ai/status/2110777729658581409</a><br>原文链接：<a href="https://github.com/Leonxlnx/taste-skill" target="_blank" rel="noopener">https://github.com/Leonxlnx/taste-skill</a><blockquote>Highly recommend installing the new TasteSkill v2 in Claude Code or Codex, then having Opus 5.5 use it to 𝗴𝗶𝘃𝗲 𝘁𝗵𝗲 𝘀𝗶𝘁𝗲 𝘆𝗼𝘂 𝘃𝗶𝗯𝗲-𝗰𝗼𝗱𝗲𝗱 𝗮 𝗰𝗵𝗲𝗰𝗸𝘂𝗽. It came out two days ago. It opens your pages at desktop, tablet and phone widths and lists every AI-website tell they hit.
+
+A few on the list you can check right away:
+→ A small all-caps line above the headline, like FEATURES
+→ Sections numbered 01 / 02 / 03
+→ Monospace body text and buttons, anywhere outside code
+→ Gradients, hairline borders, and shadows that sit there even without hover
+→ Cream backgrounds with terracotta, or any violet or indigo…</blockquote></div><p class="muted"><a href="img/05-taste-skill-v2.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p6"><a href="img/06-obsidian-loop-engineering.png" target="_blank"><img src="img/06-obsidian-loop-engineering.webp" alt="Claude + Obsidian 循环工程：笔记库即状态，先装审查闸门" loading="lazy"></a>
+<div><span class="kk">#6 · X 原帖信息</span><h3>Claude + Obsidian 循环工程：笔记库即状态，先装审查闸门</h3><div class="xi"><span class="who">Annatar.md</span> <span class="h">@AnnatarXBT</span><br>发帖时间：2026-10-15 03:35 ET<br>原帖：<a href="https://x.com/AnnatarXBT/status/2110635536595787967" target="_blank" rel="noopener">https://x.com/AnnatarXBT/status/2110635536595787967</a><blockquote>CLAUDE + OBSIDIAN + LOOP ENGINEERING = KARPATHY&#x27;S SECOND BRAIN THAT RUNS ITSELF
+
+the core idea: your Zettelkasten vault is the loop&#x27;s state, not the chat window
+
+everything Claude knows lives in a .md note, linked to the ones around it
+
+the loop:
+&gt; capture - a thought lands in 00-inbox
+&gt; context - Claude Opus 5.5 pulls links, tags, and neighbouring notes
+&gt; draft - edits happen inside a git worktree, never the live vault
+&gt; review - a critic agent checks the diff before anything ships
+&gt; commit - appended to the vault, nothing gets rewritten
+
+the key insight: frontmatter fields like supports, con…</blockquote></div><p class="muted"><a href="img/06-obsidian-loop-engineering.png" target="_blank">查看原图 PNG →</a></p></div></section></div><div class="pn"><a href="../2026-10-17/index.html">← 2026-10-17</a><a href="../index.html">往期目录</a><a href="../2026-10-15/index.html">2026-10-15 →</a></div><div class="foot">王玮的 X 海报日报 · 每天从 X 推荐流挑技术帖，用 ChatGPT 生成康奈尔笔记海报 · 每张都附 X 原帖信息 · 风格改编自 <a href="https://github.com/vuejs/vitepress">VitePress</a>（MIT）</div></main></body></html>

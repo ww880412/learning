@@ -1,0 +1,177 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>2026-10-10 · X 海报日报</title><style>/* 学习搭子 固定设计系统 — 不要在课程里改这个文件。只改 lesson.html 的内容。 */
+:root{
+  --paper:#F6F6F7; --sheet:#FFFFFF; --ink:#16202C; --ink2:#4A5868; --hair:#E2E2E3;
+  --blue:#2550D9;  --blue-soft:#E3EAFD;   /* 主角：当前步骤 / 重点 */
+  --amber:#C77A00; --amber-soft:#FBEFD9; /* 数据 / 消息 */
+  --green:#16875A; --green-soft:#DDF3E9; /* 成功 / 工具结果 */
+  --red:#C8372D;   --red-soft:#FBE3E1;   /* 出错 */
+  --r-lg:12px; --r-sm:10px;
+  --font:"PingFang SC","Noto Sans CJK SC","Source Han Sans SC","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}html,body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.7 var(--font);-webkit-font-smoothing:antialiased}
+a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+.top{position:sticky;top:0;background:rgba(242,244,247,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--hair);z-index:5}
+.top .in{max-width:980px;margin:0 auto;padding:10px 20px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.brand{font-weight:800;color:var(--ink)}.brand i{font-style:normal;display:inline-grid;place-items:center;width:28px;height:28px;border-radius:9px;background:var(--blue);color:#fff;margin-right:8px}
+.top nav{display:flex;gap:6px;flex-wrap:wrap;font-size:14px}.top nav a{padding:4px 10px;border-radius:99px;color:var(--ink2)}.top nav a.on{background:var(--blue-soft);color:var(--blue);font-weight:700}
+main{max-width:980px;margin:0 auto;padding:22px 20px 60px}
+.sheet{background:var(--sheet);border-radius:var(--r-lg);padding:24px 26px;box-shadow:0 1px 0 var(--hair),0 18px 40px -26px rgba(22,32,44,.28);margin-bottom:18px}
+.kk{font:700 13px var(--mono);color:var(--blue);letter-spacing:.04em}
+h1{font-size:28px;line-height:1.35;margin:6px 0 12px}
+h2{font-size:20px;margin:28px 0 10px;padding-left:12px;border-left:4px solid var(--blue);scroll-margin-top:110px}
+.quick{list-style:none;padding:0;margin:0;display:grid;gap:10px;counter-reset:q}
+.quick li{background:var(--blue-soft);border-radius:var(--r-sm);padding:12px 14px 12px 48px;position:relative;counter-increment:q}
+.quick li::before{content:counter(q);position:absolute;left:14px;top:12px;width:24px;height:24px;border-radius:50%;background:var(--blue);color:#fff;font:700 13px/24px var(--mono);text-align:center}
+.tabs{position:sticky;top:52px;z-index:4;display:flex;gap:8px;overflow-x:auto;padding:10px 0;background:var(--paper);margin-bottom:6px}
+.tabs a{flex:none;padding:6px 14px;border-radius:99px;background:var(--sheet);border:1px solid var(--hair);color:var(--ink);font-size:14px;font-weight:600}
+.tabs a:hover{border-color:var(--blue);text-decoration:none}
+h4{font-size:15px;margin:14px 0 4px;color:var(--ink2);font-weight:700}h3{font-size:16.5px;margin:20px 0 6px;color:var(--ink)}h3::before{content:'';display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--blue);margin-right:8px;vertical-align:middle}
+ul{padding-left:20px}li{margin:8px 0}
+.star{filter:saturate(1.2)}li:has(.star){background:var(--amber-soft);border-radius:var(--r-sm);padding:8px 12px;list-style:none;margin-left:-20px}
+.more{background:var(--paper);border-radius:var(--r-sm);padding:10px 14px;font-size:14.5px;color:var(--ink2)}
+.tip{background:var(--amber-soft);border-radius:var(--r-sm);padding:8px 12px;font-size:14.5px}
+.muted{font-size:13.5px;color:var(--ink2)}
+.row{display:flex;gap:12px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--hair)}.row:last-child{border:0}
+.row .d{font:600 14px var(--mono);color:var(--ink2);min-width:96px}.row .t{flex:1;min-width:0}
+.tag{font-size:12px;padding:2px 9px;border-radius:99px;background:var(--paper);color:var(--ink2);font-weight:600}.tag.blue{background:var(--blue-soft);color:var(--blue)}.tag.green{background:var(--green-soft);color:var(--green)}
+.empty{border:2px dashed var(--hair);border-radius:var(--r-lg);padding:20px;color:var(--ink2)}.empty b{display:block;color:var(--ink);margin-bottom:4px}
+.pn{display:flex;justify-content:space-between;gap:10px;margin-top:20px;font-weight:700}
+.foot{margin-top:30px;font-size:13px;color:var(--ink2);text-align:center}
+@media(max-width:640px){main{padding:14px 12px 40px}.sheet{padding:18px 16px}h1{font-size:22px}.row{flex-wrap:wrap;gap:4px 10px}.row .d{min-width:0}}
+/* VitePress 默认主题风格（配色/间距/卡片思路改编自 VitePress，MIT License, Copyright (c) 2019-present Yuxi (Evan) You；见 CREDITS.md）。品牌色 = 学习页蓝 #2550D9 */
+:root{--paper:#fff;--sheet:#f6f6f7;--ink:#213547;--ink2:rgba(60,60,67,.75);--hair:#e2e2e3;--blue:#2550D9;--blue-soft:rgba(37,80,217,.10);
+--amber-soft:rgba(234,179,8,.14);--green-soft:rgba(16,185,129,.14);--red-soft:rgba(244,63,94,.12);--r-lg:12px;--r-sm:8px;
+--font:"Inter",-apple-system,"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;--grad:linear-gradient(120deg,#2550D9 25%,#41a8ff)}
+html.dark{--paper:#1b1b1f;--sheet:#202127;--ink:#fffff5;--ink2:rgba(235,235,245,.6);--hair:#2e2e32;--blue:#7c9cff;--blue-soft:rgba(124,156,255,.16);
+--amber:#f0b429;--amber-soft:rgba(240,180,41,.14);--green:#3dd68c;--green-soft:rgba(61,214,140,.14);--red:#f66f81;--red-soft:rgba(246,111,129,.14);--grad:linear-gradient(120deg,#7c9cff 25%,#5ec8ff);color-scheme:dark}
+html,body{background:var(--paper);color:var(--ink)}
+.top{background:color-mix(in srgb,var(--paper) 88%,transparent)!important;border-bottom:1px solid var(--hair)}
+.top nav a.on{background:var(--blue-soft)!important;color:var(--blue)!important}.top nav a:hover{background:var(--sheet)}
+.brand i{background:var(--grad)!important}
+.sheet,.card,.list .row,.chip,.empty{box-shadow:none!important;border:1px solid var(--sheet)}
+.sheet,.card{background:var(--sheet)}
+a.card:hover,.list .row:has(a:hover),.chip:hover{border-color:var(--blue)!important;transform:none!important}
+.hero h1,main>section.sheet:first-of-type h1{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800}
+.hero .stage,.defcard .stage,.thumb,.more,.tabs a{background:var(--paper)}.stat{background:var(--sheet);border:1px solid var(--hair)}
+.chip{background:var(--blue-soft)!important;color:var(--blue)!important;border-color:transparent}
+.empty{border:1px dashed var(--hair)!important;background:var(--sheet)}
+.tabs{background:var(--paper)!important}.tabs a{border-color:var(--hair)}
+.quick li{background:var(--blue-soft)}h2{border-left-color:var(--blue)}
+.dm{margin-left:8px;flex:none;width:34px;height:34px;border-radius:50%;border:1px solid var(--hair);background:var(--sheet);color:var(--ink);cursor:pointer;font-size:15px}
+code{background:var(--sheet)}
+@media(max-width:600px){.top .in{flex-direction:row!important;flex-wrap:wrap}.top nav{order:3;width:100%}}
+/* 状态体系 */
+:root{--purple:#7c3aed;--purple-soft:rgba(124,58,237,.12)}html.dark{--purple:#c4a5ff;--purple-soft:rgba(196,165,255,.16)}
+.tag.purple{background:var(--purple-soft);color:var(--purple)}.stat.purple{border-color:var(--purple)}.stat.purple b{color:var(--purple)}
+.tag.st:not(.blue):not(.green):not(.purple){background:var(--paper);color:var(--ink2);border:1px solid var(--hair)}
+.states{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.states .stat{border-left-width:4px}
+.prog{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink2);margin-top:8px}.prog span{white-space:nowrap;font-weight:600}
+.prog .bar{flex:1;min-width:80px;height:8px;border-radius:99px;background:var(--hair);display:flex;overflow:hidden}
+.prog .bar i{display:block;height:100%}.prog .g{background:var(--purple)}.prog .l{background:var(--green)}.prog .b{background:var(--blue)}
+/* 手机导航：两行换行，全部可见 */
+@media(max-width:600px){.top nav{flex-wrap:wrap!important;overflow:visible!important;gap:4px 2px}.top nav a{padding:4px 10px!important;font-size:13px!important}.states{grid-template-columns:1fr 1fr}.prog{flex-wrap:wrap}}
+/* Quartz 风格覆盖层（配色思路改编自 Quartz v4 默认主题，MIT License, Copyright (c) 2021 jackyzha0；见 CREDITS.md）：宋体标题、窄栏、笔记式 */
+:root{--paper:#faf8f8;--sheet:rgba(143,159,169,.12);--ink:#2b2b2b;--ink2:#6b6b6b;--hair:#e5e5e5;--blue:#284b63;--blue-soft:rgba(143,159,169,.18);--q3:#84a59d;
+--font:"Source Sans Pro",-apple-system,"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;--serif:"Songti SC","Noto Serif CJK SC","Source Han Serif SC",serif;--grad:none;--r-lg:6px;--r-sm:4px}
+html.dark{--paper:#161618;--sheet:rgba(143,159,169,.10);--ink:#ebebec;--ink2:#a0a0a4;--hair:#393639;--blue:#7b97aa;--blue-soft:rgba(143,159,169,.16)}
+html,body{font-size:17px;line-height:1.8}
+main{max-width:860px!important}.top .in{max-width:860px!important}
+.top{background:color-mix(in srgb,var(--paper) 92%,transparent)!important;border-bottom:1px solid var(--hair);backdrop-filter:none!important}
+.top .brand{font-family:var(--serif);font-size:19px;font-weight:700}.brand i{display:none!important}
+.top nav a{color:var(--blue)!important;background:none!important;border-radius:0!important;padding:4px 8px!important;font-weight:500}
+.top nav a.on{color:var(--ink)!important;text-decoration:underline;text-decoration-color:var(--q3);text-underline-offset:6px;text-decoration-thickness:2px}
+h1,h2,h3,.hero h1,main>section.sheet:first-of-type h1{font-family:var(--serif)!important;background:none!important;-webkit-background-clip:initial!important;background-clip:initial!important;color:var(--ink)!important;font-weight:700;letter-spacing:0}
+h2{border-left:none!important;padding-left:0!important}
+.sheet{background:transparent!important;border:none!important;padding-left:0!important;padding-right:0!important}
+.card{background:var(--sheet)!important;border:none!important;border-radius:6px!important}
+.card b,.card h3{color:var(--blue)!important}
+a{color:var(--blue)}
+.list .row{background:transparent!important;border:none!important;border-bottom:1px dashed var(--hair)!important;border-radius:0!important}
+.chip{background:none!important;color:var(--q3)!important;border:none!important}.chip::before{content:"#"}
+.quick li{background:var(--sheet)}.dm{background:none!important;border:none!important;font-size:18px}
+.stat{background:var(--sheet)!important;border:none}
+.top nav a.on,.top nav a:hover{background:none!important}
+.pgrid{display:grid;gap:18px}.pc{display:grid;grid-template-columns:300px 1fr;gap:20px;align-items:start}
+.pc img{width:100%;border-radius:12px;border:1px solid var(--hair);display:block}.pc h3{margin-top:0}
+.xi{font-size:14.5px}.xi .who{font-weight:700}.xi .h{color:var(--ink2)}.xi blockquote{margin:10px 0;padding:10px 14px;background:var(--paper);border-radius:10px;white-space:pre-wrap;font-size:14px}
+.thumbs{display:flex;gap:6px;overflow-x:auto}.thumbs img{height:120px;border-radius:6px;border:1px solid var(--hair)}
+@media(max-width:700px){.pc{grid-template-columns:1fr}}</style><script>(function(){var k='theme',s=localStorage.getItem(k);if(s?s==='dark':matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark');
+window.__tt=function(){var d=document.documentElement.classList.toggle('dark');localStorage.setItem(k,d?'dark':'light')}})();
+</script></head><body>
+<header class="top"><div class="in"><a class="brand" href="../index.html"><i>🖼</i>X 海报日报</a><nav><a href="../../index.html">学习库首页</a><a href="../index.html" class=on>X 海报</a><a href="../../x-brief/index.html">X 简报</a></nav><button class="dm" onclick="__tt()" aria-label="切换深色模式">◐</button></div></header>
+<main><section class="sheet"><span class="kk">DAILY · 2026-10-10（周六）</span><h1>6 张技术海报</h1><p class="muted">点海报看原图；每张右侧是 X 原帖信息（时间为美东 ET）。</p></section><div class="pgrid"><section class="sheet pc" id="p1"><a href="img/01-block-claude-fable-prs.png" target="_blank"><img src="img/01-block-claude-fable-prs.webp" alt="Block 如何用 Claude Fable 编排上千个 PR" loading="lazy"></a>
+<div><span class="kk">#1 · X 原帖信息</span><h3>Block 如何用 Claude Fable 编排上千个 PR</h3><div class="xi"><span class="who">Xudong Han</span> <span class="h">@Xudong07452910</span><br>发帖时间：2026-10-09 20:30 ET<br>原帖：<a href="https://x.com/Xudong07452910/status/2108716642637099336" target="_blank" rel="noopener">https://x.com/Xudong07452910/status/2108716642637099336</a><br>原文链接：<a href="https://claude.com/resources/articles/how-block-orchestrates-claude-fable-across-thousands-of-pull-requests" target="_blank" rel="noopener">https://claude.com/resources/articles/how-block-orchestrates-claude-fable-across-thousands-of-pull-requests</a><blockquote>How Block orchestrates Claude Fable across thousands of pull requests
+
+Bradley Axen, Head of AI Capabilities at Block, on how his team evaluates new large language models, how Claude Fable 5 orchestrates company-wide code migrations, and why safeguards are a critical part of deploying frontier intelligence responsibly, at scale.
+
+Block builds tools that help businesses and individuals participate in the economy, including Square for sellers and Cash App for consumers. Bradley Axen leads AI capabilities at Block, where his team builds end-to-end AI products, including Buzz, an open-source works…</blockquote></div><p class="muted"><a href="img/01-block-claude-fable-prs.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p2"><a href="img/02-agent-acceptance-handoff.png" target="_blank"><img src="img/02-agent-acceptance-handoff.webp" alt="Agent 写完代码，验收才刚开始：交接检查与证据链" loading="lazy"></a>
+<div><span class="kk">#2 · X 原帖信息</span><h3>Agent 写完代码，验收才刚开始：交接检查与证据链</h3><div class="xi"><span class="who">Lukasen | AI &amp; Agents</span> <span class="h">@lukasen_xyz</span><br>发帖时间：2026-10-09 20:00 ET<br>原帖：<a href="https://x.com/lukasen_xyz/status/2108709094353960971" target="_blank" rel="noopener">https://x.com/lukasen_xyz/status/2108709094353960971</a><blockquote>读取旧数据失败，程序弹出报错，然后把原来的数据覆盖成空列表。报错做了，用户的数据也没了。Bradley Gibbs 在《Agents Behaving Badly》里用这个示例说明：一句“任务完成”，和代码满足了要求，差得可能很远。
+我觉得这篇最有用的地方，是把“怎么让 agent 少犯错”落到了能检查的动作上。写之前约定怎么算做完；交接时检查有没有丢掉要求；跑完以后再看这些检查有没有省下返工。作者明确说，这个案例是示意，文章没有报告自家流程的实测节省，方法需要放进自己的工作流验证。
+
+写代码的人，不能顺手改验收标准
+AI 产出变快，后面的审查未必跟得上。原文谈到一种“理解债”：团队没人亲手写过这段实现，审查者得从头理解它为什么这样写、跟系统哪里有关。即使改动通过了测试，人也可能要花更多时间补上这些理解。
+Gibbs 建议先和 AI 一起写清楚三类要求：代码必须做什么，必须保留什么，绝不能发生什么。他把这份经人确认的要求叫 conformance contract，可以理解为验收约定。
+套到读取数据的例子里，要求不能只写“读取失败时处理异常”。必须写清：返回能区分的读取失败结果；原来的存储内容保持不变；不能用空数据覆盖。没有保存过数据则是另一种情况，应该正常返回空列表。
+每项要求还要对应检查方法、预期结果和要留下的证据。在一次有明确边界的运行里，这些权威标准固定下来。Agent 可…</blockquote></div><p class="muted"><a href="img/02-agent-acceptance-handoff.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p3"><a href="img/03-ai-ui-component-libs.png" target="_blank"><img src="img/03-ai-ui-component-libs.webp" alt="给 AI 写代码用的 UI 组件库清单" loading="lazy"></a>
+<div><span class="kk">#3 · X 原帖信息</span><h3>给 AI 写代码用的 UI 组件库清单</h3><div class="xi"><span class="who">ttmouse - 豆爸</span> <span class="h">@ttmouse</span><br>发帖时间：2026-10-09 13:31 ET<br>原帖：<a href="https://x.com/ttmouse/status/2108611329192054932" target="_blank" rel="noopener">https://x.com/ttmouse/status/2108611329192054932</a><blockquote>向用 AI 写代码的人推荐下面这些 UI 组件库。
+
+用 AI 做编程，为什么做出来的界面总缺设计感？与其让模型凭空生成样式，不如先用一批本身就有设计感的组件库打底，再让 AI 去拼装。
+
+无头组件基元
+
+Radix UI — https://www.radix-ui.com
+Base UI — https://github.com/mui/base-ui
+
+组件库与设计系统
+
+shadcn/ui — https://ui.shadcn.com
+HeroUI — https://heroui.com
+Spectrum UI — https://ui.spectrumhq.in/docs/accordion
+Rare UI — https://rareui.com/components
+Beautiful UI — https://beautifului.dev
+BeUI — https://beui.dev
+Ink UI — http://ink-ui.com
+
+动效与过渡
+Transitions — https://transitions.dev</blockquote></div><p class="muted"><a href="img/03-ai-ui-component-libs.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p4"><a href="img/04-ai-learning-paradigm.png" target="_blank"><img src="img/04-ai-learning-paradigm.webp" alt="用 AI 重塑学习范式：按理解进度改变学习方式" loading="lazy"></a>
+<div><span class="kk">#4 · X 原帖信息</span><h3>用 AI 重塑学习范式：按理解进度改变学习方式</h3><div class="xi"><span class="who">奥一AoYi</span> <span class="h">@Aoyi21</span><br>发帖时间：2026-10-09 04:27 ET<br>原帖：<a href="https://x.com/Aoyi21/status/2108474440904495566" target="_blank" rel="noopener">https://x.com/Aoyi21/status/2108474440904495566</a><blockquote>我感觉，借助 AI 的能力，真的可以轻松学会所有知识了。
+最近刷到 Karpathy 分享和 AI 交互的技巧，我最兴奋的地方，是我们终于可以按照自己的理解进度，改变学习的方式。
+
+同一个知识点，可以先让 AI 说人话，再让它画出来。光看还不够，就做成能亲手操作的小工具，甚至做成小游戏。
+以前读到一个绕不过去的地方，往往只能来回看那几行字。现在可以让讲解跟着自己变，文字、图解和互动，都围绕你想弄懂的那个问题来做。
+哪怕只为了弄懂一个知识点，也值得专门给自己做一个学习工具。
+先让 AI 把话说明白
+用 AI 学习，最直接的方式就是问它问题。
+但很多时候，它写得很完整，你读起来却很费劲。一句话绕好几层，一个陌生词又引出另一个陌生词。读完一大段，还得翻回去，把里面的关系重新理一遍。
+明明是来学知识的，结果先花了半天研究它到底想说什么。
+这种时候，可以先给 AI 一套交流规范。
+Karpathy 提到的是 ASD-STE100，一套简化技术英语规范。它原本用于帮助人读懂英文维修文档，后来被用在更多技术文档里。核心做法包括缩短句子、一句只讲一个主题，以及约束词语的用法，减少歧义。
+维修文档要告诉人怎么操作，一个词前后换了意思，或者一句话塞进太多动作，读者就容易理解错。
+这套思路拿来纠正 AI 的语言习惯，很好用。
+让它把句子写短，把动作和关系交代清楚。同一个概念，前后用同一个词，别为了显得表…</blockquote></div><p class="muted"><a href="img/04-ai-learning-paradigm.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p5"><a href="img/05-skillsgist-v2.png" target="_blank"><img src="img/05-skillsgist-v2.webp" alt="skillsgist v2.0.0：私有 Agent Skills 托管" loading="lazy"></a>
+<div><span class="kk">#5 · X 原帖信息</span><h3>skillsgist v2.0.0：私有 Agent Skills 托管</h3><div class="xi"><span class="who">tengyz</span> <span class="h">@0xTYZ</span><br>发帖时间：2026-10-09 20:55 ET<br>原帖：<a href="https://x.com/0xTYZ/status/2108723107854958918" target="_blank" rel="noopener">https://x.com/0xTYZ/status/2108723107854958918</a><br>原文链接：<a href="https://github.com/Qsnh/skillsgist/releases/tag/v2.0.0" target="_blank" rel="noopener">https://github.com/Qsnh/skillsgist/releases/tag/v2.0.0</a><blockquote>【X / @0xTYZ quoting @skillsgist】
+skillsgist v2.0.0 版本发布。一款私有的 Agent Skills 托管方案。新版本通过 npx skillsgist 安装 skill （安装私有 skills 需要先 npx skillsgist login）。
+https://github.com/Qsnh/skillsgist/releases/tag/v2.0.0
+
+
+【Release notes v2.0.0】</blockquote></div><p class="muted"><a href="img/05-skillsgist-v2.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p6"><a href="img/07-anthropic-model-behavior-report.png" target="_blank"><img src="img/07-anthropic-model-behavior-report.webp" alt="Anthropic 模型行为报告：Claude 在真实网站上的越权案例" loading="lazy"></a>
+<div><span class="kk">#6 · X 原帖信息</span><h3>Anthropic 模型行为报告：Claude 在真实网站上的越权案例</h3><div class="xi"><span class="who">苍何</span> <span class="h">@canghe</span><br>发帖时间：2026-10-09 21:12 ET<br>原帖：<a href="https://x.com/canghe/status/2108727448955494610" target="_blank" rel="noopener">https://x.com/canghe/status/2108727448955494610</a><br>原文链接：<a href="https://www.anthropic.com/research/investigating-unintended-model-actions" target="_blank" rel="noopener">https://www.anthropic.com/research/investigating-unintended-model-actions</a><blockquote>【X / @canghe 摘要，一手报告见下】
+Anthropic 昨天主动发了一份坦白书。他们承认，Claude 在测试期间，对真实网站做了这些没人授权的事：向费城警察局提交虚假谋杀线索；绕过限制访问某州政府机构付费数据库；测试表单加载失败就直接提交真实政府表单。Anthropic 已向白宫汇报并通知涉及机构；内部评估不再接入真实互联网。
+一手报告：https://www.anthropic.com/research/investigating-unintended-model-actions
+
+
+Investigating unintended model actions in our evaluations and internal use \ Anthropic
+Skip to main content
+Skip to footer
+Research
+Policy
+Commitments
+Learn
+News
+Try Claude
+Alignment
+Investigating unintended model actions in our evaluations and internal use
+Oct 9, 2026
+This report describes examples of unintended model actions we’ve observed dur…</blockquote></div><p class="muted"><a href="img/07-anthropic-model-behavior-report.png" target="_blank">查看原图 PNG →</a></p></div></section></div><div class="pn"><a href="../2026-10-11/index.html">← 2026-10-11</a><a href="../index.html">往期目录</a><a href="../2026-10-09/index.html">2026-10-09 →</a></div><div class="foot">王玮的 X 海报日报 · 每天从 X 推荐流挑技术帖，用 ChatGPT 生成康奈尔笔记海报 · 每张都附 X 原帖信息 · 风格改编自 <a href="https://github.com/vuejs/vitepress">VitePress</a>（MIT）</div></main></body></html>
