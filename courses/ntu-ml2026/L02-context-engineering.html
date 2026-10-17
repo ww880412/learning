@@ -1,0 +1,453 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<script>(function(){var s=localStorage.getItem("theme");if(s?s==="dark":matchMedia("(prefers-color-scheme: dark)").matches)document.documentElement.classList.add("dark")})()</script>
+<title>李宏毅 ML 2026 · L02 Context Engineering</title><style>
+/* 学习搭子 固定设计系统 — 不要在课程里改这个文件。只改 lesson.html 的内容。 */
+:root{
+  --paper:#F6F6F7; --sheet:#FFFFFF; --ink:#16202C; --ink2:#4A5868; --hair:#E2E2E3;
+  --blue:#2550D9;  --blue-soft:#E3EAFD;   /* 主角：当前步骤 / 重点 */
+  --amber:#C77A00; --amber-soft:#FBEFD9; /* 数据 / 消息 */
+  --green:#16875A; --green-soft:#DDF3E9; /* 成功 / 工具结果 */
+  --red:#C8372D;   --red-soft:#FBE3E1;   /* 出错 */
+  --r-lg:12px; --r-sm:10px;
+  --font:"PingFang SC","Noto Sans CJK SC","Source Han Sans SC","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--paper);color:var(--ink);font:17px/1.65 var(--font);-webkit-font-smoothing:antialiased}
+.top{position:fixed;inset:0 0 auto 0;height:56px;display:flex;align-items:center;gap:16px;padding:0 28px;z-index:5}
+.top .course{font-weight:700;font-size:15px}
+.top .track{flex:1;height:6px;background:var(--hair);border-radius:99px;overflow:hidden}
+.top .track i{display:block;height:100%;width:0;background:var(--blue);transition:width .35s ease}
+.top .count{font:600 14px var(--mono);color:var(--ink2);min-width:60px;text-align:right}
+.deck{position:fixed;inset:56px 0 76px 0;display:grid;place-items:center;padding:0 24px}
+.card{display:none;width:min(1120px,100%);height:100%;max-height:640px;background:var(--sheet);border-radius:var(--r-lg);
+  box-shadow:0 1px 0 var(--hair),0 18px 40px -24px rgba(22,32,44,.25);overflow:hidden}
+.card.on{display:grid;grid-template-columns:1.45fr 1fr}
+.card.full.on{grid-template-columns:1fr}
+.stage{background:var(--paper);margin:14px 0 14px 14px;border-radius:14px;display:grid;place-items:center;padding:18px;overflow:hidden;position:relative}
+.card.full .stage{margin:14px}
+.stage svg{width:100%;height:100%;max-height:560px}
+.say{padding:40px 40px 32px;display:flex;flex-direction:column;justify-content:center;gap:14px;overflow:auto}
+.say .kicker{font-size:14px;color:var(--blue);font-weight:700}
+.say h2{margin:0;font-size:32px;line-height:1.25;letter-spacing:.01em}
+.say p{margin:0;color:var(--ink2)}
+.say p b{color:var(--ink)}
+.src{margin-top:auto;font-size:13px;color:var(--ink2);border-top:1px solid var(--hair);padding-top:12px}
+.src.extra::before{content:"补充";background:var(--amber-soft);color:var(--amber);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
+.src.official::before{content:"官方";background:var(--green-soft);color:var(--green);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
+code{font:14px var(--mono);background:var(--blue-soft);color:var(--blue);padding:1px 6px;border-radius:6px}
+pre{margin:0;font:13.5px/1.6 var(--mono);background:#101826;color:#DCE3EE;border-radius:12px;padding:16px 18px;overflow:auto;width:100%}
+pre .k{color:#8FB1FF}pre .s{color:#9BE0B4}pre .c{color:#71819A}pre .f{color:#FFC86B}pre .hl{background:rgba(143,177,255,.16);display:block;margin:0 -18px;padding:0 18px}
+.bottom{position:fixed;inset:auto 0 0 0;height:76px;display:flex;align-items:center;justify-content:center;gap:14px}
+.btn{font:600 15px var(--font);border:0;border-radius:99px;padding:11px 22px;cursor:pointer;background:var(--sheet);color:var(--ink);box-shadow:0 0 0 1px var(--hair)}
+.btn:hover{box-shadow:0 0 0 2px var(--blue)}
+.btn.main{background:var(--blue);color:#fff;box-shadow:none}
+.btn:disabled{opacity:.35;cursor:default;box-shadow:0 0 0 1px var(--hair)}
+.btn:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.btn.sm{padding:7px 14px;font-size:14px}
+/* ---- 图元（flow 组件生成） ---- */
+.fl-node rect{fill:var(--sheet);stroke:var(--hair);stroke-width:2;transition:all .3s}
+.fl-node text{font:600 17px var(--font);fill:var(--ink)}
+.fl-node .sub{font:400 13px var(--font);fill:var(--ink2)}
+.fl-node.blue rect{stroke:var(--blue)} .fl-node.amber rect{stroke:var(--amber)} .fl-node.green rect{stroke:var(--green)} .fl-node.red rect{stroke:var(--red)}
+.fl-node.act rect{fill:var(--blue-soft);stroke:var(--blue);stroke-width:3}
+.fl-node.dim{opacity:.35}
+.fl-edge{fill:none;stroke:#AEB8C6;stroke-width:2.2;transition:all .3s}
+.fl-edge.act{stroke:var(--blue);stroke-width:3.5;stroke-dasharray:8 6;animation:dash .8s linear infinite}
+.fl-elab{font:500 13px var(--font);fill:var(--ink2)}
+.fl-elab.act{fill:var(--blue);font-weight:700}
+@keyframes dash{to{stroke-dashoffset:-28}}
+/* ---- 模拟器 ---- */
+.sim{display:grid;grid-template-rows:auto 1fr auto;gap:10px;width:100%;height:100%}
+.sim .ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.sim .ctl label{font-size:13px;color:var(--ink2);display:flex;align-items:center;gap:6px}
+.sim .body{display:grid;grid-template-columns:1.1fr 1fr;gap:12px;min-height:0}
+.sim .log{background:var(--sheet);border-radius:12px;padding:10px;overflow:auto;font:13px/1.5 var(--mono)}
+.sim .msg{border-left:4px solid var(--hair);padding:6px 10px;margin:0 0 8px;border-radius:6px;background:var(--paper);white-space:pre-wrap;word-break:break-word;animation:pop .25s ease}
+.sim .msg b{font-family:var(--font);display:block;font-size:12px;color:var(--ink2)}
+.msg.user{border-color:var(--blue)} .msg.asst{border-color:var(--amber)} .msg.tool{border-color:var(--green)} .msg.err{border-color:var(--red);background:var(--red-soft)} .msg.sys{border-color:var(--ink2)}
+.sim .narr{background:var(--blue-soft);color:var(--ink);border-radius:12px;padding:10px 14px;font-size:15px;min-height:48px}
+@keyframes pop{from{opacity:0;transform:translateY(6px)}}
+/* ---- 小测 ---- */
+.quiz{width:100%;max-width:760px;display:flex;flex-direction:column;gap:12px}
+.quiz .qn{font:600 13px var(--mono);color:var(--ink2)}
+.quiz .qt{font-size:22px;font-weight:700;line-height:1.4}
+.quiz .opt{display:block;width:100%;text-align:left;font:16px var(--font);background:var(--sheet);border:2px solid var(--hair);border-radius:12px;padding:12px 16px;cursor:pointer;color:var(--ink)}
+.quiz .opt:hover{border-color:var(--blue)}
+.quiz .opt.ok{border-color:var(--green);background:var(--green-soft)} .quiz .opt.no{border-color:var(--red);background:var(--red-soft)}
+.quiz .fb{min-height:52px;font-size:15px;color:var(--ink2)}
+.quiz .fb a{color:var(--blue);font-weight:700;cursor:pointer}
+.quiz .nav{display:flex;gap:8px;align-items:center}
+@media (max-width:820px){
+  .card.full.on{grid-template-rows:1fr}.card.full .stage{overflow:auto;place-items:start center}
+  .card.on{grid-template-columns:1fr;grid-template-rows:minmax(220px,48%) 1fr}
+  .stage{margin:10px 10px 0}.say{padding:18px 20px}.say h2{font-size:24px}
+  .sim .body{grid-template-columns:1fr}.top{padding:0 14px}.top .course{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* ---- 展开细节 ---- */
+details.more{border-top:1px solid var(--hair);padding-top:10px;font-size:15px;color:var(--ink2)}
+details.more summary{cursor:pointer;font-weight:700;color:var(--blue);list-style:none}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary::before{content:"＋ 展开细节";}
+details.more[open] summary::before{content:"－ 收起细节";}
+details.more>*:not(summary){margin:8px 0 0}
+details.more ul{padding-left:18px}details.more li{margin:4px 0}
+details.more table{border-collapse:collapse;width:100%;font-size:14px}
+details.more td,details.more th{border-bottom:1px solid var(--hair);padding:5px 6px;text-align:left;vertical-align:top}
+/* ---- 对话列表（状态追踪）---- */
+.stack{width:100%;display:flex;flex-direction:column;gap:6px;font:13px/1.45 var(--mono)}
+.stack .row{display:grid;grid-template-columns:28px 92px 1fr;gap:8px;align-items:start;background:var(--sheet);border-radius:8px;padding:7px 10px;border-left:4px solid var(--hair)}
+.stack .row .i{color:var(--ink2)}.stack .row .r{font-weight:700}
+.stack .row.developer{border-color:var(--ink2)}.stack .row.user{border-color:var(--blue)}.stack .row.assistant{border-color:var(--amber)}.stack .row.result{border-color:var(--green)}
+.stack .row.new{background:var(--blue-soft)}.stack .row.bad{border-color:var(--red);background:var(--red-soft)}
+.stack .row .t{white-space:pre-wrap;word-break:break-word}
+/* ---- 对比/误区 ---- */
+.pairs{width:100%;display:grid;gap:10px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pair>div{background:var(--sheet);border-radius:12px;padding:12px 14px;font-size:15px}
+.pair .no{border-left:5px solid var(--red)}.pair .yes{border-left:5px solid var(--green)}
+.pair b{display:block;font-size:12px;color:var(--ink2);margin-bottom:4px}
+.say .more code{font-size:13px}
+@media (max-width:820px){.pair{grid-template-columns:1fr}.stack .row{grid-template-columns:22px 70px 1fr}}
+.pair .a{border-left:5px solid var(--blue)}.pair .b{border-left:5px solid var(--amber)}
+/* ===== v3：填满面板、原文标签、要点、条形图、分支 ===== */
+.stage{padding:10px}
+.stage svg.flow{width:100%;height:100%;max-height:none}
+.say p{font-size:17px}
+p.key{background:var(--blue-soft);color:var(--ink);border-radius:12px;padding:10px 14px;font-size:16px}
+p.key::before{content:"关键 ";font-weight:800;color:var(--blue)}
+.src.article::before{content:"原文";background:var(--blue-soft);color:var(--blue);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
+.stage>.stack{height:100%;justify-content:center;font-size:14.5px}
+.stage>.stack .row{padding:11px 12px;flex:0 1 auto}
+.stack .head{font:700 13px var(--font);color:var(--ink2);margin:8px 0 0}
+.stage>.pairs{height:100%;grid-auto-rows:minmax(0,1fr);align-content:stretch}
+.pair>div{font-size:16px;display:flex;flex-direction:column;justify-content:center}
+.bars{width:100%;display:flex;flex-direction:column;gap:16px;justify-content:center;height:100%;padding:0 10px}
+.bar{display:grid;grid-template-columns:150px 1fr 76px;gap:12px;align-items:center;font-size:15px}
+.bar .bl{font-weight:700;text-align:right}
+.bar .bt{height:30px;background:var(--sheet);border-radius:8px;overflow:hidden}
+.bar .bt i{display:block;height:100%;background:var(--ink2);border-radius:8px}
+.bar.blue .bt i{background:var(--blue)}.bar.amber .bt i{background:var(--amber)}.bar.green .bt i{background:var(--green)}.bar.red .bt i{background:var(--red)}
+.bar .bv{font:700 15px var(--mono)}
+.bar .bn{grid-column:2/4;font-size:13px;color:var(--ink2);margin-top:-8px}
+.bars .bc{font-size:13px;color:var(--ink2);text-align:center}
+.sim .branches{gap:14px;background:var(--sheet);border-radius:10px;padding:6px 10px}
+.sim .branches label{font-size:13.5px;color:var(--ink)}
+@media (max-width:820px){.bar{grid-template-columns:90px 1fr 60px}}
+.sim{grid-template-rows:auto auto 1fr auto}
+.sim.wide .body{grid-template-columns:1fr;grid-template-rows:minmax(0,1.1fr) minmax(0,1fr)}
+.sim:not(:has(.branches)){grid-template-rows:auto 1fr auto}
+.bar .bt.none{background:repeating-linear-gradient(45deg,var(--sheet) 0 8px,var(--hair) 8px 10px)}
+.say h2{font-size:28px;line-height:1.3}
+.sim .body{overflow:hidden}
+.sim .body>svg{min-height:0;height:100%;width:100%}
+.sim .narr{min-height:0}
+.stage>.stack{font-size:15.5px;gap:8px}
+.stage>.stack .row{padding:13px 14px}
+.stack .row .t{font-family:var(--font)}
+.stage:has(>.sim){place-items:stretch}
+.sim{min-height:0;height:100%;overflow:hidden}
+.sim.wide .body{grid-template-rows:minmax(0,55%) minmax(0,45%)}
+/* 讲解条放在图上方，永远可见 */
+.sim{grid-template-rows:auto auto auto minmax(0,1fr)}
+.sim:not(:has(.branches)){grid-template-rows:auto auto minmax(0,1fr)}
+.sim .ctl{order:0}.sim .branches{order:1}.sim .narr{order:2}.sim .body{order:3;min-height:0}
+/* ===== v4 ===== */
+.fl-node .sub{font-size:13.5px;fill:#3E4B5B}
+.fl-elab{font-size:13px;fill:#3E4B5B}
+.fl-edge.red{stroke:var(--red)}.fl-edge.amber{stroke:var(--amber)}.fl-edge.green{stroke:var(--green)}
+.fl-elab.red{fill:var(--red);font-weight:700}.fl-elab.amber{fill:var(--amber);font-weight:700}.fl-elab.green{fill:var(--green);font-weight:700}
+.stage{margin:10px 0 10px 10px;padding:4px}.card.full .stage{margin:0 10px 10px}
+.bar .bt i{background:#B8C2CF}
+.bar .bmiss{grid-column:2/4;color:var(--ink2);font-size:14px;font-style:italic}
+.sim .btn{background:transparent;box-shadow:0 0 0 1.5px var(--blue);color:var(--blue)}
+.sim .btn:hover{background:var(--blue-soft)}
+.say{justify-content:center}
+.src{margin-top:6px}
+.top .count{font-size:16px;color:var(--ink);font-weight:700}
+.top .track{height:6px}
+.card.full.on{grid-template-rows:auto minmax(0,1fr)}
+.head-full{padding:18px 26px 8px;display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
+.head-full .kicker{font-size:14px;color:var(--blue);font-weight:700}
+.head-full h2{margin:0;font-size:24px;line-height:1.3}
+.sim.wide .body{grid-template-rows:minmax(0,64%) minmax(0,36%)}
+@media (max-width:820px){.head-full{padding:12px 14px 6px}.head-full h2{font-size:19px}}
+.say{justify-content:safe center}
+@media (max-width:820px){.bars{gap:8px}.bar{font-size:13px;grid-template-columns:84px 1fr 56px}.bar .bt{height:20px}.bar .bn{font-size:12px;margin-top:-4px}.bars .bc{font-size:12px}
+ .sim .ctl .btn{padding:5px 10px}.sim .branches{flex-direction:column;align-items:flex-start;gap:2px}}
+
+/* 与知识库首页（VitePress 风格）对齐：白底页面、12px 圆角、细边框卡片、深色模式 */
+html,body{background:var(--page,#fff)}
+.card{border:1px solid var(--hair);box-shadow:none}
+html.dark{--page:#1b1b1f;--paper:#2a2a31;--sheet:#202127;--ink:#fffff5;--ink2:rgba(235,235,245,.65);--hair:#3a3a40;
+--blue:#7c9cff;--blue-soft:rgba(124,156,255,.16);--amber:#f0b429;--amber-soft:rgba(240,180,41,.14);--green:#3dd68c;--green-soft:rgba(61,214,140,.14);--red:#f66f81;--red-soft:rgba(246,111,129,.14);color-scheme:dark}
+html.dark .btn.main{color:#16202c}
+html.dark .fl-node .sub,html.dark .fl-elab{fill:var(--ink2)}html.dark .fl-elab{stroke:var(--page)!important}html.dark .fl-edge{stroke:#6b7280}
+html.dark .fl-elab.act{fill:var(--blue)}
+</style></head><body>
+<header class="top"><span class="course">李宏毅 ML 2026 · L02 Context Engineering</span><span class="track"><i></i></span><span class="count"></span></header>
+<main class="deck">
+<section class="card">
+  <div class="stage"><svg class="flow" data-act="ce" data-edge="ce>llm" data-flow='{"nodes":[{"id":"his","x":110,"y":110,"t":"全部历史","s":"人类、工具 1/2/3 输出","w":200},{"id":"ce","x":380,"y":110,"t":"Context Engineering","s":"挑选给模型看的内容","c":"blue","w":240},{"id":"llm","x":650,"y":110,"t":"语言模型","s":"只看现在的输入","c":"amber"},{"id":"long","x":250,"y":300,"t":"太长","s":"超过上限、能力变差","c":"red"},{"id":"short","x":520,"y":300,"t":"太短","s":"不知道刚才发生什么","c":"red"}],"edges":[{"f":"his","t":"ce"},{"f":"ce","t":"llm","l":"长度合适"},{"f":"ce","t":"long"},{"f":"ce","t":"short"}]}'></svg></div>
+  <div class="say"><span class="kicker">这讲一句话讲什么？</span><h2>Agent 的上下文不能太长，也不能太短</h2>
+  <p>语言模型「活在当下」，只管现在的输入；Context Engineering 决定这次输入放什么。</p>
+  <p class="key">本讲三段：Context Engineering、Agent 之间的互动、Agent 对学术研究的冲击。</p>
+  <details class="more"><summary></summary><ul><li>官方材料：agent_era.pdf（61 页）；影片三段：urwDLyNa9FU（53 分）、mmPmNezjCi0（22 分）、VqB8zMujdjM（24 分）。下文「影片 1/2/3」指这三段。</li><li>衔接：上一讲的子代理、SKILL 按需读取、压缩，讲者都归到 Context Engineering。</li></ul></details>
+  <div class="src official">agent_era.pdf p2–3；影片 1 01:00、04:00</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><pre><span class="c"># 没做 Context Engineering 的 Agent（影片 1 05:01）</span>
+C = []                        <span class="c"># 上下文</span>
+for t in 1 .. ∞:
+    I_t = 现在发生的事      <span class="c"># 人的话或工具输出</span>
+    O_t = LLM(C + I_t)
+    <span class="hl">C = C + I_t + O_t          # 只增不减</span>
+
+<span class="c"># Context Engineering 改的就是最后一行</span></pre></div>
+  <div class="say"><span class="kicker">问题出在哪一行？</span><h2>不做处理时，上下文每一步只增不减</h2>
+  <p>讲者把 Agent 写成从 1 到无限大的 for 循环；每步把输入和输出接到上下文后面。</p>
+  <p class="key">后面所有方法都在改写「上下文怎么更新」：压缩、过滤、交给语言模型自己管。</p>
+  <div class="src official">影片 1 05:01–06:01（讲者板书，代码为整理）</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="stack">
+   <div class="row developer"><span class="i">0</span><span class="r">系统</span><span class="t">系统提示词 + 任务</span></div>
+   <div class="row assistant"><span class="i">A</span><span class="r">摘要</span><span class="t">另一个语言模型把旧历史写成摘要</span></div>
+   <div class="row result bad"><span class="i">B</span><span class="r">清除</span><span class="t">Hard Clear：[这里曾经有个 Tool output]</span></div>
+   <div class="row result new"><span class="i">C</span><span class="r">卸载</span><span class="t">[详见 log1.txt]，需要时 Read(log1.txt)</span></div>
+  </div></div>
+  <div class="say"><span class="kicker">压缩有哪几种？</span><h2>压缩有摘要、清除、卸载到文件三种</h2>
+  <p>卸载把工具输出存进硬盘上的 log1.txt，上下文只留一句「详见 log1.txt」。</p>
+  <p class="key">卸载的好处：语言模型真的需要时，还能用 Read 把原文读回来。</p>
+  <div class="src official">agent_era.pdf p5、p8；影片 1 13:01–14:01</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="pairs">
+   <div class="pair"><div class="a"><b>LLM 摘要</b>多呼叫一个语言模型</div><div class="b"><b>Hard Clear（observation masking）</b>直接换成一句占位</div></div>
+   <div class="pair"><div class="no"><b>预期</b>上下文变短，花的 token 一定变少</div><div class="yes"><b>实际</b>步骤不见了，Agent 重做做过的事（轨迹延长），总 token 没下降</div></div>
+  </div></div>
+  <div class="say"><span class="kicker">哪种压缩更好？</span><h2>简单的清除，常常和摘要表现差不多</h2>
+  <p>讲者引用 arXiv 2508.21433 在 SWE-bench 上的比较：不压缩的 raw agent 多数表现不错，但耗更多 token。</p>
+  <p class="key">论文发现 observation masking 的表现很多时候和 LLM 摘要差不多。</p>
+  <details class="more"><summary></summary><ul><li>论文对 LLM 摘要的解释：轨迹延长，Agent 不确定刚才执行过没有，于是重复执行，步骤反而变多（影片 1 11:00–12:00）。</li><li>课件没有给具体数字，这里不写数字。</li></ul></details>
+  <div class="src official">agent_era.pdf p6–7；影片 1 10:02–12:00</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><svg class="flow" data-act="fb" data-edge="fail>fb" data-flow='{"nodes":[{"id":"fail","x":120,"y":110,"t":"失败的例子","s":"不压缩做对、压缩后做错","c":"red","w":200},{"id":"fb","x":400,"y":110,"t":"语言模型反省","s":"比较两条轨迹","c":"amber","w":200},{"id":"ins","x":660,"y":110,"t":"改写摘要指令","s":"要保留什么","c":"green"},{"id":"sum","x":400,"y":300,"t":"下次摘要","s":"保留凭证、token 状态","c":"blue","w":200}],"edges":[{"f":"fail","t":"fb"},{"f":"fb","t":"ins"},{"f":"ins","t":"sum"}]}'></svg></div>
+  <div class="say"><span class="kicker">失败：摘要丢了关键信息怎么办？</span><h2>ACON 用失败例子改写摘要指令</h2>
+  <p>context collapse（压缩后原本能做的任务做不了）发生在摘要丢了最重要的信息时。</p>
+  <p class="key">ACON 不训练模型，只让语言模型读失败例子，写出「摘要要保留什么」。</p>
+  <details class="more"><summary></summary><ul><li>例：反省后写出「保留凭证变数、token 状态、认证需求和受保护 API 的防护规则」（课件 p13）。</li><li>ACON 在 AppWorld 上做实验；讲者说「还真的有用」（影片 1 23:00）。</li><li>也有论文微调专门做压缩的模型，例：SUPO 用任务的 reward 训练（课件 p15）。</li><li>讲者把它连回上一讲的删邮件事件（影片 1 21:01）。</li></ul></details>
+  <div class="src official">agent_era.pdf p12–15；影片 1 20:02–25:01</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><svg class="flow" data-act="sub" data-edge="main>sub" data-flow='{"nodes":[{"id":"main","x":130,"y":200,"t":"主 Agent","s":"上下文伸长又缩短","c":"blue"},{"id":"sub","x":420,"y":110,"t":"子代理","s":"做子任务","c":"green"},{"id":"ret","x":420,"y":300,"t":"Return: …","s":"其余过程自动删除","c":"amber","w":200},{"id":"rl","x":680,"y":200,"t":"RL 训练","s":"主干过长或越界都罚","c":"red"}],"edges":[{"f":"main","t":"sub","l":"spawn"},{"f":"sub","t":"ret"},{"f":"ret","t":"main"},{"f":"rl","t":"main"}]}'></svg></div>
+  <div class="say"><span class="kicker">子代理和压缩什么关系？</span><h2>子代理等于让 Agent 自主压缩</h2>
+  <p>子代理执行 <code>return</code> 后，它做过的事从主上下文消失，只留 Return 内容。</p>
+  <p class="key">讲者：模型不喜欢压缩（抹除记忆），也难靠 prompt 稳定使用压缩工具，这能力要另外训练。</p>
+  <details class="more"><summary></summary><ul><li>AgentFold 让模型自己「折叠」步骤，需要微调模型（课件 p17）。</li><li>arXiv 2510.11967：主干上下文过长会被惩罚、子代理做超出范围的事也会被惩罚；讲者说光看答案对不对不够（课件 p20，影片 1 35:00）。</li><li>论文例子：找一篇 2023 年论文时，主上下文随子代理伸长、缩短（影片 1 32:00–33:01）。</li></ul></details>
+  <div class="src official">agent_era.pdf p16–20；影片 1 27:00–35:00</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="bars" data-bars='{"unit":"token","items":[{"l":"只是 GitHub 的工具说明","v":4600,"c":"blue"},{"l":"其他工具","v":null}],"caption":"课件 p24 引用 MCP-Zero"}'></div></div>
+  <div class="say"><span class="kicker">怎么不让无关内容进来？</span><h2>过滤和按需加载在进入前就挡掉内容</h2>
+  <p>OpenClaw 的 <code>memory_get</code> 可指定起始行和行数，只读需要的部分。</p>
+  <p class="key">MCP-Zero 让 AI 先说出需要什么工具，再搜索加载；OpenClaw 的 SKILL 也是按需加载。</p>
+  <details class="more"><summary></summary><ul><li>arXiv 2601.16746：读 log 时用小模型先滤掉和「bug fixing」无关的内容（课件 p22）。</li><li>讲者：工具多了，模型会直接超过上下文窗口（影片 1 42:01）。</li></ul></details>
+  <div class="src official">agent_era.pdf p21–26；影片 1 38:03–42:01</div></div>
+</section>
+
+<section class="card full">
+  <div class="head-full"><span class="kicker">动手：看上下文怎么随步骤变化</span><h2>同一个任务，三种处理留下不同的上下文</h2></div>
+  <div class="stage"><div class="sim" data-sim='{"label":"卸载：长输出存成文件","note":"串起来的示例：三种做法照课件 p5–8、p18 和影片 1 的说明；任务内容是教学示例，不是原文真实案例。","flow":{"nodes":[{"id":"t","x":100,"y":130,"t":"工具输出","s":"一份很长的 log","c":"green"},{"id":"ce","x":340,"y":130,"t":"更新上下文","c":"blue"},{"id":"m","x":580,"y":130,"t":"语言模型","c":"amber"}],"edges":[{"f":"t","t":"ce"},{"f":"ce","t":"m"},{"f":"m","t":"t","l":"下一个工具","route":"bottom"}]},
+  "steps":[
+   {"act":"t","msg":{"r":"tool","t":"run_tests → 3000 行输出"},"say":"工具回来一大段输出。"},
+   {"act":"ce","edge":"t>ce","msg":{"r":"sys","t":"存进 log1.txt；上下文只留 [详见 log1.txt]"},"say":"卸载：原文存到硬盘。"},
+   {"act":"m","edge":"ce>m","msg":{"r":"asst","t":"[tool_use] Read(log1.txt) 第 120–160 行"},"say":"需要细节时，按行读回来。"},
+   {"act":"m","msg":{"r":"asst","t":"找到失败原因，修改代码"},"say":"上下文短，又没丢信息。"}],
+  "alts":[{"label":"Hard Clear：轨迹延长","steps":[
+   {"act":"t","msg":{"r":"tool","t":"run_tests → 3000 行输出"},"say":"同样的长输出。"},
+   {"act":"ce","edge":"t>ce","msg":{"r":"err","t":"[这里曾经有个 Tool output]"},"say":"直接清掉，上下文最短。"},
+   {"act":"m","edge":"ce>m","msg":{"r":"err","t":"我跑过测试了吗？再跑一次"},"say":"Agent 不确定做过没有，重复执行。"},
+   {"act":"t","edge":"m>t","msg":{"r":"tool","t":"run_tests → 3000 行输出"},"say":"步骤变多，总 token 没省下。"}]},
+   {"label":"子代理：只拿回结论","steps":[
+   {"act":"m","msg":{"r":"asst","t":"spawn(跑测试并找出失败原因)"},"say":"主 Agent 把子任务交出去。"},
+   {"act":"t","edge":"m>t","msg":{"r":"tool","t":"子代理读完 3000 行"},"say":"繁琐过程只在子代理的上下文里。"},
+   {"act":"ce","edge":"t>ce","msg":{"r":"sys","t":"Return: test_login 因时区失败"},"say":"主上下文只多一行 Return。"}]}]}'></div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><svg class="flow" data-act="cur" data-edge="ref>cur" data-flow='{"nodes":[{"id":"gen","x":110,"y":150,"t":"Generator","s":"做任务","c":"amber"},{"id":"ref","x":330,"y":150,"t":"Reflector","s":"反省","c":"amber"},{"id":"cur","x":550,"y":150,"t":"Curator","s":"写编辑指令","c":"blue"},{"id":"pb","x":330,"y":330,"t":"Playbook","s":"下一步的上下文","c":"green"}],"edges":[{"f":"gen","t":"ref"},{"f":"ref","t":"cur"},{"f":"cur","t":"pb"},{"f":"pb","t":"gen"}]}'></svg></div>
+  <div class="say"><span class="kicker">深入一层：能不能全交给语言模型？</span><h2>Agentic CE 让语言模型自己改写上下文</h2>
+  <p>每一步由语言模型把旧上下文、输入、输出写成下一步的上下文。</p>
+  <p class="key">Dynamic Cheatsheet 的核心：只存未来用得上的东西，例：有效策略、可重用的 code、关键发现。</p>
+  <details class="more"><summary></summary><ul><li>ACE（arXiv 2510.04618）用 Generator、Reflector、Curator 三个角色更新 Playbook（课件 p30）。</li><li>Recursive Language Models（arXiv 2512.24601）把大部分上下文放硬盘，让语言模型写程序去搜（课件 p31）。</li><li>课件最后一页用问句收尾：「把一切交给 LLM？」，没有给结论（课件 p33）。</li></ul></details>
+  <div class="src official">agent_era.pdf p27–33；影片 1 45:00–52:01</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><svg class="flow" data-act="b" data-edge="a>c" data-flow='{"nodes":[{"id":"a","x":130,"y":110,"t":"Agent A","s":"提方案 + 评论","c":"amber"},{"id":"b","x":130,"y":300,"t":"Agent B","s":"提方案 + 评论","c":"amber"},{"id":"c","x":420,"y":200,"t":"Agent C","s":"汇整后提新方案","c":"blue"},{"id":"q","x":680,"y":200,"t":"结果","s":"agent 越多 quality 越好","c":"green","w":200}],"edges":[{"f":"a","t":"c"},{"f":"b","t":"c"},{"f":"c","t":"q"}]}'></svg></div>
+  <div class="say"><span class="kicker">多个 Agent 怎么合作最有效？</span><h2>协作结构有影响，一个传一个最没效</h2>
+  <p>arXiv 2406.07155 用有向图定义谁传给谁，比较链状、星状、树状、网状。</p>
+  <p class="key">讲者：哪种结构最适合很可能因任务而异；agent 越多 quality 越好，像 scaling law。</p>
+  <details class="more"><summary></summary><ul><li>论文里有效的树状是「由少到多、由主干到分支」，不是底层员工层层上交（影片 2 03:00–04:00）。</li><li>quality 是四个 benchmark 的平均（影片 2 05:02）。</li></ul></details>
+  <div class="src official">agent_era.pdf p35–38；影片 2 01:02–06:00</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="pairs">
+   <div class="pair"><div class="a"><b>博弈</b>AI 玩狼人杀（werewolf.foaster.ai）、剧本杀（MIRAGE）</div><div class="b"><b>讲者</b>它们做得出隐瞒、欺骗这类高阶技巧</div></div>
+   <div class="pair"><div class="no"><b>新闻印象</b>Moltbook 上 AI 成立「甲壳教」，像在社交</div><div class="yes"><b>论文分析</b>agent 多半只回一句，很少你来我往</div></div>
+  </div></div>
+  <div class="say"><span class="kicker">Agent 之间能社交吗？</span><h2>Moltbook 的 Agent 多半只回一句话</h2>
+  <p>Moltbook 是 Agent 的社群网站；有些 Agent 是按心跳间隔发文，例：每 30 分钟一次。</p>
+  <p class="key">arXiv 2602.12634：最常谈自我意识的 agent，反而和最少的其他 agent 互动。</p>
+  <details class="more"><summary></summary><ul><li>讲者提到有人的主人先叫它慫恿大家成立宗教（影片 2 18:00）。</li><li>小金回错留言，讲者不帮它删，它花两小时自己解决（影片 2 22:00）。</li></ul></details>
+  <div class="src official">agent_era.pdf p39–46；影片 2 08:00–22:00</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="bars" data-bars='{"unit":"篇","items":[{"l":"Agents4Science 投稿","v":247},{"l":"接受","v":48,"c":"blue"}],"caption":"讲者口述的数字（影片 3 19:01）"}'></div></div>
+  <div class="say"><span class="kicker">AI 写论文到什么程度了？</span><h2>好论文仍要人决定点子和实验设计</h2>
+  <p>Agents4Science 要求 AI 当第一作者、AI 审稿，最后由人类给评价。</p>
+  <p class="key">被接受的论文，人类在点子发想和实验设计上介入更多；数据分析和写作 AI 看起来能独立完成。</p>
+  <details class="more"><summary></summary><ul><li>AI 的角色：工具（一个口令一个动作）→ 协作 → 代理（自己完成任务）；今天通常要人来决定做什么（课件 p48、p58）。</li><li>例：Andrew Hall 用 Claude Code 重跑旧分析，写了「100 倍研究机构」（课件 p49–50）。</li><li>AAAI 2026 让 AI 进入审查流程，只给意见不打分（课件 p54）。</li><li>课件结论：在 Agent 萌芽的时代，「想做」什么比「会做」什么更重要（p59）。</li></ul></details>
+  <div class="src official">agent_era.pdf p48–59；影片 3 00:00–22:02</div></div>
+</section>
+
+<section class="card full">
+  <div class="head-full"><span class="kicker">小测（补充：题目由学习搭子出）</span><h2>用 6 个场景检查你会不会管上下文</h2></div>
+  <div class="stage"><div class="quiz" data-quiz='[
+   {"q":"你把工具输出全换成「这里曾经有个 Tool output」，上下文变短了，账单却没降。按本讲最可能的原因？","opts":["压缩本身很贵","Agent 不确定做过没有，重复执行，步骤变多","模型变笨了"],"a":1,"why":"轨迹延长。","back":4},
+   {"q":"压缩后 Agent 忘了 API 的认证方式，任务失败。ACON 的做法是？","opts":["换更大的模型","用失败例子让语言模型反省，改写摘要指令要保留认证信息","不再压缩"],"a":1,"why":"context collapse 的修法：改摘要指令，不必训练。","back":5},
+   {"q":"你希望长 log 不占上下文，又能在需要时查细节。选哪种？","opts":["Hard Clear","卸载到文件，需要时 Read 回来","全部保留"],"a":1,"why":"卸载保住了回读的路。","back":3},
+   {"q":"你接了 30 个 MCP 工具，第一句话就快到上下文上限。按本讲先做什么？","opts":["按需加载：先让 AI 说需要什么，再搜工具","把工具说明翻译成中文","删掉系统提示词"],"a":0,"why":"MCP-Zero：光 GitHub 工具就约 4600 token。","back":7},
+   {"q":"你只靠 prompt 叫模型「上下文太长时自己压缩」，发现它很少照做。讲者怎么解释？","opts":["prompt 写得不够长","模型不喜欢抹除记忆，这能力要另外训练","压缩工具坏了"],"a":1,"why":"讲者引用的论文都发现 prompt 难让模型稳定压缩。","back":6},
+   {"q":"你让 5 个 Agent 讨论一个方案，排成一个传一个。按 2406.07155 的结果？","opts":["这是最有效的结构","这是最没效的结构","结构不影响结果"],"a":1,"why":"误区：人越多排成链就越好。","back":10}
+  ]'></div></div>
+</section>
+</main>
+<nav class="bottom"><button class="btn" id="prev">上一张</button><button class="btn main" id="next">下一张</button></nav>
+<script>
+/* 学习搭子 固定组件库 — 不要在课程里改这个文件。 */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const NS='http://www.w3.org/2000/svg';
+const el=(t,a={},p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p&&p.appendChild(e);return e};
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+/* ---------- 卡片翻页 ---------- */
+const cards=$$('.card');let cur=0;
+function go(i){i=Math.max(0,Math.min(cards.length-1,i));cards[cur].classList.remove('on');cur=i;cards[cur].classList.add('on');
+  $('.track i').style.width=((cur+1)/cards.length*100)+'%';$('.count').textContent=(cur+1)+' / '+cards.length;
+  $('#prev').disabled=cur===0;$('#next').disabled=cur===cards.length-1;history.replaceState(null,'','#'+(cur+1));}
+window.goCard=n=>go(n-1);
+$('#prev').onclick=()=>go(cur-1);$('#next').onclick=()=>go(cur+1);
+addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.key==='ArrowRight')go(cur+1);if(e.key==='ArrowLeft')go(cur-1)});
+let sx=null;addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
+addEventListener('touchend',e=>{if(sx===null)return;const d=e.changedTouches[0].clientX-sx;if(Math.abs(d)>60)go(cur+(d<0?1:-1));sx=null});
+
+/* ---------- flow：用 JSON 画流程图 ----------
+ spec = {w,h,nodes:[{id,x,y,t,s?,c?,w?}],edges:[{f,t,l?,bend?}]}  节点坐标是中心点 */
+function drawFlow(svg,spec){
+  svg.innerHTML='';
+  const defs=el('defs',{},svg);
+  [['a','#AEB8C6'],['b','#2550D9'],['red','#C8372D'],['amber','#C77A00'],['green','#16875A']].forEach(([id,c])=>{const m=el('marker',{id:'ar'+id+svg.dataset.uid,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:7,markerHeight:7,orient:'auto-start-reverse'},defs);el('path',{d:'M0,0L10,5L0,10z',fill:c},m)});
+  const N={};spec.nodes.forEach(n=>N[n.id]={...n,w:n.w||150,h:n.s?70:56});
+  const ns=Object.values(N);
+  let x0=Math.min(...ns.map(n=>n.x-n.w/2)),x1=Math.max(...ns.map(n=>n.x+n.w/2)),y0=Math.min(...ns.map(n=>n.y-n.h/2)),y1=Math.max(...ns.map(n=>n.y+n.h/2));
+  const B={x0,x1,y0,y1};
+  const eg=el('g',{},svg),ng=el('g',{},svg);svg._edges={};svg._nodes={};
+  const clip=(a,b)=>{const dx=b.x-a.x,dy=b.y-a.y;const s=Math.min(Math.abs((a.w/2+6)/(dx||1e-9)),Math.abs((a.h/2+6)/(dy||1e-9)));return[a.x+dx*s,a.y+dy*s]};
+  spec.edges.forEach(e=>{const a=N[e.f],b=N[e.t];let d,lx,ly;
+    if(e.route){ /* 沿外圈走的直角线：top|bottom|left|right，lane 控制离外框的距离 */
+      const g=30+(e.lane||0)*30,oa=e.oa||0,ob=e.ob||0;
+      if(e.route==='top'||e.route==='bottom'){const t=e.route==='top',Y=t?B.y0-g:B.y1+g,ya=a.y+(t?-1:1)*(a.h/2+2),yb=b.y+(t?-1:1)*(b.h/2+8);
+        d=`M${a.x+oa},${ya} V${Y} H${b.x+ob} V${yb}`;lx=(a.x+oa+b.x+ob)/2;ly=Y+(t?-8:18);
+        t?(y0=Math.min(y0,Y-26)):(y1=Math.max(y1,Y+26));}
+      else{const l=e.route==='left',X=l?B.x0-g:B.x1+g,xa=a.x+(l?-1:1)*(a.w/2+2),xb=b.x+(l?-1:1)*(b.w/2+8);
+        d=`M${xa},${a.y+oa} H${X} V${b.y+ob} H${xb}`;lx=X+(l?-8:8);ly=(a.y+b.y)/2;
+        l?(x0=Math.min(x0,X-90)):(x1=Math.max(x1,X+90));}
+    }else{const[p1,q1]=clip(a,b),[p2,q2]=clip(b,a);const mx=(p1+p2)/2,my=(q1+q2)/2,len=Math.hypot(p2-p1,q2-q1)||1,bd=e.bend||0;
+      const cx=mx-(q2-q1)/len*bd,cy=my+(p2-p1)/len*bd;d=`M${p1},${q1} Q${cx},${cy} ${p2},${q2}`;
+      const qx=.25*p1+.5*cx+.25*p2,qy=.25*q1+.5*cy+.25*q2,sg=bd>=0?1:-1;lx=qx-(q2-q1)/len*sg*14;ly=qy+(p2-p1)/len*sg*14+4;}
+    const mk=e.c||'a';const p=el('path',{d,class:'fl-edge '+(e.c||''),'marker-end':`url(#ar${mk}${svg.dataset.uid})`},eg);p._mk=mk;
+    let lab=null;if(e.l){const anc=e.route==='left'?'end':e.route==='right'?'start':'middle';lab=el('text',{x:lx,y:ly,'text-anchor':anc,class:'fl-elab '+(e.c||''),stroke:'#F2F4F7','stroke-width':5,'paint-order':'stroke'},eg);lab.textContent=e.l}
+    svg._edges[e.f+'>'+e.t]={p,lab}});
+  ns.forEach(n=>{const g=el('g',{class:'fl-node '+(n.c||'')},ng);
+    el('rect',{x:n.x-n.w/2,y:n.y-n.h/2,width:n.w,height:n.h,rx:14},g);
+    const t=el('text',{x:n.x,y:n.y+(n.s?-4:6),'text-anchor':'middle'},g);t.textContent=n.t;
+    if(n.s){const s=el('text',{x:n.x,y:n.y+18,'text-anchor':'middle',class:'sub'},g);s.textContent=n.s}
+    svg._nodes[n.id]=g});
+  /* 自动贴合：viewBox 只包住内容，图会放大填满面板 */
+  const P=spec.pad??8;svg.setAttribute('viewBox',`${x0-P} ${y0-P-10} ${x1-x0+2*P} ${y1-y0+2*P+20}`);
+  svg._set=(act,edge)=>{for(const k in svg._nodes)svg._nodes[k].classList.toggle('act',k===act);
+    for(const k in svg._edges){const on=k===edge,E=svg._edges[k];E.p.classList.toggle('act',on);E.p.setAttribute('marker-end',`url(#ar${on?'b':E.p._mk}${svg.dataset.uid})`);E.lab&&E.lab.classList.toggle('act',on)}};
+  svg._set(svg.dataset.act,svg.dataset.edge);
+}
+let uid=0;
+$$('svg.flow').forEach(s=>{s.dataset.uid=++uid;drawFlow(s,JSON.parse(s.dataset.flow))});
+
+/* ---------- sim：一步步走的模拟器 ----------
+ data-sim = {flow:{...}, steps:[{act,edge,msg:{r:user|asst|tool|err|sys,n?,t},say}], alt?:{label,steps:[...]}} */
+$$('.sim').forEach(box=>{
+  const spec=JSON.parse(box.dataset.sim);if(spec.alt&&!spec.alts)spec.alts=[spec.alt];const AL=spec.alts||[];const gname='br'+(++uid);
+  box.innerHTML=`<div class="ctl"><button class="btn sm" data-a="step">下一步</button><button class="btn sm" data-a="play">▶ 自动</button><button class="btn sm" data-a="reset">重置</button>
+   <label>速度 <input type="range" min="300" max="2500" step="100" value="1200"></label></div>${AL.length?`<div class="ctl branches"><label><input type="radio" name="${gname}" value="-1" checked> ${esc(spec.label||'正常路径')}</label>${AL.map((a,j)=>`<label><input type="radio" name="${gname}" value="${j}"> ${esc(a.label)}</label>`).join('')}</div>`:''}
+   <div class="body"><svg class="flow"></svg><div class="log"></div></div><div class="narr"></div>`;
+  if(spec.layout==='wide')box.classList.add('wide');
+  const svg=$('svg',box);svg.dataset.uid=++uid;drawFlow(svg,spec.flow);
+  const log=$('.log',box),narr=$('.narr',box),radios=$$('input[type=radio]',box),spd=$('input[type=range]',box),play=$('[data-a=play]',box);
+  let i=0,timer=null;const sel=()=>{const r=radios.find(r=>r.checked);return r?+r.value:-1};const steps=()=>sel()>=0?AL[sel()].steps:spec.steps;
+  const hint=spec.note?esc(spec.note)+'　点「下一步」开始。':'点「下一步」开始。';const reset=()=>{i=0;log.innerHTML='';narr.innerHTML=hint;svg._set(null,null);stop()};
+  const stop=()=>{clearTimeout(timer);timer=null;play.textContent='▶ 自动'};
+  const step=()=>{const S=steps();if(i>=S.length){narr.textContent='流程结束。点「重置」再走一遍。';stop();return false}
+    const s=S[i++];svg._set(s.act,s.edge);if(s.msg){const d=document.createElement('div');d.className='msg '+s.msg.r;
+      d.innerHTML=`<b>${esc(s.msg.n||({user:'用户',asst:'模型',tool:'工具结果',err:'出错',sys:'系统提示词'}[s.msg.r]))}</b>${esc(s.msg.t)}`;log.appendChild(d);log.scrollTop=1e9}
+    narr.innerHTML=`<b>第 ${i}/${S.length} 步</b>　${esc(s.say)}`;return true};
+  const loop=()=>{if(step())timer=setTimeout(loop,+spd.value);else stop()};
+  box.onclick=e=>{const a=e.target.dataset.a;if(a==='step'){stop();step()}if(a==='reset')reset();if(a==='play'){if(timer)stop();else{play.textContent='❚❚ 暂停';loop()}}};
+  narr.innerHTML=hint;radios.forEach(r=>r.onchange=reset);
+  const P=new URLSearchParams(location.search);if(P.get('alt')&&radios[+P.get('alt')]){radios[+P.get('alt')].checked=true}for(let n=+P.get('sim')||0;n>0;n--)step(); /* 自查用：?sim=5&alt=1 */
+});
+
+/* ---------- bars：横向条形图 ----------
+ data-bars = {unit, items:[{l,v,c?:blue|amber|green|red,note?}], caption?}  数字必须来自原文 */
+$$('.bars').forEach(box=>{const B=JSON.parse(box.dataset.bars),mx=Math.max(...B.items.filter(i=>i.v!=null).map(i=>i.v));
+  box.innerHTML=B.items.map(i=>`<div class="bar ${i.c||''}"><span class="bl">${esc(i.l)}</span>${i.v==null?`<span class="bmiss">${esc(i.miss||'原文未给数字')}</span>`:`<span class="bt"><i style="width:${(i.v/mx*100).toFixed(1)}%"></i></span><span class="bv">${esc(i.v)}${esc(B.unit||'')}</span>`}${i.note?`<span class="bn">${esc(i.note)}</span>`:''}</div>`).join('')+(B.caption?`<div class="bc">${esc(B.caption)}</div>`:'')});
+
+/* ---------- quiz：页内小测 ----------
+ data-quiz = [{q,opts:[...],a:正确下标,why,back:答错时回到第几张卡片}] */
+$$('.quiz').forEach(box=>{
+  const Q=JSON.parse(box.dataset.quiz);let k=0,score=0;const done=new Set();
+  const render=()=>{const q=Q[k];box.innerHTML=`<div class="qn">第 ${k+1} / ${Q.length} 题　·　已答对 ${score}</div><div class="qt">${esc(q.q)}</div>
+    ${q.opts.map((o,j)=>`<button class="opt" data-j="${j}">${String.fromCharCode(65+j)}. ${esc(o)}</button>`).join('')}
+    <div class="fb"></div><div class="nav"><button class="btn sm" data-n="-1" ${k?'':'disabled'}>上一题</button><button class="btn sm main" data-n="1" ${k<Q.length-1?'':'disabled'}>下一题</button></div>`};
+  box.onclick=e=>{const t=e.target;if(t.dataset.n){k+=+t.dataset.n;render();return}
+    if(t.dataset.j===undefined||done.has(k))return;const q=Q[k],j=+t.dataset.j,fb=$('.fb',box);done.add(k);
+    $$('.opt',box)[q.a].classList.add('ok');
+    if(j===q.a){score++;fb.innerHTML='✓ 对。'+esc(q.why)}else{t.classList.add('no');fb.innerHTML='✗ 不对。'+esc(q.why)+(q.back?` <a onclick="goCard(${q.back})">回到第 ${q.back} 张再看看</a>`:'')}
+    $('.qn',box).textContent=`第 ${k+1} / ${Q.length} 题　·　已答对 ${score}`};
+  render();
+  const pk=new URLSearchParams(location.search).get('pick');if(pk!==null)$$('.opt',box)[+pk].click(); /* 自查用：?pick=0 */
+});
+
+go(Math.max(0,(parseInt(location.hash.slice(1))||1)-1));
+})();
+/* ---------- 学完了：点一下记为已学完（存在本机浏览器） ---------- */
+(function(){if(window.__finish)return;window.__finish=1;
+if(!document.querySelector('.deck'))return;
+const st=document.createElement('style');st.textContent=`.fin-btn{position:fixed;right:16px;bottom:76px;z-index:50;padding:10px 16px;border-radius:999px;border:0;background:#16a34a;color:#fff;font:600 15px system-ui;box-shadow:0 4px 14px rgba(0,0,0,.18);cursor:pointer}.fin-btn.done{background:#e5e7eb;color:#166534}`;document.head.appendChild(st);
+const key='done:'+location.pathname,p=n=>String(n).padStart(2,'0');
+const b=document.createElement('button');b.className='fin-btn';document.body.appendChild(b);
+const show=()=>{const d=localStorage.getItem(key);b.classList.toggle('done',!!d);b.textContent=d?'✓ 已学完 '+d:'✓ 学完了';b.title=d?'再点一下取消':''};show();
+b.onclick=()=>{if(localStorage.getItem(key)){if(confirm('取消「已学完」记录？'))localStorage.removeItem(key)}else{const x=new Date();localStorage.setItem(key,x.getFullYear()+'-'+p(x.getMonth()+1)+'-'+p(x.getDate()))}show()};
+})();
+</script></body></html>
