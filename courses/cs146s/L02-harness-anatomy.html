@@ -1,0 +1,479 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<script>(function(){var s=localStorage.getItem("theme");if(s?s==="dark":matchMedia("(prefers-color-scheme: dark)").matches)document.documentElement.classList.add("dark")})()</script>
+<title>CS146S · L02</title><style>
+/* 学习搭子 固定设计系统 — 不要在课程里改这个文件。只改 lesson.html 的内容。 */
+:root{
+  --paper:#F6F6F7; --sheet:#FFFFFF; --ink:#16202C; --ink2:#4A5868; --hair:#E2E2E3;
+  --blue:#2550D9;  --blue-soft:#E3EAFD;   /* 主角：当前步骤 / 重点 */
+  --amber:#C77A00; --amber-soft:#FBEFD9; /* 数据 / 消息 */
+  --green:#16875A; --green-soft:#DDF3E9; /* 成功 / 工具结果 */
+  --red:#C8372D;   --red-soft:#FBE3E1;   /* 出错 */
+  --r-lg:12px; --r-sm:10px;
+  --font:"PingFang SC","Noto Sans CJK SC","Source Han Sans SC","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--paper);color:var(--ink);font:17px/1.65 var(--font);-webkit-font-smoothing:antialiased}
+.top{position:fixed;inset:0 0 auto 0;height:56px;display:flex;align-items:center;gap:16px;padding:0 28px;z-index:5}
+.top .course{font-weight:700;font-size:15px}
+.top .track{flex:1;height:6px;background:var(--hair);border-radius:99px;overflow:hidden}
+.top .track i{display:block;height:100%;width:0;background:var(--blue);transition:width .35s ease}
+.top .count{font:600 14px var(--mono);color:var(--ink2);min-width:60px;text-align:right}
+.deck{position:fixed;inset:56px 0 76px 0;display:grid;place-items:center;padding:0 24px}
+.card{display:none;width:min(1120px,100%);height:100%;max-height:640px;background:var(--sheet);border-radius:var(--r-lg);
+  box-shadow:0 1px 0 var(--hair),0 18px 40px -24px rgba(22,32,44,.25);overflow:hidden}
+.card.on{display:grid;grid-template-columns:1.45fr 1fr}
+.card.full.on{grid-template-columns:1fr}
+.stage{background:var(--paper);margin:14px 0 14px 14px;border-radius:14px;display:grid;place-items:center;padding:18px;overflow:hidden;position:relative}
+.card.full .stage{margin:14px}
+.stage svg{width:100%;height:100%;max-height:560px}
+.say{padding:40px 40px 32px;display:flex;flex-direction:column;justify-content:center;gap:14px;overflow:auto}
+.say .kicker{font-size:14px;color:var(--blue);font-weight:700}
+.say h2{margin:0;font-size:32px;line-height:1.25;letter-spacing:.01em}
+.say p{margin:0;color:var(--ink2)}
+.say p b{color:var(--ink)}
+.src{margin-top:auto;font-size:13px;color:var(--ink2);border-top:1px solid var(--hair);padding-top:12px}
+.src.extra::before{content:"补充";background:var(--amber-soft);color:var(--amber);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
+.src.official::before{content:"官方";background:var(--green-soft);color:var(--green);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
+code{font:14px var(--mono);background:var(--blue-soft);color:var(--blue);padding:1px 6px;border-radius:6px}
+pre{margin:0;font:13.5px/1.6 var(--mono);background:#101826;color:#DCE3EE;border-radius:12px;padding:16px 18px;overflow:auto;width:100%}
+pre .k{color:#8FB1FF}pre .s{color:#9BE0B4}pre .c{color:#71819A}pre .f{color:#FFC86B}pre .hl{background:rgba(143,177,255,.16);display:block;margin:0 -18px;padding:0 18px}
+.bottom{position:fixed;inset:auto 0 0 0;height:76px;display:flex;align-items:center;justify-content:center;gap:14px}
+.btn{font:600 15px var(--font);border:0;border-radius:99px;padding:11px 22px;cursor:pointer;background:var(--sheet);color:var(--ink);box-shadow:0 0 0 1px var(--hair)}
+.btn:hover{box-shadow:0 0 0 2px var(--blue)}
+.btn.main{background:var(--blue);color:#fff;box-shadow:none}
+.btn:disabled{opacity:.35;cursor:default;box-shadow:0 0 0 1px var(--hair)}
+.btn:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.btn.sm{padding:7px 14px;font-size:14px}
+/* ---- 图元（flow 组件生成） ---- */
+.fl-node rect{fill:var(--sheet);stroke:var(--hair);stroke-width:2;transition:all .3s}
+.fl-node text{font:600 17px var(--font);fill:var(--ink)}
+.fl-node .sub{font:400 13px var(--font);fill:var(--ink2)}
+.fl-node.blue rect{stroke:var(--blue)} .fl-node.amber rect{stroke:var(--amber)} .fl-node.green rect{stroke:var(--green)} .fl-node.red rect{stroke:var(--red)}
+.fl-node.act rect{fill:var(--blue-soft);stroke:var(--blue);stroke-width:3}
+.fl-node.dim{opacity:.35}
+.fl-edge{fill:none;stroke:#AEB8C6;stroke-width:2.2;transition:all .3s}
+.fl-edge.act{stroke:var(--blue);stroke-width:3.5;stroke-dasharray:8 6;animation:dash .8s linear infinite}
+.fl-elab{font:500 13px var(--font);fill:var(--ink2)}
+.fl-elab.act{fill:var(--blue);font-weight:700}
+@keyframes dash{to{stroke-dashoffset:-28}}
+/* ---- 模拟器 ---- */
+.sim{display:grid;grid-template-rows:auto 1fr auto;gap:10px;width:100%;height:100%}
+.sim .ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.sim .ctl label{font-size:13px;color:var(--ink2);display:flex;align-items:center;gap:6px}
+.sim .body{display:grid;grid-template-columns:1.1fr 1fr;gap:12px;min-height:0}
+.sim .log{background:var(--sheet);border-radius:12px;padding:10px;overflow:auto;font:13px/1.5 var(--mono)}
+.sim .msg{border-left:4px solid var(--hair);padding:6px 10px;margin:0 0 8px;border-radius:6px;background:var(--paper);white-space:pre-wrap;word-break:break-word;animation:pop .25s ease}
+.sim .msg b{font-family:var(--font);display:block;font-size:12px;color:var(--ink2)}
+.msg.user{border-color:var(--blue)} .msg.asst{border-color:var(--amber)} .msg.tool{border-color:var(--green)} .msg.err{border-color:var(--red);background:var(--red-soft)} .msg.sys{border-color:var(--ink2)}
+.sim .narr{background:var(--blue-soft);color:var(--ink);border-radius:12px;padding:10px 14px;font-size:15px;min-height:48px}
+@keyframes pop{from{opacity:0;transform:translateY(6px)}}
+/* ---- 小测 ---- */
+.quiz{width:100%;max-width:760px;display:flex;flex-direction:column;gap:12px}
+.quiz .qn{font:600 13px var(--mono);color:var(--ink2)}
+.quiz .qt{font-size:22px;font-weight:700;line-height:1.4}
+.quiz .opt{display:block;width:100%;text-align:left;font:16px var(--font);background:var(--sheet);border:2px solid var(--hair);border-radius:12px;padding:12px 16px;cursor:pointer;color:var(--ink)}
+.quiz .opt:hover{border-color:var(--blue)}
+.quiz .opt.ok{border-color:var(--green);background:var(--green-soft)} .quiz .opt.no{border-color:var(--red);background:var(--red-soft)}
+.quiz .fb{min-height:52px;font-size:15px;color:var(--ink2)}
+.quiz .fb a{color:var(--blue);font-weight:700;cursor:pointer}
+.quiz .nav{display:flex;gap:8px;align-items:center}
+@media (max-width:820px){
+  .card.full.on{grid-template-rows:1fr}.card.full .stage{overflow:auto;place-items:start center}
+  .card.on{grid-template-columns:1fr;grid-template-rows:minmax(220px,48%) 1fr}
+  .stage{margin:10px 10px 0}.say{padding:18px 20px}.say h2{font-size:24px}
+  .sim .body{grid-template-columns:1fr}.top{padding:0 14px}.top .course{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* ---- 展开细节 ---- */
+details.more{border-top:1px solid var(--hair);padding-top:10px;font-size:15px;color:var(--ink2)}
+details.more summary{cursor:pointer;font-weight:700;color:var(--blue);list-style:none}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary::before{content:"＋ 展开细节";}
+details.more[open] summary::before{content:"－ 收起细节";}
+details.more>*:not(summary){margin:8px 0 0}
+details.more ul{padding-left:18px}details.more li{margin:4px 0}
+details.more table{border-collapse:collapse;width:100%;font-size:14px}
+details.more td,details.more th{border-bottom:1px solid var(--hair);padding:5px 6px;text-align:left;vertical-align:top}
+/* ---- 对话列表（状态追踪）---- */
+.stack{width:100%;display:flex;flex-direction:column;gap:6px;font:13px/1.45 var(--mono)}
+.stack .row{display:grid;grid-template-columns:28px 92px 1fr;gap:8px;align-items:start;background:var(--sheet);border-radius:8px;padding:7px 10px;border-left:4px solid var(--hair)}
+.stack .row .i{color:var(--ink2)}.stack .row .r{font-weight:700}
+.stack .row.developer{border-color:var(--ink2)}.stack .row.user{border-color:var(--blue)}.stack .row.assistant{border-color:var(--amber)}.stack .row.result{border-color:var(--green)}
+.stack .row.new{background:var(--blue-soft)}.stack .row.bad{border-color:var(--red);background:var(--red-soft)}
+.stack .row .t{white-space:pre-wrap;word-break:break-word}
+/* ---- 对比/误区 ---- */
+.pairs{width:100%;display:grid;gap:10px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pair>div{background:var(--sheet);border-radius:12px;padding:12px 14px;font-size:15px}
+.pair .no{border-left:5px solid var(--red)}.pair .yes{border-left:5px solid var(--green)}
+.pair b{display:block;font-size:12px;color:var(--ink2);margin-bottom:4px}
+.say .more code{font-size:13px}
+@media (max-width:820px){.pair{grid-template-columns:1fr}.stack .row{grid-template-columns:22px 70px 1fr}}
+.pair .a{border-left:5px solid var(--blue)}.pair .b{border-left:5px solid var(--amber)}
+/* ===== v3：填满面板、原文标签、要点、条形图、分支 ===== */
+.stage{padding:10px}
+.stage svg.flow{width:100%;height:100%;max-height:none}
+.say p{font-size:17px}
+p.key{background:var(--blue-soft);color:var(--ink);border-radius:12px;padding:10px 14px;font-size:16px}
+p.key::before{content:"关键 ";font-weight:800;color:var(--blue)}
+.src.article::before{content:"原文";background:var(--blue-soft);color:var(--blue);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
+.stage>.stack{height:100%;justify-content:center;font-size:14.5px}
+.stage>.stack .row{padding:11px 12px;flex:0 1 auto}
+.stack .head{font:700 13px var(--font);color:var(--ink2);margin:8px 0 0}
+.stage>.pairs{height:100%;grid-auto-rows:minmax(0,1fr);align-content:stretch}
+.pair>div{font-size:16px;display:flex;flex-direction:column;justify-content:center}
+.bars{width:100%;display:flex;flex-direction:column;gap:16px;justify-content:center;height:100%;padding:0 10px}
+.bar{display:grid;grid-template-columns:150px 1fr 76px;gap:12px;align-items:center;font-size:15px}
+.bar .bl{font-weight:700;text-align:right}
+.bar .bt{height:30px;background:var(--sheet);border-radius:8px;overflow:hidden}
+.bar .bt i{display:block;height:100%;background:var(--ink2);border-radius:8px}
+.bar.blue .bt i{background:var(--blue)}.bar.amber .bt i{background:var(--amber)}.bar.green .bt i{background:var(--green)}.bar.red .bt i{background:var(--red)}
+.bar .bv{font:700 15px var(--mono)}
+.bar .bn{grid-column:2/4;font-size:13px;color:var(--ink2);margin-top:-8px}
+.bars .bc{font-size:13px;color:var(--ink2);text-align:center}
+.sim .branches{gap:14px;background:var(--sheet);border-radius:10px;padding:6px 10px}
+.sim .branches label{font-size:13.5px;color:var(--ink)}
+@media (max-width:820px){.bar{grid-template-columns:90px 1fr 60px}}
+.sim{grid-template-rows:auto auto 1fr auto}
+.sim.wide .body{grid-template-columns:1fr;grid-template-rows:minmax(0,1.1fr) minmax(0,1fr)}
+.sim:not(:has(.branches)){grid-template-rows:auto 1fr auto}
+.bar .bt.none{background:repeating-linear-gradient(45deg,var(--sheet) 0 8px,var(--hair) 8px 10px)}
+.say h2{font-size:28px;line-height:1.3}
+.sim .body{overflow:hidden}
+.sim .body>svg{min-height:0;height:100%;width:100%}
+.sim .narr{min-height:0}
+.stage>.stack{font-size:15.5px;gap:8px}
+.stage>.stack .row{padding:13px 14px}
+.stack .row .t{font-family:var(--font)}
+.stage:has(>.sim){place-items:stretch}
+.sim{min-height:0;height:100%;overflow:hidden}
+.sim.wide .body{grid-template-rows:minmax(0,55%) minmax(0,45%)}
+/* 讲解条放在图上方，永远可见 */
+.sim{grid-template-rows:auto auto auto minmax(0,1fr)}
+.sim:not(:has(.branches)){grid-template-rows:auto auto minmax(0,1fr)}
+.sim .ctl{order:0}.sim .branches{order:1}.sim .narr{order:2}.sim .body{order:3;min-height:0}
+/* ===== v4 ===== */
+.fl-node .sub{font-size:13.5px;fill:#3E4B5B}
+.fl-elab{font-size:13px;fill:#3E4B5B}
+.fl-edge.red{stroke:var(--red)}.fl-edge.amber{stroke:var(--amber)}.fl-edge.green{stroke:var(--green)}
+.fl-elab.red{fill:var(--red);font-weight:700}.fl-elab.amber{fill:var(--amber);font-weight:700}.fl-elab.green{fill:var(--green);font-weight:700}
+.stage{margin:10px 0 10px 10px;padding:4px}.card.full .stage{margin:0 10px 10px}
+.bar .bt i{background:#B8C2CF}
+.bar .bmiss{grid-column:2/4;color:var(--ink2);font-size:14px;font-style:italic}
+.sim .btn{background:transparent;box-shadow:0 0 0 1.5px var(--blue);color:var(--blue)}
+.sim .btn:hover{background:var(--blue-soft)}
+.say{justify-content:center}
+.src{margin-top:6px}
+.top .count{font-size:16px;color:var(--ink);font-weight:700}
+.top .track{height:6px}
+.card.full.on{grid-template-rows:auto minmax(0,1fr)}
+.head-full{padding:18px 26px 8px;display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
+.head-full .kicker{font-size:14px;color:var(--blue);font-weight:700}
+.head-full h2{margin:0;font-size:24px;line-height:1.3}
+.sim.wide .body{grid-template-rows:minmax(0,64%) minmax(0,36%)}
+@media (max-width:820px){.head-full{padding:12px 14px 6px}.head-full h2{font-size:19px}}
+.say{justify-content:safe center}
+@media (max-width:820px){.bars{gap:8px}.bar{font-size:13px;grid-template-columns:84px 1fr 56px}.bar .bt{height:20px}.bar .bn{font-size:12px;margin-top:-4px}.bars .bc{font-size:12px}
+ .sim .ctl .btn{padding:5px 10px}.sim .branches{flex-direction:column;align-items:flex-start;gap:2px}}
+
+/* 与知识库首页（VitePress 风格）对齐：白底页面、12px 圆角、细边框卡片、深色模式 */
+html,body{background:var(--page,#fff)}
+.card{border:1px solid var(--hair);box-shadow:none}
+html.dark{--page:#1b1b1f;--paper:#2a2a31;--sheet:#202127;--ink:#fffff5;--ink2:rgba(235,235,245,.65);--hair:#3a3a40;
+--blue:#7c9cff;--blue-soft:rgba(124,156,255,.16);--amber:#f0b429;--amber-soft:rgba(240,180,41,.14);--green:#3dd68c;--green-soft:rgba(61,214,140,.14);--red:#f66f81;--red-soft:rgba(246,111,129,.14);color-scheme:dark}
+html.dark .btn.main{color:#16202c}
+html.dark .fl-node .sub,html.dark .fl-elab{fill:var(--ink2)}html.dark .fl-elab{stroke:var(--page)!important}html.dark .fl-edge{stroke:#6b7280}
+html.dark .fl-elab.act{fill:var(--blue)}
+</style></head><body>
+<header class="top"><span class="course">CS146S · L02</span><span class="track"><i></i></span><span class="count"></span></header>
+<main class="deck">
+<section class="card">
+  <div class="stage"><svg class="flow" data-act="harness" data-edge="harness>llm" data-flow='{"nodes":[{"id":"user","x":110,"y":90,"t":"你","s":"输入提示词","c":"blue"},{"id":"harness","x":420,"y":90,"t":"Harness","s":"Claude Code、Codex、Devin","c":"blue","w":230},{"id":"llm","x":420,"y":320,"t":"模型","s":"看不到的智能层","c":"amber"},{"id":"tools","x":110,"y":320,"t":"工具","s":"读写文件、Bash","c":"green"},{"id":"parts","x":650,"y":320,"t":"8 个组件","s":"包在循环外面","w":170}],"edges":[{"f":"user","t":"harness"},{"f":"harness","t":"llm","l":"请求"},{"f":"llm","t":"tools","l":"工具调用"},{"f":"tools","t":"harness","l":"结果"},{"f":"parts","t":"harness","l":"注入"}]}'></svg></div>
+  <div class="say"><span class="kicker">这讲一句话讲什么？</span><h2>循环没变，变的是包在外面的 Harness</h2>
+  <p>Harness（包在模型外面、负责循环和注入内容的程序）里有 8 个组件：系统提示词、配置文件、工具列表、Plan 模式、子智能体、Skill、Hook、压缩。</p>
+  <p class="key">课件：Harness 设计是编码智能体最重要的问题之一。</p>
+  <details class="more"><summary></summary><ul><li>讲师说：除了模型，Harness 的一切都能看见；模型是放在服务器上的私有参数。</li><li>本讲拆的是 Claude Code 搭配 Opus 5.5 的 Harness，讲师说这个版本当时刚发布两天。</li><li>讲师说：这些原则不只用于编码，也适用于销售、法律、客服等领域的智能体。</li></ul></details>
+  <div class="src official">S1 课件「Modern coding harnesses are more complex」；S2 讲课实录 09:51–12:16</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><pre><span class="c">// 截下的请求里 tools 块的一项（字段按讲课描述）</span>
+{
+  <span class="s">"name"</span>: <span class="s">"Agent"</span>,
+  <span class="s">"description"</span>: <span class="s">"Launch a new agent to handle
+     complex, multistep tasks ..."</span>,
+<span class="hl">  <span class="s">"input_schema"</span>: { <span class="s">"properties"</span>: { ... } }</span>
+}
+<span class="c">// 内置约 40 个；MCP 工具名以 mcp__ 开头</span></pre></div>
+  <div class="say"><span class="kicker">模型怎么知道有哪些工具？</span><h2>工具的名字、描述和签名都进提示词</h2>
+  <p>工具列表是一个列表，每项是一个字典；每次请求都完整附带一遍。</p>
+  <p class="key">所以写工具时，docstring 和参数类型要清楚一致；模型靠它们判断何时用这个工具。</p>
+  <details class="more"><summary></summary><ul><li>Claude Code 约有 40 个内置工具：读写文件、Bash、定时任务、网页搜索、LSP 搜索、子智能体、计划、创建 artifact、列 MCP 资源、调用 Skill、向用户提问、推送通知。</li><li>讲师认为模型经过后训练，专门优化过使用这些内置工具。</li><li>每个已加载的 MCP 服务器（包括第三方）的工具，也都在这个块里。</li><li>字段名 input_schema 是补充：讲课只说「有一个 schema，相当于函数签名」。</li></ul></details>
+  <div class="src official">S1 课件「Tool List」；S2 讲课实录 16:38–25:58、29:18–30:54</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="stack">
+   <div class="row developer new"><span class="i">0</span><span class="r">system</span><span class="t">You are Claude Code, Anthropic’s official CLI for Claude.</span></div>
+   <div class="row developer new"><span class="i">1</span><span class="r">system</span><span class="t">交互式智能体说明 · 安全规则 · 会话 · 记忆格式 · 环境 · 上下文管理</span></div>
+   <div class="row user"><span class="i">2</span><span class="r">user</span><span class="t">你的第一句话</span></div>
+  </div></div>
+  <div class="say"><span class="kicker">系统提示词是谁写的？</span><h2>系统提示词由 Harness 写死，你控制不了</h2>
+  <p>它是模型行为的蓝图：定义 Harness 的行为、护栏和环境；每次请求都带上。</p>
+  <p class="key">讲师说：Opus 5.5 版约 50–80 行，前一两个月还是 200–250 行，删掉了 Git 用法这类说明。</p>
+  <details class="more"><summary></summary><ul><li>讲师推测：这些知识已经通过训练进入模型参数，不用再写进提示词。</li><li>讲师说：第一个请求发出前，可能已经有上万 token 被你控制不了的内容占用。</li><li>记忆块：Claude Code 有一个从你的行为中学习的记忆机制，提示词规定记忆存放的路径和写入格式。讲师认为路径是按项目区分的。</li><li>讲师认为看到系统提示词不算大的攻击面：截请求有开源工具，Codex 的 Harness 本身就在 GitHub 上。</li></ul></details>
+  <div class="src official">S1 课件「System Prompt」；S2 讲课实录 34:30–41:30</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="pairs">
+   <div class="pair"><div class="a"><b>系统提示词</b>Harness 设定 · 静态 · 你看不到 · 你改不了</div><div class="b"><b>CLAUDE.md / AGENTS.md</b>你自己写 · 同样被注入 · 优先级高于其他指令</div></div>
+   <div class="pair"><div class="no"><b>误解</b>写得越多越好，把代码块也放进去。</div><div class="yes"><b>实际</b>只放一两条命令，例如跑单元测试、启动服务器。</div></div>
+  </div></div>
+  <div class="say"><span class="kicker">你能控制哪部分提示词？</span><h2>CLAUDE.md 是你能控制的那份提示词</h2>
+  <p>Harness 把 CLAUDE.md 的内容放进第一个 user 块，前面写明这些指令覆盖默认行为、必须照做。</p>
+  <p class="key">写太多会过度约束模型，讲师比作「对你的指令过拟合」。</p>
+  <details class="more"><summary></summary><ul><li>CLAUDE.md 是 Claude 专用名，AGENTS.md 是更通用的标准；两者作用相同，可以用符号链接把 CLAUDE.md 指向 AGENTS.md。</li><li>演示项目的 CLAUDE.md 由讲师和 Claude 一起写，内容是项目结构的高层描述。</li><li>怎样写好这类文件，课程后面有一整讲（第 4 周：CLAUDE.md、AGENTS.md、Hook）。</li></ul></details>
+  <div class="src official">S1 课件「Agent Configuration Files」；S2 讲课实录 43:00–48:03；S3 课程网站第 4 周</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="stack">
+   <div class="row developer"><span class="i">0</span><span class="r">system</span><span class="t">You are Claude Code … + 约 50–80 行说明</span></div>
+   <div class="row user new"><span class="i">1</span><span class="r">user</span><span class="t">system-reminder：CLAUDE.md 全文（讲师没输入）</span></div>
+   <div class="row user"><span class="i">2</span><span class="r">user</span><span class="t">What are the core components of this to-do app?</span></div>
+   <div class="row assistant"><span class="i">3</span><span class="r">assistant</span><span class="t">工具调用（读文件）</span></div>
+   <div class="row result"><span class="i">…</span><span class="r">tools</span><span class="t">约 40 个内置工具 + mcp__ 开头的外部工具</span></div>
+  </div></div>
+  <div class="say"><span class="kicker">一次真实请求里装了什么？（接第 1 讲）</span><h2>你只打了一句话，请求里却有几百行</h2>
+  <p>请求里的 messages 就是第 1 讲的对话列表。讲师的第一句话是 What are the core components of this to-do app?，上面全是 Harness 自己加的。</p>
+  <p class="key">讲师说：对话正文大约到第 600 行就结束，下面是很长的工具列表。</p>
+  <details class="more"><summary></summary><ul><li>讲师用代理工具截下请求，比作 Wireshark 抓包；第 1 个作业让学生自己截一遍。</li><li>演示项目是讲师用 Claude Code 写的命令行待办工具。</li><li>第 3、4 行的具体内容是补充示例；讲课只说 assistant 消息会发起工具调用。</li><li>讲师说：这是能解析到的最可读的原始形式，送进模型前大概率还有处理，具体未确认。</li><li>对象上还有校验和、哈希、UID 这类元数据，讲课没有展开。</li></ul></details>
+  <div class="src official">S1 课件「Recap」；S2 讲课实录 18:33–22:42、20:40–22:42、34:30–35:32、44:22–46:09</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><svg class="flow" data-act="design" data-edge="understand>design" data-flow='{"nodes":[{"id":"enter","x":110,"y":80,"t":"进入 Plan 模式","s":"一个工具调用","c":"green"},{"id":"understand","x":420,"y":80,"t":"1 理解需求","s":"派子智能体探索代码库"},{"id":"design","x":420,"y":300,"t":"2 设计","c":"blue"},{"id":"review","x":110,"y":300,"t":"3 审查 → 最终计划","s":"产出 plan 文件","c":"amber"}],"edges":[{"f":"enter","t":"understand","l":"注入 Plan 提示词"},{"f":"understand","t":"design"},{"f":"design","t":"review"}]}'></svg></div>
+  <div class="say"><span class="kicker">Plan 模式到底是什么？</span><h2>Plan 模式就是一段注入的提示词</h2>
+  <p>进入 Plan 模式的工具被调用后，Harness 注入一段规定计划流程的文字；做完再用另一个工具退出。</p>
+  <p class="key">关键产物是最后的 plan 文件。</p>
+  <details class="more"><summary></summary><ul><li>讲师的演示：给待办工具加周期提醒，例如「每周给植物浇水」。进入 Plan 模式，和模型来回讨论后产出计划。</li><li>Plan 模式可以继续向用户提问，澄清需求和架构。</li><li>讲师说大约九个月前，大多数编码 Harness 都加了 Plan 模式，Codex 也有。</li><li>进入和退出工具的确切名字，讲师没记清，未确认。</li></ul></details>
+  <div class="src official">S1 课件「Plan Mode」；S2 讲课实录 48:03–51:14</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="pairs">
+   <div class="pair"><div class="a"><b>MCP 工具</b>最小的原语，像一次 API 调用：一个输入、一个输出。</div><div class="b"><b>Skill</b>写好的流程：多个工具调用、脚本，中间用提示词串起来。</div></div>
+   <div class="pair"><div class="a"><b>MCP 工具怎么进上下文</b>全部定义，每次请求都带。</div><div class="b"><b>Skill 怎么进上下文</b>先只放元数据；相关时再拉入 SKILL.md 全文。</div></div>
+  </div></div>
+  <div class="say"><span class="kicker">Skill 和 MCP 工具有什么不同？</span><h2>Skill 用到时才进上下文，MCP 每次都进</h2>
+  <p>讲师说：引入 Skill 的一个原因是渐进披露（相关时才把信息放进上下文）。</p>
+  <p class="key">演示：讲师说「Check my code quality. Use the skill.」，Harness 注入命令消息，再把 SKILL.md 内容放进上下文。</p>
+  <details class="more"><summary></summary><ul><li>Skill 可以由模型按上下文主动调用，也可以由用户明确调用。</li><li>讲师为课程写了一个 check code quality Skill，内容是好代码和坏代码的区别。</li><li>课程第 3 周有一整讲讲 Skill 设计。</li></ul></details>
+  <div class="src official">S1 课件「Skills」；S2 讲课实录 25:58–27:41、31:25、51:14–53:30；S3 课程网站第 3 周</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><svg class="flow" data-act="sub" data-edge="main>sub" data-flow='{"nodes":[{"id":"main","x":120,"y":200,"t":"主智能体","s":"主控制循环","c":"blue"},{"id":"sub","x":460,"y":80,"t":"子智能体","s":"全新上下文 · 自己的系统提示词","c":"amber","w":230},{"id":"sub2","x":460,"y":320,"t":"子智能体","s":"可以并行","c":"amber"}],"edges":[{"f":"main","t":"sub","l":"工具调用"},{"f":"sub","t":"main","l":"只回传最终结果","route":"top"},{"f":"main","t":"sub2"}]}'></svg></div>
+  <div class="say"><span class="kicker">子智能体省了什么？</span><h2>子智能体的探索不留在主对话列表里</h2>
+  <p>主智能体用一个工具调用启动子智能体；子智能体用全新上下文工作，做完把结果交回。</p>
+  <p class="key">课件：可以并行，但 token 花费会上升。</p>
+  <details class="more"><summary></summary><ul><li>讲师在演示里调用过一次子智能体，大概是检查性能，他记不清了。</li><li>Hook：在 Harness 生命周期的不同点插入的提示词或代码，适合做前处理、后处理。本讲只提了一句，最佳实践留到后面。</li></ul></details>
+  <div class="src official">S1 课件「Subagents」「Hooks」；S2 讲课实录 53:40–55:25</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="bars" data-bars='{"unit":"K token","items":[{"l":"压缩前","v":500},{"l":"压缩后","v":150,"c":"blue","note":"摘要替换掉原内容"}],"caption":"讲师举的例子，不是测量数据"}'></div></div>
+  <div class="say"><span class="kicker">上下文快满了怎么办？</span><h2>压缩用一份摘要替换整段对话列表</h2>
+  <p>压缩有两种触发：快超出上下文窗口时自动触发，或你手动触发；一段专门的提示词规定怎样写摘要。</p>
+  <p class="key">课件：压缩会丢信息，所以你可能要改写自己的版本。</p>
+  <div class="src official">S1 课件「Compaction」；S2 讲课实录 55:25–56:00</div></div>
+</section>
+
+<section class="card full">
+  <div class="head-full"><span class="kicker">动手：看 Harness 怎样拼出一次请求</span><h2>一句提示词发出前，Harness 先拼好五层内容</h2></div>
+  <div class="stage"><div class="sim" data-sim='{"label":"正常路径（讲师的待办工具演示）","note":"串起来的示例：拼装顺序按讲课实录里请求的结构；分支里的具体数字和情境是教学示例，不是讲师的真实运行。","layout":"wide","flow":{"nodes":[{"id":"you","x":90,"y":120,"t":"你","s":"一句提示词","c":"blue"},{"id":"harness","x":300,"y":120,"t":"Harness","s":"拼请求","c":"blue"},{"id":"llm","x":510,"y":120,"t":"模型","c":"amber"},{"id":"tools","x":720,"y":120,"t":"工具","c":"green"}],"edges":[{"f":"you","t":"harness"},{"f":"harness","t":"llm","l":"请求"},{"f":"llm","t":"tools","l":"工具调用"},{"f":"tools","t":"harness","route":"bottom","l":"结果"}]},
+  "steps":[
+   {"act":"you","edge":"you>harness","msg":{"r":"user","t":"What are the core components of this to-do app?"},"say":"你只打了这一句。"},
+   {"act":"harness","msg":{"r":"sys","t":"system：You are Claude Code, Anthropic’s official CLI for Claude.（另一块约 50–80 行说明）"},"say":"第 1 层：系统提示词。Harness 写死，你改不了。"},
+   {"act":"harness","msg":{"r":"user","t":"user 块前部：system-reminder + CLAUDE.md 全文"},"say":"第 2 层：你的 CLAUDE.md，写明覆盖默认行为。"},
+   {"act":"harness","msg":{"r":"user","t":"What are the core components of this to-do app?"},"say":"第 3 层：你真正输入的话。"},
+   {"act":"harness","say":"第 4 层：完整工具列表，每次都带（tools：约 40 个内置工具 + mcp__ 开头的 MCP 工具）"},
+   {"act":"harness","say":"第 5 层：Skill 只放元数据，用到才拉全文（Skill：只有名字和元数据）"},
+   {"act":"llm","edge":"harness>llm","msg":{"r":"asst","t":"（工具调用：读文件）"},"say":"整包发给模型。模型回一个工具调用。"},
+   {"act":"tools","edge":"tools>harness","msg":{"r":"tool","t":"（文件内容）"},"say":"结果放回对话列表，再整包发一次：第 1 讲的循环。"}],
+  "alts":[
+   {"label":"分支 A：调用 Skill（讲师演示）","steps":[
+    {"act":"you","edge":"you>harness","msg":{"r":"user","t":"Check my code quality. Use the skill."},"say":"你明确要求用 Skill。"},
+    {"act":"harness","say":"Harness 注入一条命令消息（命令消息：check code quality）"},
+    {"act":"harness","say":"Harness 找到 SKILL.md，把内容放进上下文（SKILL.md 全文进入上下文）"},
+    {"act":"llm","edge":"harness>llm","say":"模型按 SKILL.md 写的流程做。"}]},
+   {"label":"分支 B：工具列表膨胀（教学示例）","steps":[
+    {"act":"harness","say":"讲师说早期 GitHub MCP 服务器自带约 110 个工具（tools：40 个内置 + 一个约 110 个工具的 MCP 服务器）"},
+    {"act":"llm","edge":"harness>llm","msg":{"r":"err","t":"无关定义占满上下文，任务表现变差"},"say":"讲师：无关内容越多，智能体越可能做不好。"},
+    {"act":"you","say":"做法：少而强的工具，例如 Bash（只加载真正用到的 MCP 服务器）"}]},
+   {"label":"分支 C：快超出上下文窗口（教学示例）","steps":[
+    {"act":"harness","msg":{"r":"err","t":"对话列表接近上下文上限"},"say":"长会话后，对话列表快满了。"},
+    {"act":"harness","say":"Harness 自动触发压缩（自动压缩：按压缩提示词写摘要）"},
+    {"act":"harness","say":"之后模型只看到摘要；细节可能丢了（摘要替换原对话列表）"},
+    {"act":"llm","edge":"harness>llm","say":"下一次请求带的是摘要，不是原文。"}]}]}'></div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><div class="pairs">
+   <div class="pair"><div class="no"><b>工具列表膨胀</b>每加一个 MCP 服务器，每次请求都多一堆定义。</div><div class="yes"><b>讲师的做法</b>只加真正用到的服务器。</div></div>
+   <div class="pair"><div class="no"><b>CLAUDE.md 写太多</b>模型被过度约束。</div><div class="yes"><b>讲师的做法</b>只写一两条关键命令。</div></div>
+   <div class="pair"><div class="no"><b>自动压缩丢细节</b>摘要替换原文后，细节回不来。</div><div class="yes"><b>课件的建议</b>需要时改写自己的压缩方式。</div></div>
+  </div></div>
+  <div class="say"><span class="kicker">Harness 会在哪里出问题？</span><h2>三种失败都来自塞进上下文的东西太多</h2>
+  <p>讲师说：有研究在测 token 多到什么程度时表现开始下降；他把这个区域非正式地叫作 dumb zone。</p>
+  <p class="key">课件原则：Mind the context window，避开 dumb zone，小心工具膨胀。</p>
+  <div class="src official">S1 课件「Principles of Effective Harnesses」「Compaction」；S2 讲课实录 25:58–27:41、47:05、57:04–58:00</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><svg class="flow" data-act="model" data-edge="harness>model" data-flow='{"nodes":[{"id":"harness","x":130,"y":200,"t":"投入 Harness","s":"护城河在外壳程序"},{"id":"model","x":500,"y":200,"t":"投入模型","s":"现在的方向","c":"blue"}],"edges":[{"f":"harness","t":"model","bend":-40,"l":"来回摇摆"},{"f":"model","t":"harness","bend":-40}]}'></svg></div>
+  <div class="say"><span class="kicker">为什么 Harness 越做越简单？</span><h2>Harness 越来越依赖模型本身的能力</h2>
+  <p>讲师说：Claude Code 约 40 个内置工具，比过去的版本少；业界趋势是用更少、更强的工具，例如 Bash、SQL。</p>
+  <p class="key">讲师说：投入模型还是投入 Harness，业界一直来回摇摆；现在倾向让 Harness 尽量简单。</p>
+  <details class="more"><summary></summary><ul><li>讲师说：Claude Code 大约在去年 12 月走红，一个原因是 Harness 极简，工具少但几乎什么都能做。</li><li>Bash 让模型通过文件系统和命令行完成复杂操作，讲师说它本身就是一门完整的语言。</li><li>课件原则：提示词的内容和长度会变，所以要让它们容易调整。</li></ul></details>
+  <div class="src official">S1 课件「Principles of Effective Harnesses」；S2 讲课实录 32:19–34:30、56:00–58:00</div></div>
+</section>
+
+<section class="card">
+  <div class="stage"><svg class="flow" data-act="file" data-edge="model>file" data-flow='{"nodes":[{"id":"model","x":130,"y":200,"t":"模型","s":"按提示词规定的格式写","c":"amber"},{"id":"file","x":480,"y":90,"t":"平面文件","s":"记忆路径按项目区分","c":"blue","w":220},{"id":"rag","x":480,"y":320,"t":"RAG / GraphRAG","s":"更复杂，不总有优势","w":220}],"edges":[{"f":"model","t":"file","l":"写入记忆"},{"f":"file","t":"model","l":"直接读文本","route":"top"},{"f":"rag","t":"model","l":"检索"}]}'></svg></div>
+  <div class="say"><span class="kicker">深入一层：记忆为什么用平面文件？</span><h2>记忆用平面文件，复杂检索不一定更好</h2>
+  <p>学生问是否该用 RAG 检索记忆；讲师说这类设计由基准测试决定，复杂检索不总有优势。</p>
+  <p class="key">讲师说这取决于任务，不能一概而论；他公司做销售智能体，也用平面文件存记忆。</p>
+  <div class="src official">S2 讲课实录 42:44–44:22</div></div>
+</section>
+
+<section class="card full">
+  <div class="head-full"><span class="kicker">小测（补充：题目由学习搭子出）</span><h2>用 6 个场景检查你能不能拆一个 Harness</h2></div>
+  <div class="stage"><div class="quiz" data-quiz='[
+   {"q":"你装了 5 个 MCP 服务器，只问了一个简单问题，智能体却表现变差。最可能的原因是？","opts":["模型版本降级了","每次请求都带上所有 MCP 工具定义，无关内容占了上下文","MCP 工具只能在 Plan 模式用"],"a":1,"why":"工具列表每次请求都完整附带。误区：工具越多越强。","back":2},
+   {"q":"你想让 Claude Code 每次都用 pytest -q 跑测试。该改哪里？","opts":["系统提示词","CLAUDE.md / AGENTS.md","工具的 input_schema"],"a":1,"why":"系统提示词由 Harness 写死；CLAUDE.md 是你能控制的那份。","back":4},
+   {"q":"同事把整个模块的代码贴进 CLAUDE.md，想让模型更懂项目。按讲师的说法会怎样？","opts":["模型更准确","可能过度约束模型，而且每次都占上下文","没有影响，CLAUDE.md 不进请求"],"a":1,"why":"讲师建议只放一两条命令。误区：写得越多越好。","back":4},
+   {"q":"你写了一个 20 步的发版流程，平时很少用。做成 Skill 还是 MCP 工具更省上下文？","opts":["MCP 工具","Skill：平时只放元数据，用到才拉全文","两者一样"],"a":1,"why":"渐进披露是引入 Skill 的原因之一。","back":7},
+   {"q":"你让子智能体去翻 200 个文件找性能问题。主对话列表里会多出什么？","opts":["200 个文件的内容","子智能体交回的最终结果","什么都不多"],"a":1,"why":"子智能体用全新上下文，只回传结果。","back":8},
+   {"q":"长会话自动压缩之后，模型忘了你早先定下的一个命名约定。为什么？","opts":["压缩用摘要替换原文，摘要可能丢细节","CLAUDE.md 被删了","压缩会重置系统提示词"],"a":0,"why":"课件：压缩会丢信息。重要约定可以放进 CLAUDE.md。","back":9}]'></div></div>
+</section>
+</main>
+<nav class="bottom"><button class="btn" id="prev">上一张</button><button class="btn main" id="next">下一张</button></nav>
+<script>
+/* 学习搭子 固定组件库 — 不要在课程里改这个文件。 */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const NS='http://www.w3.org/2000/svg';
+const el=(t,a={},p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p&&p.appendChild(e);return e};
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+/* ---------- 卡片翻页 ---------- */
+const cards=$$('.card');let cur=0;
+function go(i){i=Math.max(0,Math.min(cards.length-1,i));cards[cur].classList.remove('on');cur=i;cards[cur].classList.add('on');
+  $('.track i').style.width=((cur+1)/cards.length*100)+'%';$('.count').textContent=(cur+1)+' / '+cards.length;
+  $('#prev').disabled=cur===0;$('#next').disabled=cur===cards.length-1;history.replaceState(null,'','#'+(cur+1));}
+window.goCard=n=>go(n-1);
+$('#prev').onclick=()=>go(cur-1);$('#next').onclick=()=>go(cur+1);
+addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.key==='ArrowRight')go(cur+1);if(e.key==='ArrowLeft')go(cur-1)});
+let sx=null;addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
+addEventListener('touchend',e=>{if(sx===null)return;const d=e.changedTouches[0].clientX-sx;if(Math.abs(d)>60)go(cur+(d<0?1:-1));sx=null});
+
+/* ---------- flow：用 JSON 画流程图 ----------
+ spec = {w,h,nodes:[{id,x,y,t,s?,c?,w?}],edges:[{f,t,l?,bend?}]}  节点坐标是中心点 */
+function drawFlow(svg,spec){
+  svg.innerHTML='';
+  const defs=el('defs',{},svg);
+  [['a','#AEB8C6'],['b','#2550D9'],['red','#C8372D'],['amber','#C77A00'],['green','#16875A']].forEach(([id,c])=>{const m=el('marker',{id:'ar'+id+svg.dataset.uid,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:7,markerHeight:7,orient:'auto-start-reverse'},defs);el('path',{d:'M0,0L10,5L0,10z',fill:c},m)});
+  const N={};spec.nodes.forEach(n=>N[n.id]={...n,w:n.w||150,h:n.s?70:56});
+  const ns=Object.values(N);
+  let x0=Math.min(...ns.map(n=>n.x-n.w/2)),x1=Math.max(...ns.map(n=>n.x+n.w/2)),y0=Math.min(...ns.map(n=>n.y-n.h/2)),y1=Math.max(...ns.map(n=>n.y+n.h/2));
+  const B={x0,x1,y0,y1};
+  const eg=el('g',{},svg),ng=el('g',{},svg);svg._edges={};svg._nodes={};
+  const clip=(a,b)=>{const dx=b.x-a.x,dy=b.y-a.y;const s=Math.min(Math.abs((a.w/2+6)/(dx||1e-9)),Math.abs((a.h/2+6)/(dy||1e-9)));return[a.x+dx*s,a.y+dy*s]};
+  spec.edges.forEach(e=>{const a=N[e.f],b=N[e.t];let d,lx,ly;
+    if(e.route){ /* 沿外圈走的直角线：top|bottom|left|right，lane 控制离外框的距离 */
+      const g=30+(e.lane||0)*30,oa=e.oa||0,ob=e.ob||0;
+      if(e.route==='top'||e.route==='bottom'){const t=e.route==='top',Y=t?B.y0-g:B.y1+g,ya=a.y+(t?-1:1)*(a.h/2+2),yb=b.y+(t?-1:1)*(b.h/2+8);
+        d=`M${a.x+oa},${ya} V${Y} H${b.x+ob} V${yb}`;lx=(a.x+oa+b.x+ob)/2;ly=Y+(t?-8:18);
+        t?(y0=Math.min(y0,Y-26)):(y1=Math.max(y1,Y+26));}
+      else{const l=e.route==='left',X=l?B.x0-g:B.x1+g,xa=a.x+(l?-1:1)*(a.w/2+2),xb=b.x+(l?-1:1)*(b.w/2+8);
+        d=`M${xa},${a.y+oa} H${X} V${b.y+ob} H${xb}`;lx=X+(l?-8:8);ly=(a.y+b.y)/2;
+        l?(x0=Math.min(x0,X-90)):(x1=Math.max(x1,X+90));}
+    }else{const[p1,q1]=clip(a,b),[p2,q2]=clip(b,a);const mx=(p1+p2)/2,my=(q1+q2)/2,len=Math.hypot(p2-p1,q2-q1)||1,bd=e.bend||0;
+      const cx=mx-(q2-q1)/len*bd,cy=my+(p2-p1)/len*bd;d=`M${p1},${q1} Q${cx},${cy} ${p2},${q2}`;
+      const qx=.25*p1+.5*cx+.25*p2,qy=.25*q1+.5*cy+.25*q2,sg=bd>=0?1:-1;lx=qx-(q2-q1)/len*sg*14;ly=qy+(p2-p1)/len*sg*14+4;}
+    const mk=e.c||'a';const p=el('path',{d,class:'fl-edge '+(e.c||''),'marker-end':`url(#ar${mk}${svg.dataset.uid})`},eg);p._mk=mk;
+    let lab=null;if(e.l){const anc=e.route==='left'?'end':e.route==='right'?'start':'middle';lab=el('text',{x:lx,y:ly,'text-anchor':anc,class:'fl-elab '+(e.c||''),stroke:'#F2F4F7','stroke-width':5,'paint-order':'stroke'},eg);lab.textContent=e.l}
+    svg._edges[e.f+'>'+e.t]={p,lab}});
+  ns.forEach(n=>{const g=el('g',{class:'fl-node '+(n.c||'')},ng);
+    el('rect',{x:n.x-n.w/2,y:n.y-n.h/2,width:n.w,height:n.h,rx:14},g);
+    const t=el('text',{x:n.x,y:n.y+(n.s?-4:6),'text-anchor':'middle'},g);t.textContent=n.t;
+    if(n.s){const s=el('text',{x:n.x,y:n.y+18,'text-anchor':'middle',class:'sub'},g);s.textContent=n.s}
+    svg._nodes[n.id]=g});
+  /* 自动贴合：viewBox 只包住内容，图会放大填满面板 */
+  const P=spec.pad??8;svg.setAttribute('viewBox',`${x0-P} ${y0-P-10} ${x1-x0+2*P} ${y1-y0+2*P+20}`);
+  svg._set=(act,edge)=>{for(const k in svg._nodes)svg._nodes[k].classList.toggle('act',k===act);
+    for(const k in svg._edges){const on=k===edge,E=svg._edges[k];E.p.classList.toggle('act',on);E.p.setAttribute('marker-end',`url(#ar${on?'b':E.p._mk}${svg.dataset.uid})`);E.lab&&E.lab.classList.toggle('act',on)}};
+  svg._set(svg.dataset.act,svg.dataset.edge);
+}
+let uid=0;
+$$('svg.flow').forEach(s=>{s.dataset.uid=++uid;drawFlow(s,JSON.parse(s.dataset.flow))});
+
+/* ---------- sim：一步步走的模拟器 ----------
+ data-sim = {flow:{...}, steps:[{act,edge,msg:{r:user|asst|tool|err|sys,n?,t},say}], alt?:{label,steps:[...]}} */
+$$('.sim').forEach(box=>{
+  const spec=JSON.parse(box.dataset.sim);if(spec.alt&&!spec.alts)spec.alts=[spec.alt];const AL=spec.alts||[];const gname='br'+(++uid);
+  box.innerHTML=`<div class="ctl"><button class="btn sm" data-a="step">下一步</button><button class="btn sm" data-a="play">▶ 自动</button><button class="btn sm" data-a="reset">重置</button>
+   <label>速度 <input type="range" min="300" max="2500" step="100" value="1200"></label></div>${AL.length?`<div class="ctl branches"><label><input type="radio" name="${gname}" value="-1" checked> ${esc(spec.label||'正常路径')}</label>${AL.map((a,j)=>`<label><input type="radio" name="${gname}" value="${j}"> ${esc(a.label)}</label>`).join('')}</div>`:''}
+   <div class="body"><svg class="flow"></svg><div class="log"></div></div><div class="narr"></div>`;
+  if(spec.layout==='wide')box.classList.add('wide');
+  const svg=$('svg',box);svg.dataset.uid=++uid;drawFlow(svg,spec.flow);
+  const log=$('.log',box),narr=$('.narr',box),radios=$$('input[type=radio]',box),spd=$('input[type=range]',box),play=$('[data-a=play]',box);
+  let i=0,timer=null;const sel=()=>{const r=radios.find(r=>r.checked);return r?+r.value:-1};const steps=()=>sel()>=0?AL[sel()].steps:spec.steps;
+  const hint=spec.note?esc(spec.note)+'　点「下一步」开始。':'点「下一步」开始。';const reset=()=>{i=0;log.innerHTML='';narr.innerHTML=hint;svg._set(null,null);stop()};
+  const stop=()=>{clearTimeout(timer);timer=null;play.textContent='▶ 自动'};
+  const step=()=>{const S=steps();if(i>=S.length){narr.textContent='流程结束。点「重置」再走一遍。';stop();return false}
+    const s=S[i++];svg._set(s.act,s.edge);if(s.msg){const d=document.createElement('div');d.className='msg '+s.msg.r;
+      d.innerHTML=`<b>${esc(s.msg.n||({user:'用户',asst:'模型',tool:'工具结果',err:'出错',sys:'系统提示词'}[s.msg.r]))}</b>${esc(s.msg.t)}`;log.appendChild(d);log.scrollTop=1e9}
+    narr.innerHTML=`<b>第 ${i}/${S.length} 步</b>　${esc(s.say)}`;return true};
+  const loop=()=>{if(step())timer=setTimeout(loop,+spd.value);else stop()};
+  box.onclick=e=>{const a=e.target.dataset.a;if(a==='step'){stop();step()}if(a==='reset')reset();if(a==='play'){if(timer)stop();else{play.textContent='❚❚ 暂停';loop()}}};
+  narr.innerHTML=hint;radios.forEach(r=>r.onchange=reset);
+  const P=new URLSearchParams(location.search);if(P.get('alt')&&radios[+P.get('alt')]){radios[+P.get('alt')].checked=true}for(let n=+P.get('sim')||0;n>0;n--)step(); /* 自查用：?sim=5&alt=1 */
+});
+
+/* ---------- bars：横向条形图 ----------
+ data-bars = {unit, items:[{l,v,c?:blue|amber|green|red,note?}], caption?}  数字必须来自原文 */
+$$('.bars').forEach(box=>{const B=JSON.parse(box.dataset.bars),mx=Math.max(...B.items.filter(i=>i.v!=null).map(i=>i.v));
+  box.innerHTML=B.items.map(i=>`<div class="bar ${i.c||''}"><span class="bl">${esc(i.l)}</span>${i.v==null?`<span class="bmiss">${esc(i.miss||'原文未给数字')}</span>`:`<span class="bt"><i style="width:${(i.v/mx*100).toFixed(1)}%"></i></span><span class="bv">${esc(i.v)}${esc(B.unit||'')}</span>`}${i.note?`<span class="bn">${esc(i.note)}</span>`:''}</div>`).join('')+(B.caption?`<div class="bc">${esc(B.caption)}</div>`:'')});
+
+/* ---------- quiz：页内小测 ----------
+ data-quiz = [{q,opts:[...],a:正确下标,why,back:答错时回到第几张卡片}] */
+$$('.quiz').forEach(box=>{
+  const Q=JSON.parse(box.dataset.quiz);let k=0,score=0;const done=new Set();
+  const render=()=>{const q=Q[k];box.innerHTML=`<div class="qn">第 ${k+1} / ${Q.length} 题　·　已答对 ${score}</div><div class="qt">${esc(q.q)}</div>
+    ${q.opts.map((o,j)=>`<button class="opt" data-j="${j}">${String.fromCharCode(65+j)}. ${esc(o)}</button>`).join('')}
+    <div class="fb"></div><div class="nav"><button class="btn sm" data-n="-1" ${k?'':'disabled'}>上一题</button><button class="btn sm main" data-n="1" ${k<Q.length-1?'':'disabled'}>下一题</button></div>`};
+  box.onclick=e=>{const t=e.target;if(t.dataset.n){k+=+t.dataset.n;render();return}
+    if(t.dataset.j===undefined||done.has(k))return;const q=Q[k],j=+t.dataset.j,fb=$('.fb',box);done.add(k);
+    $$('.opt',box)[q.a].classList.add('ok');
+    if(j===q.a){score++;fb.innerHTML='✓ 对。'+esc(q.why)}else{t.classList.add('no');fb.innerHTML='✗ 不对。'+esc(q.why)+(q.back?` <a onclick="goCard(${q.back})">回到第 ${q.back} 张再看看</a>`:'')}
+    $('.qn',box).textContent=`第 ${k+1} / ${Q.length} 题　·　已答对 ${score}`};
+  render();
+  const pk=new URLSearchParams(location.search).get('pick');if(pk!==null)$$('.opt',box)[+pk].click(); /* 自查用：?pick=0 */
+});
+
+go(Math.max(0,(parseInt(location.hash.slice(1))||1)-1));
+})();
+/* ---------- 学完了：点一下记为已学完（存在本机浏览器） ---------- */
+(function(){if(window.__finish)return;window.__finish=1;
+if(!document.querySelector('.deck'))return;
+const st=document.createElement('style');st.textContent=`.fin-btn{position:fixed;right:16px;bottom:76px;z-index:50;padding:10px 16px;border-radius:999px;border:0;background:#16a34a;color:#fff;font:600 15px system-ui;box-shadow:0 4px 14px rgba(0,0,0,.18);cursor:pointer}.fin-btn.done{background:#e5e7eb;color:#166534}`;document.head.appendChild(st);
+const key='done:'+location.pathname,p=n=>String(n).padStart(2,'0');
+const b=document.createElement('button');b.className='fin-btn';document.body.appendChild(b);
+const show=()=>{const d=localStorage.getItem(key);b.classList.toggle('done',!!d);b.textContent=d?'✓ 已学完 '+d:'✓ 学完了';b.title=d?'再点一下取消':''};show();
+b.onclick=()=>{if(localStorage.getItem(key)){if(confirm('取消「已学完」记录？'))localStorage.removeItem(key)}else{const x=new Date();localStorage.setItem(key,x.getFullYear()+'-'+p(x.getMonth()+1)+'-'+p(x.getDate()))}show()};
+})();
+</script></body></html>
