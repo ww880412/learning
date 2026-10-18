@@ -602,6 +602,51 @@ main>.sheet h3{margin:16px 0 4px}
 }
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 @media(min-width:1180px){#k-columns~.grid:first-of-type,#k-columns+.sub+.grid{grid-template-columns:repeat(7,minmax(0,1fr))}}
+/* =====================================================================
+   ui-upgrade-2（2026-10）：参考 Minimal Gallery / One Page Love / Motion / Magic UI / Realtime Colors
+   1 字体层级  2 桌面加宽  3 调色  4 悬停光斑 + 流光边框  5 滚动入场 + 数字滚动（JS 在 vp-head.js）
+   ===================================================================== */
+@property --ang{syntax:"<angle>";inherits:false;initial-value:0deg}
+:root{--acc2:#8b5cf6;--ease:cubic-bezier(.22,1,.36,1)}
+/* 3 调色：按 Realtime Colors 的思路，每套主题 文字/背景/主色/辅色/强调 五色，深色模式提高次要文字对比度 */
+[data-theme=A]{--acc2:#c98a2b}
+html.dark[data-theme=A]{--paper:#181512;--sheet:#211d18;--card:#211d18;--meta:#a89d8f;--hair:#382f26;--acc2:#e3b15c}
+[data-theme=B]{--paper:#fafafb;--blue:#5b5bd6;--blue-soft:#efeffc;--acc2:#a855f7}
+html.dark[data-theme=B]{--paper:#0c0d10;--sheet:#14151a;--card:#14151a;--ink:#ececf1;--ink2:#babcc6;--meta:#9597a3;--hair:#262830;--hair2:#1c1d23;--blue:#9198ff;--blue-soft:rgba(145,152,255,.14);--acc2:#c084fc}
+[data-theme=C]{--acc2:#06b6d4}
+html.dark[data-theme=C]{--meta:#a3a9b8;--acc2:#22d3ee}
+html.dark{--meta:#a1a7b3}
+/* 1 字体层级：标题收紧字距、数字等宽；分区标题前加一小段主色短线 */
+h1,.hhero h1{letter-spacing:-.02em;text-wrap:balance}
+h2,.ph h2,.kicker{letter-spacing:-.01em}
+.kpi b,.stat b,.statline b,.kicker .n,.ph .n,.pct,.ring span,.badge{font-variant-numeric:tabular-nums}
+.kicker::before{content:"";width:3px;height:1em;border-radius:2px;background:linear-gradient(var(--blue),var(--acc2));flex:none}
+.kicker+.sub{margin-bottom:10px}
+.kicker{margin-top:32px}
+p,.card p,.psub,.sub{text-wrap:pretty}
+/* 2 桌面加宽：用满侧边空间 */
+@media(min-width:1000px){[data-theme=B] main{max-width:1320px;padding:32px 40px 64px}}
+[data-theme=A] .top .in,[data-theme=A] main{max-width:1280px}
+[data-theme=C] .top .in,[data-theme=C] main{max-width:1320px}
+@media(min-width:1180px){.grid{grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}.grid.wide{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}}
+/* 4 悬停：光斑跟随鼠标（JS 写 --mx/--my）+ 精选卡流光边框 */
+a.card,.crs,.panel,.pc{--mx:50%;--my:50%}
+a.card::after,.crs::after,.pc::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;background:radial-gradient(260px circle at var(--mx) var(--my),color-mix(in srgb,var(--blue) 10%,transparent),transparent 70%);transition:opacity .3s var(--ease)}
+a.card:hover::after,.crs:hover::after,.pc:hover::after{opacity:1}
+.crs,.pc{position:relative}
+.fx-glow{border:1px solid transparent!important;background:linear-gradient(var(--card),var(--card)) padding-box,conic-gradient(from var(--ang),var(--hair) 0 55%,var(--blue) 70%,var(--acc2) 80%,var(--hair) 92%) border-box!important}
+.top .fav-b,.thsw button,.btn,.chip{transition:transform .2s var(--ease),background-color .2s,color .2s,border-color .2s}
+.btn:active,.chip:active,.thsw button:active{transform:scale(.96)}
+@media (prefers-reduced-motion:no-preference){
+ a.card,.crs,.pc{transition:transform .35s var(--ease),box-shadow .35s var(--ease),border-color .2s,background-color .25s!important}
+ @keyframes fx-spin{to{--ang:360deg}}
+ .fx-glow{animation:fx-spin 6s linear infinite}
+ .fx-glow:not(:hover){animation-duration:14s}
+ /* 5 滚动入场（仅在 JS 标记 html.fx 后生效，没有 JS 时内容照常显示） */
+ html.fx .fx-rv{opacity:0;transform:translateY(14px);transition:opacity .5s var(--ease),transform .5s var(--ease)}
+ html.fx .fx-rv.fx-in{opacity:1;transform:none}
+ .chip:hover{transform:translateY(-1px)}
+}
 </style><script>(function(){var T='site-theme',v;try{v=localStorage.getItem(T)}catch(e){}if(!/^[ABC]$/.test(v||''))v='B';document.documentElement.setAttribute('data-theme',v);
 window.__setTheme=function(t){document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem(T,t)}catch(e){}[].forEach.call(document.querySelectorAll('.thsw button'),function(b){b.setAttribute('aria-pressed',b.dataset.t===t)})}})();
 (function(){var k='theme',s=localStorage.getItem(k);if(s?s==='dark':matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark');
@@ -610,6 +655,18 @@ document.addEventListener('DOMContentLoaded',function(){var t=document.querySele
 if(f&&!f.classList.contains('on')){var q=document.createElement('a');q.className='favq';q.href=f.getAttribute('href');q.title='收藏';q.setAttribute('aria-label','收藏');q.textContent='收藏';t.insertBefore(q,dm)}
 var sw=document.createElement('div');sw.className='thsw';sw.setAttribute('role','group');sw.setAttribute('aria-label','切换风格');var cur=document.documentElement.getAttribute('data-theme'),NM={A:'杂志',B:'工作台',C:'卡片'};'ABC'.split('').forEach(function(x){var e=document.createElement('button');e.type='button';e.dataset.t=x;e.textContent=x;e.title='风格 '+x+' · '+NM[x];e.setAttribute('aria-pressed',x===cur);e.onclick=function(){__setTheme(x)};sw.appendChild(e)});t.insertBefore(sw,dm||null);
 var b=document.createElement('button');b.type='button';b.className='menu';b.setAttribute('aria-label','菜单');b.textContent='☰';b.onclick=function(){var o=document.documentElement.classList.toggle('navopen');b.textContent=o?'✕':'☰'};t.appendChild(b)});
+/* ui-upgrade-2：数字滚动、滚动入场、悬停光斑、精选卡流光边框；prefers-reduced-motion 时全部跳过 */
+(function(){var RM=matchMedia('(prefers-reduced-motion: reduce)').matches;if(!RM&&'IntersectionObserver' in window)document.documentElement.classList.add('fx');
+function count(el){var m=/^(\D*)(\d+)(\D*)$/.exec(el.textContent.trim());if(!m||el.dataset.fxc)return;el.dataset.fxc=1;var to=+m[2];if(to<2)return;var t0=performance.now(),D=Math.min(900,350+to*25);(function f(t){var k=Math.min(1,(t-t0)/D),e=1-Math.pow(1-k,3);el.textContent=m[1]+Math.round(to*e)+m[3];if(k<1)requestAnimationFrame(f)})(t0)}
+window.addEventListener('load',function(){
+ document.querySelectorAll('#home-fav,.crs-list .crs:first-child,.pri,main>.grid.wide>.card:first-child').forEach(function(e){e.classList.add('fx-glow')});
+ if(RM)return;
+ setTimeout(function(){document.querySelectorAll('.kpi b,.stat b,.statline b,.kicker .n').forEach(count)},60);
+ var io=new IntersectionObserver(function(es){es.forEach(function(x){if(x.isIntersecting){x.target.classList.add('fx-in');io.unobserve(x.target)}})},{rootMargin:'0px 0px -6% 0px'});
+ var vh=innerHeight;document.querySelectorAll('main>.kicker,main>.sub,main>.grid,main>.chips,main>.list,main>.empty,.home>.kicker,.home>.sub,.home>.grid,.home>.chips,.home>.list,.home>.empty,main>.sheet,.pgrid>*').forEach(function(e,i){if(e.getBoundingClientRect().top<vh)return;e.classList.add('fx-rv');io.observe(e)});
+ addEventListener('scroll',function(){document.querySelectorAll('.fx-rv:not(.fx-in)').forEach(function(e){if(e.getBoundingClientRect().top<innerHeight){e.classList.add('fx-in');io.unobserve(e)}})},{passive:true});
+ document.addEventListener('pointermove',function(ev){var c=ev.target.closest&&ev.target.closest('a.card,.crs,.pc');if(!c)return;var r=c.getBoundingClientRect();c.style.setProperty('--mx',ev.clientX-r.left+'px');c.style.setProperty('--my',ev.clientY-r.top+'px')},{passive:true});
+})})();
 </script><script src="../assets/favorites.js" defer></script></head><body>
 <header class="top"><div class="in"><a class="brand" href="../index.html"><i>学</i>王玮的学习库</a><nav><a href="../index.html" class="">首页</a><a href="../favorites/index.html" class="">收藏</a><a href="../courses/index.html" class="s1">公开课<em>16</em></a><a href="index.html" class="on">X 好文<em>2</em></a><a href="../research/index.html" class="">技术研究<em>1</em></a><a href="../wechat/index.html" class="">微信公众号<em>5</em></a><a href="../video/index.html" class="">视频<em>1</em></a><a href="../glossary.html" class="">概念卡<em>25</em></a><a href="../x-brief/index.html" class="s2">X 简报</a><a href="../x-posters/index.html" class="">X 海报</a></nav><button class="dm" onclick="__tt()" aria-label="切换深色模式">◐</button></div></header>
 <main><div class="crumb"><a href="../index.html">首页</a> / X 好文</div><section class="hero sheet"><div class="say"><span class="kk">栏目</span><h1>𝕏 X 好文</h1><p>X 上值得精读的长文。</p></div><div class="stage"><div class="stat blue"><b>2</b><span>篇学习页</span></div><div class="stat green" data-k="done" data-ids="huangtongxueh-ai-dev,felix-ambitious"><b>0</b><span>已学完</span></div><div class="stat blue" data-k="doing" data-ids="huangtongxueh-ai-dev,felix-ambitious"><b>2</b><span>进行中</span></div><div class="stat"><b>0</b><span>个主题</span></div></div></section><div class="kicker">文章 <span class="n">2</span></div><div class="sub">一篇一页，点开就学</div><div class="grid wide"><a class="card item" href="huangtongxueh-ai-dev/huangtongxueh-ai-dev.html"><div class="thumb"><img src="huangtongxueh-ai-dev/huangtongxueh-ai-dev-preview.png" alt="" loading="lazy"></div>
