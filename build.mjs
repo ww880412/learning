@@ -119,24 +119,57 @@ ${nx ? `<div class="next"><span class="sm">${['已学完','已掌握'].includes(
 ${nx ? `<a class="nx" href="${esc(nx.href)}"${ext(nx.href)}><b>${['已学完', '已掌握'].includes(stateOf(nx)) ? '去复习' : '下一讲'} ${esc(nx.label)}</b><span>${esc(nx.title)}</span></a>` : ''}</div></div>`; }).join('');
   const reading = doing.filter(i => !i.group);
   const colsCard = columns.map((c, k) => `<a class="hc c${k % 5 + 1}" href="${c.dir}/index.html"><i>${c.icon}</i><span>${esc(c.title)}</span><em>${items.filter(i => i.column === c.id).length}</em></a>`).join('');
-  const body = `<div class="home">
-<section class="hhero"><div class="hh"><span class="kk" id="h-date">今天</span>
-<h1><span class="th-A">慢慢学，<br>学一样会一样。</span><span class="th-B">早上好，王玮</span><span class="th-C" id="h-c">今天的复习</span></h1>
-<p id="h-sum">每篇学习页可翻页、点模拟器、做小测；学完按第 1、3、7、14、30 天复习。</p></div>
-<a class="btn hcta" href="#k-review">开始复习 →</a>
-<div class="kpi"><a href="#k-review" class="red" id="due-link"><span>已逾期</span><b id="k-over">…</b></a><a href="#k-review"><span>今天到期</span><b id="k-today">…</b></a><a href="#k-doing"><span>正在学</span><b>${doing.length}</b></a><a href="#k-columns"><span>篇学习页</span><b>${pages.length}</b></a></div></section>
-<section class="hcols"><h3>按栏目</h3>${colsCard}</section>
-<div class="hbody"><div class="hmain">
-<section class="panel rv" id="k-review"><div class="ph"><h2>今天该复习</h2><span class="n" id="due-n">…</span></div><div class="psub">每篇只列一次；先清逾期，再学新的</div><div id="review"></div></section>
-<section class="panel cr" id="k-doing"><div class="ph"><h2>正在学的课</h2><a class="n" href="courses/index.html">${groups.length} 门公开课 →</a></div><div class="psub">从上次停下的地方继续</div><div class="crs-list">${courseRows}</div></section>
-</div><div class="htrio">
-<section class="panel"><div class="ph"><h2>正在读</h2><span class="n">${reading.length}</span></div><div class="list">${reading.map(i => `<div class="row"><span class="t"><a href="${esc(i.href)}">${esc(i.title)}</a></span><span class="tag">${esc(colById[i.column]?.title)}</span></div>`).join('') || '<div class="row"><span class="t">没有在读的单篇</span></div>'}</div></section>
-<section class="panel"><div class="ph"><h2>X 简报</h2><a class="n" href="x-brief/index.html">全部 →</a></div>${latestBrief ? `<a class="pt" href="x-brief/${latestBrief.d}.html">${esc(latestBrief.t)}</a><div class="list">${latestBrief.secs.slice(0, 4).map(s => `<div class="row"><span class="t"><a href="x-brief/${latestBrief.d}.html#${s.id}">${esc(s.t)}</a></span></div>`).join('')}</div>` : '<div class="list"><div class="row"><span class="t">还没有简报</span></div></div>'}</section>
-<section class="panel"><div class="ph"><h2>X 海报</h2><a class="n" href="x-posters/index.html">全部 →</a></div>${latestPoster ? `<a class="pt" href="x-posters/${latestPoster.d}/index.html">${latestPoster.d.slice(5).replace('-', '/')} · ${latestPoster.n} 张技术海报</a><div class="pthumbs">${latestPoster.imgs.map(m => `<a href="x-posters/${latestPoster.d}/index.html"><img src="${esc(m.src)}" alt="${esc(m.alt)}"></a>`).join('')}</div>` : '<div class="list"><div class="row"><span class="t">还没有海报</span></div></div>'}</section>
-<section class="panel"><div class="ph"><h2>我的收藏</h2><a class="n" href="favorites/index.html">全部 →</a></div><div class="list" id="home-fav"><div class="row"><span class="t">加载中…</span></div></div></section>
-</div></div></div>
-<div class="kicker">已学完 <span class="n">${doneIts.length}</span></div><div class="sub">到了复习日会出现在最上面</div>${courseCards(doneIts, '还没有学完的内容')}
+  // ---- 首页：三套布局（A 杂志 / B 仪表盘 / C 个人站）同时渲染，按 html[data-theme] 只显示一套；数据全部来自 data/ 与 x-brief / x-posters ----
+  const T = s => String(s || '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+  const BR = (() => { if (!latestBrief) return null; const h = fs.readFileSync(path.join(ROOT, 'x-brief', latestBrief.d + '.html'), 'utf8');
+    const secs = h.split(/<h2 id="/).slice(1).map(x => { const id = x.slice(0, x.indexOf('"')); const t = T(x.slice(x.indexOf('>') + 1, x.indexOf('</h2>'))).replace(/^\d+\.\s*/, '');
+      const p = (x.match(/<p>([\s\S]*?)<\/p>/) || [])[1]; const tip = (x.match(/<p class="tip">([\s\S]*?)<\/p>/) || [])[1]; const h3 = [...x.matchAll(/<h3[^>]*>([\s\S]*?)<\/h3>/g)].map(m => T(m[1]));
+      return { id, t, p: T(p), tip: T(tip).replace(/^💡\s*(一句话：)?/, ''), h3 }; }).filter(s => s.t && (s.p || s.h3.length));
+    const s0 = secs[0] || { id: '', t: '', p: '', tip: '', h3: [] }; return { d: latestBrief.d, t: latestBrief.t, href: `x-brief/${latestBrief.d}.html`, lead: s0.h3[0] || s0.t, sum: s0.p, tip: s0.tip, s0, secs }; })();
+  const PIMG = posters.flatMap(p => { try { const h = fs.readFileSync(path.join(ROOT, 'x-posters', p.d, 'index.html'), 'utf8');
+    return [...h.matchAll(/<section class="[^"]*\bpc" id="([^"]+)"[\s\S]*?<img src="([^"]+)" alt="([^"]*)"[\s\S]*?<h3[^>]*>([\s\S]*?)<\/h3>/g)].map(m => ({ d: p.d, href: `x-posters/${p.d}/index.html#${m[1]}`, src: `x-posters/${p.d}/${m[2]}`, t: T(m[4]) || m[3] })); } catch { return []; } }).slice(0, 6);
+  if (!PIMG.length && latestPoster) latestPoster.imgs.forEach(m => PIMG.push({ d: latestPoster.d, href: `x-posters/${latestPoster.d}/index.html`, src: m.src, t: m.alt }));
+  const CR = groups.map(G => { const all = items.filter(i => i.group === G.id).sort(ord); if (!all.length) return null; const n = all.length, cnt = countBy(all), done = cnt['已学完'] + cnt['已掌握'];
+    const parts = G.title.split(' · '); const name = parts.reduce((a, b) => b.length > a.length ? b : a, ''); const src = parts.filter(p => p !== name).join(' · ');
+    const nx = all.find(i => stateOf(i) === '进行中') || all.find(i => !['已学完', '已掌握'].includes(stateOf(i))) || all[0];
+    return { name, src, href: `${G.dir}/index.html`, n, done, doing: cnt['进行中'], pct: n ? Math.round(done / n * 100) : 0, ids: all.map(i => i.id).join(','), all, nx, rev: nx && ['已学完', '已掌握'].includes(stateOf(nx)) }; }).filter(Boolean);
+  const COLS = [...columns.map(c => ({ ic: c.icon, t: c.title, href: `${c.dir}/index.html`, n: items.filter(i => i.column === c.id).length })), { ic: '🧩', t: '概念卡', href: 'glossary.html', n: concepts.length }, { ic: '📰', t: 'X 简报', href: 'x-brief/index.html', n: '每日' }, { ic: '🖼', t: 'X 海报', href: 'x-posters/index.html', n: '每日' }];
+  const allIds = items.filter(isPage).map(i => i.id).join(',');
+  const prog = (ids, cls = '') => `<div class="bigbar prog ${cls}" data-k="prog" data-ids="${ids}"><div class="bar"><i class="g"></i><i class="l"></i><i class="b"></i></div><b>0%</b><span></span></div>`;
+  const seg = c => `<div class="seg">${c.all.map(i => { const s = stateOf(i); return `<i class="${['已学完', '已掌握'].includes(s) ? 'd' : s === '进行中' ? 'p' : ''}" title="${esc(i.label)} · ${esc(s)}"></i>`; }).join('')}</div>`;
+  const nxA = (c, cls = '') => c.nx ? `<a class="${cls}" href="${esc(c.nx.href)}"${ext(c.nx.href)}>${c.rev ? '去复习' : '下一讲'} ${esc(c.nx.label)} · ${esc(c.nx.title)}</a>` : '';
+  const crMeta = c => `已学完 ${c.done}/${c.n}${c.doing ? ` · 进行中 ${c.doing}` : ''}`;
+  const readRows = reading.map(i => `<div class="row"><span class="t"><a href="${esc(i.href)}"${ext(i.href)}>${esc(i.title)}</a></span><span class="tag">${esc(colById[i.column]?.title)}</span></div>`).join('') || '<div class="row"><span class="t">没有在读的单篇</span></div>';
+  const noBrief = '<p class="mute">还没有简报</p>', noPost = '<p class="mute">还没有海报</p>';
+  const pimg = (p, cls = '') => `<a class="${cls}" href="${esc(p.href)}"><img src="${esc(p.src)}" alt="${esc(p.t)}" loading="lazy"><span>${p.d.slice(5).replace('-', '/')} · ${esc(p.t)}</span></a>`;
+  const kpiB = `<div class="db-kpi kpi"><a href="#b-review" class="red" data-f="overbox"><span>已逾期</span><b class="cnt" data-f="over">…</b><small data-f="overmax">&nbsp;</small></a><a href="#b-review"><span>今天到期</span><b class="cnt" data-f="today">…</b><small>先清逾期</small></a><a href="#b-doing"><span>正在学</span><b>${doing.length}</b><small>${CR.length} 门公开课</small></a><a href="#k-columns"><span>学习页</span><b>${pages.length}</b><small>${columns.length} 个栏目</small></a><a href="glossary.html"><span>概念卡</span><b>${concepts.length}</b><small>跨栏目</small></a><div class="db-pct"><span>完成度</span>${prog(allIds)}</div></div>`;
+  const layB = `<div class="lay lay-B"><div class="db-top"><h1>早上好，王玮</h1><span class="kk" data-f="date">今天</span><a class="btn" href="#b-review">开始复习 →</a></div><p class="db-sum" data-f="sum"></p>${kpiB}
+<div class="db-grid"><section class="panel db-rv" id="b-review"><div class="ph"><h2>今天该复习</h2><span class="n" data-f="duen">…</span></div><div data-rv="full"></div></section>
+<section class="panel db-cr" id="b-doing"><div class="ph"><h2>正在学的课</h2><a class="n" href="courses/index.html">${groups.length} 门公开课 →</a></div>${CR.map(c => `<div class="db-c"><div class="i"><small>${esc(c.src)}</small><a class="nm" href="${c.href}">${esc(c.name)}</a>${nxA(c, 'nx')}</div><div class="p">${seg(c)}<small>${crMeta(c)}</small></div>${c.nx ? `<a class="btn sm" href="${esc(c.nx.href)}"${ext(c.nx.href)}>继续 →</a>` : ''}</div>`).join('') || '<p class="mute">还没有课程</p>'}</section>
+<section class="panel db-br"><div class="ph"><h2>今日简报${BR ? ' · ' + esc(BR.d.slice(5).replace('-', '/')) : ''}</h2><a class="n" href="x-brief/index.html">全部 →</a></div>${BR ? `<a class="pt" href="${BR.href}">${esc(BR.lead)}</a><p class="mute">${esc(BR.sum)}</p><ul>${BR.secs.map(s => ({ s, x: s.h3[0] || (s.p ? s.p.slice(0, 34) + (s.p.length > 34 ? '…' : '') : '') })).filter(o => o.x).slice(0, 5).map(({ s, x }) => `<li><a href="${BR.href}#${s.id}"><b>${esc(s.t)}</b> · ${esc(x)}</a></li>`).join('')}</ul>` : noBrief}</section>
+<section class="panel db-fv"><div class="ph"><h2>最近收藏</h2><a class="n" href="favorites/index.html">全部 →</a></div><div class="list" data-fav></div><div class="ph" style="margin-top:10px"><h2>正在读</h2><span class="n">${reading.length}</span></div><div class="list">${readRows}</div></section>
+<section class="panel db-po"><div class="ph"><h2>X 海报</h2><a class="n" href="x-posters/index.html">全部 →</a></div>${PIMG.length ? `<div class="db-th">${PIMG.map(p => pimg(p)).join('')}</div>` : noPost}</section></div></div>`;
+  const layA = `<div class="lay lay-A"><header class="ma-mast"><h1>学习日报</h1><span data-f="date">今天</span><span>王玮的学习库</span></header>
+<nav class="ma-sec">${COLS.map(c => `<a href="${c.href}">${esc(c.t)}</a>`).join('')}<a class="r" href="favorites/index.html">☆ 我的收藏</a></nav>
+<section class="ma-front"><div class="ma-due" id="a-review"><span class="kk">今日待办</span><div class="ma-big cnt" data-f="duen0">…</div><div class="ma-dl">篇该复习 · <b data-f="over">…</b> 篇逾期、<span data-f="today">…</span> 篇今天到期</div><ol data-rv="ol"></ol></div>
+<article class="ma-lead">${BR ? `<span class="kk">头条 · ${esc(BR.t || 'X 简报')}</span><h2><a href="${BR.href}">${esc(BR.lead)}</a></h2><p class="dek">${esc(BR.sum)}</p>${BR.tip ? `<div class="ma-tip">💡 ${esc(BR.tip)}</div>` : ''}` : `<span class="kk">头条</span>${noBrief}`}<div class="ma-fig">${PIMG.slice(0, 2).map(p => pimg(p)).join('')}</div></article>
+<div class="ma-side"><span class="kk">简报其他要闻</span>${BR ? BR.secs.slice(1, 6).map(s => `<article><span class="kk2">${esc(s.t)}</span><h3><a href="${BR.href}#${s.id}">${esc(s.h3[0] || s.t)}</a></h3>${s.p ? `<p>${esc(s.p.slice(0, 70))}${s.p.length > 70 ? '…' : ''}</p>` : ''}</article>`).join('') : noBrief}</div></section>
+<section class="ma-row" id="a-doing">${CR.map(c => `<article><span class="kk">公开课 · ${esc(c.src)}</span><h3><a href="${c.href}">${esc(c.name)}</a></h3>${nxA(c, 'nx')}${prog(c.ids)}</article>`).join('')}<article><span class="kk">正在读 · ${reading.length}</span><div class="list">${readRows}</div></article></section>
+<section class="ma-sf"><div><span class="kk">图片版 · X 技术海报</span><a class="n" href="x-posters/index.html">全部 →</a></div>${PIMG.length ? `<div class="ma-strip">${PIMG.map(p => pimg(p)).join('')}</div>` : noPost}</section>
+<section class="ma-fv"><span class="kk">我的收藏</span><a class="n" href="favorites/index.html">全部 →</a><div class="list" data-fav></div></section></div>`;
+  const layC = `<div class="lay lay-C"><section class="ps-hero"><div class="ps-intro"><div class="ps-av">玮</div><span class="kk" data-f="date">今天</span><h1>早上好，王玮。<br><span>慢慢学，学一样会一样。</span></h1><p data-f="sum"></p><div class="ps-cta"><a class="btn" href="#c-review">开始复习 →</a>${CR[0]?.nx ? `<a class="btn ghost" href="${esc(CR[0].nx.href)}">继续上次的课</a>` : ''}${BR ? `<a class="btn ghost" href="${BR.href}">今天的 X 简报</a>` : ''}</div></div>
+<div class="ps-st kpi"><a href="#c-review" class="hot" data-f="overbox"><span>已逾期</span><b class="cnt" data-f="over">…</b></a><a href="#c-review"><span>今天到期</span><b class="cnt" data-f="today">…</b></a><a href="#c-wall"><span>正在学</span><b>${doing.length}</b></a><a href="#k-columns"><span>篇学习页 · 概念卡 ${concepts.length}</span><b>${pages.length}</b></a></div></section>
+<div class="ps-bar" id="c-wall"><h2>作品墙</h2><em>在学的、在读的、每天的</em></div><div class="ps-wall">
+${BR ? `<a class="ps-t ps-brief fx-feat" href="${BR.href}"><small>X 简报 · ${esc(BR.d.slice(5).replace('-', '/'))}</small><h3>${esc(BR.lead)}</h3><p>${esc(BR.sum)}</p>${BR.tip ? `<p class="tip">💡 ${esc(BR.tip)}</p>` : ''}<div class="ps-tags">${BR.secs.slice(1, 5).map(s => `<span>${esc(s.h3[0] || s.t)}</span>`).join('')}</div></a>` : ''}
+${PIMG[0] ? pimg(PIMG[0], 'ps-t ps-img') : ''}
+<div class="ps-t ps-due" id="c-review"><small>今天该复习 · <span data-f="duen">…</span></small><ul data-rv="ul"></ul></div>
+${CR.map(c => `<div class="ps-t ps-cr"><small>${esc(c.src)} · 公开课</small><h3><a href="${c.href}">${esc(c.name)}</a></h3>${nxA(c, 'nx')}${prog(c.ids)}</div>`).join('')}
+${PIMG.slice(1, 4).map(p => pimg(p, 'ps-t ps-img')).join('')}
+<div class="ps-t ps-fv"><small>我的收藏 · <a href="favorites/index.html">全部 →</a></small><div class="list" data-fav></div></div>
+${reading.slice(0, 4).map(i => `<a class="ps-t ps-rd" href="${esc(i.href)}"${ext(i.href)}><small>正在读 · ${esc(colById[i.column]?.title)}</small><h3>${esc(i.title)}</h3></a>`).join('')}</div></div>`;
+  const body = `<div class="lays">${layB}${layA}${layC}</div>
 <div class="kicker" id="k-columns">栏目</div><div class="sub">按来源找内容</div><div class="grid">${colCards}</div>
+<div class="kicker">已学完 <span class="n">${doneIts.length}</span></div><div class="sub">到了复习日会出现在最上面</div>${courseCards(doneIts, '还没有学完的内容')}
 <div class="kicker">待学收件箱 <span class="n">${inbox.length}</span></div>${inboxHtml}
 <div class="kicker" id="k-concepts">概念卡</div><div class="sub">一个术语一张卡，跨栏目串起来</div><div class="chips">${concepts.map(c => `<a class="chip" href="concepts/${c.id}.html">${esc(c.term)}</a>`).join('')}<a class="chip more" href="glossary.html">全部概念卡 →</a></div>`;
   const script = `const R=${revData};const p=n=>String(n).padStart(2,'0');const d=new Date();const today=new URLSearchParams(location.search).get('today')||(d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())); /* 自查用：?today=2026-10-14 */
@@ -148,19 +181,22 @@ for(const q of R.queue){const pend=q.reviews.filter(r=>!r.done);if(!pend.length|
  if(due.length){const late=diff(due[0].date,today);(late>0?G.over:G.today).push({item:q.item,day:due[due.length-1].day,late,n:due.length,date:due[0].date})}
  else G.later.push({item:q.item,day:pend[0].day,date:pend[0].date,inN:diff(today,pend[0].date)})}
 G.over.sort((a,b)=>b.late-a.late);G.later.sort((a,b)=>a.date.localeCompare(b.date));
-const dueN=G.over.length+G.today.length;document.getElementById('due-n').textContent=dueN?dueN+' 篇到期':'无到期';const $=i=>document.getElementById(i);$('k-over').textContent=G.over.length;$('k-today').textContent=G.today.length;if(!G.over.length)$('due-link').classList.remove('red');
-{const W='日一二三四五六',[y,m,dd]=today.split('-').map(Number),wd=new Date(y,m-1,dd).getDay();$('h-date').textContent=m+' 月 '+dd+' 日 · 星期'+W[wd];
-$('h-c').textContent=dueN?'还有 '+dueN+' 篇等你复习':'今天没有到期的复习';
-const top=G.over[0]||G.today[0];$('h-sum').textContent=dueN?('今天有 '+dueN+' 篇该复习'+(G.over.length?'，其中 '+G.over.length+' 篇已经逾期':'')+'。先从「'+R.items[top.item].title+'」开始。'):(G.later.length?'下一次复习在 '+G.later[0].date.slice(5)+'：'+R.items[G.later[0].item].title+'。':'复习队列是空的，去学点新东西吧。')}
+const dueN=G.over.length+G.today.length;const F=(k,v)=>document.querySelectorAll('[data-f="'+k+'"]').forEach(e=>e.textContent=v);
+F('over',G.over.length);F('today',G.today.length);F('duen0',dueN);F('duen',dueN?dueN+' 篇到期':'无到期');F('overmax',G.over.length?'最久 '+G.over[0].late+' 天':'没有逾期');
+if(!G.over.length)document.querySelectorAll('[data-f="overbox"]').forEach(e=>e.classList.remove('red','hot'));
+{const W='日一二三四五六',[y,m,dd]=today.split('-').map(Number),wd=new Date(y,m-1,dd).getDay();F('date',m+' 月 '+dd+' 日 · 星期'+W[wd]);
+const top=G.over[0]||G.today[0];F('sum',dueN?('今天有 '+dueN+' 篇该复习'+(G.over.length?'，其中 '+G.over.length+' 篇已经逾期':'')+'。先从「'+R.items[top.item].title+'」开始。'):(G.later.length?'下一次复习在 '+G.later[0].date.slice(5)+'：'+R.items[G.later[0].item].title+'。':'复习队列是空的，去学点新东西吧。'))}
 const LAB={over:'逾期',today:'今天到期',later:'之后'};
-const row=(k,r)=>{const it=R.items[r.item];const b=k==='over'?'<b>第 '+r.day+' 天</b> · <span class="late">逾期 '+r.late+' 天</span>'+(r.n>1?' · 积压 '+r.n+' 次':''):k==='today'?'<b>第 '+r.day+' 天</b> · 今天':'第 '+r.day+' 天 · '+r.inN+' 天后（'+r.date.slice(5)+'）';return '<div class="row rvr '+k+'"><i class="ic">'+E(it.ic)+'</i><span class="t"><a href="'+E(it.href)+'">'+E(it.title)+'</a><small>'+E(it.col)+' · '+E(it.label)+' · 第 '+r.day+' 天</small></span><span class="tag">'+E(it.label)+'</span><span class="badge">'+b+'</span><span class="pill">'+(k==='over'?'逾期 '+r.late+' 天':k==='today'?'今天':r.inN+' 天后')+'</span></div>'};
+const row=(k,r)=>{const it=R.items[r.item];const b=k==='over'?'<b>第 '+r.day+' 天</b> · <span class="late">逾期 '+r.late+' 天</span>'+(r.n>1?' · 积压 '+r.n+' 次':''):k==='today'?'<b>第 '+r.day+' 天</b> · 今天':'第 '+r.day+' 天 · '+r.inN+' 天后（'+r.date.slice(5)+'）';return '<div class="row rvr '+k+'"><i class="ic">'+E(it.ic)+'</i><span class="t"><a href="'+E(it.href)+'">'+E(it.title)+'</a><small>'+E(it.col)+' · '+E(it.label)+' · 第 '+r.day+' 天</small></span><span class="tag">'+E(it.label)+'</span><span class="badge">'+b+'</span></div>'};
 const total=G.over.length+G.today.length+G.later.length;let open=false;
 function draw(){let h='',c=0;const lim=open?1e9:5;if(!dueN)h+='<div class="row"><span class="t" style="font-weight:500">今天（'+today+'）没有到期的复习 🎉</span></div>';
  for(const k of ['over','today','later']){const L=G[k];if(!L.length||c>=lim)continue;h+='<div class="rv-g '+k+'">'+LAB[k]+' <span class="c">'+L.length+'</span></div>';for(const r of L){if(c>=lim)break;h+=row(k,r);c++}}
  if(total>5)h+='<button class="rv-more" type="button">'+(open?'收起':'展开全部（共 '+total+' 篇）')+'</button>';
- const el=document.getElementById('review');el.innerHTML='<div class="list">'+h+'</div>';const b=el.querySelector('.rv-more');if(b)b.onclick=()=>{open=!open;draw()}}
+ document.querySelectorAll('[data-rv="full"]').forEach(el=>{el.innerHTML='<div class="list">'+h+'</div>';const b=el.querySelector('.rv-more');if(b)b.onclick=()=>{open=!open;draw()}})}
 draw();
-window.__favRender=function(L){var el=document.getElementById('home-fav');if(!el)return;var TN={'x-brief':'X 简报','poster':'X 海报','concept':'概念卡','course':'公开课','page':'页面'};el.innerHTML=L.length?L.slice(0,5).map(x=>'<div class="row"><span class="tag">'+E(TN[x.type]||'页面')+'</span><span class="t"><a href="'+E(x.url)+'">'+E(x.title)+'</a></span><span class="d">'+E((x.added_at||'').slice(0,10))+'</span></div>').join(''):'<div class="row"><span class="t" style="font-weight:400;color:var(--meta)">还没有收藏，在任意页面点 ☆ 就能收藏</span></div>'};`;
+const short=[...G.over.map(r=>['over',r]),...G.today.map(r=>['today',r])];const sl=(o)=>short.length?short.slice(0,6).map(([k,r])=>{const it=R.items[r.item];return '<li><a href="'+E(it.href)+'">'+E(it.title)+'</a><em class="'+k+'">'+(k==='over'?'逾期 '+r.late+' 天':'今天')+'</em></li>'}).join('')+(short.length>6?'<li class="more"><a href="#b-review" onclick="__setTheme(\\'B\\')">还有 '+(short.length-6)+' 篇 →</a></li>':''):'<li>今天没有到期的复习 🎉'+(G.later.length?'（下一次 '+G.later[0].date.slice(5)+'）':'')+'</li>';
+document.querySelectorAll('[data-rv="ol"],[data-rv="ul"]').forEach(el=>el.innerHTML=sl());
+window.__favRender=function(L){var TN={'x-brief':'X 简报','poster':'X 海报','concept':'概念卡','course':'公开课','page':'页面'};var h=L.length?L.slice(0,5).map(x=>'<div class="row"><span class="tag">'+E(TN[x.type]||'页面')+'</span><span class="t"><a href="'+E(x.url)+'">'+E(x.title)+'</a></span><span class="d">'+E((x.added_at||'').slice(0,10))+'</span></div>').join(''):'<div class="row"><span class="t" style="font-weight:400;color:var(--meta)">还没有收藏，在任意页面点 ☆ 就能收藏</span></div>';document.querySelectorAll('[data-fav]').forEach(el=>el.innerHTML=h)};window.__favRender([]);`;
   write(f, page(f, '首页', 'home', body, script));
 }
 // ---- 栏目页 + 主题页 ----
