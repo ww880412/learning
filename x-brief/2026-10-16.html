@@ -777,6 +777,15 @@ html.dark[data-theme=C]{--paper:#0b0b0f;--sheet:#15151c;--card:#15151c;--ink:#f2
 [data-theme=C] .top{background:#0b0b0f;border-bottom-color:#0b0b0f}[data-theme=C] .top .brand,[data-theme=C] .top nav a.on{color:#fff}[data-theme=C] .top nav a{color:#a5a5b4}[data-theme=C] .top nav a:hover{background:#1d1d25;color:#fff}[data-theme=C] .top nav a.on{background:#ffffff14}
 [data-theme=C] .top .dm,[data-theme=C] .top .fav-b,[data-theme=C] .top .menu,[data-theme=C] .top .favq{background:#15151c;border-color:#26262f;color:#f2f2f5}[data-theme=C] .top .thsw{background:#15151c;border-color:#26262f}[data-theme=C] .top .thsw button{color:#cbd5e1}
 [data-theme=C] .top .brand i{background:linear-gradient(135deg,#ffb86b,#ff5e8a 50%,#7b5cff)}
+/* v2：B 侧栏整列深色（含整页截图）、网格重排无空洞；A/B/C 按钮在深色栏上的选中态 */
+@media(min-width:1000px){html[data-theme=B] body{background:linear-gradient(90deg,#0f172a 232px,var(--paper) 232px)}html[data-theme=B]{background:var(--paper)}}
+.db-grid{grid-template-columns:repeat(12,minmax(0,1fr));grid-auto-flow:row dense}
+.db-rv{grid-column:span 4;grid-row:span 2;display:flex;flex-direction:column}.db-cr{grid-column:span 8}.db-br{grid-column:span 4}.db-fv{grid-column:span 4}.db-po{grid-column:span 12}
+.db-rv [data-rv]{flex:1;display:flex;flex-direction:column}.db-rv .list{flex:1}
+.db-th{grid-template-columns:repeat(6,minmax(0,1fr))}.db-th img{aspect-ratio:4/3}
+@media(max-width:1100px){.db-rv,.db-cr,.db-br,.db-fv,.db-po{grid-column:span 12;grid-row:auto}}
+[data-theme=C] .top .thsw button[aria-pressed=true]{background:#fff;color:#0b0b0f;font-weight:700}
+@media(min-width:1000px){[data-theme=B] .top .thsw button[aria-pressed=true]{background:#fff;color:#0b0b0f;font-weight:700}}
 </style><script>(function(){var T='site-theme',v;try{v=localStorage.getItem(T)}catch(e){}if(!/^[ABC]$/.test(v||''))v='B';document.documentElement.setAttribute('data-theme',v);
 window.__setTheme=function(t){document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem(T,t)}catch(e){}[].forEach.call(document.querySelectorAll('.thsw button'),function(b){b.setAttribute('aria-pressed',b.dataset.t===t)})}})();
 (function(){var k='theme',s=localStorage.getItem(k);if(s?s==='dark':matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark');
