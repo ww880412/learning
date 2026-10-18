@@ -501,6 +501,147 @@ html.dark[data-theme=C]{--paper:#0f1222;--sheet:#181c33;--card:#181c33;--ink:#e6
  [data-theme=B] .rv .list .row .t{flex:1 1 calc(100% - 30px);white-space:normal}
  [data-theme=B] .rv .list .row .badge{margin-left:20px}
 }
+/* =====================================================================
+   紧凑化（2026-10-17）：减少留白，桌面加宽并用多列填满
+   ===================================================================== */
+html,body{line-height:1.6}
+main{max-width:1240px;padding:18px 28px 40px}
+.top .in{max-width:1240px}
+h2{margin:24px 0 10px}
+.kicker{margin:26px 0 2px;font-size:17px}
+.kicker+.sub{margin:0 0 10px}.kicker:not(:has(+.sub)){margin-bottom:10px}
+.home~.kicker:first-of-type{margin-top:28px}
+.sheet{padding:18px 22px;margin-bottom:14px}
+.grid{gap:12px;grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}
+.card{padding:13px 16px;gap:4px}
+.card .ic{width:32px;height:32px;font-size:16px;border-radius:8px;margin-bottom:2px}
+.card .go{top:12px;right:14px}
+.card .meta{padding-top:4px}
+.empty{padding:12px 16px;font-size:13.5px}.empty b{display:inline;font-size:14px;margin:0 8px 0 0}
+.foot{margin-top:32px;padding-top:12px}
+.hhero{margin:4px 0 16px}
+.kpi{margin-top:14px}.kpi a{padding:10px 16px}.kpi b{font-size:21px}
+.hmain{gap:18px;grid-template-columns:1.25fr 1fr}
+.htrio{gap:18px;margin-top:18px}
+.panel .ph{padding:10px 16px}
+.panel .list .row{padding:8px 16px}
+.crs{padding:12px 16px}
+.pthumbs{padding:8px 16px 14px}
+.list .row{padding:9px 14px}
+details.panel{margin-top:20px}
+.fhint{margin-bottom:10px;padding:8px 12px}
+/* 宽屏：首页下方四个面板排成一行，栏目卡片更多列 */
+@media(min-width:1180px){
+ .htrio{grid-template-columns:repeat(4,1fr)}
+ .htrio .pthumbs{grid-template-columns:repeat(3,1fr)}
+ .grid:not(.wide){grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}
+}
+/* 阅读页（X 简报）：正文宽度保持易读，但要点卡并排、行距略收 */
+main:has(>.tabs){max-width:960px}
+main>.sheet li{margin:6px 0}
+main>.sheet h3{margin:16px 0 4px}
+.quick{gap:8px}.quick li{padding:10px 14px 10px 46px;line-height:1.6}.quick li::before{top:11px;left:14px}
+@media(min-width:1100px){.quick{grid-template-columns:repeat(3,1fr)}}
+/* 海报页 */
+.pgrid{gap:14px}.pc{gap:18px}
+/* ---- B：桌面主区居中填满侧栏右侧，不再左对齐留一大片空白 ---- */
+@media(min-width:1000px){
+ [data-theme=B] main{max-width:1280px;margin:0 auto;padding:24px 36px 48px}
+ [data-theme=B] main:has(>.tabs){max-width:980px}
+ html[data-theme=B]{background:linear-gradient(90deg,#f6f6f8 231px,var(--hair) 231px 232px,var(--paper) 232px)}
+ html.dark[data-theme=B]{background:linear-gradient(90deg,#121317 231px,var(--hair) 231px 232px,var(--paper) 232px)}
+ [data-theme=B] body{min-height:100vh}
+ [data-theme=B] .top nav a{padding:5px 10px}
+}
+/* ---- A：保留杂志感，但缩小大标题区和分区间距 ---- */
+[data-theme=A] .top .in,[data-theme=A] main{max-width:1240px}
+[data-theme=A] .top .in{padding:12px 32px}
+[data-theme=A] main{padding:4px 32px 48px}
+[data-theme=A] .hhero{padding:22px 0 22px;display:grid;grid-template-columns:1fr auto;grid-template-areas:"hh kpi";align-items:end;gap:24px}
+[data-theme=A] .hhero h1{font-size:40px;line-height:1.2;margin:8px 0 0}
+[data-theme=A] .hhero p{font-size:16px;margin-top:10px}
+[data-theme=A] .kpi{margin:0;gap:32px}
+[data-theme=A] .hmain{gap:40px;padding:26px 0}
+[data-theme=A] .panel .psub{margin:2px 0 10px}
+[data-theme=A] .hmain .panel .ph h2{font-size:21px}
+[data-theme=A] .rv .list .row{padding:10px 0}
+[data-theme=A] .rv-g{padding:10px 0 4px}
+[data-theme=A] .rv-more{padding:10px 0}
+[data-theme=A] .crs{padding:14px 18px;margin-bottom:10px}
+[data-theme=A] .crs h3{font-size:17px;margin:2px 0}
+[data-theme=A] .htrio{padding:24px 0 4px;gap:18px}
+[data-theme=A] .htrio .panel .ph{padding:14px 18px 0}
+[data-theme=A] .kicker{font-size:20px}
+@media(min-width:1180px){
+ [data-theme=A] .htrio{grid-template-columns:2fr 1fr 1fr 1fr}
+ [data-theme=A] .htrio>.panel:first-child{grid-column:auto;order:0}
+ [data-theme=A] .htrio>.panel:first-child .list{grid-template-columns:1fr}
+}
+/* ---- C：卡片风保留圆角阴影，收紧内边距 ---- */
+[data-theme=C] .top .in,[data-theme=C] main{max-width:1280px}
+[data-theme=C] .home{gap:16px}
+[data-theme=C] .hhero{padding:22px 26px}
+[data-theme=C] .hhero h1{font-size:28px;margin:4px 0}
+[data-theme=C] .hhero .kpi{margin-top:12px}
+[data-theme=C] .hcta{margin-top:14px;padding:9px 18px}
+[data-theme=C] .hcols{padding:16px 20px;gap:2px}
+[data-theme=C] .hc{padding:3px 0}[data-theme=C] .hc i{width:28px;height:28px}
+[data-theme=C] .hbody{gap:16px}
+[data-theme=C] .panel .ph{padding:10px 2px 8px}
+[data-theme=C] .panel .ph h2{font-size:18px}
+[data-theme=C] .crs-list{gap:16px}
+[data-theme=C] .crs{padding:16px 18px}
+[data-theme=C] .crs .nx{margin-top:10px;padding:8px 12px}
+[data-theme=C] .rv .list .row{padding:9px 0}
+[data-theme=C] .htrio{gap:12px}
+[data-theme=C] .htrio .list .row{padding:8px 0}
+[data-theme=C] .rv #review>.list,[data-theme=C] .htrio .panel>.list{padding:4px 18px}
+[data-theme=C] .htrio .pthumbs{padding:12px}
+[data-theme=C] .kicker{font-size:18px}
+@media(min-width:1180px){
+ [data-theme=C] .htrio{grid-template-columns:1fr 1fr}
+ [data-theme=C] .hbody{grid-template-columns:1fr 1.15fr}
+}
+@media(max-width:700px){
+ main{padding:12px 14px 36px}
+ .kicker{margin-top:22px}
+ [data-theme=A] .hhero{display:block;padding:16px 0}[data-theme=A] .hhero h1{font-size:28px}[data-theme=A] .kpi{margin-top:12px}
+ [data-theme=A] main{padding:4px 16px 40px}[data-theme=A] .hmain{gap:22px;padding:18px 0}
+ [data-theme=C] .hhero{padding:18px}[data-theme=C] .hhero h1{font-size:22px}
+ .quick{grid-template-columns:1fr}
+}
+/* =====================================================================
+   轻量动效（150–300ms），尊重 prefers-reduced-motion
+   ===================================================================== */
+@property --p{syntax:"<number>";inherits:true;initial-value:0}
+@media (prefers-reduced-motion:no-preference){
+ html{interpolate-size:allow-keywords}
+ /* 切换主题/深色时颜色平滑过渡 */
+ body,.top,.card,.panel,.sheet,.list,.list .row,.crs,.empty,.kpi,.kpi a,.chip,.tag,.btn,.tabs a,.quick li,details.panel,.hcols,.thsw button{transition:background-color .25s ease,color .25s ease,border-color .25s ease,box-shadow .2s ease,transform .2s ease}
+ /* 卡片悬停轻微上浮 */
+ a.card:hover,.crs:hover,.pc:hover{transform:translateY(-2px)}
+ [data-theme=A] a.card:hover,[data-theme=A] .crs:hover{box-shadow:0 6px 18px -10px rgba(60,40,20,.35)}
+ [data-theme=B] a.card:hover,[data-theme=B] .crs:hover{transform:translateY(-1px);box-shadow:0 2px 8px -4px rgba(20,20,40,.18)}
+ [data-theme=C] a.card:hover,[data-theme=C] .crs:hover{transform:translateY(-3px);box-shadow:0 2px 4px rgba(30,40,90,.06),0 14px 30px rgba(30,40,90,.12)}
+ .list .row,.chip{transition:background-color .15s ease,color .15s ease,border-color .15s ease}
+ /* 分区载入淡入 */
+ @keyframes lf-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+ .home>*,.htrio>.panel,.hmain>.panel,main>.kicker,main>.grid,main>.chips,main>.sheet,main>.list,.quick li,.pgrid>*{animation:lf-in .3s ease both}
+ .hmain>.panel:nth-child(2),.htrio>.panel:nth-child(2){animation-delay:.04s}
+ .htrio>.panel:nth-child(3){animation-delay:.08s}.htrio>.panel:nth-child(4){animation-delay:.12s}
+ /* 复习「展开全部」新出现的行淡入 */
+ .rv .list .row{animation:lf-in .2s ease both}
+ /* 折叠面板（课时列表、同步设置）平滑展开 */
+ details::details-content{block-size:0;overflow:hidden;transition:block-size .25s ease,content-visibility .25s allow-discrete}
+ details[open]::details-content{block-size:auto}
+ /* 进度条与进度环载入时填充 */
+ @keyframes lf-bar{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+ .prog .bar,.bigbar .bar{transform-origin:left}
+ .prog .bar i,.seg i.d,.seg i.p{transform-origin:left;animation:lf-bar .6s cubic-bezier(.2,.7,.2,1) .15s both}
+ @keyframes lf-ring{from{--p:0}}
+ [data-theme=C] .crs .ring{animation:lf-ring .7s cubic-bezier(.2,.7,.2,1) .15s both}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 .pgrid{display:grid;gap:18px}.pc{display:grid;grid-template-columns:300px 1fr;gap:20px;align-items:start}
 .pc img{width:100%;border-radius:12px;border:1px solid var(--hair);display:block}.pc h3{margin-top:0}
 .xi{font-size:14.5px}.xi .who{font-weight:700}.xi .h{color:var(--ink2)}.xi blockquote{margin:10px 0;padding:10px 14px;background:var(--paper);border-radius:10px;white-space:pre-wrap;font-size:14px}
@@ -515,4 +656,4 @@ var sw=document.createElement('div');sw.className='thsw';sw.setAttribute('role',
 var b=document.createElement('button');b.type='button';b.className='menu';b.setAttribute('aria-label','菜单');b.textContent='☰';b.onclick=function(){var o=document.documentElement.classList.toggle('navopen');b.textContent=o?'✕':'☰'};t.appendChild(b)});
 </script><script src="../assets/favorites.js" defer></script></head><body>
 <header class="top"><div class="in"><a class="brand" href="./index.html"><i>🖼</i>X 海报日报</a><nav><a href="../index.html">学习库首页</a><a href="index.html" class=on>X 海报</a><a href="../x-brief/index.html">X 简报</a><a href="../favorites/index.html">收藏</a></nav><button class="dm" onclick="__tt()" aria-label="切换深色模式">◐</button></div></header>
-<main><section class="sheet"><span class="kk">最新一期 · 2026-10-17（周六）</span><h1>X 技术海报日报</h1><div class="thumbs"><a href="2026-10-17/index.html#p1"><img src="2026-10-17/img/01-claude-code-mod-vs-hook-skill.webp" alt="" loading="lazy"></a><a href="2026-10-17/index.html#p2"><img src="2026-10-17/img/02-skill-trigger-hit-rate.webp" alt="" loading="lazy"></a><a href="2026-10-17/index.html#p3"><img src="2026-10-17/img/03-supervisors-vs-swarms.webp" alt="" loading="lazy"></a><a href="2026-10-17/index.html#p4"><img src="2026-10-17/img/04-agent-sessions-to-evals.webp" alt="" loading="lazy"></a><a href="2026-10-17/index.html#p5"><img src="2026-10-17/img/05-cut-ai-bill-jev-router.webp" alt="" loading="lazy"></a><a href="2026-10-17/index.html#p6"><img src="2026-10-17/img/06-loopx-long-running-tasks.webp" alt="" loading="lazy"></a></div><p style="margin:14px 0 0"><a href="2026-10-17/index.html"><b>看这一期 →</b></a></p></section><h2 id="archive">往期</h2><section class="sheet" style="padding:6px 12px"><div class="row"><span class="d">2026-10-17（周六）</span><span class="t"><a href="2026-10-17/index.html"><b>6 张海报</b></a> · Claude Code Mod vs Hook/Skill：扩展点怎么选；提高 Skill 触发命中率的工程方法；Supervisors vs Swarms：多 Agent 架构怎么选…</span><span class="tag blue">最新</span></div><div class="row"><span class="d">2026-10-16（周五）</span><span class="t"><a href="2026-10-16/index.html"><b>6 张海报</b></a> · Claude Code /btw 拆解：旁路提问如何复用 prompt cache；Open Claude UI：Claude 桌面端 UI 逆向拆解与开源组件；Claude Code Review 正式可用：多 Agent 审 PR 的流程与三档深度…</span></div><div class="row"><span class="d">2026-10-15（周四）</span><span class="t"><a href="2026-10-15/index.html"><b>6 张海报</b></a> · Claude Code 桌面更新：管一群 AI 的多会话工作流；Agent API 接入 OpenTelemetry：可观测性比新模型更能说明进度；CacheLink：跨模型交接长上下文 KV cache…</span></div><div class="row"><span class="d">2026-10-14（周三）</span><span class="t"><a href="2026-10-14/index.html"><b>2 张海报</b></a> · Anthropic 自研版本控制系统 Scion：为智能体规模重建源码控制；Claude Code 插件 code-modernization v1.0.0：遗留代码现代化并证明行为一致</span></div><div class="row"><span class="d">2026-10-13（周二）</span><span class="t"><a href="2026-10-13/index.html"><b>6 张海报</b></a> · Anthropic：加强对蒸馏攻击的防御（Strengthening our defenses against distillation attacks）；Claude Code 与 Codex 的 auto review：让另一个模型审批 Agent 工具调用；yetone 的魔法：magpie 是怎么让 AI 自己维护项目的…</span></div><div class="row"><span class="d">2026-10-11（周日）</span><span class="t"><a href="2026-10-11/index.html"><b>6 张海报</b></a> · 「万字总结」- 我偷来了一份成为 Agent 工程师的学习线路；Pi Durable 从入门到精通：从一个开源小助手，到你自己的 Hermes；华为开源多智能体协作框架 JiuwenSwarm…</span></div><div class="row"><span class="d">2026-10-10（周六）</span><span class="t"><a href="2026-10-10/index.html"><b>6 张海报</b></a> · Block 如何用 Claude Fable 编排上千个 PR；Agent 写完代码，验收才刚开始：交接检查与证据链；给 AI 写代码用的 UI 组件库清单…</span></div><div class="row"><span class="d">2026-10-09（周五）</span><span class="t"><a href="2026-10-09/index.html"><b>6 张海报</b></a> · AI-reads-books：让 AI 逐页读书、分段小结、沉淀知识库；android-adb-control：让 Agent 通过 ADB 遥控安卓手机（观察→执行→验证）；万字长文｜Cloudflare 从入门到精通，一个域名搞定建站、邮箱、存储和 AI 后端…</span></div></section><div class="foot">王玮的 X 海报日报 · 每天从 X 推荐流挑技术帖，用 ChatGPT 生成康奈尔笔记海报 · 每张都附 X 原帖信息 · 风格改编自 <a href="https://github.com/vuejs/vitepress">VitePress</a>（MIT）</div></main></body></html>
+<main><section class="sheet"><span class="kk">最新一期 · 2026-10-18（周日）</span><h1>X 技术海报日报</h1><div class="thumbs"><a href="2026-10-18/index.html#p1"><img src="2026-10-18/img/01-claude-code-team-code-review.webp" alt="" loading="lazy"></a><a href="2026-10-18/index.html#p2"><img src="2026-10-18/img/02-project-artifact-live-status-page.webp" alt="" loading="lazy"></a></div><p style="margin:14px 0 0"><a href="2026-10-18/index.html"><b>看这一期 →</b></a></p></section><h2 id="archive">往期</h2><section class="sheet" style="padding:6px 12px"><div class="row"><span class="d">2026-10-18（周日）</span><span class="t"><a href="2026-10-18/index.html"><b>2 张海报</b></a> · How the Claude Code team does code review（Claude Code 团队如何做代码评审）；Anthropic project-artifact 插件：把代码仓库变成活的项目状态页</span><span class="tag blue">最新</span></div><div class="row"><span class="d">2026-10-17（周六）</span><span class="t"><a href="2026-10-17/index.html"><b>6 张海报</b></a> · Claude Code Mod vs Hook/Skill：扩展点怎么选；提高 Skill 触发命中率的工程方法；Supervisors vs Swarms：多 Agent 架构怎么选…</span></div><div class="row"><span class="d">2026-10-16（周五）</span><span class="t"><a href="2026-10-16/index.html"><b>6 张海报</b></a> · Claude Code /btw 拆解：旁路提问如何复用 prompt cache；Open Claude UI：Claude 桌面端 UI 逆向拆解与开源组件；Claude Code Review 正式可用：多 Agent 审 PR 的流程与三档深度…</span></div><div class="row"><span class="d">2026-10-15（周四）</span><span class="t"><a href="2026-10-15/index.html"><b>6 张海报</b></a> · Claude Code 桌面更新：管一群 AI 的多会话工作流；Agent API 接入 OpenTelemetry：可观测性比新模型更能说明进度；CacheLink：跨模型交接长上下文 KV cache…</span></div><div class="row"><span class="d">2026-10-14（周三）</span><span class="t"><a href="2026-10-14/index.html"><b>2 张海报</b></a> · Anthropic 自研版本控制系统 Scion：为智能体规模重建源码控制；Claude Code 插件 code-modernization v1.0.0：遗留代码现代化并证明行为一致</span></div><div class="row"><span class="d">2026-10-13（周二）</span><span class="t"><a href="2026-10-13/index.html"><b>6 张海报</b></a> · Anthropic：加强对蒸馏攻击的防御（Strengthening our defenses against distillation attacks）；Claude Code 与 Codex 的 auto review：让另一个模型审批 Agent 工具调用；yetone 的魔法：magpie 是怎么让 AI 自己维护项目的…</span></div><div class="row"><span class="d">2026-10-11（周日）</span><span class="t"><a href="2026-10-11/index.html"><b>6 张海报</b></a> · 「万字总结」- 我偷来了一份成为 Agent 工程师的学习线路；Pi Durable 从入门到精通：从一个开源小助手，到你自己的 Hermes；华为开源多智能体协作框架 JiuwenSwarm…</span></div><div class="row"><span class="d">2026-10-10（周六）</span><span class="t"><a href="2026-10-10/index.html"><b>6 张海报</b></a> · Block 如何用 Claude Fable 编排上千个 PR；Agent 写完代码，验收才刚开始：交接检查与证据链；给 AI 写代码用的 UI 组件库清单…</span></div><div class="row"><span class="d">2026-10-09（周五）</span><span class="t"><a href="2026-10-09/index.html"><b>6 张海报</b></a> · AI-reads-books：让 AI 逐页读书、分段小结、沉淀知识库；android-adb-control：让 Agent 通过 ADB 遥控安卓手机（观察→执行→验证）；万字长文｜Cloudflare 从入门到精通，一个域名搞定建站、邮箱、存储和 AI 后端…</span></div></section><div class="foot">王玮的 X 海报日报 · 每天从 X 推荐流挑技术帖，用 ChatGPT 生成康奈尔笔记海报 · 每张都附 X 原帖信息 · 风格改编自 <a href="https://github.com/vuejs/vitepress">VitePress</a>（MIT）</div></main></body></html>
