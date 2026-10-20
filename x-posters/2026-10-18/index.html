@@ -195,7 +195,7 @@ main>.sheet p{line-height:1.7}
 .more{background:var(--paper);border-radius:8px;padding:10px 14px;font-size:14px;color:var(--ink2)}
 .tip{background:var(--amber-soft);border-radius:8px;padding:8px 12px;font-size:14.5px}
 .muted{font-size:13.5px;color:var(--meta)}
-/* 扩大 ☆ 和「原帖」的点击区域（约 44px），不改变行高 */
+/* 扩大收藏星和「原帖」的点击区域（约 44px），不改变行高 */
 main li a[href*="x.com/"],main li a[href*="twitter.com/"]{display:inline-block;padding:10px 6px;margin:-10px -2px}
 main li .fav-b{display:inline-grid;place-items:center;min-width:44px;min-height:44px;margin:-12px -8px -12px 0;vertical-align:middle}
 .card .fav-b{min-width:40px;min-height:40px;right:6px!important;bottom:4px!important}
@@ -786,24 +786,65 @@ html.dark[data-theme=C]{--paper:#0b0b0f;--sheet:#15151c;--card:#15151c;--ink:#f2
 @media(max-width:1100px){.db-rv,.db-cr,.db-br,.db-fv,.db-po{grid-column:span 12;grid-row:auto}}
 [data-theme=C] .top .thsw button[aria-pressed=true]{background:#fff;color:#0b0b0f;font-weight:700}
 @media(min-width:1000px){[data-theme=B] .top .thsw button[aria-pressed=true]{background:#fff;color:#0b0b0f;font-weight:700}}
+/* =====================================================================
+   design-system（2026-10）：设计令牌 + Lucide 图标 + 动效规则。完整说明见 DESIGN.md
+   ===================================================================== */
+:root{
+ --sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:24px;--sp-6:32px;
+ --fs-xs:12px;--fs-sm:13.5px;--fs-md:15px;--fs-lg:18px;--fs-xl:24px;--fs-2xl:32px;
+ --r-xs:6px;--r-sm:8px;--r-md:10px;--r-lg:12px;--r-xl:18px;--r-pill:999px;
+ --sh-1:0 1px 2px rgba(15,23,42,.06);--sh-2:0 4px 16px -8px rgba(15,23,42,.22);--sh-3:0 14px 30px -12px rgba(15,23,42,.28);
+ --dur-1:120ms;--dur-2:220ms;--dur-3:420ms;
+ --ease:cubic-bezier(.22,1,.36,1);--ease-in-out:cubic-bezier(.65,0,.35,1);
+ --spring:cubic-bezier(.34,1.3,.64,1);
+ --icon-stroke:2}
+@supports (transition-timing-function:linear(0,1)){:root{--spring:linear(0,.0089,.0346,.0752,.1286,.1927,.2654,.3445,.4278,.5131,.5983,.6812,.7598,.8325,.8981,.9555,1.0042,1.0441,1.0753,1.0982,1.1134,1.1218,1.1243,1.1218,1.1155,1.1062,1.0949,1.0825,1.0697,1.0571,1.0451,1.034,1.0242,1.0157,1.0085,1.0027,.9982,.995,.9928,.9916,.9912,.9914,.9921,.9931,.9943,.9956,.9968,.998,.999,1)}}
+html.dark{--sh-1:0 1px 2px rgba(0,0,0,.4);--sh-2:0 4px 16px -8px rgba(0,0,0,.6);--sh-3:0 14px 30px -12px rgba(0,0,0,.7)}
+/* 图标：Lucide，16/18/20px，描边 2；≥20px 用 1.75；填充态加 .fill（如已收藏的星） */
+.i{display:inline-block;flex:none;vertical-align:-.16em;stroke-width:var(--icon-stroke)}
+.i[width="20"],.i[width="26"]{--icon-stroke:1.75}
+.i.fill{fill:currentColor}
+.top .brand i .i{vertical-align:0}.top .dm .i,.top .menu .i{display:block}
+.card .ic .i,.hc i .i{display:block}
+.ma-sec .r .i,.ma-tip .i,.tip .i,.ps-brief .tip .i{color:var(--amber);vertical-align:-.18em}
+.ma-sec .r .i{color:currentColor}
+h1>.i{vertical-align:-.12em;color:var(--blue);margin-right:2px}
+details>summary .i{color:var(--meta);margin-right:2px}
+.fav-b .i{width:18px;height:18px}.fav-b.on .i{fill:currentColor}
+.rvr .ic .i{display:block}
+.star .i{color:#e0a100;vertical-align:-.15em}
+/* 动效：悬停/展开用 spring（轻微回弹），颜色用 ease；入场错峰 40ms；尊重 reduced-motion */
+@media (prefers-reduced-motion:no-preference){
+ a.card,.crs,.pc,.ps-t,.ps-st a,.db-kpi a,.chip,.btn,.fav-b,.thsw button{transition:transform var(--dur-3) var(--spring),box-shadow var(--dur-2) var(--ease),border-color var(--dur-2) var(--ease),background-color var(--dur-2) var(--ease),color var(--dur-2) var(--ease)!important}
+ .db-kpi a:hover{transform:translateY(-2px)}
+ .fav-b:hover{transform:scale(1.15)}.fav-b.on{animation:fx-pop var(--dur-3) var(--spring)}
+ @keyframes fx-pop{0%{transform:scale(.6)}100%{transform:scale(1)}}
+ details::details-content{transition:block-size var(--dur-3) var(--spring),content-visibility var(--dur-3) allow-discrete}
+ @keyframes fx-up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+ html.fx .fx-st{animation:fx-up var(--dur-3) var(--ease) both;animation-delay:calc(var(--i,0) * 40ms)}
+ ::view-transition-old(root),::view-transition-new(root){animation-duration:var(--dur-2);animation-timing-function:var(--ease)}
+}
+.fav-b.on,.top .fav-b.on{color:#e0a100!important}
 .pgrid{display:grid;gap:18px}.pc{display:grid;grid-template-columns:300px 1fr;gap:20px;align-items:start}
 .pc img{width:100%;border-radius:12px;border:1px solid var(--hair);display:block}.pc h3{margin-top:0}
 .xi{font-size:14.5px}.xi .who{font-weight:700}.xi .h{color:var(--ink2)}.xi blockquote{margin:10px 0;padding:10px 14px;background:var(--paper);border-radius:10px;white-space:pre-wrap;font-size:14px}
 .thumbs{display:flex;gap:6px;overflow-x:auto}.thumbs img{height:120px;border-radius:6px;border:1px solid var(--hair)}
-@media(max-width:700px){.pc{grid-template-columns:1fr}}</style><script>(function(){var T='site-theme',v;try{v=localStorage.getItem(T)}catch(e){}if(!/^[ABC]$/.test(v||''))v='C';document.documentElement.setAttribute('data-theme',v);
-window.__setTheme=function(t){document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem(T,t)}catch(e){}[].forEach.call(document.querySelectorAll('.thsw button'),function(b){b.setAttribute('aria-pressed',b.dataset.t===t)})}})();
+@media(max-width:700px){.pc{grid-template-columns:1fr}}</style><script>/*ICONS lucide v1.60.0 ISC*/window.__IC={"menu":"<path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/>","x":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","star":"<path d=\"M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z\"/>","party-popper":"<path d=\"M5.8 11.3 2 22l10.7-3.79\"/><path d=\"M4 3h.01\"/><path d=\"M22 8h.01\"/><path d=\"M15 2h.01\"/><path d=\"M22 20h.01\"/><path d=\"m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10\"/><path d=\"m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17\"/><path d=\"m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7\"/><path d=\"M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z\"/>"};window.__ic=function(n,s,c){return '<svg class="i i-'+n+(c?' '+c:'')+'" width="'+(s||16)+'" height="'+(s||16)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(window.__IC[n]||'')+'</svg>'};/*END ICONS*/
+(function(){var T='site-theme',v;try{v=localStorage.getItem(T)}catch(e){}if(!/^[ABC]$/.test(v||''))v='C';document.documentElement.setAttribute('data-theme',v);
+window.__setTheme=function(t){var go=function(){__applyTheme(t)};if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.startViewTransition(go);else go()};window.__applyTheme=function(t){document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem(T,t)}catch(e){}[].forEach.call(document.querySelectorAll('.thsw button'),function(b){b.setAttribute('aria-pressed',b.dataset.t===t)})}})();
 (function(){var k='theme',s=localStorage.getItem(k);if(s?s==='dark':matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark');
-window.__tt=function(){var d=document.documentElement.classList.toggle('dark');localStorage.setItem(k,d?'dark':'light')}})();
+window.__tt=function(){var f=function(){var d=document.documentElement.classList.toggle('dark');localStorage.setItem(k,d?'dark':'light')};if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.startViewTransition(f);else f()}})();
 document.addEventListener('DOMContentLoaded',function(){var t=document.querySelector('.top .in'),dm=t&&t.querySelector('.dm');if(!t||t.querySelector('.menu'))return;var nav=t.querySelector('nav'),f=nav&&[].find.call(nav.querySelectorAll('a'),function(a){return a.textContent.trim()==='收藏'});
 if(f&&!f.classList.contains('on')){var q=document.createElement('a');q.className='favq';q.href=f.getAttribute('href');q.title='收藏';q.setAttribute('aria-label','收藏');q.textContent='收藏';t.insertBefore(q,dm)}
 var sw=document.createElement('div');sw.className='thsw';sw.setAttribute('role','group');sw.setAttribute('aria-label','切换风格');var cur=document.documentElement.getAttribute('data-theme'),NM={A:'杂志',B:'工作台',C:'卡片'};'ABC'.split('').forEach(function(x){var e=document.createElement('button');e.type='button';e.dataset.t=x;e.textContent=x;e.title='风格 '+x+' · '+NM[x];e.setAttribute('aria-pressed',x===cur);e.onclick=function(){__setTheme(x)};sw.appendChild(e)});t.insertBefore(sw,dm||null);
-var b=document.createElement('button');b.type='button';b.className='menu';b.setAttribute('aria-label','菜单');b.textContent='☰';b.onclick=function(){var o=document.documentElement.classList.toggle('navopen');b.textContent=o?'✕':'☰'};t.appendChild(b)});
+var b=document.createElement('button');b.type='button';b.className='menu';b.setAttribute('aria-label','菜单');b.innerHTML=__ic('menu',18);b.onclick=function(){var o=document.documentElement.classList.toggle('navopen');b.innerHTML=__ic(o?'x':'menu',18)};t.appendChild(b)});
 /* ui-upgrade-2：数字滚动、滚动入场、悬停光斑、精选卡流光边框；prefers-reduced-motion 时全部跳过 */
 (function(){var RM=matchMedia('(prefers-reduced-motion: reduce)').matches;if(!RM&&'IntersectionObserver' in window)document.documentElement.classList.add('fx');
 function count(el){var m=/^(\D*)(\d+)(\D*)$/.exec(el.textContent.trim());if(!m||el.dataset.fxc)return;el.dataset.fxc=1;var to=+m[2];if(to<2)return;var t0=performance.now(),D=Math.min(900,350+to*25);(function f(t){var k=Math.min(1,(t-t0)/D),e=1-Math.pow(1-k,3);el.textContent=m[1]+Math.round(to*e)+m[3];if(k<1)requestAnimationFrame(f)})(t0)}
 window.addEventListener('load',function(){
  document.querySelectorAll('.fx-feat,.pri,main>.grid.wide>.card:first-child').forEach(function(e){e.classList.add('fx-glow')});
  if(RM)return;
+ document.querySelectorAll('.ps-wall>*,.ps-st>*,.db-kpi>*,.db-grid>*,.ma-row>*,.ma-strip>*,main>.grid>*').forEach(function(e,i){var k=[].indexOf.call(e.parentNode.children,e);if(e.getBoundingClientRect().top<innerHeight){e.style.setProperty('--i',Math.min(k,10));e.classList.add('fx-st')}});
  setTimeout(function(){document.querySelectorAll('.kpi b,.stat b,.statline b,.kicker .n,.cnt').forEach(count)},60);
  var io=new IntersectionObserver(function(es){es.forEach(function(x){if(x.isIntersecting){x.target.classList.add('fx-in');io.unobserve(x.target)}})},{rootMargin:'0px 0px -6% 0px'});
  var vh=innerHeight;document.querySelectorAll('main>.kicker,main>.sub,main>.grid,main>.chips,main>.list,main>.empty,.home>.kicker,.home>.sub,.home>.grid,.home>.chips,.home>.list,.home>.empty,main>.sheet,.pgrid>*').forEach(function(e,i){if(e.getBoundingClientRect().top<vh)return;e.classList.add('fx-rv');io.observe(e)});
@@ -811,7 +852,7 @@ window.addEventListener('load',function(){
  document.addEventListener('pointermove',function(ev){var c=ev.target.closest&&ev.target.closest('a.card,.crs,.pc');if(!c)return;var r=c.getBoundingClientRect();c.style.setProperty('--mx',ev.clientX-r.left+'px');c.style.setProperty('--my',ev.clientY-r.top+'px')},{passive:true});
 })})();
 </script><script src="../../assets/favorites.js" defer></script></head><body>
-<header class="top"><div class="in"><a class="brand" href="../index.html"><i>🖼</i>X 海报日报</a><nav><a href="../../index.html">学习库首页</a><a href="../index.html" class=on>X 海报</a><a href="../../x-brief/index.html">X 简报</a><a href="../../favorites/index.html">收藏</a></nav><button class="dm" onclick="__tt()" aria-label="切换深色模式">◐</button></div></header>
+<header class="top"><div class="in"><a class="brand" href="../index.html"><i><svg class="i i-image" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></i>X 海报日报</a><nav><a href="../../index.html">学习库首页</a><a href="../index.html" class=on>X 海报</a><a href="../../x-brief/index.html">X 简报</a><a href="../../favorites/index.html">收藏</a></nav><button class="dm" onclick="__tt()" aria-label="切换深色模式"><svg class="i i-sun-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2"/><path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715"/><path d="M16 12a4 4 0 0 0-4-4"/><path d="m19 5-1.256 1.256"/><path d="M20 12h2"/></svg></button></div></header>
 <main><section class="sheet"><span class="kk">DAILY · 2026-10-18（周日）</span><h1>6 张技术海报</h1><p class="muted">点海报看原图；每张右侧是 X 原帖信息（时间为美东 ET）。</p></section><div class="pgrid"><section class="sheet pc" id="p1"><a href="img/01-claude-code-team-code-review.png" target="_blank"><img src="img/01-claude-code-team-code-review.webp" alt="Claude Code 团队如何做代码评审：把阅读交给机器，把注意力留给人" loading="lazy"></a>
 <div><span class="kk">#1 · X 原帖信息</span><h3>Claude Code 团队如何做代码评审：把阅读交给机器，把注意力留给人</h3><div class="xi"><span class="who">Addy Osmani, Morgan Westlee Lunt, Qing Wang (claude.dev); via Addy Osmani</span> <span class="h">@addyosmani</span><br>发帖时间：2026-10-17 19:46 ET<br>原帖：<a href="https://x.com/addyosmani/status/2111604705340326393" target="_blank" rel="noopener">https://x.com/addyosmani/status/2111604705340326393</a><br>原文链接：<a href="https://claude.dev/blog/solving-code-review-at-anthropic/" target="_blank" rel="noopener">https://claude.dev/blog/solving-code-review-at-anthropic/</a><blockquote>Give your agent a way to verify its work. This can dramatically improve the quality of output.
 

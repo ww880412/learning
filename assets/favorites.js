@@ -42,7 +42,7 @@
   var token = function () { try { return localStorage.getItem(TK) || ''; } catch (e) { return ''; } };
   var list = []; try { list = JSON.parse(localStorage.getItem(CK) || '[]'); } catch (e) {}
   var has = function (u) { return list.some(function (x) { return x.url === u; }); };
-  var css = '.fav-b{background:none;border:none;cursor:pointer;font-size:17px;line-height:1;padding:2px 4px;color:var(--ink2);opacity:.55;vertical-align:middle}.fav-b:hover{opacity:1}.fav-b.on{color:#e0a100;opacity:1}' +
+  var css = '.fav-b{background:none;border:none;cursor:pointer;font-size:17px;line-height:1;padding:2px 4px;color:var(--ink2);opacity:.55;vertical-align:middle}.fav-b:hover{opacity:1}.fav-b.on{color:#e0a100;opacity:1}.fav-b svg{display:block}.fav-b .fill{fill:currentColor}' +
     '.fav-b.busy{opacity:.3;pointer-events:none}.card .fav-b{position:absolute;right:12px;bottom:10px;z-index:2}.pc .fav-b{float:right}' +
     '.fav-toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:8px 16px;border-radius:8px;font-size:14px;z-index:99;max-width:90vw}' +
     '.fav-toast a{color:inherit;text-decoration:underline}';
@@ -50,7 +50,7 @@
   function toast(html, ms) { var t = document.createElement('div'); t.className = 'fav-toast'; t.innerHTML = html; document.body.appendChild(t); setTimeout(function () { t.remove(); }, ms || 3200); }
   function absUrl(u) { var x = new URL(u, location.href); return x.origin === location.origin ? x.pathname + x.hash : x.href; }
   var buttons = [];
-  function paint() { buttons.forEach(function (b) { var on = has(b._item.url); b.classList.toggle('on', on); b.textContent = on ? '★' : '☆'; b.title = on ? '已收藏，点一下取消' : '收藏'; }); if (root.__favRender) root.__favRender(list); }
+  function paint() { buttons.forEach(function (b) { var on = has(b._item.url); b.classList.toggle('on', on); b.innerHTML = root.__ic ? root.__ic('star', 18, on ? 'fill' : '') : (on ? '★' : '☆'); b.setAttribute('aria-pressed', on); b.setAttribute('aria-label', on ? '取消收藏' : '收藏'); b.title = on ? '已收藏，点一下取消' : '收藏'; }); if (root.__favRender) root.__favRender(list); }
   function setList(l) { list = l; try { localStorage.setItem(CK, JSON.stringify(l)); } catch (e) {} paint(); }
   async function load() {
     try {
@@ -70,7 +70,7 @@
       item.tags = tg.split(/[,，]/).map(function (s) { return s.trim(); }).filter(Boolean); item.added_at = new Date().toISOString(); item.note = item.note || '';
     }
     b.classList.add('busy');
-    try { setList(await commitOp({ type: add ? 'add' : 'remove', item: item }, token())); toast(add ? '已收藏 ★' : '已取消收藏'); }
+    try { setList(await commitOp({ type: add ? 'add' : 'remove', item: item }, token())); toast(add ? '已收藏' : '已取消收藏'); }
     catch (e) { toast('没保存成功：' + e.message, 5000); }
     b.classList.remove('busy');
   }
