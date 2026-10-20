@@ -153,7 +153,7 @@ main>.sheet p{line-height:1.7}
 .more{background:var(--paper);border-radius:8px;padding:10px 14px;font-size:14px;color:var(--ink2)}
 .tip{background:var(--amber-soft);border-radius:8px;padding:8px 12px;font-size:14.5px}
 .muted{font-size:13.5px;color:var(--meta)}
-/* 扩大 ☆ 和「原帖」的点击区域（约 44px），不改变行高 */
+/* 扩大收藏星和「原帖」的点击区域（约 44px），不改变行高 */
 main li a[href*="x.com/"],main li a[href*="twitter.com/"]{display:inline-block;padding:10px 6px;margin:-10px -2px}
 main li .fav-b{display:inline-grid;place-items:center;min-width:44px;min-height:44px;margin:-12px -8px -12px 0;vertical-align:middle}
 .card .fav-b{min-width:40px;min-height:40px;right:6px!important;bottom:4px!important}
@@ -744,3 +744,42 @@ html.dark[data-theme=C]{--paper:#0b0b0f;--sheet:#15151c;--card:#15151c;--ink:#f2
 @media(max-width:1100px){.db-rv,.db-cr,.db-br,.db-fv,.db-po{grid-column:span 12;grid-row:auto}}
 [data-theme=C] .top .thsw button[aria-pressed=true]{background:#fff;color:#0b0b0f;font-weight:700}
 @media(min-width:1000px){[data-theme=B] .top .thsw button[aria-pressed=true]{background:#fff;color:#0b0b0f;font-weight:700}}
+/* =====================================================================
+   design-system（2026-10）：设计令牌 + Lucide 图标 + 动效规则。完整说明见 DESIGN.md
+   ===================================================================== */
+:root{
+ --sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:24px;--sp-6:32px;
+ --fs-xs:12px;--fs-sm:13.5px;--fs-md:15px;--fs-lg:18px;--fs-xl:24px;--fs-2xl:32px;
+ --r-xs:6px;--r-sm:8px;--r-md:10px;--r-lg:12px;--r-xl:18px;--r-pill:999px;
+ --sh-1:0 1px 2px rgba(15,23,42,.06);--sh-2:0 4px 16px -8px rgba(15,23,42,.22);--sh-3:0 14px 30px -12px rgba(15,23,42,.28);
+ --dur-1:120ms;--dur-2:220ms;--dur-3:420ms;
+ --ease:cubic-bezier(.22,1,.36,1);--ease-in-out:cubic-bezier(.65,0,.35,1);
+ --spring:cubic-bezier(.34,1.3,.64,1);
+ --icon-stroke:2}
+@supports (transition-timing-function:linear(0,1)){:root{--spring:linear(0,.0089,.0346,.0752,.1286,.1927,.2654,.3445,.4278,.5131,.5983,.6812,.7598,.8325,.8981,.9555,1.0042,1.0441,1.0753,1.0982,1.1134,1.1218,1.1243,1.1218,1.1155,1.1062,1.0949,1.0825,1.0697,1.0571,1.0451,1.034,1.0242,1.0157,1.0085,1.0027,.9982,.995,.9928,.9916,.9912,.9914,.9921,.9931,.9943,.9956,.9968,.998,.999,1)}}
+html.dark{--sh-1:0 1px 2px rgba(0,0,0,.4);--sh-2:0 4px 16px -8px rgba(0,0,0,.6);--sh-3:0 14px 30px -12px rgba(0,0,0,.7)}
+/* 图标：Lucide，16/18/20px，描边 2；≥20px 用 1.75；填充态加 .fill（如已收藏的星） */
+.i{display:inline-block;flex:none;vertical-align:-.16em;stroke-width:var(--icon-stroke)}
+.i[width="20"],.i[width="26"]{--icon-stroke:1.75}
+.i.fill{fill:currentColor}
+.top .brand i .i{vertical-align:0}.top .dm .i,.top .menu .i{display:block}
+.card .ic .i,.hc i .i{display:block}
+.ma-sec .r .i,.ma-tip .i,.tip .i,.ps-brief .tip .i{color:var(--amber);vertical-align:-.18em}
+.ma-sec .r .i{color:currentColor}
+h1>.i{vertical-align:-.12em;color:var(--blue);margin-right:2px}
+details>summary .i{color:var(--meta);margin-right:2px}
+.fav-b .i{width:18px;height:18px}.fav-b.on .i{fill:currentColor}
+.rvr .ic .i{display:block}
+.star .i{color:#e0a100;vertical-align:-.15em}
+/* 动效：悬停/展开用 spring（轻微回弹），颜色用 ease；入场错峰 40ms；尊重 reduced-motion */
+@media (prefers-reduced-motion:no-preference){
+ a.card,.crs,.pc,.ps-t,.ps-st a,.db-kpi a,.chip,.btn,.fav-b,.thsw button{transition:transform var(--dur-3) var(--spring),box-shadow var(--dur-2) var(--ease),border-color var(--dur-2) var(--ease),background-color var(--dur-2) var(--ease),color var(--dur-2) var(--ease)!important}
+ .db-kpi a:hover{transform:translateY(-2px)}
+ .fav-b:hover{transform:scale(1.15)}.fav-b.on{animation:fx-pop var(--dur-3) var(--spring)}
+ @keyframes fx-pop{0%{transform:scale(.6)}100%{transform:scale(1)}}
+ details::details-content{transition:block-size var(--dur-3) var(--spring),content-visibility var(--dur-3) allow-discrete}
+ @keyframes fx-up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+ html.fx .fx-st{animation:fx-up var(--dur-3) var(--ease) both;animation-delay:calc(var(--i,0) * 40ms)}
+ ::view-transition-old(root),::view-transition-new(root){animation-duration:var(--dur-2);animation-timing-function:var(--ease)}
+}
+.fav-b.on,.top .fav-b.on{color:#e0a100!important}
