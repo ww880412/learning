@@ -148,6 +148,269 @@
           "cite": "https://www.youtube.com/channel/UC2ggjtuuWvxrHHHiaDH1dlQ/playlists"
         }
       ]
+    },
+    {
+      "id": "mit-mas-s62",
+      "column": "courses",
+      "dir": "courses/mit-mas-s62",
+      "title": "MIT MAS.S62 · How to AI an AI for (Almost) Anything",
+      "desc": "2026 秋，MIT Media Lab，Paul Liang 主讲。又名 Self-Evolving AI：让 AI 从经验、反馈和探索中自我改进，按上下文、Harness、模型、任务四层讲。",
+      "source": "https://mit-mi.github.io/how2ai-course/fall2026/",
+      "planNote": "按官方课表列出 11 讲（第 4、8、13 周是项目展示，列在下方「项目展示与作业」）。L01–L05 的课件已公开，点一行打开官方课件 PDF；L06–L11 标「未发布」，链接指向官方课表。官方注明题目和日程可能随课程调整。目前没找到课程录像。",
+      "intro": [
+        {
+          "text": "课程主题是 self-evolving AI：训练完的模型基本是静态的，这门课讲 AI 怎样借助经验、反馈、记忆、交互和探索自我改进，长期持续适应。",
+          "cite": "https://mit-mi.github.io/how2ai-course/fall2026/"
+        },
+        {
+          "text": "四层演化：(1) 上下文演化：记忆、检索、工具使用、长上下文推理；(2) Harness 演化：反馈、搜索、工作流优化、多智能体；(3) 模型演化：自博弈、蒸馏、测试时训练、持续学习；(4) 任务演化：生成越来越复杂的合成任务、模拟、评测和环境（课表里第 10–11 周叫 Environment evolution）。",
+          "cite": "https://mit-mi.github.io/how2ai-course/fall2026/"
+        },
+        {
+          "text": "每周三 14:00–16:00（美东时间），MIT Media Lab E15-359；讲师 Paul Liang，助教 Ao Qu。先修：机器学习基础（6.390 或同等），以及概率、线性代数和编程。",
+          "cite": "https://docs.google.com/document/d/1H1vs32fhWaxEuP6-nA2GP-a1aFuEmjOXNMcer2UyKpM/edit?usp=sharing"
+        },
+        {
+          "text": "评分：4 次阅读作业 20%、4 次编程作业 40%、课程研究项目 40%。",
+          "cite": "https://docs.google.com/document/d/1H1vs32fhWaxEuP6-nA2GP-a1aFuEmjOXNMcer2UyKpM/edit?usp=sharing"
+        },
+        {
+          "text": "公开材料：课表上的课件 PDF、阅读论文链接、L02 的 Colab 笔记本和一份 Harness 工程教程；作业走 MIT 内部 Canvas，未公开。",
+          "cite": "https://mit-mi.github.io/how2ai-course/fall2026/schedule/"
+        }
+      ],
+      "sections": [
+        {
+          "kicker": "官方资料",
+          "sub": "课程网站上公开的课件、笔记本和大纲",
+          "rows": [
+            {
+              "tag": "课表",
+              "title": "Schedule：每周日期、主题、课件和阅读",
+              "href": "https://mit-mi.github.io/how2ai-course/fall2026/schedule/"
+            },
+            {
+              "tag": "大纲",
+              "title": "Syllabus（Google Doc）：作业、项目时间线和评分",
+              "href": "https://docs.google.com/document/d/1H1vs32fhWaxEuP6-nA2GP-a1aFuEmjOXNMcer2UyKpM/edit?usp=sharing"
+            },
+            {
+              "tag": "Colab",
+              "title": "L02 Context evolution 1 配套 Colab 笔记本",
+              "href": "https://colab.research.google.com/drive/1rL24Ydm9yQKRUPoGXHr2-zJumFbBRfvJ",
+              "d": "9/16"
+            },
+            {
+              "tag": "教程",
+              "title": "Harness engineering tutorial（PDF，L05 配套）",
+              "href": "https://mit-mi.github.io/how2ai-course/fall2026/schedule/harness%20engineering%20tutorial.pdf",
+              "d": "10/14"
+            },
+            {
+              "tag": "项目",
+              "title": "Projects：往届学生公开的项目报告",
+              "href": "https://mit-mi.github.io/how2ai-course/fall2026/projects/"
+            }
+          ]
+        },
+        {
+          "kicker": "阅读清单 · L02 · Context evolution 1（9/16）",
+          "sub": "官方课表列出的阅读（顺序照抄）",
+          "rows": [
+            {
+              "tag": "论文",
+              "title": "Large Language Models Are Human-Level Prompt Engineers",
+              "href": "https://arxiv.org/abs/2211.01910"
+            },
+            {
+              "tag": "论文",
+              "title": "TextGrad: Automatic \"Differentiation\" via Text",
+              "href": "https://arxiv.org/abs/2406.07496"
+            },
+            {
+              "tag": "论文",
+              "title": "DSPy: Compiling Declarative Language Model Calls into Self-Improving Pipelines",
+              "href": "https://arxiv.org/abs/2310.03714"
+            },
+            {
+              "tag": "论文",
+              "title": "Reflexion: Language Agents with Verbal Reinforcement Learning",
+              "href": "https://arxiv.org/abs/2303.11366"
+            },
+            {
+              "tag": "论文",
+              "title": "Evolving Prompts In-Context: An Open-ended, Self-replicating Perspective",
+              "href": "https://arxiv.org/abs/2506.17930"
+            },
+            {
+              "tag": "论文",
+              "title": "GEPA: Reflective Prompt Evolution Can Outperform Reinforcement Learning",
+              "href": "https://arxiv.org/abs/2507.19457"
+            },
+            {
+              "tag": "论文",
+              "title": "ReasoningBank: Scaling Agent Self-Evolving with Reasoning Memory",
+              "href": "https://arxiv.org/abs/2509.25140"
+            }
+          ]
+        },
+        {
+          "kicker": "阅读清单 · L03 · Context evolution 2（9/23）",
+          "sub": "官方课表列出的阅读（顺序照抄）",
+          "rows": [
+            {
+              "tag": "论文",
+              "title": "FunSearch: Mathematical discoveries from program search with large language models",
+              "href": "https://www.nature.com/articles/s41586-023-06924-6"
+            },
+            {
+              "tag": "论文",
+              "title": "Large Language Models as Optimizers",
+              "href": "https://arxiv.org/abs/2309.03409"
+            },
+            {
+              "tag": "论文",
+              "title": "AlphaEvolve: A coding agent for scientific and algorithmic discovery",
+              "href": "https://arxiv.org/abs/2506.13131"
+            }
+          ]
+        },
+        {
+          "kicker": "阅读清单 · L04 · Harness evolution 1（10/7）",
+          "sub": "官方课表列出的阅读（顺序照抄）",
+          "rows": [
+            {
+              "tag": "论文",
+              "title": "Darwin Godel Machine: Open-Ended Evolution of Self-Improving Agents",
+              "href": "https://arxiv.org/abs/2505.22954"
+            },
+            {
+              "tag": "论文",
+              "title": "Recursive Language Models",
+              "href": "https://arxiv.org/abs/2512.24601"
+            },
+            {
+              "tag": "论文",
+              "title": "Context Language Models",
+              "href": "https://arxiv.org/abs/2609.37725"
+            },
+            {
+              "tag": "论文",
+              "title": "MEM1: Learning to Synergize Memory and Reasoning for Efficient Long-horizon Agents",
+              "href": "https://arxiv.org/abs/2506.15841"
+            },
+            {
+              "tag": "论文",
+              "title": "Reflexion: Language Agents with Verbal Reinforcement Learning",
+              "href": "https://arxiv.org/abs/2303.11366"
+            },
+            {
+              "tag": "论文",
+              "title": "Voyager: An Open-Ended Embodied Agent with Large Language Models",
+              "href": "https://arxiv.org/abs/2305.16291"
+            },
+            {
+              "tag": "论文",
+              "title": "Meta-Harness: End-to-End Optimization of Model Harnesses",
+              "href": "https://arxiv.org/abs/2603.28052"
+            },
+            {
+              "tag": "论文",
+              "title": "Continual Harness: Online Adaptation for Self-Improving Foundation Agents",
+              "href": "https://arxiv.org/abs/2605.09998"
+            },
+            {
+              "tag": "博客",
+              "title": "HarnessTax: How Much Does the Harness Matter for Coding Agents?",
+              "href": "https://arena.ai/blog/coding-agents-harness-tax"
+            },
+            {
+              "tag": "论文",
+              "title": "Harness Updating Is Not Harness Benefit: Disentangling Evolution Capabilities in Self-Evolving LLM Agents",
+              "href": "https://arxiv.org/abs/2605.30621"
+            }
+          ]
+        },
+        {
+          "kicker": "阅读清单 · L05 · Harness evolution 2（10/14）",
+          "sub": "官方课表列出的阅读（顺序照抄）",
+          "rows": [
+            {
+              "tag": "论文",
+              "title": "CORAL: Towards Autonomous Multi-Agent Evolution for Open-Ended Discovery",
+              "href": "https://arxiv.org/abs/2604.01658"
+            },
+            {
+              "tag": "论文",
+              "title": "Towards a Science of Scaling Agent Systems",
+              "href": "https://arxiv.org/abs/2512.08296"
+            },
+            {
+              "tag": "论文",
+              "title": "Why Do Multi-Agent LLM Systems Fail?",
+              "href": "https://arxiv.org/abs/2503.13657"
+            }
+          ]
+        },
+        {
+          "kicker": "项目展示与作业",
+          "sub": "官方课表和大纲里的非讲课周、作业（没有公开材料）",
+          "note": "作业 1–4 的题目来自大纲，标注为暂定；作业材料走 MIT 内部的 Canvas，没有公开。",
+          "rows": [
+            {
+              "tag": "第 4 周",
+              "title": "Project proposal presentations",
+              "href": "https://mit-mi.github.io/how2ai-course/fall2026/schedule/",
+              "d": "9/30"
+            },
+            {
+              "tag": "第 8 周",
+              "title": "Project midterm presentations",
+              "href": "https://mit-mi.github.io/how2ai-course/fall2026/schedule/",
+              "d": "10/28"
+            },
+            {
+              "tag": "第 13 周",
+              "title": "Project final presentations",
+              "href": "https://mit-mi.github.io/how2ai-course/fall2026/schedule/",
+              "d": "12/2"
+            },
+            {
+              "tag": "HW1",
+              "title": "Context evolution（暂定 TextGrad 或 OpenEvolve），第 4 周交",
+              "href": "https://docs.google.com/document/d/1H1vs32fhWaxEuP6-nA2GP-a1aFuEmjOXNMcer2UyKpM/edit?usp=sharing"
+            },
+            {
+              "tag": "HW2",
+              "title": "Harness evolution（暂定 SkillOpt、DGM 或 Meta-Harness），第 7 周交",
+              "href": "https://docs.google.com/document/d/1H1vs32fhWaxEuP6-nA2GP-a1aFuEmjOXNMcer2UyKpM/edit?usp=sharing"
+            },
+            {
+              "tag": "HW3",
+              "title": "Model evolution（暂定 test-time training 或 continual learning），第 10 周交",
+              "href": "https://docs.google.com/document/d/1H1vs32fhWaxEuP6-nA2GP-a1aFuEmjOXNMcer2UyKpM/edit?usp=sharing"
+            },
+            {
+              "tag": "HW4",
+              "title": "Task evolution（暂定 PostTrainBench），第 12 周交",
+              "href": "https://docs.google.com/document/d/1H1vs32fhWaxEuP6-nA2GP-a1aFuEmjOXNMcer2UyKpM/edit?usp=sharing"
+            }
+          ]
+        },
+        {
+          "kicker": "推荐来源",
+          "sub": "从这里发现的这门课（第三方解读，以官方资料为准）",
+          "rows": [
+            {
+              "tag": "X 长文",
+              "tagc": "amber",
+              "title": "@shao__meng：让 AI 自我进化：MIT 课程「How to AI an AI」——提示优化、Harness 演化、模型自博弈与任务生成四层演化",
+              "d": "2026-10-19",
+              "href": "https://x.com/shao__meng/status/2112157117125976508"
+            }
+          ]
+        }
+      ]
     }
   ],
   "items": [
@@ -530,6 +793,149 @@
       "note": "12 张卡片 · KV Cache Decode 模拟器 · 6 道小测",
       "source": "https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf",
       "cards": 12
+    },
+    {
+      "id": "mit-mas-s62-L01",
+      "column": "courses",
+      "group": "mit-mas-s62",
+      "order": 1,
+      "label": "L01",
+      "title": "Course introduction：Basics of LLMs and foundation models · AI agents and self-evolution",
+      "href": "https://mit-mi.github.io/how2ai-course/fall2026/schedule/lec1%20-%20intro.pdf",
+      "status": "未开始",
+      "date": "9/9 · 第 1 周",
+      "note": "官方课件 PDF（lec1 - intro.pdf）。官方课表本讲没有列阅读。",
+      "source": "https://mit-mi.github.io/how2ai-course/fall2026/schedule/"
+    },
+    {
+      "id": "mit-mas-s62-L02",
+      "column": "courses",
+      "group": "mit-mas-s62",
+      "order": 2,
+      "label": "L02",
+      "title": "Context evolution 1：Prompt optimization · Memory, tools, knowledge",
+      "href": "https://mit-mi.github.io/how2ai-course/fall2026/schedule/lec2%20-%20context.pdf",
+      "status": "未开始",
+      "date": "9/16 · 第 2 周",
+      "note": "官方课件 PDF（lec2 - context.pdf）+ Colab 笔记本 + 7 篇阅读（见下方阅读清单）。",
+      "source": "https://mit-mi.github.io/how2ai-course/fall2026/schedule/"
+    },
+    {
+      "id": "mit-mas-s62-L03",
+      "column": "courses",
+      "group": "mit-mas-s62",
+      "order": 3,
+      "label": "L03",
+      "title": "Context evolution 2：LLMs as optimizers · LLMs for discovery",
+      "href": "https://mit-mi.github.io/how2ai-course/fall2026/schedule/lec3%20-%20llm%20optimizers.pdf",
+      "status": "未开始",
+      "date": "9/23 · 第 3 周",
+      "note": "官方课件 PDF（lec3 - llm optimizers.pdf）+ 3 篇阅读。",
+      "source": "https://mit-mi.github.io/how2ai-course/fall2026/schedule/"
+    },
+    {
+      "id": "mit-mas-s62-L04",
+      "column": "courses",
+      "group": "mit-mas-s62",
+      "order": 4,
+      "label": "L04",
+      "title": "Harness evolution 1：Harness components · Agent memory · Tool and skill evolution",
+      "href": "https://mit-mi.github.io/how2ai-course/fall2026/schedule/lec4%20-%20harness.pdf",
+      "status": "未开始",
+      "date": "10/7 · 第 5 周",
+      "note": "官方课件 PDF（lec4 - harness.pdf）+ 10 篇阅读。",
+      "source": "https://mit-mi.github.io/how2ai-course/fall2026/schedule/"
+    },
+    {
+      "id": "mit-mas-s62-L05",
+      "column": "courses",
+      "group": "mit-mas-s62",
+      "order": 5,
+      "label": "L05",
+      "title": "Harness evolution 2：Multi-agent systems · Multi-agent evolution · Harness engineering tutorial",
+      "href": "https://mit-mi.github.io/how2ai-course/fall2026/schedule/lec5%20-%20multi%20agent.pdf",
+      "status": "未开始",
+      "date": "10/14 · 第 6 周",
+      "note": "官方课件 PDF（lec5 - multi agent.pdf）+ Harness 工程教程 PDF + 3 篇阅读。",
+      "source": "https://mit-mi.github.io/how2ai-course/fall2026/schedule/"
+    },
+    {
+      "id": "mit-mas-s62-L06",
+      "column": "courses",
+      "group": "mit-mas-s62",
+      "order": 6,
+      "label": "L06",
+      "title": "Model evolution 1：Continual learning · Distillation · Test-time training（未发布）",
+      "href": "https://mit-mi.github.io/how2ai-course/fall2026/schedule/",
+      "status": "未开始",
+      "date": "10/21 · 第 7 周",
+      "note": "未发布：官方课表上这讲的课件链接还是空的，也没有列阅读。点开是官方课表，发布后再补。",
+      "source": "https://mit-mi.github.io/how2ai-course/fall2026/schedule/"
+    },
+    {
+      "id": "mit-mas-s62-L07",
+      "column": "courses",
+      "group": "mit-mas-s62",
+      "order": 7,
+      "label": "L07",
+      "title": "Model evolution 2：Self-play approaches（未发布）",
+      "href": "https://mit-mi.github.io/how2ai-course/fall2026/schedule/",
+      "status": "未开始",
+      "date": "11/4 · 第 9 周",
+      "note": "未发布：官方课表上这讲的课件链接还是空的，也没有列阅读。点开是官方课表，发布后再补。",
+      "source": "https://mit-mi.github.io/how2ai-course/fall2026/schedule/"
+    },
+    {
+      "id": "mit-mas-s62-L08",
+      "column": "courses",
+      "group": "mit-mas-s62",
+      "order": 8,
+      "label": "L08",
+      "title": "Environment evolution 1：Synthetic data and tasks · Environment generation（未发布）",
+      "href": "https://mit-mi.github.io/how2ai-course/fall2026/schedule/",
+      "status": "未开始",
+      "date": "11/11 · 第 10 周",
+      "note": "未发布：官方课表上这讲的课件链接还是空的，也没有列阅读。点开是官方课表，发布后再补。",
+      "source": "https://mit-mi.github.io/how2ai-course/fall2026/schedule/"
+    },
+    {
+      "id": "mit-mas-s62-L09",
+      "column": "courses",
+      "group": "mit-mas-s62",
+      "order": 9,
+      "label": "L09",
+      "title": "Environment evolution 2：World models · Evolving evaluation and rewards（未发布）",
+      "href": "https://mit-mi.github.io/how2ai-course/fall2026/schedule/",
+      "status": "未开始",
+      "date": "11/18 · 第 11 周",
+      "note": "未发布：官方课表上这讲的课件链接还是空的，也没有列阅读。点开是官方课表，发布后再补。",
+      "source": "https://mit-mi.github.io/how2ai-course/fall2026/schedule/"
+    },
+    {
+      "id": "mit-mas-s62-L10",
+      "column": "courses",
+      "group": "mit-mas-s62",
+      "order": 10,
+      "label": "L10",
+      "title": "Future topics：AI for scientific discovery · Multimodal agents（未发布）",
+      "href": "https://mit-mi.github.io/how2ai-course/fall2026/schedule/",
+      "status": "未开始",
+      "date": "11/25 · 第 12 周",
+      "note": "未发布：官方课表上这讲的课件链接还是空的，也没有列阅读。点开是官方课表，发布后再补。",
+      "source": "https://mit-mi.github.io/how2ai-course/fall2026/schedule/"
+    },
+    {
+      "id": "mit-mas-s62-L11",
+      "column": "courses",
+      "group": "mit-mas-s62",
+      "order": 11,
+      "label": "L11",
+      "title": "Future topics：Embodied harnesses · Safe evolution（未发布）",
+      "href": "https://mit-mi.github.io/how2ai-course/fall2026/schedule/",
+      "status": "未开始",
+      "date": "12/9 · 第 14 周",
+      "note": "未发布：官方课表上这讲的课件链接还是空的，也没有列阅读。点开是官方课表，发布后再补。",
+      "source": "https://mit-mi.github.io/how2ai-course/fall2026/schedule/"
     }
   ]
 }
