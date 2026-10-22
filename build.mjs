@@ -7,6 +7,8 @@ const ROOT = path.dirname(new URL(import.meta.url).pathname);
 const TPL = '/workspace/skills-src/xuexi-template/styles.css';
 const J = f => JSON.parse(fs.readFileSync(path.join(ROOT, 'data', f), 'utf8'));
 const columns = J('columns.json'), { groups, items } = J('items.json'), concepts = J('concepts.json'), inbox = J('inbox.json');
+// 产品灵感（PH灵感箱）：data/ph-inspo.json，每天追加一个 day；没有文件时板块为空
+const PHI = fs.existsSync(path.join(ROOT, 'data', 'ph-inspo.json')) ? J('ph-inspo.json') : { statuses: ['新发现', '在跟进', '已试用', '归档'], tags: [], days: [] };
 const INTERVALS = [1, 3, 7, 14, 30];
 // status「未开始」= 待学条目（href 指向原文/官方资料），不算学习页、不进复习队列、不进正在学/最近学过；无 group 时列在栏目页
 const isPage = i => i.status !== '未开始';
@@ -52,7 +54,7 @@ const COL_IC = { courses: 'graduation-cap', 'x-posts': 'file-text', research: 'f
 const colIc = (c, s = 16) => ic(COL_IC[c?.id] || 'folder', s);
 function page(file, title, active, body, script = '') {
   const r = p => rel(file, p);
-  const nav = [['index.html', '首页', 'home'], ['favorites/index.html', '收藏', 'favorites'], ...columns.map((c, k) => [`${c.dir}/index.html`, c.title, c.id, items.filter(i => i.column === c.id).length, k ? '' : 's1']), ['glossary.html', '概念卡', 'glossary', concepts.length], ['x-brief/index.html', 'X 简报', 'x-brief', null, 's2'], ['x-posters/index.html', 'X 海报', 'x-posters']]
+  const nav = [['index.html', '首页', 'home'], ['favorites/index.html', '收藏', 'favorites'], ...columns.map((c, k) => [`${c.dir}/index.html`, c.title, c.id, items.filter(i => i.column === c.id).length, k ? '' : 's1']), ['glossary.html', '概念卡', 'glossary', concepts.length], ['x-brief/index.html', 'X 简报', 'x-brief', null, 's2'], ['x-posters/index.html', 'X 海报', 'x-posters'], ['ph-inspo/index.html', '产品灵感', 'ph-inspo']]
     .map(([h, t, id, n, sc]) => `<a href="${r(h)}" class="${[id === active ? 'on' : '', sc || ''].join(' ').trim()}">${esc(t)}${n != null ? `<em>${n}</em>` : ''}</a>`).join('');
   return `<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${esc(title)} · 王玮的学习库</title><style>${CSS}${THEME}</style><script>${HEADJS}</script><script src="${r('assets/favorites.js')}" defer></script></head><body>
@@ -140,7 +142,7 @@ ${nx ? `<a class="nx" href="${esc(nx.href)}"${ext(nx.href)}><b>${['已学完', '
     const parts = G.title.split(' · '); const name = parts.reduce((a, b) => b.length > a.length ? b : a, ''); const src = parts.filter(p => p !== name).join(' · ');
     const pg = all.filter(localPage); const nx = pg.find(i => stateOf(i) === '进行中') || pg.find(i => !['已学完', '已掌握'].includes(stateOf(i))) || pg[0] || null;
     return { name, src, href: `${G.dir}/index.html`, go: nx ? nx.href : `${G.dir}/index.html`, n, done, doing: cnt['进行中'], pct: n ? Math.round(done / n * 100) : 0, ids: all.map(i => i.id).join(','), all, nx, rev: nx && ['已学完', '已掌握'].includes(stateOf(nx)) }; }).filter(Boolean);
-  const COLS = [...columns.map(c => ({ ic: colIc(c, 16), t: c.title, href: `${c.dir}/index.html`, n: items.filter(i => i.column === c.id).length })), { ic: ic('puzzle'), t: '概念卡', href: 'glossary.html', n: concepts.length }, { ic: ic('newspaper'), t: 'X 简报', href: 'x-brief/index.html', n: '每日' }, { ic: ic('image'), t: 'X 海报', href: 'x-posters/index.html', n: '每日' }];
+  const COLS = [...columns.map(c => ({ ic: colIc(c, 16), t: c.title, href: `${c.dir}/index.html`, n: items.filter(i => i.column === c.id).length })), { ic: ic('puzzle'), t: '概念卡', href: 'glossary.html', n: concepts.length }, { ic: ic('newspaper'), t: 'X 简报', href: 'x-brief/index.html', n: '每日' }, { ic: ic('image'), t: 'X 海报', href: 'x-posters/index.html', n: '每日' }, { ic: ic('rocket'), t: '产品灵感', href: 'ph-inspo/index.html', n: '每日' }];
   const allIds = items.filter(isPage).map(i => i.id).join(',');
   const prog = (ids, cls = '') => `<div class="bigbar prog ${cls}" data-k="prog" data-ids="${ids}"><div class="bar"><i class="g"></i><i class="l"></i><i class="b"></i></div><b>0%</b><span></span></div>`;
   const seg = c => `<div class="seg">${c.all.map(i => { const s = stateOf(i); return `<i class="${['已学完', '已掌握'].includes(s) ? 'd' : s === '进行中' ? 'p' : ''}" title="${esc(i.label)} · ${esc(s)}"></i>`; }).join('')}</div>`;
@@ -175,6 +177,8 @@ ${PIMG.slice(1, 4).map(p => pimg(p, 'ps-t ps-img')).join('')}
 <div class="ps-t ps-fv"><small>我的收藏 · <a href="favorites/index.html">全部 →</a></small><div class="list" data-fav></div></div>
 ${reading.slice(0, 4).map(i => `<a class="ps-t ps-rd" href="${esc(i.href)}"${ext(i.href)}><small>正在读 · ${esc(colById[i.column]?.title)}</small><h3>${esc(i.title)}</h3></a>`).join('')}</div></div>`;
   const body = `<div class="lays">${layB}${layA}${layC}</div>
+${(() => { const d0 = PHI.days[0]; if (!d0) return ''; const n = PHI.days.reduce((x, d) => x + d.items.length, 0); const top = [...d0.items].sort((x, y) => (x.rank ?? 999) - (y.rank ?? 999)).slice(0, 4);
+  return `<div class="kicker" id="k-inspo">产品灵感 <span class="n">${n}</span></div><div class="sub">Product Hunt ${esc(d0.date.slice(5).replace('-', '/'))} 挑出 ${d0.items.length} 个 · <a href="ph-inspo/index.html">全部 ${PHI.days.length} 天 →</a></div><div class="list pi-home">${top.map(i => `<div class="row"><span class="tag blue">#${esc(i.rank ?? '—')}</span><span class="t"><a href="ph-inspo/index.html#${esc(i.id)}">${esc(i.name)}</a><small>${esc(i.what)}</small></span><span class="pi-tags">${(i.tags || []).slice(0, 2).map(t => `<span class="tag">${esc(t)}</span>`).join('')}</span></div>`).join('')}</div>`; })()}
 <div class="kicker" id="k-columns">栏目</div><div class="sub">按来源找内容</div><div class="grid">${colCards}</div>
 <div class="kicker">已学完 <span class="n">${doneIts.length}</span></div><div class="sub">到了复习日会出现在最上面</div>${courseCards(doneIts, '还没有学完的内容')}
 <div class="kicker">待学收件箱 <span class="n">${inbox.length}</span></div>${inboxHtml}
@@ -272,6 +276,34 @@ document.getElementById('tksave').onclick=()=>{var v=document.getElementById('tk
 document.getElementById('tkclear').onclick=()=>{FAV.setToken('');tks();FAV.toast('已清除令牌')};
 document.addEventListener('DOMContentLoaded',tks);`;
   write(f, page(f, '我的收藏', 'favorites', body, script));
+}
+// ---- 产品灵感（数据 data/ph-inspo.json；按天归档，可按标签、状态筛选） ----
+{
+  const f = 'ph-inspo/index.html';
+  const ST_CLS = { '新发现': 'blue', '在跟进': 'amber', '已试用': 'green', '归档': '' };
+  const all = PHI.days.flatMap(d => d.items.map(i => ({ ...i, date: d.date })));
+  const tags = [...new Set([...(PHI.tags || []), ...all.flatMap(i => i.tags || [])])].filter(t => all.some(i => (i.tags || []).includes(t)));
+  const cnt = s => all.filter(i => i.status === s).length;
+  const num = v => v == null || v === '' ? '未获取' : esc(v);
+  const xa = (h, t, n) => h ? `<a href="${esc(h)}" target="_blank" rel="noopener">${ic(n, 13)}${t}</a>` : '';
+  const fuHtml = it => { const L = it.followups || []; return `<details class="pi-fu"><summary>${ic('history', 13)} 跟进记录 <span class="n">${L.length}</span></summary>${L.length ? `<ul>${L.map(x => `<li><span class="d">${esc(x.date || '')}</span><span class="tag">${esc(x.type || '其他')}</span><span>${esc(x.text)}${x.url ? ` <a href="${esc(x.url)}" target="_blank" rel="noopener">来源 →</a>` : ''}</span></li>`).join('')}</ul>` : '<p>还没有跟进记录。之后每周补：新版本、融资、定价、开源替代。</p>'}</details>`; };
+  const card = it => `<article class="card pi-card" id="${esc(it.id)}" data-tags="${esc((it.tags || []).join('|'))}" data-st="${esc(it.status)}">
+<div class="pi-hd"><span class="pi-rk" title="当天排名">${it.rank != null ? '#' + esc(it.rank) : '—'}</span><div class="pi-nm"><h3><a href="${esc(it.ph)}" target="_blank" rel="noopener">${esc(it.name)}</a></h3><div class="en">${esc(it.tagline || '')}</div></div><span class="tag st ${ST_CLS[it.status] ?? ''}">${esc(it.status)}</span></div>
+<div class="pi-tags">${(it.tags || []).map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>
+<dl class="pi-f"><dt>是什么</dt><dd>${esc(it.what)}</dd><dt>解决</dt><dd>${esc(it.problem)}</dd><dt>亮点</dt><dd>${esc(it.highlight)}</dd><dt class="ins">${ic('lightbulb', 13)}启发</dt><dd class="ins">${esc(it.inspo)}</dd></dl>
+<div class="pi-ft"><span title="PH 综合分（抓取时）">${ic('trending-up', 13)}分数 ${num(it.score)}</span><span>${ic('message-square', 13)}评论 ${num(it.comments)}</span>${xa(it.ph, 'PH', 'rocket')}${xa(it.site, '官网', 'external-link')}${xa(it.repo, '仓库', 'git-fork')}</div>
+${fuHtml(it)}</article>`;
+  const days = PHI.days.map(d => `<section class="pi-day" data-day="${esc(d.date)}"><div class="kicker">${ic('calendar', 16)} ${esc(d.date)} <span class="n">${d.items.length}</span></div><div class="sub">来源：<a href="${esc(d.source)}" target="_blank" rel="noopener">Product Hunt 当日榜单</a> · 抓取于 ${esc(d.fetched || '未记录')}${d.note ? ' · ' + esc(d.note) : ''}</div>
+<div class="pi-grid">${[...d.items].sort((a, b) => (a.rank ?? 999) - (b.rank ?? 999)).map(card).join('')}</div></section>`).join('');
+  const chip = (k, v, label, n) => `<button type="button" class="chip${v ? '' : ' on'}" data-k="${k}" data-v="${esc(v)}">${esc(label)}${n != null ? `<em>${n}</em>` : ''}</button>`;
+  const body = `<div class="crumb"><a href="../index.html">首页</a> / 产品灵感</div>
+<section class="hero sheet pi-hero"><div class="say"><span class="kk">PH灵感箱 · ${PHI.days.length} 天</span><h1>${ic('rocket', 26)} 产品灵感</h1><p>每天从 Product Hunt 前一天的榜单里挑 5–8 个和 coding agent 工作台、AI 工具、开发者工具、效率、创作、教育相关的新产品，写清楚是什么、解决什么、能抄什么。数据在 <code>data/ph-inspo.json</code>。</p></div>
+<div class="stage"><div class="stat blue"><b>${all.length}</b><span>个产品</span></div><div class="stat amber"><b>${cnt('在跟进')}</b><span>在跟进</span></div><div class="stat green"><b>${cnt('已试用')}</b><span>已试用</span></div><div class="stat purple"><b>${all.filter(i => (i.tags || []).includes('coding agent')).length}</b><span>coding agent 相关</span></div></div></section>
+${all.length ? `<div class="pi-bar"><span class="lb">${ic('tag', 13)}标签</span>${chip('tag', '', '全部')}${tags.map(t => chip('tag', t, t, all.filter(i => (i.tags || []).includes(t)).length)).join('')}</div>
+<div class="pi-bar"><span class="lb">${ic('funnel', 13)}状态</span>${chip('st', '', '全部')}${(PHI.statuses || []).map(s => chip('st', s, s, cnt(s))).join('')}<span class="pi-cnt" id="pi-cnt"></span></div>
+${days}<div class="empty" id="pi-none" hidden><b>没有符合条件的产品</b>换个标签或状态试试</div>` : emptyBox('还没有产品灵感', '每天的 PH 榜单挑完后会出现在这里（data/ph-inspo.json）。')}`;
+  const script = `(function(){var F={tag:'',st:''};var bs=document.querySelectorAll('.pi-bar .chip');function run(){var n=0;document.querySelectorAll('.pi-day').forEach(function(d){var v=0;d.querySelectorAll('.pi-card').forEach(function(c){var ok=(!F.tag||c.dataset.tags.split('|').indexOf(F.tag)>=0)&&(!F.st||c.dataset.st===F.st);c.hidden=!ok;if(ok)v++});d.hidden=!v;n+=v});var e=document.getElementById('pi-none');if(e)e.hidden=!!n;var t=document.getElementById('pi-cnt');if(t)t.textContent=(F.tag||F.st)?'筛出 '+n+' 个':'';bs.forEach(function(b){b.classList.toggle('on',F[b.dataset.k]===b.dataset.v)})}bs.forEach(function(b){b.onclick=function(){F[b.dataset.k]=F[b.dataset.k]===b.dataset.v?'':b.dataset.v;run()}});run()})();`;
+  write(f, page(f, '产品灵感', 'ph-inspo', body, script));
 }
 // ---- review.md（人读版） ----
 {

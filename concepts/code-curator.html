@@ -784,6 +784,51 @@ details>summary .i{color:var(--meta);margin-right:2px}
  ::view-transition-old(root),::view-transition-new(root){animation-duration:var(--dur-2);animation-timing-function:var(--ease)}
 }
 .fav-b.on,.top .fav-b.on{color:#e0a100!important}
+
+/* ---- 产品灵感（ph-inspo/index.html，build.mjs 生成） ---- */
+.pi-bar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:12px 0 0}
+.pi-bar+.pi-bar{margin-top:8px}
+.pi-bar .lb{display:inline-flex;align-items:center;gap:4px;min-width:52px;font-size:var(--fs-xs);font-weight:600;color:var(--meta)}
+.pi-bar .chip{cursor:pointer;font:inherit;font-size:var(--fs-sm);padding:3px 11px;gap:5px;transition:border-color var(--dur-1) var(--ease),color var(--dur-1) var(--ease),background var(--dur-1) var(--ease)}
+.pi-bar .chip em{font-style:normal;font-size:var(--fs-xs);color:var(--meta);font-variant-numeric:tabular-nums}
+.pi-bar .chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.pi-bar .chip.on em{color:inherit;opacity:.8}
+html.dark .pi-bar .chip.on{color:#0f1115}
+.pi-cnt{margin-left:auto;font-size:var(--fs-xs);color:var(--meta)}
+.pi-day[hidden],.pi-card[hidden]{display:none}
+.pi-day .kicker .i{color:var(--blue)}
+.pi-grid{display:grid;gap:12px;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch}
+.pi-card{padding:14px 16px;gap:8px}
+.pi-hd{display:flex;gap:10px;align-items:flex-start}
+.pi-rk{flex:none;min-width:34px;height:34px;padding:0 6px;border-radius:var(--r-sm);background:var(--blue-soft);color:var(--blue);display:grid;place-items:center;font-weight:800;font-size:var(--fs-sm);font-variant-numeric:tabular-nums}
+.pi-nm{flex:1;min-width:0}
+.pi-hd h3{margin:0;font-size:var(--fs-md);line-height:1.3}
+.pi-hd h3 a{color:var(--ink)}.pi-hd h3 a:hover{color:var(--blue)}
+.pi-hd .en{margin-top:2px;font-size:var(--fs-xs);color:var(--meta);line-height:1.4}
+.pi-hd .tag{flex:none}
+.pi-tags{display:flex;flex-wrap:wrap;gap:4px}
+.pi-f{margin:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:5px 10px;font-size:var(--fs-sm);line-height:1.55}
+.pi-f dt{display:inline-flex;align-items:flex-start;gap:3px;color:var(--meta);font-weight:600;white-space:nowrap}
+.pi-f dd{margin:0;color:var(--ink)}
+.pi-f dt.ins{color:var(--blue)}.pi-f dt.ins .i{margin-top:3px}
+.pi-f dd.ins{background:var(--blue-soft);border-radius:var(--r-xs);padding:4px 8px;margin:-4px 0 0 -4px}
+.pi-ft{margin-top:auto;display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;padding-top:8px;border-top:1px solid var(--hair);font-size:var(--fs-xs);color:var(--meta);font-variant-numeric:tabular-nums}
+.pi-ft>*{display:inline-flex;align-items:center;gap:3px}
+.pi-fu summary{cursor:pointer;display:inline-flex;align-items:center;gap:4px;font-size:var(--fs-xs);color:var(--meta);list-style:none}
+.pi-fu summary::-webkit-details-marker{display:none}
+.pi-fu summary .n{font-variant-numeric:tabular-nums;background:var(--hair2);border-radius:var(--r-pill);padding:0 6px}
+.pi-fu ul{margin:6px 0 0;padding:0;list-style:none;font-size:var(--fs-sm)}
+.pi-fu li{display:flex;gap:6px;align-items:baseline;padding:4px 0;border-top:1px solid var(--hair)}
+.pi-fu li .d{color:var(--meta);font-size:var(--fs-xs);white-space:nowrap}
+.pi-fu .pi-none,.pi-fu p{margin:6px 0 0;font-size:var(--fs-xs);color:var(--meta)}
+@media (max-width:1180px){.pi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:760px){.pi-grid{grid-template-columns:minmax(0,1fr)}.pi-cnt{width:100%;margin-left:0}.pi-bar .chip{min-height:32px}}
+@media (max-width:760px){.pi-hero .stage{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.pi-hero .stat{padding:8px 8px}.pi-hero .stat b{font-size:20px}.pi-hero .stat span{font-size:11px;line-height:1.3;display:block}
+.pi-bar{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}.pi-bar::-webkit-scrollbar{display:none}.pi-bar .chip,.pi-bar .lb{flex:none}.pi-cnt{width:auto;flex:none}}
+.pi-home .row .t small{display:block;font-weight:400;font-size:var(--fs-xs);color:var(--meta);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pi-home .row .t{min-width:0}
+.pi-home .pi-tags{flex:none}
+@media (max-width:760px){.pi-home .pi-tags{display:none}}
 </style><script>/*ICONS lucide v1.60.0 ISC*/window.__IC={"menu":"<path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/>","x":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","star":"<path d=\"M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z\"/>","party-popper":"<path d=\"M5.8 11.3 2 22l10.7-3.79\"/><path d=\"M4 3h.01\"/><path d=\"M22 8h.01\"/><path d=\"M15 2h.01\"/><path d=\"M22 20h.01\"/><path d=\"m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10\"/><path d=\"m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17\"/><path d=\"m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7\"/><path d=\"M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z\"/>"};window.__ic=function(n,s,c){return '<svg class="i i-'+n+(c?' '+c:'')+'" width="'+(s||16)+'" height="'+(s||16)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(window.__IC[n]||'')+'</svg>'};/*END ICONS*/
 (function(){var T='site-theme',v;try{v=localStorage.getItem(T)}catch(e){}if(!/^[ABC]$/.test(v||''))v='C';document.documentElement.setAttribute('data-theme',v);
 window.__setTheme=function(t){var go=function(){__applyTheme(t)};if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.startViewTransition(go);else go()};window.__applyTheme=function(t){document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem(T,t)}catch(e){}[].forEach.call(document.querySelectorAll('.thsw button'),function(b){b.setAttribute('aria-pressed',b.dataset.t===t)})}})();
@@ -807,7 +852,7 @@ window.addEventListener('load',function(){
  document.addEventListener('pointermove',function(ev){var c=ev.target.closest&&ev.target.closest('a.card,.crs,.pc');if(!c)return;var r=c.getBoundingClientRect();c.style.setProperty('--mx',ev.clientX-r.left+'px');c.style.setProperty('--my',ev.clientY-r.top+'px')},{passive:true});
 })})();
 </script><script src="../assets/favorites.js" defer></script></head><body>
-<header class="top"><div class="in"><a class="brand" href="../index.html"><i><svg class="i i-book-open" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/></svg></i>王玮的学习库</a><nav><a href="../index.html" class="">首页</a><a href="../favorites/index.html" class="">收藏</a><a href="../courses/index.html" class="s1">公开课<em>27</em></a><a href="../x-posts/index.html" class="">X 好文<em>2</em></a><a href="../research/index.html" class="">技术研究<em>1</em></a><a href="../wechat/index.html" class="">微信公众号<em>5</em></a><a href="../video/index.html" class="">视频<em>1</em></a><a href="../glossary.html" class="on">概念卡<em>25</em></a><a href="../x-brief/index.html" class="s2">X 简报</a><a href="../x-posters/index.html" class="">X 海报</a></nav><button class="dm" onclick="__tt()" aria-label="切换深色模式"><svg class="i i-sun-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2"/><path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715"/><path d="M16 12a4 4 0 0 0-4-4"/><path d="m19 5-1.256 1.256"/><path d="M20 12h2"/></svg></button></div></header>
+<header class="top"><div class="in"><a class="brand" href="../index.html"><i><svg class="i i-book-open" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/></svg></i>王玮的学习库</a><nav><a href="../index.html" class="">首页</a><a href="../favorites/index.html" class="">收藏</a><a href="../courses/index.html" class="s1">公开课<em>27</em></a><a href="../x-posts/index.html" class="">X 好文<em>2</em></a><a href="../research/index.html" class="">技术研究<em>1</em></a><a href="../wechat/index.html" class="">微信公众号<em>5</em></a><a href="../video/index.html" class="">视频<em>1</em></a><a href="../glossary.html" class="on">概念卡<em>25</em></a><a href="../x-brief/index.html" class="s2">X 简报</a><a href="../x-posters/index.html" class="">X 海报</a><a href="../ph-inspo/index.html" class="">产品灵感</a></nav><button class="dm" onclick="__tt()" aria-label="切换深色模式"><svg class="i i-sun-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2"/><path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715"/><path d="M16 12a4 4 0 0 0-4-4"/><path d="m19 5-1.256 1.256"/><path d="M20 12h2"/></svg></button></div></header>
 <main><div class="crumb"><a href="../index.html">首页</a> / <a href="../glossary.html">概念卡</a> / 代码把关人（Curator）</div>
 <section class="defcard sheet"><div class="stage"><span class="tag blue" style="align-self:flex-start">概念卡</span><div class="term">代码把关人（Curator）</div><div class="en" style="font:600 15px var(--mono);color:var(--ink2)">Code Curator</div></div>
 <div class="say"><p class="key">EECS 498 AASE 第 1 讲的思维模型。Typist 写代码行、把时间花在 HOW、对按键负责（正确 = 我打对了）；Curator 说明意图（做什么、为什么）、评估输出（审查、改方向、接受）、对结果负责（正确 = 能运行，而且我能为它辩护，不管是谁打的）。课程对应原则：If you can explain it, it’s yours。</p><div class="meta" style="font-size:13px;color:var(--ink2)">出现在 1 篇学习页 · 3 张卡片</div></div></section>

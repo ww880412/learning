@@ -1,0 +1,429 @@
+{
+  "_readme": "PH灵感箱数据。每天在 days 数组最前面追加一个 {date, source, fetched, note, items:[...]}；改状态改 item.status；跟进记录往 item.followups 追加 {date, type, text, url}。改完运行 node build.mjs 生成 ph-inspo/index.html。只写查得到的事实，查不到写「未获取」。",
+  "statuses": [
+    "新发现",
+    "在跟进",
+    "已试用",
+    "归档"
+  ],
+  "tags": [
+    "coding agent",
+    "AI工具",
+    "开发者工具",
+    "效率",
+    "创作",
+    "教育",
+    "开源"
+  ],
+  "followupTypes": [
+    "新版本",
+    "融资",
+    "定价",
+    "开源替代",
+    "其他"
+  ],
+  "days": [
+    {
+      "date": "2026-10-20",
+      "source": "https://www.producthunt.com/leaderboard/daily/2026/10/20",
+      "fetched": "2026-10-21 21:15 EDT",
+      "note": "排名为当日结束时的名次；分数是 PH 页面给出的综合分（投票、讨论等），抓取时的数值，不是纯票数。",
+      "items": [
+        {
+          "id": "2026-10-20-composio-instant",
+          "name": "Composio Instant",
+          "tagline": "The easiest way for AI agents to pay for their own tools",
+          "ph": "https://www.producthunt.com/products/composio",
+          "site": "https://composio.dev",
+          "rank": 2,
+          "score": 325,
+          "comments": 46,
+          "what": "给 AI agent 用的工具层：1000+ 现成工具，托管 OAuth 授权、自动挑工具、沙箱里执行。",
+          "problem": "agent 会规划但接不上真实系统，每接一个 SaaS 都要自己处理授权、权限和稳定性。",
+          "highlight": "官方说法是「五行代码从聊天机器人变成通用 agent」；这次主打让 agent 自己为用到的工具付费（标题原话）。PH 页面写 Zoom、Glean、HubSpot 的团队在用。",
+          "inspo": "企业级 coding agent 工作台绕不开「工具接入 + 授权 + 审计」。可以借鉴它的托管授权和按需挑工具，把内部系统（工单、CI、制品库）包成同样的工具目录；按调用付费的思路也能用来做内部成本核算。",
+          "tags": [
+            "AI工具",
+            "开发者工具",
+            "coding agent"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-20-harness2",
+          "name": "Harness²",
+          "tagline": "Harness the agent. Then harness its self-improvement.",
+          "ph": "https://www.producthunt.com/products/harness-104",
+          "site": "https://github.com/google-research/harness2",
+          "repo": "https://github.com/google-research/harness2",
+          "rank": 4,
+          "score": 193,
+          "comments": 7,
+          "what": "Google Research 开源的递归式 agent harness 框架，让 agent 自己改进执行用的提示词、工具和记忆。",
+          "problem": "开放式任务没有标准答案可校验，agent 的 harness 只能靠人手调。",
+          "highlight": "双层递归：任务层 Propose-Probe-Compose 反复打磨，harness 层把可复用经验攒下来；PH 页面称在 WorkBuddy-Bench 等专业基准上最多提升 11.5 分。仓库为 Apache-2.0。",
+          "inspo": "工作台里的「项目级经验沉淀」可以参考：把每次任务里有效的提示词、工具组合、踩坑记录自动归纳成可复用的 harness 配置，而不是让用户手写 AGENTS.md。值得读论文和代码。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "AI工具",
+            "开源"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-20-mintlify-autopilot",
+          "name": "Mintlify Autopilot",
+          "tagline": "An always-on agent that keeps your docs up to date",
+          "ph": "https://www.producthunt.com/products/mintlify",
+          "site": "https://mintlify.com",
+          "rank": 6,
+          "score": 135,
+          "comments": 9,
+          "what": "Mintlify 文档平台上一个常驻 agent，持续让文档跟上代码变化。",
+          "problem": "代码天天变，文档总是落后，没人愿意专门维护。",
+          "highlight": "从「写文档的工具」变成「一直在后台跑的维护 agent」，属于常驻型 agent 而不是一次性生成。",
+          "inspo": "工作台可以做同样的常驻任务：代码合并后自动检查 README、API 文档、变更日志是否需要更新并提 PR。也可以给学习站做类似的「内容过期检查」。",
+          "tags": [
+            "AI工具",
+            "开发者工具",
+            "创作"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-20-runinfra",
+          "name": "RunInfra",
+          "tagline": "Open models, built for agents.",
+          "ph": "https://www.producthunt.com/products/runinfra",
+          "site": "https://runinfra.ai",
+          "rank": 8,
+          "score": 115,
+          "comments": 10,
+          "what": "让 Claude Code、Codex、OpenCode、Cline、Droid、Grok Build 接上 GLM 5.3、DeepSeek V4.1 Flash、Qwen3.8 27B 等开源模型的推理服务。",
+          "problem": "coding agent 跑长任务很费 token，闭源模型贵，自己部署开源模型又麻烦。",
+          "highlight": "套餐每月 10 美元起，宣称缓存命中率最高 99.5%，零数据留存。",
+          "inspo": "企业工作台的模型路由层可以借鉴：同一个 agent 前端，后端按任务切到便宜的开源模型，并把提示词缓存做到极致来压成本。它支持的客户端清单也是现成的竞品/兼容性清单。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "AI工具"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-20-inflight",
+          "name": "Inflight",
+          "tagline": "The missing feedback layer for prototypes",
+          "ph": "https://www.producthunt.com/products/inflight-2",
+          "site": "https://inflight.co/",
+          "rank": 10,
+          "score": 115,
+          "comments": 12,
+          "what": "给原型和预览链接加评论层：评审人在运行中的页面上钉评论或录视频，再通过 MCP 交给 coding agent。",
+          "problem": "AI 做出来的原型反馈散落在聊天和截图里，agent 拿不到具体是哪个元素要改。",
+          "highlight": "反馈直接钉在真实 DOM 元素上，并转成 Cursor、Claude Code、Codex 能通过 MCP 拉取的待办。",
+          "inspo": "很适合抄进工作台：预览环境里点元素留评论，自动变成带选择器和截图的任务交给 agent。王玮给学习站提改版意见时也能用这种方式。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "效率"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-20-kling-4",
+          "name": "Kling 4.0",
+          "tagline": "Fast and affordable AI video for high-frequency creators",
+          "ph": "https://www.producthunt.com/products/kling-4-0-4",
+          "site": "https://kling.ai/",
+          "rank": 9,
+          "score": 110,
+          "comments": 3,
+          "what": "面向创作者和营销的 AI 视频模型，单次生成 30 秒片段。",
+          "problem": "AI 视频靠反复抽卡，故事和角色不受控。",
+          "highlight": "先锁故事：最多 10 个关键帧、15 个参考素材、8000 token 提示词；内置立体声和 10+ 语言对口型；提供 MCP 和 CLI，能接进 agent 工作流。",
+          "inspo": "自媒体可以用它把 X 海报或简报做成短视频；「MCP + CLI 接入」说明创作工具也在向 agent 开放，工作台可以把这类生成能力当作工具接入。",
+          "tags": [
+            "创作",
+            "AI工具"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-20-dev-null",
+          "name": "/dev/null",
+          "tagline": "a social network for devs",
+          "ph": "https://www.producthunt.com/products/dev-null",
+          "site": "https://dev-null.sh",
+          "rank": 1,
+          "score": 483,
+          "comments": 61,
+          "what": "给 Web 开发者的社交网络，用 GitHub 登录，分享代码片段、点赞、回复。",
+          "problem": "开发者缺一个专门聊代码的轻量社区（同时也是一次公开直播造产品的实验）。",
+          "highlight": "四位开发者 10 月 15 日在 JetBrains 办公室直播，48 小时从零做完，观众提了上百个 PR；当天榜首。",
+          "inspo": "「公开直播 48 小时造产品」本身就是很好的自媒体选题和冷启动方式。王玮可以考虑直播或连更「用自己的 coding agent 工作台做一个小产品」。",
+          "tags": [
+            "开发者工具",
+            "创作",
+            "开源"
+          ],
+          "status": "新发现",
+          "followups": []
+        }
+      ]
+    },
+    {
+      "date": "2026-10-19",
+      "source": "https://www.producthunt.com/leaderboard/daily/2026/10/19",
+      "fetched": "2026-10-21 21:15 EDT",
+      "note": "排名为当日结束时的名次；分数是 PH 页面给出的综合分，抓取时的数值，不是纯票数。",
+      "items": [
+        {
+          "id": "2026-10-19-beam-win",
+          "name": "Beam.win",
+          "tagline": "Run AI agents on one Mac and use its windows on another",
+          "ph": "https://www.producthunt.com/products/beam-win",
+          "site": "https://beam.win",
+          "rank": 1,
+          "score": 372,
+          "comments": 48,
+          "what": "agent 和构建任务跑在 Mac mini / Studio 上，把它们的终端、浏览器等窗口一个个搬到你面前的 Mac。",
+          "problem": "长时间跑的 agent 占着笔记本，远程桌面又是整屏、很难和本地窗口混用。",
+          "highlight": "每个远程窗口在本机都有独立窗口、Dock 图标和 ⌘Tab；两台 Mac 之间加密。免费试用。当天榜首。",
+          "inspo": "「agent 在远端常驻、界面按窗口粒度回到本地」正是工作台可以做的体验：任务跑在云端或团队机器上，用户只把需要看的终端、预览窗口拉回来。",
+          "tags": [
+            "coding agent",
+            "效率",
+            "开发者工具"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-19-buddylist",
+          "name": "buddylist",
+          "tagline": "Chat with your coding agents like it's 2005",
+          "ph": "https://www.producthunt.com/products/buddylist-2",
+          "site": "https://buddylist.dev",
+          "repo": "https://github.com/SafaElmali/buddylist",
+          "rank": 8,
+          "score": 125,
+          "comments": 15,
+          "what": "免费桌面应用，把 Claude Code、Codex、Gemini、OpenCode 放进 MSN 风格的好友列表里。",
+          "problem": "同时开好几个 coding agent 时，切换、分工、看 diff 很乱。",
+          "highlight": "每个任务一个 Git worktree，也能把多个 agent 拉进群聊：轮流发言、一起回答、把没做完的任务交给另一个 agent；旁边能看 diff、跑终端、预览应用、看 PR 检查。自带账号，不代管模型。",
+          "inspo": "多 agent 编排的交互隐喻很新：「好友列表 + 群聊」比看板更直觉。工作台可以抄 worktree 隔离、agent 之间交接任务、群聊式协作这几点。有公开 GitHub 仓库，可以直接读代码。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "开源"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-19-walkai-talkai",
+          "name": "walkai-talkai",
+          "tagline": "Talk to your AI coding agent over a walkie-talkie",
+          "ph": "https://www.producthunt.com/products/walkai-talkai",
+          "site": "https://walkai-talkai.com",
+          "rank": 4,
+          "score": 161,
+          "comments": 9,
+          "what": "用任意手持对讲机按键说话，指挥 Mac 上的 coding agent，再把回答用语音从对讲机播回来。",
+          "problem": "离开电脑时没法继续指挥 agent。",
+          "highlight": "本地 Whisper 转写，把指令敲进 Cursor、Claude Code 或 Antigravity（也可直接调各家模型）；音频不出本机；一次性买断，无订阅。",
+          "inspo": "想法很怪但点出一个需求：离开键盘时的语音遥控 agent。工作台可以做手机端「按住说话 → 下发任务 → 语音播报结果」。",
+          "tags": [
+            "coding agent",
+            "效率"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-19-kai-resolve",
+          "name": "Kai Resolve by Gleap",
+          "tagline": "Support that does the digging for you.",
+          "ph": "https://www.producthunt.com/products/gleap",
+          "site": "https://gleap.ai",
+          "rank": 5,
+          "score": 149,
+          "comments": 24,
+          "what": "把客服、用户反馈和 coding agent 放在一起：用户报的问题变成待审的修复，修完再在原工单里回复用户。",
+          "problem": "工单到代码修复之间要层层转手，用户迟迟收不到结果。",
+          "highlight": "打通「工单 → 修复 PR → 回复用户」整条链路，人只负责审和发布。",
+          "inspo": "企业工作台的一个高价值入口：从工单系统直接触发 agent 修 bug，结果回写工单。可以作为面向客户的 demo 场景。",
+          "tags": [
+            "coding agent",
+            "AI工具",
+            "开发者工具"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-19-framefields",
+          "name": "Framefields",
+          "tagline": "Open-source code-first video for AGI era",
+          "ph": "https://www.producthunt.com/products/framefields",
+          "site": "https://framefields.dev",
+          "rank": 9,
+          "score": 99,
+          "comments": 10,
+          "what": "开源的代码优先视频引擎，在 Node.js 里用原生 WebGPU 渲染，一个 npm 包。",
+          "problem": "让 agent 做视频要么靠笨重的创作软件，要么靠无头浏览器录屏。",
+          "highlight": "动效、特效、3D、音频处理都用 TypeScript 写，不需要 Chromium，逐帧确定性渲染，硬件加速导出 MP4。",
+          "inspo": "自媒体可以让 agent 用代码批量生成讲解视频；对比 Remotion 这类方案值得试。",
+          "tags": [
+            "创作",
+            "开发者工具",
+            "开源"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-19-readywhen",
+          "name": "readywhen",
+          "tagline": "The senior personal assistant that works inside WhatsApp",
+          "ph": "https://www.producthunt.com/products/readywhen",
+          "site": "https://app.readywhen.ai/start",
+          "rank": 3,
+          "score": 192,
+          "comments": 37,
+          "what": "住在 WhatsApp 里的 AI 私人助理，有自己的手机号、自己的电脑和一个任务看板。",
+          "problem": "要的不只是能聊天的助理，而是能真正去把事办完、并跟踪进度的助理。",
+          "highlight": "可以打电话、发消息、发语音给它；它有独立电脑去执行，并用项目看板记录你所有待办。",
+          "inspo": "「助理 = 独立号码 + 独立电脑 + 看板」的形态，和在群聊里放 bot 很像。个人效率方向可以参考它把任务状态显式化的做法。",
+          "tags": [
+            "效率",
+            "AI工具"
+          ],
+          "status": "新发现",
+          "followups": []
+        }
+      ]
+    },
+    {
+      "date": "2026-10-18",
+      "source": "https://www.producthunt.com/leaderboard/daily/2026/10/18",
+      "fetched": "2026-10-21 21:15 EDT",
+      "note": "排名为当日结束时的名次；分数是 PH 页面给出的综合分，抓取时的数值，不是纯票数。",
+      "items": [
+        {
+          "id": "2026-10-18-shim-cli",
+          "name": "shim-cli",
+          "tagline": "See what your coding agent sends. Mask what you can.",
+          "ph": "https://www.producthunt.com/products/shim-cli",
+          "site": "https://getshim.tech/products/shim-cli",
+          "repo": "https://github.com/GetSHIM/shim-cli",
+          "rank": 3,
+          "score": 195,
+          "comments": 27,
+          "what": "开源的 hook + 本地代理，支持 Claude Code、Codex、Copilot CLI 和 VS Code。",
+          "problem": "企业不知道 coding agent 把哪些代码、密钥、个人数据发给了模型，也看不清花了多少钱。",
+          "highlight": "在 Claude Code 里，工具结果进模型前先把密钥和个人数据打码；shim watch 能看一次会话发了什么、花了多少。无账号、无遥测，Apache-2.0。",
+          "inspo": "企业级工作台的刚需：出站内容审计 + 脱敏 + 成本看板。可以直接参考它的 hook 和代理实现，做成工作台内置的合规层。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "开源"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-18-tomo",
+          "name": "Tomo for ChatGPT",
+          "tagline": "Ask anything. Then play it, Duolingo-style.",
+          "ph": "https://www.producthunt.com/products/tomo-for-chatgpt",
+          "site": "https://heytomo.app",
+          "rank": 8,
+          "score": 98,
+          "comments": 6,
+          "what": "把任何主题变成像多邻国一样玩的小课程，有红心、连胜、经验值和即时反馈。",
+          "problem": "想学的东西五花八门，但没有现成的、好玩的短课程。",
+          "highlight": "AI 几分钟生成课程，可以选老师人设（教授、海盗等）；手机上每天玩 5 分钟，或在 ChatGPT 里用插件把对话变成课程。免费起步。",
+          "inspo": "孩子三年级正适合：可以试试让它把课本单元或兴趣主题（恐龙、太空）做成闯关课。学习站的「小测 + 复习」也可以借鉴连胜和经验值的游戏化设计。",
+          "tags": [
+            "教育",
+            "AI工具"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-18-mylens",
+          "name": "MyLens",
+          "tagline": "1-1 Live Presentations at Scale with AI.",
+          "ph": "https://www.producthunt.com/products/mylens-ai",
+          "site": "https://mylens.ai",
+          "rank": 2,
+          "score": 216,
+          "comments": 32,
+          "what": "给每个观众一场 AI 主讲的一对一实时演示，会用你提供的资料回答问题、现场加幻灯片。",
+          "problem": "一对一讲解效果好但没法规模化，一对多又照顾不到每个人。",
+          "highlight": "演示结束后告诉你每个人的情况：谁跟得上、谁卡住了、下一步该做什么。",
+          "inspo": "教育和内部培训都能用：同一份资料给每个人个性化讲一遍并反馈卡点。工作台上手引导、学习站的课程讲解都可以借鉴「讲完给出每人卡点报告」。",
+          "tags": [
+            "教育",
+            "AI工具",
+            "效率"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-18-inbox-zero",
+          "name": "Inbox Zero",
+          "tagline": "Open-source Superhuman alternative",
+          "ph": "https://www.producthunt.com/products/inbox-zero-2",
+          "site": "https://www.getinboxzero.com",
+          "rank": 1,
+          "score": 373,
+          "comments": 30,
+          "what": "开源的 AI 邮件助理和邮件客户端。",
+          "problem": "邮件太多，处理和回复占掉大量时间。",
+          "highlight": "定位为 Superhuman 的开源替代，当天榜首。",
+          "inspo": "「开源替代某个贵的效率工具」依然是上榜最稳的定位。个人效率方向可以自部署试用。",
+          "tags": [
+            "效率",
+            "AI工具",
+            "开源"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-18-3am",
+          "name": "3AM Super Intelligence",
+          "tagline": "Production incidents: investigated, proven, fixed",
+          "ph": "https://www.producthunt.com/products/3am-super-intelligence",
+          "site": "https://3am.si",
+          "rank": 7,
+          "score": 104,
+          "comments": 10,
+          "what": "AI 值班工程师，面向没法重写的老系统，找根因、预演修复，在 Slack 里一键处理事故。",
+          "problem": "半夜线上事故靠人排查，老系统没人敢动。",
+          "highlight": "先「预演修复」再执行，并强调在客户网络内运行。",
+          "inspo": "企业 agent 落地的信任设计值得学：先证明再动手、在内网跑、人一键确认。工作台的高风险操作可以借鉴「预演 → 证据 → 一键批准」。",
+          "tags": [
+            "开发者工具",
+            "AI工具",
+            "coding agent"
+          ],
+          "status": "新发现",
+          "followups": []
+        }
+      ]
+    }
+  ]
+}
