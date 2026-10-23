@@ -462,9 +462,13 @@ go(Math.max(0,(parseInt(location.hash.slice(1))||1)-1));
 (function(){if(window.__finish)return;window.__finish=1;
 if(!document.querySelector('.deck'))return;
 const st=document.createElement('style');st.textContent=`.fin-btn{position:fixed;right:16px;bottom:76px;z-index:50;padding:10px 16px;border-radius:999px;border:0;background:#16a34a;color:#fff;font:600 15px system-ui;box-shadow:0 4px 14px rgba(0,0,0,.18);cursor:pointer}.fin-btn.done{background:#e5e7eb;color:#166534}`;document.head.appendChild(st);
-const key='done:'+location.pathname,p=n=>String(n).padStart(2,'0');
+const p=n=>String(n).padStart(2,'0');
+const doneKeys=()=>{const out=new Set();const seed=location.pathname;const vs=new Set([seed]);if(seed.endsWith('/index.html')){const d=seed.slice(0,-10);vs.add(d);vs.add(d.replace(/\/$/,'')||'/')}else if(seed.endsWith('/')){vs.add(seed+'index.html');vs.add(seed.replace(/\/$/,'')||'/')}else if(!/\.[a-z0-9]+$/i.test(seed)){vs.add(seed+'/');vs.add(seed+'/index.html')}for(const u of vs){out.add(u);const m=u.match(/^(.*)\/courses\/(.+)$/);if(m)out.add(m[1]+'/'+m[2]);const m2=u.match(/^(.*)\/(cs146s)\/(.+)$/);if(m2&&!u.includes('/courses/'))out.add(m2[1]+'/courses/'+m2[2]+'/'+m2[3])}return[...out]};
+const getDone=()=>{for(const k of doneKeys()){const d=localStorage.getItem('done:'+k);if(d)return d}return null};
+const setDone=v=>{for(const k of doneKeys())localStorage.setItem('done:'+k,v)};
+const clearDone=()=>{for(const k of doneKeys())localStorage.removeItem('done:'+k)};
 const b=document.createElement('button');b.className='fin-btn';document.body.appendChild(b);
-const show=()=>{const d=localStorage.getItem(key);b.classList.toggle('done',!!d);b.textContent=d?'✓ 已学完 '+d:'✓ 学完了';b.title=d?'再点一下取消':''};show();
-b.onclick=()=>{if(localStorage.getItem(key)){if(confirm('取消「已学完」记录？'))localStorage.removeItem(key)}else{const x=new Date();localStorage.setItem(key,x.getFullYear()+'-'+p(x.getMonth()+1)+'-'+p(x.getDate()))}show()};
+const show=()=>{const d=getDone();b.classList.toggle('done',!!d);b.textContent=d?'✓ 已学完 '+d:'✓ 学完了';b.title=d?'再点一下取消':''};show();
+b.onclick=()=>{if(getDone()){if(confirm('取消「已学完」记录？'))clearDone()}else{const x=new Date();setDone(x.getFullYear()+'-'+p(x.getMonth()+1)+'-'+p(x.getDate()))}show()};
 })();
 </script></body></html>
