@@ -1,0 +1,315 @@
+{
+  "_readme": "DSH 插件市场盘点。页面由 build.mjs 生成 dsh-plugins/index.html。只收录 2026-10-22 已核实的事实，不补数字或仓库。苏茶原文在 sources/suercha-50-plugins.md，只作引用。",
+  "asOf": "2026-10-22",
+  "tz": "北京时间",
+  "title": "DSH 插件市场盘点",
+  "indexEntries": 6378,
+  "categoryTotal": 23,
+  "expect": {
+    "verified": 57,
+    "highlights": 22,
+    "mechanisms": 5,
+    "categoriesListed": 9
+  },
+  "kpis": [
+    {"value": "57", "label": "核实插件", "hint": "全部存在"},
+    {"value": "6,378", "label": "索引条目", "hint": "浅克隆当日"},
+    {"value": "23", "label": "分类", "hint": "索引里的类"},
+    {"value": "5", "label": "值得抄的机制", "hint": "对企业工作台"}
+  ],
+  "source": {
+    "author": "苏茶",
+    "title": "扒了市场上 6254 个插件，梳理出我常用的 50+ 效率插件",
+    "url": "https://x.com/Suercha007/status/2112791503278125329",
+    "provided": "2026-10-21",
+    "archive": "sources/suercha-50-plugins.md"
+  },
+  "facts": [
+    "文章 57 个插件的仓库都用 GitHub API 核实过：52 个仓库，其中 8 个插件是 monorepo 子目录，子目录均存在；57 个全部存在，没有失效链接。",
+    "已在库的 3 个（dsh-context #2、OpenViking #39、dsh-cost-meter #191）只补来源和内容，不新建条目。",
+    "下载量全部引自文章，标「来源：苏茶文章」。仓库自己的 `data/downloads.json` 最后更新于 2026-08-19，已经过时，本文不用。"
+  ],
+  "layers": [
+    "索引层是 [awesome-dsh-plugin](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin)，社区精选列表，CC0-1.0，★19,915。2026-10-22 浅克隆时 `data/plugins/` 下共 6,378 个条目；文章写的 6,254 是写作时的数字，[dsh-market](https://github.com/dsh-market/dsh-market) README 写的「4200+」更旧。",
+    "安装层是 [dsh-market](https://github.com/dsh-market/dsh-market)，装在 DSH 里的市场插件。它只允许安装上述列表里的来源。",
+    "DSH 0.2.1 起官方支持「插件市场索引」：Plugins → Discover → Index sources。"
+  ],
+  "categoriesNote": "共 23 类，最大的是下面 9 类。界面、主题、桌宠类占比很高。条长相对其中最大的 ui，右边是条目数。其余类本节没有列出。",
+  "categories": [
+    {"name": "ui", "n": 1189},
+    {"name": "tools", "n": 835},
+    {"name": "session", "n": 445},
+    {"name": "dev", "n": 423},
+    {"name": "workflow", "n": 367},
+    {"name": "model", "n": 349},
+    {"name": "usage", "n": 334},
+    {"name": "memory", "n": 272},
+    {"name": "security", "n": 194}
+  ],
+  "scan": {
+    "tool": "dsh-trust-check",
+    "version": "0.1.13",
+    "lead": "扫过 3,843 个插件，最近一次扫描在 2026-09-24（UTC）。各能力的插件数如下。",
+    "caps": [
+      {"name": "读文件", "n": 2882},
+      {"name": "写文件", "n": 2261},
+      {"name": "读环境变量", "n": 2206},
+      {"name": "网络", "n": 2183},
+      {"name": "shell", "n": 1634},
+      {"name": "凭据", "n": 454},
+      {"name": "动态代码", "n": 347},
+      {"name": "子 agent", "n": 87}
+    ],
+    "redLines": "453 个插件有 redLines（例如「用明文 http:// 连接某服务」）。",
+    "disclaimer": "这些都是扫描器读出来的事实，不是安全结论。"
+  },
+  "names": "文章提醒 dsh-pet 和 dsh-code-review 各有两个作者的版本；dsh-rewind 在 npm 上的同名包属于别人，要装 `dsh-rewind-plugin`。",
+  "catalog": [
+    {
+      "h": "插件 manifest",
+      "items": [
+        {
+          "t": "插件的 `package.json` 必须声明 `dsh.bundle: { \"patch\": \"./cordis.patch.yml\" }`；只声明 `dsh.client` 的不能安装，这是投稿被拒的头号原因。带前端界面的再加 `dsh.client: { \"platform\": \"web\" }`。",
+          "sub": [
+            "根目录放 `cordis.patch.yml`，内容是 `- insert: [{ id, name }]`。启用或禁用就是往 profile 的补丁层写 `- id: … disabled: true|false`，DSH 热加载约 1 秒生效。",
+            "宿主版本要求写在 `engines.dsh`，或写成 `@deepseek-ai/dsh-*` 的 peer 范围。peer 范围要显式写预发布分支，例如 `>=0.0.1-rc.1 <0.1.0 || >=0.1.0-rc.1 <0.2.0-0`，否则会静默排除 rc 版。"
+          ]
+        }
+      ]
+    },
+    {
+      "h": "索引条目",
+      "paras": ["`data/plugins/<owner>__<repo>.yml`，monorepo 子包命名为 `<owner>__<repo>--packages-x.yml`。字段如下："],
+      "items": [
+        "`url`：必须与仓库完全一致。",
+        "`name`：显示名；子包用 `owner/repo#sub`。",
+        "`category`：23 类之一。",
+        "`description.en`：唯一必填字段。",
+        "`description.zh`：可选，维护者会补。",
+        "`tarball`：可选；必须是 GitHub Release 上的 https `.tgz`。用 `latest/download/` 时资产名不能带版本号，否则发下一版就 404。"
+      ]
+    },
+    {
+      "h": "派生数据",
+      "paras": ["都按 url 做键："],
+      "items": [
+        "`data/capabilities.json`：version、spec、capabilities[]、redLines[]、scannedAt、tool。",
+        "`data/stars.json`、`data/downloads.json`、`data/added-dates.json`、`data/screenshots.json`。",
+        "能力数据的写入规则在 `scripts/lib/capabilities.mjs`：只写真正读到的事实；下载失败、扫描器崩溃或格式看不懂时一律留空，界面显示「未检出」，不写成「安全」。扫描器输出带 `schemaVersion`，换扫描器只需改这一个文件。"
+      ]
+    },
+    {
+      "h": "发布形态",
+      "items": [
+        "`scripts/publish-catalog.mjs` 把 `plugins.json` 发成 npm 包 `dsh-plugin-catalog`。原因有两个：中国大陆访问 GitHub Pages 慢，npm 镜像快；目录也因此有了版本号，出错可以回滚。",
+        "`scripts/lib/market-index.mjs` 按官方「format 1」生成索引，并用 `@deepseek-ai/dsh-plugin-market-index` 同一套解析器校验。",
+        "format 1 要求每个条目有 npm 包名、精确版本和发布时间，所以只在 GitHub、不发 npm 的那一半插件暂时进不了官方索引。",
+        "宿主拉索引的超时是 15 秒，因此描述截到 160 字。",
+        "索引地址：[https://cdn.jsdelivr.net/npm/dsh-plugin-catalog/index.json](https://cdn.jsdelivr.net/npm/dsh-plugin-catalog/index.json)（见 [dsh-market](https://github.com/dsh-market/dsh-market) README）。"
+      ]
+    },
+    {
+      "h": "dsh-market 的安装链路",
+      "items": [
+        "来源优先级：经仓库验证的 npm 包 → 作者 Release 的预构建 tarball → 整仓源码。tarball 必须属于条目自己的仓库，防止「名字写可信仓库、实际装别处的包」（`src/sources.ts`）。",
+        "构建脚本默认不执行；安装接口只接受同源 POST；重启接口只接受环回地址。"
+      ]
+    }
+  ],
+  "reviewLead": "`contributing.md`、`scripts/check-submission.mjs`、`.github/workflows/*`",
+  "review": [
+    {
+      "h": "CI 只校验形式",
+      "items": [
+        "仓库里存在 `dsh.bundle`（遍历整棵树查找）。",
+        "仓库创建满 1 天。提交数门槛已于 2026-09-03 取消，理由是它衡量的是开发习惯，不是质量。",
+        "仓库存在且未归档，并且不是 DSH 本身。",
+        "每个 PR 最多新增 3 条（依据他们统计的历史 PR 分布）。",
+        "PR 改动了哪些既有条目，gate 会逐条列出来供追问（起因是曾两次有 PR 偷改别人的描述）。"
+      ]
+    },
+    {
+      "h": "维护者合并前读源码",
+      "paras": ["看 8 点："],
+      "items": [
+        "描述里的数字和 API 是否与代码一致（夸大是被打回的主因）。",
+        "分类是否合理。维护者直接改，不会因此打回。",
+        "是不是真实可用的代码。",
+        "是否与已有条目重复。按「谁更好」决定，不是先来先得。",
+        "源码里有没有混淆、凭据外传或异常的安装期行为。这只是常识检查，不算安全审计。",
+        "PR 有没有动无关条目。",
+        "是否是只有依赖清单的纯聚合包，这种不收。",
+        "聚合包的依赖是否指向原作者。"
+      ]
+    },
+    {
+      "h": "持续维护",
+      "items": [
+        "`decay-scan.yml` 每周一扫一次，标记 gone、archived、dormant、subpath-gone、unbundled 五种状态，汇总到一个跟踪 issue；删除由人决定。",
+        "`held-rescan.yml` 每天把作者已修好、但仍挂着 `held: author` 的 PR 列出来，避免被遗忘；它不会自动去掉标签。"
+      ]
+    }
+  ],
+  "highlightsNote": "按用途分组。下载量来源：苏茶文章。创建、最近推送、★、License 与文末核实表同一口径（2026-10-22，北京时间）。",
+  "pathsNote": "各插件具体可抄的文件路径见下方条目和 refs.md（#198 起）。本页没有收录 refs.md。",
+  "highlights": [
+    {"group": "治理与安全", "name": "dsh-plugin-gating-hub", "url": "https://github.com/Noob-stupid/dsh-plugin-gating-hub", "created": "2026-08-14", "stars": "106", "license": "MIT", "pushed": "2026-10-22", "downloads": "2.1", "copy": "升级契约规则库、预检、回滚点、隔离坏插件"},
+    {"group": "治理与安全", "name": "cc-safety-net", "url": "https://github.com/kenryu42/cc-safety-net", "created": "2025-12-26", "stars": "1,732", "license": "MIT", "pushed": "2026-10-21", "downloads": "5.7", "copy": "执行前解析命令意图，拦破坏性命令和密钥访问；规则书可提交进 git"},
+    {"group": "治理与安全", "name": "dsh-mcp-connector", "url": "https://github.com/duhu2000/dsh-mcp-connector", "created": "2026-08-20", "stars": "67", "license": "MIT", "pushed": "2026-10-20", "downloads": "2.3", "copy": "MCP 的 Connection/Server/Tool 三层治理，预览 → 按 revision 提交 → 回滚"},
+    {"group": "治理与安全", "name": "dsh-permission-rules", "url": "https://github.com/PerryLink/dsh-permission-rules", "created": "2026-08-14", "stars": "126", "license": "Apache-2.0", "pushed": "2026-10-20", "downloads": "—（文章未收录）", "copy": "有序的 allow/deny/ask YAML 规则，按 argv 分解匹配（文章外）"},
+    {"group": "治理与安全", "name": "dsh-auto-review", "url": "https://github.com/PerryLink/dsh-auto-review", "created": "2026-08-14", "stars": "236", "license": "Apache-2.0", "pushed": "2026-10-20", "downloads": "—（文章未收录）", "copy": "审批链上的第二模型，默认 fail-closed（文章外）"},
+    {"group": "治理与安全", "name": "dsh-trust-check", "url": "https://github.com/liuwenji007/dsh-trust-check", "created": "2026-08-27", "stars": "1", "license": "MIT", "pushed": "2026-10-20", "downloads": "—（文章未收录）", "copy": "插件能力披露扫描，每条附证据（文章外）"},
+    {"group": "治理与安全", "name": "upstream-radar", "url": "https://github.com/MicroMilo/upstream-radar", "created": "2026-08-14", "stars": "10", "license": "Apache-2.0", "pushed": "2026-10-16", "downloads": "—（文章未收录）", "copy": "发版即在一次性 CI 里复测兼容性，出证据报告（文章外）"},
+    {"group": "治理与安全", "name": "dsh-passwords", "url": "https://github.com/slywalker2006/dsh-passwords", "created": "2026-08-14", "stars": "77", "license": "GPL-3.0", "pushed": "2026-10-10", "downloads": "—（文章未收录）", "copy": "子账号、工作区授权、配额、审计日志，GPL（文章外）"},
+    {"group": "记忆与上下文", "name": "hindsight#coding-agents", "url": "https://github.com/vectorize-io/hindsight/tree/main/hindsight-integrations/coding-agents", "created": "2025-10-30", "stars": "52,372", "license": "MIT", "pushed": "2026-10-22", "downloads": "5.7", "copy": "一仓一个记忆银行，每个 harness 一个薄入口"},
+    {"group": "记忆与上下文", "name": "OpenViking memory", "url": "https://github.com/volcengine/OpenViking/tree/main/examples/dsh-memory-plugin", "created": "2026-01-05", "stars": "40,532", "license": "AGPL-3.0", "pushed": "2026-10-21", "downloads": "3.8", "copy": "pre-step 注入、失败写入入队重放、viking:// 路径守卫"},
+    {"group": "记忆与上下文", "name": "dsh-memento", "url": "https://github.com/PerryLink/dsh-memento", "created": "2026-08-14", "stars": "138", "license": "Apache-2.0", "pushed": "2026-10-20", "downloads": "—（文章未收录）", "copy": "dsh-memory-protocol v1：写入审批门、可重建的审计（文章外）"},
+    {"group": "记忆与上下文", "name": "dsh-memory-gate", "url": "https://github.com/GIT121995/dsh-memory-gate", "created": "2026-08-14", "stars": "2", "license": "MIT", "pushed": "2026-10-19", "downloads": "—（文章未收录）", "copy": "「检索到≠注入」：每条记忆先裁决 use/verify/ignore（文章外）"},
+    {"group": "记忆与上下文", "name": "billion-context", "url": "https://github.com/ranxianglei/billion-context", "created": "2026-08-06", "stars": "2,255", "license": "未识别（NOASSERTION）", "pushed": "2026-10-22", "downloads": "177.3", "copy": "代理层增量分层压缩，保前缀缓存"},
+    {"group": "记忆与上下文", "name": "dsh-rewind", "url": "https://github.com/SiriLee/dsh-rewind", "created": "2026-08-17", "stars": "169", "license": "MIT", "pushed": "2026-10-21", "downloads": "2.6", "copy": "只追加回退标记，写前备份、未改不存"},
+    {"group": "成本", "name": "dsh-cost-meter", "url": "https://github.com/Han-1413141/dsh-cost-meter", "created": "2026-08-13", "stars": "488", "license": "MIT", "pushed": "2026-10-21", "downloads": "10.6", "copy": "上下文费用拆分、定价历史、账本锁的进程身份恢复"},
+    {"group": "成本", "name": "dsh-bill", "url": "https://github.com/Jannchie/dsh-bill", "created": "2026-08-16", "stars": "6", "license": "MIT", "pushed": "2026-10-18", "downloads": "—（文章未收录）", "copy": "按内容类型归因费用，日/月预算（文章外）"},
+    {"group": "IM 与远程", "name": "dsh-im-connect", "url": "https://github.com/MichengAI/dsh-im-connect", "created": "2026-08-16", "stars": "81", "license": "Apache-2.0", "pushed": "2026-10-21", "downloads": "12.3", "copy": "9 个 IM 渠道；入站身份准入表；审批只在绑定会话里回复"},
+    {"group": "编排与任务", "name": "dsh-task-board", "url": "https://github.com/zhu1090093659/dsh-web/tree/main/packages/dsh-task-board", "created": "2026-08-12", "stars": "9,251", "license": "Apache-2.0", "pushed": "2026-10-21", "downloads": "12.5 万", "copy": "dsh-task-board：宿主权威账本、cron 带时区、fail-closed pin"},
+    {"group": "代码知识与产物", "name": "GraphFlow", "url": "https://github.com/Roarpeng/GraphFlow", "created": "2026-05-27", "stars": "25", "license": "Apache-2.0", "pushed": "2026-10-20", "downloads": "3.2", "copy": "4 个宽参数工具、diff 路由测试、熔断救援包"},
+    {"group": "代码知识与产物", "name": "archify", "url": "https://github.com/tt-a1i/archify/tree/main/integrations/deepseek-harness", "created": "2026-04-15", "stars": "87,078", "license": "MIT", "pushed": "2026-10-21", "downloads": "3.2", "copy": "整套图表 JSON Schema；钉死 commit 的分发验收"},
+    {"group": "扩展底座与 UI", "name": "DSH-better-sidebar", "url": "https://github.com/omdsh-dev/DSH-better-sidebar", "created": "2026-08-08", "stars": "4,403", "license": "MIT", "pushed": "2026-10-18", "downloads": "20.9", "copy": "registerTab / registerFileViewer 开放扩展点"},
+    {"group": "扩展底座与 UI", "name": "dsh-genui", "url": "https://github.com/omdsh-dev/dsh-genui", "created": "2026-08-13", "stars": "722", "license": "MIT", "pushed": "2026-10-21", "downloads": "3.7", "copy": "组件白名单 + 同轮纠错 + 缺席时降级为代码块"}
+  ],
+  "mechanisms": [
+    {
+      "title": "一插件一文件的索引，CI 只管形式，人工管真实性",
+      "via": "[awesome-dsh-plugin](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin)",
+      "points": [
+        "一个插件一个 YAML，README 和网站都由脚本生成，所以 PR 之间不会冲突。",
+        "CI 检查 manifest、仓库年龄、PR 改动了哪些既有条目；维护者对照源码核实描述里的数字和 API。",
+        "每周做一次腐烂扫描，结果汇总成跟踪 issue，删除由人决定。",
+        "企业内部市场照搬即可：把「仓库年龄」换成「负责人 / 安全评审已签」。"
+      ]
+    },
+    {
+      "title": "能力披露代替安全背书，安装只认白名单来源",
+      "via": "[dsh-trust-check](https://github.com/liuwenji007/dsh-trust-check) + `data/capabilities.json` + dsh-market `src/sources.ts`",
+      "points": [
+        "卡片上展示插件会碰到的 shell、文件、网络、凭据、动态代码、子 agent，每条附「文件 + 行号 + 片段」作证据。",
+        "没扫到的显示「未检出」，不显示「安全」。",
+        "只能安装精选列表里的来源；npm 包和 tarball 必须绑定条目自己的仓库。"
+      ]
+    },
+    {
+      "title": "升级契约规则库 + 预检 + 快照回滚 + 隔离坏插件",
+      "via": "gating-hub 的 `lib/contracts/rules.json`；dsh-market 的 `src/trial.ts`、`src/snapshot.ts`、`src/recovery.ts`",
+      "points": [
+        "规则必须附事故证据。",
+        "任何渠道升级框架后都要先跑预检。",
+        "写入顺序或预设之前先离线回放组合，并自动打快照。",
+        "新框架加载不了的插件直接禁用，服务端返回 409，用户无法强开。",
+        "启动失败时，由一个不依赖宿主的进程提供「调整插件」的恢复界面。"
+      ]
+    },
+    {
+      "title": "工具级治理要两层落地",
+      "via": "[dsh-mcp-connector](https://github.com/duhu2000/dsh-mcp-connector)",
+      "points": [
+        "规则优先级 Tool > Server > Connection > 默认。",
+        "改动先预览影响面，再带 baseRevision 提交，保留最近 20 份可回滚。",
+        "执行层同时用宿主的 `restrict()`（模型看不到）和 `guard()`（调用也会被拒）；宿主没有 guard 时，干脆不允许保存 deny 规则，不能只在界面上隐藏。"
+      ]
+    },
+    {
+      "title": "开放扩展点 + 声明式权限 + 第二模型审查",
+      "via": "[DSH-better-sidebar](https://github.com/omdsh-dev/DSH-better-sidebar)、[dsh-permission-rules](https://github.com/PerryLink/dsh-permission-rules)、[dsh-auto-review](https://github.com/PerryLink/dsh-auto-review)",
+      "points": [
+        "DSH-better-sidebar 的 `registerTab` / `registerFileViewer`：描述符带 id 前缀、order、`available()`，注册返回 disposer，内置功能也走同一个 API。",
+        "dsh-permission-rules：有序规则，first-match，内置高危基线排在用户规则之后。",
+        "dsh-auto-review：规则覆盖不到的，交给只读审查子 agent，默认 fail-closed。"
+      ]
+    }
+  ],
+  "verifyNote": "创建日期 / 最近推送为北京时间；★ 与 License 来自 GitHub API；下载量来源：苏茶文章",
+  "baseline": "基线参照（已成熟）：anthropics/skills、Claude 官方插件目录、Knowledge Work Plugins、Tencent TeamAI CLI、MCP Registry、MCP Inspector",
+  "verify": [
+    {
+      "group": "上下文与记忆",
+      "rows": [
+        {"n": 1, "name": "billion-context", "repo": "ranxianglei/billion-context", "url": "https://github.com/ranxianglei/billion-context", "created": "2026-08-06", "stars": "2,255", "license": "未识别（NOASSERTION）", "pushed": "2026-10-22", "downloads": "177.3", "blurb": "官方上下文压缩，省 5 倍 token，小窗口跑数月级会话。", "note": "文章称「官方」，实为个人仓库；「省 5 倍」未核实"},
+        {"n": 2, "name": "dsh-archive-manager", "repo": "MichengAI/dsh-archive-manager", "url": "https://github.com/MichengAI/dsh-archive-manager", "created": "2026-08-16", "stars": "195", "license": "Apache-2.0", "pushed": "2026-10-19", "downloads": "16.2", "blurb": "在设置里搜索、恢复和删除已归档会话。", "note": ""},
+        {"n": 3, "name": "dsh-context", "repo": "bowenliang123/dsh-context", "url": "https://github.com/bowenliang123/dsh-context", "created": "2026-08-14", "stars": "3,141", "license": "Apache-2.0", "pushed": "2026-10-22", "downloads": "15.7", "blurb": "Context 仪表盘加 /context，查看组成、压缩与注入。", "note": "已在库 #2"},
+        {"n": 4, "name": "hindsight#coding-agents", "repo": "vectorize-io/hindsight", "url": "https://github.com/vectorize-io/hindsight/tree/main/hindsight-integrations/coding-agents", "created": "2025-10-30", "stars": "52,372", "license": "MIT", "pushed": "2026-10-22", "downloads": "5.7", "blurb": "会学习的长期记忆，自动召回和保存，按仓库隔离记忆银行。", "note": "monorepo 子目录（存在）；仓库早于 2026-07-23"},
+        {"n": 5, "name": "dsh-mnemon", "repo": "omdsh-dev/dsh-mnemon", "url": "https://github.com/omdsh-dev/dsh-mnemon", "created": "2026-08-10", "stars": "621", "license": "MIT", "pushed": "2026-10-21", "downloads": "4.9", "blurb": "跨 Agent、本地优先的持久记忆，带语义召回和知识图谱。", "note": ""},
+        {"n": 6, "name": "OpenViking memory", "repo": "volcengine/OpenViking", "url": "https://github.com/volcengine/OpenViking/tree/main/examples/dsh-memory-plugin", "created": "2026-01-05", "stars": "40,532", "license": "AGPL-3.0", "pushed": "2026-10-21", "downloads": "3.8", "blurb": "自动召回、画像注入、会话捕获，对接 OpenViking 服务端。", "note": "已在库 #39；monorepo 子目录（存在）；仓库早于 2026-07-23"},
+        {"n": 7, "name": "dsh-memory", "repo": "FuRongJun-1999/dsh-memory", "url": "https://github.com/FuRongJun-1999/dsh-memory", "created": "2026-08-14", "stars": "444", "license": "MIT", "pushed": "2026-10-21", "downloads": "2.6", "blurb": "白箱 AGI 探索，元认知、持续学习、世界模型。", "note": ""},
+        {"n": 8, "name": "dsh-rewind", "repo": "SiriLee/dsh-rewind", "url": "https://github.com/SiriLee/dsh-rewind", "created": "2026-08-17", "stars": "169", "license": "MIT", "pushed": "2026-10-21", "downloads": "2.6", "blurb": "同会话回退到任意消息，可还原工作区文件。", "note": ""}
+      ]
+    },
+    {
+      "group": "界面与主题",
+      "rows": [
+        {"n": 9, "name": "dsh-codex-ui", "repo": "MichengAI/dsh-codex-ui", "url": "https://github.com/MichengAI/dsh-codex-ui", "created": "2026-08-14", "stars": "190", "license": "Apache-2.0", "pushed": "2026-10-22", "downloads": "23.2", "blurb": "Codex 风格侧栏、会话树、全局搜索和轮次导航。", "note": ""},
+        {"n": 10, "name": "DSH-better-sidebar", "repo": "omdsh-dev/DSH-better-sidebar", "url": "https://github.com/omdsh-dev/DSH-better-sidebar", "created": "2026-08-08", "stars": "4,403", "license": "MIT", "pushed": "2026-10-18", "downloads": "20.9", "blurb": "侧边栏工作台，文件、终端、Git、子代理都能开 Tab。", "note": ""},
+        {"n": 11, "name": "DeepSeek-Balance-Whale-Widget", "repo": "MeteorNOX/DeepSeek-Balance-Whale-Widget", "url": "https://github.com/MeteorNOX/DeepSeek-Balance-Whale-Widget", "created": "2026-08-18", "stars": "5,659", "license": "MIT", "pushed": "2026-10-11", "downloads": "19.9", "blurb": "鲸鱼挂件，显示余额、今日用量和单轮成本。", "note": ""},
+        {"n": 12, "name": "dsh-skills-manager", "repo": "MichengAI/dsh-skills-manager", "url": "https://github.com/MichengAI/dsh-skills-manager", "created": "2026-08-15", "stars": "286", "license": "Apache-2.0", "pushed": "2026-10-21", "downloads": "19.5", "blurb": "设置里管理本地技能，只读查看公共 Agent 技能。", "note": ""},
+        {"n": 13, "name": "dsh-skill-explorer", "repo": "zhu1090093659/dsh-web", "url": "https://github.com/zhu1090093659/dsh-web/tree/main/packages/dsh-skill-explorer", "created": "2026-08-12", "stars": "9,251", "license": "Apache-2.0", "pushed": "2026-10-21", "downloads": "14.0", "blurb": "技能中心，按来源浏览，启停、新建、回收。", "note": "monorepo 子目录（存在）"},
+        {"n": 14, "name": "dsh-pet", "repo": "zhu1090093659/dsh-pet", "url": "https://github.com/zhu1090093659/dsh-pet", "created": "2026-09-23", "stars": "29", "license": "Apache-2.0", "pushed": "2026-10-20", "downloads": "13.7", "blurb": "鲸鱼娘桌宠，跟随 agent 状态，可摸头投喂。", "note": ""},
+        {"n": 15, "name": "dsh-web-all", "repo": "zhu1090093659/dsh-web", "url": "https://github.com/zhu1090093659/dsh-web/tree/main/packages/dsh-web-all", "created": "2026-08-12", "stars": "9,251", "license": "Apache-2.0", "pushed": "2026-10-21", "downloads": "10.3", "blurb": "Web UI 插件与皮肤合集，看板、Git 图、远程、桌宠都在。", "note": "monorepo 子目录（存在）"},
+        {"n": 16, "name": "dsh-pet（PC2005 版）", "repo": "PC2005-cloud/dsh-pet", "url": "https://github.com/PC2005-cloud/dsh-pet/tree/main/dsh-pet", "created": "2026-08-14", "stars": "3,279", "license": "MIT", "pushed": "2026-10-21", "downloads": "6.6", "blurb": "25 个透明动画、屏幕漫游、点击反应。", "note": "monorepo 子目录（存在）"},
+        {"n": 17, "name": "dsh-codex-pet", "repo": "MichengAI/dsh-codex-pet", "url": "https://github.com/MichengAI/dsh-codex-pet", "created": "2026-09-09", "stars": "5", "license": "Apache-2.0", "pushed": "2026-10-19", "downloads": "6.4", "blurb": "页内宠物，多会话任务提醒，能处理审批和问答。", "note": ""},
+        {"n": 18, "name": "dsh-wallpaper-engine", "repo": "elysia395/dsh-wallpaper-engine", "url": "https://github.com/elysia395/dsh-wallpaper-engine", "created": "2026-08-17", "stars": "1,779", "license": "MIT", "pushed": "2026-10-22", "downloads": "5.8", "blurb": "把 Wallpaper Engine 壁纸播到聊天界面后面。", "note": ""},
+        {"n": 19, "name": "dsh-TUI", "repo": "ccch1mneyyy/dsh-TUI", "url": "https://github.com/ccch1mneyyy/dsh-TUI", "created": "2026-08-13", "stars": "5,115", "license": "MIT", "pushed": "2026-10-22", "downloads": "4.7", "blurb": "Claude Code 风格全屏终端，像素鲸鱼顶栏和状态行。", "note": ""},
+        {"n": 20, "name": "maid-atelier", "repo": "Small-tailqwq/dsh-deep-whale", "url": "https://github.com/Small-tailqwq/dsh-deep-whale/tree/main/maid-atelier", "created": "2026-08-13", "stars": "2,770", "license": "未识别（NOASSERTION）", "pushed": "2026-10-21", "downloads": "4.2", "blurb": "深海女仆工坊主题皮肤。", "note": "monorepo 子目录（存在）"},
+        {"n": 21, "name": "dsh-genui", "repo": "omdsh-dev/dsh-genui", "url": "https://github.com/omdsh-dev/dsh-genui", "created": "2026-08-13", "stars": "722", "license": "MIT", "pushed": "2026-10-21", "downloads": "3.7", "blurb": "回复里直接渲染图表、表单、3D 等交互 UI。", "note": ""},
+        {"n": 22, "name": "dsh-dream-skin", "repo": "RevolutionLA/dsh-dream-skin", "url": "https://github.com/RevolutionLA/dsh-dream-skin", "created": "2026-08-15", "stars": "263", "license": "MIT", "pushed": "2026-10-21", "downloads": "3.2", "blurb": "8 套原创主题，一键换肤，支持主题包导入导出。", "note": ""},
+        {"n": 23, "name": "dsh-claude-style", "repo": "Nwflower/dsh-claude-style", "url": "https://github.com/Nwflower/dsh-claude-style", "created": "2026-09-20", "stars": "264", "license": "未识别（NOASSERTION）", "pushed": "2026-10-22", "downloads": "1.8", "blurb": "复刻 Claude Code Desktop 的视觉与交互。", "note": ""}
+      ]
+    },
+    {
+      "group": "任务与开发",
+      "rows": [
+        {"n": 24, "name": "dsh-agency-agents", "repo": "MichengAI/dsh-agency-agents", "url": "https://github.com/MichengAI/dsh-agency-agents", "created": "2026-08-15", "stars": "163", "license": "Apache-2.0", "pushed": "2026-10-20", "downloads": "12.9", "blurb": "可召唤的领域专家，以子代理运行，主会话只留最终答复。", "note": ""},
+        {"n": 25, "name": "dsh-task-board", "repo": "zhu1090093659/dsh-web", "url": "https://github.com/zhu1090093659/dsh-web/tree/main/packages/dsh-task-board", "created": "2026-08-12", "stars": "9,251", "license": "Apache-2.0", "pushed": "2026-10-21", "downloads": "12.5", "blurb": "看板卡片跑真实 agent 会话，支持 cron 定时。", "note": "monorepo 子目录（存在）"},
+        {"n": 26, "name": "dsh-git-graph", "repo": "zhu1090093659/dsh-web", "url": "https://github.com/zhu1090093659/dsh-web/tree/main/packages/dsh-git-graph", "created": "2026-08-12", "stars": "9,251", "license": "Apache-2.0", "pushed": "2026-10-21", "downloads": "11.7", "blurb": "输入框上方切分支，分支泳道和提交历史成图。", "note": "monorepo 子目录（存在）"},
+        {"n": 27, "name": "dsh-cost-meter", "repo": "Han-1413141/dsh-cost-meter", "url": "https://github.com/Han-1413141/dsh-cost-meter", "created": "2026-08-13", "stars": "488", "license": "MIT", "pushed": "2026-10-21", "downloads": "10.6", "blurb": "会话与当日 API 费用、预算、余额、历史看板。", "note": "已在库 #191"},
+        {"n": 28, "name": "dsh-automation", "repo": "MichengAI/dsh-automation", "url": "https://github.com/MichengAI/dsh-automation", "created": "2026-08-16", "stars": "33", "license": "Apache-2.0", "pushed": "2026-10-20", "downloads": "10.3", "blurb": "在独立会话里按计划跑编码任务。", "note": ""},
+        {"n": 29, "name": "dsh-btw", "repo": "MichengAI/dsh-btw", "url": "https://github.com/MichengAI/dsh-btw", "created": "2026-09-06", "stars": "24", "license": "Apache-2.0", "pushed": "2026-10-21", "downloads": "8.5", "blurb": "/btw 一次性旁问，不执行工具，不写入主对话。", "note": ""},
+        {"n": 30, "name": "dsh-simplify", "repo": "MichengAI/dsh-simplify", "url": "https://github.com/MichengAI/dsh-simplify", "created": "2026-09-06", "stars": "9", "license": "Apache-2.0", "pushed": "2026-10-17", "downloads": "7.3", "blurb": "/simplify，在选定 Git 变更范围内简化代码。", "note": ""},
+        {"n": 31, "name": "dsh-pua", "repo": "MichengAI/dsh-pua", "url": "https://github.com/MichengAI/dsh-pua", "created": "2026-09-13", "stars": "31", "license": "Apache-2.0", "pushed": "2026-10-17", "downloads": "6.7", "blurb": "/pua，失败后换方法，宣称完成前先核验收据。", "note": ""},
+        {"n": 32, "name": "dsh-code-review", "repo": "MichengAI/dsh-code-review", "url": "https://github.com/MichengAI/dsh-code-review", "created": "2026-09-13", "stars": "12", "license": "Apache-2.0", "pushed": "2026-10-17", "downloads": "5.9", "blurb": "/review 用独立子 Agent 审查选定 Git 范围。", "note": ""},
+        {"n": 33, "name": "dsh-univer-office", "repo": "dream-num/dsh-univer-office", "url": "https://github.com/dream-num/dsh-univer-office", "created": "2026-08-16", "stars": "579", "license": "Apache-2.0", "pushed": "2026-10-08", "downloads": "4.5", "blurb": "表格、文档、幻灯片、多维表格进同一个运行时。", "note": ""},
+        {"n": 34, "name": "dsh-agent-teams", "repo": "NanmiCoder/dsh-agent-teams", "url": "https://github.com/NanmiCoder/dsh-agent-teams", "created": "2026-08-12", "stars": "2,325", "license": "MIT", "pushed": "2026-10-21", "downloads": "4.5", "blurb": "多智能体团队。", "note": ""},
+        {"n": 35, "name": "lunheng-article-pipeline", "repo": "zuoyunlai/lunheng-article-pipeline-dsh", "url": "https://github.com/zuoyunlai/lunheng-article-pipeline-dsh", "created": "2026-08-17", "stars": "20", "license": "MIT", "pushed": "2026-10-21", "downloads": "3.9", "blurb": "9 角色长文生产流水线，从检索到同行评审。", "note": ""},
+        {"n": 36, "name": "GraphFlow", "repo": "Roarpeng/GraphFlow", "url": "https://github.com/Roarpeng/GraphFlow", "created": "2026-05-27", "stars": "25", "license": "Apache-2.0", "pushed": "2026-10-20", "downloads": "3.2", "blurb": "本地代码知识图谱，10 个 MCP 工具，增量 AST 建图。", "note": "仓库早于 2026-07-23；文章称 10 个 MCP 工具，是 2.x 的情况；3.0 起只有 4 个"},
+        {"n": 37, "name": "archify", "repo": "tt-a1i/archify", "url": "https://github.com/tt-a1i/archify/tree/main/integrations/deepseek-harness", "created": "2026-04-15", "stars": "87,078", "license": "MIT", "pushed": "2026-10-21", "downloads": "3.2", "blurb": "从仓库生成交互式架构图、时序图、数据流图。", "note": "monorepo 子目录（存在）；仓库早于 2026-07-23"},
+        {"n": 38, "name": "dsh-image-gen", "repo": "shanliuling/dsh-image-gen", "url": "https://github.com/shanliuling/dsh-image-gen", "created": "2026-08-17", "stars": "666", "license": "Apache-2.0", "pushed": "2026-10-20", "downloads": "2.6", "blurb": "让 agent 在对话里直接画图，结果留在当前会话。", "note": ""},
+        {"n": 39, "name": "dsh-ops", "repo": "T-Auto/dsh-ops", "url": "https://github.com/T-Auto/dsh-ops", "created": "2026-10-08", "stars": "3,669", "license": "MIT", "pushed": "2026-10-21", "downloads": "2.3", "blurb": "给 Windows 的 DSH 提供 bash、PowerShell 7 和 Rust 工具。", "note": ""},
+        {"n": 40, "name": "dsh-plugin-gating-hub", "repo": "Noob-stupid/dsh-plugin-gating-hub", "url": "https://github.com/Noob-stupid/dsh-plugin-gating-hub", "created": "2026-08-14", "stars": "106", "license": "MIT", "pushed": "2026-10-22", "downloads": "2.1", "blurb": "升级前预检、失败回滚，隔离拖垮启动的插件。", "note": ""},
+        {"n": 41, "name": "dsh-code-review（feng 版）", "repo": "f-e-n-g-0531/dsh-code-review", "url": "https://github.com/f-e-n-g-0531/dsh-code-review", "created": "2026-09-30", "stars": "8", "license": "未识别（NOASSERTION）", "pushed": "2026-10-20", "downloads": "2.0", "blurb": "复用当前 Agent 只读审查 Git 与 SVN 变更。", "note": ""}
+      ]
+    },
+    {
+      "group": "连接、远程与模型",
+      "rows": [
+        {"n": 42, "name": "dsh-remote-web-ui", "repo": "zhu1090093659/dsh-web", "url": "https://github.com/zhu1090093659/dsh-web/tree/main/packages/dsh-remote-web-ui", "created": "2026-08-12", "stars": "9,251", "license": "Apache-2.0", "pushed": "2026-10-21", "downloads": "12.6", "blurb": "手机扫码远程控制 dsh web，SSE 实时同步。", "note": "monorepo 子目录（存在）"},
+        {"n": 43, "name": "dsh-im-connect", "repo": "MichengAI/dsh-im-connect", "url": "https://github.com/MichengAI/dsh-im-connect", "created": "2026-08-16", "stars": "81", "license": "Apache-2.0", "pushed": "2026-10-21", "downloads": "12.3", "blurb": "微信、企微、钉钉、飞书、QQ、TG 接进来。", "note": ""},
+        {"n": 44, "name": "dsh-ssh", "repo": "zhu1090093659/dsh-web", "url": "https://github.com/zhu1090093659/dsh-web/tree/main/packages/dsh-ssh", "created": "2026-08-12", "stars": "9,251", "license": "Apache-2.0", "pushed": "2026-10-21", "downloads": "10.5", "blurb": "SSH 面板，Web 终端、SFTP、端口转发、批量执行。", "note": "monorepo 子目录（存在）"},
+        {"n": 45, "name": "dsh-im", "repo": "xmanrui/dsh-im", "url": "https://github.com/xmanrui/dsh-im", "created": "2026-08-15", "stars": "2,275", "license": "MIT", "pushed": "2026-10-22", "downloads": "6.2", "blurb": "扫码或机器人凭据接入飞书、微信、钉钉、QQ、Slack 等 9 个渠道。", "note": ""},
+        {"n": 46, "name": "BrowserSkill", "repo": "Tencent/BrowserSkill", "url": "https://github.com/Tencent/BrowserSkill/tree/main/packages/dsh-plugin-browserskill", "created": "2026-06-22", "stars": "9,351", "license": "MIT", "pushed": "2026-10-21", "downloads": "2.8", "blurb": "控制可见 Chrome 和 Edge 的浏览器自动化桥。", "note": "monorepo 子目录（存在）；仓库早于 2026-07-23"},
+        {"n": 47, "name": "dsh-codex-subscription", "repo": "WSL043/dsh-codex-subscription", "url": "https://github.com/WSL043/dsh-codex-subscription", "created": "2026-08-14", "stars": "229", "license": "MIT", "pushed": "2026-10-22", "downloads": "2.5", "blurb": "ChatGPT OAuth 在 DSH 里用 Codex 模型，免 API Key。", "note": ""},
+        {"n": 48, "name": "dsh-mcp-connector", "repo": "duhu2000/dsh-mcp-connector", "url": "https://github.com/duhu2000/dsh-mcp-connector", "created": "2026-08-20", "stars": "67", "license": "MIT", "pushed": "2026-10-20", "downloads": "2.3", "blurb": "MCP 管理面板，统一连接、授权与工具搜索。", "note": ""},
+        {"n": 49, "name": "dsh-find-plugin", "repo": "awesome-dsh-plugin/dsh-find-plugin", "url": "https://github.com/awesome-dsh-plugin/dsh-find-plugin", "created": "2026-08-14", "stars": "201", "license": "MIT", "pushed": "2026-09-25", "downloads": "2.3", "blurb": "会话里搜插件，直接返回描述和安装命令。", "note": ""},
+        {"n": 50, "name": "dsh-connect-workbuddy", "repo": "dingminhua/dsh-connect-workbuddy", "url": "https://github.com/dingminhua/dsh-connect-workbuddy", "created": "2026-08-28", "stars": "352", "license": "MIT", "pushed": "2026-10-22", "downloads": "2.2", "blurb": "把本机登录的 WorkBuddy 模型接进 DSH。", "note": ""},
+        {"n": 51, "name": "dsh-browser", "repo": "wqty123/dsh-browser", "url": "https://github.com/wqty123/dsh-browser", "created": "2026-08-15", "stars": "134", "license": "MIT", "pushed": "2026-10-20", "downloads": "2.0", "blurb": "共享真实浏览器，20 个 browser_* 工具，用户可随时接管。", "note": ""},
+        {"n": 52, "name": "dsh-wsl", "repo": "XINY11451/dsh-wsl", "url": "https://github.com/XINY11451/dsh-wsl", "created": "2026-08-27", "stars": "5", "license": "MIT", "pushed": "2026-10-19", "downloads": "5,369", "blurb": "在 WSL 真内核上跑 Linux 命令，退出码、信号、超时都保留。", "note": ""}
+      ]
+    },
+    {
+      "group": "搜索、视觉与安全",
+      "rows": [
+        {"n": 53, "name": "modlens", "repo": "liustack/modlens", "url": "https://github.com/liustack/modlens", "created": "2026-02-22", "stars": "4,386", "license": "MIT", "pushed": "2026-10-16", "downloads": "9.5", "blurb": "给纯文本模型加视觉，图片转 OCR、版面、语义 JSON。", "note": "仓库早于 2026-07-23"},
+        {"n": 54, "name": "cc-safety-net", "repo": "kenryu42/cc-safety-net", "url": "https://github.com/kenryu42/cc-safety-net", "created": "2025-12-26", "stars": "1,732", "license": "MIT", "pushed": "2026-10-21", "downloads": "5.7", "blurb": "执行前拦破坏性 Git、文件命令和密钥访问。", "note": "仓库早于 2026-07-23"},
+        {"n": 55, "name": "dsh-free-search", "repo": "DDDMUC/dsh-free-search", "url": "https://github.com/DDDMUC/dsh-free-search", "created": "2026-08-15", "stars": "547", "license": "MIT", "pushed": "2026-10-20", "downloads": "5.1", "blurb": "免 key 搜索，7 个引擎自动回退。", "note": ""},
+        {"n": 56, "name": "modsearch", "repo": "liustack/modsearch", "url": "https://github.com/liustack/modsearch", "created": "2026-02-22", "stars": "790", "license": "MIT", "pushed": "2026-10-19", "downloads": "4.3", "blurb": "搜索网页和 X，返回可引用的结构化 JSON 证据。", "note": "仓库早于 2026-07-23"},
+        {"n": 57, "name": "dsh-vision-router", "repo": "ysr666/dsh-vision-router", "url": "https://github.com/ysr666/dsh-vision-router", "created": "2026-08-14", "stars": "1,162", "license": "MIT", "pushed": "2026-10-22", "downloads": "3.3", "blurb": "免 Key 视觉链，加 OCR、定位、裁剪、像素对比工具。", "note": ""}
+      ]
+    }
+  ]
+}

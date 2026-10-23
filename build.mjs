@@ -9,6 +9,9 @@ const J = f => JSON.parse(fs.readFileSync(path.join(ROOT, 'data', f), 'utf8'));
 const columns = J('columns.json'), { groups, items } = J('items.json'), concepts = J('concepts.json'), inbox = J('inbox.json');
 // 产品灵感（PH灵感箱）：data/ph-inspo.json，每天追加一个 day；没有文件时板块为空
 const PHI = fs.existsSync(path.join(ROOT, 'data', 'ph-inspo.json')) ? J('ph-inspo.json') : { statuses: ['新发现', '在跟进', '已试用', '归档'], tags: [], days: [] };
+// DSH 插件市场盘点：data/dsh-plugins.json；没有文件时不出现导航和首页入口
+const DSH = fs.existsSync(path.join(ROOT, 'data', 'dsh-plugins.json')) ? J('dsh-plugins.json') : null;
+const dshVerified = DSH ? DSH.verify.reduce((n, g) => n + g.rows.length, 0) : 0;
 const INTERVALS = [1, 3, 7, 14, 30];
 // status「未开始」= 待学条目（href 指向原文/官方资料），不算学习页、不进复习队列、不进正在学/最近学过；无 group 时列在栏目页
 const isPage = i => i.status !== '未开始';
@@ -54,8 +57,9 @@ const COL_IC = { courses: 'graduation-cap', 'x-posts': 'file-text', research: 'f
 const colIc = (c, s = 16) => ic(COL_IC[c?.id] || 'folder', s);
 function page(file, title, active, body, script = '') {
   const r = p => rel(file, p);
-  const nav = [['index.html', '首页', 'home'], ['favorites/index.html', '收藏', 'favorites'], ...columns.map((c, k) => [`${c.dir}/index.html`, c.title, c.id, items.filter(i => i.column === c.id).length, k ? '' : 's1']), ['glossary.html', '概念卡', 'glossary', concepts.length], ['x-brief/index.html', 'X 简报', 'x-brief', null, 's2'], ['x-posters/index.html', 'X 海报', 'x-posters'], ['ph-inspo/index.html', '产品灵感', 'ph-inspo']]
-    .map(([h, t, id, n, sc]) => `<a href="${r(h)}" class="${[id === active ? 'on' : '', sc || ''].join(' ').trim()}">${esc(t)}${n != null ? `<em>${n}</em>` : ''}</a>`).join('');
+  const navItems = [['index.html', '首页', 'home'], ['favorites/index.html', '收藏', 'favorites'], ...columns.map((c, k) => [`${c.dir}/index.html`, c.title, c.id, items.filter(i => i.column === c.id).length, k ? '' : 's1']), ['glossary.html', '概念卡', 'glossary', concepts.length], ['x-brief/index.html', 'X 简报', 'x-brief', null, 's2'], ['x-posters/index.html', 'X 海报', 'x-posters'], ['ph-inspo/index.html', '产品灵感', 'ph-inspo']];
+  if (DSH) navItems.push(['dsh-plugins/index.html', 'DSH 插件', 'dsh', dshVerified]);
+  const nav = navItems.map(([h, t, id, n, sc]) => `<a href="${r(h)}" class="${[id === active ? 'on' : '', sc || ''].join(' ').trim()}">${esc(t)}${n != null ? `<em>${n}</em>` : ''}</a>`).join('');
   return `<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${esc(title)} · 王玮的学习库</title><style>${CSS}${THEME}</style><script>${HEADJS}</script><script src="${r('assets/favorites.js')}" defer></script></head><body>
 <header class="top"><div class="in"><a class="brand" href="${r('index.html')}"><i>${ic('book-open', 16)}</i>王玮的学习库</a><nav>${nav}</nav><button class="dm" onclick="__tt()" aria-label="切换深色模式">${ic('sun-moon', 18)}</button></div></header>
@@ -80,7 +84,8 @@ const itemConcepts = id => concepts.filter(c => c.refs.some(r => r.item === id))
     const meta = n ? `<span class="tag blue">${n} 篇</span>` : (pend ? `<span class="tag">${pend} 篇未开始</span>` : '<span class="tag">还没有内容</span>');
     return `<a class="card c${k % 4 + 1}" href="${c.dir}/index.html"><span class="go">→</span><div class="ic">${colIc(c, 20)}</div><h3>${esc(c.title)}</h3><p>${esc(c.desc)}</p><div class="meta">${meta}</div></a>`; }).join('')
     + `<a class="card c1" href="x-brief/index.html"><span class="go">→</span><div class="ic">${ic('newspaper', 20)}</div><h3>X 简报</h3><p>每天一期的 X 中文简报，按日期翻往期。</p><div class="meta"><span class="tag blue">每日更新</span></div></a>`
-    + `<a class="card c2" href="x-posters/index.html"><span class="go">→</span><div class="ic">${ic('image', 20)}</div><h3>X 海报</h3><p>每天从 X 挑技术帖做成康奈尔笔记海报，附原帖信息。</p><div class="meta"><span class="tag blue">每日更新</span></div></a>`;
+    + `<a class="card c2" href="x-posters/index.html"><span class="go">→</span><div class="ic">${ic('image', 20)}</div><h3>X 海报</h3><p>每天从 X 挑技术帖做成康奈尔笔记海报，附原帖信息。</p><div class="meta"><span class="tag blue">每日更新</span></div></a>`
+    + (DSH ? `<a class="card c3" href="dsh-plugins/index.html"><span class="go">→</span><div class="ic">${ic('boxes', 20)}</div><h3>DSH 插件</h3><p>DeepSeek Harness 插件市场盘点：生态、清单格式、审核，以及对企业工作台最值得抄的机制。</p><div class="meta"><span class="tag blue">${dshVerified} 个核实</span></div></a>` : '');
   const doing = items.filter(i => stateOf(i) === '进行中');
   const doneIts = items.filter(i => ['已学完','已掌握'].includes(stateOf(i)));
   const ord = (a, b) => (a.order ?? 0) - (b.order ?? 0) || (a.start || '').localeCompare(b.start || '');
@@ -143,6 +148,7 @@ ${nx ? `<a class="nx" href="${esc(nx.href)}"${ext(nx.href)}><b>${['已学完', '
     const pg = all.filter(localPage); const nx = pg.find(i => stateOf(i) === '进行中') || pg.find(i => !['已学完', '已掌握'].includes(stateOf(i))) || pg[0] || null;
     return { name, src, href: `${G.dir}/index.html`, go: nx ? nx.href : `${G.dir}/index.html`, n, done, doing: cnt['进行中'], pct: n ? Math.round(done / n * 100) : 0, ids: all.map(i => i.id).join(','), all, nx, rev: nx && ['已学完', '已掌握'].includes(stateOf(nx)) }; }).filter(Boolean);
   const COLS = [...columns.map(c => ({ ic: colIc(c, 16), t: c.title, href: `${c.dir}/index.html`, n: items.filter(i => i.column === c.id).length })), { ic: ic('puzzle'), t: '概念卡', href: 'glossary.html', n: concepts.length }, { ic: ic('newspaper'), t: 'X 简报', href: 'x-brief/index.html', n: '每日' }, { ic: ic('image'), t: 'X 海报', href: 'x-posters/index.html', n: '每日' }, { ic: ic('rocket'), t: '产品灵感', href: 'ph-inspo/index.html', n: '每日' }];
+  if (DSH) COLS.push({ ic: ic('boxes', 16), t: 'DSH 插件', href: 'dsh-plugins/index.html', n: dshVerified });
   const allIds = items.filter(isPage).map(i => i.id).join(',');
   const prog = (ids, cls = '') => `<div class="bigbar prog ${cls}" data-k="prog" data-ids="${ids}"><div class="bar"><i class="g"></i><i class="l"></i><i class="b"></i></div><b>0%</b><span></span></div>`;
   const seg = c => `<div class="seg">${c.all.map(i => { const s = stateOf(i); return `<i class="${['已学完', '已掌握'].includes(s) ? 'd' : s === '进行中' ? 'p' : ''}" title="${esc(i.label)} · ${esc(s)}"></i>`; }).join('')}</div>`;
@@ -179,6 +185,7 @@ ${reading.slice(0, 4).map(i => `<a class="ps-t ps-rd" href="${esc(i.href)}"${ext
   const body = `<div class="lays">${layB}${layA}${layC}</div>
 ${(() => { const d0 = PHI.days[0]; if (!d0) return ''; const n = PHI.days.reduce((x, d) => x + d.items.length, 0); const top = [...d0.items].sort((x, y) => (x.rank ?? 999) - (y.rank ?? 999)).slice(0, 4);
   return `<div class="kicker" id="k-inspo">产品灵感 <span class="n">${n}</span></div><div class="sub">Product Hunt ${esc(d0.date.slice(5).replace('-', '/'))} 挑出 ${d0.items.length} 个 · <a href="ph-inspo/index.html">全部 ${PHI.days.length} 天 →</a></div><div class="list pi-home">${top.map(i => `<div class="row"><span class="tag blue">#${esc(i.rank ?? '—')}</span><span class="t"><a href="ph-inspo/index.html#${esc(i.id)}">${esc(i.name)}</a><small>${esc(i.what)}</small></span><span class="pi-tags">${(i.tags || []).slice(0, 2).map(t => `<span class="tag">${esc(t)}</span>`).join('')}</span></div>`).join('')}</div>`; })()}
+${DSH ? `<div class="kicker" id="k-dsh">DSH 插件 <span class="n">${dshVerified}</span></div><div class="sub">${esc(DSH.asOf)} 核实 · 索引 ${Number(DSH.indexEntries).toLocaleString('en-US')} 条 · <a href="dsh-plugins/index.html">盘点全文 →</a></div><div class="list">${DSH.mechanisms.map((m, i) => `<div class="row"><span class="tag blue">${i + 1}</span><span class="t"><a href="dsh-plugins/index.html#m${i + 1}">${esc(m.title)}</a></span></div>`).join('')}</div>` : ''}
 <div class="kicker" id="k-columns">栏目</div><div class="sub">按来源找内容</div><div class="grid">${colCards}</div>
 <div class="kicker">已学完 <span class="n">${doneIts.length}</span></div><div class="sub">到了复习日会出现在最上面</div>${courseCards(doneIts, '还没有学完的内容')}
 <div class="kicker">待学收件箱 <span class="n">${inbox.length}</span></div>${inboxHtml}
@@ -307,6 +314,82 @@ ${all.length ? `<div class="pi-bar"><span class="lb">${ic('tag', 13)}标签</spa
 ${days}<div class="empty" id="pi-none" hidden><b>没有符合条件的产品</b>换个标签或状态试试</div>` : emptyBox('还没有产品灵感', '每天的 PH 榜单挑完后会出现在这里（data/ph-inspo.json）。')}`;
   const script = `(function(){var F={tag:'',st:''};var bs=document.querySelectorAll('.pi-bar .chip');function run(){var n=0;document.querySelectorAll('.pi-day').forEach(function(d){var v=0;d.querySelectorAll('.pi-card').forEach(function(c){var ok=(!F.tag||c.dataset.tags.split('|').indexOf(F.tag)>=0)&&(!F.st||c.dataset.st===F.st);c.hidden=!ok;if(ok)v++});d.hidden=!v;n+=v});var e=document.getElementById('pi-none');if(e)e.hidden=!!n;var t=document.getElementById('pi-cnt');if(t)t.textContent=(F.tag||F.st)?'筛出 '+n+' 个':'';bs.forEach(function(b){b.classList.toggle('on',F[b.dataset.k]===b.dataset.v)})}bs.forEach(function(b){b.onclick=function(){F[b.dataset.k]=F[b.dataset.k]===b.dataset.v?'':b.dataset.v;run()}});run()})();`;
   write(f, page(f, '产品灵感', 'ph-inspo', body, script));
+}
+// ---- DSH 插件市场盘点（数据 data/dsh-plugins.json） ----
+if (DSH) {
+  const f = 'dsh-plugins/index.html';
+  const exp = DSH.expect || {};
+  const grp = n => Number(n).toLocaleString('en-US');
+  if (dshVerified !== exp.verified) throw new Error(`dsh verify rows ${dshVerified} != ${exp.verified}`);
+  if (DSH.highlights.length !== exp.highlights) throw new Error(`dsh highlights ${DSH.highlights.length} != ${exp.highlights}`);
+  if (DSH.mechanisms.length !== exp.mechanisms) throw new Error(`dsh mechanisms ${DSH.mechanisms.length} != ${exp.mechanisms}`);
+  if (DSH.categories.length !== exp.categoriesListed) throw new Error(`dsh categories ${DSH.categories.length} != ${exp.categoriesListed}`);
+  if (String(DSH.kpis[0].value) !== String(dshVerified)) throw new Error('dsh kpi verified');
+  if (DSH.kpis[1].value !== grp(DSH.indexEntries)) throw new Error('dsh kpi index');
+  if (String(DSH.kpis[2].value) !== String(DSH.categoryTotal)) throw new Error('dsh kpi categories');
+  if (String(DSH.kpis[3].value) !== String(DSH.mechanisms.length)) throw new Error('dsh kpi mechanisms');
+  const nums = DSH.verify.flatMap(g => g.rows.map(r => r.n));
+  if (nums.join(',') !== Array.from({ length: exp.verified }, (_, i) => i + 1).join(',')) throw new Error('dsh verify numbering');
+  for (const r of [...DSH.highlights, ...DSH.verify.flatMap(g => g.rows)]) {
+    if (!/^https:\/\/github\.com\//.test(r.url || '')) throw new Error('dsh url ' + (r.name || r.n));
+    if (r.downloads == null || r.downloads === '') throw new Error('dsh downloads ' + r.name);
+  }
+  const inline = s => {
+    const re = /`([^`]+)`|\[([^\]]+)\]\((https?:[^)\s]+|sources\/[^)\s]+)\)/g;
+    let out = '', i = 0, m;
+    while ((m = re.exec(String(s ?? '')))) {
+      out += esc(s.slice(i, m.index));
+      if (m[1] != null) out += `<code>${esc(m[1])}</code>`;
+      else {
+        const ext = /^https?:/.test(m[3]);
+        const href = ext ? m[3] : rel(f, m[3]);
+        out += `<a href="${esc(href)}"${ext ? ' target="_blank" rel="noopener"' : ''}>${esc(m[2])}</a>`;
+      }
+      i = m.index + m[0].length;
+    }
+    return out + esc(String(s ?? '').slice(i));
+  };
+  const lis = items => `<ul>${items.map(it => typeof it === 'string' ? `<li>${inline(it)}</li>` : `<li>${inline(it.t)}${it.sub ? lis(it.sub) : ''}</li>`).join('')}</ul>`;
+  const paras = arr => (arr || []).map(p => `<p>${inline(p)}</p>`).join('');
+  const blocks = arr => (arr || []).map(b => `<h3 class="dsh-h3">${esc(b.h)}</h3>${paras(b.paras)}${b.items ? lis(b.items) : ''}`).join('');
+  const gh = (url, label) => `<a href="${esc(url)}" target="_blank" rel="noopener">${esc(label)}</a>`;
+  const src = DSH.source;
+  const lead = `来源：${esc(src.author)}《${esc(src.title)}》（<a href="${esc(src.url)}" target="_blank" rel="noopener">X 文章</a>，用户 ${esc(src.provided)} 提供，全文存于 <a href="${rel(f, src.archive)}">${esc(src.archive)}</a>）。`;
+  const stage = `<div class="stage">${DSH.kpis.map(k => `<div class="stat"><b>${esc(k.value)}</b><span>${esc(k.label)}</span>${k.hint ? `<small>${esc(k.hint)}</small>` : ''}</div>`).join('')}</div>`;
+  const jump = `<div class="chips dsh-jump">${[['eco', '生态形态'], ['fmt', '清单格式'], ['rev', '审核流程'], ['picks', '重点插件'], ['mech', '5 个机制'], ['verify', '核实表']].map(([id, t]) => `<a class="chip" href="#${id}">${t}</a>`).join('')}</div>`;
+  const maxShare = DSH.indexEntries || 1;
+  const maxCat = Math.max(...DSH.categories.map(c => c.n));
+  const cats = `<div class="dsh-box"><h3>最大的 ${DSH.categories.length} 类 <span class="tag">共 ${esc(DSH.categoryTotal)} 类</span></h3><div class="dsh-cat">${DSH.categories.map(c => `<div class="r"><span class="nm"><code>${esc(c.name)}</code></span><span class="b" title="${grp(c.n)} 条 · 占索引 ${((c.n / maxShare) * 100).toFixed(1)}%"><i style="width:${((c.n / maxCat) * 100).toFixed(2)}%"></i></span><span class="n">${grp(c.n)}</span></div>`).join('')}</div><p class="dsh-note">${inline(DSH.categoriesNote)}</p></div>`;
+  const caps = `<div class="dsh-box"><h3>${esc(DSH.scan.tool)} ${esc(DSH.scan.version)}</h3><p>${inline(DSH.scan.lead)}</p><div class="dsh-caps">${DSH.scan.caps.map(c => `<div><b>${grp(c.n)}</b><span>${esc(c.name)}</span></div>`).join('')}</div><p class="dsh-note">${inline(DSH.scan.redLines)}</p><p class="dsh-note">${inline(DSH.scan.disclaimer)}</p></div>`;
+  let prev = '', hrows = '';
+  for (const r of DSH.highlights) {
+    if (r.group !== prev) { hrows += `<tr class="grp"><td colspan="7">${esc(r.group)}</td></tr>`; prev = r.group; }
+    hrows += `<tr><td>${gh(r.url, r.name)}</td><td class="num">${esc(r.created)}</td><td class="num">${esc(r.stars)}</td><td>${esc(r.license)}</td><td class="num">${esc(r.pushed)}</td><td class="num">${esc(r.downloads)}</td><td>${inline(r.copy)}</td></tr>`;
+  }
+  const bodies = DSH.verify.map(g => `<tbody data-g="${esc(g.group)}"><tr class="grp"><td colspan="10">${esc(g.group)}</td></tr>${g.rows.map(r => `<tr><td class="num">${r.n}</td><td>${gh(r.url, r.name)}</td><td>${gh(r.url, r.repo)}</td><td class="num">${esc(r.created)}</td><td class="num">${esc(r.stars)}</td><td>${esc(r.license)}</td><td class="num">${esc(r.pushed)}</td><td class="num">${esc(r.downloads)}</td><td>${esc(r.blurb)}</td><td>${r.note ? esc(r.note) : ''}</td></tr>`).join('')}</tbody>`).join('');
+  const chips = `<div class="dsh-bar"><button type="button" class="chip on" data-dsh-g="">全部<em>${dshVerified}</em></button>${DSH.verify.map(g => `<button type="button" class="chip" data-dsh-g="${esc(g.group)}">${esc(g.group)}<em>${g.rows.length}</em></button>`).join('')}<span class="cnt" id="dsh-vcnt"></span></div>`;
+  const mechs = `<div class="dsh-mechs">${DSH.mechanisms.map((m, i) => `<article class="card dsh-mech" id="m${i + 1}"><div class="no">${String(i + 1).padStart(2, '0')}</div><h3>${esc(m.title)}</h3><p class="src">${inline(m.via)}</p><ul>${m.points.map(p => `<li>${inline(p)}</li>`).join('')}</ul></article>`).join('')}</div>`;
+  const body = `<div class="crumb"><a href="../index.html">首页</a> / DSH 插件</div>
+<section class="hero sheet dsh-hero"><div class="say"><span class="kk">插件市场盘点 · ${esc(DSH.asOf)} ${esc(DSH.tz)}</span><h1>${ic('boxes', 26)} ${esc(DSH.title)}</h1><p class="dsh-lead">${lead}</p><ul class="dsh-facts">${DSH.facts.map(x => `<li>${inline(x)}</li>`).join('')}</ul></div>
+${stage}</section>
+${jump}
+<div class="kicker dsh-sec" id="eco">生态形态</div><div class="sub">两层结构：索引层收录，安装层只装列表里的来源</div>
+<div class="dsh-prose">${lis(DSH.layers)}</div>
+<div class="dsh-split">${cats}${caps}</div>
+<div class="dsh-call"><b>同名坑。</b> ${inline(DSH.names)}</div>
+<div class="kicker dsh-sec" id="fmt">清单与插件格式</div><div class="sub">manifest、索引条目、派生数据和安装链路</div>
+<div class="sheet dsh-prose">${blocks(DSH.catalog)}</div>
+<div class="kicker dsh-sec" id="rev">审核流程</div><div class="sub">${inline(DSH.reviewLead)}</div>
+<div class="sheet dsh-prose">${blocks(DSH.review)}</div>
+<div class="kicker dsh-sec" id="picks">重点插件 <span class="n">${DSH.highlights.length}</span></div><div class="sub">${inline(DSH.highlightsNote)}</div>
+<div class="dsh-scroll"><table class="dsh-tbl"><thead><tr><th>插件</th><th>创建</th><th>★</th><th>License</th><th>最近推送</th><th>下载量</th><th>可以抄什么</th></tr></thead><tbody>${hrows}</tbody></table></div>
+<p class="dsh-note">${inline(DSH.pathsNote)}</p>
+<div class="kicker dsh-sec" id="mech">最值得抄的 5 个机制 <span class="n">5</span></div><div class="sub">对企业工作台插件市场</div>
+${mechs}
+<details class="panel dsh-sec" id="verify"><summary>${ic('file-text', 15)} 附：文章 ${dshVerified} 个插件核实表 <span class="s">${esc(DSH.verifyNote)}</span></summary><div class="pb">${chips}<div class="dsh-scroll"><table class="dsh-tbl wide"><thead><tr><th>#</th><th>插件</th><th>仓库</th><th>创建</th><th>★</th><th>License</th><th>最近推送</th><th>下载量</th><th>文章一句话</th><th>备注</th></tr></thead>${bodies}</table></div></div></details>
+<p class="dsh-note">${inline(DSH.baseline)}</p>`;
+  const script = `(function(){var cur='';var bs=document.querySelectorAll('.dsh-bar .chip');function run(){var n=0;document.querySelectorAll('#verify tbody[data-g]').forEach(function(tb){var on=!cur||tb.getAttribute('data-g')===cur;tb.hidden=!on;if(on)n+=tb.querySelectorAll('tr:not(.grp)').length});var t=document.getElementById('dsh-vcnt');if(t)t.textContent=cur?'筛出 '+n+' 个':'';bs.forEach(function(b){b.classList.toggle('on',(b.getAttribute('data-dsh-g')||'')===cur)})}bs.forEach(function(b){b.onclick=function(){var v=b.getAttribute('data-dsh-g')||'';cur=cur===v&&v?'':v;run()}});run()})();`;
+  write(f, page(f, 'DSH 插件', 'dsh', body, script));
 }
 // ---- review.md（人读版） ----
 {
