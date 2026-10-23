@@ -24,6 +24,178 @@
   ],
   "days": [
     {
+      "date": "2026-10-22",
+      "source": "https://www.producthunt.com/leaderboard/daily/2026/10/22",
+      "fetched": "2026-10-23 02:20 EDT",
+      "note": "排名为当日结束时的名次；分数是 PH 页面给出的综合分（投票、讨论等），抓取时的数值，不是纯票数。对照《P-Hunt内容速览》10/23 热榜（对应 PH 太平洋时间 10/22）补入库。",
+      "items": [
+        {
+          "id": "2026-10-22-claude-duet",
+          "name": "Claude Duet",
+          "tagline": "Proactive agent that understands what needs your attention",
+          "ph": "https://www.producthunt.com/products/claude",
+          "site": "https://claude.com/resources/articles/claude-duet",
+          "rank": 2,
+          "score": 292,
+          "comments": 4,
+          "what": "Anthropic 的主动式 agent 应用：连上邮箱、日历等应用后，每天早上发简报，白天只在需要你决策时找你；任务在云端虚拟机里继续跑，发消息、付款、签字、删除前会先征求批准。",
+          "problem": "专业人士和小企业主每天要盯的事太多，被动聊天式 AI 要人主动去问，容易漏掉日历冲突、待回邮件这类「该提醒你」的事。",
+          "highlight": "研究预览阶段，对美国 Pro/Max 用户开放候补；沿用 Claude 的 memory、skills 和 Marketplace 连接器；凭证按 Claude Managed Agents 设计、agent 看不到密码；另有敏感信息分类器。获当日 Launch of the Day。",
+          "inspo": "企业级 coding agent 工作台最该抄的是「主动注意力」和「高风险动作必批」：后台定期扫连接的系统，只把阻塞推给人；发送、付款、删改走审批。云端 VM 持续干活、本机关机也能跑，是长任务 harness 的产品形态参考。",
+          "tags": [
+            "coding agent",
+            "AI工具",
+            "效率"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-22-heal-dev",
+          "name": "heal.dev",
+          "tagline": "Find bugs and vulnerabilities code review misses",
+          "ph": "https://www.producthunt.com/products/heal-dev",
+          "site": "https://www.heal.dev/",
+          "rank": 4,
+          "score": 220,
+          "comments": 36,
+          "what": "运行时 QA agent：先学会怎么跑你的应用，搭一个把外部服务 stub 掉的类生产沙箱，再主动挖会真正打到用户的 bug、性能回退和运行时漏洞；每条缺陷先复现再报，并给出失败测试。",
+          "problem": "Code review 和静态分析只看 diff，coding agent 写的 e2e 也多走 happy path；真正在运行时才炸的问题仍会进生产。",
+          "highlight": "官方称约 70% 的发现是代码评审机器人抓不到的；可把缺陷交给 coding agent 经 MCP 处理后再跑一遍验证；beta 免费、不用绑卡。",
+          "inspo": "工作台可把「运行时复现 + 失败测试」做成 agent 交付闭环的一环：修完代码不是开 PR 就完，而是在沙箱里复跑直到绿。MCP 把找 bug 和修 bug 串起来，正好补企业 coding agent 的质量门禁。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "AI工具"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-22-loom-record-for-agents",
+          "name": "Loom Record for agents",
+          "tagline": "Hit record and hand off to AI, now in the new Loom app",
+          "ph": "https://www.producthunt.com/products/loom",
+          "site": "https://support.atlassian.com/loom/docs/record-for-agent/",
+          "rank": 7,
+          "score": 137,
+          "comments": 21,
+          "what": "Loom 新的「给 agent 录」模式：边说边指屏幕，自动把语音、点击、选中的 UI、访问过的链接和关键帧合成结构化 agent prompt，可交给 Claude、Cursor、Rovo、ChatGPT 等执行。",
+          "problem": "给 coding agent 写长 prompt、贴一堆截图很慢，还容易丢视觉上下文，结果 agent 改错地方。",
+          "highlight": "内置于重做的 Loom for Mac 和 Chrome 扩展；Selection tool / Magic pen 钉 UI；Chrome 还可抓 console/network；单次最长 5 分钟；Business+AI / Enterprise 开放 beta。",
+          "inspo": "工作台缺的「反馈入口」可以直接做成「录一段交给 agent」：产品经理或开发用指认代替打字。结构化 prompt（标题、要点、关键帧、时间戳）是可抄的中间格式，不必自己从零设计 multimodal 任务描述。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "效率"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-22-resend-inboxes",
+          "name": "Resend Inboxes",
+          "tagline": "Create shared inboxes, connect your agents, build workflows",
+          "ph": "https://www.producthunt.com/products/resend",
+          "site": "https://resend.com/products/inboxes",
+          "rank": 10,
+          "score": 118,
+          "comments": 7,
+          "what": "面向人和 agent 的共享收件箱：在自有域名上建地址，邮件按线程组织，团队可分配、留备注；同一收件箱可被人与 agent 并肩处理，并提供 API、CLI、远程 MCP。",
+          "problem": "以前 Resend 能收信靠 webhook，但分拣、回复、记上下文还得自己做；agent 要接邮件缺少现成的线程与权限原语。",
+          "highlight": "可配置内置 agent 的指令、语气和允许动作（草稿、打标签、转发等）；免费最多 3 个收件箱；MCP 地址 https://mcp.resend.com/mcp，文档写明可接 Claude Code、Cursor、Codex 等。",
+          "inspo": "企业工作台里「每个 agent 一个邮箱地址收任务/审批」是很干净的外部通道。可抄：线程原语 + 人机共治 + 动作白名单逐步放权。接 MCP 后，夜间摘要、草稿回复都能接到现有 coding agent 上。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "AI工具"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-22-deepcell",
+          "name": "DeepCell",
+          "tagline": "Your deadline survival kit for office work",
+          "ph": "https://www.producthunt.com/products/deepcell",
+          "site": "https://deepcell.net/",
+          "repo": "https://github.com/deepcell-ai/deepcell-plugins",
+          "rank": 1,
+          "score": 324,
+          "comments": 66,
+          "what": "面向截止日期的办公套件：用自研 .deepcell 格式把推理备忘（cheat sheet）、表格、文档、幻灯片连成一份，改一处可联动相关内容；提供 Web、Claude Code 插件、CLI 和远程 MCP。",
+          "problem": "建模、销售复盘、预算、月报这类「要算又要讲」的活，散落在 Excel/Word/PPT 里，改数字后叙述和幻灯对不上，还难向 AI agent 讲清结构。",
+          "highlight": "官方提供给 agent 读的安装说明（for-agent.md）；插件仓库 deepcell-ai/deepcell-plugins；可导出 Excel/Word/PPT/PDF。当日综合分榜第一。",
+          "inspo": "两层可抄：一是「给 agent 一份自描述安装文档 + CLI/MCP/插件三通道」的接入方式；二是把可计算表格和可叙述材料绑在同一真相源，企业工作台做报表/评审材料时可参考这种联动格式，而不是让 agent 分别改三个 Office 文件。",
+          "tags": [
+            "开发者工具",
+            "AI工具",
+            "效率"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-22-voxtral-3",
+          "name": "Mistral Voxtral 3",
+          "tagline": "Mistral’s speech models for transcription, TTS and agents",
+          "ph": "https://www.producthunt.com/products/mistral-7b",
+          "site": "https://mistral.ai/news/voxtral-3/",
+          "rank": 5,
+          "score": 205,
+          "comments": 3,
+          "what": "Mistral 新一代语音栈：转写（含说话人分离、时间戳、end-of-turn）、TTS（情感/语速/强调、音色克隆）以及把听、想、调工具、说串起来的 Voice Agent SDK。",
+          "problem": "做实时语音 agent 通常要自己拼 STT、LLM、TTS 和电话/浏览器通道，多语言和延迟也难控；企业还常要数据留在自有环境。",
+          "highlight": "转写宣称 50+ 语言；TTS 支持 35+ 语言；可通过 Mistral 欧盟托管 API 或自有基础设施部署（权重是否开源未在公开页标明为 HF 开源；旧版 Voxtral Mini 曾有 Apache-2.0）。公开预览。",
+          "inspo": "工作台若要加语音入口（走动口述任务、会议交接），可直接评估这套「听-推理-工具-说」一体 SDK，而不是自拼四段管道。端到端与可自部署对政企场景是加分项。",
+          "tags": [
+            "AI工具"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-22-doneas",
+          "name": "Doneas",
+          "tagline": "A daily accountability call with other entrepreneurs.",
+          "ph": "https://www.producthunt.com/products/doneas",
+          "site": "https://doneas.com",
+          "rank": 3,
+          "score": 244,
+          "comments": 114,
+          "what": "给独立开发者/创业者的问责圈子：周一锁定本周计划，工作日与固定的另外五人开 15 分钟站会，汇报完成项、下一步和阻塞，并在公开进度页记下交付。",
+          "problem": "Solo builder 缺少同事盯进度，周计划容易漂，一个人也很难说清「今天到底 ship 了什么」。",
+          "highlight": "产品定位偏轻量社群+站会，不是 AI agent；评论区讨论活跃（当日 114 条）。",
+          "inspo": "对人有用的问责节奏，可迁移到「人和 coding agent 的站会」：每天固定窗口让 agent 汇报阻塞与昨日 diff，公开进度页对应工作台的任务时间线。产品本身不是技术样板，节奏设计值得借。",
+          "tags": [
+            "效率"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-22-cutbay",
+          "name": "CutBay",
+          "tagline": "AI Video Agent: Turn Anything into Videos via Chat",
+          "ph": "https://www.producthunt.com/products/cutbay",
+          "site": "https://www.cutbay.ai/",
+          "rank": 8,
+          "score": 130,
+          "comments": 24,
+          "what": "聊天式 AI 视频 agent：用一句话、链接、文档、PDF、演示稿、表格或素材生成视频，再通过对话改脚本、画面、配音和字幕，不必自己拖时间线。",
+          "problem": "自媒体和教学视频要会剪辑软件，从素材到成片链路长，非专业作者门槛高。",
+          "highlight": "定位是 agent 而不是传统剪辑器；输入形态覆盖 URL/文档/表格。当日榜偏营销向视频工具里交互形态较新的一个。",
+          "inspo": "自媒体创作侧可当「文案/素材 → 成片」的 agent 参考；小学教育侧也可用聊天生成讲解短视频。和 coding agent 工作台无直接重合，但「对话迭代成片」说明创作类 agent 也在收拢多步工具。",
+          "tags": [
+            "创作",
+            "AI工具"
+          ],
+          "status": "新发现",
+          "followups": []
+        }
+      ]
+    },
+    {
       "date": "2026-10-21",
       "source": "https://www.producthunt.com/leaderboard/daily/2026/10/21",
       "fetched": "2026-10-22 08:10 EDT",
