@@ -3,7 +3,15 @@
 // 从 data/*.json 生成：index.html、各栏目 index.html、主题 index.html、glossary.html、concepts/*.html、review.md
 // 视觉沿用 xuexi-template 的设计变量（styles.css 的 :root），不改模板文件。
 import fs from 'node:fs'; import path from 'node:path';
+import { execFileSync } from 'node:child_process';
 const ROOT = path.dirname(new URL(import.meta.url).pathname);
+// 数据文件没有日期字段时，用该文件最近一次提交日（YYYY-MM-DD）。查不到则返回 null。
+const gitDay = rel => {
+  try {
+    const out = execFileSync('git', ['log', '-1', '--format=%cs', '--', rel], { cwd: ROOT, encoding: 'utf8' }).trim();
+    return /^\d{4}-\d{2}-\d{2}$/.test(out) ? out : null;
+  } catch { return null; }
+};
 const TPL = '/workspace/skills-src/xuexi-template/styles.css';
 const J = f => JSON.parse(fs.readFileSync(path.join(ROOT, 'data', f), 'utf8'));
 const columns = J('columns.json'), { groups, items } = J('items.json'), concepts = J('concepts.json'), inbox = J('inbox.json');
@@ -172,7 +180,8 @@ ${nx ? `<a class="nx" href="${esc(nx.href)}"${ext(nx.href)}><b>${['已学完', '
 <section class="ma-row" id="a-doing">${CR.map(c => `<article><span class="kk">公开课 · ${esc(c.src)}</span><h3><a href="${c.href}">${esc(c.name)}</a></h3>${nxA(c, 'nx')}${prog(c.ids)}</article>`).join('')}<article><span class="kk">正在读 · ${reading.length}</span><div class="list">${readRows}</div></article></section>
 <section class="ma-sf"><div><span class="kk">图片版 · X 技术海报</span><a class="n" href="x-posters/index.html">全部 →</a></div>${PIMG.length ? `<div class="ma-strip">${PIMG.map(p => pimg(p)).join('')}</div>` : noPost}</section>
 <section class="ma-fv"><span class="kk">我的收藏</span><a class="n" href="favorites/index.html">全部 →</a><div class="list" data-fav></div></section></div>`;
-  // 默认首页（风格 C）：今日清单 + 新闻 / 学习两组栏目。A/B 布局不动。
+  // 首页三套主题共用这一套结构（今日 + 新闻 / 学习）。视觉靠 data-theme 的令牌和顶栏/侧栏区分。
+  // 仓库里没有「Agent 工作台雷达」页面或数据（DSH 核实表里的 upstream-radar 只是一个插件名），新闻组不加雷达卡。
   const md = d => d ? esc(String(d).slice(5).replace('-', '/')) : '';
   const briefDir = path.join(ROOT, 'x-brief');
   const TD_BRIEF = (fs.existsSync(briefDir) ? fs.readdirSync(briefDir) : []).filter(x => /^\d{4}-\d\d-\d\d\.html$/.test(x)).sort().reverse().map(x => {
@@ -241,10 +250,10 @@ ${nx ? `<a class="nx" href="${esc(nx.href)}"${ext(nx.href)}><b>${['已学完', '
   const pushCol = c => learnList.push({ href: `${c.dir}/index.html`, ic: colIc(c, 20), t: c.title, desc: c.desc, count: `${colCount(c.id)} 条`, d: latestStart(c.id) });
   const courseCol = columns.find(c => c.id === 'courses');
   if (courseCol) pushCol(courseCol);
-  learnList.push({ href: 'glossary.html', ic: ic('puzzle', 20), t: '概念卡', desc: '一个术语一张卡，跨栏目串起来。', count: `${concepts.length} 张`, d: null });
+  learnList.push({ href: 'glossary.html', ic: ic('puzzle', 20), t: '概念卡', desc: '一个术语一张卡，跨栏目串起来。', count: `${concepts.length} 张`, d: gitDay('data/concepts.json') });
   if (DSH) learnList.push({ href: 'dsh-plugins/index.html', ic: ic('boxes', 20), t: 'DSH 插件', desc: 'DeepSeek Harness 插件市场盘点：生态、清单格式、审核，以及对企业工作台最值得抄的机制。', count: `${dshVerified} 个核实`, d: DSH.asOf || null });
   for (const c of columns) if (c.id !== 'courses') pushCol(c);
-  const layC = `<div class="lay lay-C home-v2">
+  const layC = `<div class="home-v2">
 <section class="td" id="today" aria-labelledby="td-h">
 <div class="td-h"><h1 id="td-h">今日</h1><span class="td-prog" data-td="prog"></span><span class="kk" data-f="date">今天</span></div>
 <p class="sub">按今天来看。新闻各看一条，到期要复习的课也列在这里。没有当天的，用最近一天，并标出日期。</p>
@@ -258,16 +267,7 @@ ${nx ? `<a class="nx" href="${esc(nx.href)}"${ext(nx.href)}><b>${['已学完', '
 <div class="sub">按进度走，按需查</div>
 <div class="td-cols">${learnList.map(v2card).join('')}</div>
 </div>`;
-  const body = `<div class="lays">${layB}${layA}${layC}</div>
-<div class="home-legacy">
-${(() => { const d0 = PHI.days[0]; if (!d0) return ''; const n = PHI.days.reduce((x, d) => x + d.items.length, 0); const top = [...d0.items].sort((x, y) => (x.rank ?? 999) - (y.rank ?? 999)).slice(0, 4);
-  return `<div class="kicker" id="k-inspo">产品灵感 <span class="n">${n}</span></div><div class="sub">Product Hunt ${esc(d0.date.slice(5).replace('-', '/'))} 挑出 ${d0.items.length} 个 · <a href="ph-inspo/index.html">全部 ${PHI.days.length} 天 →</a></div><div class="list pi-home">${top.map(i => `<div class="row"><span class="tag blue">#${esc(i.rank ?? '—')}</span><span class="t"><a href="ph-inspo/index.html#${esc(i.id)}">${esc(i.name)}</a><small>${esc(i.what)}</small></span><span class="pi-tags">${(i.tags || []).slice(0, 2).map(t => `<span class="tag">${esc(t)}</span>`).join('')}</span></div>`).join('')}</div>`; })()}
-${DSH ? `<div class="kicker" id="k-dsh">DSH 插件 <span class="n">${dshVerified}</span></div><div class="sub">${esc(DSH.asOf)} 核实 · 索引 ${Number(DSH.indexEntries).toLocaleString('en-US')} 条 · <a href="dsh-plugins/index.html">盘点全文 →</a></div><div class="list">${DSH.mechanisms.map((m, i) => `<div class="row"><span class="tag blue">${i + 1}</span><span class="t"><a href="dsh-plugins/index.html#m${i + 1}">${esc(m.title)}</a></span></div>`).join('')}</div>` : ''}
-<div class="kicker" id="k-columns">栏目</div><div class="sub">按来源找内容</div><div class="grid">${colCards}</div>
-<div class="kicker">已学完 <span class="n">${doneIts.length}</span></div><div class="sub">到了复习日会出现在最上面</div>${courseCards(doneIts, '还没有学完的内容')}
-<div class="kicker">待学收件箱 <span class="n">${inbox.length}</span></div>${inboxHtml}
-<div class="kicker" id="k-concepts">概念卡</div><div class="sub">一个术语一张卡，跨栏目串起来</div><div class="chips">${concepts.map(c => `<a class="chip" href="concepts/${c.id}.html">${esc(c.term)}</a>`).join('')}<a class="chip more" href="glossary.html">全部概念卡 →</a></div>
-</div>`;
+  const body = layC;
   const script = `const R=${revData};const TD=${tdJson};const CK=${ckJson};const p=n=>String(n).padStart(2,'0');const d=new Date();const today=new URLSearchParams(location.search).get('today')||(d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())); /* 自查用：?today=2026-10-14 */
 const add=(t,n)=>{const x=new Date(t+'T12:00:00');x.setDate(x.getDate()+n);return x.getFullYear()+'-'+p(x.getMonth()+1)+'-'+p(x.getDate())};
 /* 今日待办只收「学完了」过的篇：done:<pathname>；兼容 /courses/X↔软链、index.html↔尾斜杠 */
@@ -299,7 +299,7 @@ document.querySelectorAll('[data-rv="ol"],[data-rv="ul"]').forEach(el=>el.innerH
 window.__favRender=function(L){var TN={'x-brief':'X 简报','poster':'X 海报','concept':'概念卡','course':'公开课','page':'页面'};var h=L.length?L.slice(0,5).map(x=>'<div class="row"><span class="tag">'+E(TN[x.type]||'页面')+'</span><span class="t"><a href="'+E(x.url)+'">'+E(x.title)+'</a></span><span class="d">'+E((x.added_at||'').slice(0,10))+'</span></div>').join(''):'<div class="row"><span class="t" style="font-weight:400;color:var(--meta)">还没有收藏，在任意页面点 '+__ic('star',13)+' 就能收藏</span></div>';document.querySelectorAll('[data-fav]').forEach(el=>el.innerHTML=h)};window.__favRender([]);
 function tdPick(arr){if(!arr||!arr.length)return null;var hit=null;for(var i=0;i<arr.length;i++)if(arr[i].d===today)hit=arr[i];if(hit)return Object.assign({fresh:true},hit);var prev=null;for(var j=0;j<arr.length;j++)if(arr[j].d<=today&&(!prev||arr[j].d>prev.d))prev=arr[j];return prev?Object.assign({fresh:false},prev):null}
 function tdMeta(fresh,d,extra){var base=fresh?'今天':(d.slice(5).replace('-','/')+' · 最近一天');return extra?base+' · '+extra:base}
-function tdLoad(){try{return JSON.parse(localStorage.getItem('today-read:'+today)||'{}')||{}}catch(e){return {}}}
+function tdLoad(){try{return JSON.parse(localStorage.getItem('today-read:'+today)||'{}')||{}}catch(e){return {}}} /* 三套主题共用 today-read:日期 */
 function tdSave(o){try{localStorage.setItem('today-read:'+today,JSON.stringify(o))}catch(e){}}
 function tdRows(){var rows=[],b=tdPick(TD.brief),po=tdPick(TD.poster),h=tdPick(TD.ph);
  if(b)rows.push({id:'brief:'+b.d,src:'X 简报',ic:TD.ic.brief,href:b.href,title:b.title,sub:b.sub||'',meta:tdMeta(b.fresh,b.d)});else rows.push({src:'X 简报',ic:TD.ic.brief,title:'还没有简报'});
