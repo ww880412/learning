@@ -864,12 +864,79 @@ html.dark .pi-bar .chip.on{color:#0f1115}
 .pi-fu .pi-none,.pi-fu p{margin:6px 0 0;font-size:var(--fs-xs);color:var(--meta)}
 @media (max-width:1180px){.pi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:760px){.pi-grid{grid-template-columns:minmax(0,1fr)}.pi-cnt{width:100%;margin-left:0}.pi-bar .chip{min-height:32px}}
-@media (max-width:760px){.pi-hero .stage{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.pi-hero .stat{padding:8px 8px}.pi-hero .stat b{font-size:20px}.pi-hero .stat span{font-size:11px;line-height:1.3;display:block}
+@media (max-width:760px){.pi-hero .stage,.dsh-hero .stage{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.pi-hero .stat,.dsh-hero .stat{padding:8px 8px}.pi-hero .stat b,.dsh-hero .stat b{font-size:20px}.pi-hero .stat span,.dsh-hero .stat span{font-size:11px;line-height:1.3;display:block}
 .pi-bar{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}.pi-bar::-webkit-scrollbar{display:none}.pi-bar .chip,.pi-bar .lb{flex:none}.pi-cnt{width:auto;flex:none}}
 .pi-home .row .t small{display:block;font-weight:400;font-size:var(--fs-xs);color:var(--meta);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pi-home .row .t{min-width:0}
 .pi-home .pi-tags{flex:none}
 @media (max-width:760px){.pi-home .pi-tags{display:none}}
+
+/* ---- DSH 插件市场盘点（dsh-plugins/index.html，build.mjs 生成） ---- */
+.dsh-sec{scroll-margin-top:72px}
+.dsh-jump{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 2px}
+.dsh-lead{margin:0 0 8px;color:var(--ink2);font-size:var(--fs-sm);line-height:1.65}
+.dsh-facts{margin:10px 0 0;padding-left:1.15em;color:var(--ink2);font-size:var(--fs-sm);line-height:1.6}
+.dsh-facts li{margin:3px 0}
+.dsh-prose{font-size:var(--fs-sm);line-height:1.65}
+.dsh-prose p{margin:0 0 8px}
+.dsh-prose ul,.dsh-prose ol{margin:0 0 8px;padding-left:1.2em}
+.dsh-prose li{margin:4px 0}
+.dsh-prose li ul{margin:3px 0 0}
+.dsh-h3{margin:14px 0 6px;font-size:var(--fs-md);font-weight:700}
+.dsh-h3:first-child{margin-top:0}
+.dsh-note{margin:8px 0 0;font-size:var(--fs-xs);color:var(--meta);line-height:1.5}
+.dsh-split{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:12px;align-items:start}
+.dsh-box{background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-lg);padding:12px 14px;min-width:0}
+.dsh-box h3{margin:0 0 8px;font-size:var(--fs-sm)}
+.dsh-caps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.dsh-caps div{background:var(--paper);border:1px solid var(--hair);border-radius:var(--r-sm);padding:7px 8px}
+.dsh-caps b{display:block;font-size:var(--fs-lg);font-weight:750;font-variant-numeric:tabular-nums;letter-spacing:-.02em;line-height:1.2}
+.dsh-caps span{font-size:var(--fs-xs);color:var(--meta)}
+.dsh-cat{display:flex;flex-direction:column;gap:5px}
+.dsh-cat .r{display:grid;grid-template-columns:84px minmax(0,1fr) 48px;gap:8px;align-items:center;font-size:var(--fs-xs)}
+.dsh-cat .nm{font-weight:650}
+.dsh-cat .b{height:6px;border-radius:var(--r-pill);background:var(--hair2);overflow:hidden}
+.dsh-cat .b i{display:block;height:100%;background:var(--blue);border-radius:inherit}
+.dsh-cat .n{text-align:right;color:var(--meta);font-variant-numeric:tabular-nums}
+.dsh-call{margin-top:10px;padding:10px 12px;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--amber-soft);font-size:var(--fs-sm);line-height:1.55}
+.dsh-call b{font-weight:700}
+.dsh-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--hair);border-radius:var(--r-lg);background:var(--sheet)}
+.dsh-tbl{width:100%;border-collapse:collapse;font-size:var(--fs-sm);line-height:1.45}
+.dsh-tbl.wide{font-size:var(--fs-xs);min-width:980px}
+.dsh-tbl th{text-align:left;font-weight:650;color:var(--meta);padding:8px 10px;border-bottom:1px solid var(--hair);background:var(--paper);white-space:nowrap;position:sticky;top:0}
+.dsh-tbl td{padding:7px 10px;border-bottom:1px solid var(--hair);vertical-align:top}
+.dsh-tbl tr:last-child td{border-bottom:0}
+.dsh-tbl .num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.dsh-tbl a{font-weight:650}
+.dsh-tbl .grp td{background:var(--hair2);font-weight:700;color:var(--ink);white-space:nowrap}
+.dsh-mechs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.dsh-mech{padding:12px 14px;scroll-margin-top:72px}
+.dsh-mech .no{font-size:var(--fs-xs);font-weight:800;color:var(--blue);font-variant-numeric:tabular-nums}
+.dsh-mech h3{margin:2px 0 4px;font-size:var(--fs-sm);line-height:1.4}
+.dsh-mech .src{margin:0 0 6px;font-size:var(--fs-xs);color:var(--meta)}
+.dsh-mech ul{margin:0;padding-left:1.1em;font-size:var(--fs-sm);line-height:1.55}
+.dsh-mech li{margin:3px 0}
+.dsh-bar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 10px}
+.dsh-bar .chip{cursor:pointer;font:inherit;font-size:var(--fs-sm);appearance:none;-webkit-appearance:none}
+.dsh-bar .chip em{font-style:normal;font-size:var(--fs-xs);color:var(--meta);font-variant-numeric:tabular-nums;margin-left:4px}
+.dsh-bar .chip.on{background:var(--blue);border-color:var(--blue);color:var(--sheet)}
+.dsh-bar .chip.on em{color:inherit;opacity:.85}
+.dsh-tbl tbody[hidden]{display:none}
+.dsh-bar .cnt{margin-left:auto;font-size:var(--fs-xs);color:var(--meta)}
+.dsh-hero .stat b{font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.dsh-hero .stat small{display:block;margin-top:2px;font-size:var(--fs-xs);color:var(--meta);font-weight:500}
+[data-theme=C] .dsh-scroll,[data-theme=C] .dsh-box{border-radius:20px;border-color:transparent;box-shadow:var(--sh)}
+@media (max-width:760px){
+ .dsh-hero .stage{grid-template-columns:1fr 1fr}
+ .dsh-hero .stat b{font-size:24px}
+ .dsh-hero .stat span{font-size:13px;line-height:1.35}
+ .dsh-split,.dsh-mechs{grid-template-columns:minmax(0,1fr)}
+ .dsh-caps{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .dsh-bar{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+ .dsh-bar::-webkit-scrollbar{display:none}
+ .dsh-bar .chip{flex:none;min-height:40px}
+ .dsh-jump .chip{min-height:40px}
+}
 .pgrid{display:grid;gap:18px}.pc{display:grid;grid-template-columns:300px 1fr;gap:20px;align-items:start}
 .pc img{width:100%;border-radius:12px;border:1px solid var(--hair);display:block}.pc h3{margin-top:0}
 .xi{font-size:14.5px}.xi .who{font-weight:700}.xi .h{color:var(--ink2)}.xi blockquote{margin:10px 0;padding:10px 14px;background:var(--paper);border-radius:10px;white-space:pre-wrap;font-size:14px}
@@ -995,4 +1062,4 @@ Every coding agent you run, in one window.
   &amp;nbsp;·&amp;nbsp; Tour
   &amp;nbsp;·&amp;nbsp; Supported agents
   &amp;nbsp;·&amp;nbsp; FAQ
-  &amp;nbsp;·&amp;nbsp; Full g…</blockquote></div><p class="muted"><a href="img/06-codealong-multi-agent-desktop.png" target="_blank">查看原图 PNG →</a></p></div></section></div><div class="pn"><span></span><a href="../index.html">往期目录</a><a href="../2026-10-22/index.html">2026-10-22 →</a></div><div class="foot">王玮的 X 海报日报 · 每天从 X 推荐流挑技术帖，用 ChatGPT 生成康奈尔笔记海报 · 每张都附 X 原帖信息 · 风格改编自 <a href="https://github.com/vuejs/vitepress">VitePress</a>（MIT）</div></main></body></html>
+  &amp;nbsp;·&amp;nbsp; Full g…</blockquote></div><p class="muted"><a href="img/06-codealong-multi-agent-desktop.png" target="_blank">查看原图 PNG →</a></p></div></section></div><div class="pn"><a href="../2026-10-24/index.html">← 2026-10-24</a><a href="../index.html">往期目录</a><a href="../2026-10-22/index.html">2026-10-22 →</a></div><div class="foot">王玮的 X 海报日报 · 每天从 X 推荐流挑技术帖，用 ChatGPT 生成康奈尔笔记海报 · 每张都附 X 原帖信息 · 风格改编自 <a href="https://github.com/vuejs/vitepress">VitePress</a>（MIT）</div></main></body></html>
