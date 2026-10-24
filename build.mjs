@@ -19,6 +19,8 @@ const columns = J('columns.json'), { groups, items } = J('items.json'), concepts
 const PHI = fs.existsSync(path.join(ROOT, 'data', 'ph-inspo.json')) ? J('ph-inspo.json') : { statuses: ['新发现', '在跟进', '已试用', '归档'], tags: [], days: [] };
 // DSH 插件市场盘点：data/dsh-plugins.json；没有文件时不出现导航和首页入口
 const DSH = fs.existsSync(path.join(ROOT, 'data', 'dsh-plugins.json')) ? J('dsh-plugins.json') : null;
+// Agent 工作台雷达：data/radar.json（scripts/sync-radar.mjs 同步）；没有文件时不出现导航和首页卡片
+const RADAR = fs.existsSync(path.join(ROOT, 'data', 'radar.json')) ? J('radar.json') : null;
 const dshVerified = DSH ? DSH.verify.reduce((n, g) => n + g.rows.length, 0) : 0;
 const INTERVALS = [1, 3, 7, 14, 30];
 // status「未开始」= 待学条目（href 指向原文/官方资料），不算学习页、不进复习队列、不进正在学/最近学过；无 group 时列在栏目页
@@ -66,6 +68,7 @@ const colIc = (c, s = 16) => ic(COL_IC[c?.id] || 'folder', s);
 function page(file, title, active, body, script = '') {
   const r = p => rel(file, p);
   const navItems = [['index.html', '首页', 'home'], ['favorites/index.html', '收藏', 'favorites'], ...columns.map((c, k) => [`${c.dir}/index.html`, c.title, c.id, items.filter(i => i.column === c.id).length, k ? '' : 's1']), ['glossary.html', '概念卡', 'glossary', concepts.length], ['x-brief/index.html', 'X 简报', 'x-brief', null, 's2'], ['x-posters/index.html', 'X 海报', 'x-posters'], ['ph-inspo/index.html', '产品灵感', 'ph-inspo']];
+  if (RADAR) navItems.push(['radar/index.html', '雷达', 'radar', RADAR.entries.length]);
   if (DSH) navItems.push(['dsh-plugins/index.html', 'DSH 插件', 'dsh', dshVerified]);
   const nav = navItems.map(([h, t, id, n, sc]) => `<a href="${r(h)}" class="${[id === active ? 'on' : '', sc || ''].join(' ').trim()}">${esc(t)}${n != null ? `<em>${n}</em>` : ''}</a>`).join('');
   return `<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -84,6 +87,69 @@ const itemCard = (file, it) => `<a class="card item" href="${rel(file, it.href)}
 <div class="meta">开始于 ${esc(it.start)}${it.cards ? ` · ${it.cards} 张卡片` : ''}<span style="margin-left:auto;color:var(--blue);font-weight:700">开始学 →</span></div></a>`;
 const emptyBox = (t, s) => `<div class="empty"><b>${t}</b>${s}</div>`;
 const itemConcepts = id => concepts.filter(c => c.refs.some(r => r.item === id));
+
+// ---- 每日汇总（北京时间 9:00 推送用）：从 x-brief / x-posters / data/ph-inspo.json 汇成 data/digest/YYYY-MM-DD.json 和 digest/YYYY-MM-DD.html ----
+// 规则：汇总日 D = x-brief/D.html + x-posters/D/ + 产品灵感里 date 为 D 前一天的那组（PH 是「前一天的榜单」）。某个来源当天没有，就是 null，页面写「还没更新」，不拿别天的凑。
+const DG = (() => {
+  const T = s => String(s || '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+  const rd = f => { try { return fs.readFileSync(path.join(ROOT, f), 'utf8'); } catch { return ''; } };
+  const ls = d => fs.existsSync(path.join(ROOT, d)) ? fs.readdirSync(path.join(ROOT, d)) : [];
+  const WD = '日一二三四五六';
+  const brief = {}, poster = {}, ph = {};
+  for (const x of ls('x-brief').filter(x => /^\d{4}-\d\d-\d\d\.html$/.test(x))) {
+    const d = x.slice(0, 10), h = rd('x-brief/' + x);
+    const qm = h.match(/今日主线<\/div>\s*<ol class="quick">([\s\S]*?)<\/ol>/);
+    let lines = qm ? [...qm[1].matchAll(/<li>([\s\S]*?)<\/li>/g)].map(m => T(m[1])).filter(Boolean) : [];
+    if (!lines.length) lines = [...h.matchAll(/<h2 id="[^"]+"[^>]*>[\s\S]*?<\/h2>\s*<p>([\s\S]*?)<\/p>/g)].map(m => T(m[1])).filter(Boolean).slice(0, 3);
+    brief[d] = { title: T((h.match(/<h1>([\s\S]*?)<\/h1>/) || [])[1]) || `X 简报 · ${d}`, href: `x-brief/${d}.html`, lines: lines.slice(0, 3) };
+  }
+  for (const d of ls('x-posters').filter(x => /^\d{4}-\d\d-\d\d$/.test(x))) {
+    const h = rd(`x-posters/${d}/index.html`); if (!h) continue;
+    const items = [...h.matchAll(/<section class="[^"]*\bpc" id="([^"]+)"[\s\S]*?<img src="([^"]+)" alt="([^"]*)"[\s\S]*?<h3[^>]*>([\s\S]*?)<\/h3>/g)].map(m => ({ title: T(m[4]) || T(m[3]), href: `x-posters/${d}/index.html#${m[1]}`, img: `x-posters/${d}/${m[2]}` }));
+    if (items.length) poster[d] = { title: T((h.match(/<h1>([\s\S]*?)<\/h1>/) || [])[1]) || `${items.length} 张技术海报`, href: `x-posters/${d}/index.html`, n: items.length, items };
+  }
+  for (const day of PHI.days || []) {
+    if (!day.date || !(day.items || []).length) continue;
+    const d = addDays(day.date, 1);
+    ph[d] = { listDate: day.date, href: `ph-inspo/index.html`, n: day.items.length, source: day.source || null,
+      items: [...day.items].sort((a, b) => (a.rank ?? 999) - (b.rank ?? 999)).map(i => ({ rank: i.rank ?? null, name: i.name, what: i.what || '', href: `ph-inspo/index.html#${i.id}` })) };
+  }
+  const dates = [...new Set([...Object.keys(brief), ...Object.keys(poster), ...Object.keys(ph)])].sort().reverse();
+  const list = dates.map(d => { const [y, m, dd] = d.split('-').map(Number);
+    return { date: d, label: `${m} 月 ${dd} 日 · 星期${WD[new Date(Date.UTC(y, m - 1, dd)).getUTCDay()]}`, href: `digest/${d}.html`, json: `data/digest/${d}.json`,
+      brief: brief[d] || null, posters: poster[d] || null, ph: ph[d] || null }; });
+  return { list, byDate: Object.fromEntries(list.map(x => [x.date, x])) };
+})();
+{
+  const SITE = 'https://ww880412.github.io/learning/';
+  const keep = new Set(DG.list.map(x => x.date + '.json'));
+  fs.mkdirSync(path.join(ROOT, 'data', 'digest'), { recursive: true });
+  for (const x of fs.readdirSync(path.join(ROOT, 'data', 'digest'))) if (/^\d{4}-\d\d-\d\d\.json$/.test(x) && !keep.has(x)) fs.rmSync(path.join(ROOT, 'data', 'digest', x));
+  const rule = '汇总日 D = X 简报 x-brief/D.html + X 海报 x-posters/D/ + 产品灵感（Product Hunt D 前一天的榜单）。某个来源当天没有就是 null。';
+  for (const x of DG.list) fs.writeFileSync(path.join(ROOT, 'data', 'digest', x.date + '.json'), JSON.stringify({ ...x, url: SITE + x.href, rule }, null, 1) + '\n');
+  fs.writeFileSync(path.join(ROOT, 'data', 'digest', 'index.json'), JSON.stringify({ _readme: '由 build.mjs 生成。北京时间 9:00 的汇总推送直接链接 url，或读 json。', rule, site: SITE, latest: DG.list[0]?.date || null,
+    days: DG.list.map(x => ({ date: x.date, url: SITE + x.href, json: x.json, brief: !!x.brief, posters: x.posters?.n || 0, ph: x.ph?.n || 0 })) }, null, 1) + '\n');
+  console.log('wrote data/digest/*.json', DG.list.length);
+  const none = t => `<div class="dg-none">${t}</div>`;
+  const dayBody = (f, x) => `<div class="dg-grid">
+<section class="sheet dg-sec"><h2>${ic('newspaper', 18)} X 简报</h2>${x.brief ? `<a class="dg-tt" href="${rel(f, x.brief.href)}">${esc(x.brief.title)}</a>${x.brief.lines.length ? `<ol>${x.brief.lines.map(l => `<li>${esc(l)}</li>`).join('')}</ol>` : ''}<a class="btn sm" href="${rel(f, x.brief.href)}">读这期简报 →</a>` : none('这天还没有简报')}</section>
+<section class="sheet dg-sec"><h2>${ic('rocket', 18)} 产品灵感${x.ph ? ` <span class="tag">${esc(x.ph.listDate.slice(5).replace('-', '/'))} 榜单 · ${x.ph.n} 个</span>` : ''}</h2>${x.ph ? `<ol class="dg-ph">${x.ph.items.map(i => `<li><a href="${rel(f, i.href)}"><b>${i.rank != null ? '#' + esc(i.rank) + ' ' : ''}${esc(i.name)}</b></a><span>${esc(i.what)}</span></li>`).join('')}</ol>` : none('这天还没有产品灵感')}</section>
+<section class="sheet dg-sec dg-wide"><h2>${ic('image', 18)} X 海报${x.posters ? ` <span class="tag">${x.posters.n} 张</span>` : ''}</h2>${x.posters ? `<div class="dg-po">${x.posters.items.map(p => `<a href="${rel(f, p.href)}"><img src="${rel(f, p.img)}" alt="${esc(p.title)}" loading="lazy"><span>${esc(p.title)}</span></a>`).join('')}</div>` : none('这天还没有海报')}</section></div>`;
+  for (const [k, x] of DG.list.entries()) {
+    const f = x.href, prev = DG.list[k + 1], next = DG.list[k - 1];
+    const nav = `<div class="dg-nav">${prev ? `<a class="btn ghost sm" href="${prev.date}.html">← ${esc(prev.date.slice(5).replace('-', '/'))}</a>` : ''}<a class="btn ghost sm" href="index.html">全部日期</a>${next ? `<a class="btn ghost sm" href="${next.date}.html">${esc(next.date.slice(5).replace('-', '/'))} →</a>` : ''}</div>`;
+    const body = `<div class="crumb"><a href="../index.html">首页</a> / <a href="index.html">每日汇总</a> / ${esc(x.date)}</div>
+<section class="hero sheet solo dg-hero"><div class="say"><span class="kk">每日汇总 · 北京时间 9:00</span><h1>${ic('calendar', 26)} ${esc(x.label)}</h1><p>当天的 X 简报、X 海报和产品灵感放在一页，早上的推送和这页内容一致。数据：<a href="${rel(f, x.json)}"><code>${esc(x.json)}</code></a>。</p></div></section>
+${nav}${dayBody(f, x)}`;
+    write(f, page(f, `每日汇总 ${x.date}`, 'digest', body));
+  }
+  const f = 'digest/index.html';
+  const body = `<div class="crumb"><a href="../index.html">首页</a> / 每日汇总</div>
+<section class="hero sheet solo dg-hero"><div class="say"><span class="kk">每日汇总 · 北京时间 9:00</span><h1>${ic('calendar', 26)} 每日汇总</h1><p>${esc(rule)} 每天一页，链接格式 <code>digest/YYYY-MM-DD.html</code>，机器可读版 <code>data/digest/YYYY-MM-DD.json</code>。</p></div></section>
+<div class="kicker">全部日期 <span class="n">${DG.list.length}</span></div><div class="sub">新的在上面</div>
+${DG.list.length ? `<div class="list">${DG.list.map(x => `<div class="row"><span class="t"><a href="${x.date}.html">${esc(x.label)}</a></span><span class="tag${x.brief ? ' blue' : ''}">${x.brief ? '简报' : '无简报'}</span><span class="tag${x.posters ? ' blue' : ''}">${x.posters ? '海报 ' + x.posters.n : '无海报'}</span><span class="tag${x.ph ? ' blue' : ''}">${x.ph ? '灵感 ' + x.ph.n : '无灵感'}</span><span class="d">${esc(x.date)}</span></div>`).join('')}</div>` : emptyBox('还没有汇总', '')}`;
+  write(f, page(f, '每日汇总', 'digest', body));
+}
 
 // ---- 首页 ----
 {
@@ -181,7 +247,6 @@ ${nx ? `<a class="nx" href="${esc(nx.href)}"${ext(nx.href)}><b>${['已学完', '
 <section class="ma-sf"><div><span class="kk">图片版 · X 技术海报</span><a class="n" href="x-posters/index.html">全部 →</a></div>${PIMG.length ? `<div class="ma-strip">${PIMG.map(p => pimg(p)).join('')}</div>` : noPost}</section>
 <section class="ma-fv"><span class="kk">我的收藏</span><a class="n" href="favorites/index.html">全部 →</a><div class="list" data-fav></div></section></div>`;
   // 首页三套主题共用这一套结构（今日 + 新闻 / 学习）。视觉靠 data-theme 的令牌和顶栏/侧栏区分。
-  // 仓库里没有「Agent 工作台雷达」页面或数据（DSH 核实表里的 upstream-radar 只是一个插件名），新闻组不加雷达卡。
   const md = d => d ? esc(String(d).slice(5).replace('-', '/')) : '';
   const briefDir = path.join(ROOT, 'x-brief');
   const TD_BRIEF = (fs.existsSync(briefDir) ? fs.readdirSync(briefDir) : []).filter(x => /^\d{4}-\d\d-\d\d\.html$/.test(x)).sort().reverse().map(x => {
@@ -205,13 +270,6 @@ ${nx ? `<a class="nx" href="${esc(nx.href)}"${ext(nx.href)}><b>${['已学完', '
     if (!h1 && !h3s.length) return null;
     return { d, href: `x-posters/${d}/index.html`, title: h1 || `${h3s.length} 张技术海报`, sub: h3s[0] || '', n: h3s.length };
   }).filter(Boolean);
-  const TD_PH = (PHI.days || []).map(day => {
-    const its = day.items || [];
-    if (!its.length || !day.date) return null;
-    const top = [...its].sort((a, b) => (a.rank ?? 999) - (b.rank ?? 999))[0];
-    if (!top || !top.name) return null;
-    return { d: day.date, href: `ph-inspo/index.html#${top.id}`, title: top.name, sub: top.what || '', rank: top.rank ?? null, n: its.length };
-  }).filter(Boolean);
   const todayBuild = (() => { const n = new Date(); const p = x => String(x).padStart(2, '0'); return `${n.getFullYear()}-${p(n.getMonth() + 1)}-${p(n.getDate())}`; })();
   const pickDay = arr => {
     if (!arr.length) return null;
@@ -220,19 +278,36 @@ ${nx ? `<a class="nx" href="${esc(nx.href)}"${ext(nx.href)}><b>${['已学完', '
     const prev = arr.filter(x => x.d <= todayBuild).sort((a, b) => b.d.localeCompare(a.d))[0];
     return prev ? { ...prev, fresh: false } : null;
   };
-  const icBrief = ic('newspaper', 16), icPost = ic('image', 16), icPh = ic('rocket', 16), icRev = ic('graduation-cap', 16);
+  const icBrief = ic('newspaper', 16), icPost = ic('image', 16), icPh = ic('rocket', 16), icRev = ic('graduation-cap', 16), icDg = ic('calendar', 16), icRd = ic('radar', 16);
   const CK = ic('circle-check', 18);
-  const tdPayload = { brief: TD_BRIEF, poster: TD_POST, ph: TD_PH, ic: { brief: icBrief, poster: icPost, ph: icPh, rev: icRev } };
+  // 今日的新闻：一条「每日汇总」（简报 + 海报 + 产品灵感，与北京时间 9:00 推送同一份 data/digest/D.json）+ 一条雷达最近补录
+  const TD_DG = DG.list.map(x => ({ d: x.date, href: x.href, brief: x.brief ? { href: x.brief.href, t: x.brief.lines[0] || x.brief.title } : null,
+    poster: x.posters ? { href: x.posters.href, n: x.posters.n, items: x.posters.items.slice(0, 2).map(p => [p.href, p.title]) } : null,
+    ph: x.ph ? { href: x.ph.href, n: x.ph.n, items: x.ph.items.slice(0, 3).map(i => [i.href, (i.rank != null ? '#' + i.rank + ' ' : '') + i.name]) } : null }));
+  const TD_RD = RADAR ? (() => { const L = RADAR.entries.filter(e => e.added === RADAR.updated).sort((a, b) => b.id - a.id); const e = L[0];
+    return e ? [{ d: RADAR.updated, href: `radar/index.html#r${e.id}`, title: e.name, sub: e.what, n: L.length }] : []; })() : [];
+  const tdPayload = { dg: TD_DG, radar: TD_RD, ic: { dg: icDg, radar: icRd, brief: icBrief, poster: icPost, ph: icPh, rev: icRev } };
+  // 汇总那一行：Node 端先渲染一遍，浏览器端用同一个函数（toString 注入）按本地日期重渲染
+  function dgRow(x, fresh, on, CKH, E, IC) {
+    var md = function (d) { return d.slice(5).replace('-', '/'); };
+    var miss = fresh ? '今天还没更新' : '这天没有';
+    var ln = function (k, ic, inner) { return '<li><span class="k">' + ic + k + '</span><span class="v">' + inner + '</span></li>'; };
+    var links = function (arr) { return arr.map(function (a) { return '<a href="' + E(a[0]) + '">' + E(a[1]) + '</a>'; }).join('<i>、</i>'); };
+    var b = x.brief ? '<a href="' + E(x.brief.href) + '">' + E(x.brief.t) + '</a>' : '<em>' + miss + '</em>';
+    var p = x.poster ? links(x.poster.items) + (x.poster.n > x.poster.items.length ? '<i> 等 ' + x.poster.n + ' 张</i>' : '') : '<em>' + miss + '</em>';
+    var h = x.ph ? links(x.ph.items) + (x.ph.n > x.ph.items.length ? '<i> 等 ' + x.ph.n + ' 个</i>' : '') : '<em>' + miss + '</em>';
+    var title = md(x.d) + ' 每日汇总';
+    return '<div class="row td-dgr' + (on ? ' on' : '') + '"><button type="button" class="td-ck" data-id="digest:' + E(x.d) + '" aria-pressed="' + (on ? 'true' : 'false') + '" aria-label="' + (on ? '取消已看：' : '标为看过：') + E(title) + '">' + (on ? CKH : '<span class="td-box"></span>') + '</button><span class="td-src">' + IC.dg + '<span>每日汇总</span></span><span class="t"><a href="' + E(x.href) + '" title="打开' + E(title) + '页">' + E(title) + '</a><ul class="td-dg">' + ln('X 简报', IC.brief, b) + ln('X 海报', IC.poster, p) + ln('产品灵感', IC.ph, h) + '</ul></span><span class="d">' + (fresh ? '今天' : md(x.d) + ' · 最近一天') + '</span></div>';
+  }
   const tdJson = JSON.stringify(tdPayload).replace(/</g, '\\u003c');
   const ckJson = JSON.stringify(CK).replace(/</g, '\\u003c');
   const metaDate = (fresh, d, extra) => { const base = fresh ? '今天' : `${d.slice(5).replace('-', '/')} · 最近一天`; return extra ? `${base} · ${extra}` : base; };
-  const b0 = pickDay(TD_BRIEF), p0 = pickDay(TD_POST), h0 = pickDay(TD_PH);
+  const g0 = pickDay(TD_DG), r0 = pickDay(TD_RD);
   const ssrRow = r => `<div class="row"><button type="button" class="td-ck" data-id="${esc(r.id)}" aria-pressed="false" aria-label="标为看过：${esc(r.title)}"><span class="td-box"></span></button><span class="td-src">${r.ic}<span>${esc(r.src)}</span></span><span class="t"><a href="${esc(r.href)}" title="${esc(r.title)}">${esc(r.title)}</a>${r.sub ? `<small>${esc(r.sub)}</small>` : ''}</span><span class="d">${esc(r.meta)}</span></div>`;
   const ssrEmpty = (src, icn, text) => `<div class="row td-empty"><span class="td-src">${icn}<span>${esc(src)}</span></span><span class="t">${text}</span></div>`;
   const ssrList = [
-    b0 ? ssrRow({ id: 'brief:' + b0.d, src: 'X 简报', ic: icBrief, href: b0.href, title: b0.title, sub: b0.sub, meta: metaDate(b0.fresh, b0.d) }) : ssrEmpty('X 简报', icBrief, '还没有简报'),
-    p0 ? ssrRow({ id: 'poster:' + p0.d, src: 'X 海报', ic: icPost, href: p0.href, title: p0.title, sub: p0.sub, meta: metaDate(p0.fresh, p0.d, p0.n ? p0.n + ' 张' : '') }) : ssrEmpty('X 海报', icPost, '还没有海报'),
-    h0 ? ssrRow({ id: 'ph:' + h0.d, src: '产品灵感', ic: icPh, href: h0.href, title: (h0.rank != null ? '#' + h0.rank + ' ' : '') + h0.title, sub: h0.sub, meta: metaDate(h0.fresh, h0.d, '新增 ' + h0.n + ' 个') }) : ssrEmpty('产品灵感', icPh, '还没有产品灵感'),
+    g0 ? dgRow(g0, g0.fresh, false, CK, esc, tdPayload.ic) : ssrEmpty('每日汇总', icDg, '还没有汇总'),
+    ...(RADAR ? [r0 ? ssrRow({ id: 'radar:' + r0.d, src: '雷达', ic: icRd, href: r0.href, title: r0.title, sub: r0.sub, meta: metaDate(r0.fresh, r0.d, '新增 ' + r0.n + ' 条').replace('最近一天', '最近一次') }) : ssrEmpty('雷达', icRd, '雷达还没有条目')] : []),
     ssrEmpty('复习', icRev, '今天没有到期的复习 ' + ic('party-popper', 15)),
   ].join('');
   const latestStart = id => { const ds = items.filter(i => i.column === id && i.start).map(i => i.start).sort(); return ds.length ? ds[ds.length - 1] : null; };
@@ -246,6 +321,7 @@ ${nx ? `<a class="nx" href="${esc(nx.href)}"${ext(nx.href)}><b>${['已学完', '
     { href: 'x-posters/index.html', ic: ic('image', 20), t: 'X 海报', desc: '每天从 X 挑技术帖做成康奈尔笔记海报，附原帖信息。', count: `${postN} 张`, d: TD_POST[0] ? TD_POST[0].d : null },
     { href: 'ph-inspo/index.html', ic: ic('rocket', 20), t: '产品灵感', desc: '每天从 Product Hunt 前一天的榜单里挑出来的产品。', count: `${phN} 个`, d: (PHI.days[0] && PHI.days[0].date) || null },
   ];
+  if (RADAR) newsList.push({ href: 'radar/index.html', ic: ic('radar', 20), t: '雷达', desc: 'Agent 工作台雷达：企业级 coding agent 工作台的开源参考，按工具链方向分组。', count: `${RADAR.entries.length} 条`, d: RADAR.updated });
   const learnList = [];
   const pushCol = c => learnList.push({ href: `${c.dir}/index.html`, ic: colIc(c, 20), t: c.title, desc: c.desc, count: `${colCount(c.id)} 条`, d: latestStart(c.id) });
   const courseCol = columns.find(c => c.id === 'courses');
@@ -256,7 +332,7 @@ ${nx ? `<a class="nx" href="${esc(nx.href)}"${ext(nx.href)}><b>${['已学完', '
   const layC = `<div class="home-v2">
 <section class="td" id="today" aria-labelledby="td-h">
 <div class="td-h"><h1 id="td-h">今日</h1><span class="td-prog" data-td="prog"></span><span class="kk" data-f="date">今天</span></div>
-<p class="sub">按今天来看。新闻各看一条，到期要复习的课也列在这里。没有当天的，用最近一天，并标出日期。</p>
+<p class="sub">按今天来看。每日汇总和早上 9 点（北京时间）推送的是同一份：简报、海报、产品灵感；雷达看最近一次补录；到期要复习的课也列在这里。当天没有的，用最近一天，并标出日期。</p>
 <div class="td-fin" data-td="fin" hidden role="status">${ic('party-popper', 16)}<span>今天读完了</span></div>
 <div class="list" data-td="list">${ssrList}</div>
 </section>
@@ -301,10 +377,10 @@ function tdPick(arr){if(!arr||!arr.length)return null;var hit=null;for(var i=0;i
 function tdMeta(fresh,d,extra){var base=fresh?'今天':(d.slice(5).replace('-','/')+' · 最近一天');return extra?base+' · '+extra:base}
 function tdLoad(){try{return JSON.parse(localStorage.getItem('today-read:'+today)||'{}')||{}}catch(e){return {}}} /* 三套主题共用 today-read:日期 */
 function tdSave(o){try{localStorage.setItem('today-read:'+today,JSON.stringify(o))}catch(e){}}
-function tdRows(){var rows=[],b=tdPick(TD.brief),po=tdPick(TD.poster),h=tdPick(TD.ph);
- if(b)rows.push({id:'brief:'+b.d,src:'X 简报',ic:TD.ic.brief,href:b.href,title:b.title,sub:b.sub||'',meta:tdMeta(b.fresh,b.d)});else rows.push({src:'X 简报',ic:TD.ic.brief,title:'还没有简报'});
- if(po)rows.push({id:'poster:'+po.d,src:'X 海报',ic:TD.ic.poster,href:po.href,title:po.title,sub:po.sub||'',meta:tdMeta(po.fresh,po.d,po.n?po.n+' 张':'')});else rows.push({src:'X 海报',ic:TD.ic.poster,title:'还没有海报'});
- if(h)rows.push({id:'ph:'+h.d,src:'产品灵感',ic:TD.ic.ph,href:h.href,title:(h.rank!=null?'#'+h.rank+' ':'')+h.title,sub:h.sub||'',meta:tdMeta(h.fresh,h.d,'新增 '+h.n+' 个')});else rows.push({src:'产品灵感',ic:TD.ic.ph,title:'还没有产品灵感'});
+${dgRow.toString()}
+function tdRows(){var rows=[],g=tdPick(TD.dg),rd=tdPick(TD.radar);
+ if(g)rows.push({id:'digest:'+g.d,dg:g});else rows.push({src:'每日汇总',ic:TD.ic.dg,title:'还没有汇总'});
+ if(TD.radar.length){if(rd)rows.push({id:'radar:'+rd.d,src:'雷达',ic:TD.ic.radar,href:rd.href,title:rd.title,sub:rd.sub||'',meta:tdMeta(rd.fresh,rd.d,'新增 '+rd.n+' 条').replace('最近一天','最近一次')});else rows.push({src:'雷达',ic:TD.ic.radar,title:'雷达还没有条目'})}
  var due=[].concat(G.over,G.today);
  if(!due.length)rows.push({src:'复习',ic:TD.ic.rev,title:'今天没有到期的复习 '+__ic('party-popper',15),html:1});
  else due.forEach(function(r){var it=R.items[r.item];if(!it)return;rows.push({id:'rev:'+r.item,src:it.col||'复习',ic:it.ic||TD.ic.rev,href:it.href,title:it.title,sub:(it.label?it.label+' · ':'')+'第 '+r.day+' 天'+(r.n>1?' · 积压 '+r.n+' 次':''),meta:r.late>0?('逾期 '+r.late+' 天'):'今天到期',over:r.late>0})});
@@ -312,6 +388,7 @@ function tdRows(){var rows=[],b=tdPick(TD.brief),po=tdPick(TD.poster),h=tdPick(T
 var tdFirst=1;
 function renderToday(focusId){var box=document.querySelector('[data-td="list"]');if(!box)return;var saved=tdLoad(),rows=tdRows(),checks=rows.filter(function(r){return r.id}),k=0;
  box.innerHTML=rows.map(function(r){var on=!!(r.id&&saved[r.id]);if(on)k++;var title=r.html?r.title:E(r.title);
+  if(r.dg)return dgRow(r.dg,r.dg.fresh,on,CK,E,TD.ic);
   if(!r.id)return '<div class="row td-empty"><span class="td-src">'+r.ic+'<span>'+E(r.src)+'</span></span><span class="t">'+title+'</span></div>';
   var ext=/^https?:/.test(r.href)?' target="_blank" rel="noopener"':'';
   return '<div class="row'+(on?' on':'')+'"><button type="button" class="td-ck" data-id="'+E(r.id)+'" aria-pressed="'+(on?'true':'false')+'" aria-label="'+(on?'取消已看：':'标为看过：')+E(r.title)+'">'+(on?CK:'<span class="td-box"></span>')+'</button><span class="td-src">'+r.ic+'<span>'+E(r.src)+'</span></span><span class="t"><a href="'+E(r.href)+'"'+ext+' title="'+E(r.title)+'">'+E(r.title)+'</a>'+(r.sub?'<small>'+E(r.sub)+'</small>':'')+'</span><span class="d'+(r.over?' td-late':'')+'">'+E(r.meta)+'</span></div>'}).join('')||'<div class="row td-empty"><span class="t">今天没有要读的</span></div>';
@@ -493,6 +570,38 @@ ${mechs}
 <p class="dsh-note">${inline(DSH.baseline)}</p>`;
   const script = `(function(){var cur='';var bs=document.querySelectorAll('.dsh-bar .chip');function run(){var n=0;document.querySelectorAll('#verify tbody[data-g]').forEach(function(tb){var on=!cur||tb.getAttribute('data-g')===cur;tb.hidden=!on;if(on)n+=tb.querySelectorAll('tr:not(.grp)').length});var t=document.getElementById('dsh-vcnt');if(t)t.textContent=cur?'筛出 '+n+' 个':'';bs.forEach(function(b){b.classList.toggle('on',(b.getAttribute('data-dsh-g')||'')===cur)})}bs.forEach(function(b){b.onclick=function(){var v=b.getAttribute('data-dsh-g')||'';cur=cur===v&&v?'':v;run()}});run()})();`;
   write(f, page(f, 'DSH 插件', 'dsh', body, script));
+}
+// ---- Agent 工作台雷达（数据 data/radar.json，由 scripts/sync-radar.mjs 从雷达 bot 的 refs.json 同步） ----
+if (RADAR) {
+  const f = 'radar/index.html';
+  const E = RADAR.entries, TH = RADAR.themes;
+  if (TH.reduce((n, t) => n + t.n, 0) !== E.length) throw new Error('radar theme counts');
+  const latest = E.filter(e => e.added === RADAR.updated);
+  const grp = n => Number(n).toLocaleString('en-US');
+  const md = d => d ? esc(d.slice(5).replace('-', '/')) : '';
+  const ext = ' target="_blank" rel="noopener"';
+  const card = e => `<article class="card rd-card" id="r${e.id}" data-th="${esc(e.theme)}" data-new="${e.added === RADAR.updated ? 1 : 0}" data-q="${esc([e.name, e.repo, e.what, e.borrow].join(' ').toLowerCase())}">
+<div class="rd-hd"><span class="rd-no">#${e.id}</span><h3><a href="${esc(e.url)}"${ext}>${esc(e.name)}</a></h3>${e.added === RADAR.updated ? `<span class="tag green">新增 ${md(e.added)}</span>` : ''}</div>
+<div class="rd-gh">${e.repo ? `<a href="https://github.com/${esc(e.repo)}"${ext}>${ic('git-fork', 13)}${esc(e.repo)}</a>` : '<span>无仓库</span>'}${e.verified ? `<span>${ic('star', 13)}${grp(e.stars)}</span><span>${esc(e.license)}</span><span title="最近推送（北京时间）">推送 ${esc(e.pushed)}</span>${e.archived ? '<span class="tag amber">已归档</span>' : ''}` : (e.repo ? '<span class="tag">仓库未核实</span>' : '<span class="tag">未核实</span>')}</div>
+<p class="rd-what">${esc(e.what)}</p>
+<p class="rd-borrow">${ic('lightbulb', 13)}<span>${esc(e.borrow)}</span></p>
+${e.note ? `<p class="rd-note">${esc(e.note)}</p>` : ''}
+<details class="rd-src"><summary>来源 ${e.sources.length}</summary><ul>${e.sources.map(s => `<li><a href="${esc(s.url)}"${ext}>${esc(s.author)}</a>${s.date ? ` <span>转发于 ${esc(s.date)}</span>` : ''}</li>`).join('')}</ul></details></article>`;
+  const secs = TH.filter(t => t.n).map(t => `<section class="rd-sec" data-sec="${esc(t.key)}"><div class="kicker" id="t-${esc(t.key)}">${esc(t.title)} <span class="n">${t.n}</span></div>
+<div class="rd-grid">${E.filter(e => e.theme === t.key).map(card).join('')}</div></section>`).join('');
+  const chip = (v, label, n) => `<button type="button" class="chip${v ? '' : ' on'}" data-th="${esc(v)}">${esc(label)}<em>${n}</em></button>`;
+  const sc = RADAR.source.scanned || {};
+  const batches = [...RADAR.batches].reverse().map(b => `<div class="row"><span class="tag${b.date === RADAR.updated ? ' green' : ''}">${esc(b.date)}</span><span class="t">${esc(b.label)}</span><span class="d">#${b.ids[0]}${b.ids[1] !== b.ids[0] ? '–#' + b.ids[1] : ''} · ${b.n} 条</span></div>`).join('');
+  const body = `<div class="crumb"><a href="../index.html">首页</a> / 雷达</div>
+<section class="hero sheet rd-hero"><div class="say"><span class="kk">${esc(RADAR.title)} · 更新 ${esc(RADAR.updated)} ${esc(RADAR.tz)}</span><h1>${ic('radar', 26)} ${esc(RADAR.subtitle)}</h1>
+<p>雷达 bot 从 ${esc(RADAR.source.account)} 的 X 时间线（${grp(sc.own_timeline_posts || 0)} 条，${esc(sc.date_range || '')}）、GitHub 搜索、Hacker News 和工程博客里挑出的开源项目与做法，按工具链方向分组，每条写清是什么、可以借鉴什么。${(() => { const d = (String(RADAR.source.githubNote || '').match(/抓取于 (\d{4}-\d\d-\d\d)/) || [])[1]; return d ? `星数、License、最近推送来自 GitHub API（抓取于 ${esc(d)}，日期为北京时间）；没写星数的是无仓库或仓库未核实。` : ''; })()}帖子里的效果数字是作者自述，没有复现。</p></div>
+<div class="stage"><div class="stat blue"><b>${E.length}</b><span>个条目</span></div><div class="stat green"><b>${E.filter(e => e.verified).length}</b><span>个仓库已核实</span></div><div class="stat"><b>${TH.filter(t => t.n).length}</b><span>个方向</span></div><div class="stat amber"><b>${latest.length}</b><span>${md(RADAR.updated)} 新增</span></div></div></section>
+<details class="panel rd-log"><summary>${ic('history', 15)} 补录记录 <span class="s">${RADAR.batches.length} 次，首版 ${esc(RADAR.generated)}</span></summary><div class="pb"><div class="list">${batches}</div></div></details>
+<div class="pi-bar rd-bar"><span class="lb">${ic('funnel', 13)}方向</span>${chip('', '全部', E.length)}${TH.filter(t => t.n).map(t => chip(t.key, t.title, t.n)).join('')}<button type="button" class="chip" data-new="1">只看 ${md(RADAR.updated)} 新增<em>${latest.length}</em></button></div>
+<div class="rd-q"><label>${ic('search', 15)}<input id="rd-q" type="search" placeholder="搜项目名、仓库或关键词" aria-label="搜索雷达条目"></label><span id="rd-cnt"></span></div>
+${secs}<div class="empty" id="rd-none" hidden><b>没有符合条件的条目</b>换个方向或关键词试试</div>`;
+  const script = `(function(){var th='',nw=0,q='';var bs=document.querySelectorAll('.rd-bar .chip');var inp=document.getElementById('rd-q');function run(){var n=0;document.querySelectorAll('.rd-sec').forEach(function(s){var v=0;s.querySelectorAll('.rd-card').forEach(function(c){var ok=(!th||c.dataset.th===th)&&(!nw||c.dataset.new==='1')&&(!q||c.dataset.q.indexOf(q)>=0);c.hidden=!ok;if(ok)v++});s.hidden=!v;n+=v});document.getElementById('rd-none').hidden=!!n;document.getElementById('rd-cnt').textContent=(th||nw||q)?'筛出 '+n+' 条':'';bs.forEach(function(b){b.classList.toggle('on',b.dataset.new?!!nw:(b.dataset.th||'')===th)})}bs.forEach(function(b){b.onclick=function(){if(b.dataset.new)nw=nw?0:1;else{var v=b.dataset.th||'';th=th===v?'':v}run()}});inp.oninput=function(){q=inp.value.trim().toLowerCase();run()};run()})();`;
+  write(f, page(f, '雷达', 'radar', body, script));
 }
 // ---- review.md（人读版） ----
 {

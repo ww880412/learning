@@ -41,7 +41,7 @@
 - 图标来源：`assets/icons.json`，由 `scripts/vendor-icons.mjs` 从 lucide-static 抽取，只收本站用到的图标。新图标先加进脚本的 `NAMES` 再运行。不要用 emoji 或其他图标库充当界面图标。
 - 构建时内联：`build.mjs` 用 `ic(name, size)`，X 简报 `build.py` / 海报 `publish_gallery.py` 用 `ic()` / `XB.ic()`；浏览器里用 `__ic(name, size, 'fill')`，只含 menu / x / star / party-popper。
 - 尺寸：行内 14–16px，按钮 18px，卡片图标 20px，标题 26px。描边 2，≥20px 用 1.75。颜色继承 `currentColor`。装饰性图标加 `aria-hidden`，只有图标的按钮要有 `aria-label`。
-- 栏目图标映射（`COL_IC`）：公开课 graduation-cap · X 好文 file-text · 技术研究 flask-conical · 微信公众号 message-circle · 视频 circle-play · 概念卡 puzzle · X 简报 newspaper · X 海报 image · 站点标志 book-open · 深色切换 sun-moon · 提示 lightbulb · 设置 settings。
+- 栏目图标映射（`COL_IC`）：公开课 graduation-cap · X 好文 file-text · 技术研究 flask-conical · 微信公众号 message-circle · 视频 circle-play · 概念卡 puzzle · X 简报 newspaper · X 海报 image · 产品灵感 rocket · DSH 插件 boxes · 雷达 radar · 每日汇总 calendar · 站点标志 book-open · 深色切换 sun-moon · 提示 lightbulb · 设置 settings。
 - 文字里的箭头「→ ←」属于排版，不算图标，可以保留。用户写的内容（简报正文、海报原帖）里的 emoji 不用改。
 
 ## 4. 动效

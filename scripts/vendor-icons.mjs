@@ -3,7 +3,7 @@
 import fs from 'fs'; import path from 'path';
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const DIR = process.env.LUCIDE_DIR || '/tmp/pp/node_modules/lucide-static/icons';
-const NAMES = ['graduation-cap','file-text','flask-conical','message-circle','circle-play','puzzle','newspaper','image','book-open','sun-moon','menu','x','star','lightbulb','party-popper','settings','circle-check','inbox','folder','chevron-right','chevron-down','arrow-right','rocket','external-link','tag','funnel','trending-up','message-square','calendar','git-fork','history','boxes'];
+const NAMES = ['graduation-cap','file-text','flask-conical','message-circle','circle-play','puzzle','newspaper','image','book-open','sun-moon','menu','x','star','lightbulb','party-popper','settings','circle-check','inbox','folder','chevron-right','chevron-down','arrow-right','rocket','external-link','tag','funnel','trending-up','message-square','calendar','git-fork','history','boxes','radar','search'];
 const RUNTIME = ['menu','x','star','party-popper'];
 const out = {};
 for (const n of NAMES) { const s = fs.readFileSync(path.join(DIR, n + '.svg'), 'utf8'); out[n] = s.replace(/<!--[\s\S]*?-->/g, '').replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '').replace(/\s*\n\s*/g, '').replace(/\s*\/>/g, '/>').trim(); }
