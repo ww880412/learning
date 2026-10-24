@@ -895,3 +895,72 @@ html.dark .pi-bar .chip.on{color:#0f1115}
  .dsh-bar .chip{flex:none;min-height:40px}
  .dsh-jump .chip{min-height:40px}
 }
+
+/* 首页：今日 + 新闻 / 学习。A/B/C 共用这一套结构，纸色、字体、顶栏/侧栏仍跟主题走。 */
+.home-v2{min-width:0}
+.home-v2 .td{background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-lg);padding:12px 14px 4px;margin:0 0 var(--sp-2);min-width:0}
+.td-h{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.td-h h1{margin:0;font-size:var(--fs-xl);letter-spacing:-.02em}
+.td-prog{font-size:var(--fs-sm);font-weight:650;color:var(--meta);font-variant-numeric:tabular-nums}
+.td-h .kk{margin-left:auto;color:var(--meta);font-weight:600}
+.home-v2 .td>.sub{margin:2px 0 8px;font-size:var(--fs-sm)}
+.td-fin{display:flex;align-items:center;gap:8px;margin:0 0 8px;padding:8px 12px;border-radius:var(--r-md);background:var(--green-soft);color:var(--green);font-weight:750;font-size:var(--fs-sm)}
+.td-fin[hidden]{display:none}
+.home-v2 .td .list{border:0;background:transparent;border-radius:0}
+.home-v2 .td .list .row{padding:4px 2px;align-items:center;flex-wrap:nowrap;gap:8px}
+.home-v2 .td .list .row:hover{background:transparent}
+.td-ck{flex:none;width:40px;height:40px;margin:0;border:0;padding:0;background:transparent;color:var(--meta);display:grid;place-items:center;cursor:pointer;border-radius:var(--r-sm)}
+.td-box{width:18px;height:18px;border:2px solid var(--meta);border-radius:50%;box-sizing:border-box}
+.td-ck:hover{background:var(--hair2);color:var(--blue)}
+.td-ck:hover .td-box{border-color:var(--blue)}
+.td-ck:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.td-ck[aria-pressed=true]{color:var(--green)}
+.td-src{flex:none;display:inline-flex;align-items:center;gap:4px;min-width:88px;font-size:var(--fs-xs);font-weight:700;color:var(--ink2);white-space:nowrap}
+.td-src .i{color:var(--blue)}
+.home-v2 .td .t{min-width:0;flex:1}
+.home-v2 .td .t a{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:var(--ink);font-weight:650;line-height:1.45}
+.home-v2 .td .t a:hover{color:var(--blue)}
+.home-v2 .td .t small{display:block;margin-top:1px;font-size:var(--fs-xs);font-weight:400;color:var(--meta);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.home-v2 .td .d{margin-left:auto;flex:none;font-size:var(--fs-xs);color:var(--meta);white-space:nowrap;font-variant-numeric:tabular-nums}
+.home-v2 .td .row.on .t a{color:var(--meta);font-weight:550}
+.td-late{color:var(--red);font-weight:700}
+.td-empty .t{color:var(--meta);font-weight:500}
+.td-cols{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr));gap:var(--sp-3);align-items:stretch}
+.td-cols>.card{min-width:0;height:100%}
+.td-cols>.card h3,.td-cols>.card p{overflow-wrap:anywhere}
+.td-cols .card p{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.td-cols .card .meta{min-width:0}
+/* A 杂志：报头双线、衬线大标题，卡片仍是暖纸圆角 */
+[data-theme=A] .home-v2 .td{background:transparent;border:0;border-bottom:4px double var(--ink);border-radius:0;padding:2px 0 10px;box-shadow:none}
+[data-theme=A] .td-h h1{font-size:var(--fs-2xl);font-weight:700;line-height:1.2}
+/* B 仪表盘：更紧、小圆角 */
+[data-theme=B] .home-v2 .td{border-radius:var(--r-md);padding:10px 12px 2px}
+[data-theme=B] .td-h h1{font-size:22px;font-weight:650}
+[data-theme=B] .td-cols{gap:var(--sp-2)}
+/* C 个人站：大圆角和卡片阴影。后面的 :root 会把 --r-lg 收成 12px，这里按规范写回 20px */
+[data-theme=C] .home-v2 .td,[data-theme=C] .td-cols>.card{border-radius:20px;box-shadow:var(--sh)}
+@media (prefers-reduced-motion:no-preference){
+ .td-ck{transition:transform var(--dur-3) var(--spring),background-color var(--dur-2) var(--ease),color var(--dur-1) var(--ease)}
+ .td-ck:active{transform:scale(.92)}
+ .td-ck[aria-pressed=true] .i{animation:td-pop var(--dur-3) var(--spring)}
+ @keyframes td-pop{0%{transform:scale(.55)}100%{transform:scale(1)}}
+ .td-fin:not([hidden]){animation:td-in var(--dur-3) var(--spring)}
+ @keyframes td-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+}
+@media (max-width:900px){
+ .home-v2 .td .list .row{display:grid;grid-template-columns:40px minmax(0,1fr);column-gap:6px;row-gap:1px;align-items:center}
+ .home-v2 .td .list .row>*{order:0;flex-basis:auto;min-width:0;max-width:100%}
+ .home-v2 .td .td-ck{grid-column:1;grid-row:1 / span 3;align-self:center}
+ .home-v2 .td .td-src{grid-column:2;grid-row:1;min-width:0}
+ .home-v2 .td .t{grid-column:2;grid-row:2}
+ .home-v2 .td .d{grid-column:2;grid-row:3;margin-left:0;justify-self:start;white-space:normal}
+ .home-v2 .td .list .row.td-empty{display:flex;flex-wrap:nowrap;align-items:center;gap:8px}
+ .home-v2 .td .list .row.td-empty .td-src{flex:none;min-width:88px;grid-column:auto;grid-row:auto}
+ .home-v2 .td .list .row.td-empty .t{flex:1;min-width:0;grid-column:auto;grid-row:auto;white-space:normal}
+ .home-v2 .td .t a,.home-v2 .td .t small{overflow-wrap:anywhere}
+ .td-src{min-width:0}
+ .home-v2 .td .t small{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+}
+@media (max-width:700px){
+ [data-theme=A] .td-h h1{font-size:var(--fs-xl)}
+}
