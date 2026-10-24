@@ -435,7 +435,7 @@ function renderToday(focusId){var box=document.querySelector('[data-td="list"]')
 (function(){var b=document.getElementById('td-sync'),box=document.getElementById('td-syncbox'),url=document.getElementById('td-syncurl'),cp=document.getElementById('td-synccopy');
  if(!b||!box||!url||!cp||!window.__sync)return;
  function fill(){var home=new URL(typeof __R==='string'?__R:'index.html',location.href);home.search='';home.hash='sync='+__sync.encode(__sync.collect());url.value=home.href}
- b.onclick=function(){var open=box.hidden;box.hidden=!open;b.setAttribute('aria-expanded',open?'true':'false');if(open){fill();url.focus()}};
+ b.onclick=function(){var open=box.hidden;box.hidden=!open;b.setAttribute('aria-expanded',open?'true':'false');if(open)fill()};
  cp.onclick=function(){if(!url.value)fill();var t=url.value,ok=function(){cp.textContent='已复制';setTimeout(function(){cp.textContent='复制'},1600)};
   if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(ok,function(){url.focus();url.select();try{document.execCommand('copy')}catch(e){}ok()});
   else{url.focus();url.select();try{document.execCommand('copy')}catch(e){}ok()}}})();

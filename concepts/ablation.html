@@ -911,7 +911,7 @@ html.dark .pi-bar .chip.on{color:#0f1115}
 .td-synchint{margin:0;font-size:var(--fs-xs);color:var(--meta);line-height:1.45}
 .td-syncbox textarea{width:100%;min-height:64px;margin:0;resize:vertical;border:1px solid var(--hair);border-radius:var(--r-sm);background:var(--paper);color:var(--ink);padding:8px 10px;font:12px/1.45 var(--mono);word-break:break-all}
 .td-syncbox textarea:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
-.td-syncbox .btn{justify-self:start}
+.td-syncbox .btn{justify-self:start;min-width:72px}
 .sync-note{margin:0 0 8px;padding:8px 12px;border-radius:var(--r-sm);background:var(--green-soft);color:var(--green);font-size:var(--fs-sm);font-weight:650}
 .sync-note[hidden]{display:none}
 .sync-note.bad{background:var(--amber-soft);color:var(--amber)}
@@ -960,7 +960,8 @@ html.dark .pi-bar .chip.on{color:#0f1115}
  @keyframes td-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 }
 @media (max-width:900px){
- .td-h .td-syncbtn{margin-left:0;flex:1 0 100%;justify-content:center}
+ .td-h .kk{margin-left:auto}
+ .td-h .td-syncbtn{margin-left:0;order:5;flex:1 0 100%;justify-content:center}
  .td-syncbox .btn{min-height:40px}
  .home-v2 .td .list .row{display:grid;grid-template-columns:40px minmax(0,1fr);column-gap:6px;row-gap:1px;align-items:center}
  .home-v2 .td .list .row>*{order:0;flex-basis:auto;min-width:0;max-width:100%}
