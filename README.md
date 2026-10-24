@@ -45,6 +45,8 @@ node build.mjs
 
 也可以把 `data/review.json` 里对应的 `"done": false` 改成 `true`，再 `node build.mjs`。两边任一处记成完成都算数。首页按浏览器当天日期计算（`?today=YYYY-MM-DD` 可自查）。
 
+本机若在收藏页「同步设置」保存了和收藏相同的 GitHub 令牌，「今日」勾选还会把 `data/review.json` 里对应的 `done` 写成 `true`（可带 `doneOn` 完成日）。取消勾选写回 `false`，不删除 `learned`。课程页「学完了」会把北京时间的日期写入 `learned`，已有更早的日期则保留更早的。没有令牌时只写本机。
+
 ## 发布
 `.gitignore` 已排除 `_private/` 和指向它的快捷方式；`.nojekyll` 已放好。改完后 `node build.mjs`，再 `git push` 到 main。L01 的 lesson.html 源文件在 `_private/cs146s/L01-lesson/`（不发布）。
 
