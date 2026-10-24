@@ -30,7 +30,9 @@ node build.mjs
 建目录（如 `podcasts/`），在 `data/columns.json` 加一条 `{"id","dir","title","icon","desc"}`，`node build.mjs`。首页会多一张卡片，空栏目显示「还没有内容」。
 
 ## 复习打卡
-把 `data/review.json` 里对应的 `"done": false` 改成 `true`，再 `node build.mjs`。首页「今天该复习」按浏览器当天日期计算：今天到期标黄，逾期标红。
+在首页「今日」勾上一条到期复习，就把这篇当前已经到期、还没完成的复习全部记成完成。记录在这台浏览器的 localStorage（`rev-done:<条目 id>`，第几天对应完成日期）。同一天取消勾选会撤销。勾完的行当天仍显示为已看，第二天消失；下一次复习按原定日期出现。
+
+也可以把 `data/review.json` 里对应的 `"done": false` 改成 `true`，再 `node build.mjs`。两边任一处记成完成都算数。首页按浏览器当天日期计算（`?today=YYYY-MM-DD` 可自查）。
 
 ## 发布
 `.gitignore` 已排除 `_private/` 和指向它的快捷方式；`.nojekyll` 已放好。改完后 `node build.mjs`，再 `git push` 到 main。L01 的 lesson.html 源文件在 `_private/cs146s/L01-lesson/`（不发布）。
