@@ -418,4 +418,4 @@ const b=document.createElement('button');b.className='fin-btn';document.body.app
 const show=()=>{const d=getDone();b.classList.toggle('done',!!d);b.textContent=d?'✓ 已学完 '+d:'✓ 学完了';b.title=d?'再点一下取消':''};show();
 b.onclick=()=>{if(getDone()){if(confirm('取消「已学完」记录？'))clearDone()}else{const x=new Date();setDone(x.getFullYear()+'-'+p(x.getMonth()+1)+'-'+p(x.getDate()))}show()};
 })();
-</script></body></html>
+</script><script src="../../assets/gh.js" defer></script><script src="../../assets/progress.js" defer></script></body></html>

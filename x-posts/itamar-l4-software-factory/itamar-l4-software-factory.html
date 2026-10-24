@@ -478,4 +478,4 @@ const b=document.createElement('button');b.className='fin-btn';document.body.app
 const show=()=>{const d=localStorage.getItem(key);b.classList.toggle('done',!!d);b.textContent=d?'✓ 已学完 '+d:'✓ 学完了';b.title=d?'再点一下取消':''};show();
 b.onclick=()=>{if(localStorage.getItem(key)){if(confirm('取消「已学完」记录？'))localStorage.removeItem(key)}else{const x=new Date();localStorage.setItem(key,x.getFullYear()+'-'+p(x.getMonth()+1)+'-'+p(x.getDate()))}show()};
 })();
-</script></body></html>
+</script><script src="../../assets/gh.js" defer></script><script src="../../assets/progress.js" defer></script></body></html>
