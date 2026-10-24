@@ -102,36 +102,88 @@ const itemCard = (file, it) => `<a class="card item" href="${rel(file, it.href)}
 const emptyBox = (t, s) => `<div class="empty"><b>${t}</b>${s}</div>`;
 const itemConcepts = id => concepts.filter(c => c.refs.some(r => r.item === id));
 
+// 简报文件名是美东日期，固定美东 21:00 发布，等于北京时间次日 09:00。
+// head 或刊头里若有带时区（或 ET/PT 字样）的发布时间，改用该时间换算到 Asia/Shanghai；只有日期、没有钟点的，不算。
+const shanghaiDate = instant => {
+  const dt = instant instanceof Date ? instant : new Date(instant);
+  if (Number.isNaN(dt.getTime())) return null;
+  const s = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit' }).format(dt);
+  return /^\d{4}-\d{2}-\d{2}$/.test(s) ? s : null;
+};
+const wallToInstant = (day, hm, timeZone) => {
+  const [y, mo, d] = day.split('-').map(Number);
+  const [hh, mm, ss = 0] = hm.split(':').map(Number);
+  const want = Date.UTC(y, mo - 1, d, hh, mm, ss);
+  let utc = want;
+  const fmt = new Intl.DateTimeFormat('en-US', { timeZone, hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  for (let i = 0; i < 2; i++) {
+    const parts = Object.fromEntries(fmt.formatToParts(new Date(utc)).filter(p => p.type !== 'literal').map(p => [p.type, Number(p.value)]));
+    let py = parts.year, pm = parts.month, pd = parts.day, ph = parts.hour, pmi = parts.minute, ps = parts.second;
+    if (ph === 24) { ph = 0; pd += 1; }
+    utc += want - Date.UTC(py, pm - 1, pd, ph, pmi, ps);
+  }
+  return new Date(utc);
+};
+const ZONES = { ET: 'America/New_York', EDT: 'America/New_York', EST: 'America/New_York', PT: 'America/Los_Angeles', PDT: 'America/Los_Angeles', PST: 'America/Los_Angeles', UTC: 'UTC', GMT: 'UTC' };
+const parseBriefStamp = raw => {
+  const s = String(raw || '').trim();
+  if (!s) return null;
+  if (/[zZ]$|[+-]\d{2}:?\d{2}$/.test(s) && /[T ]\d{2}:\d{2}/.test(s)) return shanghaiDate(s);
+  const m = s.match(/^(\d{4}-\d{2}-\d{2})[ T](\d{2}:\d{2}(?::\d{2})?)\s*(ET|EDT|EST|PT|PDT|PST|UTC|GMT)$/i);
+  if (!m) return null;
+  const zone = ZONES[m[3].toUpperCase()];
+  if (zone === 'UTC') return shanghaiDate(`${m[1]}T${m[2].length === 5 ? m[2] + ':00' : m[2]}Z`);
+  return shanghaiDate(wallToInstant(m[1], m[2], zone));
+};
+const briefPublishDay = html => {
+  const head = (String(html).match(/<head[\s\S]*?<\/head>/i) || [''])[0];
+  const meta = head.match(/<meta[^>]*(?:article:published_time|datePublished|publish-date|published)[^>]*>/i);
+  if (meta) { const c = meta[0].match(/content="([^"]+)"/i); const day = c && parseBriefStamp(c[1]); if (day) return day; }
+  const time = head.match(/<time[^>]+datetime="([^"]+)"/i);
+  if (time) { const day = parseBriefStamp(time[1]); if (day) return day; }
+  const kk = String(html).match(/<span class="kk">([\s\S]*?)<\/span>\s*<h1>/);
+  if (kk) {
+    const hit = kk[1].replace(/<[^>]+>/g, ' ').match(/(\d{4}-\d{2}-\d{2})[ T](\d{2}:\d{2}(?::\d{2})?)\s*(ET|EDT|EST|PT|PDT|PST|UTC|GMT)/i);
+    if (hit) return parseBriefStamp(`${hit[1]} ${hit[2]} ${hit[3]}`);
+  }
+  return null;
+};
+// 没有可靠发布时间时：美东文件名 + 1 天 = 北京日期。
+const briefBeijingDate = (fileDate, html) => briefPublishDay(html) || addDays(fileDate, 1);
+
 // ---- 每日汇总（北京时间 9:00 推送用）：从 x-brief / x-posters / data/ph-inspo.json 汇成 data/digest/YYYY-MM-DD.json 和 digest/YYYY-MM-DD.html ----
-// 规则：汇总日 D = x-brief/D.html + x-posters/D/ + 产品灵感里 date 为 D 前一天的那组（PH 是「前一天的榜单」）。某个来源当天没有，就是 null，页面写「还没更新」，不拿别天的凑。
+// 汇总日 D 是北京时间。简报用北京日期（见 briefBeijingDate），海报目录已是北京日期，产品灵感取榜单日 ≤ D−2 的最新一份。某一来源没有就是 null，不拿别天硬凑。
 const DG = (() => {
   const T = s => String(s || '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
   const rd = f => { try { return fs.readFileSync(path.join(ROOT, f), 'utf8'); } catch { return ''; } };
   const ls = d => fs.existsSync(path.join(ROOT, d)) ? fs.readdirSync(path.join(ROOT, d)) : [];
   const WD = '日一二三四五六';
-  const brief = {}, poster = {}, ph = {};
-  for (const x of ls('x-brief').filter(x => /^\d{4}-\d\d-\d\d\.html$/.test(x))) {
-    const d = x.slice(0, 10), h = rd('x-brief/' + x);
+  const brief = {}, poster = {};
+  for (const x of ls('x-brief').filter(x => /^\d{4}-\d\d-\d\d\.html$/.test(x)).sort()) {
+    const fileDate = x.slice(0, 10), h = rd('x-brief/' + x);
+    const d = briefBeijingDate(fileDate, h);
+    if (brief[d] && (brief[d].href.match(/(\d{4}-\d{2}-\d{2})/) || [])[1] >= fileDate) continue;
     const qm = h.match(/今日主线<\/div>\s*<ol class="quick">([\s\S]*?)<\/ol>/);
     let lines = qm ? [...qm[1].matchAll(/<li>([\s\S]*?)<\/li>/g)].map(m => T(m[1])).filter(Boolean) : [];
     if (!lines.length) lines = [...h.matchAll(/<h2 id="[^"]+"[^>]*>[\s\S]*?<\/h2>\s*<p>([\s\S]*?)<\/p>/g)].map(m => T(m[1])).filter(Boolean).slice(0, 3);
-    brief[d] = { title: T((h.match(/<h1>([\s\S]*?)<\/h1>/) || [])[1]) || `X 简报 · ${d}`, href: `x-brief/${d}.html`, lines: lines.slice(0, 3) };
+    brief[d] = { title: T((h.match(/<h1>([\s\S]*?)<\/h1>/) || [])[1]) || `X 简报 · ${fileDate}`, href: `x-brief/${fileDate}.html`, lines: lines.slice(0, 3) };
   }
   for (const d of ls('x-posters').filter(x => /^\d{4}-\d\d-\d\d$/.test(x))) {
     const h = rd(`x-posters/${d}/index.html`); if (!h) continue;
     const items = [...h.matchAll(/<section class="[^"]*\bpc" id="([^"]+)"[\s\S]*?<img src="([^"]+)" alt="([^"]*)"[\s\S]*?<h3[^>]*>([\s\S]*?)<\/h3>/g)].map(m => ({ title: T(m[4]) || T(m[3]), href: `x-posters/${d}/index.html#${m[1]}`, img: `x-posters/${d}/${m[2]}` }));
     if (items.length) poster[d] = { title: T((h.match(/<h1>([\s\S]*?)<\/h1>/) || [])[1]) || `${items.length} 张技术海报`, href: `x-posters/${d}/index.html`, n: items.length, items };
   }
-  for (const day of PHI.days || []) {
-    if (!day.date || !(day.items || []).length) continue;
-    const d = addDays(day.date, 1);
-    ph[d] = { listDate: day.date, href: `ph-inspo/index.html`, n: day.items.length, source: day.source || null,
+  const phDays = (PHI.days || []).filter(day => day.date && (day.items || []).length).sort((a, b) => b.date.localeCompare(a.date));
+  const phFor = d => {
+    const day = phDays.find(x => x.date <= addDays(d, -2));
+    if (!day) return null;
+    return { listDate: day.date, href: `ph-inspo/index.html`, n: day.items.length, source: day.source || null,
       items: [...day.items].sort((a, b) => (a.rank ?? 999) - (b.rank ?? 999)).map(i => ({ rank: i.rank ?? null, name: i.name, what: i.what || '', href: `ph-inspo/index.html#${i.id}` })) };
-  }
-  const dates = [...new Set([...Object.keys(brief), ...Object.keys(poster), ...Object.keys(ph)])].sort().reverse();
+  };
+  const dates = [...new Set([...Object.keys(brief), ...Object.keys(poster)])].sort().reverse();
   const list = dates.map(d => { const [y, m, dd] = d.split('-').map(Number);
     return { date: d, label: `${m} 月 ${dd} 日 · 星期${WD[new Date(Date.UTC(y, m - 1, dd)).getUTCDay()]}`, href: `digest/${d}.html`, json: `data/digest/${d}.json`,
-      brief: brief[d] || null, posters: poster[d] || null, ph: ph[d] || null }; });
+      brief: brief[d] || null, posters: poster[d] || null, ph: phFor(d) }; });
   return { list, byDate: Object.fromEntries(list.map(x => [x.date, x])) };
 })();
 {
@@ -139,7 +191,7 @@ const DG = (() => {
   const keep = new Set(DG.list.map(x => x.date + '.json'));
   fs.mkdirSync(path.join(ROOT, 'data', 'digest'), { recursive: true });
   for (const x of fs.readdirSync(path.join(ROOT, 'data', 'digest'))) if (/^\d{4}-\d\d-\d\d\.json$/.test(x) && !keep.has(x)) fs.rmSync(path.join(ROOT, 'data', 'digest', x));
-  const rule = '汇总日 D = X 简报 x-brief/D.html + X 海报 x-posters/D/ + 产品灵感（Product Hunt D 前一天的榜单）。某个来源当天没有就是 null。';
+  const rule = '汇总日 D 是北京时间。简报文件名是美东日期，美东 21:00 发布等于北京时间次日 09:00，所以 D 一般对应 x-brief/(D−1).html（页面若有带时区的发布时间，则改用该时间换算到 Asia/Shanghai；链接仍是原文件）。海报是 x-posters/D/。产品灵感是最新一份榜单日 ≤ D−2 的那组（太平洋时间的 Product Hunt 日榜，北京时间 D 日 09:00 前能入库的最新一份），并标出实际榜单日。某一来源没有就是 null。';
   for (const x of DG.list) fs.writeFileSync(path.join(ROOT, 'data', 'digest', x.date + '.json'), JSON.stringify({ ...x, url: SITE + x.href, rule }, null, 1) + '\n');
   fs.writeFileSync(path.join(ROOT, 'data', 'digest', 'index.json'), JSON.stringify({ _readme: '由 build.mjs 生成。北京时间 9:00 的汇总推送直接链接 url，或读 json。', rule, site: SITE, latest: DG.list[0]?.date || null,
     days: DG.list.map(x => ({ date: x.date, url: SITE + x.href, json: x.json, brief: !!x.brief, posters: x.posters?.n || 0, ph: x.ph?.n || 0 })) }, null, 1) + '\n');
@@ -147,7 +199,7 @@ const DG = (() => {
   const none = t => `<div class="dg-none">${t}</div>`;
   const dayBody = (f, x) => `<div class="dg-grid">
 <section class="sheet dg-sec"><h2>${ic('newspaper', 18)} X 简报</h2>${x.brief ? `<a class="dg-tt" href="${rel(f, x.brief.href)}">${esc(x.brief.title)}</a>${x.brief.lines.length ? `<ol>${x.brief.lines.map(l => `<li>${esc(l)}</li>`).join('')}</ol>` : ''}<a class="btn sm" href="${rel(f, x.brief.href)}">读这期简报 →</a>` : none('这天还没有简报')}</section>
-<section class="sheet dg-sec"><h2>${ic('rocket', 18)} 产品灵感${x.ph ? ` <span class="tag">${esc(x.ph.listDate.slice(5).replace('-', '/'))} 榜单 · ${x.ph.n} 个</span>` : ''}</h2>${x.ph ? `<ol class="dg-ph">${x.ph.items.map(i => `<li><a href="${rel(f, i.href)}"><b>${i.rank != null ? '#' + esc(i.rank) + ' ' : ''}${esc(i.name)}</b></a><span>${esc(i.what)}</span></li>`).join('')}</ol>` : none('这天还没有产品灵感')}</section>
+<section class="sheet dg-sec"><h2>${ic('rocket', 18)} 产品灵感${x.ph ? ` <span class="tag">榜单 ${esc(x.ph.listDate.slice(5).replace('-', '/'))} · ${x.ph.n} 个</span>` : ''}</h2>${x.ph ? `<ol class="dg-ph">${x.ph.items.map(i => `<li><a href="${rel(f, i.href)}"><b>${i.rank != null ? '#' + esc(i.rank) + ' ' : ''}${esc(i.name)}</b></a><span>${esc(i.what)}</span></li>`).join('')}</ol>` : none('这天还没有产品灵感')}</section>
 <section class="sheet dg-sec dg-wide"><h2>${ic('image', 18)} X 海报${x.posters ? ` <span class="tag">${x.posters.n} 张</span>` : ''}</h2>${x.posters ? `<div class="dg-po">${x.posters.items.map(p => `<a href="${rel(f, p.href)}"><img src="${rel(f, p.img)}" alt="${esc(p.title)}" loading="lazy"><span>${esc(p.title)}</span></a>`).join('')}</div>` : none('这天还没有海报')}</section></div>`;
   for (const [k, x] of DG.list.entries()) {
     const f = x.href, prev = DG.list[k + 1], next = DG.list[k - 1];
@@ -274,8 +326,8 @@ ${nx ? `<a class="nx" href="${esc(nx.href)}"${ext(nx.href)}><b>${['已学完', '
       if (h2) { title = T(h2[2]); sub = T(h2[1]) || '简报'; }
     }
     if (!title) { title = T((h.match(/<h1>([\s\S]*?)<\/h1>/) || [])[1] || ''); sub = ''; }
-    return title ? { d, href: `x-brief/${d}.html`, title, sub } : null;
-  }).filter(Boolean);
+    return title ? { d: briefBeijingDate(d, h), href: `x-brief/${d}.html`, title, sub } : null;
+  }).filter(Boolean).sort((a, b) => b.d.localeCompare(a.d));
   const posterDir = path.join(ROOT, 'x-posters');
   const TD_POST = (fs.existsSync(posterDir) ? fs.readdirSync(posterDir) : []).filter(x => /^\d{4}-\d\d-\d\d$/.test(x) && fs.existsSync(path.join(posterDir, x, 'index.html'))).sort().reverse().map(d => {
     const h = fs.readFileSync(path.join(posterDir, d, 'index.html'), 'utf8');
@@ -297,7 +349,7 @@ ${nx ? `<a class="nx" href="${esc(nx.href)}"${ext(nx.href)}><b>${['已学完', '
   // 今日的新闻：一条「每日汇总」（简报 + 海报 + 产品灵感，与北京时间 9:00 推送同一份 data/digest/D.json）+ 一条雷达最近补录
   const TD_DG = DG.list.map(x => ({ d: x.date, href: x.href, brief: x.brief ? { href: x.brief.href, t: x.brief.lines[0] || x.brief.title } : null,
     poster: x.posters ? { href: x.posters.href, n: x.posters.n, items: x.posters.items.slice(0, 2).map(p => [p.href, p.title]) } : null,
-    ph: x.ph ? { href: x.ph.href, n: x.ph.n, items: x.ph.items.slice(0, 3).map(i => [i.href, (i.rank != null ? '#' + i.rank + ' ' : '') + i.name]) } : null }));
+    ph: x.ph ? { href: x.ph.href, n: x.ph.n, list: x.ph.listDate, items: x.ph.items.slice(0, 3).map(i => [i.href, (i.rank != null ? '#' + i.rank + ' ' : '') + i.name]) } : null }));
   const TD_RD = RADAR ? (() => { const L = RADAR.entries.filter(e => e.added === RADAR.updated).sort((a, b) => b.id - a.id); const e = L[0];
     return e ? [{ d: RADAR.updated, href: `radar/index.html#r${e.id}`, title: e.name, sub: e.what, n: L.length }] : []; })() : [];
   const tdPayload = { dg: TD_DG, radar: TD_RD, ic: { dg: icDg, radar: icRd, brief: icBrief, poster: icPost, ph: icPh, rev: icRev } };
@@ -309,7 +361,7 @@ ${nx ? `<a class="nx" href="${esc(nx.href)}"${ext(nx.href)}><b>${['已学完', '
     var links = function (arr) { return arr.map(function (a) { return '<a href="' + E(a[0]) + '">' + E(a[1]) + '</a>'; }).join('<i>、</i>'); };
     var b = x.brief ? '<a href="' + E(x.brief.href) + '">' + E(x.brief.t) + '</a>' : '<em>' + miss + '</em>';
     var p = x.poster ? links(x.poster.items) + (x.poster.n > x.poster.items.length ? '<i> 等 ' + x.poster.n + ' 张</i>' : '') : '<em>' + miss + '</em>';
-    var h = x.ph ? links(x.ph.items) + (x.ph.n > x.ph.items.length ? '<i> 等 ' + x.ph.n + ' 个</i>' : '') : '<em>' + miss + '</em>';
+    var h = x.ph ? '<i>榜单 ' + md(x.ph.list) + ' · </i>' + links(x.ph.items) + (x.ph.n > x.ph.items.length ? '<i> 等 ' + x.ph.n + ' 个</i>' : '') : '<em>' + miss + '</em>';
     var title = md(x.d) + ' 每日汇总';
     return '<div class="row td-dgr' + (on ? ' on' : '') + '"><button type="button" class="td-ck" data-id="digest:' + E(x.d) + '" aria-pressed="' + (on ? 'true' : 'false') + '" aria-label="' + (on ? '取消已看：' : '标为看过：') + E(title) + '">' + (on ? CKH : '<span class="td-box"></span>') + '</button><span class="td-src">' + IC.dg + '<span>每日汇总</span></span><span class="t"><a href="' + E(x.href) + '" title="打开' + E(title) + '页">' + E(title) + '</a><ul class="td-dg">' + ln('X 简报', IC.brief, b) + ln('X 海报', IC.poster, p) + ln('产品灵感', IC.ph, h) + '</ul></span><span class="d">' + (fresh ? '今天' : md(x.d) + ' · 最近一天') + '</span></div>';
   }
@@ -326,16 +378,17 @@ ${nx ? `<a class="nx" href="${esc(nx.href)}"${ext(nx.href)}><b>${['已学完', '
   ].join('');
   const latestStart = id => { const ds = items.filter(i => i.column === id && i.start).map(i => i.start).sort(); return ds.length ? ds[ds.length - 1] : null; };
   const colCount = id => items.filter(i => i.column === id).length;
-  const dateBit = d => d ? `<span>更新 ${md(d)}</span>` : '<span>日期未获取</span>';
-  const v2card = o => `<a class="card" href="${esc(o.href)}"><span class="go">→</span><div class="ic">${o.ic}</div><h3>${esc(o.t)}</h3><p>${esc(o.desc)}</p><div class="meta"><span class="tag blue">${esc(o.count)}</span>${dateBit(o.d)}</div></a>`;
+  const dateBit = o => o.when ? `<span>${esc(o.when)}</span>` : (o.d ? `<span>更新 ${md(o.d)}</span>` : '<span>日期未获取</span>');
+  const v2card = o => `<a class="card" href="${esc(o.href)}"><span class="go">→</span><div class="ic">${o.ic}</div><h3>${esc(o.t)}</h3><p>${esc(o.desc)}</p><div class="meta"><span class="tag blue">${esc(o.count)}</span>${dateBit(o)}</div></a>`;
   const phN = (PHI.days || []).reduce((n, d) => n + ((d.items || []).length), 0);
+  const phTop = (PHI.days || []).filter(d => d.date && (d.items || []).length).sort((a, b) => b.date.localeCompare(a.date))[0];
   const postN = TD_POST.reduce((n, p) => n + (p.n || 0), 0);
   const newsList = [
     { href: 'x-brief/index.html', ic: ic('newspaper', 20), t: 'X 简报', desc: '每天一期的 X 中文简报，按日期翻往期。', count: `${TD_BRIEF.length} 期`, d: TD_BRIEF[0] ? TD_BRIEF[0].d : null },
     { href: 'x-posters/index.html', ic: ic('image', 20), t: 'X 海报', desc: '每天从 X 挑技术帖做成康奈尔笔记海报，附原帖信息。', count: `${postN} 张`, d: TD_POST[0] ? TD_POST[0].d : null },
-    { href: 'ph-inspo/index.html', ic: ic('rocket', 20), t: '产品灵感', desc: '每天从 Product Hunt 前一天的榜单里挑出来的产品。', count: `${phN} 个`, d: (PHI.days[0] && PHI.days[0].date) || null },
+    { href: 'ph-inspo/index.html', ic: ic('rocket', 20), t: '产品灵感', desc: '从 Product Hunt 榜单里挑的产品。日期是太平洋时间的榜单日。', count: `${phN} 个`, when: phTop ? `榜单 ${phTop.date.slice(5).replace('-', '/')}` : null },
   ];
-  if (RADAR) newsList.push({ href: 'radar/index.html', ic: ic('radar', 20), t: '雷达', desc: 'Agent 工作台雷达：企业级 coding agent 工作台的开源参考，按工具链方向分组。', count: `${RADAR.entries.length} 条`, d: RADAR.updated });
+  if (RADAR) newsList.push({ href: 'radar/index.html', ic: ic('radar', 20), t: '雷达', desc: '企业级 coding agent 工作台的开源参考，按工具链方向分组。', count: `${RADAR.entries.length} 条`, when: '每周一更新，平时随时补录' });
   const learnList = [];
   const pushCol = c => learnList.push({ href: `${c.dir}/index.html`, ic: colIc(c, 20), t: c.title, desc: c.desc, count: `${colCount(c.id)} 条`, d: latestStart(c.id) });
   const courseCol = columns.find(c => c.id === 'courses');
@@ -353,7 +406,7 @@ ${nx ? `<a class="nx" href="${esc(nx.href)}"${ext(nx.href)}><b>${['已学完', '
 <div class="list" data-td="list">${ssrList}</div>
 </section>
 <div class="kicker" id="k-news">新闻 <span class="n">${newsList.length}</span></div>
-<div class="sub">每天刷新，看过即过</div>
+<div class="sub">简报、海报、灵感每天刷新，看过即过</div>
 <div class="td-cols">${newsList.map(v2card).join('')}</div>
 <div class="kicker" id="k-learn">学习 <span class="n">${learnList.length}</span></div>
 <div class="sub">按进度走，按需查</div>
@@ -529,7 +582,7 @@ ${fuHtml(it)}</article>`;
 <div class="pi-grid">${[...d.items].sort((a, b) => (a.rank ?? 999) - (b.rank ?? 999)).map(card).join('')}</div></section>`).join('');
   const chip = (k, v, label, n) => `<button type="button" class="chip${v ? '' : ' on'}" data-k="${k}" data-v="${esc(v)}">${esc(label)}${n != null ? `<em>${n}</em>` : ''}</button>`;
   const body = `<div class="crumb"><a href="../index.html">首页</a> / 产品灵感</div>
-<section class="hero sheet pi-hero"><div class="say"><span class="kk">PH灵感箱 · ${PHI.days.length} 天</span><h1>${ic('rocket', 26)} 产品灵感</h1><p>每天从 Product Hunt 前一天的榜单里挑 5–8 个和 coding agent 工作台、AI 工具、开发者工具、效率、创作、教育相关的新产品，写清楚是什么、解决什么、能抄什么。数据在 <code>data/ph-inspo.json</code>。</p></div>
+<section class="hero sheet pi-hero"><div class="say"><span class="kk">PH灵感箱 · ${PHI.days.length} 天</span><h1>${ic('rocket', 26)} 产品灵感</h1><p>从 Product Hunt 日榜里挑 5–8 个和 coding agent 工作台、AI 工具、开发者工具、效率、创作、教育相关的新产品，写清楚是什么、解决什么、能抄什么。标题上的日期是太平洋时间的榜单日；北京时间早上能看到的最新一份，是两天前的榜。数据在 <code>data/ph-inspo.json</code>。</p></div>
 <div class="stage"><div class="stat blue"><b>${all.length}</b><span>个产品</span></div><div class="stat amber"><b>${cnt('在跟进')}</b><span>在跟进</span></div><div class="stat green"><b>${cnt('已试用')}</b><span>已试用</span></div><div class="stat purple"><b>${all.filter(i => (i.tags || []).includes('coding agent')).length}</b><span>coding agent 相关</span></div></div></section>
 ${all.length ? `<div class="pi-bar"><span class="lb">${ic('tag', 13)}标签</span>${chip('tag', '', '全部')}${tags.map(t => chip('tag', t, t, all.filter(i => (i.tags || []).includes(t)).length)).join('')}</div>
 <div class="pi-bar"><span class="lb">${ic('funnel', 13)}状态</span>${chip('st', '', '全部')}${(PHI.statuses || []).map(s => chip('st', s, s, cnt(s))).join('')}<span class="pi-cnt" id="pi-cnt"></span></div>

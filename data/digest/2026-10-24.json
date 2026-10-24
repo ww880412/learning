@@ -3,7 +3,15 @@
  "label": "10 月 24 日 · 星期六",
  "href": "digest/2026-10-24.html",
  "json": "data/digest/2026-10-24.json",
- "brief": null,
+ "brief": {
+  "title": "X 简报 · 10/23（周五）",
+  "href": "x-brief/2026-10-23.html",
+  "lines": [
+   "月之暗面发布 Kimi K3.1 Pro：2.8T 总参数的开放权重模型，跑分贴近 Opus 5.5 和 GPT-6 Astra，价格只有 Astra 的五分之一，权重 11 月 4 日前放出；Nathan Lambert 认为 Kimi 这次把强化学习后训练做对了",
+   "漏洞潮第三天：PHP 之后轮到 Ruby，OpenAI 披露在一个广泛使用的压缩库里发现远程代码执行漏洞，并称 10/1 已恢复前沿训练、拿出大量算力做红队；Gary Marcus 呼吁暂时禁止 AI Agent，levelsio 劝大家把 VPS 撤下公网",
+   "Grok Bot 接上 iPhone 自带的 6 个应用并上线 Vault，1Password 的 Agent 登录全量开放；Cursor 也加了 Computer Use，Codex CLI 用量自 DevDay 以来翻倍"
+  ]
+ },
  "posters": {
   "title": "7 张技术海报",
   "href": "x-posters/2026-10-24/index.html",
@@ -47,55 +55,61 @@
   ]
  },
  "ph": {
-  "listDate": "2026-10-23",
+  "listDate": "2026-10-22",
   "href": "ph-inspo/index.html",
-  "n": 7,
-  "source": "https://www.producthunt.com/leaderboard/daily/2026/10/23",
+  "n": 8,
+  "source": "https://www.producthunt.com/leaderboard/daily/2026/10/22",
   "items": [
    {
+    "rank": 1,
+    "name": "DeepCell",
+    "what": "面向截止日期的办公套件：用自研 .deepcell 格式把推理备忘（cheat sheet）、表格、文档、幻灯片连成一份，改一处可联动相关内容；提供 Web、Claude Code 插件、CLI 和远程 MCP。",
+    "href": "ph-inspo/index.html#2026-10-22-deepcell"
+   },
+   {
     "rank": 2,
-    "name": "MOVO AI",
-    "what": "手机上的长视频创作 agent（也有网页版）：拍摄、上传或从一个想法开始，说你要什么，它负责规划、生成、修改，保持角色和场景一致，并把整支视频拼好。",
-    "href": "ph-inspo/index.html#2026-10-23-movo-ai"
+    "name": "Claude Duet",
+    "what": "Anthropic 的主动式 agent 应用：连上邮箱、日历等应用后，每天早上发简报，白天只在需要你决策时找你；任务在云端虚拟机里继续跑，发消息、付款、签字、删除前会先征求批准。",
+    "href": "ph-inspo/index.html#2026-10-22-claude-duet"
    },
    {
     "rank": 3,
-    "name": "Agent Hunt",
-    "what": "Monid 出的实时榜单：按 AI agent 经 Monid 真实调用的次数给工具排名。Monid 本身把 agent 接到 2,700+ 个 API，agent 运行时自己发现、调用并付费。",
-    "href": "ph-inspo/index.html#2026-10-23-agent-hunt"
+    "name": "Doneas",
+    "what": "给独立开发者/创业者的问责圈子：周一锁定本周计划，工作日与固定的另外五人开 15 分钟站会，汇报完成项、下一步和阻塞，并在公开进度页记下交付。",
+    "href": "ph-inspo/index.html#2026-10-22-doneas"
    },
    {
     "rank": 4,
-    "name": "Ovren Live Preview",
-    "what": "Ovren 让 AI 前端、后端工程师在你的真实代码库里做积压任务、交可评审的代码改动；这次上线的 Live Preview 让你在发布前实时看到产品的变化。",
-    "href": "ph-inspo/index.html#2026-10-23-ovren"
+    "name": "heal.dev",
+    "what": "运行时 QA agent：先学会怎么跑你的应用，搭一个把外部服务 stub 掉的类生产沙箱，再主动挖会真正打到用户的 bug、性能回退和运行时漏洞；每条缺陷先复现再报，并给出失败测试。",
+    "href": "ph-inspo/index.html#2026-10-22-heal-dev"
    },
    {
-    "rank": 9,
-    "name": "Context Engine",
-    "what": "给团队和 AI agent 共用的一份记忆：Claude、ChatGPT、Cursor、Claude Code 干活时往里存，团队成员可以读、提问、加文件。",
-    "href": "ph-inspo/index.html#2026-10-23-context-engine"
+    "rank": 5,
+    "name": "Mistral Voxtral 3",
+    "what": "Mistral 新一代语音栈：转写（含说话人分离、时间戳、end-of-turn）、TTS（情感/语速/强调、音色克隆）以及把听、想、调工具、说串起来的 Voice Agent SDK。",
+    "href": "ph-inspo/index.html#2026-10-22-voxtral-3"
    },
    {
-    "rank": 11,
-    "name": "Polylane for Cloudflare",
-    "what": "AI 值班工程师：连起你的代码、基础设施和可观测数据，排查每个问题，并开一个带修复的 PR；这次是面向 Cloudflare 应用的版本。",
-    "href": "ph-inspo/index.html#2026-10-23-polylane"
+    "rank": 7,
+    "name": "Loom Record for agents",
+    "what": "Loom 新的「给 agent 录」模式：边说边指屏幕，自动把语音、点击、选中的 UI、访问过的链接和关键帧合成结构化 agent prompt，可交给 Claude、Cursor、Rovo、ChatGPT 等执行。",
+    "href": "ph-inspo/index.html#2026-10-22-loom-record-for-agents"
    },
    {
-    "rank": 12,
-    "name": "Monish",
-    "what": "在 Claude Code、Codex、Cursor、n8n 或任意脚本里粘一行，agent 就能把实时进度放到 iPhone 锁屏，完成时提醒你，部署、发送、花钱前先问你，在通知里直接批准或拒绝。",
-    "href": "ph-inspo/index.html#2026-10-23-monish"
+    "rank": 8,
+    "name": "CutBay",
+    "what": "聊天式 AI 视频 agent：用一句话、链接、文档、PDF、演示稿、表格或素材生成视频，再通过对话改脚本、画面、配音和字幕，不必自己拖时间线。",
+    "href": "ph-inspo/index.html#2026-10-22-cutbay"
    },
    {
-    "rank": 15,
-    "name": "Inyon",
-    "what": "把你机器上 tmux 里正在跑的 coding agent（Claude Code、Codex、Gemini CLI、OpenCode、Copilot CLI、Antigravity）显示成手机或浏览器里的聊天；agent 提问时点一下回答，答案直接敲进同一个 pane。",
-    "href": "ph-inspo/index.html#2026-10-23-inyon"
+    "rank": 10,
+    "name": "Resend Inboxes",
+    "what": "面向人和 agent 的共享收件箱：在自有域名上建地址，邮件按线程组织，团队可分配、留备注；同一收件箱可被人与 agent 并肩处理，并提供 API、CLI、远程 MCP。",
+    "href": "ph-inspo/index.html#2026-10-22-resend-inboxes"
    }
   ]
  },
  "url": "https://ww880412.github.io/learning/digest/2026-10-24.html",
- "rule": "汇总日 D = X 简报 x-brief/D.html + X 海报 x-posters/D/ + 产品灵感（Product Hunt D 前一天的榜单）。某个来源当天没有就是 null。"
+ "rule": "汇总日 D 是北京时间。简报文件名是美东日期，美东 21:00 发布等于北京时间次日 09:00，所以 D 一般对应 x-brief/(D−1).html（页面若有带时区的发布时间，则改用该时间换算到 Asia/Shanghai；链接仍是原文件）。海报是 x-posters/D/。产品灵感是最新一份榜单日 ≤ D−2 的那组（太平洋时间的 Product Hunt 日榜，北京时间 D 日 09:00 前能入库的最新一份），并标出实际榜单日。某一来源没有就是 null。"
 }

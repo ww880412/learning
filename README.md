@@ -18,7 +18,18 @@
 ```
 node build.mjs
 ```
-生成：`index.html`、各栏目 `*/index.html`、主题页（如 `courses/cs146s/index.html`）、`glossary.html`、`concepts/*.html`、`review.md`；并为新学习页自动补排复习日期（写回 `data/review.json`）。学习页本身（如 `L01-agent-loop.html`）不由它生成，仍用 xuexi-template 的 `build.sh` 制作。
+生成：`index.html`、各栏目 `*/index.html`、主题页（如 `courses/cs146s/index.html`）、`glossary.html`、`concepts/*.html`、`review.md`；并为新学习页自动补排复习日期（写回 `data/review.json`）。学习页本身（如 `L01-agent-loop.html`）不由它生成，仍用 xuexi-template 的 `build.sh` 制作。同时重写 `digest/YYYY-MM-DD.html` 和 `data/digest/`。
+
+## 每日汇总
+
+北京时间每天 9:00 的推送和 `digest/YYYY-MM-DD.html` 是同一天的内容，机器可读版是 `data/digest/YYYY-MM-DD.json`。日期 D 都是北京时间：
+
+- **X 简报**：文件名是美东日期，固定美东 21:00 发布，等于北京时间次日 09:00。所以 D 一般对应 `x-brief/(D−1).html`。页面 `<head>` 或刊头里若有带时区的发布时间（ISO 时区，或写明 ET / PT），改用该时间换算成 `Asia/Shanghai` 的日期。只有日期、没有钟点的刊头不算。文件名和链接不改。
+- **X 海报**：目录已是北京日期，用 `x-posters/D/`。
+- **产品灵感**：Product Hunt 榜单日是太平洋时间，这份榜要到北京时间次日晚上才入库。D 日早上 09:00 能对上的，是最新一份榜单日 ≤ D−2 的那组。页面写实际榜单日（例如「榜单 10/22」），不把榜单日写成「更新」。
+- **雷达**：每周一北京时间 09:00 一份周报，平时随时补录，不是每天刷新。
+
+某一来源这天没有，汇总里就是空，不拿别的天硬凑。产品灵感按 ≤ D−2 取当时已经入库的最新一份，并标出那份榜的真实日期。首页新闻卡的「更新」同样是北京日期。
 
 ## 加一篇学习页
 1. 用 `/workspace/skills-src/xuexi-template/build.sh` 做好学习页，放到对应栏目目录（公开课放 `courses/<课程>/`，其他一篇一个目录）。
