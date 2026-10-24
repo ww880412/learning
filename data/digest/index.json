@@ -1,6 +1,6 @@
 {
  "_readme": "由 build.mjs 生成。北京时间 9:00 的汇总推送直接链接 url，或读 json。",
- "rule": "汇总日 D = X 简报 x-brief/D.html + X 海报 x-posters/D/ + 产品灵感（Product Hunt D 前一天的榜单）。某个来源当天没有就是 null。",
+ "rule": "汇总日 D 是北京时间。简报文件名是美东日期，美东 21:00 发布等于北京时间次日 09:00，所以 D 一般对应 x-brief/(D−1).html（页面若有带时区的发布时间，则改用该时间换算到 Asia/Shanghai；链接仍是原文件）。海报是 x-posters/D/。产品灵感是最新一份榜单日 ≤ D−2 的那组（太平洋时间的 Product Hunt 日榜，北京时间 D 日 09:00 前能入库的最新一份），并标出实际榜单日。某一来源没有就是 null。",
  "site": "https://ww880412.github.io/learning/",
  "latest": "2026-10-24",
  "days": [
@@ -8,9 +8,9 @@
    "date": "2026-10-24",
    "url": "https://ww880412.github.io/learning/digest/2026-10-24.html",
    "json": "data/digest/2026-10-24.json",
-   "brief": false,
+   "brief": true,
    "posters": 7,
-   "ph": 7
+   "ph": 8
   },
   {
    "date": "2026-10-23",
@@ -18,7 +18,7 @@
    "json": "data/digest/2026-10-23.json",
    "brief": true,
    "posters": 6,
-   "ph": 8
+   "ph": 7
   },
   {
    "date": "2026-10-22",
@@ -34,7 +34,7 @@
    "json": "data/digest/2026-10-21.json",
    "brief": true,
    "posters": 7,
-   "ph": 7
+   "ph": 6
   },
   {
    "date": "2026-10-20",
@@ -42,7 +42,7 @@
    "json": "data/digest/2026-10-20.json",
    "brief": true,
    "posters": 6,
-   "ph": 6
+   "ph": 5
   },
   {
    "date": "2026-10-19",
@@ -50,7 +50,7 @@
    "json": "data/digest/2026-10-19.json",
    "brief": true,
    "posters": 6,
-   "ph": 5
+   "ph": 0
   },
   {
    "date": "2026-10-18",
@@ -128,7 +128,7 @@
    "date": "2026-10-09",
    "url": "https://ww880412.github.io/learning/digest/2026-10-09.html",
    "json": "data/digest/2026-10-09.json",
-   "brief": true,
+   "brief": false,
    "posters": 6,
    "ph": 0
   }

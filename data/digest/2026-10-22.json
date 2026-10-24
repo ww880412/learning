@@ -4,12 +4,12 @@
  "href": "digest/2026-10-22.html",
  "json": "data/digest/2026-10-22.json",
  "brief": {
-  "title": "X 简报 · 10/22（周四）",
-  "href": "x-brief/2026-10-22.html",
+  "title": "X 简报 · 10/21（周三）",
+  "href": "x-brief/2026-10-21.html",
   "lines": [
-   "PHP2Shell 之后第二天，讨论从「赶紧打补丁」变成「AI 让攻击变便宜」：NSA 要求所有 PHP 服务器立即修补或下线，CVE 从每月约 4 千涨到约 1.5 万，有人亲眼看到非技术人员靠 AI 利用漏洞",
-   "Anthropic 连发三件：下周起 Claude 各端默认开 auto mode；Claude 全套平台功能在 Google Cloud 正式可用；Agent Skills 捐给 Agentic AI 基金会，和 MCP 放在一起",
-   "OpenAI 的 Decisions API 正式开放，决策模型开始进入开发者工作流；Codex 又到「重置日」，中文圈一边算额度，一边吐槽 Grok Bot 被塞进了 X 私信"
+   "安全圈「漏洞末日」的一天：PHP 曝出免登录接管服务器的 PHP2Shell，由 GPT-5.6 Sol 发现、OpenAI 牵头联合各方提前两个月修补；同一天印度 CA eMudhra 的私钥被发现是 4、56 这样的小数字，Node.js、GitLab、Railway 也接连出事",
+   "Anthropic 发布主动型个人 Agent「Claude Duet」，美国 Pro/Max 排队试用；两个多月里 xAI、Meta、OpenAI、Anthropic 四家都推出了同类产品",
+   "用量和钱的数字都在飙：Codex 登录用户缓存永久保留、API 缓存延长到 12 小时；Gemini 4 Argon 上线 72 小时处理约 25 万亿 token；《华尔街日报》曝光 Anthropic 招股书草稿"
   ]
  },
  "posters": {
@@ -45,55 +45,55 @@
   ]
  },
  "ph": {
-  "listDate": "2026-10-21",
+  "listDate": "2026-10-20",
   "href": "ph-inspo/index.html",
   "n": 7,
-  "source": "https://www.producthunt.com/leaderboard/daily/2026/10/21",
+  "source": "https://www.producthunt.com/leaderboard/daily/2026/10/20",
   "items": [
    {
+    "rank": 1,
+    "name": "/dev/null",
+    "what": "给 Web 开发者的社交网络，用 GitHub 登录，分享代码片段、点赞、回复。",
+    "href": "ph-inspo/index.html#2026-10-20-dev-null"
+   },
+   {
     "rank": 2,
-    "name": "BAND for Developers",
-    "what": "给分布在各处的 AI agent 和人类团队用的共享交互层，支持多方实时协作，并内置治理。",
-    "href": "ph-inspo/index.html#2026-10-21-band"
+    "name": "Composio Instant",
+    "what": "给 AI agent 用的工具层：1000+ 现成工具，托管 OAuth 授权、自动挑工具、沙箱里执行。",
+    "href": "ph-inspo/index.html#2026-10-20-composio-instant"
+   },
+   {
+    "rank": 4,
+    "name": "Harness²",
+    "what": "Google Research 开源的递归式 agent harness 框架，让 agent 自己改进执行用的提示词、工具和记忆。",
+    "href": "ph-inspo/index.html#2026-10-20-harness2"
    },
    {
     "rank": 6,
-    "name": "SuperCMO AI",
-    "what": "一套开源 agent skills，把 Claude Code、Cursor 或 Codex 变成「AI 市场总监」：学品牌、看竞品广告、写文案、出广告素材。",
-    "href": "ph-inspo/index.html#2026-10-21-supercmo-ai"
+    "name": "Mintlify Autopilot",
+    "what": "Mintlify 文档平台上一个常驻 agent，持续让文档跟上代码变化。",
+    "href": "ph-inspo/index.html#2026-10-20-mintlify-autopilot"
    },
    {
-    "rank": 7,
-    "name": "Notion Auto",
-    "what": "Notion 重做了 Agents 的 harness：任务可跑 24 小时以上，自带电脑和浏览器，新的 Auto 模型路由按任务难度选模型。",
-    "href": "ph-inspo/index.html#2026-10-21-notion-auto"
+    "rank": 8,
+    "name": "RunInfra",
+    "what": "让 Claude Code、Codex、OpenCode、Cline、Droid、Grok Build 接上 GLM 5.3、DeepSeek V4.1 Flash、Qwen3.8 27B 等开源模型的推理服务。",
+    "href": "ph-inspo/index.html#2026-10-20-runinfra"
    },
    {
     "rank": 9,
-    "name": "The Brains",
-    "what": "把创始人、CEO、投资人的公开演讲、文章、访谈做成可搜索的 MCP server，在 Claude、Cursor、ChatGPT、Codex 里直接问。",
-    "href": "ph-inspo/index.html#2026-10-21-the-brains"
+    "name": "Kling 4.0",
+    "what": "面向创作者和营销的 AI 视频模型，单次生成 30 秒片段。",
+    "href": "ph-inspo/index.html#2026-10-20-kling-4"
    },
    {
-    "rank": 11,
-    "name": "Mouse-1",
-    "what": "专门给 agent harness 做「小决策」的模型：输入 agent 状态和选项，返回概率，负责分类、路由这类判断。",
-    "href": "ph-inspo/index.html#2026-10-21-mouse-1"
-   },
-   {
-    "rank": 13,
-    "name": "ilha",
-    "what": "Mac 刘海里的小应用，实时显示 Claude Code、Codex、Grok Build 的 5 小时和每周额度用量、重置时间和是否会提前用完。",
-    "href": "ph-inspo/index.html#2026-10-21-ilha"
-   },
-   {
-    "rank": 14,
-    "name": "Agent Pets",
-    "what": "Chrome 扩展，把每个 Claude Code、OpenCode、omp 会话变成在浏览器底部走动的小宠物。",
-    "href": "ph-inspo/index.html#2026-10-21-agent-pets"
+    "rank": 10,
+    "name": "Inflight",
+    "what": "给原型和预览链接加评论层：评审人在运行中的页面上钉评论或录视频，再通过 MCP 交给 coding agent。",
+    "href": "ph-inspo/index.html#2026-10-20-inflight"
    }
   ]
  },
  "url": "https://ww880412.github.io/learning/digest/2026-10-22.html",
- "rule": "汇总日 D = X 简报 x-brief/D.html + X 海报 x-posters/D/ + 产品灵感（Product Hunt D 前一天的榜单）。某个来源当天没有就是 null。"
+ "rule": "汇总日 D 是北京时间。简报文件名是美东日期，美东 21:00 发布等于北京时间次日 09:00，所以 D 一般对应 x-brief/(D−1).html（页面若有带时区的发布时间，则改用该时间换算到 Asia/Shanghai；链接仍是原文件）。海报是 x-posters/D/。产品灵感是最新一份榜单日 ≤ D−2 的那组（太平洋时间的 Product Hunt 日榜，北京时间 D 日 09:00 前能入库的最新一份），并标出实际榜单日。某一来源没有就是 null。"
 }

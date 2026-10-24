@@ -4,12 +4,12 @@
  "href": "digest/2026-10-20.html",
  "json": "data/digest/2026-10-20.json",
  "brief": {
-  "title": "X 简报 · 10/20（周二）",
-  "href": "x-brief/2026-10-20.html",
+  "title": "X 简报 · 10/19（周一）",
+  "href": "x-brief/2026-10-19.html",
   "lines": [
-   "DeepSeek 把支撑 V4.1 Flash 线上服务的推理框架 DeepInfer 用 Apache 2.0 开源，中英文圈一起刷屏；知乎原文里「单集群日吞吐 155 万亿 token、每卡每小时收入 38 美元」被算成约 80% 的服务毛利",
-   "OpenAI 这边一天里动作很多：Codex 用量提前重置，并承认约 4 万个账号被按错套餐扣量、会补额度；API 上线 12 小时提示缓存；ChatGPT 推出锁定聊天和团队定时任务；收购 Orchestra Bio；Aleksander Madry 回归管安全",
-   "开发者在争论「harness 已死」：elvis、Harrison Chase、Guillermo Rauch 都站出来说 harness 正当时，评测这边则在流行用决策模型当裁判"
+   "MiniMax 认领了在 OpenRouter 上匿名跑了几周的 Space Bunny：它就是 M3.1 Flash，DeepSWE 74%，每百万 token 输入 0.15、输出 0.60 美元，10 月 23 日放权重",
+   "The Information 预告接下来几周新模型扎堆：Anthropic 一款「更会猜你意图」的新模型、Google 的 Gemini 4 Carbon，OpenAI 可能还有新的 Terra",
+   "好几位开发者同一天提醒「慢下来」：Thariq 劝大家少开几路 Agent、先想清楚 P0；同一个模型换个 harness 能差出几十分，自己的审查能力却会在全交给 Agent 后变弱"
   ]
  },
  "posters": {
@@ -50,49 +50,43 @@
   ]
  },
  "ph": {
-  "listDate": "2026-10-19",
+  "listDate": "2026-10-18",
   "href": "ph-inspo/index.html",
-  "n": 6,
-  "source": "https://www.producthunt.com/leaderboard/daily/2026/10/19",
+  "n": 5,
+  "source": "https://www.producthunt.com/leaderboard/daily/2026/10/18",
   "items": [
    {
     "rank": 1,
-    "name": "Beam.win",
-    "what": "agent 和构建任务跑在 Mac mini / Studio 上，把它们的终端、浏览器等窗口一个个搬到你面前的 Mac。",
-    "href": "ph-inspo/index.html#2026-10-19-beam-win"
+    "name": "Inbox Zero",
+    "what": "开源的 AI 邮件助理和邮件客户端。",
+    "href": "ph-inspo/index.html#2026-10-18-inbox-zero"
+   },
+   {
+    "rank": 2,
+    "name": "MyLens",
+    "what": "给每个观众一场 AI 主讲的一对一实时演示，会用你提供的资料回答问题、现场加幻灯片。",
+    "href": "ph-inspo/index.html#2026-10-18-mylens"
    },
    {
     "rank": 3,
-    "name": "readywhen",
-    "what": "住在 WhatsApp 里的 AI 私人助理，有自己的手机号、自己的电脑和一个任务看板。",
-    "href": "ph-inspo/index.html#2026-10-19-readywhen"
+    "name": "shim-cli",
+    "what": "开源的 hook + 本地代理，支持 Claude Code、Codex、Copilot CLI 和 VS Code。",
+    "href": "ph-inspo/index.html#2026-10-18-shim-cli"
    },
    {
-    "rank": 4,
-    "name": "walkai-talkai",
-    "what": "用任意手持对讲机按键说话，指挥 Mac 上的 coding agent，再把回答用语音从对讲机播回来。",
-    "href": "ph-inspo/index.html#2026-10-19-walkai-talkai"
-   },
-   {
-    "rank": 5,
-    "name": "Kai Resolve by Gleap",
-    "what": "把客服、用户反馈和 coding agent 放在一起：用户报的问题变成待审的修复，修完再在原工单里回复用户。",
-    "href": "ph-inspo/index.html#2026-10-19-kai-resolve"
+    "rank": 7,
+    "name": "3AM Super Intelligence",
+    "what": "AI 值班工程师，面向没法重写的老系统，找根因、预演修复，在 Slack 里一键处理事故。",
+    "href": "ph-inspo/index.html#2026-10-18-3am"
    },
    {
     "rank": 8,
-    "name": "buddylist",
-    "what": "免费桌面应用，把 Claude Code、Codex、Gemini、OpenCode 放进 MSN 风格的好友列表里。",
-    "href": "ph-inspo/index.html#2026-10-19-buddylist"
-   },
-   {
-    "rank": 9,
-    "name": "Framefields",
-    "what": "开源的代码优先视频引擎，在 Node.js 里用原生 WebGPU 渲染，一个 npm 包。",
-    "href": "ph-inspo/index.html#2026-10-19-framefields"
+    "name": "Tomo for ChatGPT",
+    "what": "把任何主题变成像多邻国一样玩的小课程，有红心、连胜、经验值和即时反馈。",
+    "href": "ph-inspo/index.html#2026-10-18-tomo"
    }
   ]
  },
  "url": "https://ww880412.github.io/learning/digest/2026-10-20.html",
- "rule": "汇总日 D = X 简报 x-brief/D.html + X 海报 x-posters/D/ + 产品灵感（Product Hunt D 前一天的榜单）。某个来源当天没有就是 null。"
+ "rule": "汇总日 D 是北京时间。简报文件名是美东日期，美东 21:00 发布等于北京时间次日 09:00，所以 D 一般对应 x-brief/(D−1).html（页面若有带时区的发布时间，则改用该时间换算到 Asia/Shanghai；链接仍是原文件）。海报是 x-posters/D/。产品灵感是最新一份榜单日 ≤ D−2 的那组（太平洋时间的 Product Hunt 日榜，北京时间 D 日 09:00 前能入库的最新一份），并标出实际榜单日。某一来源没有就是 null。"
 }
