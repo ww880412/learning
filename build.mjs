@@ -352,52 +352,68 @@ const doneOf=h=>{const keys=[];const add=u=>{for(const k of doneExpand(u))if(!ke
 const started=new Set();
 for(const q of R.queue){const it=R.items[q.item];const dd=it&&doneOf(it.href);if(!dd)continue;started.add(q.item);q.start=dd;for(const r of q.reviews)r.date=add(dd,r.day)}
 const diff=(a,b)=>Math.round((new Date(b+'T12:00:00')-new Date(a+'T12:00:00'))/864e5);const E=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
-const G={over:[],today:[],later:[]};
-for(const q of R.queue){if(!started.has(q.item)||!R.items[q.item])continue;const pend=q.reviews.filter(r=>!r.done);if(!pend.length)continue;const due=pend.filter(r=>r.date<=today);
- if(due.length){const late=diff(due[0].date,today);(late>0?G.over:G.today).push({item:q.item,day:due[due.length-1].day,late,n:due.length,date:due[0].date})}
- else G.later.push({item:q.item,day:pend[0].day,date:pend[0].date,inN:diff(today,pend[0].date)})}
-G.over.sort((a,b)=>b.late-a.late);G.later.sort((a,b)=>a.date.localeCompare(b.date));
-const dueN=G.over.length+G.today.length;const F=(k,v)=>document.querySelectorAll('[data-f="'+k+'"]').forEach(e=>e.textContent=v);
-F('over',G.over.length);F('today',G.today.length);F('duen0',dueN);F('duen',dueN?dueN+' 篇到期':'无到期');F('overmax',G.over.length?'最久 '+G.over[0].late+' 天':'没有逾期');
-if(!G.over.length)document.querySelectorAll('[data-f="overbox"]').forEach(e=>e.classList.remove('red','hot'));
-{const W='日一二三四五六',[y,m,dd]=today.split('-').map(Number),wd=new Date(y,m-1,dd).getDay();F('date',m+' 月 '+dd+' 日 · 星期'+W[wd]);
-const top=G.over[0]||G.today[0];F('sum',dueN?('今天有 '+dueN+' 篇该复习'+(G.over.length?'，其中 '+G.over.length+' 篇已经逾期':'')+'。先从「'+R.items[top.item].title+'」开始。'):(G.later.length?'下一次复习在 '+G.later[0].date.slice(5)+'：'+R.items[G.later[0].item].title+'。':'复习队列是空的，去学点新东西吧。'))}
+/* 复习是否完成：review.json 的 done，或本机 rev-done:<itemId>（第几天 → 完成日期）。A/B/C 共用下面的 bucket。 */
+const G={over:[],today:[],later:[],seen:[]};
+function revMap(id){try{const o=JSON.parse(localStorage.getItem('rev-done:'+id)||'{}');return o&&typeof o==='object'&&!Array.isArray(o)?o:{}}catch(e){return {}}}
+function revPut(id,o){try{const k='rev-done:'+id;if(!o||!Object.keys(o).length)localStorage.removeItem(k);else localStorage.setItem(k,JSON.stringify(o))}catch(e){}}
+function revDated(m,day){const v=m[day];return typeof v==='string'&&/^\\d{4}-\\d{2}-\\d{2}$/.test(v)?v:''}
+function bucket(){G.over.length=0;G.today.length=0;G.later.length=0;G.seen.length=0;
+ for(const q of R.queue){if(!started.has(q.item)||!R.items[q.item])continue;const m=revMap(q.item);const done=r=>!!r.done||!!revDated(m,r.day);
+  const pend=q.reviews.filter(r=>!done(r));const due=pend.filter(r=>r.date<=today);
+  if(due.length){const late=diff(due[0].date,today);(late>0?G.over:G.today).push({item:q.item,day:due[due.length-1].day,late,n:due.length,date:due[0].date})}
+  else if(pend.length)G.later.push({item:q.item,day:pend[0].day,date:pend[0].date,inN:diff(today,pend[0].date)});
+  const fin=q.reviews.filter(r=>revDated(m,r.day)===today); /* 当天勾完的仍留在「今日」，方便「已看」计数；第二天 revDated!==today 就消失 */
+  if(fin.length&&!due.length){const late=diff(fin[0].date,today);G.seen.push({item:q.item,day:fin[fin.length-1].day,late,n:fin.length,date:fin[0].date,on:1})}}
+ G.over.sort((a,b)=>b.late-a.late);G.later.sort((a,b)=>a.date.localeCompare(b.date))}
+function toggleRev(id){const q=R.queue.find(x=>x.item===id);if(!q)return;const m=revMap(id);const marked=q.reviews.filter(r=>revDated(m,r.day)===today);
+ if(marked.length){for(const r of marked)delete m[r.day];revPut(id,m);return} /* 同一天再点一次，撤销今天勾上的那些天 */
+ for(const r of q.reviews){if(r.done||revDated(m,r.day))continue;if(r.date<=today)m[r.day]=today} /* 一次勾完当前全部到期，积压清掉 */
+ revPut(id,m)}
+const F=(k,v)=>document.querySelectorAll('[data-f="'+k+'"]').forEach(e=>e.textContent=v);
+{const W='日一二三四五六',[y,m,dd]=today.split('-').map(Number),wd=new Date(y,m-1,dd).getDay();F('date',m+' 月 '+dd+' 日 · 星期'+W[wd])}
 const LAB={over:'逾期',today:'今天到期',later:'之后'};
 const row=(k,r)=>{const it=R.items[r.item];const b=k==='over'?'<b>第 '+r.day+' 天</b> · <span class="late">逾期 '+r.late+' 天</span>'+(r.n>1?' · 积压 '+r.n+' 次':''):k==='today'?'<b>第 '+r.day+' 天</b> · 今天':'第 '+r.day+' 天 · '+r.inN+' 天后（'+r.date.slice(5)+'）';return '<div class="row rvr '+k+'"><i class="ic">'+E(it.ic)+'</i><span class="t"><a href="'+E(it.href)+'">'+E(it.title)+'</a><small>'+E(it.col)+' · '+E(it.label)+' · 第 '+r.day+' 天</small></span><span class="tag">'+E(it.label)+'</span><span class="badge">'+b+'</span></div>'};
-const total=G.over.length+G.today.length+G.later.length;let open=false;
-function draw(){let h='',c=0;const lim=open?1e9:5;if(!dueN)h+='<div class="row"><span class="t" style="font-weight:500">今天（'+today+'）没有到期的复习 '+__ic('party-popper',15)+'</span></div>';
+let open=false;
+function draw(){const dueN=G.over.length+G.today.length,total=dueN+G.later.length;let h='',c=0;const lim=open?1e9:5;if(!dueN)h+='<div class="row"><span class="t" style="font-weight:500">今天（'+today+'）没有到期的复习 '+__ic('party-popper',15)+'</span></div>';
  for(const k of ['over','today','later']){const L=G[k];if(!L.length||c>=lim)continue;h+='<div class="rv-g '+k+'">'+LAB[k]+' <span class="c">'+L.length+'</span></div>';for(const r of L){if(c>=lim)break;h+=row(k,r);c++}}
  if(total>5)h+='<button class="rv-more" type="button">'+(open?'收起':'展开全部（共 '+total+' 篇）')+'</button>';
  document.querySelectorAll('[data-rv="full"]').forEach(el=>{el.innerHTML='<div class="list">'+h+'</div>';const b=el.querySelector('.rv-more');if(b)b.onclick=()=>{open=!open;draw()}})}
-draw();
-const short=[...G.over.map(r=>['over',r]),...G.today.map(r=>['today',r])];const sl=(o)=>short.length?short.slice(0,6).map(([k,r])=>{const it=R.items[r.item];return '<li><a href="'+E(it.href)+'">'+E(it.title)+'</a><em class="'+k+'">'+(k==='over'?'逾期 '+r.late+' 天':'今天')+'</em></li>'}).join('')+(short.length>6?'<li class="more"><a href="#b-review" onclick="__setTheme(\\'B\\')">还有 '+(short.length-6)+' 篇 →</a></li>':''):'<li>今天没有到期的复习 '+__ic('party-popper',15)+''+(G.later.length?'（下一次 '+G.later[0].date.slice(5)+'）':'')+'</li>';
-document.querySelectorAll('[data-rv="ol"],[data-rv="ul"]').forEach(el=>el.innerHTML=sl());
+function paint(){const dueN=G.over.length+G.today.length;
+ F('over',G.over.length);F('today',G.today.length);F('duen0',dueN);F('duen',dueN?dueN+' 篇到期':'无到期');F('overmax',G.over.length?'最久 '+G.over[0].late+' 天':'没有逾期');
+ document.querySelectorAll('[data-f="overbox"]').forEach(e=>{e.classList.toggle('red',!!G.over.length);if(!G.over.length)e.classList.remove('hot')});
+ const top=G.over[0]||G.today[0];F('sum',dueN?('今天有 '+dueN+' 篇该复习'+(G.over.length?'，其中 '+G.over.length+' 篇已经逾期':'')+'。先从「'+R.items[top.item].title+'」开始。'):(G.later.length?'下一次复习在 '+G.later[0].date.slice(5)+'：'+R.items[G.later[0].item].title+'。':'复习队列是空的，去学点新东西吧。'));
+ draw();
+ const short=[...G.over.map(r=>['over',r]),...G.today.map(r=>['today',r])];const sl=short.length?short.slice(0,6).map(([k,r])=>{const it=R.items[r.item];return '<li><a href="'+E(it.href)+'">'+E(it.title)+'</a><em class="'+k+'">'+(k==='over'?'逾期 '+r.late+' 天':'今天')+'</em></li>'}).join('')+(short.length>6?'<li class="more"><a href="#b-review" onclick="__setTheme(\\'B\\')">还有 '+(short.length-6)+' 篇 →</a></li>':''):'<li>今天没有到期的复习 '+__ic('party-popper',15)+''+(G.later.length?'（下一次 '+G.later[0].date.slice(5)+'）':'')+'</li>';
+ document.querySelectorAll('[data-rv="ol"],[data-rv="ul"]').forEach(el=>el.innerHTML=sl)}
 window.__favRender=function(L){var TN={'x-brief':'X 简报','poster':'X 海报','concept':'概念卡','course':'公开课','page':'页面'};var h=L.length?L.slice(0,5).map(x=>'<div class="row"><span class="tag">'+E(TN[x.type]||'页面')+'</span><span class="t"><a href="'+E(x.url)+'">'+E(x.title)+'</a></span><span class="d">'+E((x.added_at||'').slice(0,10))+'</span></div>').join(''):'<div class="row"><span class="t" style="font-weight:400;color:var(--meta)">还没有收藏，在任意页面点 '+__ic('star',13)+' 就能收藏</span></div>';document.querySelectorAll('[data-fav]').forEach(el=>el.innerHTML=h)};window.__favRender([]);
 function tdPick(arr){if(!arr||!arr.length)return null;var hit=null;for(var i=0;i<arr.length;i++)if(arr[i].d===today)hit=arr[i];if(hit)return Object.assign({fresh:true},hit);var prev=null;for(var j=0;j<arr.length;j++)if(arr[j].d<=today&&(!prev||arr[j].d>prev.d))prev=arr[j];return prev?Object.assign({fresh:false},prev):null}
 function tdMeta(fresh,d,extra){var base=fresh?'今天':(d.slice(5).replace('-','/')+' · 最近一天');return extra?base+' · '+extra:base}
-function tdLoad(){try{return JSON.parse(localStorage.getItem('today-read:'+today)||'{}')||{}}catch(e){return {}}} /* 三套主题共用 today-read:日期 */
+function tdLoad(){try{return JSON.parse(localStorage.getItem('today-read:'+today)||'{}')||{}}catch(e){return {}}} /* 简报/雷达等同天已看；复习完成不写这里，写 rev-done */
 function tdSave(o){try{localStorage.setItem('today-read:'+today,JSON.stringify(o))}catch(e){}}
 ${dgRow.toString()}
 function tdRows(){var rows=[],g=tdPick(TD.dg),rd=tdPick(TD.radar);
  if(g)rows.push({id:'digest:'+g.d,dg:g});else rows.push({src:'每日汇总',ic:TD.ic.dg,title:'还没有汇总'});
  if(TD.radar.length){if(rd)rows.push({id:'radar:'+rd.d,src:'雷达',ic:TD.ic.radar,href:rd.href,title:rd.title,sub:rd.sub||'',meta:tdMeta(rd.fresh,rd.d,'新增 '+rd.n+' 条').replace('最近一天','最近一次')});else rows.push({src:'雷达',ic:TD.ic.radar,title:'雷达还没有条目'})}
- var due=[].concat(G.over,G.today);
+ var due=[].concat(G.over,G.today,G.seen);
  if(!due.length)rows.push({src:'复习',ic:TD.ic.rev,title:'今天没有到期的复习 '+__ic('party-popper',15),html:1});
- else due.forEach(function(r){var it=R.items[r.item];if(!it)return;rows.push({id:'rev:'+r.item,src:it.col||'复习',ic:it.ic||TD.ic.rev,href:it.href,title:it.title,sub:(it.label?it.label+' · ':'')+'第 '+r.day+' 天'+(r.n>1?' · 积压 '+r.n+' 次':''),meta:r.late>0?('逾期 '+r.late+' 天'):'今天到期',over:r.late>0})});
+ else due.forEach(function(r){var it=R.items[r.item];if(!it)return;rows.push({id:'rev:'+r.item,src:it.col||'复习',ic:it.ic||TD.ic.rev,href:it.href,title:it.title,sub:(it.label?it.label+' · ':'')+'第 '+r.day+' 天'+(r.n>1?' · 积压 '+r.n+' 次':''),meta:r.late>0?('逾期 '+r.late+' 天'):'今天到期',over:r.late>0,on:r.on?1:0})});
  return rows}
 var tdFirst=1;
 function renderToday(focusId){var box=document.querySelector('[data-td="list"]');if(!box)return;var saved=tdLoad(),rows=tdRows(),checks=rows.filter(function(r){return r.id}),k=0;
- box.innerHTML=rows.map(function(r){var on=!!(r.id&&saved[r.id]);if(on)k++;var title=r.html?r.title:E(r.title);
+ box.innerHTML=rows.map(function(r){var rev=!!(r.id&&String(r.id).indexOf('rev:')===0);var on=rev?!!r.on:!!(r.id&&saved[r.id]);if(on)k++;var title=r.html?r.title:E(r.title);
   if(r.dg)return dgRow(r.dg,r.dg.fresh,on,CK,E,TD.ic);
   if(!r.id)return '<div class="row td-empty"><span class="td-src">'+r.ic+'<span>'+E(r.src)+'</span></span><span class="t">'+title+'</span></div>';
   var ext=/^https?:/.test(r.href)?' target="_blank" rel="noopener"':'';
-  return '<div class="row'+(on?' on':'')+'"><button type="button" class="td-ck" data-id="'+E(r.id)+'" aria-pressed="'+(on?'true':'false')+'" aria-label="'+(on?'取消已看：':'标为看过：')+E(r.title)+'">'+(on?CK:'<span class="td-box"></span>')+'</button><span class="td-src">'+r.ic+'<span>'+E(r.src)+'</span></span><span class="t"><a href="'+E(r.href)+'"'+ext+' title="'+E(r.title)+'">'+E(r.title)+'</a>'+(r.sub?'<small>'+E(r.sub)+'</small>':'')+'</span><span class="d'+(r.over?' td-late':'')+'">'+E(r.meta)+'</span></div>'}).join('')||'<div class="row td-empty"><span class="t">今天没有要读的</span></div>';
+  var act=on?(rev?'取消本次复习：':'取消已看：'):(rev?'标为已复习：':'标为看过：');
+  return '<div class="row'+(on?' on':'')+'"><button type="button" class="td-ck" data-id="'+E(r.id)+'" aria-pressed="'+(on?'true':'false')+'" aria-label="'+act+E(r.title)+'">'+(on?CK:'<span class="td-box"></span>')+'</button><span class="td-src">'+r.ic+'<span>'+E(r.src)+'</span></span><span class="t"><a href="'+E(r.href)+'"'+ext+' title="'+E(r.title)+'">'+E(r.title)+'</a>'+(r.sub?'<small>'+E(r.sub)+'</small>':'')+'</span><span class="d'+(r.over?' td-late':'')+'">'+E(r.meta)+'</span></div>'}).join('')||'<div class="row td-empty"><span class="t">今天没有要读的</span></div>';
  var fin=document.querySelector('[data-td="fin"]');if(fin)fin.hidden=!(checks.length&&k===checks.length);
  var prog=document.querySelector('[data-td="prog"]');if(prog)prog.textContent=checks.length?(k+'/'+checks.length+' 已看'):'';
  if(tdFirst&&!matchMedia('(prefers-reduced-motion: reduce)').matches){tdFirst=0;box.querySelectorAll('.row').forEach(function(e,i){e.style.setProperty('--i',String(Math.min(i,10)));e.classList.add('fx-st')});document.querySelectorAll('.td-cols>.card').forEach(function(e,i){e.style.setProperty('--i',String(Math.min(i,10)));e.classList.add('fx-st')})}
- box.querySelectorAll('.td-ck').forEach(function(b){b.onclick=function(){var id=b.getAttribute('data-id'),o=tdLoad();if(o[id])delete o[id];else o[id]=1;tdSave(o);renderToday(id)}});
+ box.querySelectorAll('.td-ck').forEach(function(b){b.onclick=function(){var id=b.getAttribute('data-id');
+  if(id&&id.indexOf('rev:')===0){toggleRev(id.slice(4));bucket();paint();renderToday(id);return}
+  var o=tdLoad();if(o[id])delete o[id];else o[id]=1;tdSave(o);renderToday(id)}});
  if(focusId){var nb=box.querySelector('.td-ck[data-id="'+focusId.replace(/"/g,'')+'"]');if(nb)nb.focus()}}
-renderToday();`;
+bucket();paint();renderToday();`;
   write(f, page(f, '首页', 'home', body, script));
 }
 // ---- 栏目页 + 主题页 ----
@@ -605,7 +621,7 @@ ${secs}<div class="empty" id="rd-none" hidden><b>没有符合条件的条目</b>
 }
 // ---- review.md（人读版） ----
 {
-  let md = `# 间隔复习队列\n\n> 由 build.mjs 从 data/review.json 生成，不要手改本文件。复习完成后把 data/review.json 里对应条目的 \`done\` 改成 \`true\`，再运行 \`node build.mjs\`。\n> 规则：开始学习后第 ${review.intervals.join('、')} 天各复习一次。首页按浏览器当天日期高亮到期项。\n\n| 内容 | 开始 | ${review.intervals.map(n => `第 ${n} 天`).join(' | ')} |\n|---|---|${review.intervals.map(() => '---').join('|')}|\n`;
+  let md = `# 间隔复习队列\n\n> 由 build.mjs 从 data/review.json 生成，不要手改本文件。\n> 完成一次复习有两种记法，满足一种即可：在首页「今日」勾上这一条（记在这台浏览器里，键 \`rev-done:<条目 id>\`，值是「第几天 → 完成日期」；同一天再点一次会撤销），或把 data/review.json 里对应 \`reviews[].done\` 改成 \`true\` 后再运行 \`node build.mjs\`。\n> 规则：点过「学完了」之后第 ${review.intervals.join('、')} 天各复习一次。勾选会把当前已经到期、还没完成的复习一次记完（清掉积压），下一次仍在原来的日期出现。勾完的那一行当天还留在「今日」里，算进「已看」，第二天消失。首页按浏览器当天日期计算，地址加 \`?today=YYYY-MM-DD\` 可以自查。\n\n| 内容 | 开始 | ${review.intervals.map(n => `第 ${n} 天`).join(' | ')} |\n|---|---|${review.intervals.map(() => '---').join('|')}|\n`;
   for (const q of review.queue) { const it = itemById[q.item]; md += `| ${it ? `${it.label} ${it.title}` : q.item} | ${q.start} | ${q.reviews.map(r => `${r.date}${r.done ? ' ✅' : ''}`).join(' | ')} |\n`; }
   write('review.md', md);
 }
