@@ -41,15 +41,29 @@ function stateOf(it) {
   return '已学完';
 }
 
-// ---- 复习队列：保留已有记录（含 done），为新条目补排期 ----
+// ---- 复习队列：保留已有 learned / reviews[].done，为新条目补排期 ----
+// 已在队列里的条目原样写回，不改 learned、不改 done、不重排已有日期。
 const reviewPath = path.join(ROOT, 'data', 'review.json');
 let review = fs.existsSync(reviewPath) ? JSON.parse(fs.readFileSync(reviewPath, 'utf8')) : { intervals: INTERVALS, queue: [] };
 const addDays = (d, n) => { const t = new Date(d + 'T00:00:00Z'); t.setUTCDate(t.getUTCDate() + n); return t.toISOString().slice(0, 10); };
+const keptReview = review.queue.map(q => ({ item: q.item, learned: Object.prototype.hasOwnProperty.call(q, 'learned') ? q.learned : undefined, done: (q.reviews || []).map(r => [r.day, r.done]) }));
 for (const it of items) {
   if (!isPage(it) || !it.start || review.queue.some(q => q.item === it.id)) continue;
   review.queue.push({ item: it.id, start: it.start, reviews: INTERVALS.map(n => ({ day: n, date: addDays(it.start, n), done: false })) });
 }
 fs.writeFileSync(reviewPath, JSON.stringify(review, null, 2) + '\n');
+{
+  const back = JSON.parse(fs.readFileSync(reviewPath, 'utf8'));
+  for (const k of keptReview) {
+    const q = back.queue.find(x => x.item === k.item);
+    if (!q) throw new Error('review.json 丢失条目 ' + k.item);
+    if (k.learned !== undefined && q.learned !== k.learned) throw new Error('review.json 丢掉了 learned：' + k.item);
+    for (const [day, done] of k.done) {
+      const r = (q.reviews || []).find(x => x.day === day);
+      if (!r || r.done !== done) throw new Error('review.json 丢掉了 done：' + k.item + ' 第 ' + day + ' 天');
+    }
+  }
+}
 reviewRef = review;
 
 // ---- 工具 ----
@@ -331,7 +345,9 @@ ${nx ? `<a class="nx" href="${esc(nx.href)}"${ext(nx.href)}><b>${['已学完', '
   for (const c of columns) if (c.id !== 'courses') pushCol(c);
   const layC = `<div class="home-v2">
 <section class="td" id="today" aria-labelledby="td-h">
-<div class="td-h"><h1 id="td-h">今日</h1><span class="td-prog" data-td="prog"></span><span class="kk" data-f="date">今天</span></div>
+<div class="td-h"><h1 id="td-h">今日</h1><span class="td-prog" data-td="prog"></span><button type="button" class="btn ghost td-syncbtn" id="td-sync" aria-expanded="false" aria-controls="td-syncbox">同步到其他设备</button><span class="kk" data-f="date">今天</span></div>
+<div class="td-syncbox" id="td-syncbox" hidden><p class="td-synchint">这条链接只带学完和复习记录。在另一台设备打开后会合并进去，不会删掉那边已有的。</p><textarea id="td-syncurl" readonly rows="3" spellcheck="false" aria-label="同步链接"></textarea><button type="button" class="btn td-syncbtn" id="td-synccopy">复制</button></div>
+<p id="sync-note" class="sync-note" hidden role="status"></p>
 <p class="sub">按今天来看。每日汇总和早上 9 点（北京时间）推送的是同一份：简报、海报、产品灵感；雷达看最近一次补录；到期要复习的课也列在这里。当天没有的，用最近一天，并标出日期。</p>
 <div class="td-fin" data-td="fin" hidden role="status">${ic('party-popper', 16)}<span>今天读完了</span></div>
 <div class="list" data-td="list">${ssrList}</div>
@@ -349,8 +365,11 @@ const add=(t,n)=>{const x=new Date(t+'T12:00:00');x.setDate(x.getDate()+n);retur
 /* 今日待办只收「学完了」过的篇：done:<pathname>；兼容 /courses/X↔软链、index.html↔尾斜杠 */
 const doneExpand=u=>{const out=[],vs=new Set([u]);if(u.endsWith('/index.html')){const d=u.slice(0,-10);vs.add(d);vs.add(d.replace(/\\/$/,'')||'/')}else if(u.endsWith('/')){vs.add(u+'index.html');vs.add(u.replace(/\\/$/,'')||'/')}else if(!/\\.[a-z0-9]+$/i.test(u)){vs.add(u+'/');vs.add(u+'/index.html')}for(const x of vs){out.push(x);const m=x.match(/^(.*)\\/courses\\/(.+)$/);if(m)out.push(m[1]+'/'+m[2]);const m2=x.match(/^(.*)\\/(cs146s)\\/(.+)$/);if(m2&&!x.includes('/courses/'))out.push(m2[1]+'/courses/'+m2[2]+'/'+m2[3])}return[...new Set(out)]};
 const doneOf=h=>{const keys=[];const add=u=>{for(const k of doneExpand(u))if(!keys.includes(k))keys.push(k)};try{add(new URL(h,new URL(__R,location.href)).pathname)}catch(e){}try{add(new URL(h,location.href).pathname)}catch(e){}for(const k of keys){const d=localStorage.getItem('done:'+k);if(d)return d}return null};
+const iso=s=>typeof s==='string'&&/^\\d{4}-\\d{2}-\\d{2}$/.test(s)?s:'';
+const earlier=(a,b)=>!a?b:!b?a:(a<b?a:b);
 const started=new Set();
-for(const q of R.queue){const it=R.items[q.item];const dd=it&&doneOf(it.href);if(!dd)continue;started.add(q.item);q.start=dd;for(const r of q.reviews)r.date=add(dd,r.day)}
+/* 学过：review.json 的 learned，或本机 done:<path>。排期用更早的那天；只有一边就用那一边。路径仍交给 doneOf，不改写。 */
+for(const q of R.queue){const it=R.items[q.item];if(!it)continue;const dd=earlier(iso(q.learned),iso(doneOf(it.href)));if(!dd)continue;started.add(q.item);q.start=dd;for(const r of q.reviews)r.date=add(dd,r.day)}
 const diff=(a,b)=>Math.round((new Date(b+'T12:00:00')-new Date(a+'T12:00:00'))/864e5);const E=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
 /* 复习是否完成：review.json 的 done，或本机 rev-done:<itemId>（第几天 → 完成日期）。A/B/C 共用下面的 bucket。 */
 const G={over:[],today:[],later:[],seen:[]};
@@ -413,6 +432,13 @@ function renderToday(focusId){var box=document.querySelector('[data-td="list"]')
   if(id&&id.indexOf('rev:')===0){toggleRev(id.slice(4));bucket();paint();renderToday(id);return}
   var o=tdLoad();if(o[id])delete o[id];else o[id]=1;tdSave(o);renderToday(id)}});
  if(focusId){var nb=box.querySelector('.td-ck[data-id="'+focusId.replace(/"/g,'')+'"]');if(nb)nb.focus()}}
+(function(){var b=document.getElementById('td-sync'),box=document.getElementById('td-syncbox'),url=document.getElementById('td-syncurl'),cp=document.getElementById('td-synccopy');
+ if(!b||!box||!url||!cp||!window.__sync)return;
+ function fill(){var home=new URL(typeof __R==='string'?__R:'index.html',location.href);home.search='';home.hash='sync='+__sync.encode(__sync.collect());url.value=home.href}
+ b.onclick=function(){var open=box.hidden;box.hidden=!open;b.setAttribute('aria-expanded',open?'true':'false');if(open){fill();url.focus()}};
+ cp.onclick=function(){if(!url.value)fill();var t=url.value,ok=function(){cp.textContent='已复制';setTimeout(function(){cp.textContent='复制'},1600)};
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(ok,function(){url.focus();url.select();try{document.execCommand('copy')}catch(e){}ok()});
+  else{url.focus();url.select();try{document.execCommand('copy')}catch(e){}ok()}}})();
 bucket();paint();renderToday();`;
   write(f, page(f, '首页', 'home', body, script));
 }
@@ -621,7 +647,7 @@ ${secs}<div class="empty" id="rd-none" hidden><b>没有符合条件的条目</b>
 }
 // ---- review.md（人读版） ----
 {
-  let md = `# 间隔复习队列\n\n> 由 build.mjs 从 data/review.json 生成，不要手改本文件。\n> 完成一次复习有两种记法，满足一种即可：在首页「今日」勾上这一条（记在这台浏览器里，键 \`rev-done:<条目 id>\`，值是「第几天 → 完成日期」；同一天再点一次会撤销），或把 data/review.json 里对应 \`reviews[].done\` 改成 \`true\` 后再运行 \`node build.mjs\`。\n> 规则：点过「学完了」之后第 ${review.intervals.join('、')} 天各复习一次。勾选会把当前已经到期、还没完成的复习一次记完（清掉积压），下一次仍在原来的日期出现。勾完的那一行当天还留在「今日」里，算进「已看」，第二天消失。首页按浏览器当天日期计算，地址加 \`?today=YYYY-MM-DD\` 可以自查。\n\n| 内容 | 开始 | ${review.intervals.map(n => `第 ${n} 天`).join(' | ')} |\n|---|---|${review.intervals.map(() => '---').join('|')}|\n`;
-  for (const q of review.queue) { const it = itemById[q.item]; md += `| ${it ? `${it.label} ${it.title}` : q.item} | ${q.start} | ${q.reviews.map(r => `${r.date}${r.done ? ' ✅' : ''}`).join(' | ')} |\n`; }
+  let md = `# 间隔复习队列\n\n> 由 build.mjs 从 data/review.json 生成，不要手改本文件。\n> 跨设备以本文件为准。学习搭子把「学完了」写进对应条目的 \`learned\`（YYYY-MM-DD），把某一次复习写进 \`reviews[].done\`。浏览器里的 \`done:<路径>\` 和 \`rev-done:<条目 id>\`（第几天 → 完成日期）只是这台设备的临时记录。首页：有 \`learned\` 或本机 \`done:\` 都算学过；两边都有时用更早的日期排 1/3/7/14/30，只有一边就用那一边。某一次复习在 \`done: true\` 或本机 \`rev-done\` 里有记录，都算完成。换设备可以在首页「今日」点「同步到其他设备」，或等学习搭子写进本文件后再 \`node build.mjs\`。构建重写本文件时保留已有的 \`learned\` 和 \`done\`。\n> 规则：学完后第 ${review.intervals.join('、')} 天各复习一次。首页勾选会把当前已经到期、还没完成的复习一次记完（清掉积压），下一次仍按学完日顺延。勾完的那一行当天还留在「今日」里，算进「已看」，第二天消失。地址加 \`?today=YYYY-MM-DD\` 可以自查。下表日期按 \`start\` 列出；首页若有 \`learned\` 或本机学完日，会按那天重排。\n\n| 内容 | 学完 | 开始 | ${review.intervals.map(n => `第 ${n} 天`).join(' | ')} |\n|---|---|---|${review.intervals.map(() => '---').join('|')}|\n`;
+  for (const q of review.queue) { const it = itemById[q.item]; md += `| ${it ? `${it.label} ${it.title}` : q.item} | ${q.learned || '—'} | ${q.start} | ${q.reviews.map(r => `${r.date}${r.done ? ' ✅' : ''}`).join(' | ')} |\n`; }
   write('review.md', md);
 }
