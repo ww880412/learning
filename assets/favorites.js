@@ -1,10 +1,12 @@
 /* 收藏：全站共享脚本。列表存在仓库 favorites.json（公开，只存标题/链接/标签）。
-   写入和学习进度共用 assets/gh.js：同一枚 fav:token、同一套 Contents API。 */
+   写入和学习进度共用 assets/gh.js：同一枚 fav:token、同一套 Contents API。
+   页面只引了 favorites.js 也能用（X 简报、海报由别的 bot 生成，只带这一个脚本）：
+   缺 gh.js 时这里自己补载，再补 progress.js。 */
 (function (root) {
   var GH = root.GH;
-  if (!GH && typeof require === 'function') { GH = require('./gh.js'); root.GH = GH; }
-  var REPO = 'ww880412/learning', BRANCH = 'main', FILE = 'favorites.json', TK = (GH && GH.TK) || 'fav:token', CK = 'fav:cache';
-  var API = GH ? GH.api(FILE) : ('https://api.github.com/repos/' + REPO + '/contents/' + FILE);
+  if (!GH && typeof require === 'function' && typeof document === 'undefined') { GH = require('./gh.js'); root.GH = GH; }
+  var BRANCH = 'main', FILE = 'favorites.json', TK = 'fav:token', CK = 'fav:cache';
+  var API = 'https://api.github.com/repos/ww880412/learning/contents/' + FILE;
   // ---------- 纯逻辑（可在 node 里测试） ----------
   function norm(list) { return Array.isArray(list) ? list.filter(function (x) { return x && x.url; }) : []; }
   function applyOp(list, op) {
@@ -12,8 +14,8 @@
     if (op.type === 'add') list.unshift(op.item);
     return list;
   }
-  if (!GH) { if (typeof console !== 'undefined') console.error('favorites.js 需要先加载 assets/gh.js'); return; }
-  var b64enc = GH.b64enc, b64dec = GH.b64dec;
+  function b64enc(s) { return GH.b64enc(s); }
+  function b64dec(s) { return GH.b64dec(s); }
   // 读最新 → 合并 → PUT（带 sha）；sha 冲突（409/422）就重读重试。实现在 gh.js。
   async function commitOp(op, token, f, tries) {
     var res = await GH.commitJson(FILE, token, function (doc) {
@@ -29,6 +31,15 @@
   var me = document.currentScript && document.currentScript.src;
   var BASE = me ? me.replace(/assets\/favorites\.js.*$/, '') : location.origin + '/learning/';
   var SITE = new URL(BASE).pathname; // /learning/
+  function addScript(name, cb) {
+    var el = document.querySelector('script[src*="assets/' + name + '"]');
+    if (el && !cb) return;
+    el = document.createElement('script'); el.src = BASE + 'assets/' + name;
+    if (cb) { el.onload = cb; el.onerror = function () { console.error('收藏：' + name + ' 加载失败'); }; }
+    document.head.appendChild(el);
+  }
+  function start() {
+  GH = root.GH;
   var token = function () { return GH.token(); };
   var list = []; try { list = JSON.parse(localStorage.getItem(CK) || '[]'); } catch (e) {}
   var has = function (u) { return list.some(function (x) { return x.url === u; }); };
@@ -102,6 +113,8 @@
     paint(); load();
   }
   root.FAV = Object.assign(core, { base: BASE, token: token, list: function () { return list; }, setToken: function (t) { try { t ? localStorage.setItem(TK, t.trim()) : localStorage.removeItem(TK); } catch (e) {} load(); try { root.dispatchEvent(new Event('gh-token')); } catch (e) {} }, reload: load, toast: toast, toggleItem: async function (item) { setList(await commitOp({ type: 'remove', item: item }, token())); } });
-  if (!document.querySelector('script[src*="assets/progress.js"]')) { var ps = document.createElement('script'); ps.src = BASE + 'assets/progress.js'; document.head.appendChild(ps); }
+  addScript('progress.js');
   document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', init) : init();
+  }
+  if (root.GH) start(); else addScript('gh.js', start);
 })(typeof window !== 'undefined' ? window : globalThis);

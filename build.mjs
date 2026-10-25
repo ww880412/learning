@@ -406,9 +406,7 @@ ${nx ? `<a class="nx" href="${esc(nx.href)}"${ext(nx.href)}><b>${['已学完', '
   for (const c of columns) if (c.id !== 'courses') pushCol(c);
   const layC = `<div class="home-v2">
 <section class="td" id="today" aria-labelledby="td-h">
-<div class="td-h"><h1 id="td-h">今日</h1><span class="td-prog" data-td="prog"></span><button type="button" class="btn ghost td-syncbtn" id="td-sync" aria-expanded="false" aria-controls="td-syncbox">同步到其他设备</button><span class="kk" data-f="date">今天</span></div>
-<div class="td-syncbox" id="td-syncbox" hidden><p class="td-synchint">这条链接只带学完和复习记录。在另一台设备打开后会合并进去，不会删掉那边已有的。</p><textarea id="td-syncurl" readonly rows="3" spellcheck="false" aria-label="同步链接"></textarea><button type="button" class="btn td-syncbtn" id="td-synccopy">复制</button></div>
-<p id="sync-note" class="sync-note" hidden role="status"></p>
+<div class="td-h"><h1 id="td-h">今日</h1><span class="td-prog" data-td="prog"></span><span class="kk" data-f="date">今天</span></div>
 <p id="prog-hint" class="td-synchint" hidden></p>
 <p class="sub">每日汇总是最新一天，和早上 9 点（北京时间）推送的是同一份。和北京时间的今天同一天时标「今天」，否则标日期。缺的来源写「还没出」。雷达看最近一次补录；到期要复习的课也列在这里。</p>
 <div class="td-fin" data-td="fin" hidden role="status">${ic('party-popper', 16)}<span>今天读完了</span></div>
@@ -495,13 +493,6 @@ function renderToday(focusId){var box=document.querySelector('[data-td="list"]')
   if(id&&id.indexOf('rev:')===0){var rid=id.slice(4),prev=revMap(rid);toggleRev(rid);var next=revMap(rid);bucket();paint();renderToday(id);if(window.PROG&&PROG.onReview)PROG.onReview(rid,prev,next);return}
   var o=tdLoad();if(o[id])delete o[id];else o[id]=1;tdSave(o);renderToday(id)}});
  if(focusId){var nb=box.querySelector('.td-ck[data-id="'+focusId.replace(/"/g,'')+'"]');if(nb)nb.focus()}}
-(function(){var b=document.getElementById('td-sync'),box=document.getElementById('td-syncbox'),url=document.getElementById('td-syncurl'),cp=document.getElementById('td-synccopy');
- if(!b||!box||!url||!cp||!window.__sync)return;
- function fill(){var home=new URL(typeof __R==='string'?__R:'index.html',location.href);home.search='';home.hash='sync='+__sync.encode(__sync.collect());url.value=home.href}
- b.onclick=function(){var open=box.hidden;box.hidden=!open;b.setAttribute('aria-expanded',open?'true':'false');if(open)fill()};
- cp.onclick=function(){if(!url.value)fill();var t=url.value,ok=function(){cp.textContent='已复制';setTimeout(function(){cp.textContent='复制'},1600)};
-  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(ok,function(){url.focus();url.select();try{document.execCommand('copy')}catch(e){}ok()});
-  else{url.focus();url.select();try{document.execCommand('copy')}catch(e){}ok()}}})();
 bucket();paint();renderToday();`;
   write(f, page(f, '首页', 'home', body, script));
 }
@@ -710,7 +701,7 @@ ${secs}<div class="empty" id="rd-none" hidden><b>没有符合条件的条目</b>
 }
 // ---- review.md（人读版） ----
 {
-  let md = `# 间隔复习队列\n\n> 由 build.mjs 从 data/review.json 生成，不要手改本文件。\n> 跨设备以本文件为准。学习搭子把「学完了」写进对应条目的 \`learned\`（YYYY-MM-DD），把某一次复习写进 \`reviews[].done\`。浏览器里的 \`done:<路径>\` 和 \`rev-done:<条目 id>\`（第几天 → 完成日期）先写在这台设备，界面马上更新。收藏页「同步设置」里的令牌和收藏共用（\`fav:token\`）：有令牌时「学完了」把北京时间的日期写入 \`learned\`（已有更早的就留更早的，取消本机记录也不删除 \`learned\`），「今日」勾选把 \`reviews[].done\` 写成 true，并可以写上可选的 \`doneOn\`（完成日）；取消勾选只把 \`done\` 改回 false。没有令牌时只留在本机。首页：有 \`learned\` 或本机 \`done:\` 都算学过；两边都有时用更早的日期排 1/3/7/14/30，只有一边就用那一边。某一次复习在 \`done: true\` 或本机 \`rev-done\` 里有记录，都算完成。换设备可以在首页「今日」点「同步到其他设备」，或等写入本文件后再 \`node build.mjs\`。构建重写本文件时保留已有的 \`learned\`、\`done\` 和 \`doneOn\`。\n> 规则：学完后第 ${review.intervals.join('、')} 天各复习一次。首页勾选会把当前已经到期、还没完成的复习一次记完（清掉积压），下一次仍按学完日顺延。勾完的那一行当天还留在「今日」里，算进「已看」，第二天消失。地址加 \`?today=YYYY-MM-DD\` 可以自查。下表日期按 \`start\` 列出；首页若有 \`learned\` 或本机学完日，会按那天重排。\n\n| 内容 | 学完 | 开始 | ${review.intervals.map(n => `第 ${n} 天`).join(' | ')} |\n|---|---|---|${review.intervals.map(() => '---').join('|')}|\n`;
+  let md = `# 间隔复习队列\n\n> 由 build.mjs 从 data/review.json 生成，不要手改本文件。\n> 跨设备以本文件为准。学习搭子把「学完了」写进对应条目的 \`learned\`（YYYY-MM-DD），把某一次复习写进 \`reviews[].done\`。浏览器里的 \`done:<路径>\` 和 \`rev-done:<条目 id>\`（第几天 → 完成日期）先写在这台设备，界面马上更新。收藏页「同步设置」里的令牌和收藏共用（\`fav:token\`）：有令牌时「学完了」把北京时间的日期写入 \`learned\`（已有更早的就留更早的，取消本机记录也不删除 \`learned\`），「今日」勾选把 \`reviews[].done\` 写成 true，并可以写上可选的 \`doneOn\`（完成日）；取消勾选只把 \`done\` 改回 false。没有令牌时只留在本机。首页：有 \`learned\` 或本机 \`done:\` 都算学过；两边都有时用更早的日期排 1/3/7/14/30，只有一边就用那一边。某一次复习在 \`done: true\` 或本机 \`rev-done\` 里有记录，都算完成。换设备：每台电脑在收藏页「同步设置」填一次令牌即可。构建重写本文件时保留已有的 \`learned\`、\`done\` 和 \`doneOn\`。\n> 规则：学完后第 ${review.intervals.join('、')} 天各复习一次。首页勾选会把当前已经到期、还没完成的复习一次记完（清掉积压），下一次仍按学完日顺延。勾完的那一行当天还留在「今日」里，算进「已看」，第二天消失。地址加 \`?today=YYYY-MM-DD\` 可以自查。下表日期按 \`start\` 列出；首页若有 \`learned\` 或本机学完日，会按那天重排。\n\n| 内容 | 学完 | 开始 | ${review.intervals.map(n => `第 ${n} 天`).join(' | ')} |\n|---|---|---|${review.intervals.map(() => '---').join('|')}|\n`;
   for (const q of review.queue) { const it = itemById[q.item]; md += `| ${it ? `${it.label} ${it.title}` : q.item} | ${q.learned || '—'} | ${q.start} | ${q.reviews.map(r => `${r.date}${r.done ? ' ✅' : ''}`).join(' | ')} |\n`; }
   write('review.md', md);
 }

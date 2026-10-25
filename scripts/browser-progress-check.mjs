@@ -13,7 +13,15 @@ const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..')
 const REVIEW = fs.readFileSync(path.join(ROOT, 'data/review.json'), 'utf8');
 const TOKEN = 'github_pat_testtoken1234';
 const BJ = prog.beijingToday(new Date());
-const SHOTS = '/opt/cursor/artifacts/screenshots';
+// 今日勾选的用例跟着 review.json 走：取 cs146s-L01 下一次没做的复习，用 ?today= 把那天调出来。
+const addDays = (d, n) => { const t = new Date(d + 'T00:00:00Z'); t.setUTCDate(t.getUTCDate() + n); return t.toISOString().slice(0, 10); };
+const L01 = JSON.parse(REVIEW).queue.find((q) => q.item === 'cs146s-L01');
+const L01_BASE = L01.learned || L01.start;
+const L01_OPEN = L01.reviews.filter((r) => !r.done);
+const TODAY = L01_OPEN.length ? [BJ, addDays(L01_BASE, L01_OPEN[0].day)].sort().pop() : BJ;
+const DUE = L01_OPEN.filter((r) => addDays(L01_BASE, r.day) <= TODAY).map((r) => r.day);
+const HOME = '/index.html?today=' + TODAY;
+const SHOTS = process.env.SHOTS || '/workspace/shots';
 fs.mkdirSync(SHOTS, { recursive: true });
 
 const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.json': 'application/json; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.webp': 'image/webp', '.md': 'text/plain' };
@@ -170,30 +178,28 @@ try {
     await page._ctx.close();
   });
 
-  await check('没令牌：今日勾选只写本机，同步链接还在', async () => {
+  await check('没令牌：今日勾选只写本机，没有同步链接', async () => {
     const page = await boot(browser, origin);
-    await page.goto(origin + '/index.html', { waitUntil: 'networkidle0' });
+    await page.goto(origin + HOME, { waitUntil: 'networkidle0' });
     await page.waitForFunction(() => window.__progReady === 1 && document.querySelector('[data-id="rev:cs146s-L01"]'));
     const hint = await page.$eval('#prog-hint', (el) => ({ hidden: el.hidden, html: el.innerHTML }));
     if (hint.hidden || !hint.html.includes('favorites/#settings') || !hint.html.includes('同步设置')) throw new Error('首页提示不对 ' + JSON.stringify(hint));
-    const sync = await page.$eval('#td-sync', (el) => el.textContent);
-    if (!sync.includes('同步到其他设备')) throw new Error('同步按钮丢了');
+    if (await page.$('#td-sync')) throw new Error('「同步到其他设备」应该去掉了');
+    if ((await page.evaluate(() => document.body.innerText)).includes('同步到其他设备')) throw new Error('页面还有「同步到其他设备」');
+    if (await page.evaluate(() => typeof window.__sync !== 'undefined')) throw new Error('#sync= 代码还在');
     await page.click('[data-id="rev:cs146s-L01"]');
     const rev = await page.evaluate(() => localStorage.getItem('rev-done:cs146s-L01'));
     const o = JSON.parse(rev || '{}');
-    for (const day of ['1', '3', '7']) if (!/^\d{4}-\d{2}-\d{2}$/.test(o[day] || '')) throw new Error('rev-done 缺少第 ' + day + ' 天 ' + rev);
-    if (o['14'] || o['30']) throw new Error('不该勾还没到期的 ' + rev);
+    for (const day of DUE) if (!/^\d{4}-\d{2}-\d{2}$/.test(o[day] || '')) throw new Error('rev-done 缺少第 ' + day + ' 天 ' + rev);
+    for (const r of L01_OPEN) if (!DUE.includes(r.day) && o[r.day]) throw new Error('不该勾还没到期的 ' + rev);
     if ((await page.evaluate(() => window.__gh.length)) !== 0) throw new Error('没令牌却请求了 GitHub');
-    await page.click('#td-sync');
-    const url = await page.$eval('#td-syncurl', (el) => el.value);
-    if (!url.includes('sync=')) throw new Error('同步链接没有 sync= ' + url);
     if (page._errors.length) throw new Error(page._errors.join('\n'));
     await page._ctx.close();
   });
 
   await check('有令牌：今日勾选和取消打出 done', async () => {
     const page = await boot(browser, origin, { token: TOKEN });
-    await page.goto(origin + '/index.html', { waitUntil: 'networkidle0' });
+    await page.goto(origin + HOME, { waitUntil: 'networkidle0' });
     await page.waitForFunction(() => window.__progReady === 1 && document.querySelector('[data-id="rev:cs146s-L01"]'));
     const hintHidden = await page.$eval('#prog-hint', (el) => el.hidden);
     if (!hintHidden) throw new Error('有令牌时不该显示去设置的提示');
@@ -206,14 +212,14 @@ try {
     const orig = JSON.parse(REVIEW);
     const item = doc.queue.find((q) => q.item === 'cs146s-L01');
     const old = orig.queue.find((q) => q.item === 'cs146s-L01');
-    const localToday = await page.evaluate(() => JSON.parse(localStorage.getItem('rev-done:cs146s-L01'))['1']);
+    const localToday = (await page.evaluate(() => JSON.parse(localStorage.getItem('rev-done:cs146s-L01'))))[DUE[0]];
     if (item.learned !== old.learned) throw new Error('勾选复习改了 learned');
     for (const r of item.reviews) {
       const was = old.reviews.find((x) => x.day === r.day);
       if (r.date !== was.date) throw new Error('排期 date 被改了 ' + r.day);
-      if ([1, 3, 7].includes(r.day)) {
+      if (DUE.includes(r.day)) {
         if (r.done !== true || r.doneOn !== localToday) throw new Error('第 ' + r.day + ' 天不对 ' + JSON.stringify(r));
-      } else if (r.done !== was.done || r.doneOn) throw new Error('不该改第 ' + r.day + ' 天 ' + JSON.stringify(r));
+      } else if (r.done !== was.done || r.doneOn !== was.doneOn) throw new Error('不该改第 ' + r.day + ' 天 ' + JSON.stringify(r));
     }
     for (const q of doc.queue) {
       if (q.item === 'cs146s-L01') continue;
@@ -227,7 +233,7 @@ try {
     const both = await puts(page, 'data/review.json');
     const undone = decode(both[1].body, gh).queue.find((q) => q.item === 'cs146s-L01');
     if (undone.learned !== old.learned) throw new Error('取消勾选删了 learned');
-    for (const day of [1, 3, 7]) {
+    for (const day of DUE) {
       const r = undone.reviews.find((x) => x.day === day);
       if (r.done !== false || Object.prototype.hasOwnProperty.call(r, 'doneOn')) throw new Error('取消后第 ' + day + ' 天还在 ' + JSON.stringify(r));
     }
@@ -259,6 +265,23 @@ try {
     if (page._errors.length || bare._errors.length) throw new Error([].concat(page._errors, bare._errors).join('\n'));
     await page._ctx.close();
     await bare._ctx.close();
+  });
+
+  await check('只引 favorites.js 的简报、海报页也有收藏按钮', async () => {
+    const brief = fs.readdirSync(path.join(ROOT, 'x-brief')).filter((f) => /^\d{4}-\d{2}-\d{2}\.html$/.test(f)).sort().pop();
+    const poster = fs.readdirSync(path.join(ROOT, 'x-posters')).filter((f) => /^\d{4}-\d{2}-\d{2}$/.test(f)).sort().pop();
+    for (const u of ['/x-brief/' + brief, '/x-posters/' + poster + '/index.html']) {
+      const page = await boot(browser, origin, { token: TOKEN });
+      await page.goto(origin + u, { waitUntil: 'networkidle0' });
+      await page.waitForSelector('.fav-b');
+      const n = await page.$$eval('.fav-b', (bs) => bs.filter((b) => b.getBoundingClientRect().width > 0).length);
+      if (n < 2) throw new Error(u + ' 收藏按钮只有 ' + n + ' 个');
+      await page.click('main .fav-b');
+      await page.waitForFunction(() => window.__gh.some((c) => c.method === 'PUT' && c.path === 'favorites.json'));
+      if (!(await page.evaluate(() => !!window.PROG && !!window.PROG.onReview))) throw new Error(u + ' 没补载 progress.js');
+      if (page._errors.length) throw new Error(u + ' ' + page._errors.join('\n'));
+      await page._ctx.close();
+    }
   });
 
   await check('截图：首页 A/B/C 和一课', async () => {
