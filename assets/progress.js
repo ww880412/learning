@@ -152,11 +152,11 @@
     var el = document.getElementById('prog-hint'); if (!el) return;
     if (GH.token()) { el.hidden = true; el.textContent = ''; return; }
     el.hidden = false;
-    el.innerHTML = '学完和复习先记在这台设备。要写入仓库，到 <a href="' + settingsHref() + '">收藏页的同步设置</a> 填一次令牌。';
+    el.innerHTML = '学完和复习先记在这台设备。到 <a href="' + settingsHref() + '">收藏页「同步设置」</a> 填一次令牌，收藏、学完和复习就能在各台电脑间同步。';
   }
   function hintLearn() {
     if (document.getElementById('prog-hint') && !document.getElementById('prog-hint').hidden) return;
-    GH.toast('已记在这台设备。要同步到其他设备，到收藏页填一次令牌 · <a href="' + settingsHref() + '">同步设置</a>', 5000);
+    GH.toast('已记在这台设备。在收藏页「同步设置」填一次令牌，各台电脑就能同步 · <a href="' + settingsHref() + '">去设置</a>', 5000);
   }
   function doneKeys(seed) {
     return doneExpand(seed || location.pathname);
