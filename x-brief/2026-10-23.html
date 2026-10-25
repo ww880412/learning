@@ -937,6 +937,173 @@ html.dark .pi-bar .chip.on{color:#0f1115}
  .dsh-bar .chip{flex:none;min-height:40px}
  .dsh-jump .chip{min-height:40px}
 }
+
+/* 首页：今日 + 新闻 / 学习。A/B/C 共用这一套结构，纸色、字体、顶栏/侧栏仍跟主题走。 */
+.home-v2{min-width:0}
+.home-v2 .td{background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-lg);padding:12px 14px 4px;margin:0 0 var(--sp-2);min-width:0}
+.td-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.td-h h1{margin:0;font-size:var(--fs-xl);letter-spacing:-.02em}
+.td-prog{font-size:var(--fs-sm);font-weight:650;color:var(--meta);font-variant-numeric:tabular-nums}
+.td-h .kk{margin-left:0;color:var(--meta);font-weight:600}
+.td-h .td-syncbtn{margin-left:auto}
+.td-syncbtn{min-height:40px;padding:6px 12px;font-size:var(--fs-sm);white-space:nowrap}
+.td-syncbox{display:grid;gap:8px;margin:2px 0 10px;min-width:0}
+.td-syncbox[hidden]{display:none}
+.td-synchint{margin:0;font-size:var(--fs-xs);color:var(--meta);line-height:1.45}
+#prog-hint{margin:0 0 8px}
+#prog-hint a{font-weight:650}
+.td-syncbox textarea{width:100%;min-height:64px;margin:0;resize:vertical;border:1px solid var(--hair);border-radius:var(--r-sm);background:var(--paper);color:var(--ink);padding:8px 10px;font:12px/1.45 var(--mono);word-break:break-all}
+.td-syncbox textarea:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.td-syncbox .btn{justify-self:start;min-width:72px}
+.sync-note{margin:0 0 8px;padding:8px 12px;border-radius:var(--r-sm);background:var(--green-soft);color:var(--green);font-size:var(--fs-sm);font-weight:650}
+.sync-note[hidden]{display:none}
+.sync-note.bad{background:var(--amber-soft);color:var(--amber)}
+.home-v2 .td>.sub{margin:2px 0 8px;font-size:var(--fs-sm)}
+.td-fin{display:flex;align-items:center;gap:8px;margin:0 0 8px;padding:8px 12px;border-radius:var(--r-md);background:var(--green-soft);color:var(--green);font-weight:750;font-size:var(--fs-sm)}
+.td-fin[hidden]{display:none}
+.home-v2 .td .list{border:0;background:transparent;border-radius:0}
+.home-v2 .td .list .row{padding:4px 2px;align-items:center;flex-wrap:nowrap;gap:8px}
+.home-v2 .td .list .row:hover{background:transparent}
+.td-ck{flex:none;width:40px;height:40px;margin:0;border:0;padding:0;background:transparent;color:var(--meta);display:grid;place-items:center;cursor:pointer;border-radius:var(--r-sm)}
+.td-box{width:18px;height:18px;border:2px solid var(--meta);border-radius:50%;box-sizing:border-box}
+.td-ck:hover{background:var(--hair2);color:var(--blue)}
+.td-ck:hover .td-box{border-color:var(--blue)}
+.td-ck:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.td-ck[aria-pressed=true]{color:var(--green)}
+.td-src{flex:none;display:inline-flex;align-items:center;gap:4px;min-width:88px;font-size:var(--fs-xs);font-weight:700;color:var(--ink2);white-space:nowrap}
+.td-src .i{color:var(--blue)}
+.home-v2 .td .t{min-width:0;flex:1}
+.home-v2 .td .t a{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:var(--ink);font-weight:650;line-height:1.45}
+.home-v2 .td .t a:hover{color:var(--blue)}
+.home-v2 .td .t small{display:block;margin-top:1px;font-size:var(--fs-xs);font-weight:400;color:var(--meta);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.home-v2 .td .d{margin-left:auto;flex:none;font-size:var(--fs-xs);color:var(--meta);white-space:nowrap;font-variant-numeric:tabular-nums}
+.home-v2 .td .row.on .t a{color:var(--meta);font-weight:550}
+.td-late{color:var(--red);font-weight:700}
+.td-empty .t{color:var(--meta);font-weight:500}
+.td-cols{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr));gap:var(--sp-3);align-items:stretch}
+.td-cols>.card{min-width:0;height:100%}
+.td-cols>.card h3,.td-cols>.card p{overflow-wrap:anywhere}
+.td-cols .card p{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.td-cols .card .meta{min-width:0}
+/* A 杂志：报头双线、衬线大标题，卡片仍是暖纸圆角 */
+[data-theme=A] .home-v2 .td{background:transparent;border:0;border-bottom:4px double var(--ink);border-radius:0;padding:2px 0 10px;box-shadow:none}
+[data-theme=A] .td-h h1{font-size:var(--fs-2xl);font-weight:700;line-height:1.2}
+/* B 仪表盘：更紧、小圆角 */
+[data-theme=B] .home-v2 .td{border-radius:var(--r-md);padding:10px 12px 2px}
+[data-theme=B] .td-h h1{font-size:22px;font-weight:650}
+[data-theme=B] .td-cols{gap:var(--sp-2)}
+/* C 个人站：大圆角和卡片阴影。后面的 :root 会把 --r-lg 收成 12px，这里按规范写回 20px */
+[data-theme=C] .home-v2 .td,[data-theme=C] .td-cols>.card{border-radius:20px;box-shadow:var(--sh)}
+@media (prefers-reduced-motion:no-preference){
+ .td-ck{transition:transform var(--dur-3) var(--spring),background-color var(--dur-2) var(--ease),color var(--dur-1) var(--ease)}
+ .td-ck:active{transform:scale(.92)}
+ .td-ck[aria-pressed=true] .i{animation:td-pop var(--dur-3) var(--spring)}
+ @keyframes td-pop{0%{transform:scale(.55)}100%{transform:scale(1)}}
+ .td-fin:not([hidden]){animation:td-in var(--dur-3) var(--spring)}
+ @keyframes td-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+}
+@media (max-width:900px){
+ .td-h .kk{margin-left:auto}
+ .td-h .td-syncbtn{margin-left:0;order:5;flex:1 0 100%;justify-content:center}
+ .td-syncbox .btn{min-height:40px}
+ .home-v2 .td .list .row{display:grid;grid-template-columns:40px minmax(0,1fr);column-gap:6px;row-gap:1px;align-items:center}
+ .home-v2 .td .list .row>*{order:0;flex-basis:auto;min-width:0;max-width:100%}
+ .home-v2 .td .td-ck{grid-column:1;grid-row:1 / span 3;align-self:center}
+ .home-v2 .td .td-src{grid-column:2;grid-row:1;min-width:0}
+ .home-v2 .td .t{grid-column:2;grid-row:2}
+ .home-v2 .td .d{grid-column:2;grid-row:3;margin-left:0;justify-self:start;white-space:normal}
+ .home-v2 .td .list .row.td-empty{display:flex;flex-wrap:nowrap;align-items:center;gap:8px}
+ .home-v2 .td .list .row.td-empty .td-src{flex:none;min-width:88px;grid-column:auto;grid-row:auto}
+ .home-v2 .td .list .row.td-empty .t{flex:1;min-width:0;grid-column:auto;grid-row:auto;white-space:normal}
+ .home-v2 .td .t a,.home-v2 .td .t small{overflow-wrap:anywhere}
+ .td-src{min-width:0}
+ .home-v2 .td .t small{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+}
+@media (max-width:700px){
+ [data-theme=A] .td-h h1{font-size:var(--fs-xl)}
+}
+
+/* ---- 今日：每日汇总行（简报 + 海报 + 产品灵感，与北京时间 9:00 推送同源 data/digest/D.json） ---- */
+.home-v2 .td .list .row.td-dgr{align-items:flex-start}
+.home-v2 .td .list .row.td-dgr .td-ck,.home-v2 .td .list .row.td-dgr .td-src{margin-top:0}
+.home-v2 .td .list .row.td-dgr .td-src{padding-top:11px}
+.home-v2 .td .list .row.td-dgr .t{padding-top:9px}
+.home-v2 .td .list .row.td-dgr .d{padding-top:11px}
+.td-dg{list-style:none;margin:4px 0 6px;padding:0;display:grid;gap:3px}
+.td-dg li{display:flex;gap:8px;align-items:baseline;min-width:0;font-size:var(--fs-sm);line-height:1.45}
+.td-dg .k{flex:none;display:inline-flex;align-items:center;gap:4px;min-width:76px;font-size:var(--fs-xs);font-weight:650;color:var(--meta)}
+.td-dg .k .i{width:13px;height:13px;color:var(--meta)}
+.td-dg .v{min-width:0;flex:1;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.home-v2 .td .t .td-dg a{display:inline;-webkit-line-clamp:unset;overflow:visible;font-weight:550;color:var(--ink2)}
+.home-v2 .td .t .td-dg a:hover{color:var(--blue)}
+.home-v2 .td .row.on .t .td-dg a{color:var(--meta)}
+.td-dg i{font-style:normal;color:var(--meta)}
+.td-dg em{font-style:normal;color:var(--meta)}
+@media (max-width:900px){
+ .home-v2 .td .list .row.td-dgr .td-src,.home-v2 .td .list .row.td-dgr .t,.home-v2 .td .list .row.td-dgr .d{padding-top:0}
+ .home-v2 .td .list .row.td-dgr .td-ck{align-self:start}
+ .td-dg li{flex-direction:column;gap:0}
+ .td-dg .k{min-width:0}
+}
+
+/* ---- 每日汇总页（digest/YYYY-MM-DD.html） ---- */
+.dg-nav{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.dg-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sp-3);align-items:stretch}
+.dg-sec{padding:14px 16px;min-width:0;border:1px solid var(--hair);border-radius:var(--r-lg)}
+.dg-sec.dg-wide{grid-column:1 / -1}
+.dg-sec h2{display:flex;align-items:center;gap:8px;margin:0 0 8px;font-size:var(--fs-lg);letter-spacing:-.01em}
+.dg-sec h2 .i{color:var(--blue)}
+.dg-tt{display:block;font-weight:700;color:var(--ink);margin-bottom:6px}
+.dg-sec ol{margin:0 0 10px;padding-left:20px;display:grid;gap:6px;font-size:var(--fs-sm);color:var(--ink2);line-height:1.55}
+.dg-ph{list-style:none;padding-left:0!important}
+.dg-ph li{display:grid;gap:1px}
+.dg-ph li span{font-size:var(--fs-xs);color:var(--meta);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.dg-none{padding:10px 0;color:var(--meta);font-weight:500}
+.dg-po{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:var(--sp-2)}
+.dg-po a{display:grid;gap:4px;min-width:0;color:var(--ink2);font-size:var(--fs-xs)}
+.dg-po img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:var(--r-sm);border:1px solid var(--hair);background:var(--hair2)}
+.dg-po span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+@media (max-width:900px){
+ .dg-grid{grid-template-columns:minmax(0,1fr)}
+ .dg-po{grid-auto-flow:column;grid-auto-columns:46%;grid-template-columns:none;overflow-x:auto;scroll-snap-type:x mandatory}
+ .dg-po a{scroll-snap-align:start}
+}
+
+/* ---- 雷达（radar/index.html，build.mjs 从 data/radar.json 生成） ---- */
+.rd-hero h1 .i{color:var(--blue)}
+.rd-log{margin:12px 0 0}
+.rd-q{display:flex;align-items:center;gap:10px;margin:10px 0 4px}
+.rd-q label{flex:1;max-width:420px;display:flex;align-items:center;gap:6px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-pill);padding:0 12px;color:var(--meta)}
+.rd-q label:focus-within{border-color:var(--blue)}
+.rd-q input{flex:1;min-width:0;border:0;background:transparent;color:var(--ink);font:inherit;font-size:var(--fs-sm);height:38px;outline:none}
+.rd-q span{font-size:var(--fs-xs);color:var(--meta)}
+.rd-sec[hidden],.rd-card[hidden]{display:none}
+.rd-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-3);align-items:stretch}
+.rd-card{padding:12px 14px;display:flex;flex-direction:column;gap:6px;min-width:0;overflow-wrap:anywhere}
+.rd-hd{display:flex;align-items:baseline;gap:8px;min-width:0}
+.rd-hd h3{margin:0;font-size:var(--fs-md);line-height:1.35;min-width:0;flex:1;overflow-wrap:anywhere}
+.rd-hd h3 a{color:var(--ink)}
+.rd-hd h3 a:hover{color:var(--blue)}
+.rd-no{flex:none;font-size:var(--fs-xs);font-weight:700;color:var(--meta);font-variant-numeric:tabular-nums}
+.rd-gh{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:var(--fs-xs);color:var(--meta);font-variant-numeric:tabular-nums}
+.rd-gh>*{display:inline-flex;align-items:center;gap:3px;min-width:0}
+.rd-gh a{color:var(--ink2);overflow-wrap:anywhere}
+.rd-gh a:hover{color:var(--blue)}
+.rd-what{margin:0;font-size:var(--fs-sm);color:var(--ink);line-height:1.55;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.rd-borrow{margin:0;display:flex;gap:6px;font-size:var(--fs-xs);color:var(--ink2);line-height:1.55;background:var(--amber-soft);border-radius:var(--r-sm);padding:6px 8px}
+.rd-borrow .i{flex:none;margin-top:2px;color:var(--amber)}
+.rd-borrow span{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.rd-note{margin:0;font-size:var(--fs-xs);color:var(--meta)}
+.rd-src{margin-top:auto;font-size:var(--fs-xs);color:var(--meta)}
+.rd-src summary{cursor:pointer;min-height:28px;display:flex;align-items:center}
+.rd-src ul{margin:2px 0 0;padding-left:18px;display:grid;gap:2px}
+.rd-src li span{color:var(--meta)}
+@media (max-width:1100px){.rd-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:760px){
+ .rd-grid{grid-template-columns:minmax(0,1fr)}
+ .rd-q label{max-width:none}
+ .rd-bar .chip{min-height:36px}
+}
 </style><script>/*ICONS lucide v1.60.0 ISC*/window.__IC={"menu":"<path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/>","x":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","star":"<path d=\"M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z\"/>","party-popper":"<path d=\"M5.8 11.3 2 22l10.7-3.79\"/><path d=\"M4 3h.01\"/><path d=\"M22 8h.01\"/><path d=\"M15 2h.01\"/><path d=\"M22 20h.01\"/><path d=\"m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10\"/><path d=\"m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17\"/><path d=\"m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7\"/><path d=\"M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z\"/>"};window.__ic=function(n,s,c){return '<svg class="i i-'+n+(c?' '+c:'')+'" width="'+(s||16)+'" height="'+(s||16)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(window.__IC[n]||'')+'</svg>'};/*END ICONS*/
 (function(){var T='site-theme',v;try{v=localStorage.getItem(T)}catch(e){}if(!/^[ABC]$/.test(v||''))v='C';document.documentElement.setAttribute('data-theme',v);
 window.__setTheme=function(t){var go=function(){__applyTheme(t)};if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.startViewTransition(go);else go()};window.__applyTheme=function(t){document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem(T,t)}catch(e){}[].forEach.call(document.querySelectorAll('.thsw button'),function(b){b.setAttribute('aria-pressed',b.dataset.t===t)})}})();
@@ -959,7 +1126,44 @@ window.addEventListener('load',function(){
  addEventListener('scroll',function(){document.querySelectorAll('.fx-rv:not(.fx-in)').forEach(function(e){if(e.getBoundingClientRect().top<innerHeight){e.classList.add('fx-in');io.unobserve(e)}})},{passive:true});
  document.addEventListener('pointermove',function(ev){var c=ev.target.closest&&ev.target.closest('a.card,.crs,.pc');if(!c)return;var r=c.getBoundingClientRect();c.style.setProperty('--mx',ev.clientX-r.left+'px');c.style.setProperty('--my',ev.clientY-r.top+'px')},{passive:true});
 })})();
-</script><script src="../assets/gh.js" defer></script><script src="../assets/progress.js" defer></script><script src="../assets/favorites.js" defer></script></head><body>
+/* 跨设备：#sync=<base64url 紧凑 JSON> 把 done: / rev-done: 合并进本机。不删已有记录，不改路径。 */
+(function(){var DAY=/^\d{4}-\d{2}-\d{2}$/;
+function isDate(s){if(typeof s!=='string'||!DAY.test(s))return false;var p=s.split('-'),y=+p[0],m=+p[1],d=+p[2],t=new Date(Date.UTC(y,m-1,d));return t.getUTCFullYear()===y&&t.getUTCMonth()===m-1&&t.getUTCDate()===d}
+function b64e(str){var bytes=new TextEncoder().encode(str),bin='',i;for(i=0;i<bytes.length;i++)bin+=String.fromCharCode(bytes[i]);return btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/g,'')}
+function b64d(s){s=String(s).replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';var bin=atob(s),bytes=new Uint8Array(bin.length),i;for(i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);return new TextDecoder().decode(bytes)}
+function sortObj(o,num){var ks=Object.keys(o).sort(num?function(a,b){return (+a)-(+b)}:undefined),out={},i;for(i=0;i<ks.length;i++)out[ks[i]]=o[ks[i]];return out}
+function okPath(p){return typeof p==='string'&&p.charAt(0)==='/'&&p.length<=400&&p.indexOf('..')<0&&!/[\u0000-\u001f\\]/.test(p)}
+function okId(id){return typeof id==='string'&&/^[A-Za-z0-9][A-Za-z0-9._-]{0,80}$/.test(id)}
+function okDay(day){return /^[1-9]\d{0,2}$/.test(String(day))}
+function collect(){var d={},r={},i,k,v,o,day,m;for(i=0;i<localStorage.length;i++){k=localStorage.key(i);if(!k)continue;
+ if(k.indexOf('done:')===0){v=localStorage.getItem(k);if(okPath(k.slice(5))&&isDate(v))d[k.slice(5)]=v}
+ else if(k.indexOf('rev-done:')===0){if(!okId(k.slice(9)))continue;try{o=JSON.parse(localStorage.getItem(k)||'')}catch(e){o=null}if(!o||typeof o!=='object'||Array.isArray(o))continue;m={};for(day in o)if(okDay(day)&&isDate(o[day]))m[day]=o[day];if(Object.keys(m).length)r[k.slice(9)]=sortObj(m,1)}}
+ var out={};if(Object.keys(d).length)out.d=sortObj(d);if(Object.keys(r).length)out.r=sortObj(r);return out}
+function merge(obj){var n=0,d=obj.d||obj.done||{},r=obj.r||obj['rev-done']||{},path,id,day,raw,cur,prev,incoming,wrote,any;
+ if(!d||typeof d!=='object'||Array.isArray(d))d={};if(!r||typeof r!=='object'||Array.isArray(r))r={};
+ for(path in d){if(!okPath(path)||!isDate(d[path]))continue;try{raw=localStorage.getItem('done:'+path)}catch(e){continue}
+  if(raw==null){try{localStorage.setItem('done:'+path,d[path])}catch(e){continue}}
+  else if(isDate(raw)&&d[path]<raw){try{localStorage.setItem('done:'+path,d[path])}catch(e){continue}}
+  n++}
+ for(id in r){incoming=r[id];if(!okId(id)||!incoming||typeof incoming!=='object'||Array.isArray(incoming))continue;
+  try{raw=localStorage.getItem('rev-done:'+id)}catch(e){continue}cur={};
+  if(raw){try{cur=JSON.parse(raw);if(!cur||typeof cur!=='object'||Array.isArray(cur))continue}catch(e){continue}}
+  wrote=!raw;any=0;for(day in incoming){if(!okDay(day)||!isDate(incoming[day]))continue;any=1;prev=cur[day];
+   if(typeof prev==='string'&&isDate(prev)){if(incoming[day]<prev){cur[day]=incoming[day];wrote=1}}
+   else if(prev==null){cur[day]=incoming[day];wrote=1}}
+  if(!any)continue;if(wrote){try{localStorage.setItem('rev-done:'+id,JSON.stringify(sortObj(cur,1)))}catch(e){continue}}n++}
+ return n}
+function note(text,bad){var go=function(){var el=document.getElementById('sync-note');
+ if(!el){el=document.createElement('p');el.id='sync-note';el.className='sync-note';el.setAttribute('role','status');var host=document.querySelector('.td-h')||document.querySelector('main');if(!host)return;if(host.classList.contains('td-h'))host.insertAdjacentElement('afterend',el);else host.insertBefore(el,host.firstChild)}
+ el.hidden=false;el.classList.toggle('bad',!!bad);el.textContent=text};
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',go);else go()}
+function take(){var h=location.hash;if(!h||h.indexOf('sync=')<0)return;var q=h.charAt(0)==='#'?h.slice(1):h,enc='';
+ try{enc=new URLSearchParams(q).get('sync')||''}catch(e){enc=''}if(!enc&&q.indexOf('sync=')===0)enc=q.slice(5).split('&')[0];
+ try{enc=decodeURIComponent(enc)}catch(e){}var msg='同步链接无法识别',bad=1;
+ try{if(!enc||enc.length>100000)throw 0;var obj=JSON.parse(b64d(enc));if(!obj||typeof obj!=='object'||Array.isArray(obj))throw 0;msg='已同步 '+merge(obj)+' 条记录';bad=0}catch(e){}
+ try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}note(msg,bad)}
+window.__sync={encode:function(o){return b64e(JSON.stringify(o))},collect:collect,merge:merge};take()})();
+</script><script src="../assets/favorites.js" defer></script></head><body>
 <header class="top"><div class="in"><a class="brand" href="./index.html"><i><svg class="i i-newspaper" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18h-5"/><path d="M18 14h-8"/><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-4 0v-9a2 2 0 0 1 2-2h2"/><rect width="8" height="4" x="10" y="6" rx="1"/></svg></i>X 简报</a><nav><a href="../index.html">学习库首页</a><a href="index.html" class=on>X 简报</a><a href="index.html#weekly">周趋势</a><a href="../favorites/index.html">收藏</a></nav><button class="dm" onclick="__tt()" aria-label="切换深色模式"><svg class="i i-sun-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2"/><path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715"/><path d="M16 12a4 4 0 0 0-4-4"/><path d="m19 5-1.256 1.256"/><path d="M20 12h2"/></svg></button></div></header>
 <main><section class="sheet"><span class="kk">DAILY · 2026-10-23（周五）</span><h1>X 简报 · 10/23（周五）</h1><div class="kk" style="color:var(--ink2);margin-bottom:8px">今日主线</div><ol class="quick"><li>月之暗面发布 Kimi K3.1 Pro：2.8T 总参数的开放权重模型，跑分贴近 Opus 5.5 和 GPT-6 Astra，价格只有 Astra 的五分之一，权重 11 月 4 日前放出；Nathan Lambert 认为 Kimi 这次把强化学习后训练做对了</li><li>漏洞潮第三天：PHP 之后轮到 Ruby，OpenAI 披露在一个广泛使用的压缩库里发现远程代码执行漏洞，并称 10/1 已恢复前沿训练、拿出大量算力做红队；Gary Marcus 呼吁暂时禁止 AI Agent，levelsio 劝大家把 VPS 撤下公网</li><li>Grok Bot 接上 iPhone 自带的 6 个应用并上线 Vault，1Password 的 Agent 登录全量开放；Cursor 也加了 Computer Use，Codex CLI 用量自 DevDay 以来翻倍</li></ol></section>
 <nav class="tabs"><a href="#s1">模型</a><a href="#s2">Agent 与编程</a><a href="#s3">产品与应用</a><a href="#s4">硬件与算力</a><a href="#s5">公司与行业</a><a href="#s6">AI Native 组织</a><a href="#s7">研究</a><a href="#s8">安全与政策</a><a href="#s9">AI 与社会</a><a href="#s10">其他</a></nav><section class="sheet"><h2 id="s1">模型</h2>
@@ -1081,4 +1285,4 @@ window.addEventListener('load',function(){
 <li>【发布】<b>desigma</b>：免费离线的开源桌面设计工具，能导入 Figma 的 .fig 文件，自带本地 MCP 服务让 AI 读设计稿——GitHubDaily @GitHub_Daily（<a href="https://x.com/GitHub_Daily/status/2113533421817581755" target="_blank" rel="noopener">原帖</a>）</li>
 <li>【观点】<b>mRNA 疫苗在皮肤癌上传来好消息</b>：他说 mRNA 疫苗正成为人类最好的发明之一——Gary Marcus @GaryMarcus（<a href="https://x.com/GaryMarcus/status/2113447045478662454" target="_blank" rel="noopener">原帖</a>）</li>
 </ul>
-<p class="muted">没发新帖：@trq212 @karpathy @AndrewYNg @DrJimFan @jeremyphoward @OfficialLoganK @_akhaliq @lijigang @rasbt @arankomatsuzaki @jxmnop @sarahookr @Swarooprm7 @sama @demishassabis @btibor91 @eladgil @HamelHusain @bcherny @alexalbert__ @_catwu @ylecun @fchollet @JeffDean @_jasonwei @jackclarkSF @hardmaru @Francis_YAO_</p></section><div class="pn"><span></span><a href="index.html">往期目录</a><a href="2026-10-22.html">2026-10-22 →</a></div><div class="foot">王玮的 X 简报 · 每天由 X Brief 生成 · 链接打开 X 原帖 · 风格改编自 <a href="https://github.com/vuejs/vitepress">VitePress</a>（MIT）</div></main></body></html>
+<p class="muted">没发新帖：@trq212 @karpathy @AndrewYNg @DrJimFan @jeremyphoward @OfficialLoganK @_akhaliq @lijigang @rasbt @arankomatsuzaki @jxmnop @sarahookr @Swarooprm7 @sama @demishassabis @btibor91 @eladgil @HamelHusain @bcherny @alexalbert__ @_catwu @ylecun @fchollet @JeffDean @_jasonwei @jackclarkSF @hardmaru @Francis_YAO_</p></section><div class="pn"><a href="2026-10-24.html">← 2026-10-24</a><a href="index.html">往期目录</a><a href="2026-10-22.html">2026-10-22 →</a></div><div class="foot">王玮的 X 简报 · 每天由 X Brief 生成 · 链接打开 X 原帖 · 风格改编自 <a href="https://github.com/vuejs/vitepress">VitePress</a>（MIT）</div></main></body></html>
