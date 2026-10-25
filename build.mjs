@@ -153,7 +153,8 @@ const briefPublishDay = html => {
 const briefBeijingDate = (fileDate, html) => briefPublishDay(html) || addDays(fileDate, 1);
 
 // ---- 每日汇总（北京时间 9:00 推送用）：从 x-brief / x-posters / data/ph-inspo.json 汇成 data/digest/YYYY-MM-DD.json 和 digest/YYYY-MM-DD.html ----
-// 汇总日 D 是北京时间。简报用北京日期（见 briefBeijingDate），海报目录已是北京日期，产品灵感取榜单日 ≤ D−2 的最新一份。某一来源没有就是 null，不拿别天硬凑。
+// 汇总日 D 是北京时间。简报用北京日期（见 briefBeijingDate），海报目录已是北京日期，产品灵感取榜单日 ≤ D−2 的最新一份。
+// 简报或海报只要有一边到了 D，就生成 digest/D（另一边 null，页面写「还没出」，不把这一天藏起来，也不拿别天硬凑）。海报晚到后再构建，仍写回同一天。
 const DG = (() => {
   const T = s => String(s || '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
   const rd = f => { try { return fs.readFileSync(path.join(ROOT, f), 'utf8'); } catch { return ''; } };
@@ -181,7 +182,7 @@ const DG = (() => {
     return { listDate: day.date, href: `ph-inspo/index.html`, n: day.items.length, source: day.source || null,
       items: [...day.items].sort((a, b) => (a.rank ?? 999) - (b.rank ?? 999)).map(i => ({ rank: i.rank ?? null, name: i.name, what: i.what || '', href: `ph-inspo/index.html#${i.id}` })) };
   };
-  const dates = [...new Set([...Object.keys(brief), ...Object.keys(poster)])].sort().reverse();
+  const dates = [...new Set([...Object.keys(brief), ...Object.keys(poster)])].filter(Boolean).sort().reverse();
   const list = dates.map(d => { const [y, m, dd] = d.split('-').map(Number);
     return { date: d, label: `${m} 月 ${dd} 日 · 星期${WD[new Date(Date.UTC(y, m - 1, dd)).getUTCDay()]}`, href: `digest/${d}.html`, json: `data/digest/${d}.json`,
       brief: brief[d] || null, posters: poster[d] || null, ph: phFor(d) }; });
@@ -198,10 +199,11 @@ const DG = (() => {
     days: DG.list.map(x => ({ date: x.date, url: SITE + x.href, json: x.json, brief: !!x.brief, posters: x.posters?.n || 0, ph: x.ph?.n || 0 })) }, null, 1) + '\n');
   console.log('wrote data/digest/*.json', DG.list.length);
   const none = t => `<div class="dg-none">${t}</div>`;
+  const pending = '今天的还没出';
   const dayBody = (f, x) => `<div class="dg-grid">
-<section class="sheet dg-sec"><h2>${ic('newspaper', 18)} X 简报</h2>${x.brief ? `<a class="dg-tt" href="${rel(f, x.brief.href)}">${esc(x.brief.title)}</a>${x.brief.lines.length ? `<ol>${x.brief.lines.map(l => `<li>${esc(l)}</li>`).join('')}</ol>` : ''}<a class="btn sm" href="${rel(f, x.brief.href)}">读这期简报 →</a>` : none('这天还没有简报')}</section>
-<section class="sheet dg-sec"><h2>${ic('rocket', 18)} 产品灵感${x.ph ? ` <span class="tag">榜单 ${esc(x.ph.listDate.slice(5).replace('-', '/'))} · ${x.ph.n} 个</span>` : ''}</h2>${x.ph ? `<ol class="dg-ph">${x.ph.items.map(i => `<li><a href="${rel(f, i.href)}"><b>${i.rank != null ? '#' + esc(i.rank) + ' ' : ''}${esc(i.name)}</b></a><span>${esc(i.what)}</span></li>`).join('')}</ol>` : none('这天还没有产品灵感')}</section>
-<section class="sheet dg-sec dg-wide"><h2>${ic('image', 18)} X 海报${x.posters ? ` <span class="tag">${x.posters.n} 张</span>` : ''}</h2>${x.posters ? `<div class="dg-po">${x.posters.items.map(p => `<a href="${rel(f, p.href)}"><img src="${rel(f, p.img)}" alt="${esc(p.title)}" loading="lazy"><span>${esc(p.title)}</span></a>`).join('')}</div>` : none('这天还没有海报')}</section></div>`;
+<section class="sheet dg-sec"><h2>${ic('newspaper', 18)} X 简报</h2>${x.brief ? `<a class="dg-tt" href="${rel(f, x.brief.href)}">${esc(x.brief.title)}</a>${x.brief.lines.length ? `<ol>${x.brief.lines.map(l => `<li>${esc(l)}</li>`).join('')}</ol>` : ''}<a class="btn sm" href="${rel(f, x.brief.href)}">读这期简报 →</a>` : none(pending)}</section>
+<section class="sheet dg-sec"><h2>${ic('rocket', 18)} 产品灵感${x.ph ? ` <span class="tag">榜单 ${esc(x.ph.listDate.slice(5).replace('-', '/'))} · ${x.ph.n} 个</span>` : ''}</h2>${x.ph ? `<ol class="dg-ph">${x.ph.items.map(i => `<li><a href="${rel(f, i.href)}"><b>${i.rank != null ? '#' + esc(i.rank) + ' ' : ''}${esc(i.name)}</b></a><span>${esc(i.what)}</span></li>`).join('')}</ol>` : none(pending)}</section>
+<section class="sheet dg-sec dg-wide"><h2>${ic('image', 18)} X 海报${x.posters ? ` <span class="tag">${x.posters.n} 张</span>` : ''}</h2>${x.posters ? `<div class="dg-po">${x.posters.items.map(p => `<a href="${rel(f, p.href)}"><img src="${rel(f, p.img)}" alt="${esc(p.title)}" loading="lazy"><span>${esc(p.title)}</span></a>`).join('')}</div>` : none(pending)}</section></div>`;
   for (const [k, x] of DG.list.entries()) {
     const f = x.href, prev = DG.list[k + 1], next = DG.list[k - 1];
     const nav = `<div class="dg-nav">${prev ? `<a class="btn ghost sm" href="${prev.date}.html">← ${esc(prev.date.slice(5).replace('-', '/'))}</a>` : ''}<a class="btn ghost sm" href="index.html">全部日期</a>${next ? `<a class="btn ghost sm" href="${next.date}.html">${esc(next.date.slice(5).replace('-', '/'))} →</a>` : ''}</div>`;
@@ -354,22 +356,26 @@ ${nx ? `<a class="nx" href="${esc(nx.href)}"${ext(nx.href)}><b>${['已学完', '
   const TD_RD = RADAR ? (() => { const L = RADAR.entries.filter(e => e.added === RADAR.updated).sort((a, b) => b.id - a.id); const e = L[0];
     return e ? [{ d: RADAR.updated, href: `radar/index.html#r${e.id}`, title: e.name, sub: e.what, n: L.length }] : []; })() : [];
   const tdPayload = { dg: TD_DG, radar: TD_RD, ic: { dg: icDg, radar: icRd, brief: icBrief, poster: icPost, ph: icPh, rev: icRev } };
-  // 汇总那一行：Node 端先渲染一遍，浏览器端用同一个函数（toString 注入）按本地日期重渲染
+  // 汇总那一行：Node 端先按北京时间渲染，浏览器端用同一个函数（toString 注入）按浏览者的北京时间重渲染
   function dgRow(x, fresh, on, CKH, E, IC) {
     var md = function (d) { return d.slice(5).replace('-', '/'); };
-    var miss = fresh ? '今天还没更新' : '这天没有';
+    var miss = fresh ? '今天的还没出' : '还没出';
     var ln = function (k, ic, inner) { return '<li><span class="k">' + ic + k + '</span><span class="v">' + inner + '</span></li>'; };
     var links = function (arr) { return arr.map(function (a) { return '<a href="' + E(a[0]) + '">' + E(a[1]) + '</a>'; }).join('<i>、</i>'); };
     var b = x.brief ? '<a href="' + E(x.brief.href) + '">' + E(x.brief.t) + '</a>' : '<em>' + miss + '</em>';
     var p = x.poster ? links(x.poster.items) + (x.poster.n > x.poster.items.length ? '<i> 等 ' + x.poster.n + ' 张</i>' : '') : '<em>' + miss + '</em>';
     var h = x.ph ? '<i>榜单 ' + md(x.ph.list) + ' · </i>' + links(x.ph.items) + (x.ph.n > x.ph.items.length ? '<i> 等 ' + x.ph.n + ' 个</i>' : '') : '<em>' + miss + '</em>';
     var title = md(x.d) + ' 每日汇总';
-    return '<div class="row td-dgr' + (on ? ' on' : '') + '"><button type="button" class="td-ck" data-id="digest:' + E(x.d) + '" aria-pressed="' + (on ? 'true' : 'false') + '" aria-label="' + (on ? '取消已看：' : '标为看过：') + E(title) + '">' + (on ? CKH : '<span class="td-box"></span>') + '</button><span class="td-src">' + IC.dg + '<span>每日汇总</span></span><span class="t"><a href="' + E(x.href) + '" title="打开' + E(title) + '页">' + E(title) + '</a><ul class="td-dg">' + ln('X 简报', IC.brief, b) + ln('X 海报', IC.poster, p) + ln('产品灵感', IC.ph, h) + '</ul></span><span class="d">' + (fresh ? '今天' : md(x.d) + ' · 最近一天') + '</span></div>';
+    return '<div class="row td-dgr' + (on ? ' on' : '') + '"><button type="button" class="td-ck" data-id="digest:' + E(x.d) + '" aria-pressed="' + (on ? 'true' : 'false') + '" aria-label="' + (on ? '取消已看：' : '标为看过：') + E(title) + '">' + (on ? CKH : '<span class="td-box"></span>') + '</button><span class="td-src">' + IC.dg + '<span>每日汇总</span></span><span class="t"><a href="' + E(x.href) + '" title="打开' + E(title) + '页">' + E(title) + '</a><ul class="td-dg">' + ln('X 简报', IC.brief, b) + ln('X 海报', IC.poster, p) + ln('产品灵感', IC.ph, h) + '</ul></span><span class="d">' + (fresh ? '今天' : md(x.d)) + '</span></div>';
   }
   const tdJson = JSON.stringify(tdPayload).replace(/</g, '\\u003c');
   const ckJson = JSON.stringify(CK).replace(/</g, '\\u003c');
   const metaDate = (fresh, d, extra) => { const base = fresh ? '今天' : `${d.slice(5).replace('-', '/')} · 最近一天`; return extra ? `${base} · ${extra}` : base; };
-  const g0 = pickDay(TD_DG), r0 = pickDay(TD_RD);
+  // 每日汇总行：始终是最新一天。构建机可能还在美东前一天，「今天」按北京时间算，不按本机日历。
+  const bjBuild = shanghaiDate(new Date());
+  const gLatest = TD_DG.slice().sort((a, b) => b.d.localeCompare(a.d))[0] || null;
+  const g0 = gLatest ? { ...gLatest, fresh: gLatest.d === bjBuild } : null;
+  const r0 = pickDay(TD_RD);
   const ssrRow = r => `<div class="row"><button type="button" class="td-ck" data-id="${esc(r.id)}" aria-pressed="false" aria-label="标为看过：${esc(r.title)}"><span class="td-box"></span></button><span class="td-src">${r.ic}<span>${esc(r.src)}</span></span><span class="t"><a href="${esc(r.href)}" title="${esc(r.title)}">${esc(r.title)}</a>${r.sub ? `<small>${esc(r.sub)}</small>` : ''}</span><span class="d">${esc(r.meta)}</span></div>`;
   const ssrEmpty = (src, icn, text) => `<div class="row td-empty"><span class="td-src">${icn}<span>${esc(src)}</span></span><span class="t">${text}</span></div>`;
   const ssrList = [
@@ -403,7 +409,7 @@ ${nx ? `<a class="nx" href="${esc(nx.href)}"${ext(nx.href)}><b>${['已学完', '
 <div class="td-syncbox" id="td-syncbox" hidden><p class="td-synchint">这条链接只带学完和复习记录。在另一台设备打开后会合并进去，不会删掉那边已有的。</p><textarea id="td-syncurl" readonly rows="3" spellcheck="false" aria-label="同步链接"></textarea><button type="button" class="btn td-syncbtn" id="td-synccopy">复制</button></div>
 <p id="sync-note" class="sync-note" hidden role="status"></p>
 <p id="prog-hint" class="td-synchint" hidden></p>
-<p class="sub">按今天来看。每日汇总和早上 9 点（北京时间）推送的是同一份：简报、海报、产品灵感；雷达看最近一次补录；到期要复习的课也列在这里。当天没有的，用最近一天，并标出日期。</p>
+<p class="sub">每日汇总是最新一天，和早上 9 点（北京时间）推送的是同一份。和北京时间的今天同一天时标「今天」，否则标日期。缺的来源写「还没出」。雷达看最近一次补录；到期要复习的课也列在这里。</p>
 <div class="td-fin" data-td="fin" hidden role="status">${ic('party-popper', 16)}<span>今天读完了</span></div>
 <div class="list" data-td="list">${ssrList}</div>
 </section>
@@ -416,6 +422,7 @@ ${nx ? `<a class="nx" href="${esc(nx.href)}"${ext(nx.href)}><b>${['已学完', '
 </div>`;
   const body = layC;
   const script = `const R=${revData};const TD=${tdJson};const CK=${ckJson};const p=n=>String(n).padStart(2,'0');const d=new Date();const today=new URLSearchParams(location.search).get('today')||(d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())); /* 自查用：?today=2026-10-14 */
+function bjToday(){var q=new URLSearchParams(location.search).get('today');if(q)return q;try{var s=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());if(/^\\d{4}-\\d{2}-\\d{2}$/.test(s))return s}catch(e){}var t=new Date(Date.now()+8*36e5);return t.getUTCFullYear()+'-'+p(t.getUTCMonth()+1)+'-'+p(t.getUTCDate())}
 const add=(t,n)=>{const x=new Date(t+'T12:00:00');x.setDate(x.getDate()+n);return x.getFullYear()+'-'+p(x.getMonth()+1)+'-'+p(x.getDate())};
 /* 今日待办只收「学完了」过的篇：done:<pathname>；兼容 /courses/X↔软链、index.html↔尾斜杠 */
 const doneExpand=u=>{const out=[],vs=new Set([u]);if(u.endsWith('/index.html')){const d=u.slice(0,-10);vs.add(d);vs.add(d.replace(/\\/$/,'')||'/')}else if(u.endsWith('/')){vs.add(u+'index.html');vs.add(u.replace(/\\/$/,'')||'/')}else if(!/\\.[a-z0-9]+$/i.test(u)){vs.add(u+'/');vs.add(u+'/index.html')}for(const x of vs){out.push(x);const m=x.match(/^(.*)\\/courses\\/(.+)$/);if(m)out.push(m[1]+'/'+m[2]);const m2=x.match(/^(.*)\\/(cs146s)\\/(.+)$/);if(m2&&!x.includes('/courses/'))out.push(m2[1]+'/courses/'+m2[2]+'/'+m2[3])}return[...new Set(out)]};
@@ -465,7 +472,7 @@ function tdMeta(fresh,d,extra){var base=fresh?'今天':(d.slice(5).replace('-','
 function tdLoad(){try{return JSON.parse(localStorage.getItem('today-read:'+today)||'{}')||{}}catch(e){return {}}} /* 简报/雷达等同天已看；复习完成不写这里，写 rev-done */
 function tdSave(o){try{localStorage.setItem('today-read:'+today,JSON.stringify(o))}catch(e){}}
 ${dgRow.toString()}
-function tdRows(){var rows=[],g=tdPick(TD.dg),rd=tdPick(TD.radar);
+function tdRows(){var rows=[],src=TD.dg&&TD.dg.length?TD.dg.slice().sort(function(a,b){return a.d<b.d?1:a.d>b.d?-1:0})[0]:null,g=src?Object.assign({},src,{fresh:src.d===bjToday()}):null,rd=tdPick(TD.radar);
  if(g)rows.push({id:'digest:'+g.d,dg:g});else rows.push({src:'每日汇总',ic:TD.ic.dg,title:'还没有汇总'});
  if(TD.radar.length){if(rd)rows.push({id:'radar:'+rd.d,src:'雷达',ic:TD.ic.radar,href:rd.href,title:rd.title,sub:rd.sub||'',meta:tdMeta(rd.fresh,rd.d,'新增 '+rd.n+' 条').replace('最近一天','最近一次')});else rows.push({src:'雷达',ic:TD.ic.radar,title:'雷达还没有条目'})}
  var due=[].concat(G.over,G.today,G.seen);
