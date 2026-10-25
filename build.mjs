@@ -154,7 +154,7 @@ const briefBeijingDate = (fileDate, html) => briefPublishDay(html) || addDays(fi
 
 // ---- 每日汇总（北京时间 9:00 推送用）：从 x-brief / x-posters / data/ph-inspo.json 汇成 data/digest/YYYY-MM-DD.json 和 digest/YYYY-MM-DD.html ----
 // 汇总日 D 是北京时间。简报用北京日期（见 briefBeijingDate），海报目录已是北京日期，产品灵感取榜单日 ≤ D−2 的最新一份。
-// 简报或海报只要有一边到了 D，就生成 digest/D（另一边 null，页面写「还没出」，不把这一天藏起来，也不拿别天硬凑）。海报晚到后再构建，仍写回同一天。
+// 简报或海报只要有一边到了 D，就生成 digest/D（另一边 null，不把这一天藏起来，也不拿别天硬凑）。最新一天缺的来源写「今天的还没出」，更早的日期写「这天还没有…」。海报晚到后再构建，仍写回同一天。
 const DG = (() => {
   const T = s => String(s || '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
   const rd = f => { try { return fs.readFileSync(path.join(ROOT, f), 'utf8'); } catch { return ''; } };
@@ -199,11 +199,12 @@ const DG = (() => {
     days: DG.list.map(x => ({ date: x.date, url: SITE + x.href, json: x.json, brief: !!x.brief, posters: x.posters?.n || 0, ph: x.ph?.n || 0 })) }, null, 1) + '\n');
   console.log('wrote data/digest/*.json', DG.list.length);
   const none = t => `<div class="dg-none">${t}</div>`;
-  const pending = '今天的还没出';
+  // 最新一天还在等迟到的来源，写「今天的还没出」。更早的日期已经定稿，写「这天还没有…」，不把旧页也叫成今天。
+  const gap = (x, settled) => x.date === DG.list[0]?.date ? '今天的还没出' : settled;
   const dayBody = (f, x) => `<div class="dg-grid">
-<section class="sheet dg-sec"><h2>${ic('newspaper', 18)} X 简报</h2>${x.brief ? `<a class="dg-tt" href="${rel(f, x.brief.href)}">${esc(x.brief.title)}</a>${x.brief.lines.length ? `<ol>${x.brief.lines.map(l => `<li>${esc(l)}</li>`).join('')}</ol>` : ''}<a class="btn sm" href="${rel(f, x.brief.href)}">读这期简报 →</a>` : none(pending)}</section>
-<section class="sheet dg-sec"><h2>${ic('rocket', 18)} 产品灵感${x.ph ? ` <span class="tag">榜单 ${esc(x.ph.listDate.slice(5).replace('-', '/'))} · ${x.ph.n} 个</span>` : ''}</h2>${x.ph ? `<ol class="dg-ph">${x.ph.items.map(i => `<li><a href="${rel(f, i.href)}"><b>${i.rank != null ? '#' + esc(i.rank) + ' ' : ''}${esc(i.name)}</b></a><span>${esc(i.what)}</span></li>`).join('')}</ol>` : none(pending)}</section>
-<section class="sheet dg-sec dg-wide"><h2>${ic('image', 18)} X 海报${x.posters ? ` <span class="tag">${x.posters.n} 张</span>` : ''}</h2>${x.posters ? `<div class="dg-po">${x.posters.items.map(p => `<a href="${rel(f, p.href)}"><img src="${rel(f, p.img)}" alt="${esc(p.title)}" loading="lazy"><span>${esc(p.title)}</span></a>`).join('')}</div>` : none(pending)}</section></div>`;
+<section class="sheet dg-sec"><h2>${ic('newspaper', 18)} X 简报</h2>${x.brief ? `<a class="dg-tt" href="${rel(f, x.brief.href)}">${esc(x.brief.title)}</a>${x.brief.lines.length ? `<ol>${x.brief.lines.map(l => `<li>${esc(l)}</li>`).join('')}</ol>` : ''}<a class="btn sm" href="${rel(f, x.brief.href)}">读这期简报 →</a>` : none(gap(x, '这天还没有简报'))}</section>
+<section class="sheet dg-sec"><h2>${ic('rocket', 18)} 产品灵感${x.ph ? ` <span class="tag">榜单 ${esc(x.ph.listDate.slice(5).replace('-', '/'))} · ${x.ph.n} 个</span>` : ''}</h2>${x.ph ? `<ol class="dg-ph">${x.ph.items.map(i => `<li><a href="${rel(f, i.href)}"><b>${i.rank != null ? '#' + esc(i.rank) + ' ' : ''}${esc(i.name)}</b></a><span>${esc(i.what)}</span></li>`).join('')}</ol>` : none(gap(x, '这天还没有产品灵感'))}</section>
+<section class="sheet dg-sec dg-wide"><h2>${ic('image', 18)} X 海报${x.posters ? ` <span class="tag">${x.posters.n} 张</span>` : ''}</h2>${x.posters ? `<div class="dg-po">${x.posters.items.map(p => `<a href="${rel(f, p.href)}"><img src="${rel(f, p.img)}" alt="${esc(p.title)}" loading="lazy"><span>${esc(p.title)}</span></a>`).join('')}</div>` : none(gap(x, '这天还没有海报'))}</section></div>`;
   for (const [k, x] of DG.list.entries()) {
     const f = x.href, prev = DG.list[k + 1], next = DG.list[k - 1];
     const nav = `<div class="dg-nav">${prev ? `<a class="btn ghost sm" href="${prev.date}.html">← ${esc(prev.date.slice(5).replace('-', '/'))}</a>` : ''}<a class="btn ghost sm" href="index.html">全部日期</a>${next ? `<a class="btn ghost sm" href="${next.date}.html">${esc(next.date.slice(5).replace('-', '/'))} →</a>` : ''}</div>`;
