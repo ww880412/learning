@@ -2,7 +2,7 @@
 
 静态网站，中文界面。本地直接用浏览器打开 `index.html`（file:// 可用），也能整体放到 GitHub Pages 子路径（如 `/learning/`）下，所有内部链接都是相对路径。已发布：https://ww880412.github.io/learning/（仓库 ww880412/learning，推到 main 即更新）。
 
-> 设计规范：改样式、模板、图标之前先看 [`DESIGN.md`](DESIGN.md)（令牌、组件、只用 Lucide 图标、动效、紧凑布局）；给 bot 的约定见 [`AGENTS.md`](AGENTS.md)。
+> 设计规范：改样式、模板、图标之前先看 [`DESIGN.md`](DESIGN.md)（令牌、组件、只用 Lucide 图标、动效、紧凑布局）；外部 agent（Codex、Cursor、Claude Code、其他 bot）改仓库前先读 [`AGENTS.md`](AGENTS.md)：哪些文件是生成的、哪些 bot 什么时候推 `main`、怎么测试和发布。
 
 ## 路径速查（给学习搭子 / 记忆用）
 - 根目录：`/workspace/learning/`
