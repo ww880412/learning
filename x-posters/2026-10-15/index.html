@@ -39,6 +39,7 @@ ul{padding-left:20px}li{margin:8px 0}
 .empty{border:2px dashed var(--hair);border-radius:var(--r-lg);padding:20px;color:var(--ink2)}.empty b{display:block;color:var(--ink);margin-bottom:4px}
 .pn{display:flex;justify-content:space-between;gap:10px;margin-top:20px;font-weight:700}
 .foot{margin-top:30px;font-size:13px;color:var(--ink2);text-align:center}
+.bxs{display:grid;gap:10px;margin-bottom:8px}.bxs details.panel{margin-top:0}.bx>summary h2{margin:0;padding:0;border:0;font-size:17px;scroll-margin-top:110px}.bx .pb{padding-top:6px}
 @media(max-width:640px){main{padding:14px 12px 40px}.sheet{padding:18px 16px}h1{font-size:22px}.row{flex-wrap:wrap;gap:4px 10px}.row .d{min-width:0}}
 /* 学习库统一主题（2026-10 重设计）：单一无衬线字体，靠字号/字重分层；白卡片 + 细边框；只有「逾期」用强调色。 */
 :root{--paper:#f6f7f9;--sheet:#fff;--card:#fff;--ink:#111827;--ink2:#4b5563;--meta:#6b7280;--hair:#e5e7eb;--hair2:#eef0f3;
@@ -1091,10 +1092,24 @@ html.dark .pi-bar .chip.on{color:#0f1115}
  .rd-q label{max-width:none}
  .rd-bar .chip{min-height:36px}
 }
+/* ---- 2026-10-26 每日产出呈现修一轮（jobs-fix1） ---- */
+/* 桌面顶栏：栏目多了放不下时换行，不再把最后几个（DSH 插件）藏在看不见的滚动里 */
+@media(min-width:701px){html:not([data-theme=B]) .top nav{flex-wrap:wrap;overflow:visible;justify-content:flex-end;row-gap:2px;min-width:0}[data-theme=C] .top nav a{padding:7px 10px}}
+/* 「关于这页数据」：页头说明收起来 */
+details.panel.about{margin-top:14px}details.panel.about>summary{font-weight:550;font-size:14px;color:var(--ink2)}details.panel.about .pb p{margin:10px 0 0;font-size:14px;color:var(--ink2)}
+.hero details.panel.about{grid-column:1/-1}
+/* 另见：同一件事在别的栏目也有 */
+.xref{display:inline-block;margin-left:6px;font-size:12.5px;font-weight:600;line-height:1.7;padding:0 8px;border-radius:99px;background:var(--blue-soft);color:var(--blue);white-space:nowrap}.xref:hover{text-decoration:none;filter:brightness(.95)}
+.sa{margin:6px 0}.sa .xref{margin:0 6px 4px 0}
+/* 雷达：每个方向只露最新 3 条，其余收起 */
+.rd-more{margin-top:var(--sp-3)}.rd-more>summary{cursor:pointer;font-size:14px;font-weight:600;color:var(--blue);padding:6px 0;list-style:none}.rd-more>summary::-webkit-details-marker{display:none}.rd-more>summary::before{content:"▸ "}.rd-more[open]>summary::before{content:"▾ "}
+/* 产品灵感：更早的榜单收起；每天的说明收成一个小按钮 */
+details.panel.pi-old{margin-top:20px}details.panel.pi-old .pi-day{margin-top:14px}
+.pi-note{display:inline}.pi-note>summary{display:inline;cursor:pointer;color:var(--blue);list-style:none}.pi-note>summary::-webkit-details-marker{display:none}.pi-note[open]{display:block;margin-top:4px}
 .pgrid{display:grid;gap:18px}.pc{display:grid;grid-template-columns:300px 1fr;gap:20px;align-items:start}
 .pc img{width:100%;border-radius:12px;border:1px solid var(--hair);display:block}.pc h3{margin-top:0}
 .xi{font-size:14.5px}.xi .who{font-weight:700}.xi .h{color:var(--ink2)}.xi blockquote{margin:10px 0;padding:10px 14px;background:var(--paper);border-radius:10px;white-space:pre-wrap;font-size:14px}
-.thumbs{display:flex;gap:6px;overflow-x:auto}.thumbs img{height:120px;border-radius:6px;border:1px solid var(--hair)}
+.thumbs{display:flex;gap:6px;overflow-x:auto}.ptoc{margin:4px 0 10px;gap:2px;grid-template-columns:1fr!important}.ptoc li{padding:5px 8px 5px 36px;line-height:1.5;font-size:15px;background:none!important;border:0!important;box-shadow:none!important}.ptoc li::before{top:6px;left:8px}.sa{margin:0 0 8px}.sa .xref{margin:0 6px 4px 0}.thumbs img{height:120px;border-radius:6px;border:1px solid var(--hair)}
 @media(max-width:700px){.pc{grid-template-columns:1fr}}</style><script>/*ICONS lucide v1.60.0 ISC*/window.__IC={"menu":"<path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/>","x":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","star":"<path d=\"M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z\"/>","party-popper":"<path d=\"M5.8 11.3 2 22l10.7-3.79\"/><path d=\"M4 3h.01\"/><path d=\"M22 8h.01\"/><path d=\"M15 2h.01\"/><path d=\"M22 20h.01\"/><path d=\"m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10\"/><path d=\"m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17\"/><path d=\"m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7\"/><path d=\"M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z\"/>"};window.__ic=function(n,s,c){return '<svg class="i i-'+n+(c?' '+c:'')+'" width="'+(s||16)+'" height="'+(s||16)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(window.__IC[n]||'')+'</svg>'};/*END ICONS*/
 (function(){var T='site-theme',v;try{v=localStorage.getItem(T)}catch(e){}if(!/^[ABC]$/.test(v||''))v='C';document.documentElement.setAttribute('data-theme',v);
 window.__setTheme=function(t){var go=function(){__applyTheme(t)};if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.startViewTransition(go);else go()};window.__applyTheme=function(t){document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem(T,t)}catch(e){}[].forEach.call(document.querySelectorAll('.thsw button'),function(b){b.setAttribute('aria-pressed',b.dataset.t===t)})}})();
@@ -1117,10 +1132,14 @@ window.addEventListener('load',function(){
  addEventListener('scroll',function(){document.querySelectorAll('.fx-rv:not(.fx-in)').forEach(function(e){if(e.getBoundingClientRect().top<innerHeight){e.classList.add('fx-in');io.unobserve(e)}})},{passive:true});
  document.addEventListener('pointermove',function(ev){var c=ev.target.closest&&ev.target.closest('a.card,.crs,.pc');if(!c)return;var r=c.getBoundingClientRect();c.style.setProperty('--mx',ev.clientX-r.left+'px');c.style.setProperty('--my',ev.clientY-r.top+'px')},{passive:true});
 })})();
+/* 链接指向收起来的内容（<details> 里）时，先展开再滚过去：简报栏目、雷达其余条目、产品灵感更早的榜单 */
+(function(){function go(){var h=location.hash.slice(1);if(!h)return;var t;try{t=document.getElementById(decodeURIComponent(h))}catch(e){}if(!t)return;var d=t.closest('details'),inD=!!d;while(d){d.open=true;d=d.parentElement&&d.parentElement.closest('details')}if(inD){/* 浏览器可能已自己展开但滚动位置不对，统一再对准一次 */setTimeout(function(){t.scrollIntoView()},30);setTimeout(function(){t.scrollIntoView()},450)}}/* 第二次等展开动画（.25s）走完再对准 */
+document.addEventListener('DOMContentLoaded',go);addEventListener('hashchange',go);
+document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href^="#"]');if(a&&a.getAttribute('href')===location.hash)setTimeout(go,0)})})();
 </script><script src="../../assets/favorites.js" defer></script></head><body>
-<header class="top"><div class="in"><a class="brand" href="../index.html"><i><svg class="i i-image" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></i>X 海报日报</a><nav><a href="../../index.html">学习库首页</a><a href="../index.html" class=on>X 海报</a><a href="../../x-brief/index.html">X 简报</a><a href="../../favorites/index.html">收藏</a></nav><button class="dm" onclick="__tt()" aria-label="切换深色模式"><svg class="i i-sun-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2"/><path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715"/><path d="M16 12a4 4 0 0 0-4-4"/><path d="m19 5-1.256 1.256"/><path d="M20 12h2"/></svg></button></div></header>
-<main><section class="sheet"><span class="kk">DAILY · 2026-10-15（周四）</span><h1>6 张技术海报</h1><p class="muted">点海报看原图；每张右侧是 X 原帖信息（时间为美东 ET）。</p></section><div class="pgrid"><section class="sheet pc" id="p1"><a href="img/02-claude-code-desktop-manage-agents.png" target="_blank"><img src="img/02-claude-code-desktop-manage-agents.webp" alt="Claude Code 桌面更新：管一群 AI 的多会话工作流" loading="lazy"></a>
-<div><span class="kk">#1 · X 原帖信息</span><h3>Claude Code 桌面更新：管一群 AI 的多会话工作流</h3><div class="xi"><span class="who">Xiao Tan</span> <span class="h">@tvytlx</span><br>发帖时间：2026-10-14 18:25 ET<br>原帖：<a href="https://x.com/tvytlx/status/2110497124492484857" target="_blank" rel="noopener">https://x.com/tvytlx/status/2110497124492484857</a><blockquote>### X post (https://x.com/tvytlx/status/2110497124492484857)
+<header class="top"><div class="in"><a class="brand" href="../../index.html"><i><svg class="i i-book-open" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/></svg></i>王玮的学习库</a><nav><a href="../../index.html" class="">首页</a><a href="../../favorites/index.html" class="">收藏</a><a href="../../courses/index.html" class="s1">公开课</a><a href="../../x-posts/index.html" class="">X 好文</a><a href="../../research/index.html" class="">技术研究</a><a href="../../wechat/index.html" class="">微信公众号</a><a href="../../video/index.html" class="">视频</a><a href="../../glossary.html" class="">概念卡</a><a href="../../x-brief/index.html" class="s2">X 简报</a><a href="../../x-posters/index.html" class="on">X 海报</a><a href="../../ph-inspo/index.html" class="">产品灵感</a><a href="../../radar/index.html" class="">雷达</a><a href="../../dsh-plugins/index.html" class="">DSH 插件</a></nav><button class="dm" onclick="__tt()" aria-label="切换深色模式"><svg class="i i-sun-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2"/><path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715"/><path d="M16 12a4 4 0 0 0-4-4"/><path d="m19 5-1.256 1.256"/><path d="M20 12h2"/></svg></button></div></header>
+<main><div class="crumb"><a href="../../index.html">首页</a> / <a href="../index.html">X 海报</a> / 2026-10-15（周四）</div><section class="sheet"><span class="kk">DAILY · 2026-10-15（周四） · 北京时间</span><h1>6 张技术海报</h1><ol class="quick ptoc"><li><a href="#p1">Claude Code 桌面更新：管一群 AI 的多会话工作流</a></li><li><a href="#p2">Agent API 接入 OpenTelemetry：可观测性比新模型更能说明进度</a></li><li><a href="#p3">CacheLink：跨模型交接长上下文 KV cache</a></li><li><a href="#p4">Design Creativity Bench：评测 AI 的 UI 设计创造力</a></li><li><a href="#p5">Stanford CS329Z：Agent Memory 从模型到系统</a></li><li><a href="#p6">Pi Agent 1.0 Code Mode：用 JavaScript 编排工具调用</a></li></ol><p class="muted">点标题跳到那张海报；点海报看原图。发帖时间是北京时间。</p></section><div class="pgrid"><section class="sheet pc" id="p1"><a href="img/02-claude-code-desktop-manage-agents.png" target="_blank"><img src="img/02-claude-code-desktop-manage-agents.webp" alt="Claude Code 桌面更新：管一群 AI 的多会话工作流" loading="lazy"></a>
+<div><span class="kk">#1 · X 原帖信息</span><h3>Claude Code 桌面更新：管一群 AI 的多会话工作流</h3><div class="xi"><span class="who">Xiao Tan</span> <span class="h">@tvytlx</span><br>发帖时间：2026-10-15 06:25 北京<br>原帖：<a href="https://x.com/tvytlx/status/2110497124492484857" target="_blank" rel="noopener">https://x.com/tvytlx/status/2110497124492484857</a><blockquote>### X post (https://x.com/tvytlx/status/2110497124492484857)
 Published: 2026-10-14T22:25:00.000Z
 
 Claude Code 桌面版这次更新，我翻了一遍，几乎没有一个功能是关于写代码的。
@@ -1150,7 +1169,7 @@ AI 写代码够快了，同时开五个 session，真正卡住的是你：在哪
 所以这次几乎每个功能，都在帮你省注意力。
 
 也有边界。有人翻了文档，目前跨 session 的视图只覆盖桌面端的本地、SSH 和 WSL，云端和 CLI 里跑的 session…</blockquote></div><p class="muted"><a href="img/02-claude-code-desktop-manage-agents.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p2"><a href="img/04-agent-api-opentelemetry.png" target="_blank"><img src="img/04-agent-api-opentelemetry.webp" alt="Agent API 接入 OpenTelemetry：可观测性比新模型更能说明进度" loading="lazy"></a>
-<div><span class="kk">#2 · X 原帖信息</span><h3>Agent API 接入 OpenTelemetry：可观测性比新模型更能说明进度</h3><div class="xi"><span class="who">Xiao Tan</span> <span class="h">@tvytlx</span><br>发帖时间：2026-10-14 20:16 ET<br>原帖：<a href="https://x.com/tvytlx/status/2110525058527719696" target="_blank" rel="noopener">https://x.com/tvytlx/status/2110525058527719696</a><blockquote>### X post (https://x.com/tvytlx/status/2110525058527719696)
+<div><span class="kk">#2 · X 原帖信息</span><h3>Agent API 接入 OpenTelemetry：可观测性比新模型更能说明进度</h3><div class="xi"><span class="who">Xiao Tan</span> <span class="h">@tvytlx</span><br>发帖时间：2026-10-15 08:16 北京<br>原帖：<a href="https://x.com/tvytlx/status/2110525058527719696" target="_blank" rel="noopener">https://x.com/tvytlx/status/2110525058527719696</a><blockquote>### X post (https://x.com/tvytlx/status/2110525058527719696)
 Published: 2026-10-15T00:16:00.000Z
 
 Anthropic 今天发了条挺无聊的更新。
@@ -1176,7 +1195,7 @@ Agent 做 demo 的时候，跑通一次就够了。
 它走的是 OpenTelemetry 的 gen_ai 规范，一个跨厂商的通用标准。
 也就是说，Claude 的数据和别家模型的数据，可以放在同一个看板上比。
 哪个…</blockquote></div><p class="muted"><a href="img/04-agent-api-opentelemetry.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p3"><a href="img/05-cachelink-cross-model-kv.png" target="_blank"><img src="img/05-cachelink-cross-model-kv.webp" alt="CacheLink：跨模型交接长上下文 KV cache" loading="lazy"></a>
-<div><span class="kk">#3 · X 原帖信息</span><h3>CacheLink：跨模型交接长上下文 KV cache</h3><div class="xi"><span class="who">恒星sun</span> <span class="h">@vintcessun</span><br>发帖时间：2026-10-14 21:12 ET<br>原帖：<a href="https://x.com/vintcessun/status/2110539164169191829" target="_blank" rel="noopener">https://x.com/vintcessun/status/2110539164169191829</a><blockquote>### X post (https://x.com/vintcessun/status/2110539164169191829)
+<div><span class="kk">#3 · X 原帖信息</span><h3>CacheLink：跨模型交接长上下文 KV cache</h3><div class="xi"><span class="who">恒星sun</span> <span class="h">@vintcessun</span><br>发帖时间：2026-10-15 09:12 北京<br>原帖：<a href="https://x.com/vintcessun/status/2110539164169191829" target="_blank" rel="noopener">https://x.com/vintcessun/status/2110539164169191829</a><blockquote>### X post (https://x.com/vintcessun/status/2110539164169191829)
 Published: 2026-10-15T01:12:03.000Z
 
 跨模型交接长上下文，最容易忽略的不是 cache 长得像不像，而是接收模型用起来对不对。
@@ -1189,7 +1208,7 @@ CacheLink先用按头 Ridge 回归初始化 KV，再通过联合校正，让冻�
 Title: CacheLink: Functional KV Transport for Zero-Prefill Cross-Model Context Handoff
 Authors: Haomiao Qiu, Yining Tang, Zijia Song, Ruizi Han, Ziyue Qiao, Miao Zhang
 Published: 2026-10-11T10:19:31Z…</blockquote></div><p class="muted"><a href="img/05-cachelink-cross-model-kv.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p4"><a href="img/06-design-creativity-bench.png" target="_blank"><img src="img/06-design-creativity-bench.webp" alt="Design Creativity Bench：评测 AI 的 UI 设计创造力" loading="lazy"></a>
-<div><span class="kk">#4 · X 原帖信息</span><h3>Design Creativity Bench：评测 AI 的 UI 设计创造力</h3><div class="xi"><span class="who">meng shao</span> <span class="h">@shao__meng</span><br>发帖时间：2026-10-14 21:24 ET<br>原帖：<a href="https://x.com/shao__meng/status/2110542220709540193" target="_blank" rel="noopener">https://x.com/shao__meng/status/2110542220709540193</a><blockquote>### X post (https://x.com/shao__meng/status/2110542220709540193)
+<div><span class="kk">#4 · X 原帖信息</span><h3>Design Creativity Bench：评测 AI 的 UI 设计创造力</h3><div class="xi"><span class="who">meng shao</span> <span class="h">@shao__meng</span><br>发帖时间：2026-10-15 09:24 北京<br>原帖：<a href="https://x.com/shao__meng/status/2110542220709540193" target="_blank" rel="noopener">https://x.com/shao__meng/status/2110542220709540193</a><blockquote>### X post (https://x.com/shao__meng/status/2110542220709540193)
 Published: 2026-10-15T01:24:12.000Z
 
 模型创造力排行 GPT-6 Astra 排第一、Claude Opus 5.5 第八 ？而且最强模型还是远低于人类 ？ 
@@ -1211,7 +1230,7 @@ https://t.co/LVp1ljlgIC
 # 测试结果很意外！
 
 创造力总分差距悬殊：最佳模型 GPT-6 Astra 得 65.5，人类设计师参考为 92.3，差距近 30 分。前几名为 G…</blockquote></div><p class="muted"><a href="img/06-design-creativity-bench.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p5"><a href="img/07-stanford-cs329z-agent-memory.png" target="_blank"><img src="img/07-stanford-cs329z-agent-memory.webp" alt="Stanford CS329Z：Agent Memory 从模型到系统" loading="lazy"></a>
-<div><span class="kk">#5 · X 原帖信息</span><h3>Stanford CS329Z：Agent Memory 从模型到系统</h3><div class="xi"><span class="who">meng shao</span> <span class="h">@shao__meng</span><br>发帖时间：2026-10-14 21:34 ET<br>原帖：<a href="https://x.com/shao__meng/status/2110544704286970338" target="_blank" rel="noopener">https://x.com/shao__meng/status/2110544704286970338</a><blockquote>### X post (https://x.com/shao__meng/status/2110544704286970338)
+<div><span class="kk">#5 · X 原帖信息</span><h3>Stanford CS329Z：Agent Memory 从模型到系统</h3><div class="xi"><span class="who">meng shao</span> <span class="h">@shao__meng</span><br>发帖时间：2026-10-15 09:34 北京<br>原帖：<a href="https://x.com/shao__meng/status/2110544704286970338" target="_blank" rel="noopener">https://x.com/shao__meng/status/2110544704286970338</a><blockquote>### X post (https://x.com/shao__meng/status/2110544704286970338)
 Published: 2026-10-15T01:34:04.000Z
 
 CS 329Z: Engineering AI Agents
@@ -1226,7 +1245,7 @@ https://t.co/B36NqiMjio
 ### Course page (https://cs329z.stanford.edu)
 
 cute, reflection), and scaffolds as design decisions. Slides Readings : Yao et al. &quot;ReAct: Synergizing Reasoning and Acting in Language Models.&quot; ICLR (2023). 4 Wed Oct 14 Memory &amp; Multi-Agen…</blockquote></div><p class="muted"><a href="img/07-stanford-cs329z-agent-memory.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p6"><a href="img/08-pi-agent-code-mode.png" target="_blank"><img src="img/08-pi-agent-code-mode.webp" alt="Pi Agent 1.0 Code Mode：用 JavaScript 编排工具调用" loading="lazy"></a>
-<div><span class="kk">#6 · X 原帖信息</span><h3>Pi Agent 1.0 Code Mode：用 JavaScript 编排工具调用</h3><div class="xi"><span class="who">VerySmallWoods</span> <span class="h">@verysmallwoods</span><br>发帖时间：2026-10-14 18:44 ET<br>原帖：<a href="https://x.com/verysmallwoods/status/2110502104557048205" target="_blank" rel="noopener">https://x.com/verysmallwoods/status/2110502104557048205</a><blockquote>### X post (https://x.com/verysmallwoods/status/2110502104557048205)
+<div><span class="kk">#6 · X 原帖信息</span><h3>Pi Agent 1.0 Code Mode：用 JavaScript 编排工具调用</h3><div class="xi"><span class="who">VerySmallWoods</span> <span class="h">@verysmallwoods</span><br>发帖时间：2026-10-15 06:44 北京<br>原帖：<a href="https://x.com/verysmallwoods/status/2110502104557048205" target="_blank" rel="noopener">https://x.com/verysmallwoods/status/2110502104557048205</a><blockquote>### X post (https://x.com/verysmallwoods/status/2110502104557048205)
 Published: 2026-10-14T22:44:47.000Z
 
 新视频做好了：《Pi Agent 1.0 Code Mode：用 JavaScript 编排工具调用》

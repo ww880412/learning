@@ -20,3 +20,7 @@ window.addEventListener('load',function(){
  addEventListener('scroll',function(){document.querySelectorAll('.fx-rv:not(.fx-in)').forEach(function(e){if(e.getBoundingClientRect().top<innerHeight){e.classList.add('fx-in');io.unobserve(e)}})},{passive:true});
  document.addEventListener('pointermove',function(ev){var c=ev.target.closest&&ev.target.closest('a.card,.crs,.pc');if(!c)return;var r=c.getBoundingClientRect();c.style.setProperty('--mx',ev.clientX-r.left+'px');c.style.setProperty('--my',ev.clientY-r.top+'px')},{passive:true});
 })})();
+/* 链接指向收起来的内容（<details> 里）时，先展开再滚过去：简报栏目、雷达其余条目、产品灵感更早的榜单 */
+(function(){function go(){var h=location.hash.slice(1);if(!h)return;var t;try{t=document.getElementById(decodeURIComponent(h))}catch(e){}if(!t)return;var d=t.closest('details'),inD=!!d;while(d){d.open=true;d=d.parentElement&&d.parentElement.closest('details')}if(inD){/* 浏览器可能已自己展开但滚动位置不对，统一再对准一次 */setTimeout(function(){t.scrollIntoView()},30);setTimeout(function(){t.scrollIntoView()},450)}}/* 第二次等展开动画（.25s）走完再对准 */
+document.addEventListener('DOMContentLoaded',go);addEventListener('hashchange',go);
+document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href^="#"]');if(a&&a.getAttribute('href')===location.hash)setTimeout(go,0)})})();

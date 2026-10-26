@@ -1,5 +1,5 @@
 <!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>X 简报 · 10/13（周二） · X 简报</title><style>/* 学习搭子 固定设计系统 — 不要在课程里改这个文件。只改 lesson.html 的内容。 */
+<title>X 简报 · 10/14（周三） · X 简报</title><style>/* 学习搭子 固定设计系统 — 不要在课程里改这个文件。只改 lesson.html 的内容。 */
 :root{
   --paper:#F6F6F7; --sheet:#FFFFFF; --ink:#16202C; --ink2:#4A5868; --hair:#E2E2E3;
   --blue:#2550D9;  --blue-soft:#E3EAFD;   /* 主角：当前步骤 / 重点 */
@@ -39,6 +39,7 @@ ul{padding-left:20px}li{margin:8px 0}
 .empty{border:2px dashed var(--hair);border-radius:var(--r-lg);padding:20px;color:var(--ink2)}.empty b{display:block;color:var(--ink);margin-bottom:4px}
 .pn{display:flex;justify-content:space-between;gap:10px;margin-top:20px;font-weight:700}
 .foot{margin-top:30px;font-size:13px;color:var(--ink2);text-align:center}
+.bxs{display:grid;gap:10px;margin-bottom:8px}.bxs details.panel{margin-top:0}.bx>summary h2{margin:0;padding:0;border:0;font-size:17px;scroll-margin-top:110px}.bx .pb{padding-top:6px}
 @media(max-width:640px){main{padding:14px 12px 40px}.sheet{padding:18px 16px}h1{font-size:22px}.row{flex-wrap:wrap;gap:4px 10px}.row .d{min-width:0}}
 /* 学习库统一主题（2026-10 重设计）：单一无衬线字体，靠字号/字重分层；白卡片 + 细边框；只有「逾期」用强调色。 */
 :root{--paper:#f6f7f9;--sheet:#fff;--card:#fff;--ink:#111827;--ink2:#4b5563;--meta:#6b7280;--hair:#e5e7eb;--hair2:#eef0f3;
@@ -1091,6 +1092,20 @@ html.dark .pi-bar .chip.on{color:#0f1115}
  .rd-q label{max-width:none}
  .rd-bar .chip{min-height:36px}
 }
+/* ---- 2026-10-26 每日产出呈现修一轮（jobs-fix1） ---- */
+/* 桌面顶栏：栏目多了放不下时换行，不再把最后几个（DSH 插件）藏在看不见的滚动里 */
+@media(min-width:701px){html:not([data-theme=B]) .top nav{flex-wrap:wrap;overflow:visible;justify-content:flex-end;row-gap:2px;min-width:0}[data-theme=C] .top nav a{padding:7px 10px}}
+/* 「关于这页数据」：页头说明收起来 */
+details.panel.about{margin-top:14px}details.panel.about>summary{font-weight:550;font-size:14px;color:var(--ink2)}details.panel.about .pb p{margin:10px 0 0;font-size:14px;color:var(--ink2)}
+.hero details.panel.about{grid-column:1/-1}
+/* 另见：同一件事在别的栏目也有 */
+.xref{display:inline-block;margin-left:6px;font-size:12.5px;font-weight:600;line-height:1.7;padding:0 8px;border-radius:99px;background:var(--blue-soft);color:var(--blue);white-space:nowrap}.xref:hover{text-decoration:none;filter:brightness(.95)}
+.sa{margin:6px 0}.sa .xref{margin:0 6px 4px 0}
+/* 雷达：每个方向只露最新 3 条，其余收起 */
+.rd-more{margin-top:var(--sp-3)}.rd-more>summary{cursor:pointer;font-size:14px;font-weight:600;color:var(--blue);padding:6px 0;list-style:none}.rd-more>summary::-webkit-details-marker{display:none}.rd-more>summary::before{content:"▸ "}.rd-more[open]>summary::before{content:"▾ "}
+/* 产品灵感：更早的榜单收起；每天的说明收成一个小按钮 */
+details.panel.pi-old{margin-top:20px}details.panel.pi-old .pi-day{margin-top:14px}
+.pi-note{display:inline}.pi-note>summary{display:inline;cursor:pointer;color:var(--blue);list-style:none}.pi-note>summary::-webkit-details-marker{display:none}.pi-note[open]{display:block;margin-top:4px}
 </style><script>/*ICONS lucide v1.60.0 ISC*/window.__IC={"menu":"<path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/>","x":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","star":"<path d=\"M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z\"/>","party-popper":"<path d=\"M5.8 11.3 2 22l10.7-3.79\"/><path d=\"M4 3h.01\"/><path d=\"M22 8h.01\"/><path d=\"M15 2h.01\"/><path d=\"M22 20h.01\"/><path d=\"m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10\"/><path d=\"m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17\"/><path d=\"m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7\"/><path d=\"M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z\"/>"};window.__ic=function(n,s,c){return '<svg class="i i-'+n+(c?' '+c:'')+'" width="'+(s||16)+'" height="'+(s||16)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(window.__IC[n]||'')+'</svg>'};/*END ICONS*/
 (function(){var T='site-theme',v;try{v=localStorage.getItem(T)}catch(e){}if(!/^[ABC]$/.test(v||''))v='C';document.documentElement.setAttribute('data-theme',v);
 window.__setTheme=function(t){var go=function(){__applyTheme(t)};if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.startViewTransition(go);else go()};window.__applyTheme=function(t){document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem(T,t)}catch(e){}[].forEach.call(document.querySelectorAll('.thsw button'),function(b){b.setAttribute('aria-pressed',b.dataset.t===t)})}})();
@@ -1113,10 +1128,14 @@ window.addEventListener('load',function(){
  addEventListener('scroll',function(){document.querySelectorAll('.fx-rv:not(.fx-in)').forEach(function(e){if(e.getBoundingClientRect().top<innerHeight){e.classList.add('fx-in');io.unobserve(e)}})},{passive:true});
  document.addEventListener('pointermove',function(ev){var c=ev.target.closest&&ev.target.closest('a.card,.crs,.pc');if(!c)return;var r=c.getBoundingClientRect();c.style.setProperty('--mx',ev.clientX-r.left+'px');c.style.setProperty('--my',ev.clientY-r.top+'px')},{passive:true});
 })})();
+/* 链接指向收起来的内容（<details> 里）时，先展开再滚过去：简报栏目、雷达其余条目、产品灵感更早的榜单 */
+(function(){function go(){var h=location.hash.slice(1);if(!h)return;var t;try{t=document.getElementById(decodeURIComponent(h))}catch(e){}if(!t)return;var d=t.closest('details'),inD=!!d;while(d){d.open=true;d=d.parentElement&&d.parentElement.closest('details')}if(inD){/* 浏览器可能已自己展开但滚动位置不对，统一再对准一次 */setTimeout(function(){t.scrollIntoView()},30);setTimeout(function(){t.scrollIntoView()},450)}}/* 第二次等展开动画（.25s）走完再对准 */
+document.addEventListener('DOMContentLoaded',go);addEventListener('hashchange',go);
+document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href^="#"]');if(a&&a.getAttribute('href')===location.hash)setTimeout(go,0)})})();
 </script><script src="../assets/favorites.js" defer></script></head><body>
-<header class="top"><div class="in"><a class="brand" href="./index.html"><i><svg class="i i-newspaper" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18h-5"/><path d="M18 14h-8"/><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-4 0v-9a2 2 0 0 1 2-2h2"/><rect width="8" height="4" x="10" y="6" rx="1"/></svg></i>X 简报</a><nav><a href="../index.html">学习库首页</a><a href="index.html" class=on>X 简报</a><a href="index.html#weekly">周趋势</a><a href="../favorites/index.html">收藏</a></nav><button class="dm" onclick="__tt()" aria-label="切换深色模式"><svg class="i i-sun-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2"/><path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715"/><path d="M16 12a4 4 0 0 0-4-4"/><path d="m19 5-1.256 1.256"/><path d="M20 12h2"/></svg></button></div></header>
-<main><section class="sheet"><span class="kk">DAILY · 2026-10-13（周二）</span><h1>X 简报 · 10/13（周二）</h1><div class="kk" style="color:var(--ink2);margin-bottom:8px">今日主线</div><ol class="quick"><li>Meta 发布 Muse Wonder：Full 版在 Artificial Analysis 指数上排第二，只比 Claude Opus 5.5 低 2 分。API 价格是每百万 token 输入 $4、输出 $20。Nathan Lambert 说 Meta 回到了前沿，也有人认为它的真实水平在 Sonnet 5.5 一档。</li><li>SpaceXSI 推出 The X Subscription，把 Grok、Grok Bot、Cursor 和 X Premium 合成 $8/$30/$100/$200 四档。要注意的是，新计划里 Cursor 的 Claude、GPT 等第三方模型要按 API 原价另付，老用户可以保留原计划。</li><li>Anthropic 一天发了两篇：一篇公开点名智谱、月之暗面蒸馏 Claude 的思维链，并加强防御；另一篇是前沿红队测 AI 在廉价设备上自我复制，结论是小模型目前还做不到。另外，Codex 第 8 天全局重置，Gemini 4 Argon 今天向 Ultra 订阅用户上线。</li></ol></section>
-<nav class="tabs"><a href="#s1">新闻</a><a href="#s2">趋势</a><a href="#s3">技术</a><a href="#s4">学术</a></nav><section class="sheet"><h2 id="s1">新闻</h2>
+<header class="top"><div class="in"><a class="brand" href="../index.html"><i><svg class="i i-book-open" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/></svg></i>王玮的学习库</a><nav><a href="../index.html" class="">首页</a><a href="../favorites/index.html" class="">收藏</a><a href="../courses/index.html" class="s1">公开课</a><a href="../x-posts/index.html" class="">X 好文</a><a href="../research/index.html" class="">技术研究</a><a href="../wechat/index.html" class="">微信公众号</a><a href="../video/index.html" class="">视频</a><a href="../glossary.html" class="">概念卡</a><a href="../x-brief/index.html" class="on s2">X 简报</a><a href="../x-posters/index.html" class="">X 海报</a><a href="../ph-inspo/index.html" class="">产品灵感</a><a href="../radar/index.html" class="">雷达</a><a href="../dsh-plugins/index.html" class="">DSH 插件</a></nav><button class="dm" onclick="__tt()" aria-label="切换深色模式"><svg class="i i-sun-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2"/><path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715"/><path d="M16 12a4 4 0 0 0-4-4"/><path d="m19 5-1.256 1.256"/><path d="M20 12h2"/></svg></button></div></header>
+<main><div class="crumb"><a href="../index.html">首页</a> / <a href="index.html">X 简报</a> / 2026-10-14（周三）</div><section class="sheet"><span class="kk">DAILY · 2026-10-14（周三） · 北京时间</span><h1>X 简报 · 10/14（周三）</h1><div class="kk" style="color:var(--ink2);margin-bottom:8px">今日主线</div><ol class="quick"><li>Meta 发布 Muse Wonder：Full 版在 Artificial Analysis 指数上排第二，只比 Claude Opus 5.5 低 2 分。API 价格是每百万 token 输入 $4、输出 $20。Nathan Lambert 说 Meta 回到了前沿，也有人认为它的真实水平在 Sonnet 5.5 一档。</li><li>SpaceXSI 推出 The X Subscription，把 Grok、Grok Bot、Cursor 和 X Premium 合成 $8/$30/$100/$200 四档。要注意的是，新计划里 Cursor 的 Claude、GPT 等第三方模型要按 API 原价另付，老用户可以保留原计划。</li><li>Anthropic 一天发了两篇：一篇公开点名智谱、月之暗面蒸馏 Claude 的思维链，并加强防御；另一篇是前沿红队测 AI 在廉价设备上自我复制，结论是小模型目前还做不到。另外，Codex 第 8 天全局重置，Gemini 4 Argon 今天向 Ultra 订阅用户上线。</li></ol></section>
+<nav class="tabs"><a href="#s1">新闻</a><a href="#s2">趋势</a><a href="#s3">技术</a><a href="#s4">学术</a></nav><section class="bxs"><details class="panel bx"><summary><h2 id="s1">新闻</h2><span class="s">14 条</span></summary><div class="pb">
 <ul>
 <li><span class="star"><svg class="i i-star fill" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></svg></span> TestingCatalog：Meta Muse Wonder Full 在 Artificial Analysis 指数上排第二，只比 Claude Opus 5.5 低 2 分，DeepSWE 79 分是目前最高。Muse Wonder 已经上了 Meta Model API 和 Muse Code，Full 版只给 Muse Code 订阅用户。<a href="https://x.com/testingcatalog/status/2109693532592013798" target="_blank" rel="noopener">原帖</a></li>
 <li><span class="star"><svg class="i i-star fill" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></svg></span> 宝玉拆解 Cursor 并入 The X Subscription：老订阅不会被强制迁移；新计划的月费不含 Claude、GPT、Gemini 额度，用多少按 API 原价付多少。主要用 Claude、GPT 写代码的人留在原计划更划算，主要用 Grok 的人切过去更值。<a href="https://x.com/dotey/status/2109804948611326229" target="_blank" rel="noopener">原帖</a></li>
@@ -1136,7 +1155,8 @@ window.addEventListener('load',function(){
 <li>TestingCatalog：Google 在准备基于 Gemini 4 的 Nano Banana 3 Pro，预计 11–12 月推出。<a href="https://x.com/testingcatalog/status/2109761567675838548" target="_blank" rel="noopener">原帖</a></li>
 <li>AYi：MLH 的 Hacktoberfest 活动送一年 Cursor Pro，北京时间 10/15 截止。<a href="https://x.com/AYi_AInotes/status/2109621079501320541" target="_blank" rel="noopener">原帖</a></li>
 </ul>
-<h2 id="s2">趋势</h2>
+</div></details>
+<details class="panel bx"><summary><h2 id="s2">趋势</h2><span class="s">11 条</span></summary><div class="pb">
 <ul>
 <li>Ethan Mollick：GPT-4 当年稳坐世界第一整整一年，现在已经有 19 个能在手机上跑的模型比它强。<a href="https://x.com/emollick/status/2109851162518425779" target="_blank" rel="noopener">原帖</a></li>
 <li>Gary Marcus 引用 The Information 的数据：质量最高的十个模型只占开发者 token 的 14%，去年还是 55%，便宜又「够用」的模型在靠量取胜。<a href="https://x.com/GaryMarcus/status/2109775449429877229" target="_blank" rel="noopener">原帖</a></li>
@@ -1153,7 +1173,8 @@ window.addEventListener('load',function(){
 <li>steipete 再次表态：「vibe coding」是个贬称。<a href="https://x.com/steipete/status/2109724776168300631" target="_blank" rel="noopener">原帖</a></li>
 <li>花叔：初创公司别想着定义新品类了。年初 OpenClaw 那么火，现在的 personal agent 还是 Grok Bot、Muse、dots；模型公司只要订阅里的 token 单价远低于 API 价就够了。<a href="https://x.com/AlchainHust/status/2109966734769995838" target="_blank" rel="noopener">原帖</a></li>
 </ul>
-<h2 id="s3">技术</h2>
+</div></details>
+<details class="panel bx"><summary><h2 id="s3">技术</h2><span class="s">15 条</span></summary><div class="pb">
 <ul>
 <li>yetone 分享自己的开发流程：就是 Claude Code 用官方的 Opus 5.5 跑 loop，同时并行 3 个，每晚抽点时间收拾 UI/UX 问题，然后就没别的活了。<a href="https://x.com/yetone/status/2109855710444237018" target="_blank" rel="noopener">原帖</a></li>
 <li>歸藏从 Anthropic 的防蒸馏文章里总结了避免误封的做法：别诱导 Claude 展示或吐出思维链；账号和付款渠道要干净，别用代理或转售号；别在同一个 Agent 环境里混用国产模型和 Claude。<a href="https://x.com/op7418/status/2109852753875075242" target="_blank" rel="noopener">原帖</a></li>
@@ -1174,7 +1195,8 @@ window.addEventListener('load',function(){
 <li>向阳乔木开源了一个 Skill（qiaomu-screen2video），能给任意录屏加双语字幕、花字、梗图和配乐，并自动出横竖两版封面。<a href="https://x.com/vista8/status/2109906565742616924" target="_blank" rel="noopener">原帖</a></li>
 <li>meng shao：LiteLLM 开源了 Agent 传输层 SDK agentchat，任何框架写的 Agent 都能统一接入 Slack、Teams、iMessage、WhatsApp、Discord。<a href="https://x.com/shao__meng/status/2109819186893766721" target="_blank" rel="noopener">原帖</a></li>
 </ul>
-<h2 id="s4">学术</h2>
+</div></details>
+<details class="panel bx"><summary><h2 id="s4">学术</h2><span class="s">9 条</span></summary><div class="pb">
 <ul>
 <li>omarsar0 推荐 NVIDIA 的 LoGRA：RL 后训练时更新全部权重，内存反而比 LoRA 还省。1.5B 模型平均 7.2 GiB，rank-256 LoRA 要 13.2 GiB；Pass@4 基本持平（81.8% 对 81.4%），Pass@1 低约 2 个点。<a href="https://x.com/omarsar0/status/2109771098120450299" target="_blank" rel="noopener">原帖</a></li>
 <li>omarsar0 推荐一篇检验「多 Agent + 持久记忆」的论文：把长上下文拆给多个 agent，每题的峰值 KV cache 降到 14.3 MiB（单遍和 RAG 约 35 MiB）；但持久化的轨迹回忆层只让准确率变化 +0.015，置信区间跨过了零。<a href="https://x.com/omarsar0/status/2109643758228869175" target="_blank" rel="noopener">原帖</a></li>
@@ -1189,4 +1211,4 @@ window.addEventListener('load',function(){
 <li>TestingCatalog：Nature Will 发布物理世界基础模型 Natura-1，用 100 万小时第一人称视频训练，能处理没见过的物体和任务。<a href="https://x.com/testingcatalog/status/2109963128242868302" target="_blank" rel="noopener">原帖</a></li>
 <li>Gorden_Sun：Prompteina 能用日常自然语言描述形状、折叠和表面性质，直接生成全原子蛋白质结构。<a href="https://x.com/Gorden_Sun/status/2109924507469393955" target="_blank" rel="noopener">原帖</a></li>
 </ul>
-<p class="muted">没发新帖（窗口内无原创）：@Khazix0918、@karpathy、@AndrewYNg、@DrJimFan、@lijigang、@rasbt、@sama、@alexeheath、@eladgil、@bcherny</p></section><div class="pn"><a href="2026-10-14.html">← 2026-10-14</a><a href="index.html">往期目录</a><a href="2026-10-12.html">2026-10-12 →</a></div><div class="foot">王玮的 X 简报 · 每天由 X Brief 生成 · 链接打开 X 原帖 · 风格改编自 <a href="https://github.com/vuejs/vitepress">VitePress</a>（MIT）</div></main></body></html>
+<p class="muted">没发新帖（窗口内无原创）：@Khazix0918、@karpathy、@AndrewYNg、@DrJimFan、@lijigang、@rasbt、@sama、@alexeheath、@eladgil、@bcherny</p></div></details></section><div class="pn"><a href="2026-10-14.html">← 2026-10-15</a><a href="index.html">往期目录</a><a href="2026-10-12.html">2026-10-13 →</a></div><div class="foot">王玮的 X 简报 · 每天由 X Brief 生成 · 链接打开 X 原帖 · 风格改编自 <a href="https://github.com/vuejs/vitepress">VitePress</a>（MIT）</div></main></body></html>

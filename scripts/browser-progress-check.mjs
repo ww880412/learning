@@ -370,6 +370,7 @@ try {
       const page = await boot(browser, origin, { token: TOKEN });
       await page.goto(origin + u, { waitUntil: 'networkidle0' });
       await page.waitForSelector('.fav-b');
+      await page.evaluate(() => document.querySelectorAll('main details').forEach((d) => { d.open = true; })); // 简报栏目默认收起（2026-10-26 jobs-fix1），展开后再数
       const n = await page.$$eval('.fav-b', (bs) => bs.filter((b) => b.getBoundingClientRect().width > 0).length);
       if (n < 2) throw new Error(u + ' 收藏按钮只有 ' + n + ' 个');
       await page.click('main .fav-b');

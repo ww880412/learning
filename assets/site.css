@@ -1049,3 +1049,17 @@ html.dark .pi-bar .chip.on{color:#0f1115}
  .rd-q label{max-width:none}
  .rd-bar .chip{min-height:36px}
 }
+/* ---- 2026-10-26 每日产出呈现修一轮（jobs-fix1） ---- */
+/* 桌面顶栏：栏目多了放不下时换行，不再把最后几个（DSH 插件）藏在看不见的滚动里 */
+@media(min-width:701px){html:not([data-theme=B]) .top nav{flex-wrap:wrap;overflow:visible;justify-content:flex-end;row-gap:2px;min-width:0}[data-theme=C] .top nav a{padding:7px 10px}}
+/* 「关于这页数据」：页头说明收起来 */
+details.panel.about{margin-top:14px}details.panel.about>summary{font-weight:550;font-size:14px;color:var(--ink2)}details.panel.about .pb p{margin:10px 0 0;font-size:14px;color:var(--ink2)}
+.hero details.panel.about{grid-column:1/-1}
+/* 另见：同一件事在别的栏目也有 */
+.xref{display:inline-block;margin-left:6px;font-size:12.5px;font-weight:600;line-height:1.7;padding:0 8px;border-radius:99px;background:var(--blue-soft);color:var(--blue);white-space:nowrap}.xref:hover{text-decoration:none;filter:brightness(.95)}
+.sa{margin:6px 0}.sa .xref{margin:0 6px 4px 0}
+/* 雷达：每个方向只露最新 3 条，其余收起 */
+.rd-more{margin-top:var(--sp-3)}.rd-more>summary{cursor:pointer;font-size:14px;font-weight:600;color:var(--blue);padding:6px 0;list-style:none}.rd-more>summary::-webkit-details-marker{display:none}.rd-more>summary::before{content:"▸ "}.rd-more[open]>summary::before{content:"▾ "}
+/* 产品灵感：更早的榜单收起；每天的说明收成一个小按钮 */
+details.panel.pi-old{margin-top:20px}details.panel.pi-old .pi-day{margin-top:14px}
+.pi-note{display:inline}.pi-note>summary{display:inline;cursor:pointer;color:var(--blue);list-style:none}.pi-note>summary::-webkit-details-marker{display:none}.pi-note[open]{display:block;margin-top:4px}
