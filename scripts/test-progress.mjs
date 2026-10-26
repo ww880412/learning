@@ -78,6 +78,54 @@ assert.equal(prog.beijingToday(new Date('2026-10-24T16:00:00Z')), '2026-10-25');
 assert.equal(prog.beijingToday(new Date('2026-10-24T02:00:00Z')), '2026-10-24');
 assert.equal(prog.pathsMatch('/learning/cs146s/L02-harness-anatomy.html', 'courses/cs146s/L02-harness-anatomy.html', '/learning/'), true);
 
+
+// ---------- 跨设备冲突：以最后一次操作为准 ----------
+{
+  const T1 = Date.parse('2026-10-26T01:00:00Z'), T2 = Date.parse('2026-10-26T02:00:00Z'), T3 = Date.parse('2026-10-26T03:00:00Z');
+  const items = [{ id: 'cs146s-L01', href: 'courses/cs146s/L01-agent-loop.html' }, { id: 'cs146s-L02', href: 'courses/cs146s/L02-harness-anatomy.html' }];
+  // 设备 A 勾第 3 天（T1）→ 云端 done + at
+  let cloud = reviewDoc();
+  const a = prog.applyOps(cloud, 'cs146s-L01', { 3: { done: true, on: '2026-10-26', at: T1 } });
+  assert.equal(a.doc.queue[0].reviews[1].done, true); assert.equal(a.doc.queue[0].reviews[1].doneOn, '2026-10-26');
+  assert.equal(a.doc.queue[0].reviews[1].at, new Date(T1).toISOString()); assert.match(a.message, /^review: cs146s-L01 3 done$/);
+  cloud = a.doc;
+  // 设备 B 在 T2 取消 → 云端 done:false、去掉 doneOn、at=T2
+  const b = prog.applyOps(JSON.parse(JSON.stringify(cloud)), 'cs146s-L01', { 3: { done: false, at: T2 } });
+  assert.equal(b.doc.queue[0].reviews[1].done, false); assert.equal('doneOn' in b.doc.queue[0].reviews[1], false);
+  assert.match(b.message, / undo$/); cloud = b.doc;
+  // 设备 A 重新打开：本机还留着第 3 天的 rev-done（操作已传过、没有待上传操作）→ 不再把取消改回去
+  assert.equal(prog.mergeLocal(cloud, { done: {}, rev: { 'cs146s-L01': { 3: '2026-10-26' } }, ops: {} }, items, '/'), null, '取消不能被旧设备复活');
+  // 设备 A 断网时在 T1 勾的操作（比云端 T2 的取消早）→ 不改云端，并且这条操作被清掉
+  assert.equal(prog.applyOps(JSON.parse(JSON.stringify(cloud)), 'cs146s-L01', { 3: { done: true, on: '2026-10-26', at: T1 } }), null, '更早的操作不改云端');
+  assert.deepEqual(prog.pruneOps(cloud, 'cs146s-L01', { 3: { done: true, on: '2026-10-26', at: T1 } }), {}, '过时的操作要清掉');
+  // 设备 A 在 T3 又勾上（比取消新）→ 生效；没传上去之前保留
+  assert.deepEqual(Object.keys(prog.pruneOps(cloud, 'cs146s-L01', { 3: { done: true, on: '2026-10-26', at: T3 } })), ['3'], '更新的操作没传上去前要保留');
+  const m = prog.mergeLocal(cloud, { done: {}, rev: { 'cs146s-L01': { 3: '2026-10-26' } }, ops: { 'cs146s-L01': { 3: { done: true, on: '2026-10-26', at: T3 } } } }, items, '/');
+  assert.equal(m.doc.queue[0].reviews[1].done, true); assert.equal(m.doc.queue[0].reviews[1].at, new Date(T3).toISOString());
+  assert.deepEqual(prog.pruneOps(m.doc, 'cs146s-L01', { 3: { done: true, on: '2026-10-26', at: T3 } }), {}, '传上去之后清掉');
+  // 取消比勾选新：留住（T3 取消压过 T2 的勾选）
+  const c2 = prog.applyOps(prog.applyOps(reviewDoc(), 'cs146s-L02', { 1: { done: true, on: '2026-10-26', at: T2 } }).doc, 'cs146s-L02', { 1: { done: false, at: T3 } });
+  assert.equal(c2.doc.queue[1].reviews[0].done, false, '更新的取消要留住');
+  // 同一时刻不重复写（幂等）
+  assert.equal(prog.applyOps(c2.doc, 'cs146s-L02', { 1: { done: false, at: T3 } }), null);
+  // 没有 at 的旧数据：旧本机记录照旧补上（向后兼容），云端已有 at 的那天不补
+  const legacy = prog.mergeLocal(reviewDoc(), { done: {}, rev: { 'cs146s-L01': { 1: '2026-10-13' } } }, items, '/');
+  assert.equal(legacy.doc.queue[0].reviews[0].done, true);
+  // 坏操作被忽略
+  assert.equal(prog.applyOps(reviewDoc(), 'cs146s-L01', { 1: { done: 'yes', at: T1 }, 2: { done: true, at: 0 }, x: { done: true, at: T1 } }), null);
+  // 首页显示：effReview
+  const E = prog.effReview;
+  assert.deepEqual(E({ done: true, doneOn: '2026-10-26', at: new Date(T1).toISOString() }, '', undefined), { done: true, on: '2026-10-26' }, '(a)5：云端今天勾的，这台设备也算今天已看');
+  assert.deepEqual(E({ done: false, at: new Date(T2).toISOString() }, '2026-10-26', undefined), { done: false, on: '' }, '云端更新的取消压过本机旧记录');
+  assert.deepEqual(E({ done: false, at: new Date(T2).toISOString() }, '', { done: true, on: '2026-10-26', at: T3 }), { done: true, on: '2026-10-26' }, '本机更新的操作优先');
+  assert.deepEqual(E({ done: true, doneOn: '2026-10-20', at: new Date(T2).toISOString() }, '', { done: false, at: T3 }), { done: false, on: '' }, '本机更新的取消优先');
+  assert.deepEqual(E({ done: true, doneOn: '2026-10-20' }, '2026-10-18', undefined), { done: true, on: '2026-10-18' }, '旧数据：两边都完成取更早的日期');
+  assert.deepEqual(E({ done: false }, '2026-10-18', undefined), { done: true, on: '2026-10-18' }, '旧数据：本机完成也算');
+  // effReview 的源码会注入首页内联脚本，必须自包含
+  const injected = new Function('return (' + E.toString() + ')')();
+  assert.deepEqual(injected({ done: true, doneOn: '2026-10-26', at: new Date(T1).toISOString() }, '', undefined), { done: true, on: '2026-10-26' });
+}
+
 function jsonResp(status, obj) { return { status, json: async () => obj }; }
 async function fakeCommit() {
   let sha = 's0', puts = 0, stored = { version: 1, items: [] };
