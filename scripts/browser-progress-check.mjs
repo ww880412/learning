@@ -44,7 +44,7 @@ const mockSrc = `(() => {
   const REVIEW = ${JSON.stringify(REVIEW)};
   const state = { n: 1, files: {
     'favorites.json': { sha: 'fav1', text: JSON.stringify({ version: 1, items: [] }, null, 2) + '\\n' },
-    'data/review.json': { sha: 'rev1', text: REVIEW }
+    'data/review.json': { sha: 'rev1', text: localStorage.getItem('__test:cloud-review') || REVIEW }
   }};
   window.__gh = [];
   function b64(s) { return btoa(unescape(encodeURIComponent(s))); }
@@ -238,6 +238,21 @@ try {
       if (r.done !== false || Object.prototype.hasOwnProperty.call(r, 'doneOn')) throw new Error('取消后第 ' + day + ' 天还在 ' + JSON.stringify(r));
     }
     if (!both[1].body.message.includes('undo')) throw new Error('取消说明 ' + both[1].body.message);
+    if (page._errors.length) throw new Error(page._errors.join('\n'));
+    await page._ctx.close();
+  });
+
+  await check('首页以仓库里的 review.json 为准：云端已勾的复习不再出现', async () => {
+    const cloud = JSON.parse(REVIEW);
+    const q = cloud.queue.find((x) => x.item === 'cs146s-L01');
+    for (const r of q.reviews) if (DUE.includes(r.day)) { r.done = true; r.doneOn = TODAY; }
+    const page = await boot(browser, origin, { token: TOKEN });
+    // 假 API 在页面加载时读 __test:cloud-review，先写进去再重开一次首页。
+    await page.goto(origin + '/favorites/index.html', { waitUntil: 'networkidle0' });
+    await page.evaluate((t) => localStorage.setItem('__test:cloud-review', t), JSON.stringify(cloud, null, 2));
+    await page.goto(origin + HOME, { waitUntil: 'networkidle0' });
+    await page.waitForFunction(() => window.__cloudReady === 1);
+    if (await page.$('[data-id="rev:cs146s-L01"]')) throw new Error('云端已完成，首页还显示 cs146s-L01');
     if (page._errors.length) throw new Error(page._errors.join('\n'));
     await page._ctx.close();
   });

@@ -430,7 +430,9 @@ const iso=s=>typeof s==='string'&&/^\\d{4}-\\d{2}-\\d{2}$/.test(s)?s:'';
 const earlier=(a,b)=>!a?b:!b?a:(a<b?a:b);
 const started=new Set();
 /* 学过：review.json 的 learned，或本机 done:<path>。排期用更早的那天；只有一边就用那一边。路径仍交给 doneOf，不改写。 */
-for(const q of R.queue){const it=R.items[q.item];if(!it)continue;const dd=earlier(iso(q.learned),iso(doneOf(it.href)));if(!dd)continue;started.add(q.item);q.start=dd;for(const r of q.reviews)r.date=add(dd,r.day)}
+const BAKED=JSON.parse(JSON.stringify(R.queue));
+function plan(queue){started.clear();R.queue=JSON.parse(JSON.stringify(queue));for(const q of R.queue){const it=R.items[q.item];if(!it)continue;const dd=earlier(iso(q.learned),iso(doneOf(it.href)));if(!dd)continue;started.add(q.item);q.start=dd;for(const r of q.reviews)r.date=add(dd,r.day)}}
+plan(BAKED);
 const diff=(a,b)=>Math.round((new Date(b+'T12:00:00')-new Date(a+'T12:00:00'))/864e5);const E=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
 /* 复习是否完成：review.json 的 done，或本机 rev-done:<itemId>（第几天 → 完成日期）。A/B/C 共用下面的 bucket。 */
 const G={over:[],today:[],later:[],seen:[]};
@@ -476,7 +478,7 @@ function tdRows(){var rows=[],src=TD.dg&&TD.dg.length?TD.dg.slice().sort(functio
  if(TD.radar.length){if(rd)rows.push({id:'radar:'+rd.d,src:'雷达',ic:TD.ic.radar,href:rd.href,title:rd.title,sub:rd.sub||'',meta:tdMeta(rd.fresh,rd.d,'新增 '+rd.n+' 条').replace('最近一天','最近一次')});else rows.push({src:'雷达',ic:TD.ic.radar,title:'雷达还没有条目'})}
  var due=[].concat(G.over,G.today,G.seen);
  if(!due.length)rows.push({src:'复习',ic:TD.ic.rev,title:'今天没有到期的复习 '+__ic('party-popper',15),html:1});
- else due.forEach(function(r){var it=R.items[r.item];if(!it)return;rows.push({id:'rev:'+r.item,src:it.col||'复习',ic:it.ic||TD.ic.rev,href:it.href,title:it.title,sub:(it.label?it.label+' · ':'')+'第 '+r.day+' 天'+(r.n>1?' · 积压 '+r.n+' 次':''),meta:r.late>0?('逾期 '+r.late+' 天'):'今天到期',over:r.late>0,on:r.on?1:0})});
+ else due.forEach(function(r){var it=R.items[r.item];if(!it)return;var q=R.queue.find(function(x){return x.item===r.item}),lo=q&&q.start?q.start.slice(5).replace('-','/'):'';rows.push({id:'rev:'+r.item,src:'复习',ic:TD.ic.rev,href:it.href,title:it.title,sub:(it.col?it.col+' · ':'')+(it.label?it.label+' · ':'')+(lo?lo+' 学完，':'')+'第 '+r.day+' 天复习'+(r.n>1?' · 积压 '+r.n+' 次':''),meta:r.late>0?('逾期 '+r.late+' 天'):'今天到期',over:r.late>0,on:r.on?1:0})});
  return rows}
 var tdFirst=1;
 function renderToday(focusId){var box=document.querySelector('[data-td="list"]');if(!box)return;var saved=tdLoad(),rows=tdRows(),checks=rows.filter(function(r){return r.id}),k=0;
@@ -493,7 +495,19 @@ function renderToday(focusId){var box=document.querySelector('[data-td="list"]')
   if(id&&id.indexOf('rev:')===0){var rid=id.slice(4),prev=revMap(rid);toggleRev(rid);var next=revMap(rid);bucket();paint();renderToday(id);if(window.PROG&&PROG.onReview)PROG.onReview(rid,prev,next);return}
   var o=tdLoad();if(o[id])delete o[id];else o[id]=1;tdSave(o);renderToday(id)}});
  if(focusId){var nb=box.querySelector('.td-ck[data-id="'+focusId.replace(/"/g,'')+'"]');if(nb)nb.focus()}}
-bucket();paint();renderToday();`;
+bucket();paint();renderToday();
+/* 云端进度：生成页里嵌的 review.json 是构建那一刻的，浏览器提交「学完了」、复习勾选不会触发重建。
+   打开首页时再读一次仓库里的 data/review.json（有令牌走 API，最新；没令牌读 Pages 上的副本），以它的 learned / done / doneOn 为准。 */
+function mergeCloud(doc){if(!doc||!Array.isArray(doc.queue))return;var by={},ch=0;doc.queue.forEach(function(c){if(c&&c.item)by[c.item]=c});
+ var next=BAKED.map(function(q){var c=by[q.item];if(!c)return q;var n=JSON.parse(JSON.stringify(q));var cl=iso(c.learned)||undefined;if(cl!==n.learned){if(cl)n.learned=cl;else delete n.learned;ch=1}
+  (n.reviews||[]).forEach(function(r){var cr=(c.reviews||[]).find(function(x){return +x.day===+r.day});if(!cr)return;if(!!cr.done!==!!r.done){r.done=!!cr.done;ch=1}if(iso(cr.doneOn))r.doneOn=cr.doneOn;else delete r.doneOn});return n});
+ if(!ch)return;plan(next);bucket();paint();renderToday()}
+function loadCloud(){var tk='';try{tk=localStorage.getItem('fav:token')||''}catch(e){}var base=new URL(typeof __R==='string'?__R:'index.html',location.href);
+ var pub=function(){return fetch(new URL('data/review.json?t='+Date.now(),base).href,{cache:'no-store'}).then(function(r){return r.ok?r.json():null})};
+ var dec=function(j){return j&&j.content?JSON.parse(decodeURIComponent(escape(atob(String(j.content).replace(/\\s/g,''))))):null};
+ var p=tk?fetch('https://api.github.com/repos/ww880412/learning/contents/data/review.json?ref=main&t='+Date.now(),{headers:{Authorization:'Bearer '+tk,Accept:'application/vnd.github+json'},cache:'no-store'}).then(function(r){return r.ok?r.json().then(dec):pub()}).catch(pub):pub();
+ return p.then(mergeCloud).catch(function(){}).then(function(){window.__cloudReady=1})}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',loadCloud);else loadCloud();`;
   write(f, page(f, '首页', 'home', body, script));
 }
 // ---- 栏目页 + 主题页 ----
