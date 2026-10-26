@@ -18,7 +18,8 @@
         var sha = null, doc = null, missing = false;
         if (r.status === 200) {
           var j = await r.json(); sha = j.sha;
-          try { doc = JSON.parse(b64dec(j.content)); } catch (e) { doc = null; }
+          // 文件存在但读不懂（坏 JSON、内容为空）就报错、不写：不能拿空列表把整个文件覆盖掉。只有 404 才允许从空白初始化。
+          try { doc = JSON.parse(b64dec(j.content)); } catch (e) { throw new Error(file + ' 内容损坏，没有写入（请先修好仓库里的这个文件）'); }
         } else if (r.status === 404) missing = true;
         else throw new Error(r.status === 401 ? '令牌无效或已过期' : r.status === 403 ? '令牌没有写权限（需要 Contents: Read and write）' : '读取失败 ' + r.status);
         var out = mutate(doc, { missing: missing, sha: sha });
