@@ -4,6 +4,8 @@
 // 视觉沿用 xuexi-template 的设计变量（styles.css 的 :root），不改模板文件。
 import fs from 'node:fs'; import path from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { createRequire } from 'node:module';
+const PROG = createRequire(import.meta.url)('./assets/progress.js');
 const ROOT = path.dirname(new URL(import.meta.url).pathname);
 // 数据文件没有日期字段时，用该文件最近一次提交日（YYYY-MM-DD）。查不到则返回 null。
 const gitDay = rel => {
@@ -28,16 +30,16 @@ const INTERVALS = [1, 3, 7, 14, 30];
 const isPage = i => i.status !== '未开始';
 const pages = items.filter(isPage);
 // ---- 状态体系（规则见 README.md）----
-// 未开始：没有学习页；进行中：学习页已上线，小测或复述未过；已学完：quiz.correct ≥ 5（6 题）且 retell=true；
-// 已掌握：已学完，且第 14 天复习已完成（review.json 里 day 14 done=true），期间没有重置（item.reset 为空/0）。
+// 未开始：没有学习页；进行中：学习页已上线，还没点「学完了」；已学完：点过学习页的「学完了」（review.json 里有 learned，
+// 或这台浏览器有 done:<路径>，页面脚本会补上）；已掌握：已学完，且第 14 天复习已完成（day 14 done=true），没有重置（item.reset 为空/0）。
+// 小测（quiz）和复述（retell）只是学习记录，不再决定状态（2026-10-26 王玮定：「已学完」按「学完了」按钮算）。
 const STATES = ['未开始', '进行中', '已学完', '已掌握'];
 const STATE_CLS = { '未开始': '', '进行中': 'blue', '已学完': 'green', '已掌握': 'purple' };
 let reviewRef = null;
 function stateOf(it) {
   if (!isPage(it)) return '未开始';
-  const passed = (it.quiz?.correct ?? 0) >= 5 && it.retell === true;
-  if (!passed) return '进行中';
   const q = reviewRef?.queue.find(x => x.item === it.id);
+  if (!q || !q.learned) return '进行中';
   if (q && q.reviews.some(r => r.day === 14 && r.done) && !it.reset) return '已掌握';
   return '已学完';
 }
@@ -86,7 +88,8 @@ const addDays = (d, n) => { const t = new Date(d + 'T00:00:00Z'); t.setUTCDate(t
     if (!itIds.has(q.item)) bad('data/review.json', w, `item 引用了不存在的条目 ${JSON.stringify(q.item)}`);
     dayField('data/review.json', w, 'start', q.start, false); dayField('data/review.json', w, 'learned', q.learned);
     if (!Array.isArray(q.reviews)) { bad('data/review.json', w, 'reviews 应为数组'); return; }
-    q.reviews.forEach((r, k) => { dayField('data/review.json', `${w} reviews[${k}] (day=${r.day})`, 'date', r.date, false); dayField('data/review.json', `${w} reviews[${k}] (day=${r.day})`, 'doneOn', r.doneOn); }); });
+    q.reviews.forEach((r, k) => { dayField('data/review.json', `${w} reviews[${k}] (day=${r.day})`, 'date', r.date, false); dayField('data/review.json', `${w} reviews[${k}] (day=${r.day})`, 'doneOn', r.doneOn);
+      if (r.at != null && !(typeof r.at === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/.test(r.at) && !Number.isNaN(Date.parse(r.at)))) bad('data/review.json', `${w} reviews[${k}] (day=${r.day})`, `at 不是 ISO 时间（如 2026-10-26T10:05:00.000Z）：${JSON.stringify(r.at)}`); }); });
   if (PHI) { const ids = new Set(); (PHI.days || []).forEach((d, i) => { const w = `days[${i}] (date=${d.date})`; dayField('data/ph-inspo.json', w, 'date', d.date, false);
     (d.items || []).forEach((it, k) => { const ww = `${w} items[${k}] (id=${it.id})`; if (!it.id) bad('data/ph-inspo.json', ww, '缺少 id'); else if (ids.has(it.id)) bad('data/ph-inspo.json', ww, 'id 重复'); else ids.add(it.id);
       for (const f of ['ph', 'site', 'repo']) linkField('data/ph-inspo.json', ww, f, it[f]); (it.followups || []).forEach((x, j) => linkField('data/ph-inspo.json', `${ww} followups[${j}]`, 'url', x.url)); }); }); }
@@ -95,7 +98,7 @@ const addDays = (d, n) => { const t = new Date(d + 'T00:00:00Z'); t.setUTCDate(t
     (RADAR.entries || []).forEach((e, i) => { const w = `entries[${i}] (id=${e.id})`; if (!thKeys.has(e.theme)) bad('data/radar.json', w, `theme 引用了不存在的方向 ${JSON.stringify(e.theme)}`); dayField('data/radar.json', w, 'added', e.added); linkField('data/radar.json', w, 'url', e.url); (e.sources || []).forEach((x, j) => linkField('data/radar.json', `${w} sources[${j}]`, 'url', x.url)); }); }
   if (errs.length) { console.error('数据校验失败（没有写任何文件）：\n- ' + errs.join('\n- ')); process.exit(1); }
 }
-const keptReview = review.queue.map(q => ({ item: q.item, learned: Object.prototype.hasOwnProperty.call(q, 'learned') ? q.learned : undefined, done: (q.reviews || []).map(r => [r.day, r.done, Object.prototype.hasOwnProperty.call(r, 'doneOn') ? r.doneOn : undefined]) }));
+const keptReview = review.queue.map(q => ({ item: q.item, learned: Object.prototype.hasOwnProperty.call(q, 'learned') ? q.learned : undefined, done: (q.reviews || []).map(r => [r.day, r.done, Object.prototype.hasOwnProperty.call(r, 'doneOn') ? r.doneOn : undefined, Object.prototype.hasOwnProperty.call(r, 'at') ? r.at : undefined]) }));
 for (const it of items) {
   if (!isPage(it) || !it.start || review.queue.some(q => q.item === it.id)) continue;
   review.queue.push({ item: it.id, start: it.start, reviews: INTERVALS.map(n => ({ day: n, date: addDays(it.start, n), done: false })) });
@@ -107,10 +110,11 @@ fs.writeFileSync(reviewPath, JSON.stringify(review, null, 2) + '\n');
     const q = back.queue.find(x => x.item === k.item);
     if (!q) throw new Error('review.json 丢失条目 ' + k.item);
     if (k.learned !== undefined && q.learned !== k.learned) throw new Error('review.json 丢掉了 learned：' + k.item);
-    for (const [day, done, doneOn] of k.done) {
+    for (const [day, done, doneOn, at] of k.done) {
       const r = (q.reviews || []).find(x => x.day === day);
       if (!r || r.done !== done) throw new Error('review.json 丢掉了 done：' + k.item + ' 第 ' + day + ' 天');
       if (doneOn !== undefined && r.doneOn !== doneOn) throw new Error('review.json 丢掉了 doneOn：' + k.item + ' 第 ' + day + ' 天');
+      if (at !== undefined && r.at !== at) throw new Error('review.json 丢掉了 at：' + k.item + ' 第 ' + day + ' 天');
     }
   }
 }
@@ -137,7 +141,7 @@ function page(file, title, active, body, script = '') {
   return `<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${esc(title)} · 王玮的学习库</title><style>${THEME}</style><script>${HEADJS}</script><script src="${r('assets/gh.js')}" defer></script><script src="${r('assets/favorites.js')}" defer></script><script src="${r('assets/progress.js')}" defer></script></head><body>
 <header class="top"><div class="in"><a class="brand" href="${r('index.html')}"><i>${ic('book-open', 16)}</i>王玮的学习库</a><nav>${nav}</nav><button class="dm" onclick="__tt()" aria-label="切换深色模式">${ic('sun-moon', 18)}</button></div></header>
-<main>${body}<div class="foot"><span>王玮的学习库 · 每篇都是可翻页、可动手、带小测的学习页</span><span>由 build.mjs 从 data/ 生成</span></div></main>${script ? `<script>${script}</script>` : ''}<script>var __R='${r('index.html')}',__I=${JSON.stringify(Object.fromEntries(items.map(i=>[i.id,[i.href,stateOf(i)]]))).replace(/</g,'\\u003c')};(function(){const DONE=['已学完','已掌握'];const doneExpand=u=>{const out=[],vs=new Set([u]);if(u.endsWith('/index.html')){const d=u.slice(0,-10);vs.add(d);vs.add(d.replace(/\\/$/,'')||'/')}else if(u.endsWith('/')){vs.add(u+'index.html');vs.add(u.replace(/\\/$/,'')||'/')}else if(!/\\.[a-z0-9]+$/i.test(u)){vs.add(u+'/');vs.add(u+'/index.html')}for(const x of vs){out.push(x);const m=x.match(/^(.*)\\/courses\\/(.+)$/);if(m)out.push(m[1]+'/'+m[2]);const m2=x.match(/^(.*)\\/(cs146s)\\/(.+)$/);if(m2&&!x.includes('/courses/'))out.push(m2[1]+'/courses/'+m2[2]+'/'+m2[3])}return[...new Set(out)]};const doneHit=h=>{const keys=[];const add=u=>{for(const k of doneExpand(u))if(!keys.includes(k))keys.push(k)};try{add(new URL(h,new URL(__R,location.href)).pathname)}catch(e){}try{add(new URL(h,location.href).pathname)}catch(e){}for(const k of keys){const d=localStorage.getItem('done:'+k);if(d)return d}return null};const st=id=>{const v=__I[id];if(!v)return null;let s=v[1];if(s!=='已掌握'&&!/^https?:/.test(v[0])){try{if(doneHit(v[0]))s='已学完'}catch(e){}}return s};document.querySelectorAll('a[href]').forEach(a=>{const d=doneHit(a.getAttribute('href'));if(!d)return;const box=a.closest('.row,.card');if(!box)return;const t=box.querySelector('.tag.st');if(t&&!/已掌握/.test(t.textContent)){t.textContent='已学完';t.className='tag st green'}});document.querySelectorAll('[data-doing]').forEach(g=>{const dn=[];g.querySelectorAll('a.card').forEach(a=>{try{if(doneHit(a.getAttribute('href')))dn.push(a)}catch(e){}});if(!dn.length)return;const w=document.createElement('div');w.innerHTML='<div class="kicker">已学完 <span class="n">'+dn.length+'</span></div><div class="sub">到了复习日会出现在上面的「今天该复习」</div><div class="grid wide"></div>';const gd=w.querySelector('.grid');dn.forEach(a=>{a.querySelectorAll('.meta span').forEach(x=>{if(/开始学/.test(x.textContent))x.textContent='复习 →'});gd.appendChild(a)});g.after(...w.childNodes);if(!g.querySelector('a.card'))g.outerHTML='<div class="empty"><b>现在没有进行中的内容</b></div>'});document.querySelectorAll('[data-ids]').forEach(el=>{const ss=el.dataset.ids.split(',').filter(Boolean).map(st).filter(Boolean);const n=ss.length,c=x=>ss.filter(s=>s===x).length;const k=el.dataset.k,b=el.querySelector('b');if(k==='done')b.textContent=ss.filter(s=>DONE.includes(s)).length;else if(k==='doing')b.textContent=c('进行中');else if(k.startsWith('st:'))b.textContent=c(k.slice(3));else if(k==='prog'){const is=el.querySelectorAll('.bar i');const w=x=>(n?x/n*100:0)+'%';is[0].style.width=w(c('已掌握'));is[1].style.width=w(c('已学完'));is[2].style.width=w(c('进行中'));const sp=el.querySelector(':scope>span');const bb=el.querySelector(':scope>b');if(bb)bb.textContent=(n?Math.round((c('已学完')+c('已掌握'))/n*100):0)+'%';sp.textContent='已学完 '+(c('已学完')+c('已掌握'))+'/'+n+(c('已掌握')?' · 已掌握 '+c('已掌握'):'')+(c('进行中')?' · 进行中 '+c('进行中'):'')}})})();</script></body></html>`;
+<main>${body}<div class="foot"><span>王玮的学习库 · 每篇都是可翻页、可动手、带小测的学习页</span><span>由 build.mjs 从 data/ 生成</span></div></main>${script ? `<script>${script}</script>` : ''}<script>var __R='${r('index.html')}',__I=${JSON.stringify(Object.fromEntries(items.map(i=>[i.id,[i.href,stateOf(i)]]))).replace(/</g,'\\u003c')};(function(){const DONE=['已学完','已掌握'];const LP=new Set();const doneExpand=u=>{const out=[],vs=new Set([u]);if(u.endsWith('/index.html')){const d=u.slice(0,-10);vs.add(d);vs.add(d.replace(/\\/$/,'')||'/')}else if(u.endsWith('/')){vs.add(u+'index.html');vs.add(u.replace(/\\/$/,'')||'/')}else if(!/\\.[a-z0-9]+$/i.test(u)){vs.add(u+'/');vs.add(u+'/index.html')}for(const x of vs){out.push(x);const m=x.match(/^(.*)\\/courses\\/(.+)$/);if(m)out.push(m[1]+'/'+m[2]);const m2=x.match(/^(.*)\\/(cs146s)\\/(.+)$/);if(m2&&!x.includes('/courses/'))out.push(m2[1]+'/courses/'+m2[2]+'/'+m2[3])}return[...new Set(out)]};const doneHit=h=>{const keys=[];const add=u=>{for(const k of doneExpand(u))if(!keys.includes(k))keys.push(k)};try{add(new URL(h,new URL(__R,location.href)).pathname)}catch(e){}try{add(new URL(h,location.href).pathname)}catch(e){}for(const k of keys){if(LP.has(k))return 1;const d=localStorage.getItem('done:'+k);if(d)return d}return null};const st=id=>{const v=__I[id];if(!v)return null;let s=v[1];if(s!=='已掌握'&&!/^https?:/.test(v[0])){try{if(doneHit(v[0]))s='已学完'}catch(e){}}return s};const go=()=>{document.querySelectorAll('a[href]').forEach(a=>{const d=doneHit(a.getAttribute('href'));if(!d)return;const box=a.closest('.row,.card');if(!box)return;const t=box.querySelector('.tag.st');if(t&&!/已掌握/.test(t.textContent)){t.textContent='已学完';t.className='tag st green'}});document.querySelectorAll('[data-doing]').forEach(g=>{const dn=[];g.querySelectorAll('a.card').forEach(a=>{try{if(doneHit(a.getAttribute('href')))dn.push(a)}catch(e){}});if(!dn.length)return;const w=document.createElement('div');w.innerHTML='<div class="kicker">已学完 <span class="n">'+dn.length+'</span></div><div class="sub">到了复习日会出现在上面的「今天该复习」</div><div class="grid wide"></div>';const gd=w.querySelector('.grid');dn.forEach(a=>{a.querySelectorAll('.meta span').forEach(x=>{if(/开始学/.test(x.textContent))x.textContent='复习 →'});gd.appendChild(a)});g.after(...w.childNodes);if(!g.querySelector('a.card'))g.outerHTML='<div class="empty"><b>现在没有进行中的内容</b></div>'});document.querySelectorAll('[data-ids]').forEach(el=>{const ss=el.dataset.ids.split(',').filter(Boolean).map(st).filter(Boolean);const n=ss.length,c=x=>ss.filter(s=>s===x).length;const k=el.dataset.k,b=el.querySelector('b');if(k==='done')b.textContent=ss.filter(s=>DONE.includes(s)).length;else if(k==='doing')b.textContent=c('进行中');else if(k.startsWith('st:'))b.textContent=c(k.slice(3));else if(k==='prog'){const is=el.querySelectorAll('.bar i');const w=x=>(n?x/n*100:0)+'%';is[0].style.width=w(c('已掌握'));is[1].style.width=w(c('已学完'));is[2].style.width=w(c('进行中'));const sp=el.querySelector(':scope>span');const bb=el.querySelector(':scope>b');if(bb)bb.textContent=(n?Math.round((c('已学完')+c('已掌握'))/n*100):0)+'%';sp.textContent='已学完 '+(c('已学完')+c('已掌握'))+'/'+n+(c('已掌握')?' · 已掌握 '+c('已掌握'):'')+(c('进行中')?' · 进行中 '+c('进行中'):'')}})};let ran=0;const once=()=>{if(!ran){ran=1;go()}};/* 已学完＝点过「学完了」：本机 done:<路径>，或仓库 review.json 里的 learned（别的设备点的） */try{const B=new URL(__R,location.href);fetch(new URL('data/review.json?t='+Date.now(),B).href,{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{((j&&j.queue)||[]).forEach(q=>{const v=q&&__I[q.item];if(!v||!q.learned||/^https?:/.test(v[0]))return;try{for(const k of doneExpand(new URL(v[0],B).pathname))LP.add(k)}catch(e){}});once()}).catch(once)}catch(e){once()}setTimeout(once,1500)})();</script></body></html>`;
 }
 const write = (f, s) => { fs.mkdirSync(path.dirname(path.join(ROOT, f)), { recursive: true }); fs.writeFileSync(path.join(ROOT, f), s); console.log('wrote', f); };
 const statusTag = s => `<span class="tag st ${STATE_CLS[s] ?? ''}">${esc(s)}</span>`;
@@ -151,7 +155,7 @@ const itemCard = (file, it) => `<a class="card item" href="${rel(file, it.href)}
 const emptyBox = (t, s) => `<div class="empty"><b>${t}</b>${s}</div>`;
 const itemConcepts = id => concepts.filter(c => c.refs.some(r => r.item === id));
 
-// 简报文件名是美东日期，固定美东 21:00 发布，等于北京时间次日 09:00（夏令时）或 10:00（冬令时），都是北京的第二天。
+// 简报文件名是美东日期，北京时间每天 09:00 发布（定时任务按 Asia/Shanghai 触发，不随美东夏令时变），那时美东还是前一天，所以是文件名日期的北京第二天。
 // head 或刊头里若有带时区（或 ET/PT 字样）的发布时间，改用该时间换算到 Asia/Shanghai；只有日期、没有钟点的，不算。
 const shanghaiDate = instant => {
   const dt = instant instanceof Date ? instant : new Date(instant);
@@ -241,8 +245,11 @@ const DG = (() => {
   const keep = new Set(DG.list.map(x => x.date + '.json'));
   fs.mkdirSync(path.join(ROOT, 'data', 'digest'), { recursive: true });
   for (const x of fs.readdirSync(path.join(ROOT, 'data', 'digest'))) if (/^\d{4}-\d\d-\d\d\.json$/.test(x) && !keep.has(x)) fs.rmSync(path.join(ROOT, 'data', 'digest', x));
-  const rule = '汇总日 D 是北京时间。简报文件名是美东日期，美东 21:00 发布等于北京时间次日 09:00，所以 D 一般对应 x-brief/(D−1).html（页面若有带时区的发布时间，则改用该时间换算到 Asia/Shanghai；链接仍是原文件）。海报是 x-posters/D/。产品灵感是最新一份榜单日 ≤ D−2 的那组（太平洋时间的 Product Hunt 日榜，北京时间 D 日 09:00 前能入库的最新一份），并标出实际榜单日。某一来源没有就是 null。';
-  for (const x of DG.list) fs.writeFileSync(path.join(ROOT, 'data', 'digest', x.date + '.json'), JSON.stringify({ ...x, url: SITE + x.href, rule }, null, 1) + '\n');
+  const rule = '汇总日 D 是北京时间。简报文件名是美东日期，北京时间 D 日 09:00 发布，那时美东还是 D−1 日，所以 D 一般对应 x-brief/(D−1).html（页面若有带时区的发布时间，则改用该时间换算到 Asia/Shanghai；链接仍是原文件）。海报是 x-posters/D/。产品灵感是最新一份榜单日 ≤ D−2 的那组（太平洋时间的 Product Hunt 日榜，北京时间 D 日 09:00 前能入库的最新一份），并标出实际榜单日。某一来源没有就是 null。';
+  const rule0 = '汇总日 D 是北京时间。简报文件名是美东日期，美东 21:00 发布等于北京时间次日 09:00，所以 D 一般对应 x-brief/(D−1).html（页面若有带时区的发布时间，则改用该时间换算到 Asia/Shanghai；链接仍是原文件）。海报是 x-posters/D/。产品灵感是最新一份榜单日 ≤ D−2 的那组（太平洋时间的 Product Hunt 日榜，北京时间 D 日 09:00 前能入库的最新一份），并标出实际榜单日。某一来源没有就是 null。';
+  // 2026-10-27 起的汇总用新说法（定时任务改按北京时间触发）；更早的汇总保留当时的说法，不改写历史 json
+  const ruleOf = d => d >= '2026-10-27' ? rule : rule0;
+  for (const x of DG.list) fs.writeFileSync(path.join(ROOT, 'data', 'digest', x.date + '.json'), JSON.stringify({ ...x, url: SITE + x.href, rule: ruleOf(x.date) }, null, 1) + '\n');
   fs.writeFileSync(path.join(ROOT, 'data', 'digest', 'index.json'), JSON.stringify({ _readme: '由 build.mjs 生成。北京时间 9:00 的汇总推送直接链接 url，或读 json。', rule, site: SITE, latest: DG.list[0]?.date || null,
     days: DG.list.map(x => ({ date: x.date, url: SITE + x.href, json: x.json, brief: !!x.brief, posters: x.posters?.n || 0, ph: x.ph?.n || 0 })) }, null, 1) + '\n');
   console.log('wrote data/digest/*.json', DG.list.length);
@@ -467,23 +474,28 @@ const BAKED=JSON.parse(JSON.stringify(R.queue));
 function plan(queue){started.clear();R.queue=JSON.parse(JSON.stringify(queue));for(const q of R.queue){const it=R.items[q.item];if(!it)continue;const dd=earlier(iso(q.learned),iso(doneOf(it.href)));if(!dd)continue;started.add(q.item);q.start=dd;for(const r of q.reviews)r.date=add(dd,r.day)}}
 plan(BAKED);
 const diff=(a,b)=>Math.round((new Date(b+'T12:00:00')-new Date(a+'T12:00:00'))/864e5);const E=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
-/* 复习是否完成：review.json 的 done，或本机 rev-done:<itemId>（第几天 → 完成日期）。A/B/C 共用下面的 bucket。 */
+/* 复习是否完成：以最后一次操作为准。云端 reviews[].at、本机待上传操作 rev-op:<itemId>（{第几天:{done,on,at}}）谁新听谁的；
+   都没有操作时间的旧记录：云端 done 或本机 rev-done:<itemId>（第几天 → 完成日期）有一边就算完成。规则在 assets/progress.js 的 effReview，这里注入的是同一份源码。 */
+const EFF=${PROG.effReview.toString()};
 const G={over:[],today:[],later:[],seen:[]};
 function revMap(id){try{const o=JSON.parse(localStorage.getItem('rev-done:'+id)||'{}');return o&&typeof o==='object'&&!Array.isArray(o)?o:{}}catch(e){return {}}}
 function revPut(id,o){try{const k='rev-done:'+id;if(!o||!Object.keys(o).length)localStorage.removeItem(k);else localStorage.setItem(k,JSON.stringify(o))}catch(e){}}
 function revDated(m,day){const v=m[day];return typeof v==='string'&&/^\\d{4}-\\d{2}-\\d{2}$/.test(v)?v:''}
+function opsMap(id){try{const o=JSON.parse(localStorage.getItem('rev-op:'+id)||'{}');return o&&typeof o==='object'&&!Array.isArray(o)?o:{}}catch(e){return {}}}
+function opsPut(id,o){try{const k='rev-op:'+id;if(!o||!Object.keys(o).length)localStorage.removeItem(k);else localStorage.setItem(k,JSON.stringify(o))}catch(e){}}
+const stOf=(q,m,o)=>r=>EFF(r,revDated(m,r.day),o[r.day]);
 function bucket(){G.over.length=0;G.today.length=0;G.later.length=0;G.seen.length=0;
- for(const q of R.queue){if(!started.has(q.item)||!R.items[q.item])continue;const m=revMap(q.item);const done=r=>!!r.done||!!revDated(m,r.day);
+ for(const q of R.queue){if(!started.has(q.item)||!R.items[q.item])continue;const st=stOf(q,revMap(q.item),opsMap(q.item));const done=r=>st(r).done;
   const pend=q.reviews.filter(r=>!done(r));const due=pend.filter(r=>r.date<=today);
   if(due.length){const late=diff(due[0].date,today);(late>0?G.over:G.today).push({item:q.item,day:due[due.length-1].day,late,n:due.length,date:due[0].date})}
   else if(pend.length)G.later.push({item:q.item,day:pend[0].day,date:pend[0].date,inN:diff(today,pend[0].date)});
-  const fin=q.reviews.filter(r=>revDated(m,r.day)===today); /* 当天勾完的仍留在「今日」，方便「已看」计数；第二天 revDated!==today 就消失 */
+  const fin=q.reviews.filter(r=>{const e=st(r);return e.done&&e.on===today}); /* 当天勾完的（这台设备或云端 doneOn=今天）仍留在「今日」，算「已看」，可在同一处取消；第二天就消失 */
   if(fin.length&&!due.length){const late=diff(fin[0].date,today);G.seen.push({item:q.item,day:fin[fin.length-1].day,late,n:fin.length,date:fin[0].date,on:1})}}
  G.over.sort((a,b)=>b.late-a.late);G.later.sort((a,b)=>a.date.localeCompare(b.date))}
-function toggleRev(id){const q=R.queue.find(x=>x.item===id);if(!q)return;const m=revMap(id);const marked=q.reviews.filter(r=>revDated(m,r.day)===today);
- if(marked.length){for(const r of marked)delete m[r.day];revPut(id,m);return} /* 同一天再点一次，撤销今天勾上的那些天 */
- for(const r of q.reviews){if(r.done||revDated(m,r.day))continue;if(r.date<=today)m[r.day]=today} /* 一次勾完当前全部到期，积压清掉 */
- revPut(id,m)}
+function toggleRev(id){const q=R.queue.find(x=>x.item===id);if(!q)return;const m=revMap(id),o=opsMap(id),st=stOf(q,m,o),now=Date.now();const marked=q.reviews.filter(r=>{const e=st(r);return e.done&&e.on===today});
+ if(marked.length){for(const r of marked){delete m[r.day];o[r.day]={done:false,at:now}}revPut(id,m);opsPut(id,o);return} /* 同一天再点一次，撤销今天勾上的那些天（包括别的设备今天勾的） */
+ for(const r of q.reviews){if(st(r).done)continue;if(r.date<=today){m[r.day]=today;o[r.day]={done:true,on:today,at:now}}} /* 一次勾完当前全部到期，积压清掉 */
+ revPut(id,m);opsPut(id,o)}
 const F=(k,v)=>document.querySelectorAll('[data-f="'+k+'"]').forEach(e=>e.textContent=v);
 {const W='日一二三四五六',[y,m,dd]=today.split('-').map(Number),wd=new Date(y,m-1,dd).getDay();F('date',m+' 月 '+dd+' 日 · 星期'+W[wd])}
 const LAB={over:'逾期',today:'今天到期',later:'之后'};
@@ -531,10 +543,14 @@ function renderToday(focusId){var box=document.querySelector('[data-td="list"]')
 bucket();paint();renderToday();
 /* 云端进度：生成页里嵌的 review.json 是构建那一刻的，浏览器提交「学完了」、复习勾选不会触发重建。
    打开首页时再读一次仓库里的 data/review.json（有令牌走 API，最新；没令牌读 Pages 上的副本），以它的 learned / done / doneOn 为准。 */
-function mergeCloud(doc){if(!doc||!Array.isArray(doc.queue))return;var by={},ch=0;doc.queue.forEach(function(c){if(c&&c.item)by[c.item]=c});
- var next=BAKED.map(function(q){var c=by[q.item];if(!c)return q;var n=JSON.parse(JSON.stringify(q));var cl=iso(c.learned)||undefined;if(cl!==n.learned){if(cl)n.learned=cl;else delete n.learned;ch=1}
-  (n.reviews||[]).forEach(function(r){var cr=(c.reviews||[]).find(function(x){return +x.day===+r.day});if(!cr)return;if(!!cr.done!==!!r.done){r.done=!!cr.done;ch=1}if(iso(cr.doneOn))r.doneOn=cr.doneOn;else delete r.doneOn});return n});
- if(!ch)return;plan(next);bucket();paint();renderToday()}
+var CUR=JSON.stringify(BAKED);
+function mergeCloud(doc){if(!doc||!Array.isArray(doc.queue))return;var by={};doc.queue.forEach(function(c){if(c&&c.item)by[c.item]=c});
+ var next=BAKED.map(function(q){var c=by[q.item];if(!c)return q;var n=JSON.parse(JSON.stringify(q));var cl=iso(c.learned)||undefined;if(cl)n.learned=cl;else delete n.learned;
+  (n.reviews||[]).forEach(function(r){var cr=(c.reviews||[]).find(function(x){return +x.day===+r.day});if(!cr)return;r.done=!!cr.done;if(iso(cr.doneOn))r.doneOn=cr.doneOn;else delete r.doneOn;if(typeof cr.at==='string'&&cr.at)r.at=cr.at;else delete r.at});return n});
+ /* 云端某天有 at 且没有更新的本机操作：本机旧的 rev-done 那一天跟着云端走（云端已取消就删掉），已落地或过时的 rev-op 清掉 */
+ next.forEach(function(q){var m=revMap(q.item),o=opsMap(q.item),mc=0,oc=0;(q.reviews||[]).forEach(function(r){var ca=Date.parse(r.at||'')||0;if(!ca)return;var op=o[r.day];if(op&&+op.at>ca)return;if(op){delete o[r.day];oc=1}if(!r.done&&m[r.day]){delete m[r.day];mc=1}});if(mc)revPut(q.item,m);if(oc)opsPut(q.item,o)});
+ var s=JSON.stringify(next);if(s===CUR)return;CUR=s;plan(next);bucket();paint();renderToday()}
+window.addEventListener('prog-doc',function(e){mergeCloud(e.detail)});
 function loadCloud(){var tk='';try{tk=localStorage.getItem('fav:token')||''}catch(e){}var base=new URL(typeof __R==='string'?__R:'index.html',location.href);
  var pub=function(){return fetch(new URL('data/review.json?t='+Date.now(),base).href,{cache:'no-store'}).then(function(r){return r.ok?r.json():null})};
  var dec=function(j){return j&&j.content?JSON.parse(decodeURIComponent(escape(atob(String(j.content).replace(/\\s/g,''))))):null};
@@ -789,7 +805,7 @@ ${secs}<div class="empty" id="rd-none" hidden><b>没有符合条件的条目</b>
 }
 // ---- review.md（人读版） ----
 {
-  let md = `# 间隔复习队列\n\n> 由 build.mjs 从 data/review.json 生成，不要手改本文件。\n> 跨设备以本文件为准。学习搭子把「学完了」写进对应条目的 \`learned\`（YYYY-MM-DD），把某一次复习写进 \`reviews[].done\`。浏览器里的 \`done:<路径>\` 和 \`rev-done:<条目 id>\`（第几天 → 完成日期）先写在这台设备，界面马上更新。收藏页「同步设置」里的令牌和收藏共用（\`fav:token\`）：有令牌时「学完了」把北京时间的日期写入 \`learned\`（已有更早的就留更早的，取消本机记录也不删除 \`learned\`），「今日」勾选把 \`reviews[].done\` 写成 true，并可以写上可选的 \`doneOn\`（完成日）；取消勾选只把 \`done\` 改回 false。没有令牌时只留在本机。首页：有 \`learned\` 或本机 \`done:\` 都算学过；两边都有时用更早的日期排 1/3/7/14/30，只有一边就用那一边。某一次复习在 \`done: true\` 或本机 \`rev-done\` 里有记录，都算完成。换设备：每台电脑在收藏页「同步设置」填一次令牌即可。构建重写本文件时保留已有的 \`learned\`、\`done\` 和 \`doneOn\`。\n> 规则：学完后第 ${review.intervals.join('、')} 天各复习一次。首页勾选会把当前已经到期、还没完成的复习一次记完（清掉积压），下一次仍按学完日顺延。勾完的那一行当天还留在「今日」里，算进「已看」，第二天消失。地址加 \`?today=YYYY-MM-DD\` 可以自查。下表日期按 \`start\` 列出；首页若有 \`learned\` 或本机学完日，会按那天重排。\n\n| 内容 | 学完 | 开始 | ${review.intervals.map(n => `第 ${n} 天`).join(' | ')} |\n|---|---|---|${review.intervals.map(() => '---').join('|')}|\n`;
+  let md = `# 间隔复习队列\n\n> 由 build.mjs 从 data/review.json 生成，不要手改本文件。\n> 跨设备以本文件为准。学习搭子把「学完了」写进对应条目的 \`learned\`（YYYY-MM-DD），把某一次复习写进 \`reviews[].done\`。浏览器里的 \`done:<路径>\` 和 \`rev-done:<条目 id>\`（第几天 → 完成日期）先写在这台设备，界面马上更新。收藏页「同步设置」里的令牌和收藏共用（\`fav:token\`）：有令牌时「学完了」把北京时间的日期写入 \`learned\`（已有更早的就留更早的，取消本机记录也不删除 \`learned\`），「今日」勾选把 \`reviews[].done\` 写成 true，并可以写上可选的 \`doneOn\`（完成日）；取消勾选把 \`done\` 改回 false；两者都写上 \`at\`。没有令牌时只留在本机。首页：有 \`learned\` 或本机 \`done:\` 都算学过；两边都有时用更早的日期排 1/3/7/14/30，只有一边就用那一边。某一次复习勾选、取消以最后一次操作为准（\`reviews[].at\` 是操作时刻，比云端新的本机操作才改云端）；没有 \`at\` 的旧记录，\`done: true\` 或本机 \`rev-done\` 有一边就算完成。换设备：每台电脑在收藏页「同步设置」填一次令牌即可。构建重写本文件时保留已有的 \`learned\`、\`done\` 和 \`doneOn\`。\n> 规则：学完后第 ${review.intervals.join('、')} 天各复习一次。首页勾选会把当前已经到期、还没完成的复习一次记完（清掉积压），下一次仍按学完日顺延。勾完的那一行当天还留在「今日」里，算进「已看」，第二天消失。地址加 \`?today=YYYY-MM-DD\` 可以自查。下表日期按 \`start\` 列出；首页若有 \`learned\` 或本机学完日，会按那天重排。\n\n| 内容 | 学完 | 开始 | ${review.intervals.map(n => `第 ${n} 天`).join(' | ')} |\n|---|---|---|${review.intervals.map(() => '---').join('|')}|\n`;
   for (const q of review.queue) { const it = itemById[q.item]; md += `| ${it ? `${it.label} ${it.title}` : q.item} | ${q.learned || '—'} | ${q.start} | ${q.reviews.map(r => `${r.date}${r.done ? ' ✅' : ''}`).join(' | ')} |\n`; }
   write('review.md', md);
 }

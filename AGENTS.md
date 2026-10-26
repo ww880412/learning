@@ -6,7 +6,7 @@ Codex、Cursor、Claude Code、其他 Grok Bot 改这个仓库前先读这一页
 
 - 王玮的学习站，纯静态 HTML。GitHub Pages 直接发布 `main`：https://ww880412.github.io/learning/ 。推到 `main` 大约 1 分钟后上线，没有 CI。
 - 大部分页面由 `node build.mjs` 从 `data/*.json` 生成。没有 npm 依赖，只要 node。
-- **所有日期都按北京时间（Asia/Shanghai）显示。** 唯一例外是 X 简报文件名：`x-brief/YYYY-MM-DD.html` 用美东日期，美东 21:00 发布，夏令时等于北京时间次日 09:00、冬令时（2026-11-01 起）等于次日 10:00，都是北京的第二天，所以页面上按 +1 天显示。海报目录 `x-posters/YYYY-MM-DD/` 已经是北京日期。详细规则见 README「每日汇总」。
+- **所有日期都按北京时间（Asia/Shanghai）显示。** 唯一例外是 X 简报文件名：`x-brief/YYYY-MM-DD.html` 用美东日期，北京时间 09:00 发布时美东还是前一天，所以页面上按 +1 天显示。**定时任务一律按北京时间触发**（2026-10-26 定，cron 用 `CRON_TZ=Asia/Shanghai`），不随美东夏令时变；各 bot 的 routine 改好之前，实际仍是美东时间触发，11/1 冬令时后会晚一小时。海报目录 `x-posters/YYYY-MM-DD/` 已经是北京日期。详细规则见 README「每日汇总」。
 
 ## 2. 目录：哪些能手改
 
@@ -32,18 +32,18 @@ Codex、Cursor、Claude Code、其他 Grok Bot 改这个仓库前先读这一页
 
 | 写入方 | 时间 | 写哪些路径 | 提交信息 |
 |---|---|---|---|
-| X Brief（`/workspace/x-brief/site/publish.sh`，工作区 `/workspace/learning`，detached HEAD，推 `HEAD:main`） | 每天美东 21:00（夏令时北京 09:00，冬令时北京 10:00） | `x-brief/`（含 `weekly/`）、`index.html`、`digest/`、`data/digest/` | `x-brief: update <日期>` |
-| X海报日报（`publish_gallery.py`，工作区 `/workspace/learning-main` 的 `main`） | 每天美东 20:15 起（夏令时北京 08:15，冬令时北京 09:15），约 25 分钟 | `x-posters/`、`index.html`、`digest/`、`data/digest/` | `x-posters: update <日期>` |
-| PH灵感箱 | 约美东 08:00 | `data/ph-inspo.json`、`ph-inspo/index.html`、`index.html`、`digest/`、`data/digest/` | `ph-inspo: …` |
+| X Brief（`/workspace/x-brief/site/publish.sh`，工作区 `/workspace/learning`，detached HEAD，推 `HEAD:main`） | 每天北京 09:00 | `x-brief/`（含 `weekly/`）、`index.html`、`digest/`、`data/digest/` | `x-brief: update <日期>` |
+| X海报日报（`publish_gallery.py`，工作区 `/workspace/learning-main` 的 `main`） | 每天北京 08:15 起，约 25 分钟 | `x-posters/`、`index.html`、`digest/`、`data/digest/` | `x-posters: update <日期>` |
+| PH灵感箱 | 约北京 20:00 | `data/ph-inspo.json`、`ph-inspo/index.html`、`index.html`、`digest/`、`data/digest/` | `ph-inspo: …` |
 | Agent工作台雷达（指挥家代为发布，步骤见 `/workspace/agent-workbench/SYNC.md`） | 每周一（北京 09:00 周报），平时随时补录 | 先 `node scripts/sync-radar.mjs`（读 `/workspace/agent-workbench`）写 `data/radar.json` 和 `data/radar-weekly/`，再 `node build.mjs` 写 `radar/index.html`、`radar/weekly/<日期>.html` 等 | `radar: …` |
 | 学习搭子 | 不定时 | 学习页（`courses/…`、`x-posts/…`、`research/…`、`wechat/…`、`video/…`）、`data/items.json`、`data/concepts.json`、`data/review.json`，以及构建后的全部生成页 | `courses: …`、`x-posts: …`、`review.json：…` |
 | 浏览器（王玮点收藏、学完了、今日勾选） | 随时 | `favorites.json`、`data/review.json`（GitHub Contents API 直接提交） | `fav: + / - …`、`learn: …`、`review: …` |
 
-两个发布脚本都会调 `scripts/rebuild-home.sh`（内部就是 `node build.mjs`），提交自己的目录、`index.html` 和 `digest/`、`data/digest/`（首页链到当天的汇总页，必须一起推；2026-10-25 起）。发布前它们会丢掉工作区里上次没提交的生成文件，对齐最新 `origin/main`；推送被拒就 `rebase --autostash` 重试，冲突则回到 `origin/main` 重建。脚本在仓库外：`/workspace/x-brief/site/publish.sh`、`/workspace/daily-x-tech-posters/scripts/publish_gallery.py`。
+两个发布脚本都会调 `scripts/rebuild-home.sh`（内部就是 `node build.mjs`；**构建失败就停发**，2026-10-26 起它和两个发布脚本都非零退出、丢掉半成品、不提交不推送，并打印原因），提交自己的目录、`index.html` 和 `digest/`、`data/digest/`（首页链到当天的汇总页，必须一起推；2026-10-25 起）。发布前它们会丢掉工作区里上次没提交的生成文件，对齐最新 `origin/main`；推送被拒就回到最新 `origin/main` 重新生成再推（不管 rebase 能不能成功，免得首页嵌着旧数据）。脚本在仓库外：`/workspace/x-brief/site/publish.sh`、`/workspace/daily-x-tech-posters/scripts/publish_gallery.py`。
 
 ## 4. 数据和同步
 
-- **`data/review.json`**：复习队列，跨设备以它为准。每条 `{item, learned?, start, reviews:[{day, date, done, doneOn?}]}`，间隔 1/3/7/14/30 天。`learned` 是「学完了」的北京日期；`reviews[].done` 是这一次复习做没做，`doneOn` 是完成日。构建会给新学习页补排期，但保留已有的 `learned`、`done`、`doneOn`，丢了会直接报错。浏览器写入只补、取更早的日期，从不删 `learned`。
+- **`data/review.json`**：复习队列，跨设备以它为准。每条 `{item, learned?, start, reviews:[{day, date, done, doneOn?, at?}]}`，间隔 1/3/7/14/30 天。`learned` 是「学完了」的北京日期；`reviews[].done` 是这一次复习做没做，`doneOn` 是完成日。构建会给新学习页补排期，但保留已有的 `learned`、`done`、`doneOn`，丢了会直接报错。浏览器从不删 `learned`（只补、取更早的日期）。复习勾选和取消以最后一次操作为准：`at` 是那次操作的时刻（ISO 时间），浏览器只在自己的操作比云端 `at` 新时才改那一天；规则写在 `assets/progress.js` 的 `effReview` / `applyOps`，首页内联脚本注入的是同一份源码。手改 `review.json` 的某次复习时，把它的 `at` 写成当前 UTC 时间，否则浏览器里更早的记录可能盖过你。「已学完」只看「学完了」按钮（`learned` 或本机 `done:`），不看 `quiz`、`retell`。
 - 首页「今日」打开时会重新读仓库里的 `data/review.json`（有令牌走 API，没令牌读 Pages 副本），所以浏览器提交的勾选不用等 bot 重建就能在别的设备上生效（Pages 副本最多有约 10 分钟缓存）。
 - **`data/radar.json`**：只由 `scripts/sync-radar.mjs` 生成。周报原文放在雷达目录 `weekly/YYYY-MM-DD.md`（北京日期，第一行是标题，`**结论先说**` 后的编号列表进页头），同步到 `data/radar-weekly/`，`build.mjs` 生成 `radar/weekly/YYYY-MM-DD.html` 并在雷达页列出。
 - **收藏**：存仓库根目录的 `favorites.json`（公开，只存标题、链接、标签）。
@@ -55,7 +55,7 @@ Codex、Cursor、Claude Code、其他 Grok Bot 改这个仓库前先读这一页
 
 1. **不手改生成文件。** 改 `build.mjs`、`assets/` 或 `data/`，然后 `node build.mjs`。
 2. **模板改动要扛得住 bot 重写。** 简报、海报 bot 每次发布都会实时读 `assets/vp-head.js` 和 `assets/site.css`，内联进页面，再加一个 `favorites.js`。要让这两类页面变样，改 `assets/` 里这几个文件，不要只改 `x-brief/`、`x-posters/` 里的 HTML，下次发布就被冲掉。
-3. **推之前先拉。** bot 和浏览器随时往 `main` 推。先 `git pull --rebase`（或 `git fetch && git rebase origin/main`），生成文件冲突就以 `origin/main` 为准、重跑 `node build.mjs` 再提交。避开美东 20:15–21:30（夏令时北京 08:15–09:30，冬令时北京 09:15–10:30）和美东 08:00 前后推大改动。
+3. **推之前先拉。** bot 和浏览器随时往 `main` 推。先 `git pull --rebase`（或 `git fetch && git rebase origin/main`），生成文件冲突就以 `origin/main` 为准、重跑 `node build.mjs` 再提交。避开北京 08:15–09:30 和北京 20:00 前后推大改动。
 4. **不要弄乱两个 bot 的工作区。** `/workspace/learning-main` 必须停在 `main` 且干净，海报 bot 直接在这里 `git add x-posters index.html && commit && push`；`/workspace/learning` 是 X Brief 的工作区（detached HEAD 跟随 `origin/main`），不要在里面做事；`publish.sh` 发布前会清掉里面没提交的生成文件。自己做事另开 worktree，例如 `git worktree add /workspace/learning-<任务> -b <分支> origin/main`。
 5. **分支 + PR，squash 合并，合并后删分支**（`git push origin --delete <分支>`）。只有 bot 的日常发布直接推 `main`。
 6. **合并前跑测试**（见第 6 节）。
@@ -72,8 +72,9 @@ cd /workspace/learning-<任务>
 node build.mjs                      # 重建所有生成页，并补排 data/review.json
 node scripts/test-progress.mjs      # 纯逻辑测试，打印 ok
 node scripts/test-guards.mjs        # 坏数据拦截：坏 JSON 不写、build.mjs 入口校验，打印 ok
+node scripts/test-publish.mjs       # 构建失败就停发：rebuild-home.sh 和 box 上两个发布脚本，坏数据时非零退出、不推送，打印 ok
 NODE_PATH=<装了 puppeteer-core 的 node_modules> SHOTS=/workspace/<截图目录> \
-  node scripts/browser-progress-check.mjs   # 无头 Chrome（/usr/bin/google-chrome）+ 假 GitHub API，7 项应全部 PASS，并截首页 A/B/C 和一课
+  node scripts/browser-progress-check.mjs   # 无头 Chrome（/usr/bin/google-chrome）+ 假 GitHub API，11 项应全部 PASS，并截首页 A/B/C 和一课
 git add -A && git commit -m "…" && git push -u origin <分支>
 # 开 PR → squash 合并 → git push origin --delete <分支>
 ```

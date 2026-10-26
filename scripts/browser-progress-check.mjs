@@ -242,17 +242,98 @@ try {
     await page._ctx.close();
   });
 
-  await check('首页以仓库里的 review.json 为准：云端已勾的复习不再出现', async () => {
-    const cloud = JSON.parse(REVIEW);
-    const q = cloud.queue.find((x) => x.item === 'cs146s-L01');
-    for (const r of q.reviews) if (DUE.includes(r.day)) { r.done = true; r.doneOn = TODAY; }
+  async function withCloud(cloud, local, url) {
     const page = await boot(browser, origin, { token: TOKEN });
     // 假 API 在页面加载时读 __test:cloud-review，先写进去再重开一次首页。
     await page.goto(origin + '/favorites/index.html', { waitUntil: 'networkidle0' });
-    await page.evaluate((t) => localStorage.setItem('__test:cloud-review', t), JSON.stringify(cloud, null, 2));
-    await page.goto(origin + HOME, { waitUntil: 'networkidle0' });
-    await page.waitForFunction(() => window.__cloudReady === 1);
-    if (await page.$('[data-id="rev:cs146s-L01"]')) throw new Error('云端已完成，首页还显示 cs146s-L01');
+    await page.evaluate((t, loc) => { localStorage.setItem('__test:cloud-review', t); for (const [k, v] of Object.entries(loc || {})) localStorage.setItem(k, v); }, JSON.stringify(cloud, null, 2), local || {});
+    await page.goto(origin + (url || HOME), { waitUntil: 'networkidle0' });
+    await page.waitForFunction(() => window.__cloudReady === 1 && window.__progReady === 1);
+    await page.waitForFunction(() => !window.__progPending);
+    return page;
+  }
+  await check('(a)5 别的设备今天勾完的复习：这台设备显示「已看」，可在同一行取消', async () => {
+    const cloud = JSON.parse(REVIEW);
+    const q = cloud.queue.find((x) => x.item === 'cs146s-L01');
+    const at = new Date(Date.now() - 60000).toISOString();
+    for (const r of q.reviews) if (DUE.includes(r.day)) { r.done = true; r.doneOn = TODAY; r.at = at; }
+    const page = await withCloud(cloud);
+    const pressed = await page.$eval('[data-id="rev:cs146s-L01"]', (b) => b.getAttribute('aria-pressed'));
+    if (pressed !== 'true') throw new Error('云端今天已完成，应显示为已看，aria-pressed=' + pressed);
+    if ((await puts(page, 'data/review.json')).length) throw new Error('打开页面不应 PUT');
+    await page.click('[data-id="rev:cs146s-L01"]');
+    await page.waitForFunction(() => window.__gh.some((c) => c.method === 'PUT' && c.path === 'data/review.json'));
+    await page.waitForFunction(() => !window.__progPending);
+    const [put] = await puts(page, 'data/review.json');
+    const doc = decode(put.body, gh).queue.find((x) => x.item === 'cs146s-L01');
+    for (const day of DUE) {
+      const r = doc.reviews.find((x) => x.day === day);
+      if (r.done !== false || 'doneOn' in r || !(Date.parse(r.at) > Date.parse(at))) throw new Error('取消没写对 ' + JSON.stringify(r));
+    }
+    const after = await page.$eval('[data-id="rev:cs146s-L01"]', (b) => b.getAttribute('aria-pressed'));
+    if (after !== 'false') throw new Error('取消后应变回未看');
+    const ops = await page.evaluate(() => localStorage.getItem('rev-op:cs146s-L01'));
+    if (ops) throw new Error('传上去之后 rev-op 应清掉 ' + ops);
+    if (page._errors.length) throw new Error(page._errors.join('\n'));
+    await page._ctx.close();
+  });
+
+  await check('(b)2 别的设备更晚的取消不会被这台的旧记录勾回去', async () => {
+    const cloud = JSON.parse(REVIEW);
+    const q = cloud.queue.find((x) => x.item === 'cs146s-L01');
+    const at = new Date(Date.now() - 60000).toISOString();
+    for (const r of q.reviews) if (DUE.includes(r.day)) { r.done = false; delete r.doneOn; r.at = at; }
+    const stale = Object.fromEntries(DUE.map((d) => [d, TODAY]));
+    const page = await withCloud(cloud, { 'rev-done:cs146s-L01': JSON.stringify(stale) });
+    if ((await puts(page, 'data/review.json')).length) throw new Error('旧本机记录把取消传回了云端');
+    const pressed = await page.$eval('[data-id="rev:cs146s-L01"]', (b) => b.getAttribute('aria-pressed'));
+    if (pressed !== 'false') throw new Error('云端更晚取消了，这台设备不应显示已看');
+    const left = await page.evaluate(() => localStorage.getItem('rev-done:cs146s-L01'));
+    if (left) throw new Error('本机旧记录应跟着云端清掉 ' + left);
+    if (page._errors.length) throw new Error(page._errors.join('\n'));
+    await page._ctx.close();
+  });
+
+  await check('(b)2 没传上去的更新操作：下次打开时补传，压过云端更早的记录', async () => {
+    const cloud = JSON.parse(REVIEW);
+    const q = cloud.queue.find((x) => x.item === 'cs146s-L01');
+    const old = new Date(Date.now() - 3600000).toISOString();
+    for (const r of q.reviews) if (DUE.includes(r.day)) { r.done = true; r.doneOn = TODAY; r.at = old; }
+    const now = Date.now() - 1000;
+    const ops = Object.fromEntries(DUE.map((d) => [d, { done: false, at: now }]));
+    const page = await withCloud(cloud, { 'rev-op:cs146s-L01': JSON.stringify(ops) });
+    const all = await puts(page, 'data/review.json');
+    if (all.length !== 1) throw new Error('应补传一次，实际 ' + all.length);
+    const doc = decode(all[0].body, gh).queue.find((x) => x.item === 'cs146s-L01');
+    for (const day of DUE) { const r = doc.reviews.find((x) => x.day === day); if (r.done !== false || Date.parse(r.at) !== now) throw new Error('补传不对 ' + JSON.stringify(r)); }
+    if (await page.evaluate(() => localStorage.getItem('rev-op:cs146s-L01'))) throw new Error('补传后 rev-op 应清掉');
+    const pressed = await page.$eval('[data-id="rev:cs146s-L01"]', (b) => b.getAttribute('aria-pressed'));
+    if (pressed !== 'false') throw new Error('取消应生效');
+    if (page._errors.length) throw new Error(page._errors.join('\n'));
+    await page._ctx.close();
+  });
+
+  await check('(b)4 已学完＝点过「学完了」：别的设备写的 learned，这台的栏目页也算已学完', async () => {
+    const items = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/items.json'), 'utf8')).items;
+    const rv = JSON.parse(REVIEW);
+    const target = rv.queue.find((q) => !q.learned && items.find((i) => i.id === q.item && i.column === 'courses' && !/^https?:/.test(i.href)));
+    if (!target) throw new Error('找不到没有 learned 的课程条目');
+    const it = items.find((i) => i.id === target.item);
+    const page = await boot(browser, origin);
+    await page.setRequestInterception(true);
+    page.on('request', (req) => {
+      if (/\/data\/review\.json/.test(req.url())) { const j = JSON.parse(REVIEW); j.queue.find((q) => q.item === target.item).learned = BJ; req.respond({ status: 200, contentType: 'application/json', body: JSON.stringify(j) }); }
+      else req.continue();
+    });
+    const dir = it.href.replace(/\/[^/]+$/, '/');
+    const base = it.href.split('/').pop();
+    const baked = await (async () => { const p2 = await boot(browser, origin); await p2.goto(origin + '/' + dir + 'index.html', { waitUntil: 'networkidle0' }); const n = await p2.$eval('[data-k="done"] b', (b) => +b.textContent); await p2._ctx.close(); return n; })();
+    await page.goto(origin + '/' + dir + 'index.html', { waitUntil: 'networkidle0' });
+    await new Promise((r) => setTimeout(r, 300));
+    const tag = await page.evaluate((base) => { const a = [...document.querySelectorAll('a[href]')].find((x) => x.getAttribute('href') === base); const box = a && a.closest('.row,.card'); const t = box && box.querySelector('.tag.st'); return t ? t.textContent : null; }, base);
+    if (tag !== '已学完') throw new Error(it.id + ' 应显示已学完，实际 ' + tag);
+    const n = await page.$eval('[data-k="done"] b', (b) => +b.textContent);
+    if (n !== baked + 1) throw new Error('「已学完」计数应从 ' + baked + ' 变成 ' + (baked + 1) + '，实际 ' + n);
     if (page._errors.length) throw new Error(page._errors.join('\n'));
     await page._ctx.close();
   });
