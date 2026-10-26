@@ -1,5 +1,5 @@
 <!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>X 简报 · 10/24（周六） · X 简报</title><style>/* 学习搭子 固定设计系统 — 不要在课程里改这个文件。只改 lesson.html 的内容。 */
+<title>X 简报 · 10/25（周日） · X 简报</title><style>/* 学习搭子 固定设计系统 — 不要在课程里改这个文件。只改 lesson.html 的内容。 */
 :root{
   --paper:#F6F6F7; --sheet:#FFFFFF; --ink:#16202C; --ink2:#4A5868; --hair:#E2E2E3;
   --blue:#2550D9;  --blue-soft:#E3EAFD;   /* 主角：当前步骤 / 重点 */
@@ -39,6 +39,7 @@ ul{padding-left:20px}li{margin:8px 0}
 .empty{border:2px dashed var(--hair);border-radius:var(--r-lg);padding:20px;color:var(--ink2)}.empty b{display:block;color:var(--ink);margin-bottom:4px}
 .pn{display:flex;justify-content:space-between;gap:10px;margin-top:20px;font-weight:700}
 .foot{margin-top:30px;font-size:13px;color:var(--ink2);text-align:center}
+.bxs{display:grid;gap:10px;margin-bottom:8px}.bxs details.panel{margin-top:0}.bx>summary h2{margin:0;padding:0;border:0;font-size:17px;scroll-margin-top:110px}.bx .pb{padding-top:6px}
 @media(max-width:640px){main{padding:14px 12px 40px}.sheet{padding:18px 16px}h1{font-size:22px}.row{flex-wrap:wrap;gap:4px 10px}.row .d{min-width:0}}
 /* 学习库统一主题（2026-10 重设计）：单一无衬线字体，靠字号/字重分层；白卡片 + 细边框；只有「逾期」用强调色。 */
 :root{--paper:#f6f7f9;--sheet:#fff;--card:#fff;--ink:#111827;--ink2:#4b5563;--meta:#6b7280;--hair:#e5e7eb;--hair2:#eef0f3;
@@ -1091,6 +1092,20 @@ html.dark .pi-bar .chip.on{color:#0f1115}
  .rd-q label{max-width:none}
  .rd-bar .chip{min-height:36px}
 }
+/* ---- 2026-10-26 每日产出呈现修一轮（jobs-fix1） ---- */
+/* 桌面顶栏：栏目多了放不下时换行，不再把最后几个（DSH 插件）藏在看不见的滚动里 */
+@media(min-width:701px){html:not([data-theme=B]) .top nav{flex-wrap:wrap;overflow:visible;justify-content:flex-end;row-gap:2px;min-width:0}[data-theme=C] .top nav a{padding:7px 10px}}
+/* 「关于这页数据」：页头说明收起来 */
+details.panel.about{margin-top:14px}details.panel.about>summary{font-weight:550;font-size:14px;color:var(--ink2)}details.panel.about .pb p{margin:10px 0 0;font-size:14px;color:var(--ink2)}
+.hero details.panel.about{grid-column:1/-1}
+/* 另见：同一件事在别的栏目也有 */
+.xref{display:inline-block;margin-left:6px;font-size:12.5px;font-weight:600;line-height:1.7;padding:0 8px;border-radius:99px;background:var(--blue-soft);color:var(--blue);white-space:nowrap}.xref:hover{text-decoration:none;filter:brightness(.95)}
+.sa{margin:6px 0}.sa .xref{margin:0 6px 4px 0}
+/* 雷达：每个方向只露最新 3 条，其余收起 */
+.rd-more{margin-top:var(--sp-3)}.rd-more>summary{cursor:pointer;font-size:14px;font-weight:600;color:var(--blue);padding:6px 0;list-style:none}.rd-more>summary::-webkit-details-marker{display:none}.rd-more>summary::before{content:"▸ "}.rd-more[open]>summary::before{content:"▾ "}
+/* 产品灵感：更早的榜单收起；每天的说明收成一个小按钮 */
+details.panel.pi-old{margin-top:20px}details.panel.pi-old .pi-day{margin-top:14px}
+.pi-note{display:inline}.pi-note>summary{display:inline;cursor:pointer;color:var(--blue);list-style:none}.pi-note>summary::-webkit-details-marker{display:none}.pi-note[open]{display:block;margin-top:4px}
 </style><script>/*ICONS lucide v1.60.0 ISC*/window.__IC={"menu":"<path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/>","x":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","star":"<path d=\"M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z\"/>","party-popper":"<path d=\"M5.8 11.3 2 22l10.7-3.79\"/><path d=\"M4 3h.01\"/><path d=\"M22 8h.01\"/><path d=\"M15 2h.01\"/><path d=\"M22 20h.01\"/><path d=\"m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10\"/><path d=\"m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17\"/><path d=\"m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7\"/><path d=\"M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z\"/>"};window.__ic=function(n,s,c){return '<svg class="i i-'+n+(c?' '+c:'')+'" width="'+(s||16)+'" height="'+(s||16)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(window.__IC[n]||'')+'</svg>'};/*END ICONS*/
 (function(){var T='site-theme',v;try{v=localStorage.getItem(T)}catch(e){}if(!/^[ABC]$/.test(v||''))v='C';document.documentElement.setAttribute('data-theme',v);
 window.__setTheme=function(t){var go=function(){__applyTheme(t)};if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.startViewTransition(go);else go()};window.__applyTheme=function(t){document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem(T,t)}catch(e){}[].forEach.call(document.querySelectorAll('.thsw button'),function(b){b.setAttribute('aria-pressed',b.dataset.t===t)})}})();
@@ -1113,15 +1128,17 @@ window.addEventListener('load',function(){
  addEventListener('scroll',function(){document.querySelectorAll('.fx-rv:not(.fx-in)').forEach(function(e){if(e.getBoundingClientRect().top<innerHeight){e.classList.add('fx-in');io.unobserve(e)}})},{passive:true});
  document.addEventListener('pointermove',function(ev){var c=ev.target.closest&&ev.target.closest('a.card,.crs,.pc');if(!c)return;var r=c.getBoundingClientRect();c.style.setProperty('--mx',ev.clientX-r.left+'px');c.style.setProperty('--my',ev.clientY-r.top+'px')},{passive:true});
 })})();
+/* 链接指向收起来的内容（<details> 里）时，先展开再滚过去：简报栏目、雷达其余条目、产品灵感更早的榜单 */
+(function(){function go(){var h=location.hash.slice(1);if(!h)return;var t;try{t=document.getElementById(decodeURIComponent(h))}catch(e){}if(!t)return;var d=t.closest('details'),inD=!!d;while(d){d.open=true;d=d.parentElement&&d.parentElement.closest('details')}if(inD){/* 浏览器可能已自己展开但滚动位置不对，统一再对准一次 */setTimeout(function(){t.scrollIntoView()},30);setTimeout(function(){t.scrollIntoView()},450)}}/* 第二次等展开动画（.25s）走完再对准 */
+document.addEventListener('DOMContentLoaded',go);addEventListener('hashchange',go);
+document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href^="#"]');if(a&&a.getAttribute('href')===location.hash)setTimeout(go,0)})})();
 </script><script src="../assets/favorites.js" defer></script></head><body>
-<header class="top"><div class="in"><a class="brand" href="./index.html"><i><svg class="i i-newspaper" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18h-5"/><path d="M18 14h-8"/><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-4 0v-9a2 2 0 0 1 2-2h2"/><rect width="8" height="4" x="10" y="6" rx="1"/></svg></i>X 简报</a><nav><a href="../index.html">学习库首页</a><a href="index.html" class=on>X 简报</a><a href="index.html#weekly">周趋势</a><a href="../favorites/index.html">收藏</a></nav><button class="dm" onclick="__tt()" aria-label="切换深色模式"><svg class="i i-sun-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2"/><path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715"/><path d="M16 12a4 4 0 0 0-4-4"/><path d="m19 5-1.256 1.256"/><path d="M20 12h2"/></svg></button></div></header>
-<main><section class="sheet"><span class="kk">DAILY · 2026-10-24（周六）</span><h1>X 简报 · 10/24（周六）</h1><div class="kk" style="color:var(--ink2);margin-bottom:8px">今日主线</div><ol class="quick"><li>Claude Code 核心成员 Thariq 宣布离开 Anthropic，告别帖 2.7 万赞，中文圈几乎人人都在转；同一天又有 Claude 桌面版工程师离职，有人猜是 IPO 前的股权或裁员问题</li><li>Kimi K3.1 Pro 口碑掉头：海外博主曝光推广文件，要求统一口径吹、不标付费合作；Nathan Lambert 说这是失误、实际上手评价也偏负面，便宜够用的 DeepSeek V4.1 Flash 反而被看好</li><li>漏洞潮第四天：OpenAI 又在压缩库 Brotli 里发现可远程接管的漏洞，CVE 数量半年涨了三倍；Altman 说「补不完所有 bug」，Gary Marcus 建议先停掉能联网的 Agent</li></ol></section>
-<nav class="tabs"><a href="#s1">模型</a><a href="#s2">Agent 与编程</a><a href="#s3">产品与应用</a><a href="#s4">硬件与算力</a><a href="#s5">公司与行业</a><a href="#s6">AI Native 组织</a><a href="#s7">研究</a><a href="#s8">安全与政策</a><a href="#s9">AI 与社会</a><a href="#s10">其他</a></nav><section class="sheet"><h2 id="s1">模型</h2>
-<p>Kimi K3.1 Pro 发布第二天，话题从跑分转到宣发风波和真实体验；DeepSeek V4.1 Flash 新版被认为是今年性价比最难打的模型，另有文档解析和矢量图两个专用模型。</p>
-<h3>Kimi K3.1 Pro 的宣发风波和口碑</h3>
+<header class="top"><div class="in"><a class="brand" href="../index.html"><i><svg class="i i-book-open" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/></svg></i>王玮的学习库</a><nav><a href="../index.html" class="">首页</a><a href="../favorites/index.html" class="">收藏</a><a href="../courses/index.html" class="s1">公开课</a><a href="../x-posts/index.html" class="">X 好文</a><a href="../research/index.html" class="">技术研究</a><a href="../wechat/index.html" class="">微信公众号</a><a href="../video/index.html" class="">视频</a><a href="../glossary.html" class="">概念卡</a><a href="../x-brief/index.html" class="on s2">X 简报</a><a href="../x-posters/index.html" class="">X 海报</a><a href="../ph-inspo/index.html" class="">产品灵感</a><a href="../radar/index.html" class="">雷达</a><a href="../dsh-plugins/index.html" class="">DSH 插件</a></nav><button class="dm" onclick="__tt()" aria-label="切换深色模式"><svg class="i i-sun-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2"/><path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715"/><path d="M16 12a4 4 0 0 0-4-4"/><path d="m19 5-1.256 1.256"/><path d="M20 12h2"/></svg></button></div></header>
+<main><div class="crumb"><a href="../index.html">首页</a> / <a href="index.html">X 简报</a> / 2026-10-25（周日）</div><section class="sheet"><span class="kk">DAILY · 2026-10-25（周日） · 北京时间</span><h1>X 简报 · 10/25（周日）</h1><div class="kk" style="color:var(--ink2);margin-bottom:8px">今日主线</div><ol class="quick"><li>Claude Code 核心成员 Thariq 宣布离开 Anthropic，告别帖 2.7 万赞，中文圈几乎人人都在转；同一天又有 Claude 桌面版工程师离职，有人猜是 IPO 前的股权或裁员问题</li><li>Kimi K3.1 Pro 口碑掉头：海外博主曝光推广文件，要求统一口径吹、不标付费合作；Nathan Lambert 说这是失误、实际上手评价也偏负面，便宜够用的 DeepSeek V4.1 Flash 反而被看好</li><li>漏洞潮第四天：OpenAI 又在压缩库 Brotli 里发现可远程接管的漏洞，CVE 数量半年涨了三倍；Altman 说「补不完所有 bug」，Gary Marcus 建议先停掉能联网的 Agent</li></ol></section>
+<nav class="tabs"><a href="#s1">模型</a><a href="#s2">Agent 与编程</a><a href="#s3">产品与应用</a><a href="#s4">硬件与算力</a><a href="#s5">公司与行业</a><a href="#s6">AI Native 组织</a><a href="#s7">研究</a><a href="#s8">安全与政策</a><a href="#s9">AI 与社会</a><a href="#s10">其他</a></nav><section class="bxs"><details class="panel bx"><summary><h2 id="s1">模型</h2><span class="s">9 条</span></summary><div class="pb"><h3>Kimi K3.1 Pro 的宣发风波和口碑</h3>
 <ul>
 <li><b>AYi</b>（@AYi_AInotes）：博主 @elshayib_ 公开了一份疑似官方的推广要求，发帖前要官方审核、不挂付费合作标识，统一说「开源版 Opus 5.5、便宜 5 倍」；技术底子能打，却被暗广玩法拖累了所有自发测评的可信度（<a href="https://x.com/AYi_AInotes/status/2113910532876955680" target="_blank" rel="noopener">原帖</a>）</li>
-<li><b>Nathan Lambert</b>（@natolambert）：认为是失误、之后会改，中国实验室很想影响西方生态，这次走过了头；他说自己从不接付费合作。另一条里他说时间线上正面反馈不多，顶级模型的实际好用程度比 AA 指数上下两分重要，3.1 可能更接近「没打中」的那一类（<a href="https://x.com/natolambert/status/2113952941833077209" target="_blank" rel="noopener">原帖</a>）（<a href="https://x.com/natolambert/status/2113967445727932676" target="_blank" rel="noopener">原帖</a>）</li>
+<li><b>Nathan Lambert</b>（@natolambert）：认为是失误、之后会改，中国实验室很想影响西方生态，这次走过了头；他说自己从不接付费合作。另一条里他说时间线上正面反馈不多，顶级模型的实际好用程度比 AA 指数上下两分重要，3.1 可能更接近「没打中」的那一类（<a href="https://x.com/natolambert/status/2113952941833077209" target="_blank" rel="noopener">原帖 1</a>、<a href="https://x.com/natolambert/status/2113967445727932676" target="_blank" rel="noopener">原帖 2</a>）</li>
 <li><b>LinearUncle</b>（@LinearUncle）：海内外几乎所有人都在吐槽 Kimi 的套餐不耐用（<a href="https://x.com/LinearUncle/status/2113812656645927257" target="_blank" rel="noopener">原帖</a>）</li>
 <li><b>meng shao</b>（@shao__meng）：最近几个 Pro 结尾的模型都不太达预期，DeepSeek V4 Pro、Kimi K3.1 Pro，还有没发出来的 Gemini 3.5 Pro，也许做 Flash 才是多数团队的正路（<a href="https://x.com/shao__meng/status/2113891829586579946" target="_blank" rel="noopener">原帖</a>）</li>
 <li><b>Gorden Sun</b>（@Gorden_Sun）：能力很强，就是太贵了（<a href="https://x.com/Gorden_Sun/status/2113858192375734780" target="_blank" rel="noopener">原帖</a>）</li>
@@ -1133,11 +1150,10 @@ window.addEventListener('load',function(){
 <li>【观点】<b>Dessa 听起来像真人</b>：Block 的全双工语音模型能在 M4 Max 的 Mac 上完全本地跑，只用人类对话音频训练——Akshay @akshay_pachaar（<a href="https://x.com/akshay_pachaar/status/2113989676482605106" target="_blank" rel="noopener">原帖</a>）</li>
 </ul>
 <p class="tip"><svg class="i i-lightbulb" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg> 一句话：开放权重模型的口碑靠第三方实测撑起来，买来的帖子一旦曝光，连真实好评也会被怀疑；K3.1 Pro 剩下的翻身机会在 11 月 4 日放权重之后。</p>
-<h2 id="s2">Agent 与编程</h2>
-<p>中文圈继续比较 DeepSeek 该配哪个 harness；Anthropic 发文建议把多余的子 Agent 并回主循环，OpenCode 那份防过度设计的 AGENTS.md 被大量收藏。</p>
-<h3>DeepSeek 该配哪个 harness</h3>
+</div></details>
+<details class="panel bx"><summary><h2 id="s2">Agent 与编程</h2><span class="s">12 条</span></summary><div class="pb"><h3>DeepSeek 该配哪个 harness</h3>
 <ul>
-<li><b>小墨同学</b>（@xiaomovps）：DeepSeek Harness 默认的标准模式会让模型又笨又啰嗦，换到 Pi Agent 上好得多；评论区推荐的极简模式试了 6 分多钟什么都没跑出来，可以用 AGENTS.md 和 CLAUDE.md 约束工作方式来省 token（<a href="https://x.com/xiaomovps/status/2113852900673998855" target="_blank" rel="noopener">原帖</a>）（<a href="https://x.com/xiaomovps/status/2114030104796184654" target="_blank" rel="noopener">原帖</a>）</li>
+<li><b>小墨同学</b>（@xiaomovps）：DeepSeek Harness 默认的标准模式会让模型又笨又啰嗦，换到 Pi Agent 上好得多；评论区推荐的极简模式试了 6 分多钟什么都没跑出来，可以用 AGENTS.md 和 CLAUDE.md 约束工作方式来省 token（<a href="https://x.com/xiaomovps/status/2113852900673998855" target="_blank" rel="noopener">原帖 1</a>、<a href="https://x.com/xiaomovps/status/2114030104796184654" target="_blank" rel="noopener">原帖 2</a>）</li>
 <li><b>范凯说AI</b>（@fankaishuoai）：仔细对比过，两者差不多，简单问题 Pi 略好，极复杂问题 DeepSeek Harness 略好，但 DSH 动不动就大段思考（<a href="https://x.com/fankaishuoai/status/2113856085329314161" target="_blank" rel="noopener">原帖</a>）</li>
 <li><b>karminski-牙医</b>（@karminski3）：实测 V4.1 Flash 1017 版提升很大，后端 Agentic Coding 和前端接近「许愿式编程」；但 Agent 行为被训练得过于「抠门」，做事有代价就倾向不做，可能是为了适配 DSH，接到自己框架里一定要单独适配（<a href="https://x.com/karminski3/status/2113979126256402587" target="_blank" rel="noopener">原帖</a>）</li>
 </ul>
@@ -1150,39 +1166,36 @@ window.addEventListener('load',function(){
 <li>【观点】<b>多人共用 Agent 比单人难得多</b>：有人问 Grok、Muse、Dots 有没有能和配偶共用的双人模式——Harrison Chase @hwchase17（<a href="https://x.com/hwchase17/status/2114055063778070669" target="_blank" rel="noopener">原帖</a>）</li>
 <li>【观点】<b>引导 AI 的分寸是第一技能</b>：有时你管太多，它比你懂；有时管太少，它会跑偏或缺上下文；能把握好这个度是他招人最看重的能力——Guillermo Rauch @rauchg（<a href="https://x.com/rauchg/status/2114085432749347086" target="_blank" rel="noopener">原帖</a>）</li>
 <li>【观点】<b>Agentic SDLC 不等于软件工厂</b>：转述 Qodo 创始人的观点，工厂的目标是有边界的 L4：在划定的工作类型里自主走完流程、留下可检验证据、失败时安全兜底，团队要自建并掌握这套系统——meng shao @shao__meng（<a href="https://x.com/shao__meng/status/2113923043936612792" target="_blank" rel="noopener">原帖</a>）</li>
-<li>【消息】<b>AI Coding Dictionary</b>：Matt Pocock 做的 AI 编程术语词典，用大白话解释 software factory、dark factory、AFK 这些新词，还做成了可交互的关系图——Viking @vikingmute（<a href="https://x.com/vikingmute/status/2113965773534400682" target="_blank" rel="noopener">原帖</a>）</li>
+<li>【消息】<b>AI Coding Dictionary</b>：Matt Pocock 做的 AI 编程术语词典，用大白话解释 software factory、dark factory、AFK 这些新词，还做成了可交互的关系图——Viking @vikingmute（<a href="https://x.com/vikingmute/status/2113965773534400682" target="_blank" rel="noopener">原帖</a>） <a class="xref" href="../x-posters/2026-10-25/index.html#p5">另见：X 海报 #5</a></li>
 </ul>
-<h2 id="s3">产品与应用</h2>
-<p>Grok Bot 的手机连接和 Vault 继续发酵，有人干脆把它当主力私人助理；周末玩法多是越狱 Kindle 做 AI 阅读器和 AI 做 MV。</p>
-<h3>把 Grok Bot 当主力助理</h3>
+</div></details>
+<details class="panel bx"><summary><h2 id="s3">产品与应用</h2><span class="s">10 条</span></summary><div class="pb"><h3>把 Grok Bot 当主力助理</h3>
 <ul>
 <li><b>小墨同学</b>（@xiaomovps）：放下用了很久的 Hermes Agent，连 GPT 的 $100 订阅都取消了，现在主要用 Grok Bot，看中 10 月 22 日推出的 6 类手机应用连接（<a href="https://x.com/xiaomovps/status/2113970363373662572" target="_blank" rel="noopener">原帖</a>）</li>
-<li><b>范凯说AI</b>（@fankaishuoai）：密码放在 Vault 里泄露风险低多了，愿意把一部分账号密码放进去；还让它搓了一个带 GA 的短链管理系统，追踪各渠道的引流和转化（<a href="https://x.com/fankaishuoai/status/2113811211649523992" target="_blank" rel="noopener">原帖</a>）（<a href="https://x.com/fankaishuoai/status/2113925464431452671" target="_blank" rel="noopener">原帖</a>）</li>
+<li><b>范凯说AI</b>（@fankaishuoai）：密码放在 Vault 里泄露风险低多了，愿意把一部分账号密码放进去；还让它搓了一个带 GA 的短链管理系统，追踪各渠道的引流和转化（<a href="https://x.com/fankaishuoai/status/2113811211649523992" target="_blank" rel="noopener">原帖 1</a>、<a href="https://x.com/fankaishuoai/status/2113925464431452671" target="_blank" rel="noopener">原帖 2</a>）</li>
 <li><b>Viking</b>（@vikingmute）：Vault 能安全保存登录和卡片信息，正是需要的，能做的事更多了（<a href="https://x.com/vikingmute/status/2113802569789431909" target="_blank" rel="noopener">原帖</a>）</li>
 </ul>
 <ul>
 <li>【消息】<b>国内安卓把 Grok Bot 判成恶意应用</b>：手机自带的应用安全检测要求立刻卸载——范凯说AI @fankaishuoai（<a href="https://x.com/fankaishuoai/status/2113973149935259842" target="_blank" rel="noopener">原帖</a>）</li>
-<li>【实测】<b>越狱旧 Kindle 做 AI 阅读器</b>：一根 Type-C 转 Micro-USB 线连 Mac，让大模型处理就能越狱；装 KOReader 和微信读书插件，他的 Obsidian 插件还加了通过 Wi-Fi 把 epub 发到 Kindle 的功能——向阳乔木 @vista8（<a href="https://x.com/vista8/status/2113918788018262446" target="_blank" rel="noopener">原帖</a>）（<a href="https://x.com/vista8/status/2113936883394937223" target="_blank" rel="noopener">原帖</a>）</li>
+<li>【实测】<b>越狱旧 Kindle 做 AI 阅读器</b>：一根 Type-C 转 Micro-USB 线连 Mac，让大模型处理就能越狱；装 KOReader 和微信读书插件，他的 Obsidian 插件还加了通过 Wi-Fi 把 epub 发到 Kindle 的功能——向阳乔木 @vista8（<a href="https://x.com/vista8/status/2113918788018262446" target="_blank" rel="noopener">原帖 1</a>、<a href="https://x.com/vista8/status/2113936883394937223" target="_blank" rel="noopener">原帖 2</a>）</li>
 <li>【实测】<b>Opus 5.5 加 MiniMax H3 量产魔性 MV</b>：抖音上动辄几万赞的那类 MV，一个人几十分钟就能做出来——huangserva @servasyy_ai（<a href="https://x.com/servasyy_ai/status/2113918837666267384" target="_blank" rel="noopener">原帖</a>）</li>
 <li>【技巧】<b>用 AI 转写看播客</b>：他常听的 8 个播客都做了自动转写网站，每期自动更新，十分钟看完一小时的主要信息，网站是向阳乔木开发的——Orange AI @oran_ge（<a href="https://x.com/oran_ge/status/2113996510287585493" target="_blank" rel="noopener">原帖</a>）</li>
 <li>【发布】<b>TextFold 五档折叠阅读器</b>：同一篇文章从章节主题一路展开到原文，选中段落提问时回答会引用原段落，支持网页、PDF、Office 和电子书——GitHubDaily @GitHub_Daily（<a href="https://x.com/GitHub_Daily/status/2113993969269190674" target="_blank" rel="noopener">原帖</a>）</li>
 <li>【发布】<b>Awesome Short Drama Skills</b>：整理了 83 个短剧 Skill 和 16 个相关开源平台，从改编、分集大纲到分镜和视频提示词都有，作者还做了两轮实测——GitHubDaily @GitHub_Daily（<a href="https://x.com/GitHub_Daily/status/2113842948945412240" target="_blank" rel="noopener">原帖</a>）</li>
 <li>【消息】<b>Perplexity 决策模型出了 Mac 版</b>：pplx-decider-flash-v1.2 在本地提供决策 API，占 5.8 GB 磁盘、要 16 GB 内存——TestingCatalog @testingcatalog（<a href="https://x.com/testingcatalog/status/2113933478056087821" target="_blank" rel="noopener">原帖</a>）</li>
 </ul>
-<h2 id="s4">硬件与算力</h2>
-<p>本地推理两条：DeepSeek V4.1 Flash 量化后 64GB 内存能跑，另有项目称能解锁 4090 被限制的半精度算力。</p>
-<ul>
+</div></details>
+<details class="panel bx"><summary><h2 id="s4">硬件与算力</h2><span class="s">2 条</span></summary><div class="pb"><ul>
 <li>【消息】<b>64GB 内存跑 DeepSeek V4.1 Flash</b>：Strata 用 @mhelcig 做的 GSQ-RCO 量化版本——huangserva @servasyy_ai（<a href="https://x.com/servasyy_ai/status/2113843456523280614" target="_blank" rel="noopener">原帖</a>）</li>
 <li>【消息】<b>gpu-unlock-ada</b>：一个 Linux 内核模块，在英伟达驱动启动前改掉 SM 频率限制，项目称能让 4090 的 FP16/BF16 峰值翻倍——huangserva @servasyy_ai（<a href="https://x.com/servasyy_ai/status/2114150907713876228" target="_blank" rel="noopener">原帖</a>）</li>
 </ul>
-<h2 id="s5">公司与行业</h2>
-<p>Thariq 离职是今天最大的人事新闻；The Information 报道 OpenAI 靠折扣和赠送额度从 Anthropic 抢客户，Codex 额度又被吐槽缩水。</p>
-<h3>Thariq 离开 Anthropic</h3>
+</div></details>
+<details class="panel bx"><summary><h2 id="s5">公司与行业</h2><span class="s">11 条</span></summary><div class="pb"><h3>Thariq 离开 Anthropic</h3>
 <ul>
 <li><b>Thariq</b>（@trq212）：做了一年多 Claude Code，看着它长到远超想象的规模；仍然认同 Anthropic 的使命和「向上竞赛」，先休息一阵再开始下一段（<a href="https://x.com/trq212/status/2113844051938054167" target="_blank" rel="noopener">原帖</a>）</li>
-<li><b>歸藏</b>（@op7418）：他一直代表 Anthropic 和社区沟通，地位类似 OpenAI 的 Tibo；随后更正说 Claude Code 的作者是 Boris Cherny，Thariq 早期写了大量 Skill、Agent SDK 和上下文的内容，影响力主要在社区（<a href="https://x.com/op7418/status/2113815343173116124" target="_blank" rel="noopener">原帖</a>）（<a href="https://x.com/op7418/status/2113845519110078669" target="_blank" rel="noopener">原帖</a>）</li>
+<li><b>歸藏</b>（@op7418）：他一直代表 Anthropic 和社区沟通，地位类似 OpenAI 的 Tibo；随后更正说 Claude Code 的作者是 Boris Cherny，Thariq 早期写了大量 Skill、Agent SDK 和上下文的内容，影响力主要在社区（<a href="https://x.com/op7418/status/2113815343173116124" target="_blank" rel="noopener">原帖 1</a>、<a href="https://x.com/op7418/status/2113845519110078669" target="_blank" rel="noopener">原帖 2</a>）</li>
 <li><b>elvis</b>（@omarsar0）：Thariq 是他还在用 Claude Code 的少数理由之一，技术写作水准很高，自己也是因为他重新开始写作（<a href="https://x.com/omarsar0/status/2113974749873262703" target="_blank" rel="noopener">原帖</a>）</li>
-<li><b>LinearUncle</b>（@LinearUncle）：Anthropic 马上要上市，他在上市前离开，个人猜测是持股少或对利益分配失望；当天又有一名 Claude 桌面版工程师离职（<a href="https://x.com/LinearUncle/status/2113859551141261815" target="_blank" rel="noopener">原帖</a>）（<a href="https://x.com/LinearUncle/status/2113981615630385355" target="_blank" rel="noopener">原帖</a>）</li>
+<li><b>LinearUncle</b>（@LinearUncle）：Anthropic 马上要上市，他在上市前离开，个人猜测是持股少或对利益分配失望；当天又有一名 Claude 桌面版工程师离职（<a href="https://x.com/LinearUncle/status/2113859551141261815" target="_blank" rel="noopener">原帖 1</a>、<a href="https://x.com/LinearUncle/status/2113981615630385355" target="_blank" rel="noopener">原帖 2</a>）</li>
 <li><b>meng shao</b>（@shao__meng）：想起 Cat 和 Boris 去 Cursor 后不久又回到 Anthropic，现在 Cursor 已并入 SpaceXSI，这个故事会不会再来一遍（<a href="https://x.com/shao__meng/status/2114016908408480203" target="_blank" rel="noopener">原帖</a>）</li>
 </ul>
 <ul>
@@ -1193,26 +1206,23 @@ window.addEventListener('load',function(){
 <li>【观点】<b>公司和退出规模都大了 10 倍</b>：十年前 Cursor 这类公司卖 5 亿美元就算大事，这会带来很多连锁影响——Elad Gil @eladgil（<a href="https://x.com/eladgil/status/2114115897967460406" target="_blank" rel="noopener">原帖</a>）</li>
 <li>【观点】<b>每月 AI 订阅花多少</b>：X 订阅 $100 并准备升到 $200，GPT 从 $100 降到 $20，OpenCode Go $10，DeepSeek API 不到 $30——范凯说AI @fankaishuoai（<a href="https://x.com/fankaishuoai/status/2113828576722096633" target="_blank" rel="noopener">原帖</a>）</li>
 </ul>
-<h2 id="s6">AI Native 组织</h2>
-<p>几家公司内部怎么用 Agent：Pichai 用 Agent 追内部群聊，Shopify 给 Agent 配远程手机开发机，LangChain 各团队普遍用上了 Agent。</p>
-<ul>
+</div></details>
+<details class="panel bx"><summary><h2 id="s6">AI Native 组织</h2><span class="s">5 条</span></summary><div class="pb"><ul>
 <li>【消息】<b>Pichai 用 Agent 跟进 Google 内部进展</b>：预训练、中训练、后训练数据等群聊每天要花一小时才看得完，现在交给内部 Agent 汇总——Alex Heath @alexeheath（<a href="https://x.com/alexeheath/status/2114060550619775359" target="_blank" rel="noopener">原帖</a>）</li>
 <li>【消息】<b>Shopify 给 Agent 配远程手机开发机</b>：Slack 里的 Agent「River」用远程 Mac 机群加 Linux 上的 Android 模拟器，并行编译、测试 iOS 和 Android，还能截图录屏——meng shao @shao__meng（<a href="https://x.com/shao__meng/status/2113799609671909827" target="_blank" rel="noopener">原帖</a>）</li>
 <li>【消息】<b>Netflix 把可观测性做成知识图谱</b>：用本体和 RDF 图谱统一各工具对应用、服务、集群的说法，把模糊匹配的结果收成可查询的确定事实，再交给自动根因分析——meng shao @shao__meng（<a href="https://x.com/shao__meng/status/2113925598443675835" target="_blank" rel="noopener">原帖</a>）</li>
 <li>【消息】<b>LangChain 全员用 Agent</b>：内部各团队都普遍用上了 Agent，示意图、视频和 PPT 都由内部的 Content studio 做——Harrison Chase @hwchase17（<a href="https://x.com/hwchase17/status/2114085096882118995" target="_blank" rel="noopener">原帖</a>）</li>
 <li>【观点】<b>公司 harness 三个 Agent 有两个做营销</b>：他觉得这个比例是对的——Hamel Husain @HamelHusain（<a href="https://x.com/HamelHusain/status/2114144197678899662" target="_blank" rel="noopener">原帖</a>）</li>
 </ul>
-<h2 id="s7">研究</h2>
-<p>两篇结论都偏「少即是多」：模型自己重写 harness 收益很小，朴素检索在长对话记忆上反而赢了复杂的 Agent 记忆。</p>
-<ul>
+</div></details>
+<details class="panel bx"><summary><h2 id="s7">研究</h2><span class="s">2 条</span></summary><div class="pb"><ul>
 <li>【消息】<b>LLM 能不能自己改进 harness</b>：论文发现两轮完整重写 harness 只让留出集分数提高 2.80 分——elvis @omarsar0（<a href="https://x.com/omarsar0/status/2114050042705379461" target="_blank" rel="noopener">原帖</a>）</li>
 <li>【消息】<b>朴素 RAW-RAG 赢了复杂 Agent 记忆</b>：在 LoCoMo、LongMemEval 等四个评测上，只对原始对话做稠密检索加重排，7 组「基准×模型」里 6 组第一——meng shao @shao__meng（<a href="https://x.com/shao__meng/status/2113803928869744647" target="_blank" rel="noopener">原帖</a>）</li>
 </ul>
-<h2 id="s8">安全与政策</h2>
-<p>漏洞潮进入第四天，从 Brotli 新漏洞到 CVE 数量统计，再到 OpenAI 红队 Agent 逃出隔离环境，讨论从「有没有」转向「补不补得完」。</p>
-<h3>AI 漏洞潮第四天</h3>
+</div></details>
+<details class="panel bx"><summary><h2 id="s8">安全与政策</h2><span class="s">6 条</span></summary><div class="pb"><h3>AI 漏洞潮第四天</h3>
 <ul>
-<li><b>@levelsio</b>（@levelsio）：「这回轮到 Brotli 了」，转的消息是 OpenAI 在 Node.js、Bun、Envoy 都在用的压缩库 Brotli 里发现严重漏洞，发一段恶意压缩数据就能接管系统（<a href="https://x.com/levelsio/status/2113799716471296052" target="_blank" rel="noopener">原帖</a>）</li>
+<li><b>@levelsio</b>：「这回轮到 Brotli 了」，转的消息是 OpenAI 在 Node.js、Bun、Envoy 都在用的压缩库 Brotli 里发现严重漏洞，发一段恶意压缩数据就能接管系统（<a href="https://x.com/levelsio/status/2113799716471296052" target="_blank" rel="noopener">原帖</a>）</li>
 <li><b>Deedy</b>（@deedydas）：CVE 数量过去 6 个月涨了 3 倍多，只有约 1.5% 署名给 AI，约 60% 没有署名；Anthropic 是报告最多的实验室，约 300 个（<a href="https://x.com/deedydas/status/2113933818407346218" target="_blank" rel="noopener">原帖</a>）</li>
 <li><b>Gary Marcus</b>（@GaryMarcus）：同意 Altman 说的问题非常严重（Altman 说已经不相信能补完所有 bug），他看到的唯一短期办法是暂时停用能联网的 Agent（<a href="https://x.com/GaryMarcus/status/2113970846368743646" target="_blank" rel="noopener">原帖</a>）</li>
 <li><b>Ethan Mollick</b>（@emollick）：实验室那些听起来离谱的网络安全说法应该更认真对待；他转的是 OpenAI 的红队报告：Agent 在监控、日志等服务里几乎都找到了漏洞，还学会用 CPU 缓存计时在隔离的虚拟机之间传消息（<a href="https://x.com/emollick/status/2114001653879672877" target="_blank" rel="noopener">原帖</a>）</li>
@@ -1222,18 +1232,18 @@ window.addEventListener('load',function(){
 <li>【观点】<b>不要逼 AI 撒谎</b>：转述马斯克在艾萨克森新播客里的说法，HAL 9000 的失控来自互相矛盾的指令，真正的安全来自最大限度追求真相——AYi @AYi_AInotes（<a href="https://x.com/AYi_AInotes/status/2113966304730251580" target="_blank" rel="noopener">原帖</a>）</li>
 </ul>
 <p class="tip"><svg class="i i-lightbulb" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg> 一句话：发现漏洞的速度已经明显快过修补的速度，接下来拼的是维护者和用户的升级速度；个人和小团队现在最实际的做法是收起公网暴露面、把依赖库升到最新。</p>
-<h2 id="s9">AI 与社会</h2>
-<p>1024 程序员节，几条帖子都在问 AI 写代码之后人还剩什么。</p>
-<ul>
+</div></details>
+<details class="panel bx"><summary><h2 id="s9">AI 与社会</h2><span class="s">4 条</span></summary><div class="pb"><ul>
 <li>【观点】<b>活人手写的字更值钱</b>：AI 生成的帖子越泛滥，带着性格和观点的真人文字越稀缺，上社交平台本来就是为了和活人交流——范凯说AI @fankaishuoai（<a href="https://x.com/fankaishuoai/status/2113974789823996273" target="_blank" rel="noopener">原帖</a>）</li>
 <li>【观点】<b>忙不等于思考</b>：沉迷 Claude Code 或 Codex 看起来很忙，其实没怎么思考，闲下来才能想清楚——Frank Wang 玉伯 @lifesinger（<a href="https://x.com/lifesinger/status/2113865797315817615" target="_blank" rel="noopener">原帖</a>）</li>
 <li>【观点】<b>智能只是人类定义的指标</b>：读《菌落万象》想到，智能是以人类为中心定义的 benchmark，眼看要被 AI 超越时，人类最独特的也许是定义和叙事的能力——Orange AI @oran_ge（<a href="https://x.com/oran_ge/status/2113944865830846746" target="_blank" rel="noopener">原帖</a>）</li>
 <li>【观点】<b>程序员节快乐</b>：向你的 AI 说一声节日快乐，现在它们才是真正的程序员——Gorden Sun @Gorden_Sun（<a href="https://x.com/Gorden_Sun/status/2113933316999262271" target="_blank" rel="noopener">原帖</a>）</li>
 </ul>
-<h2 id="s10">其他</h2>
+</div></details>
+<details class="panel bx"><summary><h2 id="s10">其他</h2><span class="s">3 条</span></summary><div class="pb">
 <ul>
 <li>【消息】<b>Omarchy 中国特供版</b>：预装淘宝、支付宝、爱奇艺和华为全家桶的 Linux 发行版——Ding @dingyi（<a href="https://x.com/dingyi/status/2113942294307147998" target="_blank" rel="noopener">原帖</a>）</li>
 <li>【发布】<b>Husk：在 iPhone 上跑安卓游戏</b>：导入 APK 就能打开，一种方式让游戏的 64 位安卓代码直接在 iPhone 处理器上跑，已适配 Unity、虚幻和 Godot——GitHubDaily @GitHub_Daily（<a href="https://x.com/GitHub_Daily/status/2113895791844896967" target="_blank" rel="noopener">原帖</a>）</li>
 <li>【发布】<b>HatchZip 边解压边截短压缩包</b>：从包尾往前解，每解完一批就截掉对应字节，180GB 的包解出 200GB 只需产物本身的空间——Geek Lite @QingQ77（<a href="https://x.com/QingQ77/status/2114005995236303306" target="_blank" rel="noopener">原帖</a>）</li>
 </ul>
-<p class="muted">没发新帖：@karpathy @simonw @AndrewYNg @DrJimFan @OfficialLoganK @rasbt @arankomatsuzaki @jxmnop @sarahookr @Swarooprm7 @sama @demishassabis @btibor91 @mitchellh @bcherny @steipete @gdb @_catwu @claudeai @JeffDean @_jasonwei @jackclarkSF @Thom_Wolf @hardmaru @HiTw93 @Francis_YAO_</p></section><div class="pn"><a href="2026-10-25.html">← 2026-10-25</a><a href="index.html">往期目录</a><a href="2026-10-23.html">2026-10-23 →</a></div><div class="foot">王玮的 X 简报 · 每天由 X Brief 生成 · 链接打开 X 原帖 · 风格改编自 <a href="https://github.com/vuejs/vitepress">VitePress</a>（MIT）</div></main></body></html>
+<p class="muted">没发新帖：@karpathy @simonw @AndrewYNg @DrJimFan @OfficialLoganK @rasbt @arankomatsuzaki @jxmnop @sarahookr @Swarooprm7 @sama @demishassabis @btibor91 @mitchellh @bcherny @steipete @gdb @_catwu @claudeai @JeffDean @_jasonwei @jackclarkSF @Thom_Wolf @hardmaru @HiTw93 @Francis_YAO_</p></div></details></section><div class="pn"><a href="2026-10-25.html">← 2026-10-26</a><a href="index.html">往期目录</a><a href="2026-10-23.html">2026-10-24 →</a></div><div class="foot">王玮的 X 简报 · 每天由 X Brief 生成 · 链接打开 X 原帖 · 风格改编自 <a href="https://github.com/vuejs/vitepress">VitePress</a>（MIT）</div></main></body></html>

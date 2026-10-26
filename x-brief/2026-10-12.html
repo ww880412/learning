@@ -1,5 +1,5 @@
 <!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>X 简报 · 10/12（周一） · X 简报</title><style>/* 学习搭子 固定设计系统 — 不要在课程里改这个文件。只改 lesson.html 的内容。 */
+<title>X 简报 · 10/13（周二） · X 简报</title><style>/* 学习搭子 固定设计系统 — 不要在课程里改这个文件。只改 lesson.html 的内容。 */
 :root{
   --paper:#F6F6F7; --sheet:#FFFFFF; --ink:#16202C; --ink2:#4A5868; --hair:#E2E2E3;
   --blue:#2550D9;  --blue-soft:#E3EAFD;   /* 主角：当前步骤 / 重点 */
@@ -39,6 +39,7 @@ ul{padding-left:20px}li{margin:8px 0}
 .empty{border:2px dashed var(--hair);border-radius:var(--r-lg);padding:20px;color:var(--ink2)}.empty b{display:block;color:var(--ink);margin-bottom:4px}
 .pn{display:flex;justify-content:space-between;gap:10px;margin-top:20px;font-weight:700}
 .foot{margin-top:30px;font-size:13px;color:var(--ink2);text-align:center}
+.bxs{display:grid;gap:10px;margin-bottom:8px}.bxs details.panel{margin-top:0}.bx>summary h2{margin:0;padding:0;border:0;font-size:17px;scroll-margin-top:110px}.bx .pb{padding-top:6px}
 @media(max-width:640px){main{padding:14px 12px 40px}.sheet{padding:18px 16px}h1{font-size:22px}.row{flex-wrap:wrap;gap:4px 10px}.row .d{min-width:0}}
 /* 学习库统一主题（2026-10 重设计）：单一无衬线字体，靠字号/字重分层；白卡片 + 细边框；只有「逾期」用强调色。 */
 :root{--paper:#f6f7f9;--sheet:#fff;--card:#fff;--ink:#111827;--ink2:#4b5563;--meta:#6b7280;--hair:#e5e7eb;--hair2:#eef0f3;
@@ -1091,6 +1092,20 @@ html.dark .pi-bar .chip.on{color:#0f1115}
  .rd-q label{max-width:none}
  .rd-bar .chip{min-height:36px}
 }
+/* ---- 2026-10-26 每日产出呈现修一轮（jobs-fix1） ---- */
+/* 桌面顶栏：栏目多了放不下时换行，不再把最后几个（DSH 插件）藏在看不见的滚动里 */
+@media(min-width:701px){html:not([data-theme=B]) .top nav{flex-wrap:wrap;overflow:visible;justify-content:flex-end;row-gap:2px;min-width:0}[data-theme=C] .top nav a{padding:7px 10px}}
+/* 「关于这页数据」：页头说明收起来 */
+details.panel.about{margin-top:14px}details.panel.about>summary{font-weight:550;font-size:14px;color:var(--ink2)}details.panel.about .pb p{margin:10px 0 0;font-size:14px;color:var(--ink2)}
+.hero details.panel.about{grid-column:1/-1}
+/* 另见：同一件事在别的栏目也有 */
+.xref{display:inline-block;margin-left:6px;font-size:12.5px;font-weight:600;line-height:1.7;padding:0 8px;border-radius:99px;background:var(--blue-soft);color:var(--blue);white-space:nowrap}.xref:hover{text-decoration:none;filter:brightness(.95)}
+.sa{margin:6px 0}.sa .xref{margin:0 6px 4px 0}
+/* 雷达：每个方向只露最新 3 条，其余收起 */
+.rd-more{margin-top:var(--sp-3)}.rd-more>summary{cursor:pointer;font-size:14px;font-weight:600;color:var(--blue);padding:6px 0;list-style:none}.rd-more>summary::-webkit-details-marker{display:none}.rd-more>summary::before{content:"▸ "}.rd-more[open]>summary::before{content:"▾ "}
+/* 产品灵感：更早的榜单收起；每天的说明收成一个小按钮 */
+details.panel.pi-old{margin-top:20px}details.panel.pi-old .pi-day{margin-top:14px}
+.pi-note{display:inline}.pi-note>summary{display:inline;cursor:pointer;color:var(--blue);list-style:none}.pi-note>summary::-webkit-details-marker{display:none}.pi-note[open]{display:block;margin-top:4px}
 </style><script>/*ICONS lucide v1.60.0 ISC*/window.__IC={"menu":"<path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/>","x":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","star":"<path d=\"M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z\"/>","party-popper":"<path d=\"M5.8 11.3 2 22l10.7-3.79\"/><path d=\"M4 3h.01\"/><path d=\"M22 8h.01\"/><path d=\"M15 2h.01\"/><path d=\"M22 20h.01\"/><path d=\"m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10\"/><path d=\"m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17\"/><path d=\"m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7\"/><path d=\"M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z\"/>"};window.__ic=function(n,s,c){return '<svg class="i i-'+n+(c?' '+c:'')+'" width="'+(s||16)+'" height="'+(s||16)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(window.__IC[n]||'')+'</svg>'};/*END ICONS*/
 (function(){var T='site-theme',v;try{v=localStorage.getItem(T)}catch(e){}if(!/^[ABC]$/.test(v||''))v='C';document.documentElement.setAttribute('data-theme',v);
 window.__setTheme=function(t){var go=function(){__applyTheme(t)};if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.startViewTransition(go);else go()};window.__applyTheme=function(t){document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem(T,t)}catch(e){}[].forEach.call(document.querySelectorAll('.thsw button'),function(b){b.setAttribute('aria-pressed',b.dataset.t===t)})}})();
@@ -1113,10 +1128,14 @@ window.addEventListener('load',function(){
  addEventListener('scroll',function(){document.querySelectorAll('.fx-rv:not(.fx-in)').forEach(function(e){if(e.getBoundingClientRect().top<innerHeight){e.classList.add('fx-in');io.unobserve(e)}})},{passive:true});
  document.addEventListener('pointermove',function(ev){var c=ev.target.closest&&ev.target.closest('a.card,.crs,.pc');if(!c)return;var r=c.getBoundingClientRect();c.style.setProperty('--mx',ev.clientX-r.left+'px');c.style.setProperty('--my',ev.clientY-r.top+'px')},{passive:true});
 })})();
+/* 链接指向收起来的内容（<details> 里）时，先展开再滚过去：简报栏目、雷达其余条目、产品灵感更早的榜单 */
+(function(){function go(){var h=location.hash.slice(1);if(!h)return;var t;try{t=document.getElementById(decodeURIComponent(h))}catch(e){}if(!t)return;var d=t.closest('details'),inD=!!d;while(d){d.open=true;d=d.parentElement&&d.parentElement.closest('details')}if(inD){/* 浏览器可能已自己展开但滚动位置不对，统一再对准一次 */setTimeout(function(){t.scrollIntoView()},30);setTimeout(function(){t.scrollIntoView()},450)}}/* 第二次等展开动画（.25s）走完再对准 */
+document.addEventListener('DOMContentLoaded',go);addEventListener('hashchange',go);
+document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href^="#"]');if(a&&a.getAttribute('href')===location.hash)setTimeout(go,0)})})();
 </script><script src="../assets/favorites.js" defer></script></head><body>
-<header class="top"><div class="in"><a class="brand" href="./index.html"><i><svg class="i i-newspaper" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18h-5"/><path d="M18 14h-8"/><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-4 0v-9a2 2 0 0 1 2-2h2"/><rect width="8" height="4" x="10" y="6" rx="1"/></svg></i>X 简报</a><nav><a href="../index.html">学习库首页</a><a href="index.html" class=on>X 简报</a><a href="index.html#weekly">周趋势</a><a href="../favorites/index.html">收藏</a></nav><button class="dm" onclick="__tt()" aria-label="切换深色模式"><svg class="i i-sun-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2"/><path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715"/><path d="M16 12a4 4 0 0 0-4-4"/><path d="m19 5-1.256 1.256"/><path d="M20 12h2"/></svg></button></div></header>
-<main><section class="sheet"><span class="kk">DAILY · 2026-10-12（周一）</span><h1>X 简报 · 10/12（周一）</h1><div class="kk" style="color:var(--ink2);margin-bottom:8px">今日主线</div><ol class="quick"><li>OpenAI 的 Codex 活动第 7 天：GPT-6.1 Sol 在 Codex 和 ChatGPT Work 里的默认上下文从 272k 提到 500k，订阅用量不再收长上下文加价，上限仍是 1M。</li><li>REA 逆向潮还在烧：作者 morluto 被挖出是解决过 33 年数学难题的硬核工程师；宝玉把最新 Claude Design 逆向后接到 GPT-6.1 Sol 和开源 BaoCut 上，设计能力明显抬升。</li><li>Meta Muse 留存几乎追平 ChatGPT（D7 超 30%、D14 约 22%）；Karpathy 说大家对 LLM 能力的认知差距正在拉成漏斗；Meta 的 GitSwarm 论文用共享 Git 仓库让几百个异步 Agent 互相接力。</li></ol></section>
-<nav class="tabs"><a href="#s1">新闻</a><a href="#s2">趋势</a><a href="#s3">技术</a><a href="#s4">学术</a></nav><section class="sheet"><h2 id="s1">新闻</h2>
+<header class="top"><div class="in"><a class="brand" href="../index.html"><i><svg class="i i-book-open" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/></svg></i>王玮的学习库</a><nav><a href="../index.html" class="">首页</a><a href="../favorites/index.html" class="">收藏</a><a href="../courses/index.html" class="s1">公开课</a><a href="../x-posts/index.html" class="">X 好文</a><a href="../research/index.html" class="">技术研究</a><a href="../wechat/index.html" class="">微信公众号</a><a href="../video/index.html" class="">视频</a><a href="../glossary.html" class="">概念卡</a><a href="../x-brief/index.html" class="on s2">X 简报</a><a href="../x-posters/index.html" class="">X 海报</a><a href="../ph-inspo/index.html" class="">产品灵感</a><a href="../radar/index.html" class="">雷达</a><a href="../dsh-plugins/index.html" class="">DSH 插件</a></nav><button class="dm" onclick="__tt()" aria-label="切换深色模式"><svg class="i i-sun-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2"/><path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715"/><path d="M16 12a4 4 0 0 0-4-4"/><path d="m19 5-1.256 1.256"/><path d="M20 12h2"/></svg></button></div></header>
+<main><div class="crumb"><a href="../index.html">首页</a> / <a href="index.html">X 简报</a> / 2026-10-13（周二）</div><section class="sheet"><span class="kk">DAILY · 2026-10-13（周二） · 北京时间</span><h1>X 简报 · 10/13（周二）</h1><div class="kk" style="color:var(--ink2);margin-bottom:8px">今日主线</div><ol class="quick"><li>OpenAI 的 Codex 活动第 7 天：GPT-6.1 Sol 在 Codex 和 ChatGPT Work 里的默认上下文从 272k 提到 500k，订阅用量不再收长上下文加价，上限仍是 1M。</li><li>REA 逆向潮还在烧：作者 morluto 被挖出是解决过 33 年数学难题的硬核工程师；宝玉把最新 Claude Design 逆向后接到 GPT-6.1 Sol 和开源 BaoCut 上，设计能力明显抬升。</li><li>Meta Muse 留存几乎追平 ChatGPT（D7 超 30%、D14 约 22%）；Karpathy 说大家对 LLM 能力的认知差距正在拉成漏斗；Meta 的 GitSwarm 论文用共享 Git 仓库让几百个异步 Agent 互相接力。</li></ol></section>
+<nav class="tabs"><a href="#s1">新闻</a><a href="#s2">趋势</a><a href="#s3">技术</a><a href="#s4">学术</a></nav><section class="bxs"><details class="panel bx"><summary><h2 id="s1">新闻</h2><span class="s">7 条</span></summary><div class="pb">
 <ul>
 <li><span class="star"><svg class="i i-star fill" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></svg></span> Tibo 宣布第 7 天：GPT-6.1 Sol 在 Codex 与 ChatGPT Work 的默认上下文提到 500k（原 272k，约 +80%），订阅用量不再收长上下文费，仍可手动调到最高 1M，目标是少触发 compaction。<a href="https://x.com/thsottiaux/status/2109430343346581527" target="_blank" rel="noopener">原帖</a></li>
 <li>deedydas 晒出 Meta Muse 留存：D7 高于 ChatGPT（超 30%），D14 约 22%、略低于 ChatGPT，已是留存最高的一批 AI 产品之一。<a href="https://x.com/deedydas/status/2109474596366004417" target="_blank" rel="noopener">原帖</a></li>
@@ -1129,7 +1148,8 @@ window.addEventListener('load',function(){
 <li>TestingCatalog 同步报道了 500k 默认上下文上调。<a href="https://x.com/testingcatalog/status/2109431898691031316" target="_blank" rel="noopener">原帖</a></li>
 <li>Tibo 对「愿不愿用 2 倍额度换回 5 小时限额」的投票结果表示意外，多数人并不买账。<a href="https://x.com/thsottiaux/status/2109439315570999598" target="_blank" rel="noopener">原帖</a></li>
 </ul>
-<h2 id="s2">趋势</h2>
+</div></details>
+<details class="panel bx"><summary><h2 id="s2">趋势</h2><span class="s">8 条</span></summary><div class="pb">
 <ul>
 <li><span class="star"><svg class="i i-star fill" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></svg></span> Karpathy 重发并加长四月那条：对 LLM 能力的认知差距在拉成漏斗——约 60 亿人几乎没碰过，10–20 亿人只当更好的搜索，真正在数学与编程里一手体验前沿 Agent 的大约只有 2000 万人（0.2%）。<a href="https://x.com/karpathy/status/2109361546505966046" target="_blank" rel="noopener">原帖</a></li>
 <li>AYi 转述 Alexandr Wang：Muse 惊艳原型一两周就拉出来了，但他们按住七个月打磨稳定性；消费级市场里偶尔坏一次，在用户眼里就是垃圾。<a href="https://x.com/AYi_AInotes/status/2109442976149577863" target="_blank" rel="noopener">原帖</a></li>
@@ -1143,7 +1163,8 @@ window.addEventListener('load',function(){
 <li>Rauch 转发 Anatomy：一句话描述一台机器，Claude 就能生成可旋转、可拆解的交互等距线框和真实 3D 动效。<a href="https://x.com/rauchg/status/2109297685392175488" target="_blank" rel="noopener">原帖</a></li>
 <li>Mollick：实验室里约 5000 个能摸到先进模型的人，多数还只用在网络安全、数学和 AI 研发，其他领域远未铺开。<a href="https://x.com/emollick/status/2109422437616029941" target="_blank" rel="noopener">原帖</a></li>
 </ul>
-<h2 id="s3">技术</h2>
+</div></details>
+<details class="panel bx"><summary><h2 id="s3">技术</h2><span class="s">15 条</span></summary><div class="pb">
 <ul>
 <li>宝玉用 REA 逆向了最新 Claude Design，接到 GPT-6.1 Sol 后设计能力明显提升，并把 Claude Design / Slides 集成进开源 BaoCut（原本只做视频剪辑）。<a href="https://x.com/dotey/status/2109482425722057154" target="_blank" rel="noopener">原帖</a></li>
 <li>Oh My Pi 作者 Can Bölük 新开 Stencil Labs，推出 Rust 写的新终端 Tern（neoterminal），目前封闭测试可排队；dingyi 也很期待。<a href="https://x.com/xiaomovps/status/2109269231573549114" target="_blank" rel="noopener">原帖</a></li>
@@ -1164,7 +1185,8 @@ window.addEventListener('load',function(){
 <li>Harrison Chase 贴出「未来 Agent 长什么样」总览幻灯，对齐他们 managed deepagents 的方向。<a href="https://x.com/hwchase17/status/2109307704346853833" target="_blank" rel="noopener">原帖</a></li>
 <li>范凯用外包临时工 vs 全职员工打比方，解释 Agent 和 Bot 的差别。<a href="https://x.com/fankaishuoai/status/2109339427101442540" target="_blank" rel="noopener">原帖</a></li>
 </ul>
-<h2 id="s4">学术</h2>
+</div></details>
+<details class="panel bx"><summary><h2 id="s4">学术</h2><span class="s">4 条</span></summary><div class="pb">
 <ul>
 <li>omarsar0 推荐 Meta Superintelligence Labs 的 GitSwarm：几百个异步 Agent 共享一个 Git 仓库接力，无中心规划；GPT-5.5 Codex worker 一次跑通 IMOProofBench-Advanced 全部 30 题，ProgramBench 79.4%（单 Agent 同预算约 65.1%）。<a href="https://x.com/omarsar0/status/2109287161199812802" target="_blank" rel="noopener">原帖</a></li>
 <li>Ethan Mollick：赛博格（人+AI）正在突然主导数学研究。<a href="https://x.com/emollick/status/2109327353088287057" target="_blank" rel="noopener">原帖</a></li>
@@ -1174,4 +1196,4 @@ window.addEventListener('load',function(){
 <ul>
 <li>Mollick：GPT-6 Pro 经常在顺带工作里发现论文疑似错误，但确认与处置机制还跟不上纠正洪水。<a href="https://x.com/emollick/status/2109497942717632662" target="_blank" rel="noopener">原帖</a></li>
 </ul>
-<p class="muted">没发新帖（窗口内无原创）：@AndrewYNg、@DrJimFan、@_akhaliq、@alexeheath、@bcherny、@btibor91、@demishassabis、@eladgil、@jeremyphoward、@jxmnop、@kyliebytes、@natolambert、@rasbt、@sama、@sarahookr、@simonw、@steipete、@steph_palazzolo、@Swarooprm7</p></section><div class="pn"><a href="2026-10-13.html">← 2026-10-13</a><a href="index.html">往期目录</a><a href="2026-10-11.html">2026-10-11 →</a></div><div class="foot">王玮的 X 简报 · 每天由 X Brief 生成 · 链接打开 X 原帖 · 风格改编自 <a href="https://github.com/vuejs/vitepress">VitePress</a>（MIT）</div></main></body></html>
+<p class="muted">没发新帖（窗口内无原创）：@AndrewYNg、@DrJimFan、@_akhaliq、@alexeheath、@bcherny、@btibor91、@demishassabis、@eladgil、@jeremyphoward、@jxmnop、@kyliebytes、@natolambert、@rasbt、@sama、@sarahookr、@simonw、@steipete、@steph_palazzolo、@Swarooprm7</p></div></details></section><div class="pn"><a href="2026-10-13.html">← 2026-10-14</a><a href="index.html">往期目录</a><a href="2026-10-11.html">2026-10-12 →</a></div><div class="foot">王玮的 X 简报 · 每天由 X Brief 生成 · 链接打开 X 原帖 · 风格改编自 <a href="https://github.com/vuejs/vitepress">VitePress</a>（MIT）</div></main></body></html>

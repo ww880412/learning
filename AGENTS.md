@@ -56,7 +56,7 @@ Codex、Cursor、Claude Code、其他 Grok Bot 改这个仓库前先读这一页
 1. **不手改生成文件。** 改 `build.mjs`、`assets/` 或 `data/`，然后 `node build.mjs`。
 2. **模板改动要扛得住 bot 重写。** 简报、海报 bot 每次发布都会实时读 `assets/vp-head.js` 和 `assets/site.css`，内联进页面，再加一个 `favorites.js`。要让这两类页面变样，改 `assets/` 里这几个文件，不要只改 `x-brief/`、`x-posters/` 里的 HTML，下次发布就被冲掉。
 3. **推之前先拉。** bot 和浏览器随时往 `main` 推。先 `git pull --rebase`（或 `git fetch && git rebase origin/main`），生成文件冲突就以 `origin/main` 为准、重跑 `node build.mjs` 再提交。避开北京 08:15–09:30 和北京 20:00 前后推大改动。
-4. **不要弄乱两个 bot 的工作区。** `/workspace/learning-main` 必须停在 `main` 且干净，海报 bot 直接在这里 `git add x-posters index.html && commit && push`；`/workspace/learning` 是 X Brief 的工作区（detached HEAD 跟随 `origin/main`），不要在里面做事；`publish.sh` 发布前会清掉里面没提交的生成文件。自己做事另开 worktree，例如 `git worktree add /workspace/learning-<任务> -b <分支> origin/main`。
+4. **不要弄乱两个 bot 的工作区。** `/workspace/learning-main` 必须停在 `main` 且干净，海报 bot 直接在这里 `git add x-posters index.html digest data/digest && commit && push`；`/workspace/learning` 是 X Brief 的工作区（detached HEAD 跟随 `origin/main`），不要在里面做事；`publish.sh` 发布前会清掉里面没提交的生成文件。自己做事另开 worktree，例如 `git worktree add /workspace/learning-<任务> -b <分支> origin/main`。
 5. **分支 + PR，squash 合并，合并后删分支**（`git push origin --delete <分支>`）。只有 bot 的日常发布直接推 `main`。
 6. **合并前跑测试**（见第 6 节）。
 7. **大的样式改动、新栏目，先给王玮看截图，他同意再上。** 他要求的 bug 修复和日常内容更新可以直接上线。
@@ -88,4 +88,6 @@ git add -A && git commit -m "…" && git push -u origin <分支>
 - **改样式或模板前先读 `DESIGN.md`**：令牌、组件、只用 Lucide 图标、动效规则、布局要紧凑。
 - 新增界面图标：先把名字加进 `scripts/vendor-icons.mjs` 的 `NAMES`，运行后再用 `ic('name')`。不要写 emoji 图标。
 - 产品灵感（PH灵感箱）：数据在 `data/ph-inspo.json`，每天在 `days` 最前面追加一天 `{date, source, fetched, note, items}`；改状态改 `item.status`（新发现/在跟进/已试用/归档），跟进写进 `item.followups`（`{date, type: 新版本|融资|定价|开源替代|其他, text, url}`）。改完 `node build.mjs`，生成 `ph-inspo/index.html` 和首页入口。
+- **呈现规则（2026-10-26 jobs-fix1）**：简报、海报页用学习库同一套顶栏和面包屑（`/workspace/x-brief/site/build.py` 的 `header()`、`crumb()`，海报脚本复用）；简报各栏目默认折叠，第一屏只留「今日主线」；雷达每个方向只露最新 3 条，产品灵感只展开最新一天；页头说明收进「关于这页数据」。链接指向折叠内容时，`assets/vp-head.js` 会先展开再滚过去。
+- **另见**：同一件事出现在几个栏目时都保留，互相加 `<a class="xref">另见：…</a>`。简报 ↔ 海报（同一北京日）按标题里少见的英文专名匹配（`build.py` 的 `same_story`，宁可漏不乱连）；雷达 ↔ 产品灵感按项目名相同；海报 → 雷达/产品灵感按项目名出现在海报标题开头（前 16 个字符），名字在 3 张以上海报里出现就不连。`build.mjs` 取摘要前会去掉这些链接（`noXref`）。
 - DSH 插件市场盘点：数据在 `data/dsh-plugins.json`，苏茶原文归档在 `sources/suercha-50-plugins.md`（只作引用）。改完 `node build.mjs`，生成 `dsh-plugins/index.html`、顶栏和首页入口。只写盘点里已核实的事实，不补数字或仓库。

@@ -1,5 +1,5 @@
 <!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>X 简报 · 10/17（周六） · X 简报</title><style>/* 学习搭子 固定设计系统 — 不要在课程里改这个文件。只改 lesson.html 的内容。 */
+<title>X 简报 · 10/18（周日） · X 简报</title><style>/* 学习搭子 固定设计系统 — 不要在课程里改这个文件。只改 lesson.html 的内容。 */
 :root{
   --paper:#F6F6F7; --sheet:#FFFFFF; --ink:#16202C; --ink2:#4A5868; --hair:#E2E2E3;
   --blue:#2550D9;  --blue-soft:#E3EAFD;   /* 主角：当前步骤 / 重点 */
@@ -39,6 +39,7 @@ ul{padding-left:20px}li{margin:8px 0}
 .empty{border:2px dashed var(--hair);border-radius:var(--r-lg);padding:20px;color:var(--ink2)}.empty b{display:block;color:var(--ink);margin-bottom:4px}
 .pn{display:flex;justify-content:space-between;gap:10px;margin-top:20px;font-weight:700}
 .foot{margin-top:30px;font-size:13px;color:var(--ink2);text-align:center}
+.bxs{display:grid;gap:10px;margin-bottom:8px}.bxs details.panel{margin-top:0}.bx>summary h2{margin:0;padding:0;border:0;font-size:17px;scroll-margin-top:110px}.bx .pb{padding-top:6px}
 @media(max-width:640px){main{padding:14px 12px 40px}.sheet{padding:18px 16px}h1{font-size:22px}.row{flex-wrap:wrap;gap:4px 10px}.row .d{min-width:0}}
 /* 学习库统一主题（2026-10 重设计）：单一无衬线字体，靠字号/字重分层；白卡片 + 细边框；只有「逾期」用强调色。 */
 :root{--paper:#f6f7f9;--sheet:#fff;--card:#fff;--ink:#111827;--ink2:#4b5563;--meta:#6b7280;--hair:#e5e7eb;--hair2:#eef0f3;
@@ -1091,6 +1092,20 @@ html.dark .pi-bar .chip.on{color:#0f1115}
  .rd-q label{max-width:none}
  .rd-bar .chip{min-height:36px}
 }
+/* ---- 2026-10-26 每日产出呈现修一轮（jobs-fix1） ---- */
+/* 桌面顶栏：栏目多了放不下时换行，不再把最后几个（DSH 插件）藏在看不见的滚动里 */
+@media(min-width:701px){html:not([data-theme=B]) .top nav{flex-wrap:wrap;overflow:visible;justify-content:flex-end;row-gap:2px;min-width:0}[data-theme=C] .top nav a{padding:7px 10px}}
+/* 「关于这页数据」：页头说明收起来 */
+details.panel.about{margin-top:14px}details.panel.about>summary{font-weight:550;font-size:14px;color:var(--ink2)}details.panel.about .pb p{margin:10px 0 0;font-size:14px;color:var(--ink2)}
+.hero details.panel.about{grid-column:1/-1}
+/* 另见：同一件事在别的栏目也有 */
+.xref{display:inline-block;margin-left:6px;font-size:12.5px;font-weight:600;line-height:1.7;padding:0 8px;border-radius:99px;background:var(--blue-soft);color:var(--blue);white-space:nowrap}.xref:hover{text-decoration:none;filter:brightness(.95)}
+.sa{margin:6px 0}.sa .xref{margin:0 6px 4px 0}
+/* 雷达：每个方向只露最新 3 条，其余收起 */
+.rd-more{margin-top:var(--sp-3)}.rd-more>summary{cursor:pointer;font-size:14px;font-weight:600;color:var(--blue);padding:6px 0;list-style:none}.rd-more>summary::-webkit-details-marker{display:none}.rd-more>summary::before{content:"▸ "}.rd-more[open]>summary::before{content:"▾ "}
+/* 产品灵感：更早的榜单收起；每天的说明收成一个小按钮 */
+details.panel.pi-old{margin-top:20px}details.panel.pi-old .pi-day{margin-top:14px}
+.pi-note{display:inline}.pi-note>summary{display:inline;cursor:pointer;color:var(--blue);list-style:none}.pi-note>summary::-webkit-details-marker{display:none}.pi-note[open]{display:block;margin-top:4px}
 </style><script>/*ICONS lucide v1.60.0 ISC*/window.__IC={"menu":"<path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/>","x":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","star":"<path d=\"M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z\"/>","party-popper":"<path d=\"M5.8 11.3 2 22l10.7-3.79\"/><path d=\"M4 3h.01\"/><path d=\"M22 8h.01\"/><path d=\"M15 2h.01\"/><path d=\"M22 20h.01\"/><path d=\"m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10\"/><path d=\"m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17\"/><path d=\"m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7\"/><path d=\"M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z\"/>"};window.__ic=function(n,s,c){return '<svg class="i i-'+n+(c?' '+c:'')+'" width="'+(s||16)+'" height="'+(s||16)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(window.__IC[n]||'')+'</svg>'};/*END ICONS*/
 (function(){var T='site-theme',v;try{v=localStorage.getItem(T)}catch(e){}if(!/^[ABC]$/.test(v||''))v='C';document.documentElement.setAttribute('data-theme',v);
 window.__setTheme=function(t){var go=function(){__applyTheme(t)};if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.startViewTransition(go);else go()};window.__applyTheme=function(t){document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem(T,t)}catch(e){}[].forEach.call(document.querySelectorAll('.thsw button'),function(b){b.setAttribute('aria-pressed',b.dataset.t===t)})}})();
@@ -1113,12 +1128,14 @@ window.addEventListener('load',function(){
  addEventListener('scroll',function(){document.querySelectorAll('.fx-rv:not(.fx-in)').forEach(function(e){if(e.getBoundingClientRect().top<innerHeight){e.classList.add('fx-in');io.unobserve(e)}})},{passive:true});
  document.addEventListener('pointermove',function(ev){var c=ev.target.closest&&ev.target.closest('a.card,.crs,.pc');if(!c)return;var r=c.getBoundingClientRect();c.style.setProperty('--mx',ev.clientX-r.left+'px');c.style.setProperty('--my',ev.clientY-r.top+'px')},{passive:true});
 })})();
+/* 链接指向收起来的内容（<details> 里）时，先展开再滚过去：简报栏目、雷达其余条目、产品灵感更早的榜单 */
+(function(){function go(){var h=location.hash.slice(1);if(!h)return;var t;try{t=document.getElementById(decodeURIComponent(h))}catch(e){}if(!t)return;var d=t.closest('details'),inD=!!d;while(d){d.open=true;d=d.parentElement&&d.parentElement.closest('details')}if(inD){/* 浏览器可能已自己展开但滚动位置不对，统一再对准一次 */setTimeout(function(){t.scrollIntoView()},30);setTimeout(function(){t.scrollIntoView()},450)}}/* 第二次等展开动画（.25s）走完再对准 */
+document.addEventListener('DOMContentLoaded',go);addEventListener('hashchange',go);
+document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href^="#"]');if(a&&a.getAttribute('href')===location.hash)setTimeout(go,0)})})();
 </script><script src="../assets/favorites.js" defer></script></head><body>
-<header class="top"><div class="in"><a class="brand" href="./index.html"><i><svg class="i i-newspaper" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18h-5"/><path d="M18 14h-8"/><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-4 0v-9a2 2 0 0 1 2-2h2"/><rect width="8" height="4" x="10" y="6" rx="1"/></svg></i>X 简报</a><nav><a href="../index.html">学习库首页</a><a href="index.html" class=on>X 简报</a><a href="index.html#weekly">周趋势</a><a href="../favorites/index.html">收藏</a></nav><button class="dm" onclick="__tt()" aria-label="切换深色模式"><svg class="i i-sun-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2"/><path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715"/><path d="M16 12a4 4 0 0 0-4-4"/><path d="m19 5-1.256 1.256"/><path d="M20 12h2"/></svg></button></div></header>
-<main><section class="sheet"><span class="kk">DAILY · 2026-10-17（周六）</span><h1>X 简报 · 10/17（周六）</h1><div class="kk" style="color:var(--ink2);margin-bottom:8px">今日主线</div><ol class="quick"><li>DeepSeek 周末发布 V4.1-Flash-1017：自家测的 DeepSWE 得 77 分，超过 Opus 5，价格却只是零头，还开放了联网搜索接口；中文圈实测都说便宜好用，但审美、3D 物理和长任务仍比 Opus 5.5 差一截</li><li>Anthropic 公开 Claude Code 团队的代码审查做法：九成代码由 Claude 写，一次改动要过七层检查，合并量翻倍，撤回率反而降了四成多，中文圈几乎人人在转</li><li>OpenCode 因一次「蒸馏攻击」泄露了部分用户存的 OpenAI、Anthropic、Google 密钥，余额被刷；Nathan Lambert 质疑把盗密钥也叫「蒸馏」是在混淆概念</li></ol></section>
-<nav class="tabs"><a href="#s1">模型</a><a href="#s2">Agent 与编程</a><a href="#s3">产品与应用</a><a href="#s4">硬件与算力</a><a href="#s5">公司与行业</a><a href="#s6">研究</a><a href="#s7">安全与政策</a><a href="#s8">其他</a></nav><section class="sheet"><h2 id="s1">模型</h2>
-<p>今天模型圈只有一个主角：DeepSeek V4.1-Flash-1017，关注名单里十几个人都在发。官方跑分很猛，上手实测褒贬参半。</p>
-<h3>DeepSeek V4.1-Flash-1017 发布</h3>
+<header class="top"><div class="in"><a class="brand" href="../index.html"><i><svg class="i i-book-open" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/></svg></i>王玮的学习库</a><nav><a href="../index.html" class="">首页</a><a href="../favorites/index.html" class="">收藏</a><a href="../courses/index.html" class="s1">公开课</a><a href="../x-posts/index.html" class="">X 好文</a><a href="../research/index.html" class="">技术研究</a><a href="../wechat/index.html" class="">微信公众号</a><a href="../video/index.html" class="">视频</a><a href="../glossary.html" class="">概念卡</a><a href="../x-brief/index.html" class="on s2">X 简报</a><a href="../x-posters/index.html" class="">X 海报</a><a href="../ph-inspo/index.html" class="">产品灵感</a><a href="../radar/index.html" class="">雷达</a><a href="../dsh-plugins/index.html" class="">DSH 插件</a></nav><button class="dm" onclick="__tt()" aria-label="切换深色模式"><svg class="i i-sun-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2"/><path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715"/><path d="M16 12a4 4 0 0 0-4-4"/><path d="m19 5-1.256 1.256"/><path d="M20 12h2"/></svg></button></div></header>
+<main><div class="crumb"><a href="../index.html">首页</a> / <a href="index.html">X 简报</a> / 2026-10-18（周日）</div><section class="sheet"><span class="kk">DAILY · 2026-10-18（周日） · 北京时间</span><h1>X 简报 · 10/18（周日）</h1><div class="kk" style="color:var(--ink2);margin-bottom:8px">今日主线</div><ol class="quick"><li>DeepSeek 周末发布 V4.1-Flash-1017：自家测的 DeepSWE 得 77 分，超过 Opus 5，价格却只是零头，还开放了联网搜索接口；中文圈实测都说便宜好用，但审美、3D 物理和长任务仍比 Opus 5.5 差一截</li><li>Anthropic 公开 Claude Code 团队的代码审查做法：九成代码由 Claude 写，一次改动要过七层检查，合并量翻倍，撤回率反而降了四成多，中文圈几乎人人在转</li><li>OpenCode 因一次「蒸馏攻击」泄露了部分用户存的 OpenAI、Anthropic、Google 密钥，余额被刷；Nathan Lambert 质疑把盗密钥也叫「蒸馏」是在混淆概念</li></ol></section>
+<nav class="tabs"><a href="#s1">模型</a><a href="#s2">Agent 与编程</a><a href="#s3">产品与应用</a><a href="#s4">硬件与算力</a><a href="#s5">公司与行业</a><a href="#s6">研究</a><a href="#s7">安全与政策</a><a href="#s8">其他</a></nav><section class="bxs"><details class="panel bx"><summary><h2 id="s1">模型</h2><span class="s">12 条</span></summary><div class="pb"><h3>DeepSeek V4.1-Flash-1017 发布</h3>
 <ul>
 <li><b>TestingCatalog</b>（@testingcatalog）：新的开放权重模型，DeepSWE 1.1 得 77%，超过 GLM-5.3、Kimi K3，也超过 GPT-5.6 Sol 和 Opus 5；网页、API 和 Hugging Face 都已上线，而且极便宜（<a href="https://x.com/testingcatalog/status/2111380259295653976" target="_blank" rel="noopener">原帖</a>）</li>
 <li><b>Thomas Wolf</b>（@Thom_Wolf）：DeepSeek 管这叫「小更新」，Terminal-Bench 4.0 却从 31.2 涨到 42.3；他觉得最有意思的是完成更快、输出更短，少用 token 正是成本下降的实际途径；权重照例是 MIT 协议，他想看这些分数离开 DeepSeek 自家评测环境还站不站得住（<a href="https://x.com/Thom_Wolf/status/2111401132840890440" target="_blank" rel="noopener">原帖</a>）</li>
@@ -1139,9 +1156,8 @@ window.addEventListener('load',function(){
 <li>【发布】<b>OpenMoss 开源绘画模型 MOSS</b>：5.6B 参数，中文字写得不错，但推理能力弱，写中文时要把文字内容写明确——Gorden Sun @Gorden_Sun（<a href="https://x.com/Gorden_Sun/status/2111367804981284996" target="_blank" rel="noopener">原帖</a>）</li>
 </ul>
 <p class="tip"><svg class="i i-lightbulb" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg> 一句话：跑分说它超过 Opus 5，实测说它做不出 Opus 5.5 的细节；最划算的用法大概是让强模型拿主意，它来干量大的活。</p>
-<h2 id="s2">Agent 与编程</h2>
-<p>今天的话题是代码多到人读不过来以后怎么审：Anthropic 公开了 Claude Code 团队的做法，大家在拆细节，也在争人工审批还有没有用。</p>
-<h3>Claude Code 团队怎么审 AI 写的代码</h3>
+</div></details>
+<details class="panel bx"><summary><h2 id="s2">Agent 与编程</h2><span class="s">11 条</span></summary><div class="pb"><h3>Claude Code 团队怎么审 AI 写的代码</h3>
 <ul>
 <li><b>meng shao</b>（@shao__meng）：没有取消审查，而是把「人读代码」大多交给机器；一次改动要过七层：提 PR 前 Claude 先自证、AI 审查、安全审查、自动检查、按风险决定几个人批、合并队列加功能开关和灰度、快速回滚；AI 审 AI 曾一夜来回 50 多轮，加了三轮封顶等规则后，一轮通过率从 65% 升到 78%（<a href="https://x.com/shao__meng/status/2111274173192638932" target="_blank" rel="noopener">原帖</a>）</li>
 <li><b>宝玉</b>（@dotey）：做了中英文讲解视频，用「一摞带洞的奶酪片」打比方：每道检查都会漏，叠起来就很难漏，底下还有一张网兜底；他引用的官方帖说，Code Review 已对 Claude Team 和 Enterprise 套餐正式开放（<a href="https://x.com/dotey/status/2111384189656252712" target="_blank" rel="noopener">原帖</a>）</li>
@@ -1157,9 +1173,8 @@ window.addEventListener('load',function(){
 <li>【发布】<b>JetBrains 开源 Pi 桌面端 ThinkRail</b>：底座是 pi-coding-agent，模型、技能和会话仍由 Pi 管，每个工作区对应一个 git worktree——小墨同学 @xiaomovps（<a href="https://x.com/xiaomovps/status/2111476463048573268" target="_blank" rel="noopener">原帖</a>）</li>
 <li>【技巧】<b>自建 Magpie 网关</b>：在海外 VPS 上部署 @yetone 的 Magpie，相当于有了自己的 OpenRouter，能用 Codex 里的额度，装插件后还能用 TRAE、WorkBuddy 送的免费模型——向阳乔木 @vista8（<a href="https://x.com/vista8/status/2111488518577180866" target="_blank" rel="noopener">原帖</a>）</li>
 </ul>
-<h2 id="s3">产品与应用</h2>
-<p>Grok Bot 仍是中文圈最热的产品，大家在分享怎么把它和本地 Agent、各种云服务接起来；OpenAI 的 dots 也有了真实用例。</p>
-<h3>Grok Bot 的玩法</h3>
+</div></details>
+<details class="panel bx"><summary><h2 id="s3">产品与应用</h2><span class="s">8 条</span></summary><div class="pb"><h3>Grok Bot 的玩法</h3>
 <ul>
 <li><b>范凯说AI</b>（@fankaishuoai）：他现在用它收发邮件和 X 私信谈合作、每天抓 X 生成新闻、记待办并分派给其他 Bot（<a href="https://x.com/fankaishuoai/status/2111407398237909098" target="_blank" rel="noopener">原帖</a>）；用 Webhook 加 GitHub Action 把它和本地 Agent 打通（<a href="https://x.com/fankaishuoai/status/2111361067041673452" target="_blank" rel="noopener">原帖</a>）；他认为这是今年的现象级产品，占了 OpenClaw 和 Hermes 的位置，但编程和长程任务还是本地 Agent 更合适（<a href="https://x.com/fankaishuoai/status/2111618261968195641" target="_blank" rel="noopener">原帖</a>）</li>
 <li><b>小墨同学</b>（@xiaomovps）：高强度用了一周，工作流都迁了过来，Hermes Agent 不用了；Bot 本身就是一台高性能 VPS（<a href="https://x.com/xiaomovps/status/2111313527067787589" target="_blank" rel="noopener">原帖</a>）</li>
@@ -1172,15 +1187,13 @@ window.addEventListener('load',function(){
 <li>【发布】<b>Qiaomu Publish</b>：开源 Obsidian 插件，一篇笔记调好排版就能发到公众号草稿箱，还能连 X、知乎和小红书——向阳乔木 @vista8（<a href="https://x.com/vista8/status/2111312618929688766" target="_blank" rel="noopener">原帖</a>）</li>
 <li>【发布】<b>Atticus</b>：开源 Mac 语音助手，按住快捷键说一句话就能挪窗口、找文件、看屏幕，直接走已有的 Claude Pro 或 Max 订阅——GitHubDaily @GitHub_Daily（<a href="https://x.com/GitHub_Daily/status/2111427020211343603" target="_blank" rel="noopener">原帖</a>）</li>
 </ul>
-<h2 id="s4">硬件与算力</h2>
-<p>今天这类内容不多：一条国产存储芯片的财报，一条在 Mac 上跑超大开源模型的方案。</p>
-<ul>
+</div></details>
+<details class="panel bx"><summary><h2 id="s4">硬件与算力</h2><span class="s">2 条</span></summary><div class="pb"><ul>
 <li>【消息】<b>长鑫科技一年翻身</b>：前三季度归母净利润预计 1310 亿到 1325 亿元，去年同期还亏 52.8 亿，平均每天净赚 4.8 亿——WquGuru @wquguru（<a href="https://x.com/wquguru/status/2111392909153198301" target="_blank" rel="noopener">原帖</a>）</li>
 <li>【技巧】<b>两台 Mac Studio 跑 816B 的 Muse Spark Open</b>：扎克伯格说新开源的 Muse Spark Open 在新款 Mac Studio 上跑得很好，帖子里还整理了从 512GB 单机起的三档启动命令和避坑参数——AYi @AYi_AInotes（<a href="https://x.com/AYi_AInotes/status/2111328848549757126" target="_blank" rel="noopener">原帖</a>）</li>
 </ul>
-<h2 id="s5">公司与行业</h2>
-<p>OpenAI 给用户重置了额度，Replit 把默认模型换成 OpenAI；订阅额度怎么算仍是大家最在意的事。</p>
-<ul>
+</div></details>
+<details class="panel bx"><summary><h2 id="s5">公司与行业</h2><span class="s">6 条</span></summary><div class="pb"><ul>
 <li>【消息】<b>OpenAI 第 13 天：重置用量额度</b>：他宣布 Day 13 是重置额度，说太平洋时间今天下班前到位——Tibo @thsottiaux（<a href="https://x.com/thsottiaux/status/2111492673890824348" target="_blank" rel="noopener">原帖</a>）</li>
 <li>【消息】<b>Replit 默认用 OpenAI</b>：他澄清 Replit 仍支持选 Anthropic 等多家模型，只是 OpenAI 凭性能、成本和合作关系成了 Agent 的首选伙伴（<a href="https://x.com/amasad/status/2111494912562888939" target="_blank" rel="noopener">原帖</a>）；Replit 还推出可部署到自家 Azure、Google Cloud 或 AWS 的版本，面向政府、金融和医疗——Amjad Masad @amasad（<a href="https://x.com/amasad/status/2111267314012496121" target="_blank" rel="noopener">原帖</a>）</li>
 <li>【实测】<b>Devin Max 的 Opus 额度偏少</b>：200 美元的 Devin Max 会员给的 Opus 5.5 额度，比 20 美元的 Claude Pro 还少约 20%——Gorden Sun @Gorden_Sun（<a href="https://x.com/Gorden_Sun/status/2111470614041243906" target="_blank" rel="noopener">原帖</a>）</li>
@@ -1188,17 +1201,15 @@ window.addEventListener('load',function(){
 <li>【观点】<b>Meta 能追上 Claude 吗</b>：他在 Interconnects 复盘 Meta 的大一周和美国开放权重模型的现状，Meta 势头越来越好，但能不能补上和 Claude 的最后一段差距还难说——Nathan Lambert @natolambert（<a href="https://x.com/natolambert/status/2111461099140772137" target="_blank" rel="noopener">原帖</a>）</li>
 <li>【消息】<b>Elorian 种子轮</b>：他说团队有 Gemini、苹果大模型和 xAI 的负责人，首个模型 Glimpse 做到 Astra 级的视觉推理（<a href="https://x.com/deedydas/status/2111342727044665427" target="_blank" rel="noopener">原帖</a>）；种子轮由他领投——Deedy @deedydas（<a href="https://x.com/deedydas/status/2111343548746633492" target="_blank" rel="noopener">原帖</a>）</li>
 </ul>
-<h2 id="s6">研究</h2>
-<p>两篇训练 Agent 的论文和一篇关于 Agent 冲击公共服务的论文，外加一门推理模型课完结。</p>
-<ul>
+</div></details>
+<details class="panel bx"><summary><h2 id="s6">研究</h2><span class="s">4 条</span></summary><div class="pb"><ul>
 <li>【观点】<b>Agent 正在冲垮办事门槛</b>：政府和企业正被 Agent 发来的大量请求淹没，过去靠麻烦挡人的服务得做选择：加费用、变差、禁 Agent，还是用 AI 把服务做得更好——Ethan Mollick @emollick（<a href="https://x.com/emollick/status/2111595040913100837" target="_blank" rel="noopener">原帖</a>）</li>
 <li>【发布】<b>腾讯：终端 Agent 的递归自我改进</b>：从 Qwen3.8-27B 出发，分五个阶段交替两种训练，适合关注用强化学习训练终端和编码 Agent 的人——elvis @omarsar0（<a href="https://x.com/omarsar0/status/2111487480281416004" target="_blank" rel="noopener">原帖</a>）</li>
 <li>【发布】<b>Salesforce 用 8B 小模型出研究点子</b>：AI 科学家流程很难提出新颖多样的想法，他们训练一个 8B 推理模型，一次生成多个研究想法——elvis @omarsar0（<a href="https://x.com/omarsar0/status/2111579013072433395" target="_blank" rel="noopener">原帖</a>）</li>
 <li>【发布】<b>《从零构建推理模型》完结</b>：最后一讲讲蒸馏，作为强化学习之外更省的路线，用 Qwen3-0.6B 从头写完整训练循环——Sebastian Raschka @rasbt（<a href="https://x.com/rasbt/status/2111448141119856866" target="_blank" rel="noopener">原帖</a>）</li>
 </ul>
-<h2 id="s7">安全与政策</h2>
-<p>OpenCode 泄露是今天最大的安全事件；Anthropic 的立法立场和中国新的 AI 技术出口目录也值得留意。</p>
-<h3>OpenCode 因「蒸馏攻击」泄露密钥</h3>
+</div></details>
+<details class="panel bx"><summary><h2 id="s7">安全与政策</h2><span class="s">8 条</span></summary><div class="pb"><h3>OpenCode 因「蒸馏攻击」泄露密钥</h3>
 <ul>
 <li><b>宝玉</b>（@dotey）：OpenCode 说前一晚的事件影响 1.4% 的 Console 用户，都是绑定了外部服务商的，没收到邮件就没受影响；据媒体转述，邮件提醒工作区里存的 OpenAI、Anthropic 等密钥可能已泄露，要作废换新并查最近用量（<a href="https://x.com/dotey/status/2111553994867028409" target="_blank" rel="noopener">原帖</a>）</li>
 <li><b>TestingCatalog</b>（@testingcatalog）：部分用户的 OpenAI、Anthropic、Google 余额被刷光；如果这是最省事的蒸馏途径，说明大厂自己防得更严了，用小服务商反而更不安全，大厂的 token 也更值钱了（<a href="https://x.com/testingcatalog/status/2111536604351246541" target="_blank" rel="noopener">原帖</a>）</li>
@@ -1212,11 +1223,12 @@ window.addEventListener('load',function(){
 <li>【观点】<b>陶哲轩说 AGI 竞赛变得有毒</b>：转述陶哲轩在 Dwarkesh 访谈里的话，OpenAI 一口气发了几百篇论文，一夜之间抢走了年轻学者的入门课题——AYi @AYi_AInotes（<a href="https://x.com/AYi_AInotes/status/2111289580833919337" target="_blank" rel="noopener">原帖</a>）</li>
 </ul>
 <p class="tip"><svg class="i i-lightbulb" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg> 一句话：OpenCode 这次说明，把各家密钥集中存在一个中转平台上，风险也跟着集中；在第三方工具里绑过密钥的，值得今天查一下用量。</p>
-<h2 id="s8">其他</h2>
+</div></details>
+<details class="panel bx"><summary><h2 id="s8">其他</h2><span class="s">4 条</span></summary><div class="pb">
 <ul>
 <li>【实测】<b>能开的 Roadster 模拟器</b>：照着发布会的坡道做了一个能开的 Three.js 物理模拟，保留了吸地和推进器等细节——Guillermo Rauch @rauchg（<a href="https://x.com/rauchg/status/2111313462987231519" target="_blank" rel="noopener">原帖</a>）</li>
 <li>【观点】<b>60 分是新的 0 分</b>：AI 把及格线拉到 60 分，60 分就成了新的 0 分，这只是经济学的基本原理——Orange AI @oran_ge（<a href="https://x.com/oran_ge/status/2111350773162693116" target="_blank" rel="noopener">原帖</a>）</li>
 <li>【观点】<b>别让 AI 直接给答案</b>：他推荐一场「如何避免脑腐」的讲座：让 AI 用苏格拉底式提问，你会觉得学得少，研究显示其实学得更多；工具变得太快，懂新工具的一半好过精通旧工具的九成——Thomas Wolf @Thom_Wolf（<a href="https://x.com/Thom_Wolf/status/2111397076764438554" target="_blank" rel="noopener">原帖</a>）</li>
 <li>【消息】<b>Claude 搭出来的个人主页</b>：Claude 团队的 Felix Rieseberg 把主页做成 90 年代记者的房间，他不会 Blender，房间和道具大多是 Claude 用 Python 驱动 Blender 建的——Ding @dingyi（<a href="https://x.com/dingyi/status/2111607693500989876" target="_blank" rel="noopener">原帖</a>）</li>
 </ul>
-<p class="muted">没发新帖：Khazix0918、trq212、karpathy、simonw、AndrewYNg、DrJimFan、hwchase17、jeremyphoward、OfficialLoganK、_akhaliq、arankomatsuzaki、jxmnop、sama、demishassabis、steph_palazzolo、alexeheath、btibor91、eladgil、mitchellh、HamelHusain、bcherny、steipete、gdb、alexalbert__、_catwu、claudeai、ylecun、JeffDean、_jasonwei、hardmaru、ClementDelangue、karminski3、Francis_YAO_、lifesinger</p></section><div class="pn"><a href="2026-10-18.html">← 2026-10-18</a><a href="index.html">往期目录</a><a href="2026-10-16.html">2026-10-16 →</a></div><div class="foot">王玮的 X 简报 · 每天由 X Brief 生成 · 链接打开 X 原帖 · 风格改编自 <a href="https://github.com/vuejs/vitepress">VitePress</a>（MIT）</div></main></body></html>
+<p class="muted">没发新帖：Khazix0918、trq212、karpathy、simonw、AndrewYNg、DrJimFan、hwchase17、jeremyphoward、OfficialLoganK、_akhaliq、arankomatsuzaki、jxmnop、sama、demishassabis、steph_palazzolo、alexeheath、btibor91、eladgil、mitchellh、HamelHusain、bcherny、steipete、gdb、alexalbert__、_catwu、claudeai、ylecun、JeffDean、_jasonwei、hardmaru、ClementDelangue、karminski3、Francis_YAO_、lifesinger</p></div></details></section><div class="pn"><a href="2026-10-18.html">← 2026-10-19</a><a href="index.html">往期目录</a><a href="2026-10-16.html">2026-10-17 →</a></div><div class="foot">王玮的 X 简报 · 每天由 X Brief 生成 · 链接打开 X 原帖 · 风格改编自 <a href="https://github.com/vuejs/vitepress">VitePress</a>（MIT）</div></main></body></html>

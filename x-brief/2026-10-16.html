@@ -1,5 +1,5 @@
 <!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>X 简报 · 10/16（周五） · X 简报</title><style>/* 学习搭子 固定设计系统 — 不要在课程里改这个文件。只改 lesson.html 的内容。 */
+<title>X 简报 · 10/17（周六） · X 简报</title><style>/* 学习搭子 固定设计系统 — 不要在课程里改这个文件。只改 lesson.html 的内容。 */
 :root{
   --paper:#F6F6F7; --sheet:#FFFFFF; --ink:#16202C; --ink2:#4A5868; --hair:#E2E2E3;
   --blue:#2550D9;  --blue-soft:#E3EAFD;   /* 主角：当前步骤 / 重点 */
@@ -39,6 +39,7 @@ ul{padding-left:20px}li{margin:8px 0}
 .empty{border:2px dashed var(--hair);border-radius:var(--r-lg);padding:20px;color:var(--ink2)}.empty b{display:block;color:var(--ink);margin-bottom:4px}
 .pn{display:flex;justify-content:space-between;gap:10px;margin-top:20px;font-weight:700}
 .foot{margin-top:30px;font-size:13px;color:var(--ink2);text-align:center}
+.bxs{display:grid;gap:10px;margin-bottom:8px}.bxs details.panel{margin-top:0}.bx>summary h2{margin:0;padding:0;border:0;font-size:17px;scroll-margin-top:110px}.bx .pb{padding-top:6px}
 @media(max-width:640px){main{padding:14px 12px 40px}.sheet{padding:18px 16px}h1{font-size:22px}.row{flex-wrap:wrap;gap:4px 10px}.row .d{min-width:0}}
 /* 学习库统一主题（2026-10 重设计）：单一无衬线字体，靠字号/字重分层；白卡片 + 细边框；只有「逾期」用强调色。 */
 :root{--paper:#f6f7f9;--sheet:#fff;--card:#fff;--ink:#111827;--ink2:#4b5563;--meta:#6b7280;--hair:#e5e7eb;--hair2:#eef0f3;
@@ -1091,6 +1092,20 @@ html.dark .pi-bar .chip.on{color:#0f1115}
  .rd-q label{max-width:none}
  .rd-bar .chip{min-height:36px}
 }
+/* ---- 2026-10-26 每日产出呈现修一轮（jobs-fix1） ---- */
+/* 桌面顶栏：栏目多了放不下时换行，不再把最后几个（DSH 插件）藏在看不见的滚动里 */
+@media(min-width:701px){html:not([data-theme=B]) .top nav{flex-wrap:wrap;overflow:visible;justify-content:flex-end;row-gap:2px;min-width:0}[data-theme=C] .top nav a{padding:7px 10px}}
+/* 「关于这页数据」：页头说明收起来 */
+details.panel.about{margin-top:14px}details.panel.about>summary{font-weight:550;font-size:14px;color:var(--ink2)}details.panel.about .pb p{margin:10px 0 0;font-size:14px;color:var(--ink2)}
+.hero details.panel.about{grid-column:1/-1}
+/* 另见：同一件事在别的栏目也有 */
+.xref{display:inline-block;margin-left:6px;font-size:12.5px;font-weight:600;line-height:1.7;padding:0 8px;border-radius:99px;background:var(--blue-soft);color:var(--blue);white-space:nowrap}.xref:hover{text-decoration:none;filter:brightness(.95)}
+.sa{margin:6px 0}.sa .xref{margin:0 6px 4px 0}
+/* 雷达：每个方向只露最新 3 条，其余收起 */
+.rd-more{margin-top:var(--sp-3)}.rd-more>summary{cursor:pointer;font-size:14px;font-weight:600;color:var(--blue);padding:6px 0;list-style:none}.rd-more>summary::-webkit-details-marker{display:none}.rd-more>summary::before{content:"▸ "}.rd-more[open]>summary::before{content:"▾ "}
+/* 产品灵感：更早的榜单收起；每天的说明收成一个小按钮 */
+details.panel.pi-old{margin-top:20px}details.panel.pi-old .pi-day{margin-top:14px}
+.pi-note{display:inline}.pi-note>summary{display:inline;cursor:pointer;color:var(--blue);list-style:none}.pi-note>summary::-webkit-details-marker{display:none}.pi-note[open]{display:block;margin-top:4px}
 </style><script>/*ICONS lucide v1.60.0 ISC*/window.__IC={"menu":"<path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/>","x":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","star":"<path d=\"M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z\"/>","party-popper":"<path d=\"M5.8 11.3 2 22l10.7-3.79\"/><path d=\"M4 3h.01\"/><path d=\"M22 8h.01\"/><path d=\"M15 2h.01\"/><path d=\"M22 20h.01\"/><path d=\"m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10\"/><path d=\"m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17\"/><path d=\"m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7\"/><path d=\"M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z\"/>"};window.__ic=function(n,s,c){return '<svg class="i i-'+n+(c?' '+c:'')+'" width="'+(s||16)+'" height="'+(s||16)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(window.__IC[n]||'')+'</svg>'};/*END ICONS*/
 (function(){var T='site-theme',v;try{v=localStorage.getItem(T)}catch(e){}if(!/^[ABC]$/.test(v||''))v='C';document.documentElement.setAttribute('data-theme',v);
 window.__setTheme=function(t){var go=function(){__applyTheme(t)};if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.startViewTransition(go);else go()};window.__applyTheme=function(t){document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem(T,t)}catch(e){}[].forEach.call(document.querySelectorAll('.thsw button'),function(b){b.setAttribute('aria-pressed',b.dataset.t===t)})}})();
@@ -1113,10 +1128,14 @@ window.addEventListener('load',function(){
  addEventListener('scroll',function(){document.querySelectorAll('.fx-rv:not(.fx-in)').forEach(function(e){if(e.getBoundingClientRect().top<innerHeight){e.classList.add('fx-in');io.unobserve(e)}})},{passive:true});
  document.addEventListener('pointermove',function(ev){var c=ev.target.closest&&ev.target.closest('a.card,.crs,.pc');if(!c)return;var r=c.getBoundingClientRect();c.style.setProperty('--mx',ev.clientX-r.left+'px');c.style.setProperty('--my',ev.clientY-r.top+'px')},{passive:true});
 })})();
+/* 链接指向收起来的内容（<details> 里）时，先展开再滚过去：简报栏目、雷达其余条目、产品灵感更早的榜单 */
+(function(){function go(){var h=location.hash.slice(1);if(!h)return;var t;try{t=document.getElementById(decodeURIComponent(h))}catch(e){}if(!t)return;var d=t.closest('details'),inD=!!d;while(d){d.open=true;d=d.parentElement&&d.parentElement.closest('details')}if(inD){/* 浏览器可能已自己展开但滚动位置不对，统一再对准一次 */setTimeout(function(){t.scrollIntoView()},30);setTimeout(function(){t.scrollIntoView()},450)}}/* 第二次等展开动画（.25s）走完再对准 */
+document.addEventListener('DOMContentLoaded',go);addEventListener('hashchange',go);
+document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href^="#"]');if(a&&a.getAttribute('href')===location.hash)setTimeout(go,0)})})();
 </script><script src="../assets/favorites.js" defer></script></head><body>
-<header class="top"><div class="in"><a class="brand" href="./index.html"><i><svg class="i i-newspaper" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18h-5"/><path d="M18 14h-8"/><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-4 0v-9a2 2 0 0 1 2-2h2"/><rect width="8" height="4" x="10" y="6" rx="1"/></svg></i>X 简报</a><nav><a href="../index.html">学习库首页</a><a href="index.html" class=on>X 简报</a><a href="index.html#weekly">周趋势</a><a href="../favorites/index.html">收藏</a></nav><button class="dm" onclick="__tt()" aria-label="切换深色模式"><svg class="i i-sun-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2"/><path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715"/><path d="M16 12a4 4 0 0 0-4-4"/><path d="m19 5-1.256 1.256"/><path d="M20 12h2"/></svg></button></div></header>
-<main><section class="sheet"><span class="kk">DAILY · 2026-10-16（周五）</span><h1>X 简报 · 10/16（周五）</h1><div class="kk" style="color:var(--ink2);margin-bottom:8px">今日主线</div><ol class="quick"><li>特斯拉新 Roadster 发布会刷屏：车能短暂飞起、空中翻正落地，关注名单里十几个人都在聊，连 Sam Altman 都发帖点赞</li><li>OpenAI 和 Anthropic 同日出牌：OpenAI 提高 Codex 有效用量、升级 GPT-6 Pro，三家都在推 AI 做幻灯片；Anthropic 公开反蒸馏三层防御，还发报告说内部 Agent 工作时长已是员工的 6 倍</li><li>长程 Agent 是今天的研究主线：四个 Gemini 4 Argon Agent 27 小时通关 Minecraft；Ethan Mollick 认为长任务里小误差会层层放大，便宜模型最好由大模型来调度和把关</li></ol></section>
-<nav class="tabs"><a href="#s1">1. 今日大事</a><a href="#s2">2. meng shao @shao__meng</a><a href="#s3">3. 宝玉 @dotey</a><a href="#s4">4. Nathan Lambert @natolambert</a><a href="#s5">5. Jim Fan @DrJimFan</a><a href="#s6">6. levelsio @levelsio</a><a href="#s7">7. Guillermo Rauch @rauchg</a><a href="#s8">8. Boris Cherny @bcherny</a><a href="#s9">9. elvis @omarsar0</a><a href="#s10">10. yibie @yibie</a><a href="#s11">11. 数字生命卡兹克 @Khazix0918</a><a href="#s12">12. 小墨同学 @xiaomovps</a><a href="#s13">13. 范凯说AI @fankaishuoai</a><a href="#s14">14. yetone @yetone</a><a href="#s15">15. Viking @vikingmute</a><a href="#s16">16. Gary Marcus @GaryMarcus</a><a href="#s17">17. 小工具与杂项</a></nav><section class="sheet"><h2 id="s1">1. 今日大事</h2>
+<header class="top"><div class="in"><a class="brand" href="../index.html"><i><svg class="i i-book-open" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/></svg></i>王玮的学习库</a><nav><a href="../index.html" class="">首页</a><a href="../favorites/index.html" class="">收藏</a><a href="../courses/index.html" class="s1">公开课</a><a href="../x-posts/index.html" class="">X 好文</a><a href="../research/index.html" class="">技术研究</a><a href="../wechat/index.html" class="">微信公众号</a><a href="../video/index.html" class="">视频</a><a href="../glossary.html" class="">概念卡</a><a href="../x-brief/index.html" class="on s2">X 简报</a><a href="../x-posters/index.html" class="">X 海报</a><a href="../ph-inspo/index.html" class="">产品灵感</a><a href="../radar/index.html" class="">雷达</a><a href="../dsh-plugins/index.html" class="">DSH 插件</a></nav><button class="dm" onclick="__tt()" aria-label="切换深色模式"><svg class="i i-sun-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2"/><path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715"/><path d="M16 12a4 4 0 0 0-4-4"/><path d="m19 5-1.256 1.256"/><path d="M20 12h2"/></svg></button></div></header>
+<main><div class="crumb"><a href="../index.html">首页</a> / <a href="index.html">X 简报</a> / 2026-10-17（周六）</div><section class="sheet"><span class="kk">DAILY · 2026-10-17（周六） · 北京时间</span><h1>X 简报 · 10/17（周六）</h1><div class="kk" style="color:var(--ink2);margin-bottom:8px">今日主线</div><ol class="quick"><li>特斯拉新 Roadster 发布会刷屏：车能短暂飞起、空中翻正落地，关注名单里十几个人都在聊，连 Sam Altman 都发帖点赞</li><li>OpenAI 和 Anthropic 同日出牌：OpenAI 提高 Codex 有效用量、升级 GPT-6 Pro，三家都在推 AI 做幻灯片；Anthropic 公开反蒸馏三层防御，还发报告说内部 Agent 工作时长已是员工的 6 倍</li><li>长程 Agent 是今天的研究主线：四个 Gemini 4 Argon Agent 27 小时通关 Minecraft；Ethan Mollick 认为长任务里小误差会层层放大，便宜模型最好由大模型来调度和把关</li></ol></section>
+<nav class="tabs"><a href="#s1">1. 今日大事</a><a href="#s2">2. meng shao @shao__meng</a><a href="#s3">3. 宝玉 @dotey</a><a href="#s4">4. Nathan Lambert @natolambert</a><a href="#s5">5. Jim Fan @DrJimFan</a><a href="#s6">6. levelsio @levelsio</a><a href="#s7">7. Guillermo Rauch @rauchg</a><a href="#s8">8. Boris Cherny @bcherny</a><a href="#s9">9. elvis @omarsar0</a><a href="#s10">10. yibie @yibie</a><a href="#s11">11. 数字生命卡兹克 @Khazix0918</a><a href="#s12">12. 小墨同学 @xiaomovps</a><a href="#s13">13. 范凯说AI @fankaishuoai</a><a href="#s14">14. yetone @yetone</a><a href="#s15">15. Viking @vikingmute</a><a href="#s16">16. Gary Marcus @GaryMarcus</a><a href="#s17">17. 小工具与杂项</a></nav><section class="bxs"><details class="panel bx"><summary><h2 id="s1">1. 今日大事</h2><span class="s">33 条</span></summary><div class="pb">
 <h3>特斯拉新 Roadster：会飞的跑车</h3>
 <ul>
 <li><b>小互</b>（@xiaohu）：分三个版本，双座公路版 Performance、双座推进增强版 Thrust、单座邀请制 Rocket；Thrust 版 0–60 英里加速不到 1 秒，底盘抽气能把整车吸在天花板上倒挂，Rocket 版的推进器能升空并调整姿态（<a href="https://x.com/xiaohu/status/2110913842402484454" target="_blank" rel="noopener">原帖</a>）</li>
@@ -1183,74 +1202,90 @@ window.addEventListener('load',function(){
 <li><b>小互</b>（@xiaohu）：让 Codex 写了个抢购程序（<a href="https://x.com/xiaohu/status/2111040270028714235" target="_blank" rel="noopener">原帖</a>）</li>
 <li><b>Orange AI</b>（@oran_ge）：上次抢 iPhone 这么火还是十年前（<a href="https://x.com/oran_ge/status/2111073333395812553" target="_blank" rel="noopener">原帖</a>）</li>
 </ul>
-<h2 id="s2">2. meng shao @shao__meng</h2>
+</div></details>
+<details class="panel bx"><summary><h2 id="s2">2. meng shao @shao__meng</h2><span class="s">3 条</span></summary><div class="pb">
 <ul>
 <li><b>Anthropic 反蒸馏三层防御</b>：攻击者窃取的推理 token 量降了 90%–99%；用完整推理记录训练的模型 SWE-bench Verified 得 80.4%，只用摘要只有 71.8%，所以原始思维链是主要目标；三层分别是推理摘要、「保留思考」（8 月 31 日后的新 API 账号不能编辑先前上下文）和误报率低于 0.1% 的分类器加批量封号，并再次点名智谱 GLM-5.3 和月之暗面 Kimi（<a href="https://x.com/shao__meng/status/2110923670755631111" target="_blank" rel="noopener">原帖</a>）</li>
 <li><b>腾讯 Hy Memory 2.0</b>：用 30B 总参、约 3B 激活的专用模型做记忆写入，配 SDK 和桌面工具 MemHub；官方自报宏平均 55.49，略高于 Claude Opus 5 的 54.62，待独立复现（<a href="https://x.com/shao__meng/status/2111082839068246301" target="_blank" rel="noopener">原帖</a>）</li>
 <li><b>Perplexity 开源 SPACE</b>：把不可信的 Agent 代码放进 Firecracker 微虚拟机隔离运行，纯 HTTP/SSE 接口，兼容 E2B SDK（<a href="https://x.com/shao__meng/status/2111087549884379597" target="_blank" rel="noopener">原帖</a>）</li>
 </ul>
 <p class="tip"><svg class="i i-lightbulb" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg> 一句话：蒸馏攻防的焦点已经从模型输出转到原始思维链，谁能藏住推理过程，谁就守住了护城河</p>
-<h2 id="s3">3. 宝玉 @dotey</h2>
+</div></details>
+<details class="panel bx"><summary><h2 id="s3">3. 宝玉 @dotey</h2><span class="s">2 条</span></summary><div class="pb">
 <ul>
 <li><b>Anthropic 公开内部数据</b>：两份新报告显示，Agent 工作时长已是员工的 6 倍，技术岗新招人里初级员工占比从 27% 降到 9%（<a href="https://x.com/dotey/status/2111223306061836484" target="_blank" rel="noopener">原帖</a>）</li>
 <li><b>Handwired 教学视频</b>：用它做了倒计时、贪吃蛇等例子，讲清楚怎么不训练就把代码原样变成神经网络，中英文版都有（<a href="https://x.com/dotey/status/2111097422810169575" target="_blank" rel="noopener">原帖</a>）</li>
 </ul>
-<h2 id="s4">4. Nathan Lambert @natolambert</h2>
+</div></details>
+<details class="panel bx"><summary><h2 id="s4">4. Nathan Lambert @natolambert</h2><span class="s">2 条</span></summary><div class="pb">
 <ul>
 <li><b>中国开源模型新规</b>：很多人在说中国商务部一份文件意味着大型开源模型的终结，但文件里也有便利开源技术的表述，关键看执行和「近乎自动」的审批怎么落地（<a href="https://x.com/natolambert/status/2111091990427521520" target="_blank" rel="noopener">原帖</a>）</li>
 <li><b>别信二手解读</b>：大多数评论是拿 Claude 的残缺翻译在读，这个话题上他信得过的人只有 5 到 10 个（<a href="https://x.com/natolambert/status/2111114681066901719" target="_blank" rel="noopener">原帖</a>）</li>
 </ul>
-<h2 id="s5">5. Jim Fan @DrJimFan</h2>
+</div></details>
+<details class="panel bx"><summary><h2 id="s5">5. Jim Fan @DrJimFan</h2><span class="s">1 条</span></summary><div class="pb">
 <ul>
 <li><b>ASPIRE V1.0 开源</b>：英伟达的 Agent 机器人框架，支持真实机器人的技能发现和自我改进；Astra 一出，他们换上新后端，一夜之间把基准刷到约 99%；目前 Opus 5.5 在机器人仿真基准上略胜 Astra，Sonnet 5.5 每任务约 12 美元，是性价比最优（<a href="https://x.com/DrJimFan/status/2111128797181567466" target="_blank" rel="noopener">原帖</a>）</li>
 </ul>
-<h2 id="s6">6. levelsio @levelsio</h2>
+</div></details>
+<details class="panel bx"><summary><h2 id="s6">6. levelsio @levelsio</h2><span class="s">1 条</span></summary><div class="pb">
 <ul>
 <li><b>追剩下的护城河</b>：他认为 AI 公司会吸走其他一切，所以把产品往专有数据（城市数据 API 年费 2490 到 9990 美元）、社区网络效应、受众（X 上月入约 1.5 万美元，邮件和 Telegram 订阅 18.7 万人）、线下活动和资本配置上转（<a href="https://x.com/levelsio/status/2111142856094265595" target="_blank" rel="noopener">原帖</a>）</li>
 </ul>
-<h2 id="s7">7. Guillermo Rauch @rauchg</h2>
+</div></details>
+<details class="panel bx"><summary><h2 id="s7">7. Guillermo Rauch @rauchg</h2><span class="s">1 条</span></summary><div class="pb">
 <ul>
 <li><b>Agent 断了也能续跑</b>：同一个 createFxAgent() 现在本地或云端都能持久运行，状态可存在文件、Postgres 或 Vercel Workflows；进程在工具调用中途崩溃也能从断点继续，下一步要给 Pi、OpenCode 也加上（<a href="https://x.com/rauchg/status/2111215808781394329" target="_blank" rel="noopener">原帖</a>）</li>
 </ul>
-<h2 id="s8">8. Boris Cherny @bcherny</h2>
+</div></details>
+<details class="panel bx"><summary><h2 id="s8">8. Boris Cherny @bcherny</h2><span class="s">1 条</span></summary><div class="pb">
 <ul>
 <li><b>Claude Code Review</b>：它跑在他所有的 PR 上，几乎在合并前抓住每个 bug，是团队又快又稳的秘诀之一（<a href="https://x.com/bcherny/status/2111158313463525518" target="_blank" rel="noopener">原帖</a>）</li>
 </ul>
-<h2 id="s9">9. elvis @omarsar0</h2>
+</div></details>
+<details class="panel bx"><summary><h2 id="s9">9. elvis @omarsar0</h2><span class="s">1 条</span></summary><div class="pb">
 <ul>
 <li><b>让研究 Agent 定期遗忘</b>：UC Berkeley 论文发现 Agent 会被自己的历史尝试锚住，于是定期丢掉会话和历史、从当前最优解重启，同等预算下比并行 Agent 高最多 15%，比单 Agent 高最多 39%（<a href="https://x.com/omarsar0/status/2110911109964386460" target="_blank" rel="noopener">原帖</a>）</li>
 </ul>
-<h2 id="s10">10. yibie @yibie</h2>
+</div></details>
+<details class="panel bx"><summary><h2 id="s10">10. yibie @yibie</h2><span class="s">2 条</span></summary><div class="pb">
 <ul>
 <li><b>多台 Mac Studio 跑近万亿参数模型</b>：苹果实测 MLX 加雷雳 RDMA，四台 M5 Ultra 张量并行时 Qwen 3.8 27B 解码到 50.89 token/秒，Muse Spark Open 到 36.73 token/秒，单机峰值功耗约 300W（<a href="https://x.com/yibie/status/2111168984607539402" target="_blank" rel="noopener">原帖</a>）</li>
 <li><b>先规划再检索工具</b>：苹果论文发现单工具查询用「先检索再规划」更好，多工具查询反过来；按 top-1 相似度分流能省约 16% 推理 token（<a href="https://x.com/yibie/status/2111169523642683780" target="_blank" rel="noopener">原帖</a>）</li>
 </ul>
-<h2 id="s11">11. 数字生命卡兹克 @Khazix0918</h2>
+</div></details>
+<details class="panel bx"><summary><h2 id="s11">11. 数字生命卡兹克 @Khazix0918</h2><span class="s">1 条</span></summary><div class="pb">
 <ul>
 <li><b>RTX Spark 开售秒空</b>：华硕 ProArt 128G 版卖 37999 元，线上瞬间抢光；实测 Qwen3.8-27B 本地跑到 30 token/秒（<a href="https://x.com/Khazix0918/status/2111078005330399726" target="_blank" rel="noopener">原帖</a>）</li>
 </ul>
-<h2 id="s12">12. 小墨同学 @xiaomovps</h2>
+</div></details>
+<details class="panel bx"><summary><h2 id="s12">12. 小墨同学 @xiaomovps</h2><span class="s">2 条</span></summary><div class="pb">
 <ul>
 <li><b>OpenCode 15 个模型限时免费</b>：继 DeepSeek V4.1 Flash 后又放出 GLM-5.3-Flash，官方没写截止日（<a href="https://x.com/xiaomovps/status/2111009623759257755" target="_blank" rel="noopener">原帖</a>）</li>
 <li><b>Pi 也有自动权限模式</b>：OpenRouter 上线 Armor，类似 Claude Code 的 Auto 模式，由 Jev 判断命令能否放行（<a href="https://x.com/xiaomovps/status/2110972998916411577" target="_blank" rel="noopener">原帖</a>）</li>
 </ul>
-<h2 id="s13">13. 范凯说AI @fankaishuoai</h2>
+</div></details>
+<details class="panel bx"><summary><h2 id="s13">13. 范凯说AI @fankaishuoai</h2><span class="s">1 条</span></summary><div class="pb">
 <ul>
 <li><b>GPT 拉垮的是 6.1 Sol</b>：他日常用 GPT-6 Astra 低思考级别，快、懂意图；费 token 的简单活交给 DeepSeek V4.1 Flash（<a href="https://x.com/fankaishuoai/status/2110920251575763233" target="_blank" rel="noopener">原帖</a>）；但非编码任务别用 Codex（<a href="https://x.com/fankaishuoai/status/2111083120372199581" target="_blank" rel="noopener">原帖</a>）</li>
 </ul>
-<h2 id="s14">14. yetone @yetone</h2>
+</div></details>
+<details class="panel bx"><summary><h2 id="s14">14. yetone @yetone</h2><span class="s">1 条</span></summary><div class="pb">
 <ul>
 <li><b>magpie 省 token</b>：新增精简 Claude 系统提示词开关，每个请求省约 1K token，轻量聊天客户端 3 轮输入少 35%；他提醒这样请求不那么像 Claude Code 本身，有账号风险（<a href="https://x.com/yetone/status/2111178943604953551" target="_blank" rel="noopener">原帖</a>）</li>
 </ul>
-<h2 id="s15">15. Viking @vikingmute</h2>
+</div></details>
+<details class="panel bx"><summary><h2 id="s15">15. Viking @vikingmute</h2><span class="s">1 条</span></summary><div class="pb">
 <ul>
 <li><b>PR 成了仪式</b>：开 PR 前 AI 已经审完，人只看 CI 变绿就点通过；他现在用 worktree 多分支并行开发（<a href="https://x.com/vikingmute/status/2111003256646504772" target="_blank" rel="noopener">原帖</a>）</li>
 </ul>
-<h2 id="s16">16. Gary Marcus @GaryMarcus</h2>
+</div></details>
+<details class="panel bx"><summary><h2 id="s16">16. Gary Marcus @GaryMarcus</h2><span class="s">1 条</span></summary><div class="pb">
 <ul>
 <li><b>市场降温</b>：CoreWeave 本周跌 21%，Anthropic 预期的 IPO 估值跌了 25%（<a href="https://x.com/GaryMarcus/status/2111140654575419620" target="_blank" rel="noopener">原帖</a>）</li>
 </ul>
-<h2 id="s17">17. 小工具与杂项</h2>
+</div></details>
+<details class="panel bx"><summary><h2 id="s17">17. 小工具与杂项</h2><span class="s">11 条</span></summary><div class="pb">
 <ul>
 <li><b>LinearUncle</b>（@LinearUncle）：开源库 earshot 帮 AI 做视频时挑音效、截干净片段、检查音画是否对齐（<a href="https://x.com/LinearUncle/status/2111020465569595763" target="_blank" rel="noopener">原帖</a>）；Claude Code 的 /loop 命令一图看懂（<a href="https://x.com/LinearUncle/status/2110932160916144302" target="_blank" rel="noopener">原帖</a>）</li>
 <li><b>GitHubDaily</b>（@GitHub_Daily）：SeeCode 给 Claude Code、Codex、Cursor 用，大白话描述就能生成会动的架构图（<a href="https://x.com/GitHub_Daily/status/2111064619808948697" target="_blank" rel="noopener">原帖</a>）；开源 PhotoCraft 照着 Photoshop 重做，免费离线，两周 6 万多 Star（<a href="https://x.com/GitHub_Daily/status/2111094834677289104" target="_blank" rel="noopener">原帖</a>）</li>
@@ -1264,4 +1299,4 @@ window.addEventListener('load',function(){
 <li><b>Ding</b>（@dingyi）：Claude Desktop 太好用了（<a href="https://x.com/dingyi/status/2111018338747023752" target="_blank" rel="noopener">原帖</a>）</li>
 <li><b>Kylie Robison</b>（@kyliebytes）：伊丽莎白·霍姆斯纪录片《You Can See Everything》看得心率飙到 133（<a href="https://x.com/kyliebytes/status/2110901621379199333" target="_blank" rel="noopener">原帖</a>）；<b>Alex Heath</b>（@alexeheath）也看完直呼震撼（<a href="https://x.com/alexeheath/status/2110906479570268578" target="_blank" rel="noopener">原帖</a>）</li>
 </ul>
-<p class="muted">没发新帖：trq212、karpathy、simonw、AndrewYNg、hwchase17、jeremyphoward、OfficialLoganK、lijigang、rasbt、arankomatsuzaki、jxmnop、sarahookr、Swarooprm7、demishassabis、steph_palazzolo、btibor91、deedydas、HamelHusain、steipete</p></section><div class="pn"><a href="2026-10-17.html">← 2026-10-17</a><a href="index.html">往期目录</a><a href="2026-10-15.html">2026-10-15 →</a></div><div class="foot">王玮的 X 简报 · 每天由 X Brief 生成 · 链接打开 X 原帖 · 风格改编自 <a href="https://github.com/vuejs/vitepress">VitePress</a>（MIT）</div></main></body></html>
+<p class="muted">没发新帖：trq212、karpathy、simonw、AndrewYNg、hwchase17、jeremyphoward、OfficialLoganK、lijigang、rasbt、arankomatsuzaki、jxmnop、sarahookr、Swarooprm7、demishassabis、steph_palazzolo、btibor91、deedydas、HamelHusain、steipete</p></div></details></section><div class="pn"><a href="2026-10-17.html">← 2026-10-18</a><a href="index.html">往期目录</a><a href="2026-10-15.html">2026-10-16 →</a></div><div class="foot">王玮的 X 简报 · 每天由 X Brief 生成 · 链接打开 X 原帖 · 风格改编自 <a href="https://github.com/vuejs/vitepress">VitePress</a>（MIT）</div></main></body></html>
