@@ -17,7 +17,9 @@ const added = {}; const batches = [];
 for (const line of head.split('\n')) {
   const m = line.match(/^>\s*(\d{4}-\d{2}-\d{2})\s*([^：]*)：(.*)$/); if (!m) continue;
   const [, date, label, rest] = m; const ids = [];
-  for (const seg of rest.split('新增').slice(1)) {
+  // 「新增 #a–#b」；没有「新增」二字时，接受以「#a–#b 共 N 条」开头的写法（如 2026-10-26 PH 灵感箱补录）
+  const segs = rest.includes('新增') ? rest.split('新增').slice(1) : (/^\s*#\d+(?:[–-]#\d+)?\s*共/.test(rest) ? [rest] : []);
+  for (const seg of segs) {
     const clause = seg.split(/[；。：]/)[0];
     for (const r of clause.matchAll(/#(\d+)(?:[–-]#(\d+))?/g)) { const a = +r[1], b = r[2] ? +r[2] : a; for (let i = a; i <= b; i++) ids.push(i); }
   }
@@ -46,3 +48,11 @@ const out = {
 };
 fs.writeFileSync(path.join(ROOT, 'data', 'radar.json'), JSON.stringify(out, null, 1) + '\n');
 console.log(`radar: ${entries.length} entries, ${entries.filter(e => e.verified).length} verified repos, updated ${updated}, batches ${batches.map(b => b.date + '#' + b.ids.join('-')).join(' ')}`);
+
+// 周报：雷达目录 weekly/YYYY-MM-DD.md（北京日期，原文照搬）复制到 data/radar-weekly/，build.mjs 生成 radar/weekly/YYYY-MM-DD.html。
+const WK_SRC = path.join(SRC, 'weekly'), WK_DST = path.join(ROOT, 'data', 'radar-weekly');
+const wk = fs.existsSync(WK_SRC) ? fs.readdirSync(WK_SRC).filter(f => /^\d{4}-\d{2}-\d{2}\.md$/.test(f)).sort() : [];
+fs.mkdirSync(WK_DST, { recursive: true });
+for (const f of fs.readdirSync(WK_DST)) if (/\.md$/.test(f) && !wk.includes(f)) fs.rmSync(path.join(WK_DST, f));
+for (const f of wk) fs.copyFileSync(path.join(WK_SRC, f), path.join(WK_DST, f));
+console.log(`radar weekly: ${wk.length} 份${wk.length ? '（' + wk.map(f => f.slice(0, 10)).join(' ') + '）' : ''}`);

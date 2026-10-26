@@ -685,6 +685,47 @@ ${mechs}
 if (RADAR) {
   const f = 'radar/index.html';
   const E = RADAR.entries, TH = RADAR.themes;
+  // 周报：data/radar-weekly/YYYY-MM-DD.md（sync-radar.mjs 从雷达目录 weekly/ 原样复制），版式沿用 X 简报周趋势页（.sheet / .tabs / .quick / .pn）
+  const WKD = path.join(ROOT, 'data', 'radar-weekly');
+  const wkInline = t => { const re = /\*\*(.+?)\*\*|`([^`]+)`|\[([^\]]+)\]\((https?:[^)\s]+)\)|(?<![*\w])\*([^*\n]+)\*(?!\*)/g; let o = '', i = 0, m; t = String(t);
+    while ((m = re.exec(t))) { o += esc(t.slice(i, m.index)); o += m[1] != null ? `<b>${wkInline(m[1])}</b>` : m[2] != null ? `<code>${esc(m[2])}</code>` : m[3] != null ? `<a href="${esc(m[4])}" target="_blank" rel="noopener">${wkInline(m[3])}</a>` : `<i>${wkInline(m[5])}</i>`; i = m.index + m[0].length; }
+    return o + esc(t.slice(i)); };
+  const wkParse = src => {
+    const lines = src.replace(/\r/g, '').split('\n'); const title = (lines[0] || '').replace(/^#\s*/, '').trim();
+    const out = [], secs = [], quick = []; let stack = [], mode = '';
+    const closeTo = d => { while (stack.length > d) { const t = stack.pop(); out.push(`</li></${t.tag}>`); } };
+    for (const ln of lines.slice(1)) {
+      const s = ln.trim();
+      if (/^\*\*结论先说\*\*$/.test(s)) { closeTo(0); mode = 'q'; continue; }
+      if (mode === 'q') { const m = s.match(/^\d+\.\s+(.*)$/); if (m) { quick.push(wkInline(m[1])); continue; } if (!s) continue; mode = ''; }
+      if (!s) { closeTo(0); continue; }
+      if (s.startsWith('## ')) { closeTo(0); secs.push(s.slice(3).trim()); out.push(`<h2 id="s${secs.length}">${wkInline(secs.at(-1))}</h2>`); continue; }
+      if (s.startsWith('### ')) { closeTo(0); out.push(`<h3>${wkInline(s.slice(4))}</h3>`); continue; }
+      const li = ln.match(/^(\s*)([-*]|\d+\.)\s+(.*)$/);
+      if (li) { const d = Math.floor(li[1].length / 2) + 1, tag = /\d/.test(li[2]) ? 'ol' : 'ul';
+        if (stack.length >= d) { closeTo(d); if (stack.length === d) out.push('</li><li>' + wkInline(li[3])); else { out.push(`<${tag}><li>${wkInline(li[3])}`); stack.push({ tag }); } }
+        else { while (stack.length < d) { out.push(`<${tag}><li>`); stack.push({ tag }); } out[out.length - 1] += wkInline(li[3]); }
+        continue; }
+      if (/^\s+\S/.test(ln) && stack.length) { out.push('<br>' + wkInline(s)); continue; }
+      closeTo(0);
+      const h = s.match(/^\*\*([^*]+)\*\*$/);
+      out.push(h ? `<h3>${wkInline(h[1])}</h3>` : `<p>${wkInline(s)}</p>`);
+    }
+    closeTo(0); return { title, secs, quick, body: out.join('\n') };
+  };
+  const WK = (fs.existsSync(WKD) ? fs.readdirSync(WKD).filter(x => /^\d{4}-\d{2}-\d{2}\.md$/.test(x)).sort().reverse() : []).map(x => ({ d: x.slice(0, 10), ...wkParse(fs.readFileSync(path.join(WKD, x), 'utf8')) }));
+  WK.forEach((w, i) => {
+    const wf = `radar/weekly/${w.d}.html`;
+    const tabs = w.secs.map((t, k) => `<a href="#s${k + 1}">${esc(t)}</a>`).join('');
+    const newer = i ? `<a href="${WK[i - 1].d}.html">← ${WK[i - 1].d}</a>` : '<span></span>';
+    const older = i + 1 < WK.length ? `<a href="${WK[i + 1].d}.html">${WK[i + 1].d} →</a>` : '<span></span>';
+    const b = `<div class="crumb"><a href="../../index.html">首页</a> / <a href="../index.html">雷达</a> / 周报 ${esc(w.d)}</div>
+<section class="sheet"><span class="kk">雷达周报 · ${esc(w.d)}（北京时间）</span><h1>${wkInline(w.title)}</h1>${w.quick.length ? `<div class="kk" style="margin:4px 0">结论先说</div><ol class="quick">${w.quick.map(x => `<li>${x}</li>`).join('')}</ol>` : ''}</section>
+<nav class="tabs">${tabs}</nav><section class="sheet">${w.body}</section><div class="pn">${newer}<a href="../index.html#weekly">周报目录</a>${older}</div>`;
+    write(wf, page(wf, w.title, 'radar', b));
+  });
+  const wkBlock = WK.length ? `<div class="kicker" id="weekly">周报 <span class="n">${WK.length}</span></div><div class="sub">每周一的雷达周报原文，含结论、各方向新东西、最值得抄的作业</div>
+<div class="list rd-wk">${WK.map((w, k) => `<div class="row"><span class="tag${k ? '' : ' green'}">${esc(w.d)}</span><span class="t"><a href="weekly/${esc(w.d)}.html">${wkInline(w.title)}</a></span>${k ? '' : '<span class="d">最新</span>'}</div>`).join('')}</div>` : '';
   if (TH.reduce((n, t) => n + t.n, 0) !== E.length) throw new Error('radar theme counts');
   const latest = E.filter(e => e.added === RADAR.updated);
   const grp = n => Number(n).toLocaleString('en-US');
@@ -704,8 +745,9 @@ ${e.note ? `<p class="rd-note">${esc(e.note)}</p>` : ''}
   const batches = [...RADAR.batches].reverse().map(b => `<div class="row"><span class="tag${b.date === RADAR.updated ? ' green' : ''}">${esc(b.date)}</span><span class="t">${esc(b.label)}</span><span class="d">#${b.ids[0]}${b.ids[1] !== b.ids[0] ? '–#' + b.ids[1] : ''} · ${b.n} 条</span></div>`).join('');
   const body = `<div class="crumb"><a href="../index.html">首页</a> / 雷达</div>
 <section class="hero sheet rd-hero"><div class="say"><span class="kk">${esc(RADAR.title)} · 更新 ${esc(RADAR.updated)} ${esc(RADAR.tz)}</span><h1>${ic('radar', 26)} ${esc(RADAR.subtitle)}</h1>
-<p>雷达 bot 从 ${esc(RADAR.source.account)} 的 X 时间线（${grp(sc.own_timeline_posts || 0)} 条，${esc(sc.date_range || '')}）、GitHub 搜索、Hacker News 和工程博客里挑出的开源项目与做法，按工具链方向分组，每条写清是什么、可以借鉴什么。${(() => { const d = (String(RADAR.source.githubNote || '').match(/抓取于 (\d{4}-\d\d-\d\d)/) || [])[1]; return d ? `星数、License、最近推送来自 GitHub API（抓取于 ${esc(d)}，日期为北京时间）；没写星数的是无仓库或仓库未核实。` : ''; })()}帖子里的效果数字是作者自述，没有复现。</p></div>
+<p>雷达 bot 从 ${esc(RADAR.source.account)} 的 X 时间线（${grp(sc.own_timeline_posts || 0)} 条，${esc(sc.date_range || '')}）、GitHub 搜索、Hacker News 和工程博客里挑出的开源项目与做法，按工具链方向分组，每条写清是什么、可以借鉴什么。${(() => { const gn = String(RADAR.source.githubNote || ''), d = (gn.match(/(\d{4}-\d\d-\d\d) ?全量刷新/) || gn.match(/抓取于 (\d{4}-\d\d-\d\d)/) || [])[1]; return d ? `星数、License、最近推送来自 GitHub API（抓取于 ${esc(d)}，日期为北京时间）；没写星数的是无仓库或仓库未核实。` : ''; })()}帖子里的效果数字是作者自述，没有复现。</p></div>
 <div class="stage"><div class="stat blue"><b>${E.length}</b><span>个条目</span></div><div class="stat green"><b>${E.filter(e => e.verified).length}</b><span>个仓库已核实</span></div><div class="stat"><b>${TH.filter(t => t.n).length}</b><span>个方向</span></div><div class="stat amber"><b>${latest.length}</b><span>${md(RADAR.updated)} 新增</span></div></div></section>
+${wkBlock}
 <details class="panel rd-log"><summary>${ic('history', 15)} 补录记录 <span class="s">${RADAR.batches.length} 次，首版 ${esc(RADAR.generated)}</span></summary><div class="pb"><div class="list">${batches}</div></div></details>
 <div class="pi-bar rd-bar"><span class="lb">${ic('funnel', 13)}方向</span>${chip('', '全部', E.length)}${TH.filter(t => t.n).map(t => chip(t.key, t.title, t.n)).join('')}<button type="button" class="chip" data-new="1">只看 ${md(RADAR.updated)} 新增<em>${latest.length}</em></button></div>
 <div class="rd-q"><label>${ic('search', 15)}<input id="rd-q" type="search" placeholder="搜项目名、仓库或关键词" aria-label="搜索雷达条目"></label><span id="rd-cnt"></span></div>
