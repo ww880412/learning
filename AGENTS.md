@@ -16,6 +16,7 @@ Codex、Cursor、Claude Code、其他 Grok Bot 改这个仓库前先读这一页
 | `data/columns.json`、`items.json`、`concepts.json`、`inbox.json`、`ph-inspo.json`、`dsh-plugins.json` | 数据源 | 能，改完 `node build.mjs` |
 | `data/review.json` | 数据源，但构建会补排期，浏览器也会写 | 能，只改自己的条目，见第 4 节 |
 | `data/radar.json` | `scripts/sync-radar.mjs` 生成 | 不要手改，重跑同步脚本 |
+| `data/radar-weekly/*.md` | `scripts/sync-radar.mjs` 从 `/workspace/agent-workbench/weekly/` 原样复制（雷达周报原文，文件名是北京日期） | 不要手改，改雷达目录里的源文件再同步 |
 | `favorites.json` | 浏览器经 GitHub API 写 | 不要手改 |
 | `index.html`、各栏目 `*/index.html`（`courses/`、`x-posts/`、`research/`、`wechat/`、`video/`、`ph-inspo/`、`dsh-plugins/`、`radar/`、`favorites/`）、课程主题页（如 `courses/cs146s/index.html`）、`glossary.html`、`concepts/*.html`、`digest/*.html`、`data/digest/*.json`、`review.md` | `build.mjs` 生成 | **不要手改**，改模板或数据后重建 |
 | `x-brief/**` | X Brief bot 的 `/workspace/x-brief/site/build.py` 生成 | 不要手改，下次发布会整目录重写 |
@@ -34,7 +35,7 @@ Codex、Cursor、Claude Code、其他 Grok Bot 改这个仓库前先读这一页
 | X Brief（`/workspace/x-brief/site/publish.sh`，工作区 `/workspace/learning`，detached HEAD，推 `HEAD:main`） | 每天美东 21:00（北京 09:00） | `x-brief/`（含 `weekly/`）、`index.html`、`digest/`、`data/digest/` | `x-brief: update <日期>` |
 | X海报日报（`publish_gallery.py`，工作区 `/workspace/learning-main` 的 `main`） | 每天美东 20:15 起（北京 08:15），约 25 分钟 | `x-posters/`、`index.html`、`digest/`、`data/digest/` | `x-posters: update <日期>` |
 | PH灵感箱 | 约美东 08:00 | `data/ph-inspo.json`、`ph-inspo/index.html`、`index.html`、`digest/`、`data/digest/` | `ph-inspo: …` |
-| Agent工作台雷达 | 每周一（北京 09:00 周报），平时随时补录 | 先 `node scripts/sync-radar.mjs`（读 `/workspace/agent-workbench`）写 `data/radar.json`，再 `node build.mjs` 写 `radar/index.html` 等 | — |
+| Agent工作台雷达（指挥家代为发布，步骤见 `/workspace/agent-workbench/SYNC.md`） | 每周一（北京 09:00 周报），平时随时补录 | 先 `node scripts/sync-radar.mjs`（读 `/workspace/agent-workbench`）写 `data/radar.json` 和 `data/radar-weekly/`，再 `node build.mjs` 写 `radar/index.html`、`radar/weekly/<日期>.html` 等 | `radar: …` |
 | 学习搭子 | 不定时 | 学习页（`courses/…`、`x-posts/…`、`research/…`、`wechat/…`、`video/…`）、`data/items.json`、`data/concepts.json`、`data/review.json`，以及构建后的全部生成页 | `courses: …`、`x-posts: …`、`review.json：…` |
 | 浏览器（王玮点收藏、学完了、今日勾选） | 随时 | `favorites.json`、`data/review.json`（GitHub Contents API 直接提交） | `fav: + / - …`、`learn: …`、`review: …` |
 
@@ -44,7 +45,7 @@ Codex、Cursor、Claude Code、其他 Grok Bot 改这个仓库前先读这一页
 
 - **`data/review.json`**：复习队列，跨设备以它为准。每条 `{item, learned?, start, reviews:[{day, date, done, doneOn?}]}`，间隔 1/3/7/14/30 天。`learned` 是「学完了」的北京日期；`reviews[].done` 是这一次复习做没做，`doneOn` 是完成日。构建会给新学习页补排期，但保留已有的 `learned`、`done`、`doneOn`，丢了会直接报错。浏览器写入只补、取更早的日期，从不删 `learned`。
 - 首页「今日」打开时会重新读仓库里的 `data/review.json`（有令牌走 API，没令牌读 Pages 副本），所以浏览器提交的勾选不用等 bot 重建就能在别的设备上生效（Pages 副本最多有约 10 分钟缓存）。
-- **`data/radar.json`**：只由 `scripts/sync-radar.mjs` 生成。
+- **`data/radar.json`**：只由 `scripts/sync-radar.mjs` 生成。周报原文放在雷达目录 `weekly/YYYY-MM-DD.md`（北京日期，第一行是标题，`**结论先说**` 后的编号列表进页头），同步到 `data/radar-weekly/`，`build.mjs` 生成 `radar/weekly/YYYY-MM-DD.html` 并在雷达页列出。
 - **收藏**：存仓库根目录的 `favorites.json`（公开，只存标题、链接、标签）。
 - **一枚令牌，三处共用**：每个浏览器在收藏页「同步设置」填一次 GitHub fine-grained token，存在 localStorage `fav:token`。`assets/gh.js` 负责读写仓库文件（sha 冲突会重读重试）；`assets/favorites.js` 用它写 `favorites.json`；`assets/progress.js` 用它写 `data/review.json`。没令牌时只记在本机，提示指向「同步设置」。不再有「同步链接」或 `#sync=`。
 - **`favorites.js` 必须能单独引用。** X 简报、海报页只带 `<script src=".../assets/favorites.js">` 这一个脚本，缺 `gh.js` 时它自己补载 `gh.js`，再补 `progress.js`。不要改成依赖页面先引 `gh.js`（PR #7 这样改过，简报、海报页的收藏按钮全丢了，PR #9 修回）。
