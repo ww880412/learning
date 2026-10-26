@@ -43,6 +43,7 @@ Codex、Cursor、Claude Code、其他 Grok Bot 改这个仓库前先读这一页
 ## 4. 数据和同步
 
 - **`data/review.json`**：复习队列，跨设备以它为准。每条 `{item, learned?, start, reviews:[{day, date, done, doneOn?}]}`，间隔 1/3/7/14/30 天。`learned` 是「学完了」的北京日期；`reviews[].done` 是这一次复习做没做，`doneOn` 是完成日。构建会给新学习页补排期，但保留已有的 `learned`、`done`、`doneOn`，丢了会直接报错。浏览器写入只补、取更早的日期，从不删 `learned`。
+- 首页「今日」打开时会重新读仓库里的 `data/review.json`（有令牌走 API，没令牌读 Pages 副本），所以浏览器提交的勾选不用等 bot 重建就能在别的设备上生效（Pages 副本最多有约 10 分钟缓存）。
 - **`data/radar.json`**：只由 `scripts/sync-radar.mjs` 生成。
 - **收藏**：存仓库根目录的 `favorites.json`（公开，只存标题、链接、标签）。
 - **一枚令牌，三处共用**：每个浏览器在收藏页「同步设置」填一次 GitHub fine-grained token，存在 localStorage `fav:token`。`assets/gh.js` 负责读写仓库文件（sha 冲突会重读重试）；`assets/favorites.js` 用它写 `favorites.json`；`assets/progress.js` 用它写 `data/review.json`。没令牌时只记在本机，提示指向「同步设置」。不再有「同步链接」或 `#sync=`。
