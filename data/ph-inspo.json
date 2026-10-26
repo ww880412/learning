@@ -24,6 +24,187 @@
   ],
   "days": [
     {
+      "date": "2026-10-25",
+      "source": "https://www.producthunt.com/leaderboard/daily/2026/10/25",
+      "fetched": "2026-10-26 08:10 EDT",
+      "note": "排名为当日结束时的名次；分数是 PH 页面给出的综合分（投票、讨论等），抓取时的数值，不是纯票数。当天是周日，榜单共 12 个产品。星数为抓取时 GitHub API 数值。今日未与《P-Hunt内容速览》交叉核对。",
+      "items": [
+        {
+          "id": "2026-10-25-moli",
+          "name": "Moli by Lexmount",
+          "tagline": "The fastest headless browser for agents and harnesses",
+          "ph": "https://www.producthunt.com/products/lexmount-browser",
+          "site": "https://browser.lexmount.com/",
+          "repo": null,
+          "rank": 1,
+          "score": 284,
+          "comments": 68,
+          "what": "专门给 AI agent 从零写的无头浏览器引擎，通过 Lexmount Browser 云平台提供，多会话隔离、带代理。",
+          "problem": "agent 跑网页任务时用 Chrome 冷启动慢、吃内存，自己维护浏览器集群又麻烦。",
+          "highlight": "官方基准称冷启动约为 Chrome 的 5 倍快、内存约 1/7（厂商自测，未独立验证）；SDK 支持 Playwright、CDP、扩展、下载和会话回放；结果可交付成带来源链接的 CSV。$12/月含 100 浏览器小时、25 并发。引擎本身不开源，GitHub 上只有 JS/Python SDK 示例仓库。",
+          "inspo": "工作台里给 agent 配「浏览器能力」时，会话回放 + 可核对来源的结果是值得抄的验收形态；浏览器层建议直接接现成服务或 Playwright，不必自研。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "AI工具"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-25-agentgrid",
+          "name": "AgentGrid.io",
+          "tagline": "Shared workspace for humans and agents",
+          "ph": "https://www.producthunt.com/products/agentgrid-io",
+          "site": "https://agentgrid.io/",
+          "repo": null,
+          "rank": 3,
+          "score": 197,
+          "comments": 8,
+          "what": "人和多个 AI agent 共用的「云盘」：文档、报告、幻灯片、网页应用、设计都放在同一份在线产物上一起改。",
+          "problem": "AI 做出来的东西散落在各个聊天窗口里，没法共享、没法接力改，也看不出谁改了什么。",
+          "highlight": "对人是 Google Docs 式多人编辑，对 agent 是 Markdown + Git 接口；Claude、ChatGPT、Codex、Cursor 等通过 MCP、CLI、API 接入；每份产物有固定链接、版本历史和按 agent 的读写权限。出自 Anima 团队，有免费档。",
+          "inspo": "「对人像文档、对 agent 像 Git」正是企业工作台里共享资产/知识库的一种做法：同一份产物两种接口、按 agent 分权限、全程留版本。可以拿它的权限和版本模型做对照。",
+          "tags": [
+            "coding agent",
+            "AI工具",
+            "效率"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-25-openstatus-incident",
+          "name": "Openstatus Incident Management",
+          "tagline": "Incident management for small teams",
+          "ph": "https://www.producthunt.com/products/openstatus-2",
+          "site": "https://www.openstatus.dev",
+          "repo": "https://github.com/openstatusHQ/openstatus",
+          "rank": 4,
+          "score": 170,
+          "comments": 14,
+          "what": "开源状态页/监控工具 Openstatus 新增的事故管理：在监控和状态页旁边直接处理线上事故。",
+          "problem": "小团队出事故时，宣布、拉群、记时间线、写复盘分散在好几个工具里，大厂级事故平台又太贵。",
+          "highlight": "在 Slack 里宣布事故，每个事故自动开一个频道，记时间线，并起草事后复盘；和监控、状态页放在一起。开源（AGPL-3.0，TypeScript，抓取时约 9.2k 星），有 CLI、API、Terraform。",
+          "inspo": "「从聊天里宣布 → 自动开频道 → 时间线 → 起草复盘」这条链可以直接套到 agent 任务的失败处理和收尾上（类似 claude-brain 的 closeout）。",
+          "tags": [
+            "开发者工具",
+            "开源"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-25-git-flow-next",
+          "name": "git-flow-next",
+          "tagline": "Your favorite Git workflow. Reimagined.",
+          "ph": "https://www.producthunt.com/products/tower",
+          "site": "https://git-flow.sh",
+          "repo": "https://github.com/gittower/git-flow-next",
+          "rank": 5,
+          "score": 133,
+          "comments": 2,
+          "what": "Tower 团队用 Go 重写的 git-flow 继任者，2.1 版加入 worktree 支持。",
+          "problem": "多个 coding agent 并行改同一个仓库时互相踩脚，要么来回 stash/切分支，要么手工管 worktree。",
+          "highlight": "--worktree 让每个 feature 起在独立目录；可把 worktree 设为默认，这样 Claude Code、Codex 开的每个 feature 自动有自己的目录；feature 收尾时自动清理 worktree。兼容旧 git-flow 配置，获原作者 Vincent Driessen 认可。开源 BSD-2-Clause（抓取时约 470 星），brew install git-flow-next。",
+          "inspo": "「每个 agent 一个 worktree、结束自动清理」是多 agent 并行的基础设施，王玮这边已有多 worktree 并行的实际场景，可以直接试用或把这套约定写进工作台的任务启动/收尾流程。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "开源"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-25-llama-windows",
+          "name": "Llama Windows",
+          "tagline": "One local AI server for all your Windows apps",
+          "ph": "https://www.producthunt.com/products/llama-windows",
+          "site": "https://llama.app/",
+          "repo": "https://github.com/ggml-org/Llama-Windows",
+          "rank": 6,
+          "score": 125,
+          "comments": 4,
+          "what": "llama.cpp 团队和 Hugging Face 出的 Windows 11 托盘应用，一键下开源模型、Alt+Space 本地聊天。",
+          "problem": "每个本地 AI 应用都各自下一份几十 GB 的模型、各起一个服务，普通用户还得敲命令行。",
+          "highlight": "提供一个共享的本地 OpenAI 兼容接口（localhost:9931/v1），coding agent、编辑器、脚本都连它；模型放在通用的 Hugging Face 缓存里不重复下载；按电脑配置推荐模型；不需要终端和管理员权限。免费开源（MIT，C#，抓取时约 290 星）。",
+          "inspo": "「一台机器一个本地模型服务、所有工具共享」的思路适合企业工作台的本地/离线模式：统一入口 + 共享缓存，比每个插件各自管模型省事。",
+          "tags": [
+            "AI工具",
+            "开发者工具",
+            "开源"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-25-papermark-data-rooms",
+          "name": "Papermark Data Rooms",
+          "tagline": "Secure data rooms your AI agents can run. Live in < 60 sec.",
+          "ph": "https://www.producthunt.com/products/papermark-2",
+          "site": "https://www.papermark.com",
+          "repo": "https://github.com/papermark/papermark",
+          "rank": 7,
+          "score": 110,
+          "comments": 14,
+          "what": "开源 DocSend 替代品 Papermark 的数据室 2.0：60 秒内建好融资/并购用的加密资料室，agent 也能操作。",
+          "problem": "搭一个数据室要几天，看不到谁读了材料，品牌是供应商的，而且 AI agent 碰不到这些资料。",
+          "highlight": "文件权限、内置问答、完整审计日志、逐页阅读分析，可白标到自己的域名；提供 API、CLI 和 MCP，对 Claude/Cursor 说一句「建一个某项目的买方并购资料室」就返回文件夹、权限和分享链接。代码开源（主体 AGPL-3.0，ee 目录为商业许可，抓取时约 9.3k 星）。",
+          "inspo": "「一句话让 agent 建好带权限和审计的资产空间」可以对照到企业知识库：MCP 暴露的不只是读写，而是带权限模板的「建空间」动作。",
+          "tags": [
+            "AI工具",
+            "效率",
+            "开源"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-25-yourcast",
+          "name": "Yourcast 2.0",
+          "tagline": "AI summaries with tap-to-jump timestamps, right in Telegram",
+          "ph": "https://www.producthunt.com/products/yourcast",
+          "site": "https://t.me/yourcastbot",
+          "repo": "https://github.com/amadevstudio/yourcastbot",
+          "rank": 11,
+          "score": 89,
+          "comments": 4,
+          "what": "Telegram 里的播客机器人：搜索订阅播客、新集自动推到聊天里，2.0 加了 AI 摘要。",
+          "problem": "想先判断一集播客值不值得花一小时听，又不想为播客再装一个 App。",
+          "highlight": "AI 摘要带时间戳，点时间直接跳到音频对应位置，还能就单集提问；失效的订阅源每天自动重找新地址；用 Telegram Stars 收费（免费每周 10 集）。作者说过去 7 周合并了 85 个 PR，主要由 LLM 写。开源 GPL-3.0（Python）。",
+          "inspo": "「摘要 + 可点击跳回原文时间点」适合 DXK 和学习站：每条要点都能跳回原帖/原视频位置，方便核对出处。",
+          "tags": [
+            "创作",
+            "AI工具",
+            "开源"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-25-how-it-spread",
+          "name": "How It Spread",
+          "tagline": "See how anything went viral, from the first post",
+          "ph": "https://www.producthunt.com/products/how-it-spread",
+          "site": "https://howitspread.com",
+          "repo": null,
+          "rank": 12,
+          "score": 88,
+          "comments": 1,
+          "what": "爆款案例库：收录 1600 多个走红的影视、产品、梗和营销活动，追溯它们是怎么从第一条帖子传开的。",
+          "problem": "做内容和营销的人想学爆款的传播路径，但只能零散地看结果，看不到起点和扩散过程。",
+          "highlight": "作者定位是「病毒传播版的 Mobbin」，按案例拆传播过程；浏览免费，Pro 付费。",
+          "inspo": "可以借鉴「从第一条帖子开始还原传播链」的案例结构，用在王玮 X 账号和 DXK 的选题复盘上。",
+          "tags": [
+            "创作"
+          ],
+          "status": "新发现",
+          "followups": []
+        }
+      ]
+    },
+    {
       "date": "2026-10-24",
       "source": "https://www.producthunt.com/leaderboard/daily/2026/10/24",
       "fetched": "2026-10-25 08:20 EDT",
