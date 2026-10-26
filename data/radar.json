@@ -95,6 +95,15 @@
     251
    ],
    "n": 5
+  },
+  {
+   "date": "2026-10-26",
+   "label": "PH 灵感箱补录（10/25 榜）",
+   "ids": [
+    252,
+    253
+   ],
+   "n": 2
   }
  ],
  "themes": [
@@ -116,7 +125,7 @@
   {
    "key": "harness",
    "title": "harness 与编排",
-   "n": 44
+   "n": 45
   },
   {
    "key": "sandbox",
@@ -136,7 +145,7 @@
   {
    "key": "cost",
    "title": "成本与模型路由",
-   "n": 14
+   "n": 15
   },
   {
    "key": "review",
@@ -7659,6 +7668,77 @@
      "author": "GitHub 仓库核实",
      "date": null,
      "url": "https://github.com/morsechimwai/agent-valley"
+    }
+   ],
+   "added": "2026-10-26"
+  },
+  {
+   "id": 252,
+   "theme": "harness",
+   "name": "git-flow-next 2.1（git-flow 的 Go 重写版；2.1 起按分支自动建独立 worktree，finish 时自动清理；老项目新变化）",
+   "url": "https://github.com/gittower/git-flow-next",
+   "repo": "gittower/git-flow-next",
+   "stars": 466,
+   "license": "NOASSERTION",
+   "pushed": "2026-09-08",
+   "archived": false,
+   "verified": true,
+   "what": "Tower 团队维护的 git-flow 继任者（Go 重写，兼容 git-flow / git-flow-avh 配置，获原作者 Vincent Driessen 认可）。v2.1.0（2026-09-08）加入 worktree：<type> start --worktree 把新分支建在独立目录；gitflow.branch.<type>.worktree 可设为默认；checkout 感知 worktree 并通过 shell-init 自动 cd；list --worktrees 显示每个分支的 worktree 与改动数；finish / delete 时自动释放 worktree。Tower 团队在 PH 帖里的定位是：把 worktree 设为默认后，Claude Code、Codex 等 agent 每开一个 feature 就各有一个目录，可以并行互不干扰。仓库文档本身没有提 agent，「按 agent 隔离」实际是「按分支隔离」。",
+   "borrow": "多 agent 并行的「worktree 生命周期」参考实现。①来源标记（provenance）：internal/worktree/provenance.go 在本地 git config 写 gitflow.worktree.<branch>.managed=true（MarkManaged / ClearMarker / SweepMarkers），并明确排除在可提交的共享配置 .gitflow 之外；清理时只删自己建的，手工建的 worktree 只 detach HEAD、文件和未提交改动原样保留。工作台给 agent 建 worktree 时可以照抄这个「谁建谁删」规则。②路径模板：internal/worktree/path.go 的 ComputePath()，默认 ../{{ repo }}-worktrees/{{ branch }}，支持 {{ branchName }} / {{ topicType }}，相对路径以主 worktree 为基准，纯函数无副作用。③破坏性操作前置检查：cmd/worktree_cleanup.go 的 preflightWorktreeCleanup()，在合并开始前（以及 --continue 恢复时）检查 worktree 是否有进行中的 merge / rebase / bisect / cherry-pick / revert（一律拒绝）、是否有未提交改动（要 --force-worktree）；freeWorktreeForBranch() 执行删除或 detach；redirectPreferringParentWorktree() 处理「人站在要删的目录里」。④子进程改不了父 shell 的 cwd：internal/navigate/cdfile.go 用 GIT_FLOW_CD_FILE 把目标目录写到文件，由 shell-init 生成的包装函数读取后 cd，工作台的 CLI 也可以用这个通道。⑤底层 git 封装 internal/git/worktree.go（解析 git worktree list --porcelain、WorktreeOperationInProgress、Windows 路径大小写折叠 SamePath / foldPath）。",
+   "note": "仓库创建于 2025-03-16（北京时间），非新项目；新变化是 v2.1.0@2026-09-08（worktree 支持），上一个大版本 v2.0.0@2026-08-09（可提交的共享配置 .gitflow）；最近推送 2026-09-08。★466。LICENSE 正文是 BSD-2-Clause，末尾附原版 git-flow / git-flow-avh 的版权声明（同为 BSD-2-Clause），所以 GitHub 识别为 Other（NOASSERTION）。PH 产品页显示当日第 5（Product Hunt 页面）。PH 灵感箱线索。",
+   "sources": [
+    {
+     "author": "PH 灵感箱（10/25 榜，Product Hunt）",
+     "date": null,
+     "url": "https://www.producthunt.com/products/tower"
+    },
+    {
+     "author": "GitHub Release v2.1.0（2026-09-08 北京时间）",
+     "date": null,
+     "url": "https://github.com/gittower/git-flow-next/releases/tag/v2.1.0"
+    },
+    {
+     "author": "GitHub 仓库核实",
+     "date": null,
+     "url": "https://github.com/gittower/git-flow-next"
+    }
+   ],
+   "added": "2026-10-26"
+  },
+  {
+   "id": 253,
+   "theme": "cost",
+   "name": "Llama Windows（ggml-org 官方 Windows 托盘应用：本机托管 llama serve，模型放在 Hugging Face 标准缓存里与其他工具共用）",
+   "url": "https://github.com/ggml-org/Llama-Windows",
+   "repo": "ggml-org/Llama-Windows",
+   "stars": 293,
+   "license": "MIT",
+   "pushed": "2026-10-26",
+   "archived": false,
+   "verified": true,
+   "what": "Llama for Mac 的 WinUI 3 移植版。托盘里一键下载、加载 GGUF 模型；后台管理一个 llama.cpp 的 llama serve 进程（router 模式，按需加载、可限制同时加载的模型数），默认端口 9931（LlamaManager.cs 的 DefaultServerPort），coding agent、编辑器、脚本都可以指向 http://localhost:9931/v1 共用同一个 OpenAI 兼容服务（接口由 llama.cpp 服务端提供，App 只管进程和设置）；模型放在 %USERPROFILE%\\.cache\\huggingface\\hub，与 llama.cpp 和 HF 工具共用一份。Alt+Space 呼出聊天浮层。v0.12.0（10-10）加了监听网卡选择、并行模型上限、KV cache 量化、自定义 serve 参数和一组安全加固；v0.13.0（10-20）自动启用投机解码（作者自报最高约 2 倍速）、按 GGUF 头估算内存给出「能不能跑」判定、安装包从 235 MB 降到 86 MB（自报）。",
+   "borrow": "「本地模型服务」做成团队可用的端点时要注意的安全默认值。①LlamaApp.Common/ServerAuth.cs：监听地址只要不是回环地址就自动生成 256 位 API key，通过 --api-key-file 交给服务端，绝不放进 argv（WMI / 事件日志 4688 / EDR 都能看到进程命令行），客户端每次请求带 Bearer。②LlamaApp.Common/ServeArgumentPolicy.cs：ReservedFlags（--host、--port、--api-key、--models-preset、--models-dir、--ssl* 等）不允许用户在自定义参数里覆盖，因为 llama.cpp 以最后一次出现的参数为准；SecretFlags 的值写日志前脱敏；HF token 走环境变量 HF_TOKEN。工作台的本地模型 / MCP 进程启动器可以直接抄这套「保留参数 + 密钥不进命令行」。③LlamaApp.LlamaCpp/LlamaManager.cs 的 serve 参数构建（--models-max、--models-preset 用 INI 给每个模型单独定 ctx-size）以及「避免两个实例同时拉起两个 llama serve」的串行化处理。④LlamaApp.Common/WebOriginPolicy.cs：内嵌 WebView 只允许显示本机服务同源页面；InstallScriptIntegrity.cs：安装脚本固定 URL + 哈希校验 + 大小上限 + 不跟随重定向。⑤内存估算 LlamaApp.LlamaCpp/{ModelMemoryEstimator,MemoryFit,HardwareFitHeuristic}.cs，可用于「本地能跑哪个模型」的路由前置判断。",
+   "note": "创建 2026-06-29（北京时间），略早于 90 天窗口，但首个 Release v0.0.5-alpha 在 2026-07-27，近 90 天连发 12 个版本；最近 Release v0.13.0@2026-10-20，上一个 v0.12.0@2026-10-10；最近推送 2026-10-26。MIT（已读 LICENSE 文件，版权方 Hugging Face Inc.）。★293。只支持 Windows 11。Hugging Face 博客 2026-10-13 正式发布；Product Hunt 2026-10-25 上榜，当日第 6、125 票（hunted.space 统计页）。PH 灵感箱线索。",
+   "sources": [
+    {
+     "author": "PH 灵感箱（10/25 榜，Product Hunt）",
+     "date": null,
+     "url": "https://www.producthunt.com/products/llama-windows"
+    },
+    {
+     "author": "Hugging Face 博客《Introducing Llama Windows》（2026-10-13）",
+     "date": null,
+     "url": "https://huggingface.co/blog/huggingface/llama-windows"
+    },
+    {
+     "author": "GitHub Release v0.13.0（2026-10-20 北京时间）",
+     "date": null,
+     "url": "https://github.com/ggml-org/Llama-Windows/releases/tag/v0.13.0"
+    },
+    {
+     "author": "GitHub 仓库核实",
+     "date": null,
+     "url": "https://github.com/ggml-org/Llama-Windows"
     }
    ],
    "added": "2026-10-26"
