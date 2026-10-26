@@ -6,7 +6,7 @@ Codex、Cursor、Claude Code、其他 Grok Bot 改这个仓库前先读这一页
 
 - 王玮的学习站，纯静态 HTML。GitHub Pages 直接发布 `main`：https://ww880412.github.io/learning/ 。推到 `main` 大约 1 分钟后上线，没有 CI。
 - 大部分页面由 `node build.mjs` 从 `data/*.json` 生成。没有 npm 依赖，只要 node。
-- **所有日期都按北京时间（Asia/Shanghai）显示。** 唯一例外是 X 简报文件名：`x-brief/YYYY-MM-DD.html` 用美东日期，美东 21:00 发布，等于北京时间次日 09:00，所以页面上按 +1 天显示。海报目录 `x-posters/YYYY-MM-DD/` 已经是北京日期。详细规则见 README「每日汇总」。
+- **所有日期都按北京时间（Asia/Shanghai）显示。** 唯一例外是 X 简报文件名：`x-brief/YYYY-MM-DD.html` 用美东日期，美东 21:00 发布，夏令时等于北京时间次日 09:00、冬令时（2026-11-01 起）等于次日 10:00，都是北京的第二天，所以页面上按 +1 天显示。海报目录 `x-posters/YYYY-MM-DD/` 已经是北京日期。详细规则见 README「每日汇总」。
 
 ## 2. 目录：哪些能手改
 
@@ -32,8 +32,8 @@ Codex、Cursor、Claude Code、其他 Grok Bot 改这个仓库前先读这一页
 
 | 写入方 | 时间 | 写哪些路径 | 提交信息 |
 |---|---|---|---|
-| X Brief（`/workspace/x-brief/site/publish.sh`，工作区 `/workspace/learning`，detached HEAD，推 `HEAD:main`） | 每天美东 21:00（北京 09:00） | `x-brief/`（含 `weekly/`）、`index.html`、`digest/`、`data/digest/` | `x-brief: update <日期>` |
-| X海报日报（`publish_gallery.py`，工作区 `/workspace/learning-main` 的 `main`） | 每天美东 20:15 起（北京 08:15），约 25 分钟 | `x-posters/`、`index.html`、`digest/`、`data/digest/` | `x-posters: update <日期>` |
+| X Brief（`/workspace/x-brief/site/publish.sh`，工作区 `/workspace/learning`，detached HEAD，推 `HEAD:main`） | 每天美东 21:00（夏令时北京 09:00，冬令时北京 10:00） | `x-brief/`（含 `weekly/`）、`index.html`、`digest/`、`data/digest/` | `x-brief: update <日期>` |
+| X海报日报（`publish_gallery.py`，工作区 `/workspace/learning-main` 的 `main`） | 每天美东 20:15 起（夏令时北京 08:15，冬令时北京 09:15），约 25 分钟 | `x-posters/`、`index.html`、`digest/`、`data/digest/` | `x-posters: update <日期>` |
 | PH灵感箱 | 约美东 08:00 | `data/ph-inspo.json`、`ph-inspo/index.html`、`index.html`、`digest/`、`data/digest/` | `ph-inspo: …` |
 | Agent工作台雷达（指挥家代为发布，步骤见 `/workspace/agent-workbench/SYNC.md`） | 每周一（北京 09:00 周报），平时随时补录 | 先 `node scripts/sync-radar.mjs`（读 `/workspace/agent-workbench`）写 `data/radar.json` 和 `data/radar-weekly/`，再 `node build.mjs` 写 `radar/index.html`、`radar/weekly/<日期>.html` 等 | `radar: …` |
 | 学习搭子 | 不定时 | 学习页（`courses/…`、`x-posts/…`、`research/…`、`wechat/…`、`video/…`）、`data/items.json`、`data/concepts.json`、`data/review.json`，以及构建后的全部生成页 | `courses: …`、`x-posts: …`、`review.json：…` |
@@ -55,7 +55,7 @@ Codex、Cursor、Claude Code、其他 Grok Bot 改这个仓库前先读这一页
 
 1. **不手改生成文件。** 改 `build.mjs`、`assets/` 或 `data/`，然后 `node build.mjs`。
 2. **模板改动要扛得住 bot 重写。** 简报、海报 bot 每次发布都会实时读 `assets/vp-head.js` 和 `assets/site.css`，内联进页面，再加一个 `favorites.js`。要让这两类页面变样，改 `assets/` 里这几个文件，不要只改 `x-brief/`、`x-posters/` 里的 HTML，下次发布就被冲掉。
-3. **推之前先拉。** bot 和浏览器随时往 `main` 推。先 `git pull --rebase`（或 `git fetch && git rebase origin/main`），生成文件冲突就以 `origin/main` 为准、重跑 `node build.mjs` 再提交。避开美东 20:15–21:30（北京 08:15–09:30）和美东 08:00 前后推大改动。
+3. **推之前先拉。** bot 和浏览器随时往 `main` 推。先 `git pull --rebase`（或 `git fetch && git rebase origin/main`），生成文件冲突就以 `origin/main` 为准、重跑 `node build.mjs` 再提交。避开美东 20:15–21:30（夏令时北京 08:15–09:30，冬令时北京 09:15–10:30）和美东 08:00 前后推大改动。
 4. **不要弄乱两个 bot 的工作区。** `/workspace/learning-main` 必须停在 `main` 且干净，海报 bot 直接在这里 `git add x-posters index.html && commit && push`；`/workspace/learning` 是 X Brief 的工作区（detached HEAD 跟随 `origin/main`），不要在里面做事；`publish.sh` 发布前会清掉里面没提交的生成文件。自己做事另开 worktree，例如 `git worktree add /workspace/learning-<任务> -b <分支> origin/main`。
 5. **分支 + PR，squash 合并，合并后删分支**（`git push origin --delete <分支>`）。只有 bot 的日常发布直接推 `main`。
 6. **合并前跑测试**（见第 6 节）。
@@ -71,6 +71,7 @@ cd /workspace/learning-<任务>
 # 改源码 / 数据
 node build.mjs                      # 重建所有生成页，并补排 data/review.json
 node scripts/test-progress.mjs      # 纯逻辑测试，打印 ok
+node scripts/test-guards.mjs        # 坏数据拦截：坏 JSON 不写、build.mjs 入口校验，打印 ok
 NODE_PATH=<装了 puppeteer-core 的 node_modules> SHOTS=/workspace/<截图目录> \
   node scripts/browser-progress-check.mjs   # 无头 Chrome（/usr/bin/google-chrome）+ 假 GitHub API，7 项应全部 PASS，并截首页 A/B/C 和一课
 git add -A && git commit -m "…" && git push -u origin <分支>
