@@ -214,6 +214,8 @@ const briefPublishDay = html => {
 };
 // 没有可靠发布时间时：美东文件名 + 1 天 = 北京日期。
 const briefBeijingDate = (fileDate, html) => briefPublishDay(html) || addDays(fileDate, 1);
+// 简报主线条目下的「前提或争议 / 为什么值得看」小行（x-brief build.py 的 <div class="qd">）只在简报页显示，汇总和首页只取第一行
+const noQd = s => String(s || '').replace(/<div class="qd">[\s\S]*?<\/div>/g, '');
 // 简报、海报页里的「另见：…」小链接（x-brief/site/build.py 加的）不是正文，取摘要前去掉
 const noXref = h => String(h).replace(/ ?<a class="xref"[^>]*>[\s\S]*?<\/a>/g, '');
 // 「2026-10-26 08:10 EDT」这类带时区的时刻 → 北京「10/26 20:10」；认不出就返回 null
@@ -251,7 +253,7 @@ const DG = (() => {
     const d = briefBeijingDate(fileDate, h);
     if (brief[d] && (brief[d].href.match(/(\d{4}-\d{2}-\d{2})/) || [])[1] >= fileDate) continue;
     const qm = h.match(/今日主线<\/div>\s*<ol class="quick">([\s\S]*?)<\/ol>/);
-    let lines = qm ? [...qm[1].matchAll(/<li>([\s\S]*?)<\/li>/g)].map(m => T(m[1])).filter(Boolean) : [];
+    let lines = qm ? [...qm[1].matchAll(/<li>([\s\S]*?)<\/li>/g)].map(m => T(noQd(m[1]))).filter(Boolean) : [];
     if (!lines.length) lines = [...h.matchAll(/<h2 id="[^"]+"[^>]*>[\s\S]*?<\/h2>\s*<p>([\s\S]*?)<\/p>/g)].map(m => T(m[1])).filter(Boolean).slice(0, 3);
     brief[d] = { title: T((h.match(/<h1>([\s\S]*?)<\/h1>/) || [])[1]) || `X 简报 · ${fileDate}`, href: `x-brief/${fileDate}.html`, lines: lines.slice(0, 3) };
   }
@@ -417,7 +419,7 @@ ${nx ? `<a class="nx" href="${esc(nx.href)}"${ext(nx.href)}><b>${['已学完', '
     const d = x.slice(0, 10);
     let title = '', sub = '今日主线';
     const qm = h.match(/今日主线<\/div>\s*<ol class="quick">([\s\S]*?)<\/ol>/);
-    if (qm) { const li = qm[1].match(/<li>([\s\S]*?)<\/li>/); if (li) title = T(li[1]); }
+    if (qm) { const li = qm[1].match(/<li>([\s\S]*?)<\/li>/); if (li) title = T(noQd(li[1])); }
     if (!title) {
       const h2 = h.match(/<h2 id="[^"]+"[^>]*>([\s\S]*?)<\/h2>\s*<p>([\s\S]*?)<\/p>/);
       if (h2) { title = T(h2[2]); sub = T(h2[1]) || '简报'; }
