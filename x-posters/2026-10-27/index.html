@@ -1106,11 +1106,23 @@ details.panel.about{margin-top:14px}details.panel.about>summary{font-weight:550;
 /* 产品灵感：更早的榜单收起；每天的说明收成一个小按钮 */
 details.panel.pi-old{margin-top:20px}details.panel.pi-old .pi-day{margin-top:14px}
 .pi-note{display:inline}.pi-note>summary{display:inline;cursor:pointer;color:var(--blue);list-style:none}.pi-note>summary::-webkit-details-marker{display:none}.pi-note[open]{display:block;margin-top:4px}
+/* 产品灵感：标题下「先看 3 个」 */
+.pi-picks{margin:10px 0 12px;padding:10px 12px;border:1px solid var(--hair);border-radius:var(--r-sm);background:var(--card)}
+.pi-picks .lb{font-size:13px;font-weight:600;color:var(--ink2);margin-bottom:4px}
+.pi-picks ol{margin:0;padding-left:22px}.pi-picks li{margin:6px 0;font-size:15px;line-height:1.6}
+.pi-picks li a{color:var(--ink);text-decoration:none}.pi-picks li a b{border-bottom:1px solid var(--blue)}
+.pi-picks .lim{display:block;font-size:14px;color:var(--ink);margin-top:2px}.pi-picks .lim .tag{margin-right:6px;font-size:12px}
+.pi-card:target{outline:2px solid var(--blue);outline-offset:2px}
+/* 雷达周报「结论先说」：每条拆成 解决什么 / 抄哪一处 / 还要确认 三行 */
+.quick li .ql{display:block;font-size:14.5px;line-height:1.6;margin-top:3px;color:var(--ink)}
+.quick li .ql b{display:inline-block;min-width:4.6em;margin-right:6px;color:var(--ink2);font-weight:600}
 .pgrid{display:grid;gap:18px}.pc{display:grid;grid-template-columns:300px 1fr;gap:20px;align-items:start}
 .pc img{width:100%;border-radius:12px;border:1px solid var(--hair);display:block}.pc h3{margin-top:0}
 .xi{font-size:14.5px}.xi .who{font-weight:700}.xi .h{color:var(--ink2)}.xi blockquote{margin:10px 0;padding:10px 14px;background:var(--paper);border-radius:10px;white-space:pre-wrap;font-size:14px}
 .thumbs{display:flex;gap:6px;overflow-x:auto}.ptoc{margin:4px 0 10px;gap:2px;grid-template-columns:1fr!important}.ptoc li{padding:5px 8px 5px 36px;line-height:1.5;font-size:15px;background:none!important;border:0!important;box-shadow:none!important}.ptoc li::before{top:6px;left:8px}.sa{margin:0 0 8px}.sa .xref{margin:0 6px 4px 0}.thumbs img{height:120px;border-radius:6px;border:1px solid var(--hair)}
-@media(max-width:700px){.pc{grid-template-columns:1fr}}</style><script>/*ICONS lucide v1.60.0 ISC*/window.__IC={"menu":"<path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/>","x":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","star":"<path d=\"M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z\"/>","party-popper":"<path d=\"M5.8 11.3 2 22l10.7-3.79\"/><path d=\"M4 3h.01\"/><path d=\"M22 8h.01\"/><path d=\"M15 2h.01\"/><path d=\"M22 20h.01\"/><path d=\"m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10\"/><path d=\"m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17\"/><path d=\"m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7\"/><path d=\"M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z\"/>"};window.__ic=function(n,s,c){return '<svg class="i i-'+n+(c?' '+c:'')+'" width="'+(s||16)+'" height="'+(s||16)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(window.__IC[n]||'')+'</svg>'};/*END ICONS*/
+@media(max-width:700px){.pc{grid-template-columns:1fr}}
+.pc2 h3{margin:4px 0 6px}.pc2 .tags{margin:0 0 6px;display:flex;gap:6px;flex-wrap:wrap}.pc2 .tag.amber{background:var(--amber-soft);color:var(--amber)}.pc2 .new{font-size:14.5px;color:var(--ink2);margin:0 0 6px}.pc2 .take{font-size:16px;font-weight:600;margin:8px 0}.pc2 .pts{margin:0 0 10px;padding-left:20px}.pc2 .pts li{margin:3px 0}.pc2 .q{font-size:14.5px;margin:0 0 10px;color:var(--ink)}.pc2 .q span{color:var(--ink2);margin-left:4px}
+.pc2 .thumb{display:block;max-width:420px}.pc2 .thumb{background:none;overflow:visible}.pc2 .thumb img{width:100%;height:auto;aspect-ratio:auto;object-fit:contain;border-radius:var(--r-sm);border:1px solid var(--hair);display:block}.pc2 .thumb span{display:block;font-size:13px;color:var(--blue);margin-top:4px}.pc2 .srcl{font-size:13.5px;color:var(--ink2);margin:8px 0 0}</style><script>/*ICONS lucide v1.60.0 ISC*/window.__IC={"menu":"<path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/>","x":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","star":"<path d=\"M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z\"/>","party-popper":"<path d=\"M5.8 11.3 2 22l10.7-3.79\"/><path d=\"M4 3h.01\"/><path d=\"M22 8h.01\"/><path d=\"M15 2h.01\"/><path d=\"M22 20h.01\"/><path d=\"m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10\"/><path d=\"m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17\"/><path d=\"m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7\"/><path d=\"M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z\"/>"};window.__ic=function(n,s,c){return '<svg class="i i-'+n+(c?' '+c:'')+'" width="'+(s||16)+'" height="'+(s||16)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(window.__IC[n]||'')+'</svg>'};/*END ICONS*/
 (function(){var T='site-theme',v;try{v=localStorage.getItem(T)}catch(e){}if(!/^[ABC]$/.test(v||''))v='C';document.documentElement.setAttribute('data-theme',v);
 window.__setTheme=function(t){var go=function(){__applyTheme(t)};if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.startViewTransition(go);else go()};window.__applyTheme=function(t){document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem(T,t)}catch(e){}[].forEach.call(document.querySelectorAll('.thsw button'),function(b){b.setAttribute('aria-pressed',b.dataset.t===t)})}})();
 (function(){var k='theme',s=localStorage.getItem(k);if(s?s==='dark':matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark');
@@ -1138,182 +1150,11 @@ document.addEventListener('DOMContentLoaded',go);addEventListener('hashchange',g
 document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href^="#"]');if(a&&a.getAttribute('href')===location.hash)setTimeout(go,0)})})();
 </script><script src="../../assets/favorites.js" defer></script></head><body>
 <header class="top"><div class="in"><a class="brand" href="../../index.html"><i><svg class="i i-book-open" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/></svg></i>王玮的学习库</a><nav><a href="../../index.html" class="">首页</a><a href="../../favorites/index.html" class="">收藏</a><a href="../../courses/index.html" class="s1">公开课</a><a href="../../x-posts/index.html" class="">X 好文</a><a href="../../research/index.html" class="">技术研究</a><a href="../../wechat/index.html" class="">微信公众号</a><a href="../../video/index.html" class="">视频</a><a href="../../glossary.html" class="">概念卡</a><a href="../../x-brief/index.html" class="s2">X 简报</a><a href="../../x-posters/index.html" class="on">X 海报</a><a href="../../ph-inspo/index.html" class="">产品灵感</a><a href="../../radar/index.html" class="">雷达</a><a href="../../dsh-plugins/index.html" class="">DSH 插件</a></nav><button class="dm" onclick="__tt()" aria-label="切换深色模式"><svg class="i i-sun-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2"/><path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715"/><path d="M16 12a4 4 0 0 0-4-4"/><path d="m19 5-1.256 1.256"/><path d="M20 12h2"/></svg></button></div></header>
-<main><div class="crumb"><a href="../../index.html">首页</a> / <a href="../index.html">X 海报</a> / 2026-10-27（周二）</div><section class="sheet"><span class="kk">DAILY · 2026-10-27（周二） · 北京时间</span><h1>7 张技术海报</h1><ol class="quick ptoc"><li><a href="#p1">Nodecode：只给 Agent 一个工具（Lisp eval）的自改写 Agent</a></li><li><a href="#p2">ThinkRail：JetBrains 开源的 agentic IDE（套壳 pi，worktree 工作区 + SPEC 图）</a></li><li><a href="#p3">FanXing：三大模型的性格差异，以及我怎么把它们组合成开发循环</a></li><li><a href="#p4">GPT-6.1 Terra 发布：便宜一半、快 3 倍的电脑操作模型</a></li><li><a href="#p5">Cindy：登顶 GitHub Trending 的开源 Agent 客户端（Claude Code / Codex 多 harness）</a></li><li><a href="#p6">HachimoDock 哈基米机：把 Codex / Claude Code 状态变成桌宠表情的 ESP32 小屏</a></li><li><a href="#p7">Colorfigures：一句话生成可转动、可透视的手绘 3D 交互物件的 Skill</a></li></ol><p class="muted">点标题跳到那张海报；点海报看原图。发帖时间是北京时间。</p></section><div class="pgrid"><section class="sheet pc" id="p1"><a href="img/01-nodecode-one-tool-lisp-agent.png" target="_blank"><img src="img/01-nodecode-one-tool-lisp-agent.webp" alt="Nodecode：只给 Agent 一个工具（Lisp eval）的自改写 Agent" loading="lazy"></a>
-<div><span class="kk">#1 · X 原帖信息</span><h3>Nodecode：只给 Agent 一个工具（Lisp eval）的自改写 Agent</h3><div class="xi"><span class="who">Xiao Tan</span> <span class="h">@tvytlx</span><br>发帖时间：2026-10-27 04:22 北京<br>原帖：<a href="https://x.com/tvytlx/status/2114814825121337473" target="_blank" rel="noopener">https://x.com/tvytlx/status/2114814825121337473</a><br>原文链接：<a href="https://github.com/nodecode-ai/nodecode" target="_blank" rel="noopener">https://github.com/nodecode-ai/nodecode</a><blockquote>### X post (@tvytlx)
-
-大家都在给 Agent 狂塞各种 MCP 和技能插件，有两个哥们反手把 Agent 的工具砍到了只剩一个。
-
-结果有点反直觉。
-
-用同样的模型去打穿 ARC-AGI-3 的全部 25 个公开游戏，这玩意消耗的 Token 比 Claude Code 少了 54%，比 Codex CLI 少了 66%，账单直接省了四成。
-
-项目叫 Nodecode，底层是用 Common Lisp 写的。
-
-我看完它的设计，真觉得这帮做工程的脑子太清醒了。
-
-现在的 Agent 记东西靠写 Markdown，调工具靠往上下文里塞一大堆 JSON 说明书。模型每动一下，都要交极其高昂的“通信税”。
-
-这俩哥们直接搬出了 Lisp 祖师爷麦卡锡在 1984 年定下的规矩：代码即数据。
-
-他们只给大模型留了一个工具，就是 Lisp 的解释器 eval。
-
-整个 Agent 跑在一个常驻内存的进程里。你跟它说“你不会读 PDF，自己学一下”，它当场写一个 read-pdf 函数，直接热更新进自己正在跑的程序里，顺手用 Git 存个档。
-
-全程不需要重启。
-
-从这一秒开始，你的终端、浏览器、还有挂在 Discord 和 Telegram 里的机器人，因为连的都是同一个本地网关，全都长出了读 PDF 的能力。
-
-它连管自己的上下文都不做摘要。
-
-别的框架窗口满了就让模…</blockquote></div><p class="muted"><a href="img/01-nodecode-one-tool-lisp-agent.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p2"><a href="img/02-thinkrail-jetbrains-pi-agentic-ide.png" target="_blank"><img src="img/02-thinkrail-jetbrains-pi-agentic-ide.webp" alt="ThinkRail：JetBrains 开源的 agentic IDE（套壳 pi，worktree 工作区 + SPEC 图）" loading="lazy"></a>
-<div><span class="kk">#2 · X 原帖信息</span><h3>ThinkRail：JetBrains 开源的 agentic IDE（套壳 pi，worktree 工作区 + SPEC 图）</h3><div class="xi"><span class="who">Viking</span> <span class="h">@vikingmute</span><br>发帖时间：2026-10-26 09:39 北京<br>原帖：<a href="https://x.com/vikingmute/status/2114532351464308958" target="_blank" rel="noopener">https://x.com/vikingmute/status/2114532351464308958</a><br>原文链接：<a href="https://thinkrail.ai/" target="_blank" rel="noopener">https://thinkrail.ai/</a><blockquote>### X post (@vikingmute)
-
-JetBrains 还在努力呢，出了一个开源的 agentic IDE ThinkRail，里面是套壳 Pi
-
-https://t.co/d4YIJ0XJeu
-
-外面套了自己的 Monaco + 终端 + diff，主打还是 Workspaces，一个和项目相关的 SPEC.md 文件，这个文件记录项目的状态，ThinkRail 只是套了轻量级的壳 不会偷偷塞任何 prompt 干活的还是 Pi
-
-使用 Pi 的朋友可以试试看 看起来还不错
-
-### GitHub README (JetBrains/thinkrail; repo created 2026-07-08, Apache-2.0; v0.2.0 stable 2026-10-18, v0.3.0-nightly.6 2026-10-25)
-
-# ThinkRail
-
-[![JetBrains incubator project](https://jb.gg/badges/incubator-plastic.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
-[![GitHub stars](https://img.shields.io/github/stars/JetBrain…</blockquote></div><p class="muted"><a href="img/02-thinkrail-jetbrains-pi-agentic-ide.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p3"><a href="img/03-fanxing-three-model-dev-loop.png" target="_blank"><img src="img/03-fanxing-three-model-dev-loop.webp" alt="FanXing：三大模型的性格差异，以及我怎么把它们组合成开发循环" loading="lazy"></a>
-<div><span class="kk">#3 · X 原帖信息</span><h3>FanXing：三大模型的性格差异，以及我怎么把它们组合成开发循环</h3><div class="xi"><span class="who">FanXing</span> <span class="h">@fanxing321</span><br>发帖时间：2026-10-26 18:39 北京<br>原帖：<a href="https://x.com/fanxing321/status/2114668139887968698" target="_blank" rel="noopener">https://x.com/fanxing321/status/2114668139887968698</a><br>原文链接：<a href="https://x.com/i/article/2114591835113046016" target="_blank" rel="noopener">https://x.com/i/article/2114591835113046016</a><blockquote>### X post (@fanxing321)
-
-我对于目前三大主流模型的观点，以及我的开发工作流是如何组合这三个模型的。希望可以对大家有一些帮助 https://t.co/mu1YdhOeTq
-
-### [X Article] Argon &amp; Opus &amp; Astra 的区别（个人观点）
-
-这篇文章并不官方，也不权威，也不具备严谨性，完全是从个人使用体验出发去编写的，欢迎大佬们指正。
-从现象观察
-在 X 上，就可以观察到一些模型区别，很常见的：
-GPT Astra 或 Sol 所编写的代码过度防御，架构稀烂，需要体毛级的提示词才能做好工作。
-Opus 在很多情况下没问题，但是如果拿来做项目，很多地方还是有概率写出 BUG，并且 opus 的代码拿给 gpt review，还是能发现一些问题。
-Gemini 写前端效果炫酷，但是写代码的时候经常遗忘，或者写的代码功能存在问题，无法使用，或者大量bug。
-这三个情况其实可以总结为：One-Shot Prompt 下，GPT 完成率最高，Claude 其次，Gemini 最末。
-但是也有不同的一些情况，比如：
-Gemini 说人话，和他交流很舒服，而且拥有良好的架构思维
-其实这些现象已经呈现出了三个模型的区别，结合我个人的体验感受来讲，我的结论是：
-GPT 最悲观，他的思考也最细节，各种细枝末叶都能想到。
-Gemini 最乐观，他总会…</blockquote></div><p class="muted"><a href="img/03-fanxing-three-model-dev-loop.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p4"><a href="img/04-gpt-6-1-terra-cheaper-computer-use.png" target="_blank"><img src="img/04-gpt-6-1-terra-cheaper-computer-use.webp" alt="GPT-6.1 Terra 发布：便宜一半、快 3 倍的电脑操作模型" loading="lazy"></a>
-<div><span class="kk">#4 · X 原帖信息</span><h3>GPT-6.1 Terra 发布：便宜一半、快 3 倍的电脑操作模型</h3><div class="xi"><span class="who">Super Niu</span> <span class="h">@Super_Nius</span><br>发帖时间：2026-10-27 03:02 北京<br>原帖：<a href="https://x.com/Super_Nius/status/2114794859626471786" target="_blank" rel="noopener">https://x.com/Super_Nius/status/2114794859626471786</a><br>原文链接：<a href="https://openai.com/index/introducing-gpt-6-1-terra/" target="_blank" rel="noopener">https://openai.com/index/introducing-gpt-6-1-terra/</a><blockquote>### X post (@Super_Nius)
-
-OpenAI 自己都承认：GPT-6.1 Terra 打不过 Sol。但大部分人可能该换它 🤔
-
-9 成的能力、一半的价钱、3 倍的速度
-
-差距：第三方智能榜 Terra 48 分、Sol 52 分；最复杂的编程，官方建议还是用 Sol
-
-换来的东西：
-· 价格砍一半，输出每百万 token 5 美元
-· 完成任务快 3 倍多
-· 瞎编率从 88% 降到 38%
-· 同样的会员额度，能干的活比 Sol 多得多 💰
-
-说白了就是 9 成的能力、一半的价钱、3 倍的速度。每天回邮件、整理资料、让 AI 帮你点网页的人，选它更划算
-
-真要写大项目，再切回 Sol 🔁
-
-### OpenAI posts on X (2026-10-26)
-
-[@OpenAI 2026-10-26 14:06 ET] GPT-6.1 Terra continues to advance the cost-intelligence frontier across our model families.
-
-It’s a significant step up over GPT‑5.6 Terra, with 50% lower standard API prices.
-
-In ChatGPT Work and Codex, your usage allowan…</blockquote></div><p class="muted"><a href="img/04-gpt-6-1-terra-cheaper-computer-use.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p5"><a href="img/05-cindy-multi-harness-agent-client.png" target="_blank"><img src="img/05-cindy-multi-harness-agent-client.webp" alt="Cindy：登顶 GitHub Trending 的开源 Agent 客户端（Claude Code / Codex 多 harness）" loading="lazy"></a>
-<div><span class="kk">#5 · X 原帖信息</span><h3>Cindy：登顶 GitHub Trending 的开源 Agent 客户端（Claude Code / Codex 多 harness）</h3><div class="xi"><span class="who">Chris</span> <span class="h">@zkyo</span><br>发帖时间：2026-10-26 15:07 北京<br>原帖：<a href="https://x.com/zkyo/status/2114614997007663141" target="_blank" rel="noopener">https://x.com/zkyo/status/2114614997007663141</a><br>原文链接：<a href="https://github.com/makecindy/cindy" target="_blank" rel="noopener">https://github.com/makecindy/cindy</a><blockquote>### X post (@zkyo)
-
-恭喜 Cindy 排到了 Github Trending 第一：
-https://t.co/spKSqI5CbN
-人生里程碑了！还有我头像！ https://t.co/dLzoogQmv3
-(GitHub Trending daily page fetched 2026-10-26 20:40 ET lists makecindy/cindy among trending repos)
-
-### GitHub README (makecindy/cindy; repo created 2026-07-22, Apache-2.0)
-
-English · 简体中文
-
-  
-  
-  
-  
-
-  🌐 cindy.app &amp;nbsp;·&amp;nbsp; ⬇️ Download
-
-Cindy is an open-source AI agent that works out of the box. She brings multiple
-harnesses, models and tools into one agent that finishes real work in your
-projects and apps. Ready from day one, yours to shape over time.
-
-Cindy runs locally…</blockquote></div><p class="muted"><a href="img/05-cindy-multi-harness-agent-client.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p6"><a href="img/06-hachimodock-esp32-agent-desk-pet.png" target="_blank"><img src="img/06-hachimodock-esp32-agent-desk-pet.webp" alt="HachimoDock 哈基米机：把 Codex / Claude Code 状态变成桌宠表情的 ESP32 小屏" loading="lazy"></a>
-<div><span class="kk">#6 · X 原帖信息</span><h3>HachimoDock 哈基米机：把 Codex / Claude Code 状态变成桌宠表情的 ESP32 小屏</h3><div class="xi"><span class="who">李天才｜TianCai</span> <span class="h">@Lniosytest</span><br>发帖时间：2026-10-26 17:02 北京<br>原帖：<a href="https://x.com/Lniosytest/status/2114643923591151736" target="_blank" rel="noopener">https://x.com/Lniosytest/status/2114643923591151736</a><br>原文链接：<a href="https://github.com/YizhengWw/HachimoDock" target="_blank" rel="noopener">https://github.com/YizhengWw/HachimoDock</a><blockquote>### X post (@Lniosytest)
-
-卧槽，小米开源 AI 桌宠只要 150 块。
-
-名字叫 HachimoDock，哈基米机。
-
-ESP32 小屏，把 Codex、Claude Code 的干活状态变成桌上小狗表情。
-
-语音派任务，抬头一眼知道它在想还是在跑。
-
-源码、BOM、结构件全开，自己焊自己改。
-
-Vibe Coding 第一台实体硬件，门槛打到地板。
-
-#开源硬件 #AIKA https://t.co/ptv3xLhhWk
-
-### GitHub README (YizhengWw/HachimoDock; repo created 2026-06-10; HachimoDock project license, non-commercial)
-
-HachimoDock（哈基米机）
-  哈基米机 HachimoDock：让你的宠物 / 朋友 / 你推变成 AI Agent，和你一起工作
-  
-    把 ChatGPT（Codex）、Claude 等 Agent 的实时工作状态变成桌上宠物的表情、动作、Session 气泡和提醒。
-  
-  
-    
-      
-    
-  
-  
-    硬件方案
-    · 硬件端资料
-    · 图集
-    · 软件架构
-    · 复刻与部署
-    · 快速开始
-    · 常见问题</blockquote></div><p class="muted"><a href="img/06-hachimodock-esp32-agent-desk-pet.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p7"><a href="img/07-colorfigures-3d-interactive-skill.png" target="_blank"><img src="img/07-colorfigures-3d-interactive-skill.webp" alt="Colorfigures：一句话生成可转动、可透视的手绘 3D 交互物件的 Skill" loading="lazy"></a>
-<div><span class="kk">#7 · X 原帖信息</span><h3>Colorfigures：一句话生成可转动、可透视的手绘 3D 交互物件的 Skill</h3><div class="xi"><span class="who">（作者名缺失）</span> <span class="h">@jinglian</span><br>发帖时间：2026-10-26 11:26 北京<br>原帖：<a href="https://x.com/jinglian/status/2114559141008347226" target="_blank" rel="noopener">https://x.com/jinglian/status/2114559141008347226</a><br>原文链接：<a href="https://april-zhu.com/colorfigures" target="_blank" rel="noopener">https://april-zhu.com/colorfigures</a><blockquote>### X post (@jinglian)
-
-喜闻乐见，有越来越多有趣的 3D 立体书出现。
-
-书籍地址👇
-https://t.co/AEpo2q2n4d
-
-制作书籍的技能：https://t.co/DwNoFeIkaw
-
-作者：April @Aprilzz423
-
-https://t.co/URGO4LagVT https://t.co/PJGIR2Axqu
-
-### Quoted post (@jinglian, 2026-10-25)
-
-「交互式的3D 立体书籍」更新了
-
-一本关于能量的3D书籍
-
-现在涵盖了整个GCSE能量主题：动能、引力势能和弹性势能、加热、功率、效率、能源以及能量守恒。
-
-使用 Opus 5.5 和 Three.js 构建。
-
-作者：Techartist @techartist_
-
-https://t.co/W0vRqsRqU6 https://t.co/7NnX5GuOTd
-
-### Colorfigures skill page (april-zhu.com/colorfigures)
-
-Colorfigures skill · April Zhu 
- Colorfigures 
- Colorfigures
- Describe an everyday object. AI draws it hand-inked and isometric, wit…</blockquote></div><p class="muted"><a href="img/07-colorfigures-3d-interactive-skill.png" target="_blank">查看原图 PNG →</a></p></div></section></div><div class="pn"><span></span><a href="../index.html">往期目录</a><a href="../2026-10-26/index.html">2026-10-26 →</a></div><div class="foot">王玮的 X 海报日报 · 每天从 X 推荐流挑技术帖，用 ChatGPT 生成康奈尔笔记海报 · 每张都附 X 原帖信息 · 风格改编自 <a href="https://github.com/vuejs/vitepress">VitePress</a>（MIT）</div></main></body></html>
+<main><div class="crumb"><a href="../../index.html">首页</a> / <a href="../index.html">X 海报</a> / 2026-10-27（周二）</div><section class="sheet"><span class="kk">DAILY · 2026-10-27（周二） · 北京时间</span><h1>7 张技术海报</h1><ol class="quick ptoc"><li><a href="#p1">Nodecode：只给 Agent 一个工具（Lisp eval），边跑边改写自己</a></li><li><a href="#p2">ThinkRail：JetBrains 开源的 agentic IDE，外壳套 pi</a></li><li><a href="#p3">三大模型各有性格：一个聊需求、一个写代码、一个做 review</a></li><li><a href="#p4">GPT-6.1 Terra：价格减半、快 3 倍的电脑操作模型</a></li><li><a href="#p5">Cindy：开源 Agent 客户端，Claude Code 和 Codex 混着用</a></li><li><a href="#p6">HachimoDock 哈基米机：把 Codex / Claude Code 状态变成桌宠表情</a></li><li><a href="#p7">Colorfigures：一句话生成能转、能透视的 3D 小物件</a></li></ol><p class="muted">点标题跳到那张海报；点海报看原图。发帖时间是北京时间。</p></section><div class="pgrid"><section class="sheet pc2" id="p1"><span class="kk">#1</span><h3>Nodecode：只给 Agent 一个工具（Lisp eval），边跑边改写自己</h3><p class="tags"><span class="tag blue">老项目</span><span class="tag amber">未确认：省 token 数据来自开发团队自己的 Foresight Labs 报告</span></p><p class="new">这次新在哪：仓库 2025-08 就建了，10/23 才在 X 首发、10/25 上 Show HN 正式公开，并附 ARC-AGI-3 成本报告</p><p class="take">不往上下文塞工具说明书，让模型在常驻进程里直接写 Lisp 函数，写完就留下、各端共用。</p><ul class="pts"><li>ARC-AGI-3 全部 25 个公开游戏：同模型下 token 比 Claude Code 少 54%、比 Codex CLI 少 66%（团队自测）</li><li>旧对话整条移出窗口、不做摘要，需要时按原文读回</li><li>默认没有沙箱，继承当前账号全部权限，官方建议放进容器或虚拟机</li></ul><p class="q">「他们只给大模型留了一个工具，就是 Lisp 的解释器 eval。」<span>—— Xiao Tan，<a href="https://x.com/tvytlx/status/2114814825121337473" target="_blank" rel="noopener">原帖</a></span></p>
+<a class="thumb" href="img/01-nodecode-one-tool-lisp-agent.png" target="_blank"><img src="img/01-nodecode-one-tool-lisp-agent.webp" alt="Nodecode：只给 Agent 一个工具（Lisp eval），边跑边改写自己" loading="lazy" width="720" height="1080"><span>点击看大图</span></a><p class="srcl">Xiao Tan @tvytlx · <a href="https://x.com/tvytlx/status/2114814825121337473" target="_blank" rel="noopener">原帖</a> · <a href="https://github.com/nodecode-ai/nodecode" target="_blank" rel="noopener">原文</a> · 2026-10-27 04:22 北京</p></section><section class="sheet pc2" id="p2"><span class="kk">#2</span><h3>ThinkRail：JetBrains 开源的 agentic IDE，外壳套 pi</h3><p class="tags"><span class="tag blue">老项目</span></p><p class="new">这次新在哪：仓库 2026-07 创建，10/18 发 0.2.0（每轮改动回执、MCP 调用前在对话里审批），10/25 已到 0.3.0-nightly.6</p><p class="take">IDE 只管工作区、编辑器和界面，模型、技能、上下文压缩全交给 pi，不偷偷拼 prompt。</p><ul class="pts"><li>每个工作区是一个 git worktree，多个 Agent 并行互不干扰</li><li>项目意图写在一张 SPEC.md 规格图里，Agent 用专门工具读写</li><li>0.2.0：每轮改动给一张回执（几个文件、增删多少行）和 Review turn 按钮</li></ul><p class="q">「That isn’t a review. It’s archaeology.」<span>—— Rinat S（ThinkRail 博客），<a href="https://x.com/vikingmute/status/2114532351464308958" target="_blank" rel="noopener">原帖</a></span></p>
+<a class="thumb" href="img/02-thinkrail-jetbrains-pi-agentic-ide.png" target="_blank"><img src="img/02-thinkrail-jetbrains-pi-agentic-ide.webp" alt="ThinkRail：JetBrains 开源的 agentic IDE，外壳套 pi" loading="lazy" width="720" height="1080"><span>点击看大图</span></a><p class="srcl">Viking @vikingmute · <a href="https://x.com/vikingmute/status/2114532351464308958" target="_blank" rel="noopener">原帖</a> · <a href="https://thinkrail.ai/" target="_blank" rel="noopener">原文</a> · 2026-10-26 09:39 北京</p></section><section class="sheet pc2" id="p3"><span class="kk">#3</span><h3>三大模型各有性格：一个聊需求、一个写代码、一个做 review</h3><p class="tags"><span class="tag amber">未确认：作者自称个人体验、不严谨；文章正文只拿到前约 1/3</span></p><p class="take">作者把 GPT 当最悲观的审查者、Gemini 当聊架构的伙伴、Claude 当执行层，串成一个循环。</p><ul class="pts"><li>用 Argon 聊需求和架构，产出 spec 并拆成 issue</li><li>Opus（或速度更快的 Flash）按 issue 开发，开发要快、交互要顺</li><li>GPT 审 PR，再让 Argon 判断哪些是真问题；review 异步、可并发多个需求</li></ul><p class="q">「GPT 最悲观，他的思考也最细节，各种细枝末叶都能想到。」<span>—— FanXing，<a href="https://x.com/fanxing321/status/2114668139887968698" target="_blank" rel="noopener">原帖</a></span></p>
+<a class="thumb" href="img/03-fanxing-three-model-dev-loop.png" target="_blank"><img src="img/03-fanxing-three-model-dev-loop.webp" alt="三大模型各有性格：一个聊需求、一个写代码、一个做 review" loading="lazy" width="720" height="1080"><span>点击看大图</span></a><p class="srcl">FanXing @fanxing321 · <a href="https://x.com/fanxing321/status/2114668139887968698" target="_blank" rel="noopener">原帖</a> · <a href="https://x.com/i/article/2114591835113046016" target="_blank" rel="noopener">原文</a> · 2026-10-26 18:39 北京</p></section><section class="sheet pc2" id="p4"><span class="kk">#4</span><h3>GPT-6.1 Terra：价格减半、快 3 倍的电脑操作模型</h3><p class="tags"><span class="tag amber">未确认：帖子说瞎编率 88%→38%，OpenAI 官方页写的是 53.6%→16.7%（低推理档），以官方为准</span></p><p class="take">日常回邮件、填表、点网页用 Terra 更划算；最复杂的编程官方仍建议 Sol 或 Astra。</p><ul class="pts"><li>API 每百万 token 输入 1 美元、输出 5 美元，比 GPT-5.6 Terra 和 GPT-6.1 Sol 便宜一半</li><li>Agents&#x27; Last Exam 与 GPT-6 Astra 持平，完成任务比 Astra、Sol 快 3 倍多</li><li>Terminal-Bench 4.0 解出 50.3%，是 GPT-5.6 Terra 的两倍多；已上 ChatGPT Work 和 Codex</li></ul><p class="q">「真要写大项目，再切回 Sol」<span>—— Super Niu，<a href="https://x.com/Super_Nius/status/2114794859626471786" target="_blank" rel="noopener">原帖</a></span></p>
+<a class="thumb" href="img/04-gpt-6-1-terra-cheaper-computer-use.png" target="_blank"><img src="img/04-gpt-6-1-terra-cheaper-computer-use.webp" alt="GPT-6.1 Terra：价格减半、快 3 倍的电脑操作模型" loading="lazy" width="720" height="1080"><span>点击看大图</span></a><p class="srcl">Super Niu @Super_Nius · <a href="https://x.com/Super_Nius/status/2114794859626471786" target="_blank" rel="noopener">原帖</a> · <a href="https://openai.com/index/introducing-gpt-6-1-terra/" target="_blank" rel="noopener">原文</a> · 2026-10-27 03:02 北京</p></section><section class="sheet pc2" id="p5"><span class="kk">#5</span><h3>Cindy：开源 Agent 客户端，Claude Code 和 Codex 混着用</h3><p class="tags"><span class="tag blue">老项目</span><span class="tag amber">未确认：Trending 第一来自帖子作者自述</span></p><p class="new">这次新在哪：仓库 2026-07 创建、10/25 GitHub 日榜海报里出现过；10/26 登上 GitHub Trending 第一，同日发 0.1.117（夜间学习沉淀记忆和技能）</p><p class="take">一个本地客户端里换 harness、换模型，工作区、记忆、技能和工具保持连续。</p><ul class="pts"><li>首批支持 Claude Code 和 Codex，可接已付费的 Coding Plan、自带 Key 或本地模型</li><li>一项任务可以让不同 harness×模型分别规划、并行执行、交叉 review</li><li>客户端 Apache-2.0 开源，后端服务不在仓库里；官方包带 TapDB 统计</li></ul><p class="q">「Ready out of the box, never boxed in」<span>—— Cindy README，<a href="https://x.com/zkyo/status/2114614997007663141" target="_blank" rel="noopener">原帖</a></span></p>
+<a class="thumb" href="img/05-cindy-multi-harness-agent-client.png" target="_blank"><img src="img/05-cindy-multi-harness-agent-client.webp" alt="Cindy：开源 Agent 客户端，Claude Code 和 Codex 混着用" loading="lazy" width="720" height="1080"><span>点击看大图</span></a><p class="srcl">Chris @zkyo · <a href="https://x.com/zkyo/status/2114614997007663141" target="_blank" rel="noopener">原帖</a> · <a href="https://github.com/makecindy/cindy" target="_blank" rel="noopener">原文</a> · 2026-10-26 15:07 北京</p></section><section class="sheet pc2" id="p6"><span class="kk">#6</span><h3>HachimoDock 哈基米机：把 Codex / Claude Code 状态变成桌宠表情</h3><p class="tags"><span class="tag blue">老项目</span><span class="tag amber">未确认：帖子说「小米开源」「150 块」「源码全开」；README 写版权归个人、仅限非商业，0.1.167 说明称仓库源码未同步</span></p><p class="new">这次新在哪：仓库 2026-06 创建，10/24 发 0.1.167（语音写入、任务只写入不发送等修复）</p><p class="take">桌上一块 ESP32-P4 小屏，抬头就知道 Agent 在想、在跑、等你确认还是出错了。</p><ul class="pts"><li>桌面端读取 Agent Session，经 USB 下发到小屏，不用联网</li><li>长按按键说话，语音转文字后送回当前 Agent 会话</li><li>用 petui Skill 让 Agent 生成番茄钟、Token 仪表盘等小组件</li></ul><p class="q">「抬头一眼知道它在想还是在跑。」<span>—— 李天才，<a href="https://x.com/Lniosytest/status/2114643923591151736" target="_blank" rel="noopener">原帖</a></span></p>
+<a class="thumb" href="img/06-hachimodock-esp32-agent-desk-pet.png" target="_blank"><img src="img/06-hachimodock-esp32-agent-desk-pet.webp" alt="HachimoDock 哈基米机：把 Codex / Claude Code 状态变成桌宠表情" loading="lazy" width="720" height="1080"><span>点击看大图</span></a><p class="srcl">李天才｜TianCai @Lniosytest · <a href="https://x.com/Lniosytest/status/2114643923591151736" target="_blank" rel="noopener">原帖</a> · <a href="https://github.com/YizhengWw/HachimoDock" target="_blank" rel="noopener">原文</a> · 2026-10-26 17:02 北京</p></section><section class="sheet pc2" id="p7"><span class="kk">#7</span><h3>Colorfigures：一句话生成能转、能透视的 3D 小物件</h3><p class="take">描述一个日常机器，AI 画成手绘等距 3D 网页，按钮能按，还能看到内部零件怎么动。</p><ul class="pts"><li>Claude Code、Codex、Gemini 都能装，产物是单个 HTML 文件</li><li>每个物件约 15–30 分钟、20–40 万 token，AI 会多角度自查</li><li>Skill 是 8 个纯文本小文件，MIT 许可，可商用</li></ul><p class="q">「One sentence in, a working object out」<span>—— April Zhu，<a href="https://x.com/jinglian/status/2114559141008347226" target="_blank" rel="noopener">原帖</a></span></p>
+<a class="thumb" href="img/07-colorfigures-3d-interactive-skill.png" target="_blank"><img src="img/07-colorfigures-3d-interactive-skill.webp" alt="Colorfigures：一句话生成能转、能透视的 3D 小物件" loading="lazy" width="720" height="1080"><span>点击看大图</span></a><p class="srcl"> @jinglian · <a href="https://x.com/jinglian/status/2114559141008347226" target="_blank" rel="noopener">原帖</a> · <a href="https://april-zhu.com/colorfigures" target="_blank" rel="noopener">原文</a> · 2026-10-26 11:26 北京</p></section></div><div class="pn"><span></span><a href="../index.html">往期目录</a><a href="../2026-10-26/index.html">2026-10-26 →</a></div><div class="foot">王玮的 X 海报日报 · 每天从 X 推荐流挑技术帖，用 ChatGPT 生成康奈尔笔记海报 · 每张都附 X 原帖信息 · 风格改编自 <a href="https://github.com/vuejs/vitepress">VitePress</a>（MIT）</div></main></body></html>

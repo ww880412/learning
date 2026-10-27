@@ -1106,11 +1106,23 @@ details.panel.about{margin-top:14px}details.panel.about>summary{font-weight:550;
 /* 产品灵感：更早的榜单收起；每天的说明收成一个小按钮 */
 details.panel.pi-old{margin-top:20px}details.panel.pi-old .pi-day{margin-top:14px}
 .pi-note{display:inline}.pi-note>summary{display:inline;cursor:pointer;color:var(--blue);list-style:none}.pi-note>summary::-webkit-details-marker{display:none}.pi-note[open]{display:block;margin-top:4px}
+/* 产品灵感：标题下「先看 3 个」 */
+.pi-picks{margin:10px 0 12px;padding:10px 12px;border:1px solid var(--hair);border-radius:var(--r-sm);background:var(--card)}
+.pi-picks .lb{font-size:13px;font-weight:600;color:var(--ink2);margin-bottom:4px}
+.pi-picks ol{margin:0;padding-left:22px}.pi-picks li{margin:6px 0;font-size:15px;line-height:1.6}
+.pi-picks li a{color:var(--ink);text-decoration:none}.pi-picks li a b{border-bottom:1px solid var(--blue)}
+.pi-picks .lim{display:block;font-size:14px;color:var(--ink);margin-top:2px}.pi-picks .lim .tag{margin-right:6px;font-size:12px}
+.pi-card:target{outline:2px solid var(--blue);outline-offset:2px}
+/* 雷达周报「结论先说」：每条拆成 解决什么 / 抄哪一处 / 还要确认 三行 */
+.quick li .ql{display:block;font-size:14.5px;line-height:1.6;margin-top:3px;color:var(--ink)}
+.quick li .ql b{display:inline-block;min-width:4.6em;margin-right:6px;color:var(--ink2);font-weight:600}
 .pgrid{display:grid;gap:18px}.pc{display:grid;grid-template-columns:300px 1fr;gap:20px;align-items:start}
 .pc img{width:100%;border-radius:12px;border:1px solid var(--hair);display:block}.pc h3{margin-top:0}
 .xi{font-size:14.5px}.xi .who{font-weight:700}.xi .h{color:var(--ink2)}.xi blockquote{margin:10px 0;padding:10px 14px;background:var(--paper);border-radius:10px;white-space:pre-wrap;font-size:14px}
 .thumbs{display:flex;gap:6px;overflow-x:auto}.ptoc{margin:4px 0 10px;gap:2px;grid-template-columns:1fr!important}.ptoc li{padding:5px 8px 5px 36px;line-height:1.5;font-size:15px;background:none!important;border:0!important;box-shadow:none!important}.ptoc li::before{top:6px;left:8px}.sa{margin:0 0 8px}.sa .xref{margin:0 6px 4px 0}.thumbs img{height:120px;border-radius:6px;border:1px solid var(--hair)}
-@media(max-width:700px){.pc{grid-template-columns:1fr}}</style><script>/*ICONS lucide v1.60.0 ISC*/window.__IC={"menu":"<path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/>","x":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","star":"<path d=\"M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z\"/>","party-popper":"<path d=\"M5.8 11.3 2 22l10.7-3.79\"/><path d=\"M4 3h.01\"/><path d=\"M22 8h.01\"/><path d=\"M15 2h.01\"/><path d=\"M22 20h.01\"/><path d=\"m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10\"/><path d=\"m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17\"/><path d=\"m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7\"/><path d=\"M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z\"/>"};window.__ic=function(n,s,c){return '<svg class="i i-'+n+(c?' '+c:'')+'" width="'+(s||16)+'" height="'+(s||16)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(window.__IC[n]||'')+'</svg>'};/*END ICONS*/
+@media(max-width:700px){.pc{grid-template-columns:1fr}}
+.pc2 h3{margin:4px 0 6px}.pc2 .tags{margin:0 0 6px;display:flex;gap:6px;flex-wrap:wrap}.pc2 .tag.amber{background:var(--amber-soft);color:var(--amber)}.pc2 .new{font-size:14.5px;color:var(--ink2);margin:0 0 6px}.pc2 .take{font-size:16px;font-weight:600;margin:8px 0}.pc2 .pts{margin:0 0 10px;padding-left:20px}.pc2 .pts li{margin:3px 0}.pc2 .q{font-size:14.5px;margin:0 0 10px;color:var(--ink)}.pc2 .q span{color:var(--ink2);margin-left:4px}
+.pc2 .thumb{display:block;max-width:420px}.pc2 .thumb{background:none;overflow:visible}.pc2 .thumb img{width:100%;height:auto;aspect-ratio:auto;object-fit:contain;border-radius:var(--r-sm);border:1px solid var(--hair);display:block}.pc2 .thumb span{display:block;font-size:13px;color:var(--blue);margin-top:4px}.pc2 .srcl{font-size:13.5px;color:var(--ink2);margin:8px 0 0}</style><script>/*ICONS lucide v1.60.0 ISC*/window.__IC={"menu":"<path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/>","x":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","star":"<path d=\"M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z\"/>","party-popper":"<path d=\"M5.8 11.3 2 22l10.7-3.79\"/><path d=\"M4 3h.01\"/><path d=\"M22 8h.01\"/><path d=\"M15 2h.01\"/><path d=\"M22 20h.01\"/><path d=\"m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10\"/><path d=\"m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17\"/><path d=\"m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7\"/><path d=\"M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z\"/>"};window.__ic=function(n,s,c){return '<svg class="i i-'+n+(c?' '+c:'')+'" width="'+(s||16)+'" height="'+(s||16)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(window.__IC[n]||'')+'</svg>'};/*END ICONS*/
 (function(){var T='site-theme',v;try{v=localStorage.getItem(T)}catch(e){}if(!/^[ABC]$/.test(v||''))v='C';document.documentElement.setAttribute('data-theme',v);
 window.__setTheme=function(t){var go=function(){__applyTheme(t)};if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.startViewTransition(go);else go()};window.__applyTheme=function(t){document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem(T,t)}catch(e){}[].forEach.call(document.querySelectorAll('.thsw button'),function(b){b.setAttribute('aria-pressed',b.dataset.t===t)})}})();
 (function(){var k='theme',s=localStorage.getItem(k);if(s?s==='dark':matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark');
@@ -1139,81 +1151,9 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
 </script><script src="../../assets/favorites.js" defer></script></head><body>
 <header class="top"><div class="in"><a class="brand" href="../../index.html"><i><svg class="i i-book-open" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/></svg></i>王玮的学习库</a><nav><a href="../../index.html" class="">首页</a><a href="../../favorites/index.html" class="">收藏</a><a href="../../courses/index.html" class="s1">公开课</a><a href="../../x-posts/index.html" class="">X 好文</a><a href="../../research/index.html" class="">技术研究</a><a href="../../wechat/index.html" class="">微信公众号</a><a href="../../video/index.html" class="">视频</a><a href="../../glossary.html" class="">概念卡</a><a href="../../x-brief/index.html" class="s2">X 简报</a><a href="../../x-posters/index.html" class="on">X 海报</a><a href="../../ph-inspo/index.html" class="">产品灵感</a><a href="../../radar/index.html" class="">雷达</a><a href="../../dsh-plugins/index.html" class="">DSH 插件</a></nav><button class="dm" onclick="__tt()" aria-label="切换深色模式"><svg class="i i-sun-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2"/><path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715"/><path d="M16 12a4 4 0 0 0-4-4"/><path d="m19 5-1.256 1.256"/><path d="M20 12h2"/></svg></button></div></header>
 <main><div class="crumb"><a href="../../index.html">首页</a> / <a href="../index.html">X 海报</a> / 2026-10-16（周五）</div><section class="sheet"><span class="kk">DAILY · 2026-10-16（周五） · 北京时间</span><h1>6 张技术海报</h1><ol class="quick ptoc"><li><a href="#p1">Claude Code /btw 拆解：旁路提问如何复用 prompt cache</a></li><li><a href="#p2">Open Claude UI：Claude 桌面端 UI 逆向拆解与开源组件</a></li><li><a href="#p3">Claude Code Review 正式可用：多 Agent 审 PR 的流程与三档深度</a></li><li><a href="#p4">Magpie 全面插件化：这次新在哪（七类插件扩展点）</a></li><li><a href="#p5">TasteSkill v2（老项目 + 这次新在哪）：给 AI 生成网站做设计体检</a></li><li><a href="#p6">Claude + Obsidian 循环工程：笔记库即状态，先装审查闸门</a></li></ol><p class="muted">点标题跳到那张海报；点海报看原图。发帖时间是北京时间。</p></section><div class="pgrid"><section class="sheet pc" id="p1"><a href="img/01-claude-code-btw-prompt-cache.png" target="_blank"><img src="img/01-claude-code-btw-prompt-cache.webp" alt="Claude Code /btw 拆解：旁路提问如何复用 prompt cache" loading="lazy"></a>
-<div><span class="kk">#1 · X 原帖信息</span><h3>Claude Code /btw 拆解：旁路提问如何复用 prompt cache</h3><div class="xi"><span class="who">KC</span> <span class="h">@ScarletKc</span><br>发帖时间：2026-10-15 22:44 北京<br>原帖：<a href="https://x.com/ScarletKc/status/2110743554486423802" target="_blank" rel="noopener">https://x.com/ScarletKc/status/2110743554486423802</a><blockquote>研究了一下 Claude Code 的 /btw。这个旁路提问是不能用工具的，但它其实没有把工具从请求里拿掉。
-
-请求里还是主对话那一整套 system prompt、工具定义和历史消息，只在最后追加一段提醒，告诉模型这是旁路问题，你没有工具。模型真去调工具的话，执行层会全部拒绝，也只给一轮。
-
-这么绕是为了缓存。Anthropic 的 prompt cache 按前缀匹配，删掉工具定义整个缓存就失效了，改 tool_choice 也会让对话历史那部分失效。现在前缀和主对话一模一样，btw 能直接吃主对话的缓存，还是只读不写，一次性的问题不用多付写缓存的钱。
-
-Agent 工具里的 fork 子代理也是这个思路，system prompt、工具、模型全部继承父代理。所以 fork 不能单独换模型，缓存本来就是按模型分开的。
-
-Codex 也有 /btw，不过它是 /side 的别名，会开一个临时的 fork 线程。可以多轮聊，也能用工具，靠提示词约束它别改文件。这个新线程还会换一个 prompt_cache_key，前缀虽然一样，能不能命中缓存就没保证了。</blockquote></div><p class="muted"><a href="img/01-claude-code-btw-prompt-cache.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p2"><a href="img/02-open-claude-ui.png" target="_blank"><img src="img/02-open-claude-ui.webp" alt="Open Claude UI：Claude 桌面端 UI 逆向拆解与开源组件" loading="lazy"></a>
-<div><span class="kk">#2 · X 原帖信息</span><h3>Open Claude UI：Claude 桌面端 UI 逆向拆解与开源组件</h3><div class="xi"><span class="who">Kxians</span> <span class="h">@xulijian1994</span><br>发帖时间：2026-10-15 12:34 北京<br>原帖：<a href="https://x.com/xulijian1994/status/2110590027453669498" target="_blank" rel="noopener">https://x.com/xulijian1994/status/2110590027453669498</a><br>原文链接：<a href="https://github.com/Caho1/open-claude-ui" target="_blank" rel="noopener">https://github.com/Caho1/open-claude-ui</a><blockquote>有人把 Claude 桌面客户端的 UI 几乎扒了个底朝天，还直接开源了。
-
-项目叫 Open Claude UI，利用 REA 逆向工程框架，对 Claude 桌面端进行了深度拆解。
-
-最有价值的不是复刻了 Claude 的外观，而是连背后的交互逻辑和动效算法都研究了一遍。
-
-项目包含：
-
-1. 30 个独立 React 组件，基本可以直接拿来用
-2. 8 项核心交互算法，包括弹簧动画、滚动渐隐、图片缩放等
-3. 3000 多行逆向分析文档，覆盖 31 个技术小节
-4. Claude 风格的聊天输入框、模型切换器、MCP 授权卡片
-5. macOS 毛玻璃效果、侧边栏拖拽、Cowork 多 Agent 协作界面
-
-甚至连中文输入法按回车误发送、AI 输出时自动滚动抢屏幕这种细节，都有对应的实现方案。
-
-我觉得这个项目真正值得收藏的，其实是那份逆向分析文档。
-
-对于想开发 AI 客户端、Agent 工作台或者 Claude 风格产品的开发者来说，相当于有人把一套成熟产品的前端设计思路和交互细节整理成了开源教材。
-
-以后想做一个有 Claude 那种质感的 AI 产品，确实可以少走不少弯路。
-
-项目地址：
-https://t.co/bgbicb26xr</blockquote></div><p class="muted"><a href="img/02-open-claude-ui.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p3"><a href="img/03-claude-code-review-ga.png" target="_blank"><img src="img/03-claude-code-review-ga.webp" alt="Claude Code Review 正式可用：多 Agent 审 PR 的流程与三档深度" loading="lazy"></a>
-<div><span class="kk">#3 · X 原帖信息</span><h3>Claude Code Review 正式可用：多 Agent 审 PR 的流程与三档深度</h3><div class="xi"><span class="who">ClaudeDevs</span> <span class="h">@ClaudeDevs</span><br>发帖时间：2026-10-16 06:51 北京<br>原帖：<a href="https://x.com/ClaudeDevs/status/2110866210573386065" target="_blank" rel="noopener">https://x.com/ClaudeDevs/status/2110866210573386065</a><br>原文链接：<a href="https://code.claude.com/docs/en/code-review" target="_blank" rel="noopener">https://code.claude.com/docs/en/code-review</a><blockquote>Code Review is now generally available for Claude Team and Enterprise plans. 
-
-Reviews are now faster, catch more of the bugs that matter, and admins can pick from Quick, Standard, or Deep review levels for each repo. https://t.co/RO4tDC4U1U</blockquote></div><p class="muted"><a href="img/03-claude-code-review-ga.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p4"><a href="img/04-magpie-plugin-system.png" target="_blank"><img src="img/04-magpie-plugin-system.webp" alt="Magpie 全面插件化：这次新在哪（七类插件扩展点）" loading="lazy"></a>
-<div><span class="kk">#4 · X 原帖信息</span><h3>Magpie 全面插件化：这次新在哪（七类插件扩展点）</h3><p class="sa"><a class="xref" href="../../radar/index.html#r188">另见：雷达 #188</a></p><div class="xi"><span class="who">yetone</span> <span class="h">@yetone</span><br>发帖时间：2026-10-16 05:09 北京<br>原帖：<a href="https://x.com/yetone/status/2110840519156965691" target="_blank" rel="noopener">https://x.com/yetone/status/2110840519156965691</a><br>原文链接：<a href="https://usemagpie.ai/docs/plugins" target="_blank" rel="noopener">https://usemagpie.ai/docs/plugins</a><blockquote>Magpie 现在全面插件化了 🧩
-
-以前社区插件只能接入新的订阅；现在 Magpie 自己的几乎每一层都向社区开放，一个 npm 包就能扩展：
-
-• 订阅 / Provider：登录、刷新、模型、请求、用量全由插件负责
-• 网关中间件：改写经过 Magpie 的请求和响应
-• 路由策略：自己决定请求怎么在多个账号、多个模型之间分配
-• onUsage：每一条用量记录插件都能收到
-• 工具：插件写的工具通过 Magpie 的 MCP 服务器，给每一个接入的 Agent 用
-• Agent：让 Magpie 支持一个新的 Agent
-• 页面：插件在 Magpie 窗口里有自己的页面，跑在沙盒里
-
-入口：Magpie › 插件 › 发现，每类插件各有分区；点「编写插件」直接打开文档。
-
-文档：https://t.co/ckQuIZlQAs
-社区仓库：https://t.co/tbFsM25lE0
-
-三个示例已经发到 npm：tools-calc（精确计算、单位换算、日期计算工具）、page-usage（用量一览页面）、middleware-reserve（留余量的路由策略）。
-
-magpie plugin add @magpie-community/tools-calc 一行装好。来写插件吧 👇</blockquote></div><p class="muted"><a href="img/04-magpie-plugin-system.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p5"><a href="img/05-taste-skill-v2.png" target="_blank"><img src="img/05-taste-skill-v2.webp" alt="TasteSkill v2（老项目 + 这次新在哪）：给 AI 生成网站做设计体检" loading="lazy"></a>
-<div><span class="kk">#5 · X 原帖信息</span><h3>TasteSkill v2（老项目 + 这次新在哪）：给 AI 生成网站做设计体检</h3><p class="tip">老项目 + 这次新在哪：见海报</p><div class="xi"><span class="who">Vox</span> <span class="h">@Voxyz_ai</span><br>发帖时间：2026-10-16 01:00 北京<br>原帖：<a href="https://x.com/Voxyz_ai/status/2110777729658581409" target="_blank" rel="noopener">https://x.com/Voxyz_ai/status/2110777729658581409</a><br>原文链接：<a href="https://github.com/Leonxlnx/taste-skill" target="_blank" rel="noopener">https://github.com/Leonxlnx/taste-skill</a><blockquote>Highly recommend installing the new TasteSkill v2 in Claude Code or Codex, then having Opus 5.5 use it to 𝗴𝗶𝘃𝗲 𝘁𝗵𝗲 𝘀𝗶𝘁𝗲 𝘆𝗼𝘂 𝘃𝗶𝗯𝗲-𝗰𝗼𝗱𝗲𝗱 𝗮 𝗰𝗵𝗲𝗰𝗸𝘂𝗽. It came out two days ago. It opens your pages at desktop, tablet and phone widths and lists every AI-website tell they hit.
-
-A few on the list you can check right away:
-→ A small all-caps line above the headline, like FEATURES
-→ Sections numbered 01 / 02 / 03
-→ Monospace body text and buttons, anywhere outside code
-→ Gradients, hairline borders, and shadows that sit there even without hover
-→ Cream backgrounds with terracotta, or any violet or indigo…</blockquote></div><p class="muted"><a href="img/05-taste-skill-v2.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p6"><a href="img/06-obsidian-loop-engineering.png" target="_blank"><img src="img/06-obsidian-loop-engineering.webp" alt="Claude + Obsidian 循环工程：笔记库即状态，先装审查闸门" loading="lazy"></a>
-<div><span class="kk">#6 · X 原帖信息</span><h3>Claude + Obsidian 循环工程：笔记库即状态，先装审查闸门</h3><div class="xi"><span class="who">Annatar.md</span> <span class="h">@AnnatarXBT</span><br>发帖时间：2026-10-15 15:35 北京<br>原帖：<a href="https://x.com/AnnatarXBT/status/2110635536595787967" target="_blank" rel="noopener">https://x.com/AnnatarXBT/status/2110635536595787967</a><blockquote>CLAUDE + OBSIDIAN + LOOP ENGINEERING = KARPATHY&#x27;S SECOND BRAIN THAT RUNS ITSELF
-
-the core idea: your Zettelkasten vault is the loop&#x27;s state, not the chat window
-
-everything Claude knows lives in a .md note, linked to the ones around it
-
-the loop:
-&gt; capture - a thought lands in 00-inbox
-&gt; context - Claude Opus 5.5 pulls links, tags, and neighbouring notes
-&gt; draft - edits happen inside a git worktree, never the live vault
-&gt; review - a critic agent checks the diff before anything ships
-&gt; commit - appended to the vault, nothing gets rewritten
-
-the key insight: frontmatter fields like supports, con…</blockquote></div><p class="muted"><a href="img/06-obsidian-loop-engineering.png" target="_blank">查看原图 PNG →</a></p></div></section></div><div class="pn"><a href="../2026-10-17/index.html">← 2026-10-17</a><a href="../index.html">往期目录</a><a href="../2026-10-15/index.html">2026-10-15 →</a></div><div class="foot">王玮的 X 海报日报 · 每天从 X 推荐流挑技术帖，用 ChatGPT 生成康奈尔笔记海报 · 每张都附 X 原帖信息 · 风格改编自 <a href="https://github.com/vuejs/vitepress">VitePress</a>（MIT）</div></main></body></html>
+<div><span class="kk">#1 · X 原帖信息</span><h3>Claude Code /btw 拆解：旁路提问如何复用 prompt cache</h3><div class="xi"><span class="who">KC</span> <span class="h">@ScarletKc</span><br>发帖时间：2026-10-15 22:44 北京<br>原帖：<a href="https://x.com/ScarletKc/status/2110743554486423802" target="_blank" rel="noopener">https://x.com/ScarletKc/status/2110743554486423802</a></div><p class="muted"><a href="img/01-claude-code-btw-prompt-cache.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p2"><a href="img/02-open-claude-ui.png" target="_blank"><img src="img/02-open-claude-ui.webp" alt="Open Claude UI：Claude 桌面端 UI 逆向拆解与开源组件" loading="lazy"></a>
+<div><span class="kk">#2 · X 原帖信息</span><h3>Open Claude UI：Claude 桌面端 UI 逆向拆解与开源组件</h3><div class="xi"><span class="who">Kxians</span> <span class="h">@xulijian1994</span><br>发帖时间：2026-10-15 12:34 北京<br>原帖：<a href="https://x.com/xulijian1994/status/2110590027453669498" target="_blank" rel="noopener">https://x.com/xulijian1994/status/2110590027453669498</a><br>原文链接：<a href="https://github.com/Caho1/open-claude-ui" target="_blank" rel="noopener">https://github.com/Caho1/open-claude-ui</a></div><p class="muted"><a href="img/02-open-claude-ui.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p3"><a href="img/03-claude-code-review-ga.png" target="_blank"><img src="img/03-claude-code-review-ga.webp" alt="Claude Code Review 正式可用：多 Agent 审 PR 的流程与三档深度" loading="lazy"></a>
+<div><span class="kk">#3 · X 原帖信息</span><h3>Claude Code Review 正式可用：多 Agent 审 PR 的流程与三档深度</h3><div class="xi"><span class="who">ClaudeDevs</span> <span class="h">@ClaudeDevs</span><br>发帖时间：2026-10-16 06:51 北京<br>原帖：<a href="https://x.com/ClaudeDevs/status/2110866210573386065" target="_blank" rel="noopener">https://x.com/ClaudeDevs/status/2110866210573386065</a><br>原文链接：<a href="https://code.claude.com/docs/en/code-review" target="_blank" rel="noopener">https://code.claude.com/docs/en/code-review</a></div><p class="muted"><a href="img/03-claude-code-review-ga.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p4"><a href="img/04-magpie-plugin-system.png" target="_blank"><img src="img/04-magpie-plugin-system.webp" alt="Magpie 全面插件化：这次新在哪（七类插件扩展点）" loading="lazy"></a>
+<div><span class="kk">#4 · X 原帖信息</span><h3>Magpie 全面插件化：这次新在哪（七类插件扩展点）</h3><p class="sa"><a class="xref" href="../../radar/index.html#r188">另见：雷达 #188</a></p><div class="xi"><span class="who">yetone</span> <span class="h">@yetone</span><br>发帖时间：2026-10-16 05:09 北京<br>原帖：<a href="https://x.com/yetone/status/2110840519156965691" target="_blank" rel="noopener">https://x.com/yetone/status/2110840519156965691</a><br>原文链接：<a href="https://usemagpie.ai/docs/plugins" target="_blank" rel="noopener">https://usemagpie.ai/docs/plugins</a></div><p class="muted"><a href="img/04-magpie-plugin-system.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p5"><a href="img/05-taste-skill-v2.png" target="_blank"><img src="img/05-taste-skill-v2.webp" alt="TasteSkill v2（老项目 + 这次新在哪）：给 AI 生成网站做设计体检" loading="lazy"></a>
+<div><span class="kk">#5 · X 原帖信息</span><h3>TasteSkill v2（老项目 + 这次新在哪）：给 AI 生成网站做设计体检</h3><p class="tip">老项目 + 这次新在哪：见海报</p><div class="xi"><span class="who">Vox</span> <span class="h">@Voxyz_ai</span><br>发帖时间：2026-10-16 01:00 北京<br>原帖：<a href="https://x.com/Voxyz_ai/status/2110777729658581409" target="_blank" rel="noopener">https://x.com/Voxyz_ai/status/2110777729658581409</a><br>原文链接：<a href="https://github.com/Leonxlnx/taste-skill" target="_blank" rel="noopener">https://github.com/Leonxlnx/taste-skill</a></div><p class="muted"><a href="img/05-taste-skill-v2.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p6"><a href="img/06-obsidian-loop-engineering.png" target="_blank"><img src="img/06-obsidian-loop-engineering.webp" alt="Claude + Obsidian 循环工程：笔记库即状态，先装审查闸门" loading="lazy"></a>
+<div><span class="kk">#6 · X 原帖信息</span><h3>Claude + Obsidian 循环工程：笔记库即状态，先装审查闸门</h3><div class="xi"><span class="who">Annatar.md</span> <span class="h">@AnnatarXBT</span><br>发帖时间：2026-10-15 15:35 北京<br>原帖：<a href="https://x.com/AnnatarXBT/status/2110635536595787967" target="_blank" rel="noopener">https://x.com/AnnatarXBT/status/2110635536595787967</a></div><p class="muted"><a href="img/06-obsidian-loop-engineering.png" target="_blank">查看原图 PNG →</a></p></div></section></div><div class="pn"><a href="../2026-10-17/index.html">← 2026-10-17</a><a href="../index.html">往期目录</a><a href="../2026-10-15/index.html">2026-10-15 →</a></div><div class="foot">王玮的 X 海报日报 · 每天从 X 推荐流挑技术帖，用 ChatGPT 生成康奈尔笔记海报 · 每张都附 X 原帖信息 · 风格改编自 <a href="https://github.com/vuejs/vitepress">VitePress</a>（MIT）</div></main></body></html>

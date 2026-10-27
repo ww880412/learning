@@ -1106,11 +1106,23 @@ details.panel.about{margin-top:14px}details.panel.about>summary{font-weight:550;
 /* 产品灵感：更早的榜单收起；每天的说明收成一个小按钮 */
 details.panel.pi-old{margin-top:20px}details.panel.pi-old .pi-day{margin-top:14px}
 .pi-note{display:inline}.pi-note>summary{display:inline;cursor:pointer;color:var(--blue);list-style:none}.pi-note>summary::-webkit-details-marker{display:none}.pi-note[open]{display:block;margin-top:4px}
+/* 产品灵感：标题下「先看 3 个」 */
+.pi-picks{margin:10px 0 12px;padding:10px 12px;border:1px solid var(--hair);border-radius:var(--r-sm);background:var(--card)}
+.pi-picks .lb{font-size:13px;font-weight:600;color:var(--ink2);margin-bottom:4px}
+.pi-picks ol{margin:0;padding-left:22px}.pi-picks li{margin:6px 0;font-size:15px;line-height:1.6}
+.pi-picks li a{color:var(--ink);text-decoration:none}.pi-picks li a b{border-bottom:1px solid var(--blue)}
+.pi-picks .lim{display:block;font-size:14px;color:var(--ink);margin-top:2px}.pi-picks .lim .tag{margin-right:6px;font-size:12px}
+.pi-card:target{outline:2px solid var(--blue);outline-offset:2px}
+/* 雷达周报「结论先说」：每条拆成 解决什么 / 抄哪一处 / 还要确认 三行 */
+.quick li .ql{display:block;font-size:14.5px;line-height:1.6;margin-top:3px;color:var(--ink)}
+.quick li .ql b{display:inline-block;min-width:4.6em;margin-right:6px;color:var(--ink2);font-weight:600}
 .pgrid{display:grid;gap:18px}.pc{display:grid;grid-template-columns:300px 1fr;gap:20px;align-items:start}
 .pc img{width:100%;border-radius:12px;border:1px solid var(--hair);display:block}.pc h3{margin-top:0}
 .xi{font-size:14.5px}.xi .who{font-weight:700}.xi .h{color:var(--ink2)}.xi blockquote{margin:10px 0;padding:10px 14px;background:var(--paper);border-radius:10px;white-space:pre-wrap;font-size:14px}
 .thumbs{display:flex;gap:6px;overflow-x:auto}.ptoc{margin:4px 0 10px;gap:2px;grid-template-columns:1fr!important}.ptoc li{padding:5px 8px 5px 36px;line-height:1.5;font-size:15px;background:none!important;border:0!important;box-shadow:none!important}.ptoc li::before{top:6px;left:8px}.sa{margin:0 0 8px}.sa .xref{margin:0 6px 4px 0}.thumbs img{height:120px;border-radius:6px;border:1px solid var(--hair)}
-@media(max-width:700px){.pc{grid-template-columns:1fr}}</style><script>/*ICONS lucide v1.60.0 ISC*/window.__IC={"menu":"<path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/>","x":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","star":"<path d=\"M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z\"/>","party-popper":"<path d=\"M5.8 11.3 2 22l10.7-3.79\"/><path d=\"M4 3h.01\"/><path d=\"M22 8h.01\"/><path d=\"M15 2h.01\"/><path d=\"M22 20h.01\"/><path d=\"m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10\"/><path d=\"m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17\"/><path d=\"m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7\"/><path d=\"M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z\"/>"};window.__ic=function(n,s,c){return '<svg class="i i-'+n+(c?' '+c:'')+'" width="'+(s||16)+'" height="'+(s||16)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(window.__IC[n]||'')+'</svg>'};/*END ICONS*/
+@media(max-width:700px){.pc{grid-template-columns:1fr}}
+.pc2 h3{margin:4px 0 6px}.pc2 .tags{margin:0 0 6px;display:flex;gap:6px;flex-wrap:wrap}.pc2 .tag.amber{background:var(--amber-soft);color:var(--amber)}.pc2 .new{font-size:14.5px;color:var(--ink2);margin:0 0 6px}.pc2 .take{font-size:16px;font-weight:600;margin:8px 0}.pc2 .pts{margin:0 0 10px;padding-left:20px}.pc2 .pts li{margin:3px 0}.pc2 .q{font-size:14.5px;margin:0 0 10px;color:var(--ink)}.pc2 .q span{color:var(--ink2);margin-left:4px}
+.pc2 .thumb{display:block;max-width:420px}.pc2 .thumb{background:none;overflow:visible}.pc2 .thumb img{width:100%;height:auto;aspect-ratio:auto;object-fit:contain;border-radius:var(--r-sm);border:1px solid var(--hair);display:block}.pc2 .thumb span{display:block;font-size:13px;color:var(--blue);margin-top:4px}.pc2 .srcl{font-size:13.5px;color:var(--ink2);margin:8px 0 0}</style><script>/*ICONS lucide v1.60.0 ISC*/window.__IC={"menu":"<path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/>","x":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","star":"<path d=\"M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z\"/>","party-popper":"<path d=\"M5.8 11.3 2 22l10.7-3.79\"/><path d=\"M4 3h.01\"/><path d=\"M22 8h.01\"/><path d=\"M15 2h.01\"/><path d=\"M22 20h.01\"/><path d=\"m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10\"/><path d=\"m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17\"/><path d=\"m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7\"/><path d=\"M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z\"/>"};window.__ic=function(n,s,c){return '<svg class="i i-'+n+(c?' '+c:'')+'" width="'+(s||16)+'" height="'+(s||16)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(window.__IC[n]||'')+'</svg>'};/*END ICONS*/
 (function(){var T='site-theme',v;try{v=localStorage.getItem(T)}catch(e){}if(!/^[ABC]$/.test(v||''))v='C';document.documentElement.setAttribute('data-theme',v);
 window.__setTheme=function(t){var go=function(){__applyTheme(t)};if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.startViewTransition(go);else go()};window.__applyTheme=function(t){document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem(T,t)}catch(e){}[].forEach.call(document.querySelectorAll('.thsw button'),function(b){b.setAttribute('aria-pressed',b.dataset.t===t)})}})();
 (function(){var k='theme',s=localStorage.getItem(k);if(s?s==='dark':matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark');
@@ -1139,92 +1151,9 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
 </script><script src="../../assets/favorites.js" defer></script></head><body>
 <header class="top"><div class="in"><a class="brand" href="../../index.html"><i><svg class="i i-book-open" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/></svg></i>王玮的学习库</a><nav><a href="../../index.html" class="">首页</a><a href="../../favorites/index.html" class="">收藏</a><a href="../../courses/index.html" class="s1">公开课</a><a href="../../x-posts/index.html" class="">X 好文</a><a href="../../research/index.html" class="">技术研究</a><a href="../../wechat/index.html" class="">微信公众号</a><a href="../../video/index.html" class="">视频</a><a href="../../glossary.html" class="">概念卡</a><a href="../../x-brief/index.html" class="s2">X 简报</a><a href="../../x-posters/index.html" class="on">X 海报</a><a href="../../ph-inspo/index.html" class="">产品灵感</a><a href="../../radar/index.html" class="">雷达</a><a href="../../dsh-plugins/index.html" class="">DSH 插件</a></nav><button class="dm" onclick="__tt()" aria-label="切换深色模式"><svg class="i i-sun-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2"/><path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715"/><path d="M16 12a4 4 0 0 0-4-4"/><path d="m19 5-1.256 1.256"/><path d="M20 12h2"/></svg></button></div></header>
 <main><div class="crumb"><a href="../../index.html">首页</a> / <a href="../index.html">X 海报</a> / 2026-10-20（周二）</div><section class="sheet"><span class="kk">DAILY · 2026-10-20（周二） · 北京时间</span><h1>6 张技术海报</h1><ol class="quick ptoc"><li><a href="#p1">AI Native 实践续篇：迈向 Stage 8（Attention / preflight / logbook / 变异测试）</a></li><li><a href="#p2">Pele：Obsidian 开源的 Mermaid 渲染库（快 100–500 倍、零依赖）</a></li><li><a href="#p3">Agent 写代码时如何守住质量：先想清楚、写 ADR、守护系统全貌</a></li><li><a href="#p4">ESP32 新手入门：芯片型号、开源项目和开发板一次讲清</a></li><li><a href="#p5">/better 提示词 Skill：让模型给出“更深而不是更大”的任务版本</a></li><li><a href="#p6">dsh-genui：让 DeepSeek Harness 的回复里直接长出可交互界面</a></li></ol><p class="muted">点标题跳到那张海报；点海报看原图。发帖时间是北京时间。</p></section><div class="pgrid"><section class="sheet pc" id="p1"><a href="img/01-alswl-ai-native-stage8.png" target="_blank"><img src="img/01-alswl-ai-native-stage8.webp" alt="AI Native 实践续篇：迈向 Stage 8（Attention / preflight / logbook / 变异测试）" loading="lazy"></a>
-<div><span class="kk">#1 · X 原帖信息</span><h3>AI Native 实践续篇：迈向 Stage 8（Attention / preflight / logbook / 变异测试）</h3><div class="xi"><span class="who">Jingchao</span> <span class="h">@alswl</span><br>发帖时间：2026-10-20 09:24 北京<br>原帖：<a href="https://x.com/alswl/status/2112354303944069363" target="_blank" rel="noopener">https://x.com/alswl/status/2112354303944069363</a><br>原文链接：<a href="https://x.com/i/article/2112347760200708096" target="_blank" rel="noopener">https://x.com/i/article/2112347760200708096</a><blockquote>How far are we from 24/7 automated code writing going live? How far from 2,000 PRs? How do we step into stage 8? Sharing my thoughts and practices.
-
-🧠 Attention / ✈️ preflight / 🧑‍✈️ logbook / 💉 Mutation testing / 🤔 Humans and AI: arti and fact https://x.com/i/article/2112347760200708096
-
-[X Article] Continuing AI Native Practice: Moving Toward Stage 8
-
-I recently took another look at how I work. The biggest change is that I now hand complete tasks to a coordinator. It organizes other agents and moves the work forward, while I gradually step away from watching every window one by one.
-This fol…</blockquote></div><p class="muted"><a href="img/01-alswl-ai-native-stage8.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p2"><a href="img/02-pele-mermaid-renderer.png" target="_blank"><img src="img/02-pele-mermaid-renderer.webp" alt="Pele：Obsidian 开源的 Mermaid 渲染库（快 100–500 倍、零依赖）" loading="lazy"></a>
-<div><span class="kk">#2 · X 原帖信息</span><h3>Pele：Obsidian 开源的 Mermaid 渲染库（快 100–500 倍、零依赖）</h3><div class="xi"><span class="who">lucas</span> <span class="h">@lucas_flatwhite</span><br>发帖时间：2026-10-19 20:45 北京<br>原帖：<a href="https://x.com/lucas_flatwhite/status/2112163139282465168" target="_blank" rel="noopener">https://x.com/lucas_flatwhite/status/2112163139282465168</a><br>原文链接：<a href="https://github.com/obsidianmd/pele" target="_blank" rel="noopener">https://github.com/obsidianmd/pele</a><blockquote>와.. Pele 써보니까 진짜 좋네요!
-라이브러리 이걸로 다 바꿈. 첨부한 이미지도 Pele로 그린거!
-
-Pele = Mermaid 다이어그램 렌더링 라이브러리
-https://t.co/lBni7EJwMO
-
-정말 고마운 kepano가 직접 만들었어요. Mermaid 문법 그대로 쓰면서 SVG로 그려주는데,,
-
-성능+크기+테마 면에서 기존 mermaid.js를 완전히 압도함..ㄷㄷㅠ
-
-의존성 아예 제로 + 100~500배 빠르고 + 약 6배 작은 크기
-
-반응형에 기존에 쓰던 모든 다이어그램 타입을 그대로 지원함..
-
-정말 좋은 소식은 오픈소스로 완전히 공개되었고, 심지어 다음 버전부터 Obsidian의 기본 Mermaid 렌더러가 Pele로 바뀜!
-
-당연히 지금 바로 활용해볼 수 있으니 다들 써보세요!
-
-[翻译要点: 韩语原帖称 Pele 是 Mermaid 图表渲染库，零依赖、快 100~500 倍、体积约小 6 倍，响应式，支持原有全部图表类型，MIT 开源，下一版 Obsidian 默认 Mermaid 渲染器将换成 Pele]
-
-[Quoted post @kepano 2026-10-17]
-This is Pele, my new rendering library for diagrams…</blockquote></div><p class="muted"><a href="img/02-pele-mermaid-renderer.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p3"><a href="img/03-agent-code-quality-legacy.png" target="_blank"><img src="img/03-agent-code-quality-legacy.webp" alt="Agent 写代码时如何守住质量：先想清楚、写 ADR、守护系统全貌" loading="lazy"></a>
-<div><span class="kk">#3 · X 原帖信息</span><h3>Agent 写代码时如何守住质量：先想清楚、写 ADR、守护系统全貌</h3><div class="xi"><span class="who">Haruki Yano / Haruma-K</span> <span class="h">@harumak_11</span><br>发帖时间：2026-10-19 12:17 北京<br>原帖：<a href="https://x.com/harumak_11/status/2112035259688857697" target="_blank" rel="noopener">https://x.com/harumak_11/status/2112035259688857697</a><br>原文链接：<a href="https://www.blog4ems.com/p/maintaining-quality-agentic-engineering" target="_blank" rel="noopener">https://www.blog4ems.com/p/maintaining-quality-agentic-engineering</a><blockquote>エージェントがコードを書くなかで品質を保つ、という記事
-https://t.co/gA2a71sgUh
-
-・今はエージェントでコードを書くのが当たり前になり、複数のエージェントを並行して動かせば、大きな機能もすぐに作れる
-・その結果、レビュー待ちのPRが大量に生まれ、マージされたコードはすぐに保守すべき「レガシーコード」になる
-・既存とほぼ同じ意味のフィールドが増えたり、コンポーネントに本来の役割ではない処理が入り込んだりと、レビューを急ぐと見落とす判断が紛れ込む
-
-・OpenCode共同創業者のDax氏は、AIが登場する前から労力の95%を「何をするか考えること」に使い、手を動かすのは5%だったという
-・以前は、コードを書く過程で古い関数の事情を理解したり、途中でエッジケースや設計の不備に気づいたりしていた
-・エージェントがその作業を肩代わりしても、エンジニアはシステムの全体像を把握していなければならない
-
-・データモデルやインターフェース、本番での動作の変更など、影響が長く残る変更の前は一度手を止めて考える
-・担当者が、何をなぜここで変えるのか、終わったあとも守るべきことは何か、後で戻しにくい判断はどれかを説明できるようにしておく
-・チームで共有する簡単なADRを書くだけでもいい
-
-・マルチタスクが苦手なら、大きなタスクを1つ主軸にして、エージェントに選択肢の調査や一部の実装を…</blockquote></div><p class="muted"><a href="img/03-agent-code-quality-legacy.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p4"><a href="img/04-esp32-beginner-guide.png" target="_blank"><img src="img/04-esp32-beginner-guide.webp" alt="ESP32 新手入门：芯片型号、开源项目和开发板一次讲清" loading="lazy"></a>
-<div><span class="kk">#4 · X 原帖信息</span><h3>ESP32 新手入门：芯片型号、开源项目和开发板一次讲清</h3><div class="xi"><span class="who">小墨同学</span> <span class="h">@xiaomovps</span><br>发帖时间：2026-10-20 09:35 北京<br>原帖：<a href="https://x.com/xiaomovps/status/2112357123246178332" target="_blank" rel="noopener">https://x.com/xiaomovps/status/2112357123246178332</a><br>原文链接：<a href="https://x.com/i/article/2112199928940265472" target="_blank" rel="noopener">https://x.com/i/article/2112199928940265472</a><blockquote>[X Article] ESP32 新手怎么入门？芯片、开源项目和板子，一次讲清楚
-
- 
-这阵子 X 上到处是 ESP32 做的小东西：会聊天的桌面机器人、按住说话的 AI 对讲机、替 AI 点手机屏幕的小板子。
-想自己也弄一块，打开购物软件一搜，几百个结果，名字后面跟着 S3、C6、N16R8；去 GitHub 找项目，又是一个比一个火。
-10 月 12 日我下单了一块立创实战派 ESP32-S3，一周里从刷小智做到给 Pi 做了一个桌面审批小助手。这一周发的二十来条帖子里，收藏最多的不是我的实操，而是“型号怎么选”“开源项目盘点”“学习资源清单”。新手卡住的，基本都是“选”。
-所以这篇只讲清楚一件事：选 ESP32，先想清楚要做什么，再挑开源项目，最后让项目决定买哪块板子。
-想做什么 → 挑开源项目 → 照着项目买板子
-先把结论放在这里，后面每一章都是在展开它：
-会聊天的桌面助手：先试小智 AI，板子从小智支持列表里挑 S3，或者直接买淘宝成品小智；
-智能家居：先试 ESPHome，普通 ESP32、C3、C6 开发板都行；
-给自己的 Agent 装个身体：看你在用哪个 Agent，Muse Gadgets、Hermes Gadget SDK、pi-buddy 都能用 S3 开发板，其中 pi-buddy 只支持立创实战派；
-会转头的桌面机器人：Groki Bot，要 M5St…</blockquote></div><p class="muted"><a href="img/04-esp32-beginner-guide.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p5"><a href="img/05-better-prompt-skill.png" target="_blank"><img src="img/05-better-prompt-skill.webp" alt="/better 提示词 Skill：让模型给出“更深而不是更大”的任务版本" loading="lazy"></a>
-<div><span class="kk">#5 · X 原帖信息</span><h3>/better 提示词 Skill：让模型给出“更深而不是更大”的任务版本</h3><div class="xi"><span class="who">Josh</span> <span class="h">@jjpcodes</span><br>发帖时间：2026-10-19 16:38 北京<br>原帖：<a href="https://x.com/jjpcodes/status/2112100971727769622" target="_blank" rel="noopener">https://x.com/jjpcodes/status/2112100971727769622</a><br>原文链接：<a href="https://gist.github.com/joshp123/a1443d30fa1b7c577e74882895cea61b" target="_blank" rel="noopener">https://gist.github.com/joshp123/a1443d30fa1b7c577e74882895cea61b</a><blockquote>This is the most useful prompt I&#x27;ve found in months. I&#x27;ve been using it with Opus 5.5 as a skill called /better to great effect. Grab it here: https://t.co/owQGz21OR7
-
-Here&#x27;s how it&#x27;s really stretches the model&#x27;s performance vs usual prompts:
-1. The &quot;what a top professional in the field would do&quot; somehow reminds the model to think of a lot of stuff it wouldn&#x27;t otherwise do, and (unless this is your core area of expertise), you wouldn&#x27;t know either.
-Obviously Claude/Codex always knows the best practices already, but often it needs reminding to use them (despite it being in the training data), s…</blockquote></div><p class="muted"><a href="img/05-better-prompt-skill.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p6"><a href="img/06-dsh-genui-interactive-ui.png" target="_blank"><img src="img/06-dsh-genui-interactive-ui.webp" alt="dsh-genui：让 DeepSeek Harness 的回复里直接长出可交互界面" loading="lazy"></a>
-<div><span class="kk">#6 · X 原帖信息</span><h3>dsh-genui：让 DeepSeek Harness 的回复里直接长出可交互界面</h3><p class="sa"><a class="xref" href="../../radar/index.html#r1">另见：雷达 #1</a> <a class="xref" href="../../radar/index.html#r207">另见：雷达 #207</a></p><div class="xi"><span class="who">极客杰尼</span> <span class="h">@seekjourney</span><br>发帖时间：2026-10-19 19:56 北京<br>原帖：<a href="https://x.com/seekjourney/status/2112151005869842781" target="_blank" rel="noopener">https://x.com/seekjourney/status/2112151005869842781</a><br>原文链接：<a href="https://github.com/omdsh-dev/dsh-genui" target="_blank" rel="noopener">https://github.com/omdsh-dev/dsh-genui</a><blockquote>发现 dsh 也有一套比较不错的 gen ui 能力，实现已经相当完善了。
-
-https://github.com/omdsh-dev/dsh-genui https://x.com/seekjourney/status/2112151005869842781/photo/1 https://twitter.com/seekjourney/status/2112098606543188111
-
-[Quoted post @seekjourney 2026-10-19]
-看了下 ZCode 最新的 Gen UI 实现，思路还挺简单的。
-
-Agent 通过 visualize Skill 生成 HTML + JS，ZCode 负责在对话中渲染，用户可以直接操作滑块、图表和表单。
-
-普通交互由 JS 完成，需要继续推理时再调用 Agent。
-
-特别推荐看看这个 visualize Skill，设计思路很清晰。
-
-Skill：https://t.co/BaQEfxrlhc
-
-[GitHub README omdsh-dev/dsh-genui — repo created 2026-08-13]
-# 🎨 dsh-genui
-
-&lt;div align=&quot;center&quot;&gt;
-
-**English** · [简体中文](./README.zh-CN.md)
-
-&lt;br&gt;
-
-[**Open the li…</blockquote></div><p class="muted"><a href="img/06-dsh-genui-interactive-ui.png" target="_blank">查看原图 PNG →</a></p></div></section></div><div class="pn"><a href="../2026-10-21/index.html">← 2026-10-21</a><a href="../index.html">往期目录</a><a href="../2026-10-19/index.html">2026-10-19 →</a></div><div class="foot">王玮的 X 海报日报 · 每天从 X 推荐流挑技术帖，用 ChatGPT 生成康奈尔笔记海报 · 每张都附 X 原帖信息 · 风格改编自 <a href="https://github.com/vuejs/vitepress">VitePress</a>（MIT）</div></main></body></html>
+<div><span class="kk">#1 · X 原帖信息</span><h3>AI Native 实践续篇：迈向 Stage 8（Attention / preflight / logbook / 变异测试）</h3><div class="xi"><span class="who">Jingchao</span> <span class="h">@alswl</span><br>发帖时间：2026-10-20 09:24 北京<br>原帖：<a href="https://x.com/alswl/status/2112354303944069363" target="_blank" rel="noopener">https://x.com/alswl/status/2112354303944069363</a><br>原文链接：<a href="https://x.com/i/article/2112347760200708096" target="_blank" rel="noopener">https://x.com/i/article/2112347760200708096</a></div><p class="muted"><a href="img/01-alswl-ai-native-stage8.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p2"><a href="img/02-pele-mermaid-renderer.png" target="_blank"><img src="img/02-pele-mermaid-renderer.webp" alt="Pele：Obsidian 开源的 Mermaid 渲染库（快 100–500 倍、零依赖）" loading="lazy"></a>
+<div><span class="kk">#2 · X 原帖信息</span><h3>Pele：Obsidian 开源的 Mermaid 渲染库（快 100–500 倍、零依赖）</h3><div class="xi"><span class="who">lucas</span> <span class="h">@lucas_flatwhite</span><br>发帖时间：2026-10-19 20:45 北京<br>原帖：<a href="https://x.com/lucas_flatwhite/status/2112163139282465168" target="_blank" rel="noopener">https://x.com/lucas_flatwhite/status/2112163139282465168</a><br>原文链接：<a href="https://github.com/obsidianmd/pele" target="_blank" rel="noopener">https://github.com/obsidianmd/pele</a></div><p class="muted"><a href="img/02-pele-mermaid-renderer.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p3"><a href="img/03-agent-code-quality-legacy.png" target="_blank"><img src="img/03-agent-code-quality-legacy.webp" alt="Agent 写代码时如何守住质量：先想清楚、写 ADR、守护系统全貌" loading="lazy"></a>
+<div><span class="kk">#3 · X 原帖信息</span><h3>Agent 写代码时如何守住质量：先想清楚、写 ADR、守护系统全貌</h3><div class="xi"><span class="who">Haruki Yano / Haruma-K</span> <span class="h">@harumak_11</span><br>发帖时间：2026-10-19 12:17 北京<br>原帖：<a href="https://x.com/harumak_11/status/2112035259688857697" target="_blank" rel="noopener">https://x.com/harumak_11/status/2112035259688857697</a><br>原文链接：<a href="https://www.blog4ems.com/p/maintaining-quality-agentic-engineering" target="_blank" rel="noopener">https://www.blog4ems.com/p/maintaining-quality-agentic-engineering</a></div><p class="muted"><a href="img/03-agent-code-quality-legacy.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p4"><a href="img/04-esp32-beginner-guide.png" target="_blank"><img src="img/04-esp32-beginner-guide.webp" alt="ESP32 新手入门：芯片型号、开源项目和开发板一次讲清" loading="lazy"></a>
+<div><span class="kk">#4 · X 原帖信息</span><h3>ESP32 新手入门：芯片型号、开源项目和开发板一次讲清</h3><div class="xi"><span class="who">小墨同学</span> <span class="h">@xiaomovps</span><br>发帖时间：2026-10-20 09:35 北京<br>原帖：<a href="https://x.com/xiaomovps/status/2112357123246178332" target="_blank" rel="noopener">https://x.com/xiaomovps/status/2112357123246178332</a><br>原文链接：<a href="https://x.com/i/article/2112199928940265472" target="_blank" rel="noopener">https://x.com/i/article/2112199928940265472</a></div><p class="muted"><a href="img/04-esp32-beginner-guide.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p5"><a href="img/05-better-prompt-skill.png" target="_blank"><img src="img/05-better-prompt-skill.webp" alt="/better 提示词 Skill：让模型给出“更深而不是更大”的任务版本" loading="lazy"></a>
+<div><span class="kk">#5 · X 原帖信息</span><h3>/better 提示词 Skill：让模型给出“更深而不是更大”的任务版本</h3><div class="xi"><span class="who">Josh</span> <span class="h">@jjpcodes</span><br>发帖时间：2026-10-19 16:38 北京<br>原帖：<a href="https://x.com/jjpcodes/status/2112100971727769622" target="_blank" rel="noopener">https://x.com/jjpcodes/status/2112100971727769622</a><br>原文链接：<a href="https://gist.github.com/joshp123/a1443d30fa1b7c577e74882895cea61b" target="_blank" rel="noopener">https://gist.github.com/joshp123/a1443d30fa1b7c577e74882895cea61b</a></div><p class="muted"><a href="img/05-better-prompt-skill.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p6"><a href="img/06-dsh-genui-interactive-ui.png" target="_blank"><img src="img/06-dsh-genui-interactive-ui.webp" alt="dsh-genui：让 DeepSeek Harness 的回复里直接长出可交互界面" loading="lazy"></a>
+<div><span class="kk">#6 · X 原帖信息</span><h3>dsh-genui：让 DeepSeek Harness 的回复里直接长出可交互界面</h3><p class="sa"><a class="xref" href="../../radar/index.html#r1">另见：雷达 #1</a> <a class="xref" href="../../radar/index.html#r207">另见：雷达 #207</a></p><div class="xi"><span class="who">极客杰尼</span> <span class="h">@seekjourney</span><br>发帖时间：2026-10-19 19:56 北京<br>原帖：<a href="https://x.com/seekjourney/status/2112151005869842781" target="_blank" rel="noopener">https://x.com/seekjourney/status/2112151005869842781</a><br>原文链接：<a href="https://github.com/omdsh-dev/dsh-genui" target="_blank" rel="noopener">https://github.com/omdsh-dev/dsh-genui</a></div><p class="muted"><a href="img/06-dsh-genui-interactive-ui.png" target="_blank">查看原图 PNG →</a></p></div></section></div><div class="pn"><a href="../2026-10-21/index.html">← 2026-10-21</a><a href="../index.html">往期目录</a><a href="../2026-10-19/index.html">2026-10-19 →</a></div><div class="foot">王玮的 X 海报日报 · 每天从 X 推荐流挑技术帖，用 ChatGPT 生成康奈尔笔记海报 · 每张都附 X 原帖信息 · 风格改编自 <a href="https://github.com/vuejs/vitepress">VitePress</a>（MIT）</div></main></body></html>
