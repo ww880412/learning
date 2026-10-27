@@ -157,9 +157,12 @@ const tagOf = it => statusTag(stateOf(it));
 const countBy = arr => Object.fromEntries(STATES.map(k => [k, arr.filter(i => stateOf(i) === k).length]));
 const progBar = arr => { const n = arr.length, c = countBy(arr), done = c['已学完'] + c['已掌握']; return `<div class="prog" data-k="prog" data-ids="${arr.map(i=>i.id).join(',')}"><div class="bar"><i class="g" style="width:${n ? c['已掌握'] / n * 100 : 0}%"></i><i class="l" style="width:${n ? c['已学完'] / n * 100 : 0}%"></i><i class="b" style="width:${n ? c['进行中'] / n * 100 : 0}%"></i></div><span>已学完 ${done}/${n}${c['已掌握'] ? ` · 已掌握 ${c['已掌握']}` : ''}${c['进行中'] ? ` · 进行中 ${c['进行中']}` : ''}</span></div>`; };
 const stateStats = arr => { const c = countBy(arr); return STATES.map(k => `<div data-k="st:${k}" data-ids="${arr.map(i=>i.id).join(',')}" class="stat ${({'未开始':'','进行中':'blue','已学完':'green','已掌握':'purple'})[k]}"><b>${c[k]}</b><span>${k}</span></div>`).join(''); };
+// 学习页有几节：数页面里的 <section class="sec">（新模板每节一个）；分主线的长文把各条主线的节数加起来。读不到就不显示。
+const secCount = href => { try { return (fs.readFileSync(path.join(ROOT, String(href).split('#')[0]), 'utf8').match(/<section class="sec[ "]/g) || []).length; } catch { return 0; } };
+const lessonSecs = it => it.threads?.length ? it.threads.reduce((n, t) => n + secCount(t.href), 0) : secCount(it.href);
 const itemCard = (file, it) => `<a class="card item" href="${rel(file, it.href)}">${it.preview ? `<div class="thumb"><img src="${rel(file, it.preview)}" alt="" loading="lazy"></div>` : ''}
 <div class="meta" style="margin-top:0;padding-top:0"><span class="tag">${esc(it.label)}</span>${tagOf(it)}</div><h3>${esc(it.title)}</h3><p>${esc(it.note)}</p>
-<div class="meta">开始于 ${esc(it.start)}${it.cards ? ` · ${it.cards} 张卡片` : ''}<span style="margin-left:auto;color:var(--blue);font-weight:700">开始学 →</span></div></a>`;
+<div class="meta">开始于 ${esc(it.start)}${lessonSecs(it) ? ` · ${lessonSecs(it)} 节` : ''}<span style="margin-left:auto;color:var(--blue);font-weight:700">开始学 →</span></div></a>`;
 const emptyBox = (t, s) => `<div class="empty"><b>${t}</b>${s}</div>`;
 const itemConcepts = id => concepts.filter(c => c.refs.some(r => r.item === id));
 
@@ -629,7 +632,7 @@ for (const c of columns) {
     body += `<div class="kicker">主题</div><div class="sub">${esc(g.title)}</div><div class="grid wide"><a class="card c1" href="${rel(f, g.dir + '/index.html')}"><span class="go">→</span><div class="ic">${colIc(c, 20)}</div><h3>${esc(g.title)}</h3><p>${esc(g.desc)}</p><div class="meta"><span class="tag blue">${gi.length} 篇学习页</span>${gp.length ? `<span class="tag">${gp.length} 讲未开始</span>` : ''}</div>${progBar(items.filter(i => i.group === g.id))}</a></div>`; }
   const loose = its.filter(i => !i.group);
   if (loose.length) body += `<div class="kicker">文章 <span class="n">${loose.length}</span></div><div class="sub">一篇一页，点开就学</div><div class="grid wide">${loose.map(i => itemCard(f, i)).join('')}</div>`;
-  // 长文分主线：item.threads = [{label,title,href,cards,range,conclusion}]（全文导读在 item.href）
+  // 长文分主线：item.threads = [{label,title,href,range,conclusion}]（全文导读在 item.href）
   for (const i of loose.filter(x => x.threads?.length)) body += `<div class="kicker">${esc(i.label)} · 分主线学 <span class="n">${i.threads.length} 条</span></div><div class="sub">${esc(i.title)}</div><div class="list"><div class="row"><span class="tag blue">导读</span><span class="t"><a href="${rel(f, i.href)}">全文导读：主线怎么连起来</a></span></div>${i.threads.map(t => `<div class="row"><span class="tag">${esc(t.label)}</span><span class="t"><a href="${rel(f, t.href)}">${esc(t.title)}</a><div style="font-weight:400;font-size:14px;color:var(--ink2)">${esc(t.conclusion)}</div></span><span class="d">${esc(t.range)} · ${t.cards} 张</span></div>`).join('')}</div>`;
   if (pending.length) body += `<div class="kicker">待学 <span class="n">${pending.length}</span></div><div class="sub">还没做成学习页，先看原文</div><div class="list">${pending.map(i => `<div class="row">${statusTag('未开始')}<span class="tag">${esc(i.label)}</span><span class="t"><a href="${esc(i.href)}"${/^https?:/.test(i.href) ? ' target="_blank" rel="noopener"' : ''}>${esc(i.title)}</a>${i.note ? `<div style="font-weight:400;font-size:14px;color:var(--ink2)">${esc(i.note)}</div>` : ''}</span>${i.date ? `<span class="d">${esc(i.date)}</span>` : ''}</div>`).join('')}</div>`;
   write(f, page(f, c.title, c.id, body));

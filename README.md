@@ -46,7 +46,7 @@ node build.mjs
 
 ## 加一篇学习页
 1. 用 `/workspace/skills-src/xuexi-template/build.sh` 做好学习页，放到对应栏目目录（公开课放 `courses/<课程>/`，其他一篇一个目录）。
-2. 在 `data/items.json` 的 `items` 里加一条：`id, column, group(公开课填课程 id), order, label, title, href, preview, status(进行中/已学/待小测), start(YYYY-MM-DD), cards, note, source`。新课程还要在 `groups` 里加一条。
+2. 在 `data/items.json` 的 `items` 里加一条：`id, column, group(公开课填课程 id), order, label, title, href, preview, status(进行中/已学/待小测), start(YYYY-MM-DD), note, source`。节数不用写：build.mjs 从学习页里数 `<section class="sec">` 自动算。新课程还要在 `groups` 里加一条。
 3. 涉及的概念：在 `data/concepts.json` 给已有概念的 `refs` 加 `{"item":"…","card":卡片号,"note":"…"}`，或新增概念（定义只写学习页/原文里有的内容）。
 4. `node build.mjs`。复习日期按开始日期第 1、3、7、14、30 天自动排好。
 
