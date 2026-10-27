@@ -262,7 +262,8 @@ const DG = (() => {
     const day = phDays.find(x => x.date <= addDays(d, -2));
     if (!day) return null;
     return { listDate: day.date, href: `ph-inspo/index.html`, n: day.items.length, source: day.source || null,
-      items: [...day.items].sort((a, b) => (a.rank ?? 999) - (b.rank ?? 999)).map(i => ({ rank: i.rank ?? null, name: i.name, what: i.what || '', href: `ph-inspo/index.html#${i.id}` })) };
+      picks: !!day.picks, // 写了 picks（先看 3 个）就按数据顺序（前 3 个就是 picks），否则按名次
+      items: (day.picks ? day.items : [...day.items].sort((a, b) => (a.rank ?? 999) - (b.rank ?? 999))).map((i, k) => ({ rank: i.rank ?? null, pick: !!day.picks && k < 3, name: i.name, what: i.what || '', href: `ph-inspo/index.html#${i.id}` })) };
   };
   const dates = [...new Set([...Object.keys(brief), ...Object.keys(poster)])].filter(Boolean).sort().reverse();
   const list = dates.map(d => { const [y, m, dd] = d.split('-').map(Number);
@@ -288,7 +289,7 @@ const DG = (() => {
   const gap = (x, settled) => x.date === DG.list[0]?.date ? '今天的还没出' : settled;
   const dayBody = (f, x) => `<div class="dg-grid">
 <section class="sheet dg-sec"><h2>${ic('newspaper', 18)} X 简报</h2>${x.brief ? `<a class="dg-tt" href="${rel(f, x.brief.href)}">${esc(x.brief.title)}</a>${x.brief.lines.length ? `<ol>${x.brief.lines.map(l => `<li>${esc(l)}</li>`).join('')}</ol>` : ''}<a class="btn sm" href="${rel(f, x.brief.href)}">读这期简报 →</a>` : none(gap(x, '这天还没有简报'))}</section>
-<section class="sheet dg-sec"><h2>${ic('rocket', 18)} 产品灵感${x.ph ? ` <span class="tag">榜单 ${esc(x.ph.listDate.slice(5).replace('-', '/'))} · ${x.ph.n} 个</span>` : ''}</h2>${x.ph ? `<ol class="dg-ph">${x.ph.items.map(i => `<li><a href="${rel(f, i.href)}"><b>${i.rank != null ? '#' + esc(i.rank) + ' ' : ''}${esc(i.name)}</b></a><span>${esc(i.what)}</span></li>`).join('')}</ol>` : none(gap(x, '这天还没有产品灵感'))}</section>
+<section class="sheet dg-sec"><h2>${ic('rocket', 18)} 产品灵感${x.ph ? ` <span class="tag">榜单 ${esc(x.ph.listDate.slice(5).replace('-', '/'))} · ${x.ph.n} 个</span>` : ''}</h2>${x.ph ? `<ol class="dg-ph">${x.ph.items.map(i => `<li><a href="${rel(f, i.href)}"><b>${i.pick ? '先看 · ' : i.rank != null ? '#' + esc(i.rank) + ' ' : ''}${esc(i.name)}</b></a><span>${esc(i.what)}</span></li>`).join('')}</ol>` : none(gap(x, '这天还没有产品灵感'))}</section>
 <section class="sheet dg-sec dg-wide"><h2>${ic('image', 18)} X 海报${x.posters ? ` <span class="tag">${x.posters.n} 张</span>` : ''}</h2>${x.posters ? `<div class="dg-po">${x.posters.items.map(p => `<a href="${rel(f, p.href)}"><img src="${rel(f, p.img)}" alt="${esc(p.title)}" loading="lazy"><span>${esc(p.title)}</span></a>`).join('')}</div>` : none(gap(x, '这天还没有海报'))}</section></div>`;
   for (const [k, x] of DG.list.entries()) {
     const f = x.href, prev = DG.list[k + 1], next = DG.list[k - 1];
@@ -442,7 +443,7 @@ ${nx ? `<a class="nx" href="${esc(nx.href)}"${ext(nx.href)}><b>${['已学完', '
   // 今日的新闻：一条「每日汇总」（简报 + 海报 + 产品灵感，与北京时间 9:00 推送同一份 data/digest/D.json）+ 一条雷达最近补录
   const TD_DG = DG.list.map(x => ({ d: x.date, href: x.href, brief: x.brief ? { href: x.brief.href, t: x.brief.lines[0] || x.brief.title } : null,
     poster: x.posters ? { href: x.posters.href, n: x.posters.n, items: x.posters.items.slice(0, 2).map(p => [p.href, p.title]) } : null,
-    ph: x.ph ? { href: x.ph.href, n: x.ph.n, list: x.ph.listDate, items: x.ph.items.slice(0, 3).map(i => [i.href, (i.rank != null ? '#' + i.rank + ' ' : '') + i.name]) } : null }));
+    ph: x.ph ? { href: x.ph.href, n: x.ph.n, list: x.ph.listDate, items: x.ph.items.slice(0, 3).map((i, k) => [i.href, i.pick ? (k ? '' : '先看 ') + i.name : (i.rank != null ? '#' + i.rank + ' ' : '') + i.name]) } : null }));
   // 雷达那一行 =「本周首选」：取最新一份周报「结论先说」第 1 条；这份没写就往前找上一份；都没有才退回最新入库的一条
   const rdPick = (() => { const D = path.join(ROOT, 'data', 'radar-weekly'); if (!fs.existsSync(D)) return null;
     const plain = t => t.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').replace(/\*\*|`/g, '').trim();
