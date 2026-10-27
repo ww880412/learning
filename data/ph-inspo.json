@@ -24,6 +24,138 @@
   ],
   "days": [
     {
+      "date": "2026-10-26",
+      "source": "https://www.producthunt.com/leaderboard/daily/2026/10/26",
+      "fetched": "2026-10-27 19:53 北京",
+      "note": "周一榜单共 10 个产品；排名为当日结束时名次，分数为抓取时综合分，所以第 6 名分数高于第 5 名。今日未与《P-Hunt内容速览》交叉核对。",
+      "picks": [
+        {
+          "id": "2026-10-26-whoiscooking",
+          "why": "把每个 coding agent 和它拉起的进程合成一行，正是工作台运行面板该有的视图。",
+          "limit": "只认 Mac Apple Silicon，按进程名识别 agent，不开源。"
+        },
+        {
+          "id": "2026-10-26-cloudknife",
+          "why": "agent 出方案、确定性规则把关、人批准后执行，是高风险操作的现成模板。",
+          "limit": "只做 Azure 成本优化，规则引擎细节官网没公开。"
+        },
+        {
+          "id": "2026-10-26-surgepix",
+          "why": "一份 SKILL.md 分发到五种 agent 的安装表可直接参考，还能给公众号/小红书出图。",
+          "limit": "技能只是付费 API 的壳，要 API key，图要上传到它的服务器。"
+        }
+      ],
+      "items": [
+        {
+          "id": "2026-10-26-whoiscooking",
+          "name": "WhoIsCooking",
+          "tagline": "See which AI agent is heating your Mac and cool it down.",
+          "ph": "https://www.producthunt.com/products/whoiscooking",
+          "site": "https://whoiscooking.site",
+          "repo": null,
+          "rank": 10,
+          "score": 111,
+          "comments": 12,
+          "what": "Mac 刘海/菜单栏小工具，显示芯片温度，以及是哪个 AI agent（Claude Code、Codex、Cursor 等）在让 Mac 发烫。",
+          "problem": "coding agent 会自己起构建、测试、渲染和 dev server，Activity Monitor 里是几十个看不懂的进程，不知道是谁在烧 CPU、哪些在会话结束后还没关。",
+          "highlight": "把一个 agent 会话和它拉起的所有子进程（构建、测试、dev server、渲染）合成一行；「降温」是把重活挪到能效核上继续跑，不冻结、不杀进程（官网称同一渲染从 64°C 降到 50°C，厂商自测）；agent 连续 5 分钟高 CPU、或会话结束后留下 dev server 时提醒。识别 Claude Code、Codex CLI、Gemini CLI、Cursor、Aider、Copilot CLI、Ollama、LM Studio。仅 Apple Silicon、macOS 14+，一次性 5 美元，不开源。",
+          "inspo": "「按 agent 会话归并进程树」可以直接搬进工作台的运行面板：每个 agent 一行，显示它拉起的进程、CPU 和遗留的 dev server，会话结束时提示清理。前提是工作台启动 agent 时记下进程组或会话 ID，否则只能像它一样按进程名猜。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "效率"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-26-cloudknife",
+          "name": "CloudKnife",
+          "tagline": "Cut your cloud bill, not your performance",
+          "ph": "https://www.producthunt.com/products/cloudknife",
+          "site": "https://cloudknife.com",
+          "repo": null,
+          "rank": 8,
+          "score": 125,
+          "comments": 20,
+          "what": "Azure 云成本优化平台（GCP、AWS 官网标为即将支持），从分析、给建议一直做到执行。",
+          "problem": "云成本工具通常只告诉你该砍什么，执行没人做，建议堆在 backlog 里。",
+          "highlight": "PH 介绍称：AI agent 先弄清每个资源是什么、实际怎么用、允许变成什么，再由一个确定性的核心按硬规则检查每条建议（例如 SAP 虚拟机只给 SAP 认证的规格）；人批准后由它执行。官网称用策略和 IaC 护栏决定 Autopilot 能动哪些资源，建议附证据和理由。14 天免费试用。",
+          "inspo": "「agent 出方案 → 确定性规则校验 → 人批准 → 执行」这条链适合工作台里高风险操作（改生产配置、批量改仓库）：把不能违反的约束写成规则引擎，而不是写进提示词。前提是这些约束能写成可机器检查的规则。",
+          "tags": [
+            "AI工具",
+            "开发者工具"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-26-surgepix",
+          "name": "SurgePix",
+          "tagline": "AI visuals. Edit every layer. Agent-callable.",
+          "ph": "https://www.producthunt.com/products/surgepix",
+          "site": "https://surgepix.ai",
+          "repo": "https://github.com/SurgePix/agent-skills",
+          "rank": 2,
+          "score": 253,
+          "comments": 94,
+          "what": "AI 出图加分层编辑：生成后能改任意图层、换字、局部重绘、套品牌色；也能让 coding agent 通过技能直接调用。",
+          "problem": "多数 AI 出图工具只能一次性生成，改字、改局部要重来；agent 工作流里也没法顺手出图。",
+          "highlight": "开源的 agent 技能包（MIT，抓取时 4 星）用 SKILL.md 格式，一个包同时装进 Claude Code、Codex CLI、Cursor、Gemini CLI、OpenClaw，用 npx skills add SurgePix/agent-skills 安装；技能含做 PPT、海报、小红书竖版套图、公众号横版配图、抠图、图片翻译，触发词有中文。技能只是调用它的付费 API，需要 SURGEPIX_API_KEY。",
+          "inspo": "两点可抄：一是同一份 SKILL.md 按 agent 分发到各自目录（~/.claude/skills、.agents/skills、.cursor/skills），工作台做插件分发可以照这张表；二是技能里写明易混场景的分流规则（只说「配图」时先问是小红书竖版还是公众号横版）。王玮做自媒体配图也可以试，但要先注册拿 API key，图要传到它的服务器。",
+          "tags": [
+            "创作",
+            "coding agent",
+            "AI工具"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-26-minimax-m31-flash",
+          "name": "MiniMax M3.1 Flash",
+          "tagline": "MiniMax’s Flash model, 3x faster and 70% cheaper for agents",
+          "ph": "https://www.producthunt.com/products/minimax-4",
+          "site": "https://www.minimax.io/blog/minimax-m31f",
+          "repo": null,
+          "rank": 3,
+          "score": 223,
+          "comments": 5,
+          "what": "MiniMax 面向 agent 任务、编程、电脑操作和网络安全的新一代 Flash 模型。",
+          "problem": "agent 任务长、调用多，用旗舰模型太贵太慢。",
+          "highlight": "官网称比上一代线上推理快约 3 倍、agent 任务成本降 70%，输出 200+ token/秒；定价每百万 token 输入 0.15 美元、输出 0.60 美元；官网称 DeepSWE v1.1 73.7%、OSWorld V2 61.7（厂商自测，未见独立验证）。在 MiniMax API、M Plan 和 MiniMax Code 上可用，权重称之后开放。官网博客日期为 10 月 19 日，PH 上架晚一周。",
+          "inspo": "可以作为工作台里便宜的子任务模型候选（批量读代码、跑工具调用），把旗舰模型留给规划和评审。前提是先用自己的任务集测一下，别直接信厂商分数。",
+          "tags": [
+            "AI工具",
+            "coding agent"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-26-strawberry",
+          "name": "Strawberry 1.0",
+          "tagline": "AI Browser that saves your team >100h/week",
+          "ph": "https://www.producthunt.com/products/strawberry",
+          "site": "https://strawberrybrowser.com",
+          "repo": null,
+          "rank": 1,
+          "score": 334,
+          "comments": 64,
+          "what": "内置 AI「同事」的浏览器，可以雇官方的销售、招聘、行政、营销、咨询等角色，也能按自己的流程自建。",
+          "problem": "日常的找线索、调研候选人、整理会议纪要、写跟进这类网页上的重复活要人一页页点。",
+          "highlight": "浏览器本身就是人和 AI 共用的工作区，AI 能用你登录过的网站（官网称「甚至在登录墙后」）；会议里直接记笔记，不需要会议机器人；支持「收到某封邮件/某条 Slack/会议结束 → 在 Linear 建任务、写进 HubSpot、存到 Notion」这类触发式自动化和定时任务。标题里「每周省 100 小时以上」是厂商说法。",
+          "inspo": "「按岗位包装的 agent + 触发器」是一种好懂的产品形态：用户挑一个角色，而不是自己写提示词。工作台可以把常用 agent 配置做成角色模板（比如代码评审员、发布值班），附带默认触发条件。",
+          "tags": [
+            "AI工具",
+            "效率"
+          ],
+          "status": "新发现",
+          "followups": []
+        }
+      ]
+    },
+    {
       "date": "2026-10-25",
       "source": "https://www.producthunt.com/leaderboard/daily/2026/10/25",
       "fetched": "2026-10-26 08:10 EDT",
