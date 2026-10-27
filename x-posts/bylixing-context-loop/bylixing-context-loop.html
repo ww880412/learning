@@ -1,374 +1,719 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<script>(function(){var s=localStorage.getItem("theme");if(s?s==="dark":matchMedia("(prefers-color-scheme: dark)").matches)document.documentElement.classList.add("dark")})()</script>
+<!DOCTYPE html><html lang="zh-CN" class="layout-article" data-layout="article"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<script>(function(){var v;try{v=localStorage.getItem('site-theme')}catch(e){}document.documentElement.dataset.theme=/^[ABC]$/.test(v||'')?v:'C'})();
+(function(){var k='theme',s=localStorage.getItem(k);if(s?s==='dark':matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark');
+window.__tt=function(){var f=function(){var d=document.documentElement.classList.toggle('dark');localStorage.setItem(k,d?'dark':'light')};if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.startViewTransition(f);else f()}})();</script>
 <title>Context 与 Loop · 立行</title><style>
-/* 学习搭子 固定设计系统 — 不要在课程里改这个文件。只改 lesson.html 的内容。 */
-:root{
-  --paper:#F6F6F7; --sheet:#FFFFFF; --ink:#16202C; --ink2:#4A5868; --hair:#E2E2E3;
-  --blue:#2550D9;  --blue-soft:#E3EAFD;   /* 主角：当前步骤 / 重点 */
-  --amber:#C77A00; --amber-soft:#FBEFD9; /* 数据 / 消息 */
-  --green:#16875A; --green-soft:#DDF3E9; /* 成功 / 工具结果 */
-  --red:#C8372D;   --red-soft:#FBE3E1;   /* 出错 */
-  --r-lg:12px; --r-sm:10px;
-  --font:"PingFang SC","Noto Sans CJK SC","Source Han Sans SC","Microsoft YaHei",system-ui,sans-serif;
-  --mono:"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;
-}
-*{box-sizing:border-box}
-html,body{margin:0;height:100%;background:var(--paper);color:var(--ink);font:17px/1.65 var(--font);-webkit-font-smoothing:antialiased}
-.top{position:fixed;inset:0 0 auto 0;height:56px;display:flex;align-items:center;gap:16px;padding:0 28px;z-index:5}
-.top .course{font-weight:700;font-size:15px}
-.top .track{flex:1;height:6px;background:var(--hair);border-radius:99px;overflow:hidden}
-.top .track i{display:block;height:100%;width:0;background:var(--blue);transition:width .35s ease}
-.top .count{font:600 14px var(--mono);color:var(--ink2);min-width:60px;text-align:right}
-.deck{position:fixed;inset:56px 0 76px 0;display:grid;place-items:center;padding:0 24px}
-.card{display:none;width:min(1120px,100%);height:100%;max-height:640px;background:var(--sheet);border-radius:var(--r-lg);
-  box-shadow:0 1px 0 var(--hair),0 18px 40px -24px rgba(22,32,44,.25);overflow:hidden}
-.card.on{display:grid;grid-template-columns:1.45fr 1fr}
-.card.full.on{grid-template-columns:1fr}
-.stage{background:var(--paper);margin:14px 0 14px 14px;border-radius:14px;display:grid;place-items:center;padding:18px;overflow:hidden;position:relative}
-.card.full .stage{margin:14px}
-.stage svg{width:100%;height:100%;max-height:560px}
-.say{padding:40px 40px 32px;display:flex;flex-direction:column;justify-content:center;gap:14px;overflow:auto}
-.say .kicker{font-size:14px;color:var(--blue);font-weight:700}
-.say h2{margin:0;font-size:32px;line-height:1.25;letter-spacing:.01em}
-.say p{margin:0;color:var(--ink2)}
-.say p b{color:var(--ink)}
-.src{margin-top:auto;font-size:13px;color:var(--ink2);border-top:1px solid var(--hair);padding-top:12px}
-.src.extra::before{content:"补充";background:var(--amber-soft);color:var(--amber);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
-.src.official::before{content:"官方";background:var(--green-soft);color:var(--green);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
-code{font:14px var(--mono);background:var(--blue-soft);color:var(--blue);padding:1px 6px;border-radius:6px}
-pre{margin:0;font:13.5px/1.6 var(--mono);background:#101826;color:#DCE3EE;border-radius:12px;padding:16px 18px;overflow:auto;width:100%}
-pre .k{color:#8FB1FF}pre .s{color:#9BE0B4}pre .c{color:#71819A}pre .f{color:#FFC86B}pre .hl{background:rgba(143,177,255,.16);display:block;margin:0 -18px;padding:0 18px}
-.bottom{position:fixed;inset:auto 0 0 0;height:76px;display:flex;align-items:center;justify-content:center;gap:14px}
-.btn{font:600 15px var(--font);border:0;border-radius:99px;padding:11px 22px;cursor:pointer;background:var(--sheet);color:var(--ink);box-shadow:0 0 0 1px var(--hair)}
-.btn:hover{box-shadow:0 0 0 2px var(--blue)}
-.btn.main{background:var(--blue);color:#fff;box-shadow:none}
-.btn:disabled{opacity:.35;cursor:default;box-shadow:0 0 0 1px var(--hair)}
-.btn:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
-.btn.sm{padding:7px 14px;font-size:14px}
-/* ---- 图元（flow 组件生成） ---- */
-.fl-node rect{fill:var(--sheet);stroke:var(--hair);stroke-width:2;transition:all .3s}
-.fl-node text{font:600 17px var(--font);fill:var(--ink)}
-.fl-node .sub{font:400 13px var(--font);fill:var(--ink2)}
-.fl-node.blue rect{stroke:var(--blue)} .fl-node.amber rect{stroke:var(--amber)} .fl-node.green rect{stroke:var(--green)} .fl-node.red rect{stroke:var(--red)}
-.fl-node.act rect{fill:var(--blue-soft);stroke:var(--blue);stroke-width:3}
-.fl-node.dim{opacity:.35}
-.fl-edge{fill:none;stroke:#AEB8C6;stroke-width:2.2;transition:all .3s}
-.fl-edge.act{stroke:var(--blue);stroke-width:3.5;stroke-dasharray:8 6;animation:dash .8s linear infinite}
-.fl-elab{font:500 13px var(--font);fill:var(--ink2)}
-.fl-elab.act{fill:var(--blue);font-weight:700}
-@keyframes dash{to{stroke-dashoffset:-28}}
-/* ---- 模拟器 ---- */
-.sim{display:grid;grid-template-rows:auto 1fr auto;gap:10px;width:100%;height:100%}
-.sim .ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.sim .ctl label{font-size:13px;color:var(--ink2);display:flex;align-items:center;gap:6px}
-.sim .body{display:grid;grid-template-columns:1.1fr 1fr;gap:12px;min-height:0}
-.sim .log{background:var(--sheet);border-radius:12px;padding:10px;overflow:auto;font:13px/1.5 var(--mono)}
-.sim .msg{border-left:4px solid var(--hair);padding:6px 10px;margin:0 0 8px;border-radius:6px;background:var(--paper);white-space:pre-wrap;word-break:break-word;animation:pop .25s ease}
-.sim .msg b{font-family:var(--font);display:block;font-size:12px;color:var(--ink2)}
-.msg.user{border-color:var(--blue)} .msg.asst{border-color:var(--amber)} .msg.tool{border-color:var(--green)} .msg.err{border-color:var(--red);background:var(--red-soft)} .msg.sys{border-color:var(--ink2)}
-.sim .narr{background:var(--blue-soft);color:var(--ink);border-radius:12px;padding:10px 14px;font-size:15px;min-height:48px}
-@keyframes pop{from{opacity:0;transform:translateY(6px)}}
-/* ---- 小测 ---- */
-.quiz{width:100%;max-width:760px;display:flex;flex-direction:column;gap:12px}
-.quiz .qn{font:600 13px var(--mono);color:var(--ink2)}
-.quiz .qt{font-size:22px;font-weight:700;line-height:1.4}
-.quiz .opt{display:block;width:100%;text-align:left;font:16px var(--font);background:var(--sheet);border:2px solid var(--hair);border-radius:12px;padding:12px 16px;cursor:pointer;color:var(--ink)}
-.quiz .opt:hover{border-color:var(--blue)}
-.quiz .opt.ok{border-color:var(--green);background:var(--green-soft)} .quiz .opt.no{border-color:var(--red);background:var(--red-soft)}
-.quiz .fb{min-height:52px;font-size:15px;color:var(--ink2)}
-.quiz .fb a{color:var(--blue);font-weight:700;cursor:pointer}
-.quiz .nav{display:flex;gap:8px;align-items:center}
-@media (max-width:820px){
-  .card.full.on{grid-template-rows:1fr}.card.full .stage{overflow:auto;place-items:start center}
-  .card.on{grid-template-columns:1fr;grid-template-rows:minmax(220px,48%) 1fr}
-  .stage{margin:10px 10px 0}.say{padding:18px 20px}.say h2{font-size:24px}
-  .sim .body{grid-template-columns:1fr}.top{padding:0 14px}.top .course{display:none}
-}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-/* ---- 展开细节 ---- */
-details.more{border-top:1px solid var(--hair);padding-top:10px;font-size:15px;color:var(--ink2)}
-details.more summary{cursor:pointer;font-weight:700;color:var(--blue);list-style:none}
-details.more summary::-webkit-details-marker{display:none}
-details.more summary::before{content:"＋ 展开细节";}
-details.more[open] summary::before{content:"－ 收起细节";}
-details.more>*:not(summary){margin:8px 0 0}
-details.more ul{padding-left:18px}details.more li{margin:4px 0}
-details.more table{border-collapse:collapse;width:100%;font-size:14px}
-details.more td,details.more th{border-bottom:1px solid var(--hair);padding:5px 6px;text-align:left;vertical-align:top}
-/* ---- 对话列表（状态追踪）---- */
-.stack{width:100%;display:flex;flex-direction:column;gap:6px;font:13px/1.45 var(--mono)}
-.stack .row{display:grid;grid-template-columns:28px 92px 1fr;gap:8px;align-items:start;background:var(--sheet);border-radius:8px;padding:7px 10px;border-left:4px solid var(--hair)}
-.stack .row .i{color:var(--ink2)}.stack .row .r{font-weight:700}
-.stack .row.developer{border-color:var(--ink2)}.stack .row.user{border-color:var(--blue)}.stack .row.assistant{border-color:var(--amber)}.stack .row.result{border-color:var(--green)}
-.stack .row.new{background:var(--blue-soft)}.stack .row.bad{border-color:var(--red);background:var(--red-soft)}
-.stack .row .t{white-space:pre-wrap;word-break:break-word}
-/* ---- 对比/误区 ---- */
-.pairs{width:100%;display:grid;gap:10px}
-.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.pair>div{background:var(--sheet);border-radius:12px;padding:12px 14px;font-size:15px}
-.pair .no{border-left:5px solid var(--red)}.pair .yes{border-left:5px solid var(--green)}
-.pair b{display:block;font-size:12px;color:var(--ink2);margin-bottom:4px}
-.say .more code{font-size:13px}
-@media (max-width:820px){.pair{grid-template-columns:1fr}.stack .row{grid-template-columns:22px 70px 1fr}}
-.pair .a{border-left:5px solid var(--blue)}.pair .b{border-left:5px solid var(--amber)}
-/* ===== v3：填满面板、原文标签、要点、条形图、分支 ===== */
-.stage{padding:10px}
-.stage svg.flow{width:100%;height:100%;max-height:none}
-.say p{font-size:17px}
-p.key{background:var(--blue-soft);color:var(--ink);border-radius:12px;padding:10px 14px;font-size:16px}
-p.key::before{content:"关键 ";font-weight:800;color:var(--blue)}
-.src.article::before{content:"原文";background:var(--blue-soft);color:var(--blue);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
-.stage>.stack{height:100%;justify-content:center;font-size:14.5px}
-.stage>.stack .row{padding:11px 12px;flex:0 1 auto}
-.stack .head{font:700 13px var(--font);color:var(--ink2);margin:8px 0 0}
-.stage>.pairs{height:100%;grid-auto-rows:minmax(0,1fr);align-content:stretch}
-.pair>div{font-size:16px;display:flex;flex-direction:column;justify-content:center}
-.bars{width:100%;display:flex;flex-direction:column;gap:16px;justify-content:center;height:100%;padding:0 10px}
-.bar{display:grid;grid-template-columns:150px 1fr 76px;gap:12px;align-items:center;font-size:15px}
-.bar .bl{font-weight:700;text-align:right}
-.bar .bt{height:30px;background:var(--sheet);border-radius:8px;overflow:hidden}
-.bar .bt i{display:block;height:100%;background:var(--ink2);border-radius:8px}
-.bar.blue .bt i{background:var(--blue)}.bar.amber .bt i{background:var(--amber)}.bar.green .bt i{background:var(--green)}.bar.red .bt i{background:var(--red)}
-.bar .bv{font:700 15px var(--mono)}
-.bar .bn{grid-column:2/4;font-size:13px;color:var(--ink2);margin-top:-8px}
-.bars .bc{font-size:13px;color:var(--ink2);text-align:center}
-.sim .branches{gap:14px;background:var(--sheet);border-radius:10px;padding:6px 10px}
-.sim .branches label{font-size:13.5px;color:var(--ink)}
-@media (max-width:820px){.bar{grid-template-columns:90px 1fr 60px}}
-.sim{grid-template-rows:auto auto 1fr auto}
-.sim.wide .body{grid-template-columns:1fr;grid-template-rows:minmax(0,1.1fr) minmax(0,1fr)}
-.sim:not(:has(.branches)){grid-template-rows:auto 1fr auto}
-.bar .bt.none{background:repeating-linear-gradient(45deg,var(--sheet) 0 8px,var(--hair) 8px 10px)}
-.say h2{font-size:28px;line-height:1.3}
-.sim .body{overflow:hidden}
-.sim .body>svg{min-height:0;height:100%;width:100%}
-.sim .narr{min-height:0}
-.stage>.stack{font-size:15.5px;gap:8px}
-.stage>.stack .row{padding:13px 14px}
-.stack .row .t{font-family:var(--font)}
-.stage:has(>.sim){place-items:stretch}
-.sim{min-height:0;height:100%;overflow:hidden}
-.sim.wide .body{grid-template-rows:minmax(0,55%) minmax(0,45%)}
-/* 讲解条放在图上方，永远可见 */
-.sim{grid-template-rows:auto auto auto minmax(0,1fr)}
-.sim:not(:has(.branches)){grid-template-rows:auto auto minmax(0,1fr)}
-.sim .ctl{order:0}.sim .branches{order:1}.sim .narr{order:2}.sim .body{order:3;min-height:0}
-/* ===== v4 ===== */
-.fl-node .sub{font-size:13.5px;fill:#3E4B5B}
-.fl-elab{font-size:13px;fill:#3E4B5B}
-.fl-edge.red{stroke:var(--red)}.fl-edge.amber{stroke:var(--amber)}.fl-edge.green{stroke:var(--green)}
-.fl-elab.red{fill:var(--red);font-weight:700}.fl-elab.amber{fill:var(--amber);font-weight:700}.fl-elab.green{fill:var(--green);font-weight:700}
-.stage{margin:10px 0 10px 10px;padding:4px}.card.full .stage{margin:0 10px 10px}
-.bar .bt i{background:#B8C2CF}
-.bar .bmiss{grid-column:2/4;color:var(--ink2);font-size:14px;font-style:italic}
-.sim .btn{background:transparent;box-shadow:0 0 0 1.5px var(--blue);color:var(--blue)}
-.sim .btn:hover{background:var(--blue-soft)}
-.say{justify-content:center}
-.src{margin-top:6px}
-.top .count{font-size:16px;color:var(--ink);font-weight:700}
-.top .track{height:6px}
-.card.full.on{grid-template-rows:auto minmax(0,1fr)}
-.head-full{padding:18px 26px 8px;display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
-.head-full .kicker{font-size:14px;color:var(--blue);font-weight:700}
-.head-full h2{margin:0;font-size:24px;line-height:1.3}
-.sim.wide .body{grid-template-rows:minmax(0,64%) minmax(0,36%)}
-@media (max-width:820px){.head-full{padding:12px 14px 6px}.head-full h2{font-size:19px}}
-.say{justify-content:safe center}
-@media (max-width:820px){.bars{gap:8px}.bar{font-size:13px;grid-template-columns:84px 1fr 56px}.bar .bt{height:20px}.bar .bn{font-size:12px;margin-top:-4px}.bars .bc{font-size:12px}
- .sim .ctl .btn{padding:5px 10px}.sim .branches{flex-direction:column;align-items:flex-start;gap:2px}}
+/* Site tokens copied verbatim, in cascade order, from ref/site-assets/site.css. */
+:root{--paper:#f6f7f9;--sheet:#fff;--card:#fff;--ink:#111827;--ink2:#4b5563;--meta:#6b7280;--hair:#e5e7eb;--hair2:#eef0f3;--blue:#2563eb;--blue-soft:#eff4ff;--red:#dc2626;--red-soft:#fef2f2;--green:#16a34a;--green-soft:#f0fdf4;--amber:#b45309;--amber-soft:#fffbeb;--purple:#7c3aed;--purple-soft:#f5f3ff;--font:system-ui,-apple-system,"PingFang SC","Noto Sans SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;--serif:var(--font);--mono:ui-monospace,SFMono-Regular,Menlo,monospace;--r-lg:12px;--r-sm:8px;--grad:none;color-scheme:light}
+html.dark{--paper:#0f1115;--sheet:#171a21;--card:#171a21;--ink:#e5e7eb;--ink2:#b6bcc6;--meta:#9ca3af;--hair:#2a2f3a;--hair2:#20242c;--blue:#7aa2ff;--blue-soft:rgba(122,162,255,.12);--red:#f87171;--red-soft:rgba(248,113,113,.12);--green:#4ade80;--green-soft:rgba(74,222,128,.12);--amber:#fbbf24;--amber-soft:rgba(251,191,36,.12);--purple:#c4b5fd;--purple-soft:rgba(196,181,253,.14);color-scheme:dark}
+[data-theme=B]{--paper:#fbfbfc;--sheet:#fff;--card:#fff;--ink:#16171a;--ink2:#4a4c55;--meta:#6e707a;--hair:#ececf0;--hair2:#f2f2f5;--blue:#5e6ad2;--blue-soft:#eef0fb;--red:#d4483b;--red-soft:#fdf0ee;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif}
+html.dark[data-theme=B]{--paper:#0e0f12;--sheet:#16171b;--card:#16171b;--ink:#e8e9ed;--ink2:#b3b5bd;--meta:#8b8d97;--hair:#26272d;--hair2:#1f2025;--blue:#8b93f0;--blue-soft:rgba(139,147,240,.14);--red:#f0776b}
+[data-theme=A]{--paper:#f7f4ee;--sheet:#fffdf9;--card:#fffdf9;--ink:#2b2722;--ink2:#5f574e;--meta:#8a8076;--hair:#e6dfd3;--hair2:#efe8dc;--blue:#b4532a;--blue-soft:#f6e1d6;--red:#a2461f;--red-soft:#f6e1d6;--green:#5f7a3a;--green-soft:#e7ecd9;--purple:#7a5a8c;--purple-soft:#eee4f1;--serif:"Noto Serif CJK SC","Noto Serif SC","Songti SC",serif;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif}
+html.dark[data-theme=A]{--paper:#1b1814;--sheet:#23201b;--card:#23201b;--ink:#ede6da;--ink2:#c7bdaf;--meta:#9b9184;--hair:#3a342c;--hair2:#2d2923;--blue:#e08a5f;--blue-soft:rgba(224,138,95,.15);--red:#e8916a;--red-soft:rgba(232,145,106,.15)}
+[data-theme=C]{--paper:#f3f5fb;--sheet:#fff;--card:#fff;--ink:#1d2340;--ink2:#5a6185;--meta:#8a90ad;--hair:#e6e9f4;--hair2:#eef0f7;--blue:#3b5bfd;--blue-soft:#e8edff;--red:#d4483b;--red-soft:#ffe6e3;--green:#1f9d5c;--green-soft:#e3f7ec;--amber:#d9771e;--amber-soft:#fff1e0;--purple:#7a4bf5;--purple-soft:#f2eaff;--r-lg:20px;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif;--sh:0 1px 2px rgba(30,40,90,.04),0 8px 24px rgba(30,40,90,.06)}
+html.dark[data-theme=C]{--paper:#0f1222;--sheet:#181c33;--card:#181c33;--ink:#e6e9fb;--ink2:#aab0d0;--meta:#7d84a8;--hair:#272c48;--hair2:#20253f;--blue:#7d93ff;--blue-soft:rgba(125,147,255,.15);--red:#ff8a7d;--red-soft:rgba(255,138,125,.15);--green-soft:rgba(31,157,92,.18);--amber-soft:rgba(217,119,30,.18);--purple-soft:rgba(122,75,245,.2);--sh:0 1px 2px rgba(0,0,0,.3)}
+:root{--acc2:#8b5cf6;--ease:cubic-bezier(.22,1,.36,1)}
+[data-theme=A]{--acc2:#c98a2b}
+html.dark[data-theme=A]{--paper:#181512;--sheet:#211d18;--card:#211d18;--meta:#a89d8f;--hair:#382f26;--acc2:#e3b15c}
+[data-theme=B]{--paper:#fafafb;--blue:#5b5bd6;--blue-soft:#efeffc;--acc2:#a855f7}
+html.dark[data-theme=B]{--paper:#0c0d10;--sheet:#14151a;--card:#14151a;--ink:#ececf1;--ink2:#babcc6;--meta:#9597a3;--hair:#262830;--hair2:#1c1d23;--blue:#9198ff;--blue-soft:rgba(145,152,255,.14);--acc2:#c084fc}
+[data-theme=C]{--acc2:#06b6d4}
+html.dark[data-theme=C]{--meta:#a3a9b8;--acc2:#22d3ee}
+html.dark{--meta:#a1a7b3}
+[data-theme=B]{--paper:#eef1f5;--hair:#dfe4ea;--hair2:#eef1f5;--green:#16a34a}
+html.dark[data-theme=B]{--paper:#0b0d12;--hair:#252a35;--hair2:#1a1e27}
+[data-theme=C]{--blue:#7b5cff;--blue-soft:#f0ecff;--acc2:#ff5e8a}
+html.dark[data-theme=C]{--paper:#0b0b0f;--sheet:#15151c;--card:#15151c;--ink:#f2f2f5;--ink2:#b8b8c6;--meta:#9a9aab;--hair:#26262f;--hair2:#1d1d25;--blue:#a08bff;--blue-soft:rgba(160,139,255,.14)}
+:root{--sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:24px;--sp-6:32px;--fs-xs:12px;--fs-sm:13.5px;--fs-md:15px;--fs-lg:18px;--fs-xl:24px;--fs-2xl:32px;--r-xs:6px;--r-sm:8px;--r-md:10px;--r-lg:12px;--r-xl:18px;--r-pill:999px;--sh-1:0 1px 2px rgba(15,23,42,.06);--sh-2:0 4px 16px -8px rgba(15,23,42,.22);--sh-3:0 14px 30px -12px rgba(15,23,42,.28);--dur-1:120ms;--dur-2:220ms;--dur-3:420ms;--ease:cubic-bezier(.22,1,.36,1);--ease-in-out:cubic-bezier(.65,0,.35,1);--spring:cubic-bezier(.34,1.3,.64,1);--icon-stroke:2}
+:root{--spring:linear(0,.0089,.0346,.0752,.1286,.1927,.2654,.3445,.4278,.5131,.5983,.6812,.7598,.8325,.8981,.9555,1.0042,1.0441,1.0753,1.0982,1.1134,1.1218,1.1243,1.1218,1.1155,1.1062,1.0949,1.0825,1.0697,1.0571,1.0451,1.034,1.0242,1.0157,1.0085,1.0027,.9982,.995,.9928,.9916,.9912,.9914,.9921,.9931,.9943,.9956,.9968,.998,.999,1)}
+html.dark{--sh-1:0 1px 2px rgba(0,0,0,.4);--sh-2:0 4px 16px -8px rgba(0,0,0,.6);--sh-3:0 14px 30px -12px rgba(0,0,0,.7)}
+/* Five reading levels: title / section / subsection / body / note. */
+:root{--reading-width:680px;--toc-width:208px;--rail-width:180px;--reading-gap:28px;--top-height:56px;--body-size:18px;--body-leading:1.8;--finish-space:104px}
+*{box-sizing:border-box}html{scroll-padding-top:72px}html,body{margin:0;background:var(--paper);color:var(--ink);font:var(--body-size)/var(--body-leading) var(--font);-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}a{color:var(--blue);text-underline-offset:3px;overflow-wrap:anywhere}a:hover{text-decoration-thickness:2px}button,input,textarea,select{font:inherit;color:inherit}button,a,summary{touch-action:manipulation}button{cursor:pointer}button:disabled{opacity:.5;cursor:default}:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+h1,h2,h3{color:var(--ink);font-family:var(--serif);line-height:1.35;letter-spacing:-.02em;overflow-wrap:anywhere}h1{font-size:var(--fs-2xl);margin:8px 0 16px}h2{font-size:var(--fs-xl);margin:8px 0 16px}h3{font-size:var(--fs-lg);margin:24px 0 8px}p{margin:0 0 12px}ul,ol{padding-left:24px}li{margin:4px 0}code{font:.88em var(--mono);background:var(--hair2);padding:1px 4px;border-radius:var(--r-xs)}pre{overflow:auto;white-space:pre;tab-size:4;font:14px/1.65 var(--mono);padding:16px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-md);margin:12px 0}pre code{font:inherit;white-space:inherit;background:none;padding:0}
+.i{display:inline-block;vertical-align:middle;flex:none;width:18px;height:18px;stroke-width:2}.btn,button.opt{min-height:44px;border:1px solid var(--hair);border-radius:var(--r-sm);background:var(--sheet);padding:8px 14px;font-size:var(--fs-md);font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:6px}.btn:hover{border-color:var(--blue);background:var(--blue-soft)}.btn.main{background:var(--blue);color:var(--sheet)}.btn.sm{font-size:var(--fs-sm)}textarea{display:block;width:100%;padding:10px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-sm);resize:vertical}
+.top{position:fixed;inset:0 0 auto;height:var(--top-height);z-index:30;display:flex;align-items:center;gap:16px;padding:0 20px;background:var(--paper);border-bottom:1px solid var(--hair)}.top .course{font-size:var(--fs-sm);font-weight:700;max-width:35vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.top .track{flex:1;height:4px;background:var(--hair);border-radius:var(--r-pill);overflow:hidden}.top .track i{display:block;width:0;height:100%;background:var(--blue);transition:width var(--dur-2) var(--ease)}.top .count{font-size:var(--fs-sm);max-width:32vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.toc-toggle{min-width:44px}.top .theme-toggle{font-size:var(--fs-sm);min-height:44px}
+.layout-article .deck,.layout-pair .deck{padding:80px 20px calc(var(--finish-space) + env(safe-area-inset-bottom));max-width:720px;margin:0 auto;min-width:0}.layout-article .sec{position:relative;margin:0 0 32px;padding-top:16px;border-top:1px solid var(--hair);scroll-margin-top:72px;min-width:0}.layout-article .hero{border:0;padding-top:0}.kicker,.meta,.src,.source-anchor,figcaption,caption,.aside{font-size:var(--fs-sm);line-height:1.65}.kicker{display:block;color:var(--blue);font-weight:700}.lede{font-size:var(--fs-lg);font-weight:600}.links{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:var(--fs-sm)}.links a{display:inline-flex;align-items:center;min-height:44px}.src{margin:16px 0 0;padding-top:8px;border-top:1px solid var(--hair);color:var(--ink2)}.source-anchor{display:block;color:var(--ink2);margin-top:6px;overflow-wrap:anywhere}.source-anchor a{min-height:44px;display:inline-flex;align-items:center}.src.extra::before{content:'补充 · ';color:var(--amber)}.src.official::before{content:'官方 · ';color:var(--blue)}.src.article::before{content:'原文 · ';color:var(--blue)}
+.toc{position:fixed;left:max(20px,calc((100vw - 1192px)/2));top:76px;width:var(--toc-width);max-height:calc(100dvh - 180px);overflow:auto;font-size:var(--fs-sm);line-height:1.5;z-index:25}.toc ol{list-style:none;margin:0;padding:0}.toc a{display:flex;gap:8px;align-items:center;min-height:44px;padding:6px 10px;color:var(--ink2);text-decoration:none;border-radius:var(--r-sm)}.toc a[aria-current=true]{background:var(--blue-soft);color:var(--blue);font-weight:700}.toc b{display:block;margin:0 10px 8px}.toc-backdrop{display:none}.tldr,.argmap{padding:16px;background:var(--blue-soft);border-radius:var(--r-lg);margin:16px 0}.tldr a,.argmap a{display:block;min-height:44px;align-content:center}.argmap ol{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 16px;margin:0}.points{padding:12px 16px 12px 36px;background:var(--hair2);border-radius:var(--r-md)}
+figure.orig,figure.redraw,.figure{margin:20px 0;min-width:0}figure img{display:block;max-width:100%;height:auto;border:1px solid var(--hair);border-radius:var(--r-md);cursor:zoom-in;background:var(--sheet)}figcaption{margin-top:8px;color:var(--ink2)}figcaption b{color:var(--ink)}.how{margin-top:6px}.table{margin:20px 0;overflow-x:auto}.table table,table.data{width:100%;border-collapse:collapse;background:var(--sheet);font-size:var(--fs-md)}th,td{border-bottom:1px solid var(--hair);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--hair2)}caption{text-align:left;font-weight:700;padding:8px 0}.table-note{font-size:var(--fs-sm);color:var(--ink2)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;margin:16px 0}.stat{padding:12px 14px;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet)}.stat b{display:block;font-size:var(--fs-xl);line-height:1.35;color:var(--blue);font-variant-numeric:tabular-nums}.stat span{display:block;font-size:var(--fs-sm);color:var(--ink2)}.stat .source-anchor{font-size:var(--fs-xs)}
+blockquote.quote{margin:16px 0;padding:12px 16px;border-left:3px solid var(--blue);background:var(--sheet)}.quote cite{display:block;font-style:normal;font-size:var(--fs-sm);color:var(--ink2)}.callout{padding:12px 16px;margin:16px 0;border-left:3px solid var(--blue);background:var(--blue-soft);border-radius:0 var(--r-sm) var(--r-sm) 0}.callout.limit{border-color:var(--amber);background:var(--amber-soft)}.callout.extra{border:1px dashed var(--meta);background:var(--sheet)}.callout.myth{border-color:var(--amber);background:var(--hair2)}.callout.limit::before{content:'作者的限定 · ';font-weight:700}.aside{padding:12px;border-left:2px solid var(--hair);color:var(--ink2);margin:12px 0}
+.stories,.compare,.roles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}.story,.compare>div,.roles>div{padding:12px;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);font-size:var(--fs-md)}.story b,.roles b{display:block}.story dt{font-weight:700;color:var(--ink2);font-size:var(--fs-sm)}.story dd{margin:0 0 8px}.story p,.story .fix{display:block;margin:8px 0}.steps,.ladder{display:grid;gap:8px;padding:0;list-style:none;counter-reset:step}.steps>li,.ladder>li{padding:10px 14px;background:var(--hair2);border-radius:var(--r-sm);counter-increment:step}.steps>li::before{content:counter(step)'. ';color:var(--blue);font-weight:700}.ladder i{font-style:normal;font-weight:700;margin-right:8px}.matrix{border:1px solid var(--hair);padding:16px;border-radius:var(--r-md)}.matrix .axes{font-size:var(--fs-sm);color:var(--ink2)}.matrix ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));list-style:none;padding:0;gap:1px;background:var(--hair)}.matrix li{margin:0;padding:16px;background:var(--sheet)}.refs{font-size:var(--fs-sm);line-height:1.7}.refs a{display:inline-block;min-height:44px;align-content:center}.thread{border-left:2px solid var(--hair);padding-left:16px}.formula{padding:16px;border:1px solid var(--hair);overflow:auto}.formula math{font-size:var(--fs-xl)}details.more{margin:12px 0;border-top:1px solid var(--hair);font-size:var(--fs-md)}summary{min-height:44px;cursor:pointer;display:flex;align-items:center;gap:8px}summary .i{transition:transform var(--dur-1)}details[open] summary .i{transform:rotate(90deg)}
+/* Shared interactive components. No fixed page/card height. */
+.flow-scroll{max-width:100%;overflow-x:auto;min-width:0;touch-action:pan-x pan-y}.flow-scroll svg.flow{display:block;width:100%;height:auto;min-height:0}.flow-tip{font-size:var(--fs-sm);color:var(--ink2)}.fl-node rect{fill:var(--sheet);stroke:var(--hair);stroke-width:2}.fl-node text{font:600 17px var(--font);fill:var(--ink)}.fl-node .sub{font-size:13px;font-weight:400;fill:var(--ink2)}.fl-node.act rect{stroke:var(--blue);fill:var(--blue-soft);stroke-width:3}.fl-node.blue rect{stroke:var(--blue)}.fl-node.amber rect,.fl-node.red rect{stroke:var(--amber)}.fl-node.green rect{stroke:var(--green)}.fl-edge{fill:none;stroke:var(--meta);stroke-width:2}.fl-edge.act{stroke:var(--blue);stroke-width:3}.fl-elab{font:13px var(--font);fill:var(--ink2)}
+.sim{margin:16px 0;padding:12px;border:1px solid var(--hair);border-radius:var(--r-lg);background:var(--sheet);display:flex;flex-direction:column;gap:12px}.sim .ctl{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.sim .ctl label{min-height:44px;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm)}.sim .ctl input[type=range]{min-width:110px}.sim .body{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}.sim .narr{order:-1;background:var(--blue-soft);padding:10px 12px;border-radius:var(--r-sm);font-size:var(--fs-md)}.sim .log{max-height:240px;overflow:auto;font:var(--fs-sm)/1.6 var(--mono)}.sim .msg{border-left:3px solid var(--hair);padding:8px;margin:6px 0;background:var(--paper);white-space:pre-wrap;overflow-wrap:anywhere}.msg b{display:block;font-family:var(--font)}.sim .msg.err{border-color:var(--amber)}.prediction{order:-2}.component-error{padding:16px;border:1px solid var(--amber);color:var(--amber)}
+.quiz{margin:16px 0;padding:16px;border:1px solid var(--hair);border-radius:var(--r-lg);background:var(--sheet)}.quiz .qn{font-size:var(--fs-sm);color:var(--ink2)}.quiz .qt{font-size:var(--fs-lg);font-weight:700;margin-bottom:12px}.quiz .opt{display:block;width:100%;text-align:left;margin:8px 0;font-weight:400}.quiz .opt.ok{border-color:var(--green);background:var(--green-soft)}.quiz .opt.no{border-color:var(--amber);background:var(--amber-soft)}.quiz .fb{margin:12px 0;font-size:var(--fs-md)}.quiz .nav{display:flex;gap:8px;margin-top:12px}.quiz label{display:block;font-size:var(--fs-sm)}.stack{display:grid;gap:6px;font-size:var(--fs-sm)}.stack .row{display:grid;grid-template-columns:28px 80px minmax(0,1fr);gap:8px;padding:8px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-sm)}.stack .t{overflow-wrap:anywhere;white-space:pre-wrap}.stack .new{background:var(--blue-soft)}.bar{display:grid;grid-template-columns:100px minmax(0,1fr) 80px;gap:8px;margin:8px 0;align-items:center;font-size:var(--fs-sm)}.bar .bt{height:20px;background:var(--hair2);border-radius:var(--r-xs);overflow:hidden}.bar .bt i{display:block;height:100%;background:var(--blue)}.bar .bn,.bar .bmiss{grid-column:2/4}.bars .bc{font-size:var(--fs-sm);color:var(--ink2)}
+/* Paired material stays inside its own container; highlighting never scrolls the page. */
+.pair.codewalk,.pair.read-pair,.pair.material-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start;margin:20px 0;position:relative;min-width:0}.pair-source{position:sticky;top:72px;max-height:calc(100dvh - 160px);overflow:auto;overscroll-behavior:contain;min-width:0;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);padding:12px;scroll-padding:16px}.pair-notes{min-width:0}.pair-notes .step{padding:16px 0 24px;border-top:1px solid var(--hair);scroll-margin-top:84px}.pair-notes .step.is-active{border-color:var(--blue)}.pair-source .source-block{padding:12px 8px;border-left:3px solid transparent}.pair-source .source-block.is-active{background:var(--blue-soft);border-color:var(--blue)}.source-text{overflow-wrap:anywhere}.pair-source pre{border:0;padding:0;margin:8px 0;overflow:visible}.code-line{display:block;min-height:1.65em;white-space:pre;padding-left:48px;position:relative}.code-line::before{content:attr(data-line);position:absolute;left:0;width:36px;text-align:right;color:var(--meta);user-select:none}.code-line.hl{background:var(--blue-soft)}.copy-code{position:static;flex:none;white-space:nowrap}.pair-source .source-anchor{font-size:var(--fs-xs)}
+/* A separate toolbar never shares the scrolling code viewport. */
+.heading-source{font-size:var(--fs-xs);margin:0 0 8px}
+.pair.codewalk{grid-template-columns:minmax(0,60%) minmax(0,1fr)}
+.code-panel{position:sticky;top:72px;display:flex;flex-direction:column;min-width:0;max-height:calc(100dvh - 160px);border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);overflow:hidden}
+.code-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;flex:none;border-bottom:1px solid var(--hair);font-size:var(--fs-xs);color:var(--ink2)}
+.code-panel .pair-source{position:static;max-height:none;min-height:0;flex:1 1 auto;border:0;border-radius:0;box-shadow:none;overflow:auto}
+.code-panel .pair-source pre{width:max-content;min-width:100%}
+dialog.image-dialog{width:calc(100vw - 24px);max-width:none;max-height:92dvh;padding:12px;border:1px solid var(--hair);background:var(--sheet);color:var(--ink);border-radius:var(--r-md);overflow:auto}dialog::backdrop{background:rgba(0,0,0,.75)}.image-dialog img{max-width:none;width:max(100%,min(1400px,180vw));height:auto}.image-dialog .dialog-close{position:sticky;top:0;left:0}.image-open{min-height:44px;border:0;background:transparent;padding:0;display:block;cursor:zoom-in;max-width:100%}.image-open img{max-width:100%}
+/* Only CSS changes the unchanged finish.js button. High specificity beats injected styles. */
+html body .fin-btn{bottom:calc(16px + env(safe-area-inset-bottom));right:16px;min-height:44px;z-index:35}html body #quiz-return{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:35;max-width:45vw}
+@media(min-width:1180px){.layout-article .deck{width:var(--reading-width);max-width:none;padding-left:0;padding-right:0;margin-left:max(260px,calc((100vw - 1192px)/2 + 236px));margin-right:0}.layout-article .sec>.doc-body>figure,.layout-article .sec>.doc-body>.table,.layout-article .sec>.codewalk{width:calc(100% + 120px);margin-left:0}.layout-article .aside{position:absolute;left:calc(100% + 28px);top:24px;width:var(--rail-width);margin:0}.layout-article .aside~figure{width:100%}html.layout-article body .fin-btn{left:max(20px,calc((100vw - 1192px)/2));right:auto;max-width:208px}.layout-pair .deck{max-width:1280px;margin-left:236px;margin-right:20px}.layout-pair .toc{width:188px;left:20px}html.layout-pair body .fin-btn{left:20px;right:auto;max-width:188px}}
+@media(max-width:1179px){.toc{display:none;visibility:hidden;left:0;top:var(--top-height);width:min(360px,90vw);max-height:calc(100dvh - 72px);background:var(--sheet);padding:16px;border-right:1px solid var(--hair);border-bottom:1px solid var(--hair)}html.toc-open .toc{display:block;visibility:visible}html.toc-open .toc-backdrop{display:block;position:fixed;inset:var(--top-height) 0 0;background:rgba(0,0,0,.3);z-index:24}}
+@media(max-width:820px){:root{--body-size:17px}.layout-article .deck,.layout-pair .deck{padding-left:18px;padding-right:18px}.top{gap:8px;padding:0 12px}.top .course{display:none}.top .count{max-width:44vw}.top .track{min-width:24px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stories,.compare,.roles{grid-template-columns:minmax(0,1fr)}.argmap ol{grid-template-columns:minmax(0,1fr)}table.data thead,.table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}table.data,table.data tbody,table.data tr,table.data td,.table table,.table tbody,.table tr,.table td{display:block;width:100%}table.data tr,.table tr{padding:8px 12px;margin-bottom:8px;border:1px solid var(--hair);background:var(--sheet);border-radius:var(--r-md)}table.data td,.table td{border:0;padding:4px 0}td[data-label]::before{content:attr(data-label)'：';font-size:var(--fs-sm);font-weight:700;color:var(--ink2)}.table caption,table.data caption{display:block;width:100%}.pair.codewalk,.pair.read-pair,.pair.material-pair{display:block}.pair-notes{margin-top:12px}.code-panel{top:var(--top-height);max-height:40dvh;z-index:15}.pair-source{top:var(--top-height);max-height:40dvh;z-index:15;box-shadow:var(--sh-1)}.pair-notes .step{scroll-margin-top:calc(40dvh + 80px)}.flow-scroll svg.flow{width:var(--flow-width);max-width:none;height:var(--flow-height)}.sim .flow-scroll svg.flow{width:100%;height:auto}.stack .row{grid-template-columns:22px 64px minmax(0,1fr)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+@media print{.top,.toc,.fin-btn,#quiz-return,.toc-backdrop,.zoom-toggle,.code-toolbar{display:none!important}.layout-article .deck,.layout-pair .deck{margin:0;padding:0;max-width:100%;width:auto}.pair-source,.code-panel{position:static;max-height:none;overflow:visible}.sec{break-inside:auto}figure,.stat{break-inside:avoid}}
+/* Applies after legacy CSS too. Zoom is an intentional local viewport; non-zoom stays unnested. */
+html body .sim .flow-scroll.zoom{overflow:auto;max-height:40dvh;min-height:0;height:auto;overscroll-behavior:contain;scroll-padding:16px;padding:16px}
+html body .sim .flow-scroll.zoom svg.flow{width:var(--flow-width);min-width:var(--flow-width);height:var(--flow-height);max-height:none;flex:none}
+html body .sim .zoom-toggle{min-height:44px;justify-self:start}.layout-deck .sim .body{position:relative}.layout-deck .card{padding-bottom:8px}.layout-deck .deck{bottom:calc(92px + env(safe-area-inset-bottom))}
+html body .fin-btn{bottom:calc(16px + env(safe-area-inset-bottom));right:16px;min-height:44px}html.layout-deck .bottom{padding-right:170px;padding-left:12px;height:76px}.layout-deck .btn,.layout-deck .sim .branches label{min-height:44px}.layout-deck details.more summary::before{content:none}.layout-deck .fl-edge.act{animation:none}
+@media(max-width:820px){html.layout-deck .bottom{padding-right:12px;gap:8px}.layout-deck .bottom .btn{padding:8px 10px;font-size:13px}html.layout-deck body .fin-btn{padding:8px 12px;font-size:13px}.layout-deck .card.full:has(.sim)>.head-full{position:sticky;top:0;z-index:4;background:var(--sheet);padding-top:12px;padding-bottom:12px}.layout-deck .sim .body{overflow:visible}.layout-deck .card .stage:has(.sim){overflow:visible}.layout-deck .sim .flow-scroll:not(.zoom){overflow:visible}}
 
-/* 与知识库首页（VitePress 风格）对齐：白底页面、12px 圆角、细边框卡片、深色模式 */
-html,body{background:var(--page,#fff)}
-.card{border:1px solid var(--hair);box-shadow:none}
-html.dark{--page:#1b1b1f;--paper:#2a2a31;--sheet:#202127;--ink:#fffff5;--ink2:rgba(235,235,245,.65);--hair:#3a3a40;
---blue:#7c9cff;--blue-soft:rgba(124,156,255,.16);--amber:#f0b429;--amber-soft:rgba(240,180,41,.14);--green:#3dd68c;--green-soft:rgba(61,214,140,.14);--red:#f66f81;--red-soft:rgba(246,111,129,.14);color-scheme:dark}
-html.dark .btn.main{color:#16202c}
-html.dark .fl-node .sub,html.dark .fl-elab{fill:var(--ink2)}html.dark .fl-elab{stroke:var(--page)!important}html.dark .fl-edge{stroke:#6b7280}
-html.dark .fl-elab.act{fill:var(--blue)}
+.layout-deck .card.doc.on{display:block;overflow:auto;padding:24px}.layout-deck .card.doc .doc-body{overflow:visible}.layout-deck .hero.card{height:auto}
+
+/* Legacy .stage svg also matches button icons: keep Lucide at its declared size. */
+html body svg.i{width:18px;height:18px;max-height:none;flex:none}
+
+/* Below the desktop sidebar breakpoint, finish lives in the opaque top bar.
+   Reserve its width before laying out the title; keep the deck footer for paging. */
+@media(max-width:1179px){
+ html body .top{gap:8px;padding:0 132px 0 12px;z-index:40;background:var(--paper)}
+ html body .top .course{display:none}
+ html body .top .count{flex:1;min-width:0;max-width:none;font-size:var(--fs-sm);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ html body .top .track{position:absolute;left:12px;right:12px;bottom:0;height:2px;min-width:0}
+ html body .top .toc-toggle{width:44px;flex:none;padding:0}
+ html body .top .theme-toggle{flex:none;padding:8px;font-size:var(--fs-sm)}
+ html body .fin-btn{top:6px;bottom:auto;left:auto;right:12px;width:112px;max-width:112px;height:44px;padding:8px;font-size:13px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:41;box-shadow:none}
+}
 </style></head><body>
-<header class="top"><span class="course">Context 与 Loop · 立行</span><span class="track"><i></i></span><span class="count"></span></header>
-<main class="deck">
-<section class="card">
-  <div class="stage"><svg class="flow" data-act="ctx" data-flow='{"nodes":[{"id":"ctx","x":160,"y":200,"t":"Context","s":"这一次做得好不好","c":"blue","w":180},{"id":"loop","x":480,"y":200,"t":"Loop","s":"下一次能不能更好","c":"green","w":180},{"id":"out","x":320,"y":60,"t":"调度更轻松","s":"人不要成为瓶颈","c":"amber","w":180}],"edges":[{"f":"ctx","t":"loop","l":"结果回流"},{"f":"loop","t":"ctx","l":"改写下次材料","route":"bottom","c":"green"},{"f":"ctx","t":"out"},{"f":"loop","t":"out"}]}'></svg></div>
-  <div class="say"><span class="kicker">这篇文章讲什么？</span><h2>Agent 时代先抓住 Context 与 Loop</h2>
-  <p>作者张立行（@bylixing）：Context 决定这一次好不好，Loop 决定下一次能不能更好。</p>
-  <p class="key">目标：调度越来越轻松，不要让自己成为系统的瓶颈。</p>
-  <details class="more"><summary></summary><p>底稿来自两段合计 80 多分钟的语音分享。作者写：人类读思路和逻辑；执行细节丢给 Agent。</p><p>完整版在作者博客；X 上发了同题 Article。</p></details>
-  <div class="src article">引子；博客标题与开篇</div></div>
+<header class="top"><button class="btn toc-toggle" aria-label="打开目录" aria-expanded="false"><svg class="i i-menu" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h16"/></svg></button><span class="course">Context 与 Loop · 立行</span><span class="track" role="presentation"><i></i></span><span class="count"></span><button class="btn theme-toggle" aria-label="切换深浅色">深浅色</button></header><main class="deck"><section class="sec hero" data-no="导" data-toc="开篇：这篇讲什么" id="s1" data-source-section="s1">
+  <header class="doc-head">
+    <span class="kicker">长文导读 · 作者 张立行 @bylixing · 发表于 2026-10-04</span>
+    <h1>Agent 时代先记两个词：Context、Loop</h1>
+    <p class="lede" id="explain-1" data-points="p0001">Context 决定 Agent 这一次做得好不好；Loop 决定它下一次能不能做得更好。目标是调度越来越轻松，人不要成为系统的瓶颈。</p>
+    <p class="links"><a href="https://zj1123581321.com/posts/261004-context-and-loop/">博客原文 <svg class="i i-external-link" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a><a href="https://x.com/bylixing/status/2106757373834780723">X Article <svg class="i i-external-link" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a><span>原文约 2 万字 · 本页导读约 20 分钟</span></p>
+    <ul class="points">
+      <li>先读每章顶部的「一句话结论」和「本章要点」，大约 5 分钟能抓住全文主线。</li>
+      <li>想看依据，再往下读：原文的 13 张图（含题图）和 2 张表都按原样放在对应位置，点图可放大。</li>
+      <li>最后做 5 道小题，答错会带你回到对应的章节。</li>
+    </ul>
+  </header>
+  <div class="doc-body">
+    <figure class="figure orig" data-asset="a0002" id="explain-2" data-points="p0002"><img src="img/cover.jpg" alt="吃一堑，长一智"><figcaption><b>原图 1 · 题图</b>「吃一堑，长一智」。 <span class="source-anchor" data-source-section="s1">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/">原图 1 · 对应小节</a></span><span class="how">怎么看：这是文章题图，正文从下一节展开。</span></figcaption></figure>
+    <h3>全文地图</h3>
+    <nav class="argmap" aria-label="章节地图"><ol><li><a href="#s2">引子：两个关键词</a></li><li><a href="#s3">一、为什么是这两个词</a></li><li><a href="#s4">二（上）：上下文的地基和分层</a></li><li><a href="#s5">二（中）：全局规则怎么写</a></li><li><a href="#s6">二（下）：项目规则、Memory、MCP、Skill</a></li><li><a href="#s7">三、执行层：外壳比模型重要</a></li><li><a href="#s8">四（上）：Advisor 为什么有效</a></li><li><a href="#s9">四（下）：作者的 Advisor 工具</a></li><li><a href="#s10">五、Loop 的标本</a></li><li><a href="#s11">六、验证通道与「验证也要被验证」</a></li><li><a href="#s12">七、瓶颈转移：精力→硬件→精力</a></li><li><a href="#s13">八、从 Coding 到组织和学习</a></li><li><a href="#s14">写在最后：人从环内走到环外</a></li><li><a href="#s15">小测：5 道题</a></li></ol></nav>
+  </div>
+  <div class="src article">张立行《吃一堑，长一智：Agent 时代的两个关键词 Context 与 Loop》 <span class="source-anchor" data-source-section="s1"><a href="https://zj1123581321.com/posts/261004-context-and-loop/">原文链接</a></span></div>
+<nav class="tldr" aria-label="速览"><ul><li><a href="#s2">Context 管这一次，Loop 管下一次。</a></li><li><a href="#s4">先留日志，再治理六层材料。</a></li><li><a href="#s7">先拆好任务，再比较执行器。</a></li><li><a href="#s8">判断需要能力，也需要干净的上下文。</a></li><li><a href="#s11">检查必须能被已知反例推翻。</a></li></ul></nav><aside class="aside">读法：先看每节结论，再看图表和限定。精读明文需加密后接入站点。</aside></section>
+
+<section class="sec" data-toc="引子：两个关键词" id="s2" data-source-section="s2">
+  <header class="doc-head" data-no="0">
+    <span class="kicker">引子 · 两个关键词</span>
+    <h2>静态 Context 事先备好，动态 Context 靠 Loop 产生</h2>
+    <p class="lede" id="explain-4" data-points="p0004 p0005">结果好坏，多半在提问前就决定了；能否越做越好，取决于有没有闭环把结果带回来。</p>
+    <ul class="points">
+      <li id="explain-5" data-points="p0006 p0007"><b>Context</b>：给 Agent 的全部材料和规矩，从训练数据到你的仓库、知识和习惯。</li>
+      <li id="explain-6" data-points="p0008 p0009"><b>Loop</b>：有日志能复盘、改完能验证，结果再回流成下一次的 Context。</li>
+      <li>作者的仓库全由 AI 提交；他投入的精力降了约一个数量级。</li>
+    </ul>
+  </header>
+  <div class="doc-body">
+    <p id="explain-3" data-points="p0003">这篇文章由两段共 80 多分钟的语音整理而来。作者说，人只需要读懂思路和逻辑，具体执行细节把文章交给 Agent 就行。</p>
+    <h3>这篇的主线 </h3><span class="source-anchor heading-source">原图 2</span>
+    <p id="explain-8" data-points="p0010 p0011 p0012"><b>静态 Context</b>＝事先准备好的：规则文件、Skill、Memory、工具配置。<b>动态 Context</b>＝只能靠 Loop 产生：验证之后得到结果、把错误复盘清楚，这些新东西再成为下一轮的材料。</p>
+    <p id="explain-7" data-points="p0009">作者说，Loop 已经有点模型训练的雏形，再往前一步就是大家常说的「自我进化」；它完全能放进自己的日常工作流：主动去搭 Context，主动去搭 Loop。</p>
+    <figure class="figure orig" data-asset="a0013" id="explain-9" data-points="p0013"><img src="img/d1-context-loop.png" alt="全文主线：静态的 Context 预先写好，动态的 Context 从 Loop 里长出来"><figcaption><b>原图 2 · 全文主线</b> 左边是预先写好的静态 Context，右边是从 Loop 里长出来的动态 Context。 <span class="source-anchor" data-source-section="s2">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#引子两个关键词">原图 2 · 对应小节</a></span><span class="how">怎么看：先识别对象与标记，再对照本节的解释和限定。</span></figcaption></figure>
+    <h3>先看一组数字</h3>
+    <p id="explain-10" data-points="p0014">作者有个名为 agent-config 的仓库，集中存放各种 AI 工具的规则与调度脚本，建于 7 月 23 日。两个月后：</p>
+    <div class="stats">
+      <div class="stat" data-unit="次" id="explain-11" data-points="p0014" data-source-lines="35"><b>≈1.6 万</b><span>次提交（commit）</span></div>
+      <div class="stat" data-unit="个" id="explain-12" data-points="p0014" data-source-lines="35"><b>1800+</b><span>个 issue（问题单）</span></div>
+      <div class="stat" data-unit="个" id="explain-13" data-points="p0014" data-source-lines="35"><b>≈2000</b><span>个合并的 PR，全部由 AI 提交</span></div>
+      <div class="stat" data-unit="Token" id="explain-14" data-points="p0015" data-source-lines="37"><b>20–30 亿</b><span>每天的 Token 用量（缓存读取也算在内）</span></div>
+    </div>
+    <p id="explain-15" data-points="p0015 p0018">几个月前，每天约 40 亿 Token 得靠他守在旁边频繁干预（人在环内）。如今用量相近，他每天只分出一小块时间照看 Agent。按他的体感，投入的精力降了一个数量级。</p>
+    <figure class="figure orig" data-asset="a0016" id="explain-16" data-points="p0016 p0017"><img src="img/token-trend.png" alt="8 月 1 日至 10 月 4 日的 Token 处理量：上半部分按 Coding Agent 堆叠，下半部分按模型分布"><figcaption><b>原图 3 · 每天的 Token 处理量（8/1–10/4）</b> 上图按工具分：8 月初基本只有两家官方客户端，9 月下旬起 Pi（黄色）占比明显上升。下图按模型分：列出 19 个，另有 37 个未列，没有哪一家独占。 <span class="source-anchor" data-source-section="s2">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#引子两个关键词">原图 3 · 对应小节</a></span><span class="how">怎么看：先识别对象与标记，再对照本节的解释和限定。</span></figcaption></figure>
+    <h3>后文反复出现的三个角色</h3>
+    <div class="roles compare">
+      <div><p id="explain-17" data-points="p0019 p0282"><b>主脑</b><span>拆任务、做判断、验收的 AI，相当于项目经理。</span></p></div>
+      <div><p id="explain-18" data-points="p0019"><b>执行器</b><span>照任务卡改代码的 AI，相当于动手的人。</span></p></div>
+      <div><p id="explain-19" data-points="p0019"><b>门禁</b><span>合并之前要全部通过的一组自动检查。</span></p></div>
+    </div>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s2"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#引子两个关键词">引子：两个关键词</a></span></div>
 </section>
 
-<section class="card">
-  <div class="stage"><svg class="flow" data-act="v" data-flow='{"nodes":[{"id":"v1","x":120,"y":200,"t":"高价值","s":"写代码贵，省下的是钱","c":"amber","w":170},{"id":"v2","x":320,"y":80,"t":"数据充分","s":"开源、文档、问答 → Context","c":"blue","w":200},{"id":"v3","x":320,"y":320,"t":"验证可闭环","s":"能跑、能测、会报错 → Loop","c":"green","w":220},{"id":"c","x":540,"y":200,"t":"Coding 先落地","s":"两点都满足","c":"blue","w":160}],"edges":[{"f":"v1","t":"c"},{"f":"v2","t":"c"},{"f":"v3","t":"c"}]}'></svg></div>
-  <div class="say"><span class="kicker">为什么偏偏是这两个词？</span><h2>Coding 先跑通，因为 Context 与 Loop 齐了</h2>
-  <p>作者列三点：高价值、数据高质量且充分、验证可闭环。第二点对 Context，第三点对 Loop。</p>
-  <p class="key">这两件事和具体用哪家模型无关；模型变强是供应商的进度。</p>
-  <details class="more"><summary></summary><p>作者引 Cloudflare：AI 把过去最慢最贵的实现，变成最快最便宜。瓶颈移到两头：给了什么 Context，以及怎么验证做对了。</p></details>
-  <div class="src article">「一、为什么偏偏是这两个词」</div></div>
+<section class="sec" data-toc="一、为什么是这两个词" id="s3" data-source-section="s3">
+  <header class="doc-head" data-no="1">
+    <span class="kicker">第一章 · 为什么偏偏是这两个词</span>
+    <h2>Coding 跑得最快，因为它同时有 Context 和 Loop</h2>
+    <p class="lede" id="explain-26" data-points="p0029">卡脖子的不再是写代码，而是一头一尾：开始前给什么上下文，完成后怎么确认做对。</p>
+    <ul class="points">
+      <li id="explain-20" data-points="p0020 p0021">Coding 先落地，靠三点：值钱、材料多而好、对错能自动检查。</li>
+      <li>后两条正好对应 Context 和 Loop。</li>
+      <li>这两样和用什么模型无关；你能动手改的就是它们。</li>
+    </ul>
+  </header>
+  <div class="doc-body">
+    <h3>Coding 满足的三个条件</h3>
+    <div class="stats">
+      <div class="callout key" id="explain-21" data-points="p0022"><b>高价值</b><span>写代码成本高，省下的就是钱。</span></div>
+      <div class="callout key" id="explain-22" data-points="p0023 p0025"><b>数据充分 → Context</b><span>开源项目、文档、问答网站，提供了大量训练材料。</span></div>
+      <div class="callout key" id="explain-23" data-points="p0024 p0025"><b>验证可闭环 → Loop</b><span>程序能运行、能测试，写错了编译器会提示。</span></div>
+    </div>
+    <p id="explain-24" data-points="p0026">作者强调：这两样建好以后，贵模型、便宜模型都会判断得更准、少浪费 Token。模型进步靠厂商；你自己能改的，只有上下文和闭环。</p>
+    <blockquote class="quote"><p id="explain-25" data-points="p0027 p0028">AI 把过去最慢、最贵的那一步——实现——变成了最快、最便宜的。</p><cite>Cloudflare《The Agent Development Lifecycle has arrived on Cloudflare》（作者译文）</cite><span class="source-anchor" data-source-section="s3"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#一为什么偏偏是这两个词">第一章引文</a></span></blockquote>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s3"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#一为什么偏偏是这两个词">一、为什么偏偏是这两个词</a></span></div>
 </section>
 
-<section class="card">
-  <div class="stage"><svg class="flow" data-act="dyn" data-edge="loop>dyn" data-flow='{"nodes":[{"id":"stat","x":140,"y":120,"t":"静态 Context","s":"规则、Skill、Memory、工具配置","c":"blue","w":220},{"id":"loop","x":400,"y":280,"t":"Loop","s":"验证 → 复盘 → 固化","c":"green","w":180},{"id":"dyn","x":400,"y":120,"t":"动态 Context","s":"从 Loop 长出来的新材料","c":"amber","w":210}],"edges":[{"f":"stat","t":"loop","l":"开场材料"},{"f":"loop","t":"dyn","l":"回流"},{"f":"dyn","t":"stat","l":"写进下次","route":"top","c":"amber"}]}'></svg></div>
-  <div class="say"><span class="kicker">全文主线是什么？</span><h2>静态预先写好，动态从 Loop 长出来</h2>
-  <p>静态 Context：规则文件、Skill、Memory、工具配置。动态 Context：验证结果、错误复盘，再回流成下一次材料。</p>
-  <p class="key">有意识地构造 Context，也有意识地构造 Loop。</p>
-  <div class="src article">引子主线两段</div></div>
+<section class="sec" data-toc="二（上）：上下文的地基和分层" id="s4" data-source-section="s6">
+  <header class="doc-head" data-no="2.1">
+    <span class="kicker">第二章 · 静态 Context（上）</span>
+    <h2>每样进入上下文的东西，都要说明它凭什么在这里</h2>
+    <p class="lede" id="explain-27" data-points="p0030 p0031 p0040">把 Agent 的上下文窗口当成自己的注意力来省：用不着的，就拿掉。</p>
+    <ul class="points">
+      <li id="explain-28" data-points="p0032 p0033">地基：每个 Agent 留下的行为记录都要长期保存。</li>
+      <li>上下文分 6 层；除了预置 prompt，其余都由你决定。</li>
+      <li>每一层都应该放进 Git，长期迭代。</li>
+    </ul>
+  </header>
+  <div class="doc-body">
+    <h3>地基：先留住行为记录 </h3><span class="source-anchor heading-source">原文 §2.1</span>
+    <p id="explain-29" data-points="p0034">本地会话记录在 Claude Code 里默认只留 <b>30 天</b>。而复盘、验证、回测全靠这些记录；后文的每次删减与回测，都假定记录还在。只需改一项设置就能保留，成本极低。</p>
+    <h3>上下文由哪几层组成 </h3><span class="source-anchor heading-source">原文表 1</span>
+    <div class="table"><table class="data orig" data-asset="a0037" id="explain-30" data-points="p0035 p0036 p0037"><caption>原表 1 · Coding Agent 的上下文分层<span class="source-anchor" data-source-section="s6">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#上下文由哪几层组成">§2.2 原表</a></span></caption>
+      <thead><tr><th>层次</th><th>例子</th><th>能不能改</th></tr></thead>
+      <tbody>
+        <tr><td data-label="层次">预置 prompt</td><td data-label="例子">Claude Code、Codex 内置的系统提示</td><td data-label="能不能改">闭源基本不能；开源的可以自己组装</td></tr>
+        <tr><td data-label="层次">全局规则</td><td data-label="例子">~/.claude/CLAUDE.md、~/.codex/AGENTS.md</td><td data-label="能不能改">能</td></tr>
+        <tr><td data-label="层次">项目规则</td><td data-label="例子">仓库根目录的 CLAUDE.md / AGENTS.md</td><td data-label="能不能改">能</td></tr>
+        <tr><td data-label="层次">MCP</td><td data-label="例子">各类外接工具服务</td><td data-label="能不能改">能</td></tr>
+        <tr><td data-label="层次">Skill</td><td data-label="例子">全局和项目的技能包</td><td data-label="能不能改">能</td></tr>
+        <tr><td data-label="层次">Memory</td><td data-label="例子">跨会话的记忆</td><td data-label="能不能改">能</td></tr>
+      </tbody></table><p class="table-note">单位按原表表头及单元格；原文没有另列脚注。</p></div>
+    <p id="explain-31" data-points="p0038 p0039">换成日常的话：<b>规则文件</b>＝每回开场必读的守则；<b>Skill</b>＝要用时才翻开的手册，平常只露一行简介；<b>MCP</b>＝接外部服务的插头，每个都附一本厚说明书。近一个月作者把这几层逐一删改、实测，只为两件事：活干得更好，Token 花得更少。</p>
+    <h3>Git 是基石</h3>
+    <p id="explain-32" data-points="p0041">作者把 Git 看成这个时代最好的软件：它把每次修改的差异都存下来，任何一条行为记录都能查到当时用的提示词、上下文、harness 和代码版本。（harness：套在模型外面的那层客户端软件，决定 AI 能用什么工具、一开始读什么。）所以上面每一层都该进 Git 仓库，最好同步到 GitHub。</p>
+    <h3>预置 prompt：多半不用动 </h3><span class="source-anchor heading-source">原文 §2.3</span>
+    <p id="explain-33" data-points="p0042 p0043">闭源客户端改不动，开源的能自己拼。多数时候保持默认即可；第三章讲执行器时会再回到这里。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s4"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#二静态-context每样东西都要回答它凭什么在这里">二、静态 Context</a></span><span class="source-anchor" data-source-section="s5"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#地基先把行为轨迹留下来">地基</a></span><span class="source-anchor" data-source-section="s6"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#上下文由哪几层组成">上下文由哪几层组成</a></span><span class="source-anchor" data-source-section="s7"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#预置-prompt基本不用管">预置 prompt</a></span></div>
 </section>
 
-<section class="card">
-  <div class="stage"><div class="stack">
-   <div class="row developer"><span class="i">1</span><span class="r">预置 prompt</span><span class="t">各家内置系统提示；闭源基本不能改</span></div>
-   <div class="row user"><span class="i">2</span><span class="r">全局规则</span><span class="t">~/.claude/CLAUDE.md、~/.codex/AGENTS.md</span></div>
-   <div class="row user"><span class="i">3</span><span class="r">项目规则</span><span class="t">仓库根目录 CLAUDE.md / AGENTS.md</span></div>
-   <div class="row result"><span class="i">4</span><span class="r">MCP / Skill / Memory</span><span class="t">外接工具、按需手册、跨会话记忆</span></div>
-   <div class="row assistant new"><span class="i">?</span><span class="r">原则</span><span class="t">每样东西都要回答：它凭什么在这里？</span></div>
-  </div></div>
-  <div class="say"><span class="kicker">静态 Context 怎么治？</span><h2>开场进对话的东西，都要能被删掉</h2>
-  <p>作者原则：像珍惜自己的注意力一样，珍惜 Agent 的上下文窗口。</p>
-  <p class="key">先留住行为轨迹：Claude Code 默认约 30 天后删本地会话，改配置项就能长期保存。</p>
-  <details class="more"><summary></summary><p>Git 被作者称为 Agent 时代最好的软件：低成本存差异，行为可追溯到当时的 prompt、harness（包在模型外的软件层）和代码。</p><p>MCP：有 CLI 就优先用 CLI；Skill：优先吸收，要装就装到项目；Memory：多客户端时不要依赖某一家自带记忆。</p></details>
-  <div class="src article">「二、静态 Context」地基与分层表</div></div>
+<section class="sec" data-toc="二（中）：全局规则怎么写" id="s5" data-source-section="s8">
+  <header class="doc-head" data-no="2.2">
+    <span class="kicker">第二章 · 静态 Context（中）· 全局规则</span>
+    <h2>一份底稿，按「工具 × 角色」拼接</h2>
+    <p class="lede" id="explain-36" data-points="p0050">大厂说可以删掉旧补丁。作者的建议是：方向照着走，节奏晚半年。</p>
+    <ul class="points">
+      <li id="explain-34" data-points="p0044 p0045">全局规则不是写完就不管，要进仓库，有加法也有减法。</li>
+      <li>大厂敢删，是因为 Token 几乎无限；普通用户额度会用完。</li>
+      <li id="explain-43" data-points="p0060">规则不按模型分，按「工具 × 角色」分三块拼。</li>
+      <li>注入量上硬闸：主脑 ≤24KB，执行器 ≤12KB。</li>
+    </ul>
+  </header>
+  <div class="doc-body">
+    <h3>大厂的建议：删掉旧补丁</h3>
+    <blockquote class="quote"><p id="explain-35" data-points="p0046 p0047 p0048">针对 Opus 5 和 Fable 5 这类模型，我们删掉了 Claude Code 八成以上的系统提示，编码评测没有可测量的损失。</p><cite>Thariq《The new rules of context engineering for Claude 5 generation models》（作者译文）</cite><span class="source-anchor" data-source-section="s8"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#全局规则不是一次性的而且要分层拼接">§2.4 引文</a></span></blockquote>
+    <p id="explain-37" data-points="p0049 p0051 p0052 p0053 p0054">作者认为方向没错，可大厂这么做有个外人没有的条件：好模型的 Token 几乎不限量。三处都能看到这一点：Pragmatic Engineer 那篇讲 OpenAI 软件工厂的报道的开篇，Thariq 接受 Latent Space 采访时随口说的「Token 很多」，以及 Orca 创始人的访谈。</p>
+    <p id="explain-38" data-points="p0055 p0056">风险是：你照着顶级模型把提示词精简完，没几天额度耗尽、只能换回普通模型，可原先为普通模型加的补丁已经删掉了。所以在高智力 Token 变便宜之前（作者寄希望于大约六个月之后），先保留这些补丁。</p>
+    <h3>为什么不按模型各写一份</h3>
+    <p id="explain-39" data-points="p0057 p0058 p0059">Thariq 也说过，每个模型出错的方式都不一样；但为每个模型各写一份很累，不停追加出错记录还会把模型管得太死。作者用的模型更多更杂，也考虑过「强模型一套、普通模型一套」，最后放弃，原因有二：</p>
+    <ul class="plain">
+      <li id="explain-41" data-points="p0059">证据不足：很多问题说不清该怪模型，还是该怪外壳或任务卡。</li>
+      <li id="explain-42" data-points="p0059">分不开：执行器多数跑在 Pi 上，同一个外壳换着接不同模型。</li>
+    </ul>
+    <h3>他的做法：底稿拆成三块</h3>
+    <div class="roles compare">
+      <div><p id="explain-44" data-points="p0061"><b>共用底座</b><span>个人的工程习惯（比如测试先行）。不分工具、不分角色，人人都带。</span></p></div>
+      <div><p id="explain-45" data-points="p0062"><b>主脑专属</b><span>怎么派活、怎么评审、跨会话的记忆、交付权限。这些给执行器只会添乱。</span></p></div>
+      <div><p id="explain-46" data-points="p0063"><b>工具专属</b><span>各家工具的用法和行为微调。比如 Codex 那边带全套「别过度设计」的约束，原因是 GPT 系模型往往格外严谨，容易设计过度；别的工具只带简版。微调绑在工具上，不绑在模型上。</span></p></div>
+    </div>
+    <p id="explain-47" data-points="p0064">主脑这边：三块合成每家工具的全局规则，Skill 用到再加载。执行器这边：派活那一刻临时生成，只取底座中用得上的、对应工具那一段，再加任务卡与「你是谁」的声明。跑在 Pi 上的执行器干脆不加载 Skill，系统提示总共约 <b>7KB</b>。</p>
+    <figure class="figure orig" data-asset="a0065" id="explain-48" data-points="p0065"><img src="img/d2-rule-layering.png" alt="一份底稿，按工具和角色渲染：主脑拿三块，执行器只拿底座和工具段"><figcaption><b>原图 4 · 规则分层拼接</b> 主脑三块全拿；执行器只拿底座加自家工具那段。 <span class="source-anchor" data-source-section="s8">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#全局规则不是一次性的而且要分层拼接">原图 4 · 对应小节</a></span><span class="how">怎么看：先识别对象与标记，再对照本节的解释和限定。</span></figcaption></figure>
+    <h3>给注入量上硬闸</h3>
+    <div class="stats">
+      <div class="stat" data-unit="KB" id="explain-49" data-points="p0066" data-source-lines="148"><b>≤ 24KB</b><span>主脑每一侧注入的规则上限（约 1.2 万汉字）</span></div>
+      <div class="stat" data-unit="KB" id="explain-50" data-points="p0066" data-source-lines="148"><b>≤ 12KB</b><span>执行器每一侧的上限</span></div>
+      <div class="stat" data-unit="KB" id="explain-51" data-points="p0066" data-source-lines="148"><b>24.5 → 19.8KB</b><span>主脑规则一度涨到 24.5KB，几乎贴线；把只在特定流程用的内容挪进按需加载的 Skill 后，压回约 19.8KB</span></div>
+    </div>
+    <p id="explain-52" data-points="p0066">两侧超了上限，提交时都会直接被拒。闸门的效果是：想加规则，得先决定删掉哪条。这些也都纳入版本管理，按回流的数据定期回测。</p>
+    <p class="callout limit" id="explain-53" data-points="p0067">另外：仓库里找不到 CLAUDE.md 时，Claude Code 现在会改读 AGENTS.md。几家工具一起用，只维护 AGENTS.md 一份即可。</p>
+  <p id="explain-40" data-points="p0057">访谈里，Thariq 用 Fable 5 与 Fable 5.1 举例，说明版本变化也会改变失败方式。</p></div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s8"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#全局规则不是一次性的而且要分层拼接">全局规则：不是一次性的，而且要分层拼接</a></span></div>
 </section>
 
-<section class="card">
-  <div class="stage"><svg class="flow" data-act="brain" data-flow='{"nodes":[{"id":"base","x":320,"y":60,"t":"共用底座","s":"工程习惯、验证手段","c":"green","w":180},{"id":"role","x":140,"y":220,"t":"主脑专属","s":"派发、评审、授权","c":"blue","w":160},{"id":"tool","x":500,"y":220,"t":"工具专属","s":"各家用法校准","c":"amber","w":160},{"id":"brain","x":140,"y":380,"t":"主脑","s":"三块拼起来","c":"blue","w":140},{"id":"exe","x":500,"y":380,"t":"执行器","s":"底座可用部分 + 工具段 + 任务卡","c":"amber","w":220}],"edges":[{"f":"base","t":"brain"},{"f":"role","t":"brain"},{"f":"tool","t":"brain"},{"f":"base","t":"exe"},{"f":"tool","t":"exe"}]}'></svg></div>
-  <div class="say"><span class="kicker">规则怎么分层？</span><h2>一份底稿，按工具与角色拼接，不按模型分</h2>
-  <p>主脑（拆任务、判断、验收）与执行器（拿任务卡改代码）的 Context 分开构建。</p>
-  <p class="key">作者给注入量上硬闸：主脑每侧规则不超过 24KB，执行器不超过 12KB。</p>
-  <details class="more"><summary></summary><p>作者不按模型分规则：工具多、证据难分清是模型还是外壳问题；执行器多跑在 Pi 上，模型轴和外壳轴拆不开。</p><p>方向上跟顶级模型团队「大删系统提示」，节奏建议晚约半年：圈外人没有近乎无限的高质量 Token。</p><p>Pi：开源 Coding Agent 外壳，系统提示可自控，可接任意模型；作者把杂活优先交给 Pi。</p></details>
-  <div class="src article">「全局规则」「三、执行层」</div></div>
+<section class="sec" data-toc="二（下）：项目规则、Memory、MCP、Skill" id="s6" data-source-section="s9">
+  <header class="doc-head" data-no="2.3">
+    <span class="kicker">第二章 · 静态 Context（下）</span>
+    <h2>项目规则、Memory、MCP、Skill 各有去处</h2>
+    <p class="lede" id="explain-69" data-points="p0091 p0265">开场就加载的每样东西，都得说得出留下的理由，也得随时能删。</p>
+    <ul class="points">
+      <li id="explain-54" data-points="p0068 p0069 p0070">约束进 AGENTS.md，事实和偏好进 Memory，踩过的坑先开教训单。</li>
+      <li>多客户端时，自己维护一套 Memory；小项目干脆不要 Memory。</li>
+      <li>有 CLI 就不用 MCP；Skill 先吸收，再装到项目，最后才装全局。</li>
+    </ul>
+  </header>
+  <div class="doc-body">
+    <h3>三条路，都要能进也能出 </h3><span class="source-anchor heading-source">原文 §2.5</span>
+    <div class="roles compare">
+      <div><p id="explain-55" data-points="p0071"><b>AGENTS.md</b><span>长期不变的约束。</span></p></div>
+      <div><p id="explain-56" data-points="p0072"><b>Memory</b><span>事实和偏好，例如某台服务器怎么部署。</span></p></div>
+      <div><p id="explain-57" data-points="p0073"><b>教训单（issue）</b><span>踩过的坑不直接写进规则，先开单，再固化成脚本、测试或闸门（第五章展开）。</span></p></div>
+    </div>
+    <p id="explain-59" data-points="p0075 p0076 p0077"><b>为什么自己管 Memory：</b>作者同时在用 7 个客户端（Claude Code、Codex、Cursor、Grok、Kimi、OpenCode 和 Pi）。方案在 Claude 里定下，实现却由别的 Agent 完成，它们不会回写 Claude 的记忆，于是 Claude 记的反倒最过时。他就停用了 Claude Code 的内置记忆，改用「索引目录 + 若干 Markdown 文件」，并在全局规则里要求每个 Agent 都参与增、改、删。</p>
+    <p id="explain-60" data-points="p0078 p0079">他也没用语义检索。在他看来，常见的问题不是找不到，而是把过时的笔记又带进了对话；比起搜得更准，更要紧的是存下的内容正确。小项目就别用 Memory，以代码为准，靠清晰的结构、命名和文件长度限制让 Agent 更容易读懂。</p>
+    <h3>MCP：有命令行工具就先用工具 </h3><span class="source-anchor heading-source">原文 §2.6</span>
+    <p id="explain-61" data-points="p0080 p0081 p0082">对做 SaaS 平台的人，MCP 把登录授权这类麻烦处理得很好；可对用 Agent 的人，它太占上下文。所以只要有现成的命令行工具，就先让 Agent 用 CLI；MCP 只在项目里按需打开。</p>
+    <h3>Skill：先吸收，再装项目，最后才全局 </h3><span class="source-anchor heading-source">原文 §2.7</span>
+    <p id="explain-62" data-points="p0083 p0084">第三方 Skill 作者很少直接装（gstack 等少数几个除外）：多数是试着消化进自己的工程体系；真要装，也只装在项目里，尽量不装全局。</p>
+    <p id="explain-63" data-points="p0085 p0086">Skill 的简介虽短，只要在场就可能干扰结果。比如飞书 CLI 自带一大堆 Skill，有的项目完全不用飞书，有的只用到零星几个（比如多维表格、妙记），其余都是干扰。</p>
+    <div class="stats">
+      <div class="stat" data-unit="个" id="explain-64" data-points="p0087" data-source-lines="190"><b>197 个 → 41 个</b><span>Grok 主脑常驻的 Skill 数，单独治理前后</span></div>
+      <div class="stat" data-unit="Token" id="explain-65" data-points="p0087" data-source-lines="190"><b>50 万 Token</b><span>Grok 的窗口大小；活还没开始，就被重复和无关内容吃掉一截</span></div>
+    </div>
+    <p id="explain-66" data-points="p0087 p0088">原因：Grok 把 Claude 的规则文件、自家的规则文件和 Claude 的整个 skills 目录一并读入，重复的内容没有合并。因此检查启动上下文时，除了数 Skill，还得看规则文件有没有被重复加载。</p>
+    <p id="explain-67" data-points="p0089"><b>多家 Agent 通用的「项目开关」：</b>全局只放各家都能用、天天要用的 Skill；某项目专用的，放进该项目目录。这样换哪家 Agent 打开，看到的都是「通用 + 本项目所需」。只用 Claude Code 的人，直接用它内置的开关。</p>
+    <p class="callout key" id="explain-68" data-points="p0090">看到别人的 Skill：首选消化进自己的流程，其次装进某个仓库，全局安装排最后；都要入版本管理，过时就删。</p>
+  <p id="explain-58" data-points="p0074">这三类记录都要能补充、更新和撤销，不能只增不减。</p></div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s9"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#项目规则memory-与教训各有各的去处">项目规则、Memory 与教训</a></span><span class="source-anchor" data-source-section="s10"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#mcp能用-cli-就用-cli">MCP：能用 CLI 就用 CLI</a></span><span class="source-anchor" data-source-section="s11"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#skill优先吸收要装就装到项目里">Skill：优先吸收；要装就装到项目里</a></span></div>
 </section>
 
-<section class="card">
-  <div class="stage"><svg class="flow" data-act="adv" data-edge="sig>adv" data-flow='{"nodes":[{"id":"sig","x":100,"y":200,"t":"机械信号","s":"修轮用完 / 门禁连报新错 / 升级卡","c":"amber","w":210},{"id":"card","x":320,"y":80,"t":"三栏请教卡","s":"事实 · 我的判断 · 希望听到的答案","c":"blue","w":230},{"id":"adv","x":540,"y":200,"t":"Advisor","s":"只读沙箱 · 无会话史","c":"green","w":180},{"id":"out","x":320,"y":340,"t":"更强判断 + 干净 Context","s":"两样都要","c":"green","w":220}],"edges":[{"f":"sig","t":"card"},{"f":"card","t":"adv"},{"f":"adv","t":"out"},{"f":"sig","t":"adv","l":"触发"}]}'></svg></div>
-  <div class="say"><span class="kicker">Advisor 解决什么？</span><h2>更强判断力，加上一份干净的独立 Context</h2>
-  <p>两个问题：执行层判断力一般；上下文腐烂（窗口填满后智力下降，作者观察到约四五成就可能陷入局部）。</p>
-  <p class="key">顾问看不到主脑会话史；最简单的日常版是回退（如 /rewind、/tree）。</p>
-  <details class="more"><summary></summary><p>作者盲测：两个最终撤回的 PR，截断在收尾前问顾问 9 次，9 次都否掉收尾计划。</p><p>抽样 21 次决策请教：10 次直接反对，11 次部分同意并改掉关键前提，完全同意 0 次（多为已经不对劲才送审）。</p><p>顾问也会错，意见同样要验证。</p></details>
-  <div class="src article">「四、Advisor」</div></div>
+<section class="sec" data-toc="三、执行层：外壳比模型重要" id="s7" data-source-section="s14">
+  <header class="doc-head" data-no="3">
+    <span class="kicker">第三章 · 执行层</span>
+    <h2>执行用便宜模型就够，外壳比模型更要紧</h2>
+    <p class="lede" id="explain-70" data-points="p0092 p0093 p0094">拆好任务以后，各家便宜快速的模型完成质量差不多；真正拉开差距的，是外壳给模型的上下文。</p>
+    <ul class="points">
+      <li>近 90 天，几家主流执行器的验收通过率都在 88%–93%。</li>
+      <li>强模型做高价值判断，便宜的「牛马模型」做执行。</li>
+      <li>Pi 充当两家官方客户端的下属，杂活由它来跑。</li>
+    </ul>
+  </header>
+  <div class="doc-body">
+    <h3>便宜快速的模型，写代码已经够格 </h3><span class="source-anchor heading-source">原文 §3.1</span>
+    <p id="explain-71" data-points="p0095 p0096 p0097">作者几乎买齐了各家套餐，用量先分散、后又集中。比较了几千张执行器任务卡后发现：在主脑派活、执行器干活的模式下，各家的成功率和质量相差不大。</p>
+    <div class="stats">
+      <div class="stat" data-unit="%" id="explain-72" data-points="p0097" data-source-lines="210"><b>88%–93%</b><span>最近 90 天各主流执行器的验收通过率</span></div>
+      <div class="stat" data-unit="%" id="explain-73" data-points="p0097" data-source-lines="210"><b>50%</b><span>有一家只有这么多，已经下线</span></div>
+    </div>
+    <p class="callout limit" id="explain-74" data-points="p0097">各家分到的任务不同，所以这只能说明「都用得上」，证明不了质量一样。</p>
+    <p id="explain-75" data-points="p0098 p0099 p0100 p0101 p0102">过了这条线，挑执行模型时质量已拉不开，只看价格和速度。作者把「强」分成两类：<b>全面强</b>（审美、思考、执行俱佳，如 Fable 5、Opus 5.5）和<b>专项强</b>（经过后训练在写代码或办公上特别划算，如 DeepSeek v4.1 Flash）。前者负责关键判断，后者负责执行；后者每秒能吐一两百 Token，并发也好扩。</p>
+    <h3>让 Pi 给各个主脑打下手 </h3><span class="source-anchor heading-source">原文 §3.2</span>
+    <p id="explain-77" data-points="p0103 p0104 p0105 p0114">Pi 是外壳而不是模型：开源，用途与 Claude Code 一类工具相同。它的系统提示很精简，塞进对话的内容几乎都由你决定，模型可以接任意一家。</p>
+    <p id="explain-78" data-points="p0106 p0108">他仍认为强模型最好配自家的 harness，但补了条件：只在<b>难度高、开放式</b>的任务上成立。子任务已由主脑拆好时，模型和上下文都相同，跑在 Pi 上和跑在官方客户端上差不多。</p>
+    <div class="table"><table class="data orig" data-asset="a0110" id="explain-80" data-points="p0109 p0110"><caption>原表 2 · 同日同批任务卡：同一模型，Pi 对官方客户端（人工对照 12 对）<span class="source-anchor" data-source-section="s14">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#把-pi-当成所有主脑的子代理">§3.2 原表</a></span></caption>
+      <thead><tr><th>模型</th><th>Pi 胜</th><th>原生胜</th><th>结论</th></tr></thead>
+      <tbody>
+        <tr><td data-label="模型">gpt-6-luna（原生：Codex）</td><td data-label="Pi 胜">3（其中 1 场暂计）</td><td data-label="原生胜">1</td><td data-label="结论">Pi 不比原生差</td></tr>
+        <tr><td data-label="模型">k3-256k（原生：Kimi Code）</td><td data-label="Pi 胜">2</td><td data-label="原生胜">2</td><td data-label="结论">打平</td></tr>
+        <tr><td data-label="模型">grok4.6（原生：Grok CLI）</td><td data-label="Pi 胜">1</td><td data-label="原生胜">3</td><td data-label="结论">Pi 稍弱</td></tr>
+      </tbody></table><p class="table-note">单位按原表表头及单元格；原文没有另列脚注。</p></div>
+    <p id="explain-81" data-points="p0111">12 对加起来 <b>6 : 6</b>。胜负主要取决于执行器是否照任务卡办事。</p>
+    <p class="callout limit" id="explain-82" data-points="p0111">样本少，也不是公开评测；唯一能下的结论：胜负不由外壳决定。</p>
+    <h3>更早的一轮：问题出在上下文</h3>
+    <p id="explain-83" data-points="p0112">更早还比过一次：一个 DeepSeek 模型，Claude Code 里跑一份、Pi 里跑一份，起初 Pi 明显落后。查下来是 Pi 的上下文有三处毛病：第一轮漏了任务提示；83 个 Skill 一股脑全加载；规则重复注入。改好之后：</p>
+    <div class="stats">
+      <div class="stat" data-unit="字符" id="explain-84" data-points="p0112" data-source-lines="244"><b>3.87 万 → 1.67 万</b><span>Pi 系统提示的字符数</span></div>
+      <div class="stat" data-unit="Token" id="explain-85" data-points="p0112" data-source-lines="244"><b>1.75 万 → 8500</b><span>首轮输入 Token</span></div>
+      <div class="stat" data-unit="个" id="explain-86" data-points="p0112" data-source-lines="244"><b>8 个例子，赢 5 个</b><span>第三批对比，质量持平略优</span></div>
+      <div class="stat" data-unit="%" id="explain-87" data-points="p0112" data-source-lines="244"><b>约 −40%</b><span>每份任务的成本</span></div>
+    </div>
+    <p class="callout key" id="explain-79" data-points="p0107 p0113 p0115 p0116">拉开差距的是外壳喂进去的上下文，模型本身反倒其次。于是：官方客户端里只跑最强的模型负责动脑，杂活全交给 Pi + 任意第三方模型。</p>
+  <p id="explain-76" data-points="p0102">作者用「500 刀会员」的体验打比方，描述便宜模型跑并发的感受；这不是统一口径的套餐价格比较。</p></div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s12"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#三执行层flash-模型已经够用外壳比模型更重要">三、执行层</a></span><span class="source-anchor" data-source-section="s13"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#flash-级模型已经跨过了-coding-的基准线">Flash 级模型已经跨过了 Coding 的基准线</a></span><span class="source-anchor" data-source-section="s14"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#把-pi-当成所有主脑的子代理">把 Pi 当成所有主脑的子代理</a></span></div>
 </section>
 
-<section class="card full">
-  <div class="head-full"><span class="kicker">一次错误怎么变成下次的 Context？</span><h2>错误经验证与复盘，写进脚本，而不是只写进提示</h2></div>
-  <div class="stage"><div class="sim" data-sim='{"layout":"wide","label":"正常路径","note":"串起来的教学示例，情节取自原文多个真实坑，不是单次事故实录。","flow":{"pad":16,"nodes":[{"id":"ctx","x":70,"y":60,"t":"静态 Context","s":"规则 / 任务卡","c":"blue","w":140},{"id":"run","x":240,"y":60,"t":"执行","s":"主脑 → 执行器","c":"amber","w":140},{"id":"gate","x":410,"y":60,"t":"门禁验证","s":"低成本检查","c":"green","w":130},{"id":"log","x":580,"y":60,"t":"复盘","s":"教训单 issue","c":"amber","w":130},{"id":"fix","x":750,"y":60,"t":"固化","s":"脚本 / 闸门 / 测试","c":"green","w":150}],"edges":[{"f":"ctx","t":"run"},{"f":"run","t":"gate"},{"f":"gate","t":"log","l":"出错"},{"f":"log","t":"fix"},{"f":"fix","t":"ctx","l":"更新 Context","route":"bottom","c":"green"},{"f":"gate","t":"run","l":"红灯回修","route":"top","c":"red","oa":-20,"ob":20}]},
-  "steps":[
-   {"act":"ctx","msg":{"r":"sys","n":"Context","t":"任务卡缺一句：你是执行器，不要再派活"},"say":"静态材料不完整，也是 Context 问题。"},
-   {"act":"run","edge":"ctx>run","msg":{"r":"asst","n":"执行器","t":"读到了主脑派发手册，把活又派出去"},"say":"原文实例：空转约 90 分钟，零产出。"},
-   {"act":"gate","edge":"run>gate","msg":{"r":"err","n":"门禁 / 观测","t":"超时无交付"},"say":"Loop 要靠验证通道发现异常。"},
-   {"act":"log","edge":"gate>log","msg":{"r":"tool","n":"agent-config","t":"开教训单：执行器递归派活"},"say":"坑汇报回同一个仓库。"},
-   {"act":"fix","edge":"log>fix","msg":{"r":"tool","n":"固化","t":"任务卡模板强制角色声明；执行器规则剥掉主脑段"},"say":"写进代码与模板，强过只写进提示。"},
-   {"act":"ctx","edge":"fix>ctx","msg":{"r":"sys","n":"动态 Context","t":"下次开场已带上新约束"},"say":"Loop 把教训变回静态 Context。"}],
-  "alts":[
-   {"label":"分支 A：只写进提示，没写进闸门","steps":[
-     {"act":"log","msg":{"r":"asst","n":"复盘","t":"在规则文件加一句「不要递归派活」"},"say":"原文：只写进规则，过一阵子还会以别的形式冒出来。"},
-     {"act":"run","edge":"ctx>run","msg":{"r":"err","n":"执行器","t":"状态不好时当没看见，再次空转"},"say":"应升级为模板与规则剥离（Hook / 脚本层）。"}]},
-   {"label":"分支 B：判据本身是假绿","steps":[
-     {"act":"gate","msg":{"r":"tool","n":"门禁","t":"草稿态跳过模型审查，汇总把跳过当成通过"},"say":"原文：提案标正式后连红三轮。"},
-     {"act":"fix","edge":"log>fix","msg":{"r":"sys","n":"硬规矩","t":"先喂一个已知为否的输入，确认会变红"},"say":"验证也要被验证。"}]},
-   {"label":"分支 C：省 Token 工具伤了 Context","steps":[
-     {"act":"run","msg":{"r":"tool","n":"RTK","t":"压缩搜索与读文件输出"},"say":"原文回测 1505 次：宣称省 90%，实际约 44%。"},
-     {"act":"log","edge":"gate>log","msg":{"r":"err","n":"副作用","t":"搜索丢行；改代码对不上原文"},"say":"87% 节省来自最经不起压缩的两类操作；作者卸载。"}]}]}'></div></div>
-  <div class="src extra">补充：模拟器把原文多个坑串成一条路径；数字与结论来自原文</div>
+<section class="sec" data-toc="四（上）：Advisor 为什么有效" id="s8" data-source-section="s18">
+  <header class="doc-head" data-no="4.1">
+    <span class="kicker">第四章 · Advisor（上）</span>
+    <h2>Advisor 靠两样东西：更强的判断，干净的上下文</h2>
+    <p class="lede" id="explain-88" data-points="p0117">需要拍板时，请一个更强、而且没看过前面对话的模型来判断。</p>
+    <ul class="points">
+      <li id="explain-90" data-points="p0120 p0121">两个问题：执行模型判断力一般；所有模型都有上下文腐烂。</li>
+      <li>盲测：问了 9 次，顾问 9 次都反对主脑当时的收尾打算。</li>
+      <li>人人能用的简化版：回退到出错之前的节点，重新出发。</li>
+    </ul>
+  </header>
+  <div class="doc-body">
+    <p id="explain-89" data-points="p0118 p0119">作者先坦白动机：这些上下文优化，说好听点是为了提高执行质量、少占他的精力；客观地说，也确实为了省 Token，尤其是 Opus 5.5 的额度。Advisor 是他现在用得最多的一个办法。</p>
+    <h3>两个问题 </h3><span class="source-anchor heading-source">原文 §4.1</span>
+    <div class="roles compare">
+      <div><p id="explain-91" data-points="p0122"><b>判断力一般</b><span>便宜模型干活可以，拿主意多半不行。</span></p></div>
+      <div><p id="explain-92" data-points="p0123"><b>上下文腐烂</b><span>窗口装得越满，模型越迟钝，顶级模型也逃不掉。作者看到许多模型用到窗口的 40%–50% 就开始钻牛角尖却不自知。</span></p></div>
+    </div>
+    <p id="explain-93" data-points="p0124 p0125">起初作者只想解决第一个问题：到关键处自动去问最强的几家模型。每问一次要十几万 Token，可建议很有分量，常常把执行模型的结论整个推翻。灵感来自 Claude Code 内一个试验中的 Advisor 功能；它只在那一家能用，作者就自己做了个各家 Agent 通用的版本。</p>
+    <h3>另一个关键：顾问的上下文是干净的 </h3><span class="source-anchor heading-source">原文 §4.2</span>
+    <p id="explain-95" data-points="p0126 p0127">Claude Code 内置的 Advisor 会把完整对话交给顾问。作者担心顾问也被前文带歪，就做了一次回溯盲测：</p>
+    <div class="stats">
+      <div class="stat" data-unit="个" id="explain-96" data-points="p0128" data-source-lines="276"><b>2 个 PR</b><span>结局已知：改了好几轮后最终撤回</span></div>
+      <div class="stat" data-unit="次" id="explain-97" data-points="p0128" data-source-lines="276"><b>9 / 9</b><span>次请教全部反对主脑的收尾打算，与后来真的撤回一致</span></div>
+    </div>
+    <p id="explain-98" data-points="p0128 p0129">给顾问的材料停在第三轮修复刚结束、主脑正要收尾的时刻，不透露任何结局线索。之后一个个排除可能的影响因素：</p>
+    <ul class="plain">
+      <li id="explain-99" data-points="p0130">不给选项、改为开放式提问：顾问仍建议停下。</li>
+      <li id="explain-100" data-points="p0131">让顾问以「修了三轮的主脑」的身份回答：它还是能跳出原来的思路。</li>
+      <li id="explain-101" data-points="p0132">换成较弱的模型：会说「停下」，但讲不出「这件事从一开始就不该做」。</li>
+    </ul>
+    <p class="callout key" id="explain-102" data-points="p0133 p0134">判断力更强，解决第一个问题；不带会话历史、没有沉没成本，解决第二个问题。</p>
+    <h3>人人可用的简化版：回退 </h3><span class="source-anchor heading-source">原文 §4.3</span>
+    <p id="explain-103" data-points="p0135 p0136 p0138 p0139">模型靠前文推出后文，前面说过的每句话都在影响它。一旦发现跑偏，别在原对话里纠正，而要退回到出错前的节点重来（Claude Code 用 /rewind，Pi 用 /tree），这样它根本不记得那条错路。回退时还能补一句：「XX 这条路试过了，别再走。」没有回退功能，就开新对话，只带上已确认的事实。</p>
+    <figure class="figure orig" data-asset="a0137" id="explain-104" data-points="p0137"><img src="img/rewind.png" alt="Claude Code 的 /rewind：把代码和对话恢复到之前的某个节点"><figcaption><b>原图 5 · /rewind 回退</b> 代码和对话一起退回到较早的节点。 <span class="source-anchor" data-source-section="s18">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#你自己就能用的最简单版本回退">原图 5 · 对应小节</a></span><span class="how">怎么看：先识别对象与标记，再对照本节的解释和限定。</span></figcaption></figure>
+  <p id="explain-94" data-points="p0124">他最初请教的模型包括 GPT-6、Opus、Fable 和 Kimi，侧重关键判断，而非把执行工作再做一遍。</p></div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s15"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#四advisor更强的判断加一份干净的上下文">四、Advisor</a></span><span class="source-anchor" data-source-section="s16"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#两个问题判断力一般加上上下文腐烂">两个问题</a></span><span class="source-anchor" data-source-section="s17"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#后来发现干净的上下文同样关键">后来发现：干净的上下文同样关键</a></span><span class="source-anchor" data-source-section="s18"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#你自己就能用的最简单版本回退">回退</a></span></div>
+<div class="checkpoint"><script type="application/json">{"q": "换成弱一点的顾问，还能发现方案从一开始就不该做吗？", "opts": ["一定可以，只要上下文干净就够了", "未必；盲测里弱模型只说该停手"], "a": 1, "why": "作者同时要求判断力更强和上下文干净。", "back": 8}</script></div></section>
+
+<section class="sec" data-toc="四（下）：作者的 Advisor 工具" id="s9" data-source-section="s19">
+  <header class="doc-head" data-no="4.2">
+    <span class="kicker">第四章 · Advisor（下）</span>
+    <h2>机械信号触发，顾问只读，还要写三栏请教卡</h2>
+    <p class="lede">21 次决策请教里，顾问 10 次直接反对，11 次改掉了关键前提，没有一次完全同意。</p>
+    <ul class="points">
+      <li id="explain-106" data-points="p0143">顾问在只读沙箱里，看不到之前的对话。</li>
+      <li id="explain-107" data-points="p0144">请教卡分三栏：已知事实 / 我怎么判断 / 我想听到什么（第三栏就是给顾问挑错的）。</li>
+      <li>什么时候请教，看机械信号，不看模型自己的把握。</li>
+      <li>顾问也会错，它的意见同样要验证。</li>
+    </ul>
+  </header>
+  <div class="doc-body">
+    <h3>三个设计 </h3><span class="source-anchor heading-source">原文 §4.4</span>
+    <figure class="figure orig" data-asset="a0141" id="explain-105" data-points="p0140 p0141 p0142"><img src="img/d3-advisor-flow.png" alt="Advisor 请教流程：机械信号触发、三栏请教卡、沙箱里的顾问"><figcaption><b>原图 6 · Advisor 请教流程</b> 机械信号触发 → 三栏请教卡 → 沙箱里的顾问。 <span class="source-anchor" data-source-section="s19">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#我的-advisor-工具长什么样">原图 6 · 对应小节</a></span><span class="how">怎么看：先识别对象与标记，再对照本节的解释和限定。</span></figcaption></figure>
+    <p id="explain-108" data-points="p0145"><b>机械信号</b>有四种：一张卡的修复次数用光；门禁连着两轮冒出新问题；定期审计把某张卡标成「升级」；主脑在定方向前自己发起。之所以不让模型自己决定，是因为它估不准自己有多大把握。</p>
+    <div class="stats">
+      <div class="stat" data-unit="次" id="explain-109" data-points="p0146" data-source-lines="312"><b>21</b><span>次决策类请教（抽样）</span></div>
+      <div class="stat" data-unit="次" id="explain-110" data-points="p0146" data-source-lines="312"><b>10</b><span>次顾问直接反对主脑方案</span></div>
+      <div class="stat" data-unit="次" id="explain-111" data-points="p0146" data-source-lines="312"><b>11</b><span>次部分同意，但改掉了关键前提</span></div>
+      <div class="stat" data-unit="次" id="explain-112" data-points="p0146" data-source-lines="312"><b>0</b><span>次顾问完全赞同主脑的方案</span></div>
+    </div>
+    <p class="callout limit" id="explain-113" data-points="p0146">送去请教的大多本来就是主脑觉得不对或卡住的情况；反对率高，不等于顾问应该一律反对。</p>
+    <figure class="figure orig" data-asset="a0147" id="explain-114" data-points="p0147"><img src="img/consult-reply.png" alt="一次真实的请教：Opus 5.5 指出主脑之前的推荐可能在优化一个错误的前提"><figcaption><b>原图 7 · 一次真实的请教</b> 顾问（Opus 5.5）指出：主脑先前的推荐，可能建立在错的前提上。 <span class="source-anchor" data-source-section="s19">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#我的-advisor-工具长什么样">原图 7 · 对应小节</a></span><span class="how">怎么看：先识别对象与标记，再对照本节的解释和限定。</span></figcaption></figure>
+    <h3>三个真实故事</h3>
+    <div class="stories">
+      <div class="story" id="explain-115" data-points="p0148 p0149"><b>建议放弃：这张卡守的不是红线</b><p data-field="event">一段门禁判定逻辑改了三轮仍不收敛，主脑正准备从两个降级方案里选一个。<span data-field="prevention">顾问说都别选：越修红线越松</span>；三轮的问题集中在一处，是因为这张卡走了唯一一条只能靠猜的路。</p><span class="fix" data-field="consequence">PR 关闭，没有合并。</span></div>
+      <div class="story" id="explain-116" data-points="p0150"><b>安全例外：一条都不能留</b><p data-field="event">拦危险命令的钩子里有一组「cd 之后再删除」的豁免，已经修补多轮。顾问做了只读实验，证明 cd 本身能被偷换成别的操作；<span data-field="prevention">只凭命令文本，无法证明哪条例外安全</span>。</p><span class="fix" data-field="consequence">主脑照办，豁免全部删除。</span></div>
+      <div class="story" id="explain-117" data-points="p0151"><b data-field="prevention">排在最后的，应该排第一</b><p data-field="event">给一项付费服务排待办时，主脑把一个还没定性的告警放到末尾。顾问指出，只有它真伤到过付费用户：有人付款后卡住 62 天，无人察觉。</p><span class="fix" data-field="consequence">当晚就修掉了。</span></div>
+    </div>
+    <p class="callout limit" id="explain-118" data-points="p0152">顾问也有错的时候：它曾断定「原来的路径本来就会报错」，实际复现后证明不对。所以顾问的话也得验证，作者说这正是下一部分（第五章 Loop）要讲的。</p>
+    <p class="callout key" id="explain-119" data-points="p0153">要紧的判断交给全面强的模型，并给它干净的上下文；具体执行交给便宜的模型。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s19"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#我的-advisor-工具长什么样">我的 Advisor 工具长什么样</a></span></div>
 </section>
 
-<section class="card">
-  <div class="stage"><div class="bars" data-bars='{"unit":"次/张","items":[{"l":"提交（约）","v":16000,"note":"两个月，全是 AI 提交"},{"l":"issue（约）","v":1800},{"l":"其中教训单（约）","v":1100,"c":"blue"},{"l":"合并 PR（约）","v":2000}],"caption":"原文：agent-config 自 7 月 23 日建库；作者自己没写过一行代码。均为约数。"}'></div></div>
-  <div class="say"><span class="kicker">Loop 的标本长什么样？</span><h2>agent-config 用两个月长成可回流的根仓库</h2>
-  <p>演化三步：规矩进版本库 → 坑汇报回同一处 → 脚本和闸门阻止旧坑复发。</p>
-  <p class="key">关教训单的标准：这个坑现在还踩得到吗？机制上不可能再发生才关。</p>
-  <details class="more"><summary></summary><p>每周新开 issue：峰值一周 305 张（8 月底到 9 月初），9 月最后一周回落到 159 张。</p><p>作者体感：从前高频人在环内才能维持每天约 40 亿 Token；现在同量级消耗，每天只花一小部分时间。</p></details>
-  <div class="src article">引子数字；「五、Loop 的标本」</div></div>
+<section class="sec" data-toc="五、Loop 的标本" id="s10" data-source-section="s21">
+  <header class="doc-head" data-no="5">
+    <span class="kicker">第五章 · Loop 的标本</span>
+    <h2>一个用了两个月的配置仓库，怎样不让旧错重犯</h2>
+    <p class="lede" id="explain-120" data-points="p0154 p0155">所有坑都汇报到同一个仓库，每天派 Agent 处理；能根治的，都变成了脚本、闸门和测试。</p>
+    <ul class="points">
+      <li>演化三步：规矩进版本库 → 坑统一回流 → 脚本和闸门防复发。</li>
+      <li>关教训单只问一句：这个坑现在还踩得到吗？</li>
+      <li>约束从强到弱：代码结构 &gt; lint &gt; 规则和 Skill &gt; 人审风格指南。</li>
+      <li>新工具也要用自己的日志回测，RTK 就是装了又卸的例子。</li>
+    </ul>
+  </header>
+  <div class="doc-body">
+    <h3>它是怎么长成这样的 </h3><span class="source-anchor heading-source">原文 §5.1</span>
+    <p id="explain-121" data-points="p0156 p0157 p0158 p0162">这个仓库一开始只用来管上下文（规则文件同步、Skill 管理），之后陆续加了主脑派活给执行器的机制、终端状态角标，最终变成作者一切 AI 实践的大本营。下面三步没有事先规划，都是边用边长出来的：</p>
+    <ol class="ladder steps">
+      <li id="explain-122" data-points="p0159"><i>第 1 步</i>规矩先入版本库：公共规则一份，每个工具再配一小段专属内容。</li>
+      <li id="explain-123" data-points="p0160"><i>第 2 步</i>所有问题都报回一处：派活、验收、打分时遇到的坑集中回流。</li>
+      <li id="explain-124" data-points="p0161"><i>第 3 步</i>靠脚本和闸门不让老问题回来：注入上限、自管的 Memory、Advisor 都出自这一步。</li>
+    </ol>
+    <p id="explain-125" data-points="p0163">Loop 的雏形就在这里：其他仓库里的会话，凡是碰到调度或脚本层的问题，收工前都去 agent-config 开 issue；作者每天专门派 Agent 清理这些 issue。</p>
+    <figure class="figure orig" data-asset="a0164" id="explain-126" data-points="p0164"><img src="img/agent-config-repo.png" alt="agent-config 仓库首页"><figcaption><b>原图 8 · 仓库首页截图</b> <span class="source-anchor" data-source-section="s21">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#它是怎么长成这样的">原图 8 · 对应小节</a></span><span class="how">怎么看：先识别对象与标记，再对照本节的解释和限定。</span></figcaption></figure>
+    <div class="stats">
+      <div class="stat" data-unit="张" id="explain-127" data-points="p0165" data-source-lines="350"><b>1100+</b><span>张教训单（在 1800 多个 issue 里）</span></div>
+      <div class="stat" data-unit="排名" id="explain-128" data-points="p0165" data-source-lines="350"><b>第 1 / 第 2</b><span>Token 消耗最多的仓库：agent-config，其次是门禁系统</span></div>
+    </div>
+    <h3>飞机引擎边飞边换 </h3><span class="source-anchor heading-source">原文 §5.2</span>
+    <p id="explain-129" data-points="p0166 p0167 p0168">这个仓库一边当发动机，一边又在被拆修。起初乱成一团、冲突不断，过了一阵才稳定：新冒出的问题，要么能挂到旧问题上，要么出现得越来越少。</p>
+    <figure class="figure orig" data-asset="a0170" id="explain-130" data-points="p0169 p0170"><img src="img/d4-weekly-issues.png" alt="agent-config 每周新开 issue 数：8 月底到 9 月初达峰，之后逐步回落"><figcaption><b>原图 9 · 每周新开 issue 数</b> 高峰在 8 月底、9 月初那周（<b>305</b> 张），到 9 月最后一周降到 <b>159</b> 张。 <span class="source-anchor" data-source-section="s22">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#飞机引擎边飞边换">原图 9 · 对应小节</a></span><span class="how">怎么看：先识别对象与标记，再对照本节的解释和限定。</span></figcaption></figure>
+    <p id="explain-131" data-points="p0171"><b>关单标准：</b>只问一句：这个坑现在还会踩到吗？「修过了」不够，要做到「机制上再也不会发生」才关。</p>
+    <h3>同样的错只犯一次 </h3><span class="source-anchor heading-source">原文 §5.3</span>
+    <div class="stories">
+      <div class="story" id="explain-132" data-points="p0172 p0173 p0174"><b>测试打到了生产</b><p data-field="event">执行器开隔离目录时只复制了顶层配置，下层配置缺了，程序就用默认值，结果接到了线上环境，而且一声不响。</p><span class="fix" data-field="consequence"><span data-field="prevention">改成用脚本建目录，各层配置自动接好；人和 Agent 都不再手动操作。</span></span></div>
+      <div class="story" id="explain-133" data-points="p0175"><b>推成功了，又多推两次</b><p data-field="event">为省几行输出，Agent 爱把结果截短，结果把「失败」截没了；还有一次反过来，成功被显示成失败，又多推了两轮。</p><span class="fix" data-field="consequence"><span data-field="prevention">代码有没有推上去，只以远端服务器为准，不信本地输出。</span></span></div>
+      <div class="story" id="explain-134" data-points="p0176"><b>执行器把活转派了出去</b><p data-field="event">任务卡漏写「你负责动手，别再转派」，执行器看到了主脑才该看的派活手册，把任务又派了出去，白转 90 分钟，什么也没做出来。</p><span class="fix" data-field="consequence"><span data-field="prevention">任务卡模板必须写角色；执行器拿到的规则去掉主脑部分。</span></span></div>
+      <div class="story" id="explain-135" data-points="p0177"><b>确认一个开关，烧掉几万 Token</b><p data-field="event">只是想看一个服务是否在跑，主脑却用了会把整张任务卡打印出来的命令。这种浪费，不复盘就发现不了。<span data-field="consequence">几万 Token 因此挤进了上下文。</span></p><p data-field="prevention">Context 里的浪费，要靠 Loop 中的复盘发现；这个例子说明了两者怎样交汇。</p></div>
+    </div>
+    <p id="explain-136" data-points="p0178">因此，错误是宝贵的材料：让另一个 Agent 翻日志，找出当时出错的原因，攒够了再从根上统一解决。作者说这也算「闻过则喜」。</p>
+    <h3>写进提示，不如写进代码 </h3><span class="source-anchor heading-source">原文 §5.4</span>
+    <blockquote class="quote"><p id="explain-137" data-points="p0180 p0181">Claude 同一个错犯两次，就把纠正写进 CLAUDE.md。</p><cite>Anthropic《The AI-native SDLC playbook》（作者译文）</cite><span class="source-anchor" data-source-section="s24"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#写进提示不如写进代码">§5.4 引文</a></span></blockquote>
+    <p id="explain-138" data-points="p0179 p0182 p0183">同一文档也提醒：Skill 只能减少违规，Hook（提交或运行时一定会执行、不合规就报错的小脚本）才能基本杜绝违规。xAI 的 Lauren 把约束按强弱排成四层；每次纠正 Agent，都选能起作用的最强一层落地：</p>
+    <ol class="ladder steps">
+      <li id="explain-139" data-points="p0183"><i>最强</i>代码结构与架构：从结构上让错误无法出现</li>
+      <li id="explain-140" data-points="p0183"><i>次强</i>静态分析和 lint：提交时自动扫描</li>
+      <li id="explain-141" data-points="p0183"><i>较弱</i>规则和 Skill：把约定写成模型要阅读的文字</li>
+      <li id="explain-142" data-points="p0183"><i>最弱</i>只能靠人审的风格指南</li>
+    </ol>
+    <p id="explain-143" data-points="p0184">回头看那几个坑：被彻底解决的，都落成了脚本、闸门或测试；只写在规则里的，过段时间又换个样子回来。</p>
+    <h3>新工具也得拿自己的日志检验 </h3><span class="source-anchor heading-source">原文 §5.5</span>
+    <p id="explain-144" data-points="p0185 p0186 p0187">有人推荐省 Token 的工具时，先别急着装：让 Agent 对照你本机的日志评估是否需要；用了一阵再回头核对：宣称的效果有没有、有没有副作用。</p>
+    <div class="stats">
+      <div class="stat" data-unit="%" id="explain-145" data-points="p0188" data-source-lines="396"><b>90%</b><span>RTK 宣称部分场景能省的 Token</span></div>
+      <div class="stat" data-unit="%" id="explain-146" data-points="p0188" data-source-lines="396"><b>44%</b><span>作者用本机 1505 次调用回测，实际省下的比例（作者说「听起来也不错」）</span></div>
+      <div class="stat" data-unit="%" id="explain-147" data-points="p0188" data-source-lines="396"><b>87%</b><span>这些节省来自搜索和读文件，偏偏这两类最经不起压缩</span></div>
+    </div>
+    <p id="explain-148" data-points="p0188 p0189">问题不在省得少，而在省下的地方：这些节省大多来自最不该压缩的两类操作。压缩后的搜索结果会少行而不提示；读到的文件被压过，改代码时对不上，Agent 只好绕开工具重读原文件。于是他把 RTK 卸了。该问的是：它让 Agent 更懂上下文了，还是只添了新麻烦？</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s20"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#五loop-的标本一个跑了两个月的配置仓库">五、Loop 的标本</a></span><span class="source-anchor" data-source-section="s21"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#它是怎么长成这样的">它是怎么长成这样的</a></span><span class="source-anchor" data-source-section="s22"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#飞机引擎边飞边换">飞机引擎边飞边换</a></span><span class="source-anchor" data-source-section="s23"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#同一个错不犯第二次">同一个错，不犯第二次</a></span><span class="source-anchor" data-source-section="s24"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#写进提示不如写进代码">写进提示，不如写进代码</a></span><span class="source-anchor" data-source-section="s25"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#引入新工具也要用自己的日志回测">引入新工具，也要用自己的日志回测</a></span></div>
 </section>
 
-<section class="card">
-  <div class="stage"><div class="pairs">
-   <div class="pair"><div class="b"><b>低成本</b>编译、基础测试、lint；几秒内、不花 Token</div><div class="a"><b>中成本</b>花 Token 的 Agent 审查、录屏再审前端</div></div>
-   <div class="pair"><div class="b"><b>高成本</b>人参与；只留给真正要判断的地方</div><div class="a"><b>原则</b>能用低一档，就不要升到高一档</div></div>
-   <div class="pair"><div class="no"><b>假绿</b>跳过当成通过；考卷登录没配好却跑了 111 次</div><div class="yes"><b>硬规矩</b>先喂已知为「否」的输入，确认检查会变红</div></div>
-  </div></div>
-  <div class="say"><span class="kicker">验证通道怎么选？</span><h2>低成本通道先串进门禁，判据本身也要验收</h2>
-  <p>作者：代码廉价，测试高价值；目标能拆成可验收条件，迭代就主要是时间与成本。</p>
-  <p class="key">选语言用十字坐标：纵轴可自动验证程度，横轴领域生态匹配。</p>
-  <details class="more"><summary></summary><p>纵轴例：Rust 编译即反馈强；Python 更依赖自补测试。纵轴不是越高越好：Rust 编译吃 CPU 与磁盘。</p><p>前端审美等难量化目标，很难形成 Loop。</p></details>
-  <div class="src article">「六、低成本的验证通道」</div></div>
+<section class="sec" data-toc="六、验证通道与「验证也要被验证」" id="s11" data-source-section="s27">
+  <header class="doc-head" data-no="6">
+    <span class="kicker">第六章 · 低成本的验证通道</span>
+    <h2>能用低一档验证的，就不要升到高一档</h2>
+    <p class="lede" id="explain-149" data-points="p0190 p0191">Loop 转不转得起来，看你有没有便宜又快的验证方式；而验证本身，也要先被验证。</p>
+    <ul class="points">
+      <li>验证按综合成本分三档：不花 Token 的检查、花 Token 的审查、人参与的检查。</li>
+      <li>选语言看两根轴：能不能自动验证，领域生态合不合适。</li>
+      <li id="explain-159" data-points="p0208 p0209">代码廉价，测试高价值；说不清「怎样算对」的目标最难迭代。</li>
+      <li id="explain-161" data-points="p0213 p0214 p0220">任何判据写完，先喂一个答案为「否」的输入，确认它会变红。</li>
+    </ul>
+  </header>
+  <div class="doc-body">
+    <h3>验证通道的光谱 </h3><span class="source-anchor heading-source">原文 §6.1</span>
+    <p id="explain-150" data-points="p0192 p0193">算成本要把三样加在一起：花的时间、额外的 Token、要不要人出手。</p>
+    <div class="roles compare">
+      <div><p id="explain-151" data-points="p0194"><b>低成本</b><span>零 Token、几秒出结果：编译、基础测试、lint。后端行为可以用测试固定下来。</span></p></div>
+      <div><p id="explain-152" data-points="p0195"><b>中成本</b><span>要花 Token：阿里出的 OpenCode Review、自己写的 Agent 审查，以及先录下前端操作、再交给 Agent 审视频。比测试贵，但远比人便宜。</span></p></div>
+      <div><p id="explain-153" data-points="p0196"><b>高成本</b><span>需要人来看。人的工夫最贵，只用在必须靠人判断的环节。</span></p></div>
+    </div>
+    <p id="explain-154" data-points="p0197 p0199">门禁负责把低、中两档连成一串：都通过才准合并，尽量别让检查落到人身上。这些通道会把反馈马上回传给 Agent；生产 bug 修掉后也要回溯为什么犯、下次怎么避免，这也是一个 Loop。</p>
+    <figure class="figure orig" data-asset="a0198" id="explain-155" data-points="p0198"><img src="img/d5a-verify-cost.png" alt="验证通道按综合成本分三档"><figcaption><b>原图 10 · 验证通道按综合成本分三档</b> <span class="source-anchor" data-source-section="s27">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#验证通道的光谱">原图 10 · 对应小节</a></span><span class="how">怎么看：先识别对象与标记，再对照本节的解释和限定。</span></figcaption></figure>
+    <h3>选语言：一个十字坐标 </h3><span class="source-anchor heading-source">原文 §6.2</span>
+    <p id="explain-156" data-points="p0201 p0202">过去挑语言，首先看人写起来难不难；如今动手写代码的是 AI，这一点就没那么要紧了。作者手上 Go、Java 和 Python 项目都有；做出一个功能已不难，难的始终是管住复杂度。</p>
+    <figure class="figure orig" data-asset="a0204" id="explain-157" data-points="p0200 p0203 p0204 p0205 p0206"><img src="img/d5b-language-axes.png" alt="选底层语言的十字坐标：纵轴是可自动验证程度，横轴是领域生态匹配程度"><figcaption><b>原图 11 · 选语言的十字坐标</b> 纵轴：可自动验证程度（Rust 最高，Go、Java 其次，Python 更依赖自己补测试）。横轴：领域生态匹配程度（脚本和脚手架选 Python，高性能服务看 Go 和 Rust）。 <span class="source-anchor" data-source-section="s28">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#选语言一个十字坐标">原图 11 · 对应小节</a></span><span class="how">怎么看：先识别对象与标记，再对照本节的解释和限定。</span></figcaption></figure>
+    <p class="callout limit" id="explain-158" data-points="p0207">纵轴并非越高越好：Rust 编译耗 CPU、产物占硬盘，并发多了都是成本。没有万能解，只能取舍；不过对 Agent 而言，纵轴意味着便宜的反馈渠道，分量很重。</p>
+    <h3>代码廉价，测试高价值 </h3><span class="source-anchor heading-source">原文 §6.3</span>
+    <p id="explain-160" data-points="p0210 p0211 p0212">目标一旦能拆成一条条可验收的标准，剩下的不过是花时间、花钱。比如重写数据库或迁移仓库：只要有测试能证明新旧行为一致，主要就是投入最好的模型与 harness；测试没盖到的地方照样难。最难办的是说不清怎么打分的目标：后端性能有延迟、吞吐这些数字，好反复改；前端好不好看难以打分，Loop 就转不起来。</p>
+    <h3>判据也会失效 </h3><span class="source-anchor heading-source">原文 §6.4</span>
+    <p id="explain-162" data-points="p0215">门禁系统（作者第二费 Token 的仓库）里，这类坑他踩过不少：</p>
+    <div class="stories">
+      <div class="story" id="explain-163" data-points="p0216"><b>没考，被记成了及格</b><p data-field="event">PR 还是草稿时，模型审查整段没跑；汇总时却把「没跑」算成「通过」，亮了绿灯。<span data-field="consequence">转为正式后，一连红了三次</span>。</p><p data-field="prevention">作者的共同防线：<a href="#verify-first">让判据先接受已知错误的检验</a>。</p></div>
+      <div class="story" id="explain-164" data-points="p0217"><b>从没判过卷的考官</b><p data-field="event"><span data-field="prevention">用已知有问题的代码定期「考」审查模型，看它有没有变笨。</span>一个多月跑了 111 次，可凭据始终没配对，<span data-field="consequence">没有一次真的判过卷</span>。</p></div>
+      <div class="story" id="explain-165" data-points="p0218"><b>还有几次</b><p data-field="event">只固定了版本号、没固定行为，<span data-field="consequence">一升级 8 个仓库一起坏</span>；机器闲着，任务却排队最长超过 8 小时；一张没人看的名单，让 32 个仓库的代码审查悄悄停了。</p><p data-field="prevention">作者的共同防线：<a href="#verify-first">让判据先接受已知错误的检验</a>。</p></div>
+    </div>
+    <p class="callout key" id="verify-first" data-points="p0219">这些坑有个共性：全显示绿灯，没有一个报错。从不变红的检查，有和没有一样。作者的要求：先试一个预期失败的输入，检查必须报错。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s26"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#六低成本的验证通道以及验证也要被验证">六、低成本的验证通道</a></span><span class="source-anchor" data-source-section="s27"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#验证通道的光谱">验证通道的光谱</a></span><span class="source-anchor" data-source-section="s28"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#选语言一个十字坐标">选语言：一个十字坐标</a></span><span class="source-anchor" data-source-section="s29"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#代码廉价测试高价值">代码廉价，测试高价值</a></span><span class="source-anchor" data-source-section="s30"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#判据也会失效">判据也会失效</a></span></div>
+<div class="checkpoint"><script type="application/json">{"q": "一个检查始终显示通过，先怎样验证它？", "opts": ["输入一个已知应失败的例子", "继续增加正常样本"], "a": 0, "why": "必须确认判据真的能识别错误。", "back": 11}</script></div></section>
+
+<section class="sec" data-toc="七、瓶颈转移：精力→硬件→精力" id="s12" data-source-section="s32">
+  <header class="doc-head" data-no="7">
+    <span class="kicker">第七章 · 瓶颈转移</span>
+    <h2>体系搭好后，瓶颈从精力变成了硬件</h2>
+    <p class="lede" id="explain-167" data-points="p0221 p0222">并发上了一个数量级，瓶颈像打地鼠，按下一个冒出一个；这些反馈链路都必须建。</p>
+    <ul class="points">
+      <li id="explain-168" data-points="p0223">这是作者的阶段性体感，会来回摆动：硬件加强后，瓶颈又回到精力。</li>
+      <li id="explain-170" data-points="p0224">CPU、磁盘、GitHub 下载流量、CI 工位，轮流成为堵点。</li>
+      <li>只做 Coding、不被单一平台绑住时，Agent 用 Linux 比用 Mac 顺。</li>
+    </ul>
+  </header>
+  <div class="doc-body">
+    <p id="explain-169" data-points="p0223">更高一层属于大公司：高质量 Token 不限量、上下文充足、基础设施齐全，三样都有，才撑得起 Claude Tag 和 OpenAI Dots 那种企业级用法。个人先把眼下这轮瓶颈解决掉。</p>
+    <h3>CI 变成新堵点 </h3><span class="source-anchor heading-source">原文 §7.1</span>
+    <blockquote class="quote"><p id="explain-171" data-points="p0225 p0226 p0276">部分系统的负载大约涨了 10 倍。大多数公司要两三年才会涨到这个量，OpenAI 大约半年。</p><cite>Venkat Venkataramani，见《Inside OpenAI’s agentic software factory》（作者译文）</cite><span class="source-anchor" data-source-section="s32"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#ci-成了新的堵点">§7.1 引文</a></span></blockquote>
+    <p id="explain-172" data-points="p0227 p0228">文中还提到，版本管理、CI/CD 和发布环节到处都卡。（CI：合并前在专门机器上自动测试、审查的流水线。）作者常常同时开 <b>20 个主脑</b>，底下挂着三五十个执行器：</p>
+    <ul class="plain">
+      <li id="explain-173" data-points="p0229">12 核开发机经常几个小时满负荷，CI 机器同样 99%，于是换了更强的开发机。</li>
+      <li id="explain-174" data-points="p0230">内存够了，磁盘接着不够。</li>
+      <li id="explain-175" data-points="p0231">没有缓存的话，从 GitHub 下载的流量也会卡住，还得花钱。</li>
+      <li id="explain-176" data-points="p0232">不增加机器、CI 不分层，CPU 会再次卡住。</li>
+    </ul>
+    <div class="stats">
+      <div class="stat" data-unit="工位" id="explain-177" data-points="p0232" data-source-lines="485"><b>6 个 → 84 个</b><span>门禁 CI 能同时开工的工位，分布在四台机器上</span></div>
+    </div>
+    <figure class="figure orig" data-asset="a0233" id="explain-178" data-points="p0233"><img src="img/cpu-full.png" alt="某个下午的机器监控：三台 CI 机器都在 90% 上下，开发机 99%"><figcaption><b>原图 12 · 某天下午的监控</b> 3 台 CI 机器约 90%，开发机到了 99%。 <span class="source-anchor" data-source-section="s32">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#ci-成了新的堵点">原图 12 · 对应小节</a></span><span class="how">怎么看：先识别对象与标记，再对照本节的解释和限定。</span></figcaption></figure>
+    <p id="explain-179" data-points="p0234">没有一次解决所有问题的办法，只能碰到一个解一个。如果会长期用，硬件宜早升级：内存、硬盘涨价已很明显，CPU 多半也要涨。</p>
+    <h3>Linux 还是 Mac </h3><span class="source-anchor heading-source">原文 §7.2</span>
+    <p id="explain-180" data-points="p0235 p0236 p0237 p0238 p0239">Loop 最怕卡在等人这一步。若看 Computer Use（AI 操作图形界面），Mac 是最佳选择：图形软件多，系统又是 Unix。但从 Agent 自己用的角度看，最佳的一定是 Linux：改什么都靠配置文件，用不着人再点一次授权；Mac 上不少权限要人亲手点「允许」，AI 做不到，循环在这里断掉。Codex 负责人 Tibo 认为 Linux 元年可能就在 2026 年，作者赞同。</p>
+    <p class="callout limit" id="explain-181" data-points="p0240">前提是只做 Coding、也不被某个平台绑住（像 iOS 开发离不开 Mac）；浏览器里的验证、操作界面这类能力，得另外配。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s31"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#七瓶颈转移从精力到硬件再回到精力">七、瓶颈转移</a></span><span class="source-anchor" data-source-section="s32"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#ci-成了新的堵点">CI 成了新的堵点</a></span><span class="source-anchor" data-source-section="s33"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#linux-还是-mac">Linux 还是 Mac</a></span></div>
 </section>
 
-<section class="card">
-  <div class="stage"><div class="stack">
-   <div class="head">作者要避开的旧问题</div>
-   <div class="row developer"><span class="i">—</span><span class="r">见前文</span><span class="t">上下文塞满无关 Skill；人盯着才转得动</span></div>
-   <div class="head">用这套做法时仍会犯的错</div>
-   <div class="row bad"><span class="i">1</span><span class="r">只写提示</span><span class="t">教训停在规则文件，未升到脚本 / 闸门 / 测试</span></div>
-   <div class="row bad"><span class="i">2</span><span class="r">假绿判据</span><span class="t">检查永远不会红，等于没写</span></div>
-   <div class="row bad"><span class="i">3</span><span class="r">压缩误伤</span><span class="t">省 Token 工具悄悄丢掉搜索与文件原文</span></div>
-   <div class="head">作者承认仍在的限制</div>
-   <div class="row bad"><span class="i">4</span><span class="r">难验证工作</span><span class="t">前端审美、产品方向等，人仍须留在环内</span></div>
-   <div class="row bad"><span class="i">5</span><span class="r">硬件堵点</span><span class="t">并发上来后 CI、磁盘、流量轮流成为瓶颈</span></div>
-  </div></div>
-  <div class="say"><span class="kicker">旧问题、仍会犯的错、仍在的限制</span><h2>Loop 能记下这一堑，前提是机制真的挡住了</h2>
-  <p>Anthropic playbook：同一错犯两次就写进 CLAUDE.md；但 Skill 只能减少违规，Hook 才能几乎不可能违规。</p>
-  <p class="key">xAI Lauren 的强弱序：结构不可能错 &gt; lint &gt; 规则/Skill &gt; 只能人审的风格指南。</p>
-  <div class="src article">「写进提示，不如写进代码」；失效例见五、六、七节</div></div>
+<section class="sec" data-toc="八、从 Coding 到组织和学习" id="s13" data-source-section="s34">
+  <header class="doc-head" data-no="8">
+    <span class="kicker">第八章 · 从写代码到组织和学习</span>
+    <h2>说到底，是给 Agent 搭一个工作环境</h2>
+    <p class="lede" id="explain-182" data-points="p0241 p0245">环境里的材料叫 Context，让环境自己变好的机制叫 Loop；Coding 之外也一样。</p>
+    <ul class="points">
+      <li>近来的几个新名词（ADE、ADLC 等）指的是同一层。</li>
+      <li id="explain-187" data-points="p0247 p0248">Agent 进入任何环境，都看两点：Context 够不够，能不能形成 Loop。</li>
+      <li>学新东西也是 Loop：把文章交给 Agent，结合自己的日志判断值不值得吸收。</li>
+    </ul>
+  </header>
+  <div class="doc-body">
+    <h3>新名词很多，指的是同一层 </h3><span class="source-anchor heading-source">原文 §8.1</span>
+    <p id="explain-183" data-points="p0242 p0243 p0244 p0277 p0278">ADE（Orca 的叫法）、ADLC（Cloudflare 的叫法）、「harness 的 harness」，指的都是一件事：在单个 Agent 之外加一层协作环境，用于 Agent 分工、交叉查证以及留存记录。下层单点的问题（某个模型能不能写好某个模块），老老实实享受模型进步就行。</p>
+    <p>作者目前最关注的三个方向：</p>
+    <div class="roles compare">
+      <div><p id="explain-184" data-points="p0246"><b>方向 1</b><span>调度：让主脑和执行器各司其职。</span></p></div>
+      <div><p id="explain-185" data-points="p0246"><b>方向 2</b><span>低成本、高质量的验证通道。</span></p></div>
+      <div><p id="explain-186" data-points="p0246"><b>方向 3</b><span>让验证过的东西顺顺当当进入生产环境。</span></p></div>
+    </div>
+    <h3>Coding 之外 </h3><span class="source-anchor heading-source">原文 §8.2</span>
+    <p id="explain-188" data-points="p0249 p0283">作者在《老树开新花》里讲过 AI Native 组织分三层；一个代码仓库，可以看成缩小版的组织。</p>
+    <ol class="ladder steps">
+      <li id="explain-210" data-points="p0249"><i>可读</i>AI 能获取组织内的资料</li>
+      <li id="explain-189" data-points="p0249"><i>可写</i>允许 AI 修改系统中的记录</li>
+      <li id="explain-190" data-points="p0249"><i>可闭环</i>改完后能自动判对错，错误会被记录</li>
+    </ol>
+    <h3>学习本身也是一个 Loop </h3><span class="source-anchor heading-source">原文 §8.3</span>
+    <p id="explain-191" data-points="p0250 p0251 p0252 p0253 p0254">过去大厂的好做法离不开重型基础设施，个人很难照搬；现在有 Agent 帮忙，个人能做的工程几乎没有上限。作者怎么决定学不学：把文章交给 Agent，对照自己的日志、踩过的坑、旧 issue 和单人负责的处境，挑出值得吸收的部分。RTK 装了又卸、Advisor 借来再改，都是这么来的。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s34"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#八从-coding-到组织再到学习本身">八、从 Coding 到组织</a></span><span class="source-anchor" data-source-section="s35"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#名字不同干的是同一层的事">名字不同，干的是同一层的事</a></span><span class="source-anchor" data-source-section="s36"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#不止于-coding">不止于 Coding</a></span><span class="source-anchor" data-source-section="s37"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#学习本身也是一个-loop">学习本身也是一个 Loop</a></span></div>
 </section>
 
-<section class="card">
-  <div class="stage"><div class="pairs">
-   <div class="pair"><div class="no"><b>People in the loop</b>每一步人看、人判断、人拍板；循环速度跟人能盯多久绑定</div><div class="yes"><b>People out of the loop</b>人定义「怎样算对」，必要时出场；派活、执行、验证、复盘在环内自转</div></div>
-   <div class="pair"><div class="b"><b>少了 Context</b>人得一直补充背景</div><div class="a"><b>少了 Loop</b>人得一直检查结果</div></div>
-  </div></div>
-  <div class="say"><span class="kicker">作者做了什么取舍？</span><h2>从人在环内，走向人在环外</h2>
-  <p>作者原话：能自动检查对错的工作里，越做越累，说明调度方式有问题。</p>
-  <p class="key">还没法自动验证的地方，人留在环内是正常的；要把能验证的部分不断剥出来。</p>
-  <div class="src article">「写在最后」</div></div>
+<section class="sec" data-toc="写在最后：人从环内走到环外" id="s14" data-source-section="s38">
+  <header class="doc-head" data-no="终">
+    <span class="kicker">写在最后</span>
+    <h2>人从环内退到环外</h2>
+    <p class="lede" id="explain-192" data-points="p0255 p0256">在对错能自动判定的工作里，如果越做越累，问题出在你调度 Agent 的方式上。</p>
+    <ul class="points">
+      <li>有了 Context，不用人在旁边补背景；有了 Loop，不用人在旁边挑错。</li>
+      <li>两样少一样，人就离不开这个环。</li>
+      <li>还不能自动验证对错的地方（审美、方向、取舍），人留在环内是正常的。</li>
+    </ul>
+  </header>
+  <div class="doc-body">
+    <p id="explain-193" data-points="p0257 p0263">暂时还无法自动判对错的工作，觉得累很正常：先把「做对的标准」补上，再谈调度。起码在工程上，应当越干越轻松，把注意力腾出来，去管流量、权力分配这些工程以外的事。</p>
+    <div class="roles compare">
+      <div><p id="explain-211" data-points="p0258 p0259"><b>人在环内</b><span>每步都得人来看、来判、来定。开头说的「守在旁边才撑得住每天约 40 亿 Token」就是这样。循环的速度，受限于你每天醒着的时长。</span></p></div>
+      <div><p id="explain-212" data-points="p0258 p0260"><b>人在环外</b><span>人只负责两件事：讲清楚「做对是什么样」，以及系统确实需要拍板时出来拍板。其余环节（派活、执行、验证、复盘、沉淀）由环自己运转。</span></p></div>
+    </div>
+    <figure class="figure orig" data-asset="a0262" id="explain-194" data-points="p0262"><img src="img/d6-people-loop.png" alt="左：人在环内，每一步都要人拍板；右：人在环外，只定义怎样算做对，必要时出场"><figcaption><b>原图 13 · 人在环内 vs 人在环外</b> 左边每步都等人决定；右边人只给出「对」的标准，需要时才出面。 <span class="source-anchor" data-source-section="s38">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#写在最后">原图 13 · 对应小节</a></span><span class="how">怎么看：先识别对象与标记，再对照本节的解释和限定。</span></figcaption></figure>
+    <p class="callout key" id="explain-195" data-points="p0261 p0264">从环内走到环外，靠的不是更强的模型，而是本文那两样：有了 Context，旁边不必有人解释；有了 Loop，旁边不必有人纠错。</p>
+    <div class="roles compare">
+      <div><p><b>Context</b><span>有意识地准备上下文：每样东西都要说得出留下的理由，能加也能删。</span></p></div>
+      <div><p><b>Loop</b><span>有意识地构建闭环：每一次犯错都被记下、被验证，再写进下一次的上下文。</span></p></div>
+    </div>
+    <p id="explain-196" data-points="p0266 p0267">要做的就是持续把可验证的部分拆出来，交回给循环。开头会不顺，等 Loop 转起来，旧错几乎不会重犯；出现新问题，也有日志能查。人站得越远，循环转得越快。</p>
+    <blockquote class="quote"><p id="explain-197" data-points="p0268">吃一堑，长一智。前提是，这一堑被记下来了。</p><cite>张立行，原文结尾</cite><span class="source-anchor" data-source-section="s38"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#写在最后">写在最后</a></span></blockquote>
+    <p class="callout limit" id="explain-198" data-points="p0269">作者自称「一家之言，不一定对」。</p>
+    <h3>附录：参考资料 </h3><span class="source-anchor heading-source">原文附录</span>
+    <p id="explain-199" data-points="p0270 p0271 p0272 p0280">原文附录列了 7 篇外部文章和访谈，以及本系列 3 篇前文。作者说人类读者可以跳过，把链接交给 Agent 即可。</p>
+    <div class="src article refs-box">原文附录链接<ol class="refs"><li id="explain-200" data-points="p0273"><a href="https://claude.dev/blog/the-new-rules-of-context-engineering-for-claude-5-generation-models/">The new rules of context engineering for Claude 5 generation models</a> · Thariq / Claude</li><li id="explain-201" data-points="p0274"><a href="https://www.latent.space/p/thariq">Latent Space 对 Thariq 的访谈</a> · Latent Space</li><li id="explain-202" data-points="p0275"><a href="https://claude.com/blog/the-ai-native-sdlc-playbook">The AI-native SDLC playbook</a> · Anthropic</li><li id="explain-203" data-points="p0276"><a href="https://newsletter.pragmaticengineer.com/p/openai-software-factory">Inside OpenAI’s agentic software factory</a> · The Pragmatic Engineer</li><li id="explain-204" data-points="p0277"><a href="https://blog.cloudflare.com/agent-development-lifecycle/">The Agent Development Lifecycle has arrived on Cloudflare</a> · Cloudflare</li><li id="explain-205" data-points="p0278"><a href="https://www.superlinear.academy/c/recording/orca">Orca CEO 访谈</a> · Superlinear Academy</li><li id="explain-206" data-points="p0279"><a href="https://sum.zlxlabs.com/view/view_v8LdbUib-upySmXHKwv8LhiRPZNc1gzl9gqCYXJ8uFY">Lauren（xAI）分享的总结与校对稿</a> · xAI</li><li id="explain-208" data-points="p0281"><a href="https://zj1123581321.com/posts/context-is-all-you-need/">Context is All You Need</a> · 本系列前文</li><li><a href="https://zj1123581321.com/posts/260809-multi-agent-scheduling-architecture/">将军赶路不追小兔</a> · 本系列前文</li><li><a href="https://zj1123581321.com/posts/260908-smb-agent-framework/">老树开新花</a> · 本系列前文</li><li><a href="https://zj1123581321.com/posts/261004-context-and-loop/">博客原文</a></li><li><a href="https://x.com/bylixing/status/2106757373834780723">X Article</a></li></ol></div>
+  <p id="explain-207" data-points="p0279 p0284">写作说明：底稿来自飞书录音豆；Claude Code 与 Opus 5.5 做结构和整理，Codex 负责事实校核；稿件审阅分别交给 Kimi、Grok 和 Codex。附录 Lauren 的材料标题还注明上月有 2,500 个 PR 进入生产。</p></div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s38"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#写在最后">写在最后</a></span><span class="source-anchor" data-source-section="s39"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#附录参考资料">附录：参考资料</a></span></div>
 </section>
 
-<section class="card">
-  <div class="stage"><svg class="flow" data-act="ci" data-flow='{"nodes":[{"id":"att","x":120,"y":200,"t":"精力","s":"曾经的瓶颈","c":"amber","w":140},{"id":"hw","x":320,"y":200,"t":"硬件 / CI","s":"并发上来后的堵点","c":"red","w":160},{"id":"att2","x":520,"y":200,"t":"精力","s":"硬件加强后又摆回来","c":"amber","w":180},{"id":"os","x":320,"y":60,"t":"Linux vs Mac","s":"纯 Agent 用 Linux 少卡授权","c":"blue","w":200}],"edges":[{"f":"att","t":"hw","l":"阶段体感"},{"f":"hw","t":"att2","l":"会来回摆"},{"f":"os","t":"hw"}]}'></svg></div>
-  <div class="say"><span class="kicker">深入一层</span><h2>瓶颈会从精力转到硬件，再摆回精力</h2>
-  <p>作者常同时调度约 20 个主脑、三五十个执行器；门禁 CI 工位从 6 个扩到 84 个（四台机器）。</p>
-  <p class="key">这是作者自己的阶段性体感，不是说每个人都会这样切换。</p>
-  <details class="more"><summary></summary><p>纯 Coding 且不依赖单一平台时，作者认为 Linux 更适合 Agent：配置可改、少需人点「允许」。Mac 更适合偏 Computer Use 的图形界面场景。</p><p>ADE / ADLC / harness of harness：名字不同，都是在单个 Agent 外再搭可分工、可查证、可留痕的工作环境。</p></details>
-  <div class="src article">「七、瓶颈转移」；「八、从 Coding 到组织」</div></div>
+<section class="sec" data-no="测" data-toc="小测：5 道题" id="s15" data-source-section="extra">
+  <div class="head-full"><span class="kicker">小测</span><h2>用 5 道题检查你抓住主线没有</h2></div>
+  <div class="stage"><div class="quiz"><script type="application/json">[{"q": "作者认为，结果好坏多半在提问之前就已决定。这说的是哪个关键词？", "opts": ["Loop：把结果送回来，让下一次更好", "Context：你给了什么材料和规矩", "模型越强越好", "门禁全绿"], "a": 1, "why": "开口之前就定了的，是给 Agent 的材料和规矩，也就是 Context。", "back": 2}, {"q": "大厂建议删掉旧 prompt 补丁。作者为什么建议「节奏晚半年」？", "opts": ["作者认为大厂的建议方向就是错的，不该照做", "旧补丁一删，门禁和 lint 都会因为格式变化而报错失败，所以要等半年", "大厂有几乎无限的高质量 Token，普通用户额度用完后会被迫换普通模型", "Claude Code 不再读 CLAUDE.md"], "a": 2, "why": "他同意方向，只是普通用户没有无限 Token 这个前提；补丁要等高智力 Token 变便宜后再删。", "back": 5}, {"q": "Pi 和原生客户端 12 对对比打成 6 比 6。作者从中能带走的结论是什么？", "opts": ["外壳不是决定胜负的变量，差距主要来自给模型的上下文", "Pi 在所有模型上都比原生客户端强，应该全面替换", "这是可靠的公开榜单", "原生客户端都该下线"], "a": 0, "why": "样本小、不是榜单；能带走的只有：外壳不是决定胜负的变量。", "back": 7}, {"q": "盲测里，什么换掉以后，顾问能说「该停手」，却说不出「方案本身就不该做」？", "opts": ["去掉选项菜单", "让顾问扮演已经连修三轮、准备收尾的那个主脑来回答", "不给顾问看前文", "换成一个弱一点的模型"], "a": 3, "why": "这说明判断力确实重要；另一个关键变量是顾问没有背着会话历史。", "back": 8}, {"q": "你新写了一个检查。按作者的硬规矩，上线前先做什么？", "opts": ["喂一个已知答案为「否」的输入，确认它会变红", "先连续跑一百次，确认每次都显示绿灯再上线", "把它写进 CLAUDE.md", "交给人工复核每一次结果"], "a": 0, "why": "一个永远不会变红的检查等于没写；那些坑的共同点就是都是绿的、都没报错。", "back": 11}]</script></div></div>
+  <div class="src article">据原文各章出题，答错会带你回到对应章节</div>
 </section>
-
-<section class="card full">
-  <div class="head-full"><span class="kicker">小测</span><h2>用新场景判断：该动 Context，还是该动 Loop？</h2></div>
-  <div class="stage"><div class="quiz" data-quiz='[
-  {"q":"执行器反复把任务再派出去。按原文，更优先的固化方式是？","opts":["在全局规则再加一句「不要派活」","任务卡强制角色声明，并剥掉执行器侧的主脑段","换一个更强的模型"],"a":1,"why":"写进模板与规则剥离，强过只追加提示；原文空转约 90 分钟的坑。","back":7},
-  {"q":"你想同时维护 Claude、Codex、Kimi 等多家工具的规则。作者的工程实践是？","opts":["每个模型一份规则","按顶级/普通模型两套","一份底稿，按工具 × 角色拼接"],"a":2,"why":"作者明确不按模型分；主脑拿三块，执行器拿底座与工具段。","back":5},
-  {"q":"主脑卡在收尾方案上。Advisor 真正起作用，靠的是？","opts":["只靠更强模型","更强判断 + 顾问看不到那段会话史","把完整对话转给顾问，上下文越全越好"],"a":1,"why":"原文排除变量后：干净独立 Context 与判断力同样关键。原生 Advisor 转全文对话，作者刻意改掉。","back":6},
-  {"q":"新装的「省 Token」工具宣称省 90%。按 Loop，你该先做什么？","opts":["立刻全局安装","结合本地工作日志回测是否真省、有无副作用","只信作者评测数字"],"a":1,"why":"RTK 例：回测后实际约 44%，且伤害搜索与读文件；先装后卸。","back":7},
-  {"q":"门禁汇总把「跳过」显示成「通过」。说明什么？","opts":["Loop 已经够了","判据本身失效，验证也要被验证","只要最后有人审就行"],"a":1,"why":"硬规矩：先喂已知为否的输入，确认会变红。","back":9},
-  {"q":"产品视觉风格很难自动打分。按「人在环外」的判据，应该？","opts":["强迫全部自动化，人绝不看","人留在环内；把能自动验证的部分继续剥出去","放弃 Loop"],"a":1,"why":"原文：凡没法自动验证对错的地方，人留在环内正常。","back":11}]'></div></div>
-  <div class="src extra">补充：小测场景为教学示例；选项对应原文机制</div>
-</section>
-</main>
-<nav class="bottom"><button class="btn" id="prev">上一张</button><button class="btn main" id="next">下一张</button></nav>
-<script>
-/* 学习搭子 固定组件库 — 不要在课程里改这个文件。 */
+</main><script>var __H=location.hash;window.lessonIcons={"menu": "<svg class=\"i i-menu\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/><\/svg>", "play": "<svg class=\"i i-play\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z\"/><\/svg>", "pause": "<svg class=\"i i-pause\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"14\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/><rect x=\"5\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/><\/svg>", "check": "<svg class=\"i i-check\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 6 9 17l-5-5\"/><\/svg>", "x": "<svg class=\"i i-x\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/><\/svg>", "zoom-in": "<svg class=\"i i-zoom-in\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><line x1=\"21\" x2=\"16.65\" y1=\"21\" y2=\"16.65\"/><line x1=\"11\" x2=\"11\" y1=\"8\" y2=\"14\"/><line x1=\"8\" x2=\"14\" y1=\"11\" y2=\"11\"/><\/svg>", "zoom-out": "<svg class=\"i i-zoom-out\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><line x1=\"21\" x2=\"16.65\" y1=\"21\" y2=\"16.65\"/><line x1=\"8\" x2=\"14\" y1=\"11\" y2=\"11\"/><\/svg>", "copy": "<svg class=\"i i-copy\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\"/><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"/><\/svg>", "chevron-right": "<svg class=\"i i-chevron-right\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m9 18 6-6-6-6\"/><\/svg>", "book-open": "<svg class=\"i i-book-open\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 5v16\"/><path d=\"M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z\"/><\/svg>", "external-link": "<svg class=\"i i-external-link\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M15 3h6v6\"/><path d=\"M10 14 21 3\"/><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/><\/svg>"};window.lessonIcon=n=>window.lessonIcons[n]||"";</script><script>/* Article/pair navigation only. No global swipe or arrow-key paging. */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const H=document.documentElement, sections=$$('main.deck > .sec, main.deck > .hero, .pair-notes > .sec');
+if(!sections.length)return;
+const ids=new Set($$('[id]').map(n=>n.id));
+sections.forEach((s,i)=>{if(!s.id){let n=i+1,id=s.classList.contains('hero')?'intro':'s'+n;while(ids.has(id))id='s'+(++n);s.id=id;ids.add(id)}});
+const title=s=>s.dataset.toc||$('h2,h1,h3',s)?.textContent||s.id;
+const toc=document.createElement('nav');toc.className='toc';toc.id='lesson-toc';toc.setAttribute('aria-label','目录');
+const heading=document.createElement('b');heading.textContent='目录';toc.appendChild(heading);const ol=document.createElement('ol');toc.appendChild(ol);
+sections.forEach((s,i)=>{const li=document.createElement('li'),a=document.createElement('a');a.href='#'+s.id;a.textContent=(i+1)+'. '+title(s);li.appendChild(a);ol.appendChild(li)});document.body.appendChild(toc);
+const links=$$('a',toc),toggle=$('.toc-toggle'),count=$('.count'),bar=$('.track i');
+const shade=document.createElement('div');shade.className='toc-backdrop';document.body.appendChild(shade);
+function open(value){H.classList.toggle('toc-open',value);toggle?.setAttribute('aria-expanded',String(value));if(value)links.find(a=>a.getAttribute('aria-current')==='true')?.focus();else toggle?.focus()}
+if(toggle){toggle.setAttribute('aria-controls',toc.id);toggle.onclick=()=>open(!H.classList.contains('toc-open'))}shade.onclick=()=>open(false);
+addEventListener('keydown',e=>{if(e.key==='Escape'&&H.classList.contains('toc-open'))open(false)});
+function locate(hash){let id;try{id=decodeURIComponent(hash.replace(/^#/,''))}catch(e){return null}if(/^\d+$/.test(id))return sections[+id-1];return document.getElementById(id)}
+function jump(target){if(!target)return;H.classList.remove('toc-open');toggle?.setAttribute('aria-expanded','false');target.scrollIntoView({block:'start',behavior:'instant'});history.replaceState(null,'','#'+target.id);update();dispatchEvent(new Event('lesson:navigate'))}
+window.lessonNav={layout:H.dataset.layout,go:n=>jump(document.getElementById('s'+n)||sections[n-1]),returnTo:box=>jump(box.closest('.sec')||box),jump};window.goCard=n=>window.lessonNav.go(n);
+toc.onclick=e=>{const a=e.target.closest('a');if(!a)return;e.preventDefault();jump(locate(a.hash))};
+const key='pos:'+location.pathname;let queued=false,restoring=true;
+function update(){queued=false;let current=sections[0];const line=H.dataset.layout==='pair'&&innerWidth<=820?innerHeight*.4+90:100;for(const s of sections)if(s.getBoundingClientRect().top<=line)current=s;
+ count.textContent=title(current);links.forEach(a=>a.setAttribute('aria-current',String(a.hash==='#'+current.id)));const max=H.scrollHeight-innerHeight;bar.style.width=Math.max(0,Math.min(100,max>0?scrollY/max*100:100))+'%';
+ if(!restoring)try{localStorage.setItem(key,JSON.stringify({id:current.id,offset:scrollY-(current.getBoundingClientRect().top+scrollY)}))}catch(e){}
+}
+addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(update)}},{passive:true});addEventListener('resize',update);addEventListener('hashchange',()=>jump(locate(location.hash)));
+addEventListener('load',()=>{const hash=window.__H||location.hash;let target=locate(hash),offset=0;if(!hash){try{const pos=JSON.parse(localStorage.getItem(key)||'null');if(pos){target=document.getElementById(pos.id);offset=Number(pos.offset)||0}}catch(e){}}
+ if(target){target.scrollIntoView({block:'start',behavior:'instant'});if(!hash)scrollBy(0,offset+72)}restoring=false;update();
+});update();
+})();
+</script><script>/* Reveal an offscreen simulator first, then move only its local SVG viewport. */
+(function(root){
+function delta(start,end,low,high,pad=16){if(start<low+pad)return start-low-pad;if(end>high-pad)return end-high+pad;return 0}
+function focus(svg,scroller){
+ let frame=scroller.getBoundingClientRect(),bottom=innerHeight-88;
+ const top=document.querySelector('.top')?.getBoundingClientRect().bottom||56;
+ if(frame.bottom<=top||frame.top+112>bottom){
+  scroller.closest('.sim').scrollIntoView({block:'start',behavior:'instant'});
+  frame=scroller.getBoundingClientRect();
+ }
+ for(let p=scroller.parentElement;p&&p!==document.body;p=p.parentElement){const c=getComputedStyle(p);if(/auto|scroll|hidden|clip/.test(c.overflowY)){const r=p.getBoundingClientRect();bottom=Math.min(bottom,r.top+p.clientHeight)}}
+ const space=Math.max(112,Math.min(innerHeight*.4,bottom-frame.top));scroller.style.maxHeight=space+'px';
+ frame=scroller.getBoundingClientRect();const node=svg.querySelector('.fl-node.act');if(!node)return;const r=node.getBoundingClientRect();
+ scroller.scrollTop+=delta(r.top,r.bottom,frame.top,frame.top+scroller.clientHeight);
+ scroller.scrollLeft+=delta(r.left,r.right,frame.left,frame.left+scroller.clientWidth);
+}
+root.LessonGeometry={delta,focus};if(typeof module!=='undefined')module.exports={delta,focus};
+})(typeof window==='undefined'?globalThis:window);
+</script><script>/* Shared material/explanation pairing, original-image dialog and copy actions. */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)],ic=window.lessonIcon;
+window.lessonCopy=async(text,button)=>{try{if(navigator.clipboard?.writeText)await navigator.clipboard.writeText(text);else{const t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();if(!document.execCommand('copy'))throw Error('copy');t.remove()}button.textContent='已复制'}catch(e){button.textContent='复制未成功，请选中文字复制'}};
+$$('.pair.codewalk,.pair.read-pair,.pair.material-pair').forEach(pair=>{
+ const source=$('.pair-source',pair),notes=$('.pair-notes',pair);if(!source||!notes)return;
+ const pre=$('pre[data-lines]',source),code=pre&&$('code',pre),steps=$$('.step',notes);let lines=[],raw='';
+ if(code){raw=code.textContent;const first=Number(pre.dataset.lines)||1;code.textContent='';const pieces=raw.replace(/\n$/,'').split('\n');pieces.forEach((text,i)=>{const line=document.createElement('span');line.className='code-line';line.dataset.line=String(first+i);line.textContent=text;code.appendChild(line);lines.push(line)});
+  const panel=document.createElement('div');panel.className='code-panel';source.before(panel);
+  const toolbar=document.createElement('div');toolbar.className='code-toolbar';
+  const hint=document.createElement('span');hint.className='code-scroll-hint';hint.textContent='长行可横向滚动';
+  const button=document.createElement('button');button.className='btn sm copy-code';button.innerHTML=ic('copy')+' 复制代码';button.onclick=()=>window.lessonCopy(raw,button);
+  toolbar.append(hint,button);panel.append(toolbar,source);
+ }
+ let active=null;
+ function select(step){if(!step||active===step)return;active=step;steps.forEach(s=>s.classList.toggle('is-active',s===step));let targets=[];
+  if(code){const ranges=(step.dataset.hl||'').split(',').map(v=>v.split('-').map(Number));lines.forEach(line=>{const n=Number(line.dataset.line),on=ranges.some(([a,b=a])=>n>=a&&n<=b);line.classList.toggle('hl',on);if(on)targets.push(line)})}
+  else{const ids=(step.dataset.explains||step.dataset.target||'').split(/\s+/);$$('.source-block,[data-material]',source).forEach(block=>{const on=ids.includes(block.dataset.sourceId||block.id);block.classList.toggle('is-active',on);if(on)targets.push(block)})}
+  if(targets.length){const a=targets[0].getBoundingClientRect(),b=targets[targets.length-1].getBoundingClientRect(),r=source.getBoundingClientRect();const bottom=r.top+source.clientHeight;source.scrollTop+=b.bottom-a.top>source.clientHeight-32?a.top-r.top-16:window.LessonGeometry.delta(a.top,b.bottom,r.top,bottom)}
+ }
+ const update=()=>{
+  const rect=notes.getBoundingClientRect(),material=source.closest('.code-panel')||source;
+  const top=Math.max(0,$(".top")?.getBoundingClientRect().bottom||0,innerWidth<=820?material.getBoundingClientRect().bottom:0),bottom=Math.min(innerHeight,rect.bottom);
+  if(bottom<=top)return;
+  const line=top+(bottom-top)*.4;let step=steps[0];
+  for(const s of steps)if(s.getBoundingClientRect().top<=line)step=s;
+  const last=steps.at(-1),lastRect=last?.getBoundingClientRect();
+  if(scrollY+innerHeight>=document.documentElement.scrollHeight-2&&lastRect?.top<bottom&&lastRect.bottom>top)step=last;
+  select(step);
+ };
+ let queued=false;addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(()=>{queued=false;update()})}},{passive:true});addEventListener('resize',update);
+ steps.forEach(step=>{step.addEventListener('focusin',()=>select(step));step.addEventListener('click',e=>{select(step);const a=e.target.closest('a');if(a?.hash&&source.querySelector(a.hash)){e.preventDefault();source.focus()}})});select(steps[0]);addEventListener('load',update);
+});
+$$('figure img').forEach(img=>{const button=document.createElement('button');button.className='image-open';button.type='button';button.setAttribute('aria-label','放大图片：'+img.alt);img.replaceWith(button);button.appendChild(img);button.onclick=()=>{
+ const dialog=document.createElement('dialog');dialog.className='image-dialog';dialog.setAttribute('aria-label',img.alt);const close=document.createElement('button');close.className='btn dialog-close';close.innerHTML=ic('x')+' 关闭';const large=img.cloneNode();large.removeAttribute('loading');dialog.append(close,large);document.body.appendChild(dialog);close.onclick=()=>dialog.close();dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close()});dialog.addEventListener('close',()=>{dialog.remove();button.focus()});dialog.showModal();close.focus();
+}});
+$$('details.more summary').forEach(s=>{if(!s.textContent.trim())s.textContent='展开细节';s.insertAdjacentHTML('afterbegin',ic('chevron-right'))});
+})();
+</script><script>/* 学习搭子 固定组件库 — 不要在课程里改这个文件。 */
 (()=>{
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const NS='http://www.w3.org/2000/svg';
+const data=(box,kind)=>JSON.parse(box.querySelector('script[type="application/json"]')?.textContent||box.dataset[kind]);
+const ic=window.lessonIcon;
 const el=(t,a={},p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p&&p.appendChild(e);return e};
 const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 
-/* ---------- 卡片翻页 ---------- */
-const cards=$$('.card');let cur=0;
-function go(i){i=Math.max(0,Math.min(cards.length-1,i));cards[cur].classList.remove('on');cur=i;cards[cur].classList.add('on');
-  $('.track i').style.width=((cur+1)/cards.length*100)+'%';$('.count').textContent=(cur+1)+' / '+cards.length;
-  $('#prev').disabled=cur===0;$('#next').disabled=cur===cards.length-1;history.replaceState(null,'','#'+(cur+1));}
-window.goCard=n=>go(n-1);
-$('#prev').onclick=()=>go(cur-1);$('#next').onclick=()=>go(cur+1);
-addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.key==='ArrowRight')go(cur+1);if(e.key==='ArrowLeft')go(cur-1)});
-let sx=null;addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
-addEventListener('touchend',e=>{if(sx===null)return;const d=e.changedTouches[0].clientX-sx;if(Math.abs(d)>60)go(cur+(d<0?1:-1));sx=null});
+function component(selector,render){
+  $$(selector).forEach(box=>{try{render(box)}catch(error){
+    const message=document.createElement('p');message.className='component-error';
+    message.textContent='这张图的数据有误';message.setAttribute('role','status');
+    box.replaceWith(message);console.error('组件数据有误',error);
+  }});
+}
 
 /* ---------- flow：用 JSON 画流程图 ----------
  spec = {w,h,nodes:[{id,x,y,t,s?,c?,w?}],edges:[{f,t,l?,bend?}]}  节点坐标是中心点 */
 function drawFlow(svg,spec){
   svg.innerHTML='';
   const defs=el('defs',{},svg);
-  [['a','#AEB8C6'],['b','#2550D9'],['red','#C8372D'],['amber','#C77A00'],['green','#16875A']].forEach(([id,c])=>{const m=el('marker',{id:'ar'+id+svg.dataset.uid,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:7,markerHeight:7,orient:'auto-start-reverse'},defs);el('path',{d:'M0,0L10,5L0,10z',fill:c},m)});
-  const N={};spec.nodes.forEach(n=>N[n.id]={...n,w:n.w||150,h:n.s?70:56});
+  [['a','var(--meta)'],['b','var(--blue)'],['red','var(--amber)'],['amber','var(--amber)'],['green','var(--green)']].forEach(([id,c])=>{const m=el('marker',{id:'ar'+id+svg.dataset.uid,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:7,markerHeight:7,orient:'auto-start-reverse'},defs);el('path',{d:'M0,0L10,5L0,10z',fill:c},m)});
+  const N={};spec.nodes.forEach(n=>N[n.id]={...n,w:n.w||150,h:n.h||(n.s?70:56)});
   const ns=Object.values(N);
   let x0=Math.min(...ns.map(n=>n.x-n.w/2)),x1=Math.max(...ns.map(n=>n.x+n.w/2)),y0=Math.min(...ns.map(n=>n.y-n.h/2)),y1=Math.max(...ns.map(n=>n.y+n.h/2));
   const B={x0,x1,y0,y1};
@@ -387,7 +732,7 @@ function drawFlow(svg,spec){
       const cx=mx-(q2-q1)/len*bd,cy=my+(p2-p1)/len*bd;d=`M${p1},${q1} Q${cx},${cy} ${p2},${q2}`;
       const qx=.25*p1+.5*cx+.25*p2,qy=.25*q1+.5*cy+.25*q2,sg=bd>=0?1:-1;lx=qx-(q2-q1)/len*sg*14;ly=qy+(p2-p1)/len*sg*14+4;}
     const mk=e.c||'a';const p=el('path',{d,class:'fl-edge '+(e.c||''),'marker-end':`url(#ar${mk}${svg.dataset.uid})`},eg);p._mk=mk;
-    let lab=null;if(e.l){const anc=e.route==='left'?'end':e.route==='right'?'start':'middle';lab=el('text',{x:lx,y:ly,'text-anchor':anc,class:'fl-elab '+(e.c||''),stroke:'#F2F4F7','stroke-width':5,'paint-order':'stroke'},eg);lab.textContent=e.l}
+    let lab=null;if(e.l){const anc=e.route==='left'?'end':e.route==='right'?'start':'middle';lab=el('text',{x:lx,y:ly,'text-anchor':anc,class:'fl-elab '+(e.c||''),stroke:'var(--paper)','stroke-width':5,'paint-order':'stroke'},eg);lab.textContent=e.l}
     svg._edges[e.f+'>'+e.t]={p,lab}});
   ns.forEach(n=>{const g=el('g',{class:'fl-node '+(n.c||'')},ng);
     el('rect',{x:n.x-n.w/2,y:n.y-n.h/2,width:n.w,height:n.h,rx:14},g);
@@ -395,61 +740,106 @@ function drawFlow(svg,spec){
     if(n.s){const s=el('text',{x:n.x,y:n.y+18,'text-anchor':'middle',class:'sub'},g);s.textContent=n.s}
     svg._nodes[n.id]=g});
   /* 自动贴合：viewBox 只包住内容，图会放大填满面板 */
-  const P=spec.pad??8;svg.setAttribute('viewBox',`${x0-P} ${y0-P-10} ${x1-x0+2*P} ${y1-y0+2*P+20}`);
+  const P=spec.pad??8,W=x1-x0+2*P,H=y1-y0+2*P+20;
+  svg.setAttribute('viewBox',`${x0-P} ${y0-P-10} ${W} ${H}`);
+  svg.style.setProperty('--flow-width',W+'px');svg.style.setProperty('--flow-height',H+'px');
+  const scroll=document.createElement('div');scroll.className='flow-scroll';
+  svg.replaceWith(scroll);scroll.appendChild(svg);
+  if(!scroll.closest('.sim')&&W>innerWidth-78){const t=document.createElement('p');t.className='flow-tip';t.textContent='← 左右滑动看全图 →';scroll.after(t)}
   svg._set=(act,edge)=>{for(const k in svg._nodes)svg._nodes[k].classList.toggle('act',k===act);
     for(const k in svg._edges){const on=k===edge,E=svg._edges[k];E.p.classList.toggle('act',on);E.p.setAttribute('marker-end',`url(#ar${on?'b':E.p._mk}${svg.dataset.uid})`);E.lab&&E.lab.classList.toggle('act',on)}};
   svg._set(svg.dataset.act,svg.dataset.edge);
+  svg._center=()=>{if(!matchMedia('(max-width:820px)').matches)return;
+    const active=Object.values(svg._nodes).find(n=>n.classList.contains('act'));if(!active)return;
+    const a=active.getBoundingClientRect(),r=scroll.getBoundingClientRect();
+    scroll.scrollLeft+=a.left+a.width/2-r.left-r.width/2;
+  };
 }
 let uid=0;
-$$('svg.flow').forEach(s=>{s.dataset.uid=++uid;drawFlow(s,JSON.parse(s.dataset.flow))});
+component('svg.flow',s=>{s.dataset.uid=++uid;drawFlow(s,data(s,'flow'))});
 
 /* ---------- sim：一步步走的模拟器 ----------
  data-sim = {flow:{...}, steps:[{act,edge,msg:{r:user|asst|tool|err|sys,n?,t},say}], alt?:{label,steps:[...]}} */
-$$('.sim').forEach(box=>{
-  const spec=JSON.parse(box.dataset.sim);if(spec.alt&&!spec.alts)spec.alts=[spec.alt];const AL=spec.alts||[];const gname='br'+(++uid);
-  box.innerHTML=`<div class="ctl"><button class="btn sm" data-a="step">下一步</button><button class="btn sm" data-a="play">▶ 自动</button><button class="btn sm" data-a="reset">重置</button>
+component('.sim',box=>{
+  const spec=data(box,'sim');if(spec.alt&&!spec.alts)spec.alts=[spec.alt];const AL=spec.alts||[];const gname='br'+(++uid);
+  box.innerHTML=`<div class="ctl"><button class="btn sm" data-a="step">下一步</button><button class="btn sm" data-a="play">${ic("play")} 自动</button><button class="btn sm" data-a="reset">重置</button>
    <label>速度 <input type="range" min="300" max="2500" step="100" value="1200"></label></div>${AL.length?`<div class="ctl branches"><label><input type="radio" name="${gname}" value="-1" checked> ${esc(spec.label||'正常路径')}</label>${AL.map((a,j)=>`<label><input type="radio" name="${gname}" value="${j}"> ${esc(a.label)}</label>`).join('')}</div>`:''}
    <div class="body"><svg class="flow"></svg><div class="log"></div></div><div class="narr"></div>`;
   if(spec.layout==='wide')box.classList.add('wide');
-  const svg=$('svg',box);svg.dataset.uid=++uid;drawFlow(svg,spec.flow);
+  const svg=$('.body > svg.flow',box);svg.dataset.uid=++uid;drawFlow(svg,spec.flow);
+  const fs=svg.parentElement,tip=document.createElement('p');tip.className='flow-tip';tip.textContent='点图放大看字，再点回到全图';fs.after(tip);
+  const focus=()=>{if(!fs.classList.contains('zoom'))return svg._center();window.LessonGeometry.focus(svg,fs)};
+  const zoom=document.createElement('button');zoom.className='btn sm zoom-toggle';zoom.innerHTML=ic('zoom-in')+' 放大图';zoom.setAttribute('aria-pressed','false');tip.replaceWith(zoom);const toggle=()=>{const on=fs.classList.toggle('zoom');zoom.innerHTML=ic(on?'zoom-out':'zoom-in')+(on?' 返回全图':' 放大图');zoom.setAttribute('aria-pressed',String(on));if(!on){fs.style.maxHeight='';fs.scrollTop=0}focus()};fs.onclick=toggle;zoom.onclick=toggle;window.addEventListener('resize',focus);window.addEventListener('load',()=>requestAnimationFrame(()=>{const params=new URLSearchParams(location.search);if((params.has('sim')||params.has('zoom'))&&!(window.__H??location.hash)&&box===$('.sim')){const section=box.closest('.sec,.card');if(window.lessonNav.layout==='deck')window.goCard($$('.card').indexOf(section)+1);else section.scrollIntoView({block:'start',behavior:'instant'})}focus()}));window.addEventListener('lesson:navigate',()=>requestAnimationFrame(focus));
   const log=$('.log',box),narr=$('.narr',box),radios=$$('input[type=radio]',box),spd=$('input[type=range]',box),play=$('[data-a=play]',box);
-  let i=0,timer=null;const sel=()=>{const r=radios.find(r=>r.checked);return r?+r.value:-1};const steps=()=>sel()>=0?AL[sel()].steps:spec.steps;
+  let i=0,timer=null,predicted=!spec.predict;const prediction=document.createElement('div');if(spec.predict){prediction.className='prediction callout';prediction.innerHTML='<p>先预测：'+esc(spec.predict)+'</p><label>你的判断<textarea rows="2"></textarea></label><button class="btn sm" data-a="predict">提交预测，再看过程</button>';box.prepend(prediction)};const sel=()=>{const r=radios.find(r=>r.checked);return r?+r.value:-1};const steps=()=>sel()>=0?AL[sel()].steps:spec.steps;
   const hint=spec.note?esc(spec.note)+'　点「下一步」开始。':'点「下一步」开始。';const reset=()=>{i=0;log.innerHTML='';narr.innerHTML=hint;svg._set(null,null);stop()};
-  const stop=()=>{clearTimeout(timer);timer=null;play.textContent='▶ 自动'};
+  const stop=()=>{clearTimeout(timer);timer=null;play.innerHTML=ic('play')+' 自动'};
   const step=()=>{const S=steps();if(i>=S.length){narr.textContent='流程结束。点「重置」再走一遍。';stop();return false}
-    const s=S[i++];svg._set(s.act,s.edge);if(s.msg){const d=document.createElement('div');d.className='msg '+s.msg.r;
+    const s=S[i++];svg._set(s.act,s.edge);focus();if(s.msg){const d=document.createElement('div');d.className='msg '+s.msg.r;
       d.innerHTML=`<b>${esc(s.msg.n||({user:'用户',asst:'模型',tool:'工具结果',err:'出错',sys:'系统提示词'}[s.msg.r]))}</b>${esc(s.msg.t)}`;log.appendChild(d);log.scrollTop=1e9}
     narr.innerHTML=`<b>第 ${i}/${S.length} 步</b>　${esc(s.say)}`;return true};
   const loop=()=>{if(step())timer=setTimeout(loop,+spd.value);else stop()};
-  box.onclick=e=>{const a=e.target.dataset.a;if(a==='step'){stop();step()}if(a==='reset')reset();if(a==='play'){if(timer)stop();else{play.textContent='❚❚ 暂停';loop()}}};
+  box.onclick=e=>{const a=e.target.closest('button')?.dataset.a;if(a==='predict'){predicted=true;prediction.hidden=true;step()}if(a==='step'){stop();if(predicted)step();else prediction.querySelector('textarea').focus()}if(a==='reset')reset();if(a==='play'){if(!predicted){prediction.querySelector('textarea').focus();return}if(timer)stop();else{play.innerHTML=ic('pause')+' 暂停';loop()}}};
   narr.innerHTML=hint;radios.forEach(r=>r.onchange=reset);
-  const P=new URLSearchParams(location.search);if(P.get('alt')&&radios[+P.get('alt')]){radios[+P.get('alt')].checked=true}for(let n=+P.get('sim')||0;n>0;n--)step(); /* 自查用：?sim=5&alt=1 */
+  const P=new URLSearchParams(location.search);if(P.get('alt')&&radios[+P.get('alt')]){radios[+P.get('alt')].checked=true}for(let n=+P.get('sim')||0;n>0;n--)step();if(P.get('sim')){predicted=true;prediction.hidden=true}if(P.get('zoom')){fs.classList.add('zoom');zoom.setAttribute('aria-pressed','true');zoom.innerHTML=ic('zoom-out')+' 返回全图'} /* 自查用：?sim=5&alt=1&zoom=1 */
 });
 
 /* ---------- bars：横向条形图 ----------
  data-bars = {unit, items:[{l,v,c?:blue|amber|green|red,note?}], caption?}  数字必须来自原文 */
-$$('.bars').forEach(box=>{const B=JSON.parse(box.dataset.bars),mx=Math.max(...B.items.filter(i=>i.v!=null).map(i=>i.v));
-  box.innerHTML=B.items.map(i=>`<div class="bar ${i.c||''}"><span class="bl">${esc(i.l)}</span>${i.v==null?`<span class="bmiss">${esc(i.miss||'原文未给数字')}</span>`:`<span class="bt"><i style="width:${(i.v/mx*100).toFixed(1)}%"></i></span><span class="bv">${esc(i.v)}${esc(B.unit||'')}</span>`}${i.note?`<span class="bn">${esc(i.note)}</span>`:''}</div>`).join('')+(B.caption?`<div class="bc">${esc(B.caption)}</div>`:'')});
+component('.bars',box=>{const B=data(box,'bars'),mx=Math.max(1,...B.items.filter(i=>i.v!=null).map(i=>i.v));
+  box.innerHTML=B.items.map(i=>`<div class="bar ${i.c||''}"><span class="bl">${esc(i.l)}</span>${i.v==null?`<span class="bmiss">${esc(i.miss||'原文未给数字')}</span>`:`<span class="bt"><i style="width:${(i.v/(B.axis==='independent'?Math.max(1,i.v):mx)*100).toFixed(1)}%"></i></span><span class="bv">${esc(i.v)}${esc(i.unit||B.unit||'')}</span>`}${i.note?`<span class="bn">${esc(i.note)}</span>`:''}</div>`).join('')+(B.caption?`<div class="bc">${esc(B.caption)}</div>`:'')});
 
 /* ---------- quiz：页内小测 ----------
  data-quiz = [{q,opts:[...],a:正确下标,why,back:答错时回到第几张卡片}] */
-$$('.quiz').forEach(box=>{
-  const Q=JSON.parse(box.dataset.quiz);let k=0,score=0;const done=new Set();
-  const render=()=>{const q=Q[k];box.innerHTML=`<div class="qn">第 ${k+1} / ${Q.length} 题　·　已答对 ${score}</div><div class="qt">${esc(q.q)}</div>
-    ${q.opts.map((o,j)=>`<button class="opt" data-j="${j}">${String.fromCharCode(65+j)}. ${esc(o)}</button>`).join('')}
-    <div class="fb"></div><div class="nav"><button class="btn sm" data-n="-1" ${k?'':'disabled'}>上一题</button><button class="btn sm main" data-n="1" ${k<Q.length-1?'':'disabled'}>下一题</button></div>`};
-  box.onclick=e=>{const t=e.target;if(t.dataset.n){k+=+t.dataset.n;render();return}
-    if(t.dataset.j===undefined||done.has(k))return;const q=Q[k],j=+t.dataset.j,fb=$('.fb',box);done.add(k);
-    $$('.opt',box)[q.a].classList.add('ok');
-    if(j===q.a){score++;fb.innerHTML='✓ 对。'+esc(q.why)}else{t.classList.add('no');fb.innerHTML='✗ 不对。'+esc(q.why)+(q.back?` <a onclick="goCard(${q.back})">回到第 ${q.back} 张再看看</a>`:'')}
-    $('.qn',box).textContent=`第 ${k+1} / ${Q.length} 题　·　已答对 ${score}`};
+component('.quiz,.checkpoint',box=>{
+  const checkpoint=box.classList.contains('checkpoint');box.classList.add('quiz');const raw=data(box,checkpoint?'checkpoint':'quiz'),Q=Array.isArray(raw)?raw:[raw],P=new URLSearchParams(checkpoint?'':location.search);
+  let k=Math.max(0,Math.min(Q.length-1,(parseInt(P.get('q'))||1)-1));
+  const answers=Q.map(()=>({first:null,selected:null,retries:0}));
+  const score=()=>answers.filter((s,i)=>s.first===Q[i].a).length;
+  const complete=()=>answers.every(s=>s.selected!==null);
+  const reviewButton=i=>{
+    const target=window.lessonNav.layout==='deck'?$$('.card')[Q[i].back-1]:document.getElementById('s'+Q[i].back);
+    const title=target.dataset.toc||$('h2,h1,h3',target)?.textContent||'相关内容';
+    return `<button class="btn sm" data-review="${i}">回看：${esc(title)}</button>`;
+  };
+  function summary(){
+    const wrong=answers.map((s,i)=>s.first!==Q[i].a?i:-1).filter(i=>i>=0);
+    const recovered=wrong.filter(i=>answers[i].selected===Q[i].a).length;
+    box.innerHTML=`<div class="qt">小测总结</div><p>首次得分：${score()} / ${Q.length}。重试答对：${recovered} 题。</p>
+      <div>${wrong.length?wrong.map(i=>`<p>第 ${i+1} 题：${esc(Q[i].q)} ${reviewButton(i)} <button class="btn sm" data-question="${i}">回到此题</button></p>`).join(''):'没有首次错题。'}</div>
+      <p>用自己的话复述这页的核心机制，再举一个新场景。</p><label>你的复述<textarea class="retelling" rows="3"></textarea></label><button class="btn sm" data-copy-result="1">${ic("copy")} 复制学习结果 JSON</button><button class="btn sm" data-question="0">查看作答</button>`;
+  }
+  function render(){const q=Q[k],s=answers[k];
+    box.innerHTML=`<div class="qn">第 ${k+1} / ${Q.length} 题 ${checkpoint?'· 不计分':'· 首次答对 '+score()}</div><div class="qt">${esc(q.q)}</div>
+      ${q.opts.map((o,j)=>`<button class="opt ${s.selected===null?'':j===s.selected?(j===q.a?'ok':'no'):''}" data-j="${j}" aria-pressed="${j===s.selected}">${String.fromCharCode(65+j)}. ${esc(o)}</button>`).join('')}
+      <div class="fb" aria-live="polite">${s.selected===null?'':s.selected===q.a?ic('check')+' 对。'+esc(q.why):ic('x')+' 不对。先回去看看，或再试一次。'}
+      ${s.selected!==null&&s.selected!==q.a?reviewButton(k)+' <button class="btn sm" data-retry="1">再试一次</button>':''}</div>
+      <div class="nav"><button class="btn sm" data-n="-1" ${k?'':'disabled'}>上一题</button>
+      <button class="btn sm main" data-n="1" ${s.selected===null?'disabled':''}>${checkpoint?'完成检查':k===Q.length-1?'查看总结':'下一题'}</button></div>`;
+  }
+  box.onclick=e=>{const t=e.target.closest('button');if(!t)return;
+    if(t.dataset.review!==undefined){const i=+t.dataset.review;window.lessonNav.go(Q[i].back);
+      let ret=$('#quiz-return');if(!ret){ret=document.createElement('button');ret.id='quiz-return';ret.className='btn sm';document.body.appendChild(ret)}
+      ret.textContent='回到小测';ret.onclick=()=>{window.lessonNav.returnTo(box);ret.remove()};return;
+    }
+    if(t.dataset.copyResult!==undefined){const result={path:location.pathname,firstScore:score(),total:Q.length,answers:answers.map((s,i)=>({question:i+1,first:s.first,selected:s.selected,retries:s.retries,wrong:s.first!==Q[i].a,review:'#s'+Q[i].back})),retelling:$('.retelling',box).value};window.lessonCopy(JSON.stringify(result,null,2),t);return}
+    if(t.dataset.question!==undefined){k=+t.dataset.question;render();return}
+    if(t.dataset.retry){answers[k].selected=null;answers[k].retries++;render();return}
+    if(t.dataset.n){if(checkpoint&&+t.dataset.n===1){box.querySelector('.nav').hidden=true;return}if(k===Q.length-1&&+t.dataset.n===1){if(complete())summary();else{k=answers.findIndex(s=>s.selected===null);render()}return}k+=+t.dataset.n;render();return}
+    if(t.dataset.j===undefined||answers[k].selected!==null)return;
+    const j=+t.dataset.j;answers[k].selected=j;if(answers[k].first===null)answers[k].first=j;render();const nv=$('.nav',box);nv&&nv.scrollIntoView&&nv.scrollIntoView({block:'nearest'});
+  };
   render();
-  const pk=new URLSearchParams(location.search).get('pick');if(pk!==null)$$('.opt',box)[+pk].click(); /* 自查用：?pick=0 */
+  const pk=P.get('pick'),pick=pk==='wrong'?Q[k].opts.findIndex((_,i)=>i!==Q[k].a):pk!==null&&/^\d+$/.test(pk)?+pk:-1;
+  if(pick>=0&&$$('.opt',box)[pick])$$('.opt',box)[pick].click();
+
 });
 
-go(Math.max(0,(parseInt(location.hash.slice(1))||1)-1));
 })();
-/* ---------- 学完了：点一下记为已学完（存在本机浏览器） ---------- */
+</script><script>/* End-of-build readiness marker, used by the screenshot harness. */
+document.querySelector('.theme-toggle').onclick=window.__tt;
+window.__lessonReady=true;
+</script><script>/* ---------- 学完了：点一下记为已学完（存在本机浏览器） ---------- */
 (function(){if(window.__finish)return;window.__finish=1;
 if(!document.querySelector('.deck'))return;
 const st=document.createElement('style');st.textContent=`.fin-btn{position:fixed;right:16px;bottom:76px;z-index:50;padding:10px 16px;border-radius:999px;border:0;background:#16a34a;color:#fff;font:600 15px system-ui;box-shadow:0 4px 14px rgba(0,0,0,.18);cursor:pointer}.fin-btn.done{background:#e5e7eb;color:#166534}`;document.head.appendChild(st);

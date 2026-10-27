@@ -1,378 +1,349 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<script>(function(){var s=localStorage.getItem("theme");if(s?s==="dark":matchMedia("(prefers-color-scheme: dark)").matches)document.documentElement.classList.add("dark")})()</script>
-<title>Claude Managed Agents 工作坊</title><style>
-/* 学习搭子 固定设计系统 — 不要在课程里改这个文件。只改 lesson.html 的内容。 */
-:root{
-  --paper:#F6F6F7; --sheet:#FFFFFF; --ink:#16202C; --ink2:#4A5868; --hair:#E2E2E3;
-  --blue:#2550D9;  --blue-soft:#E3EAFD;   /* 主角：当前步骤 / 重点 */
-  --amber:#C77A00; --amber-soft:#FBEFD9; /* 数据 / 消息 */
-  --green:#16875A; --green-soft:#DDF3E9; /* 成功 / 工具结果 */
-  --red:#C8372D;   --red-soft:#FBE3E1;   /* 出错 */
-  --r-lg:12px; --r-sm:10px;
-  --font:"PingFang SC","Noto Sans CJK SC","Source Han Sans SC","Microsoft YaHei",system-ui,sans-serif;
-  --mono:"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;
-}
-*{box-sizing:border-box}
-html,body{margin:0;height:100%;background:var(--paper);color:var(--ink);font:17px/1.65 var(--font);-webkit-font-smoothing:antialiased}
-.top{position:fixed;inset:0 0 auto 0;height:56px;display:flex;align-items:center;gap:16px;padding:0 28px;z-index:5}
-.top .course{font-weight:700;font-size:15px}
-.top .track{flex:1;height:6px;background:var(--hair);border-radius:99px;overflow:hidden}
-.top .track i{display:block;height:100%;width:0;background:var(--blue);transition:width .35s ease}
-.top .count{font:600 14px var(--mono);color:var(--ink2);min-width:60px;text-align:right}
-.deck{position:fixed;inset:56px 0 76px 0;display:grid;place-items:center;padding:0 24px}
-.card{display:none;width:min(1120px,100%);height:100%;max-height:640px;background:var(--sheet);border-radius:var(--r-lg);
-  box-shadow:0 1px 0 var(--hair),0 18px 40px -24px rgba(22,32,44,.25);overflow:hidden}
-.card.on{display:grid;grid-template-columns:1.45fr 1fr}
-.card.full.on{grid-template-columns:1fr}
-.stage{background:var(--paper);margin:14px 0 14px 14px;border-radius:14px;display:grid;place-items:center;padding:18px;overflow:hidden;position:relative}
-.card.full .stage{margin:14px}
-.stage svg{width:100%;height:100%;max-height:560px}
-.say{padding:40px 40px 32px;display:flex;flex-direction:column;justify-content:center;gap:14px;overflow:auto}
-.say .kicker{font-size:14px;color:var(--blue);font-weight:700}
-.say h2{margin:0;font-size:32px;line-height:1.25;letter-spacing:.01em}
-.say p{margin:0;color:var(--ink2)}
-.say p b{color:var(--ink)}
-.src{margin-top:auto;font-size:13px;color:var(--ink2);border-top:1px solid var(--hair);padding-top:12px}
-.src.extra::before{content:"补充";background:var(--amber-soft);color:var(--amber);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
-.src.official::before{content:"官方";background:var(--green-soft);color:var(--green);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
-code{font:14px var(--mono);background:var(--blue-soft);color:var(--blue);padding:1px 6px;border-radius:6px}
-pre{margin:0;font:13.5px/1.6 var(--mono);background:#101826;color:#DCE3EE;border-radius:12px;padding:16px 18px;overflow:auto;width:100%}
-pre .k{color:#8FB1FF}pre .s{color:#9BE0B4}pre .c{color:#71819A}pre .f{color:#FFC86B}pre .hl{background:rgba(143,177,255,.16);display:block;margin:0 -18px;padding:0 18px}
-.bottom{position:fixed;inset:auto 0 0 0;height:76px;display:flex;align-items:center;justify-content:center;gap:14px}
-.btn{font:600 15px var(--font);border:0;border-radius:99px;padding:11px 22px;cursor:pointer;background:var(--sheet);color:var(--ink);box-shadow:0 0 0 1px var(--hair)}
-.btn:hover{box-shadow:0 0 0 2px var(--blue)}
-.btn.main{background:var(--blue);color:#fff;box-shadow:none}
-.btn:disabled{opacity:.35;cursor:default;box-shadow:0 0 0 1px var(--hair)}
-.btn:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
-.btn.sm{padding:7px 14px;font-size:14px}
-/* ---- 图元（flow 组件生成） ---- */
-.fl-node rect{fill:var(--sheet);stroke:var(--hair);stroke-width:2;transition:all .3s}
-.fl-node text{font:600 17px var(--font);fill:var(--ink)}
-.fl-node .sub{font:400 13px var(--font);fill:var(--ink2)}
-.fl-node.blue rect{stroke:var(--blue)} .fl-node.amber rect{stroke:var(--amber)} .fl-node.green rect{stroke:var(--green)} .fl-node.red rect{stroke:var(--red)}
-.fl-node.act rect{fill:var(--blue-soft);stroke:var(--blue);stroke-width:3}
-.fl-node.dim{opacity:.35}
-.fl-edge{fill:none;stroke:#AEB8C6;stroke-width:2.2;transition:all .3s}
-.fl-edge.act{stroke:var(--blue);stroke-width:3.5;stroke-dasharray:8 6;animation:dash .8s linear infinite}
-.fl-elab{font:500 13px var(--font);fill:var(--ink2)}
-.fl-elab.act{fill:var(--blue);font-weight:700}
-@keyframes dash{to{stroke-dashoffset:-28}}
-/* ---- 模拟器 ---- */
-.sim{display:grid;grid-template-rows:auto 1fr auto;gap:10px;width:100%;height:100%}
-.sim .ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.sim .ctl label{font-size:13px;color:var(--ink2);display:flex;align-items:center;gap:6px}
-.sim .body{display:grid;grid-template-columns:1.1fr 1fr;gap:12px;min-height:0}
-.sim .log{background:var(--sheet);border-radius:12px;padding:10px;overflow:auto;font:13px/1.5 var(--mono)}
-.sim .msg{border-left:4px solid var(--hair);padding:6px 10px;margin:0 0 8px;border-radius:6px;background:var(--paper);white-space:pre-wrap;word-break:break-word;animation:pop .25s ease}
-.sim .msg b{font-family:var(--font);display:block;font-size:12px;color:var(--ink2)}
-.msg.user{border-color:var(--blue)} .msg.asst{border-color:var(--amber)} .msg.tool{border-color:var(--green)} .msg.err{border-color:var(--red);background:var(--red-soft)} .msg.sys{border-color:var(--ink2)}
-.sim .narr{background:var(--blue-soft);color:var(--ink);border-radius:12px;padding:10px 14px;font-size:15px;min-height:48px}
-@keyframes pop{from{opacity:0;transform:translateY(6px)}}
-/* ---- 小测 ---- */
-.quiz{width:100%;max-width:760px;display:flex;flex-direction:column;gap:12px}
-.quiz .qn{font:600 13px var(--mono);color:var(--ink2)}
-.quiz .qt{font-size:22px;font-weight:700;line-height:1.4}
-.quiz .opt{display:block;width:100%;text-align:left;font:16px var(--font);background:var(--sheet);border:2px solid var(--hair);border-radius:12px;padding:12px 16px;cursor:pointer;color:var(--ink)}
-.quiz .opt:hover{border-color:var(--blue)}
-.quiz .opt.ok{border-color:var(--green);background:var(--green-soft)} .quiz .opt.no{border-color:var(--red);background:var(--red-soft)}
-.quiz .fb{min-height:52px;font-size:15px;color:var(--ink2)}
-.quiz .fb a{color:var(--blue);font-weight:700;cursor:pointer}
-.quiz .nav{display:flex;gap:8px;align-items:center}
-@media (max-width:820px){
-  .card.full.on{grid-template-rows:1fr}.card.full .stage{overflow:auto;place-items:start center}
-  .card.on{grid-template-columns:1fr;grid-template-rows:minmax(220px,48%) 1fr}
-  .stage{margin:10px 10px 0}.say{padding:18px 20px}.say h2{font-size:24px}
-  .sim .body{grid-template-columns:1fr}.top{padding:0 14px}.top .course{display:none}
-}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-/* ---- 展开细节 ---- */
-details.more{border-top:1px solid var(--hair);padding-top:10px;font-size:15px;color:var(--ink2)}
-details.more summary{cursor:pointer;font-weight:700;color:var(--blue);list-style:none}
-details.more summary::-webkit-details-marker{display:none}
-details.more summary::before{content:"＋ 展开细节";}
-details.more[open] summary::before{content:"－ 收起细节";}
-details.more>*:not(summary){margin:8px 0 0}
-details.more ul{padding-left:18px}details.more li{margin:4px 0}
-details.more table{border-collapse:collapse;width:100%;font-size:14px}
-details.more td,details.more th{border-bottom:1px solid var(--hair);padding:5px 6px;text-align:left;vertical-align:top}
-/* ---- 对话列表（状态追踪）---- */
-.stack{width:100%;display:flex;flex-direction:column;gap:6px;font:13px/1.45 var(--mono)}
-.stack .row{display:grid;grid-template-columns:28px 92px 1fr;gap:8px;align-items:start;background:var(--sheet);border-radius:8px;padding:7px 10px;border-left:4px solid var(--hair)}
-.stack .row .i{color:var(--ink2)}.stack .row .r{font-weight:700}
-.stack .row.developer{border-color:var(--ink2)}.stack .row.user{border-color:var(--blue)}.stack .row.assistant{border-color:var(--amber)}.stack .row.result{border-color:var(--green)}
-.stack .row.new{background:var(--blue-soft)}.stack .row.bad{border-color:var(--red);background:var(--red-soft)}
-.stack .row .t{white-space:pre-wrap;word-break:break-word}
-/* ---- 对比/误区 ---- */
-.pairs{width:100%;display:grid;gap:10px}
-.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.pair>div{background:var(--sheet);border-radius:12px;padding:12px 14px;font-size:15px}
-.pair .no{border-left:5px solid var(--red)}.pair .yes{border-left:5px solid var(--green)}
-.pair b{display:block;font-size:12px;color:var(--ink2);margin-bottom:4px}
-.say .more code{font-size:13px}
-@media (max-width:820px){.pair{grid-template-columns:1fr}.stack .row{grid-template-columns:22px 70px 1fr}}
-.pair .a{border-left:5px solid var(--blue)}.pair .b{border-left:5px solid var(--amber)}
-/* ===== v3：填满面板、原文标签、要点、条形图、分支 ===== */
-.stage{padding:10px}
-.stage svg.flow{width:100%;height:100%;max-height:none}
-.say p{font-size:17px}
-p.key{background:var(--blue-soft);color:var(--ink);border-radius:12px;padding:10px 14px;font-size:16px}
-p.key::before{content:"关键 ";font-weight:800;color:var(--blue)}
-.src.article::before{content:"原文";background:var(--blue-soft);color:var(--blue);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
-.stage>.stack{height:100%;justify-content:center;font-size:14.5px}
-.stage>.stack .row{padding:11px 12px;flex:0 1 auto}
-.stack .head{font:700 13px var(--font);color:var(--ink2);margin:8px 0 0}
-.stage>.pairs{height:100%;grid-auto-rows:minmax(0,1fr);align-content:stretch}
-.pair>div{font-size:16px;display:flex;flex-direction:column;justify-content:center}
-.bars{width:100%;display:flex;flex-direction:column;gap:16px;justify-content:center;height:100%;padding:0 10px}
-.bar{display:grid;grid-template-columns:150px 1fr 76px;gap:12px;align-items:center;font-size:15px}
-.bar .bl{font-weight:700;text-align:right}
-.bar .bt{height:30px;background:var(--sheet);border-radius:8px;overflow:hidden}
-.bar .bt i{display:block;height:100%;background:var(--ink2);border-radius:8px}
-.bar.blue .bt i{background:var(--blue)}.bar.amber .bt i{background:var(--amber)}.bar.green .bt i{background:var(--green)}.bar.red .bt i{background:var(--red)}
-.bar .bv{font:700 15px var(--mono)}
-.bar .bn{grid-column:2/4;font-size:13px;color:var(--ink2);margin-top:-8px}
-.bars .bc{font-size:13px;color:var(--ink2);text-align:center}
-.sim .branches{gap:14px;background:var(--sheet);border-radius:10px;padding:6px 10px}
-.sim .branches label{font-size:13.5px;color:var(--ink)}
-@media (max-width:820px){.bar{grid-template-columns:90px 1fr 60px}}
-.sim{grid-template-rows:auto auto 1fr auto}
-.sim.wide .body{grid-template-columns:1fr;grid-template-rows:minmax(0,1.1fr) minmax(0,1fr)}
-.sim:not(:has(.branches)){grid-template-rows:auto 1fr auto}
-.bar .bt.none{background:repeating-linear-gradient(45deg,var(--sheet) 0 8px,var(--hair) 8px 10px)}
-.say h2{font-size:28px;line-height:1.3}
-.sim .body{overflow:hidden}
-.sim .body>svg{min-height:0;height:100%;width:100%}
-.sim .narr{min-height:0}
-.stage>.stack{font-size:15.5px;gap:8px}
-.stage>.stack .row{padding:13px 14px}
-.stack .row .t{font-family:var(--font)}
-.stage:has(>.sim){place-items:stretch}
-.sim{min-height:0;height:100%;overflow:hidden}
-.sim.wide .body{grid-template-rows:minmax(0,55%) minmax(0,45%)}
-/* 讲解条放在图上方，永远可见 */
-.sim{grid-template-rows:auto auto auto minmax(0,1fr)}
-.sim:not(:has(.branches)){grid-template-rows:auto auto minmax(0,1fr)}
-.sim .ctl{order:0}.sim .branches{order:1}.sim .narr{order:2}.sim .body{order:3;min-height:0}
-/* ===== v4 ===== */
-.fl-node .sub{font-size:13.5px;fill:#3E4B5B}
-.fl-elab{font-size:13px;fill:#3E4B5B}
-.fl-edge.red{stroke:var(--red)}.fl-edge.amber{stroke:var(--amber)}.fl-edge.green{stroke:var(--green)}
-.fl-elab.red{fill:var(--red);font-weight:700}.fl-elab.amber{fill:var(--amber);font-weight:700}.fl-elab.green{fill:var(--green);font-weight:700}
-.stage{margin:10px 0 10px 10px;padding:4px}.card.full .stage{margin:0 10px 10px}
-.bar .bt i{background:#B8C2CF}
-.bar .bmiss{grid-column:2/4;color:var(--ink2);font-size:14px;font-style:italic}
-.sim .btn{background:transparent;box-shadow:0 0 0 1.5px var(--blue);color:var(--blue)}
-.sim .btn:hover{background:var(--blue-soft)}
-.say{justify-content:center}
-.src{margin-top:6px}
-.top .count{font-size:16px;color:var(--ink);font-weight:700}
-.top .track{height:6px}
-.card.full.on{grid-template-rows:auto minmax(0,1fr)}
-.head-full{padding:18px 26px 8px;display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
-.head-full .kicker{font-size:14px;color:var(--blue);font-weight:700}
-.head-full h2{margin:0;font-size:24px;line-height:1.3}
-.sim.wide .body{grid-template-rows:minmax(0,64%) minmax(0,36%)}
-@media (max-width:820px){.head-full{padding:12px 14px 6px}.head-full h2{font-size:19px}}
-.say{justify-content:safe center}
-@media (max-width:820px){.bars{gap:8px}.bar{font-size:13px;grid-template-columns:84px 1fr 56px}.bar .bt{height:20px}.bar .bn{font-size:12px;margin-top:-4px}.bars .bc{font-size:12px}
- .sim .ctl .btn{padding:5px 10px}.sim .branches{flex-direction:column;align-items:flex-start;gap:2px}}
+<!DOCTYPE html><html lang="zh-CN" class="layout-article" data-layout="article"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<script>(function(){var v;try{v=localStorage.getItem('site-theme')}catch(e){}document.documentElement.dataset.theme=/^[ABC]$/.test(v||'')?v:'C'})();
+(function(){var k='theme',s=localStorage.getItem(k);if(s?s==='dark':matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark');
+window.__tt=function(){var f=function(){var d=document.documentElement.classList.toggle('dark');localStorage.setItem(k,d?'dark':'light')};if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.startViewTransition(f);else f()}})();</script>
+<title>Claude Managed Agents 工作坊：把大脑和手拆开</title><style>
+/* Site tokens copied verbatim, in cascade order, from ref/site-assets/site.css. */
+:root{--paper:#f6f7f9;--sheet:#fff;--card:#fff;--ink:#111827;--ink2:#4b5563;--meta:#6b7280;--hair:#e5e7eb;--hair2:#eef0f3;--blue:#2563eb;--blue-soft:#eff4ff;--red:#dc2626;--red-soft:#fef2f2;--green:#16a34a;--green-soft:#f0fdf4;--amber:#b45309;--amber-soft:#fffbeb;--purple:#7c3aed;--purple-soft:#f5f3ff;--font:system-ui,-apple-system,"PingFang SC","Noto Sans SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;--serif:var(--font);--mono:ui-monospace,SFMono-Regular,Menlo,monospace;--r-lg:12px;--r-sm:8px;--grad:none;color-scheme:light}
+html.dark{--paper:#0f1115;--sheet:#171a21;--card:#171a21;--ink:#e5e7eb;--ink2:#b6bcc6;--meta:#9ca3af;--hair:#2a2f3a;--hair2:#20242c;--blue:#7aa2ff;--blue-soft:rgba(122,162,255,.12);--red:#f87171;--red-soft:rgba(248,113,113,.12);--green:#4ade80;--green-soft:rgba(74,222,128,.12);--amber:#fbbf24;--amber-soft:rgba(251,191,36,.12);--purple:#c4b5fd;--purple-soft:rgba(196,181,253,.14);color-scheme:dark}
+[data-theme=B]{--paper:#fbfbfc;--sheet:#fff;--card:#fff;--ink:#16171a;--ink2:#4a4c55;--meta:#6e707a;--hair:#ececf0;--hair2:#f2f2f5;--blue:#5e6ad2;--blue-soft:#eef0fb;--red:#d4483b;--red-soft:#fdf0ee;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif}
+html.dark[data-theme=B]{--paper:#0e0f12;--sheet:#16171b;--card:#16171b;--ink:#e8e9ed;--ink2:#b3b5bd;--meta:#8b8d97;--hair:#26272d;--hair2:#1f2025;--blue:#8b93f0;--blue-soft:rgba(139,147,240,.14);--red:#f0776b}
+[data-theme=A]{--paper:#f7f4ee;--sheet:#fffdf9;--card:#fffdf9;--ink:#2b2722;--ink2:#5f574e;--meta:#8a8076;--hair:#e6dfd3;--hair2:#efe8dc;--blue:#b4532a;--blue-soft:#f6e1d6;--red:#a2461f;--red-soft:#f6e1d6;--green:#5f7a3a;--green-soft:#e7ecd9;--purple:#7a5a8c;--purple-soft:#eee4f1;--serif:"Noto Serif CJK SC","Noto Serif SC","Songti SC",serif;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif}
+html.dark[data-theme=A]{--paper:#1b1814;--sheet:#23201b;--card:#23201b;--ink:#ede6da;--ink2:#c7bdaf;--meta:#9b9184;--hair:#3a342c;--hair2:#2d2923;--blue:#e08a5f;--blue-soft:rgba(224,138,95,.15);--red:#e8916a;--red-soft:rgba(232,145,106,.15)}
+[data-theme=C]{--paper:#f3f5fb;--sheet:#fff;--card:#fff;--ink:#1d2340;--ink2:#5a6185;--meta:#8a90ad;--hair:#e6e9f4;--hair2:#eef0f7;--blue:#3b5bfd;--blue-soft:#e8edff;--red:#d4483b;--red-soft:#ffe6e3;--green:#1f9d5c;--green-soft:#e3f7ec;--amber:#d9771e;--amber-soft:#fff1e0;--purple:#7a4bf5;--purple-soft:#f2eaff;--r-lg:20px;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif;--sh:0 1px 2px rgba(30,40,90,.04),0 8px 24px rgba(30,40,90,.06)}
+html.dark[data-theme=C]{--paper:#0f1222;--sheet:#181c33;--card:#181c33;--ink:#e6e9fb;--ink2:#aab0d0;--meta:#7d84a8;--hair:#272c48;--hair2:#20253f;--blue:#7d93ff;--blue-soft:rgba(125,147,255,.15);--red:#ff8a7d;--red-soft:rgba(255,138,125,.15);--green-soft:rgba(31,157,92,.18);--amber-soft:rgba(217,119,30,.18);--purple-soft:rgba(122,75,245,.2);--sh:0 1px 2px rgba(0,0,0,.3)}
+:root{--acc2:#8b5cf6;--ease:cubic-bezier(.22,1,.36,1)}
+[data-theme=A]{--acc2:#c98a2b}
+html.dark[data-theme=A]{--paper:#181512;--sheet:#211d18;--card:#211d18;--meta:#a89d8f;--hair:#382f26;--acc2:#e3b15c}
+[data-theme=B]{--paper:#fafafb;--blue:#5b5bd6;--blue-soft:#efeffc;--acc2:#a855f7}
+html.dark[data-theme=B]{--paper:#0c0d10;--sheet:#14151a;--card:#14151a;--ink:#ececf1;--ink2:#babcc6;--meta:#9597a3;--hair:#262830;--hair2:#1c1d23;--blue:#9198ff;--blue-soft:rgba(145,152,255,.14);--acc2:#c084fc}
+[data-theme=C]{--acc2:#06b6d4}
+html.dark[data-theme=C]{--meta:#a3a9b8;--acc2:#22d3ee}
+html.dark{--meta:#a1a7b3}
+[data-theme=B]{--paper:#eef1f5;--hair:#dfe4ea;--hair2:#eef1f5;--green:#16a34a}
+html.dark[data-theme=B]{--paper:#0b0d12;--hair:#252a35;--hair2:#1a1e27}
+[data-theme=C]{--blue:#7b5cff;--blue-soft:#f0ecff;--acc2:#ff5e8a}
+html.dark[data-theme=C]{--paper:#0b0b0f;--sheet:#15151c;--card:#15151c;--ink:#f2f2f5;--ink2:#b8b8c6;--meta:#9a9aab;--hair:#26262f;--hair2:#1d1d25;--blue:#a08bff;--blue-soft:rgba(160,139,255,.14)}
+:root{--sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:24px;--sp-6:32px;--fs-xs:12px;--fs-sm:13.5px;--fs-md:15px;--fs-lg:18px;--fs-xl:24px;--fs-2xl:32px;--r-xs:6px;--r-sm:8px;--r-md:10px;--r-lg:12px;--r-xl:18px;--r-pill:999px;--sh-1:0 1px 2px rgba(15,23,42,.06);--sh-2:0 4px 16px -8px rgba(15,23,42,.22);--sh-3:0 14px 30px -12px rgba(15,23,42,.28);--dur-1:120ms;--dur-2:220ms;--dur-3:420ms;--ease:cubic-bezier(.22,1,.36,1);--ease-in-out:cubic-bezier(.65,0,.35,1);--spring:cubic-bezier(.34,1.3,.64,1);--icon-stroke:2}
+:root{--spring:linear(0,.0089,.0346,.0752,.1286,.1927,.2654,.3445,.4278,.5131,.5983,.6812,.7598,.8325,.8981,.9555,1.0042,1.0441,1.0753,1.0982,1.1134,1.1218,1.1243,1.1218,1.1155,1.1062,1.0949,1.0825,1.0697,1.0571,1.0451,1.034,1.0242,1.0157,1.0085,1.0027,.9982,.995,.9928,.9916,.9912,.9914,.9921,.9931,.9943,.9956,.9968,.998,.999,1)}
+html.dark{--sh-1:0 1px 2px rgba(0,0,0,.4);--sh-2:0 4px 16px -8px rgba(0,0,0,.6);--sh-3:0 14px 30px -12px rgba(0,0,0,.7)}
+/* Five reading levels: title / section / subsection / body / note. */
+:root{--reading-width:680px;--toc-width:208px;--rail-width:180px;--reading-gap:28px;--top-height:56px;--body-size:18px;--body-leading:1.8;--finish-space:104px}
+*{box-sizing:border-box}html{scroll-padding-top:72px}html,body{margin:0;background:var(--paper);color:var(--ink);font:var(--body-size)/var(--body-leading) var(--font);-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}a{color:var(--blue);text-underline-offset:3px;overflow-wrap:anywhere}a:hover{text-decoration-thickness:2px}button,input,textarea,select{font:inherit;color:inherit}button,a,summary{touch-action:manipulation}button{cursor:pointer}button:disabled{opacity:.5;cursor:default}:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+h1,h2,h3{color:var(--ink);font-family:var(--serif);line-height:1.35;letter-spacing:-.02em;overflow-wrap:anywhere}h1{font-size:var(--fs-2xl);margin:8px 0 16px}h2{font-size:var(--fs-xl);margin:8px 0 16px}h3{font-size:var(--fs-lg);margin:24px 0 8px}p{margin:0 0 12px}ul,ol{padding-left:24px}li{margin:4px 0}code{font:.88em var(--mono);background:var(--hair2);padding:1px 4px;border-radius:var(--r-xs)}pre{overflow:auto;white-space:pre;tab-size:4;font:14px/1.65 var(--mono);padding:16px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-md);margin:12px 0}pre code{font:inherit;white-space:inherit;background:none;padding:0}
+.i{display:inline-block;vertical-align:middle;flex:none;width:18px;height:18px;stroke-width:2}.btn,button.opt{min-height:44px;border:1px solid var(--hair);border-radius:var(--r-sm);background:var(--sheet);padding:8px 14px;font-size:var(--fs-md);font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:6px}.btn:hover{border-color:var(--blue);background:var(--blue-soft)}.btn.main{background:var(--blue);color:var(--sheet)}.btn.sm{font-size:var(--fs-sm)}textarea{display:block;width:100%;padding:10px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-sm);resize:vertical}
+.top{position:fixed;inset:0 0 auto;height:var(--top-height);z-index:30;display:flex;align-items:center;gap:16px;padding:0 20px;background:var(--paper);border-bottom:1px solid var(--hair)}.top .course{font-size:var(--fs-sm);font-weight:700;max-width:35vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.top .track{flex:1;height:4px;background:var(--hair);border-radius:var(--r-pill);overflow:hidden}.top .track i{display:block;width:0;height:100%;background:var(--blue);transition:width var(--dur-2) var(--ease)}.top .count{font-size:var(--fs-sm);max-width:32vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.toc-toggle{min-width:44px}.top .theme-toggle{font-size:var(--fs-sm);min-height:44px}
+.layout-article .deck,.layout-pair .deck{padding:80px 20px calc(var(--finish-space) + env(safe-area-inset-bottom));max-width:720px;margin:0 auto;min-width:0}.layout-article .sec{position:relative;margin:0 0 32px;padding-top:16px;border-top:1px solid var(--hair);scroll-margin-top:72px;min-width:0}.layout-article .hero{border:0;padding-top:0}.kicker,.meta,.src,.source-anchor,figcaption,caption,.aside{font-size:var(--fs-sm);line-height:1.65}.kicker{display:block;color:var(--blue);font-weight:700}.lede{font-size:var(--fs-lg);font-weight:600}.links{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:var(--fs-sm)}.links a{display:inline-flex;align-items:center;min-height:44px}.src{margin:16px 0 0;padding-top:8px;border-top:1px solid var(--hair);color:var(--ink2)}.source-anchor{display:block;color:var(--ink2);margin-top:6px;overflow-wrap:anywhere}.source-anchor a{min-height:44px;display:inline-flex;align-items:center}.src.extra::before{content:'补充 · ';color:var(--amber)}.src.official::before{content:'官方 · ';color:var(--blue)}.src.article::before{content:'原文 · ';color:var(--blue)}
+.toc{position:fixed;left:max(20px,calc((100vw - 1192px)/2));top:76px;width:var(--toc-width);max-height:calc(100dvh - 180px);overflow:auto;font-size:var(--fs-sm);line-height:1.5;z-index:25}.toc ol{list-style:none;margin:0;padding:0}.toc a{display:flex;gap:8px;align-items:center;min-height:44px;padding:6px 10px;color:var(--ink2);text-decoration:none;border-radius:var(--r-sm)}.toc a[aria-current=true]{background:var(--blue-soft);color:var(--blue);font-weight:700}.toc b{display:block;margin:0 10px 8px}.toc-backdrop{display:none}.tldr,.argmap{padding:16px;background:var(--blue-soft);border-radius:var(--r-lg);margin:16px 0}.tldr a,.argmap a{display:block;min-height:44px;align-content:center}.argmap ol{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 16px;margin:0}.points{padding:12px 16px 12px 36px;background:var(--hair2);border-radius:var(--r-md)}
+figure.orig,figure.redraw,.figure{margin:20px 0;min-width:0}figure img{display:block;max-width:100%;height:auto;border:1px solid var(--hair);border-radius:var(--r-md);cursor:zoom-in;background:var(--sheet)}figcaption{margin-top:8px;color:var(--ink2)}figcaption b{color:var(--ink)}.how{margin-top:6px}.table{margin:20px 0;overflow-x:auto}.table table,table.data{width:100%;border-collapse:collapse;background:var(--sheet);font-size:var(--fs-md)}th,td{border-bottom:1px solid var(--hair);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--hair2)}caption{text-align:left;font-weight:700;padding:8px 0}.table-note{font-size:var(--fs-sm);color:var(--ink2)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;margin:16px 0}.stat{padding:12px 14px;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet)}.stat b{display:block;font-size:var(--fs-xl);line-height:1.35;color:var(--blue);font-variant-numeric:tabular-nums}.stat span{display:block;font-size:var(--fs-sm);color:var(--ink2)}.stat .source-anchor{font-size:var(--fs-xs)}
+blockquote.quote{margin:16px 0;padding:12px 16px;border-left:3px solid var(--blue);background:var(--sheet)}.quote cite{display:block;font-style:normal;font-size:var(--fs-sm);color:var(--ink2)}.callout{padding:12px 16px;margin:16px 0;border-left:3px solid var(--blue);background:var(--blue-soft);border-radius:0 var(--r-sm) var(--r-sm) 0}.callout.limit{border-color:var(--amber);background:var(--amber-soft)}.callout.extra{border:1px dashed var(--meta);background:var(--sheet)}.callout.myth{border-color:var(--amber);background:var(--hair2)}.callout.limit::before{content:'作者的限定 · ';font-weight:700}.aside{padding:12px;border-left:2px solid var(--hair);color:var(--ink2);margin:12px 0}
+.stories,.compare,.roles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}.story,.compare>div,.roles>div{padding:12px;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);font-size:var(--fs-md)}.story b,.roles b{display:block}.story dt{font-weight:700;color:var(--ink2);font-size:var(--fs-sm)}.story dd{margin:0 0 8px}.story p,.story .fix{display:block;margin:8px 0}.steps,.ladder{display:grid;gap:8px;padding:0;list-style:none;counter-reset:step}.steps>li,.ladder>li{padding:10px 14px;background:var(--hair2);border-radius:var(--r-sm);counter-increment:step}.steps>li::before{content:counter(step)'. ';color:var(--blue);font-weight:700}.ladder i{font-style:normal;font-weight:700;margin-right:8px}.matrix{border:1px solid var(--hair);padding:16px;border-radius:var(--r-md)}.matrix .axes{font-size:var(--fs-sm);color:var(--ink2)}.matrix ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));list-style:none;padding:0;gap:1px;background:var(--hair)}.matrix li{margin:0;padding:16px;background:var(--sheet)}.refs{font-size:var(--fs-sm);line-height:1.7}.refs a{display:inline-block;min-height:44px;align-content:center}.thread{border-left:2px solid var(--hair);padding-left:16px}.formula{padding:16px;border:1px solid var(--hair);overflow:auto}.formula math{font-size:var(--fs-xl)}details.more{margin:12px 0;border-top:1px solid var(--hair);font-size:var(--fs-md)}summary{min-height:44px;cursor:pointer;display:flex;align-items:center;gap:8px}summary .i{transition:transform var(--dur-1)}details[open] summary .i{transform:rotate(90deg)}
+/* Shared interactive components. No fixed page/card height. */
+.flow-scroll{max-width:100%;overflow-x:auto;min-width:0;touch-action:pan-x pan-y}.flow-scroll svg.flow{display:block;width:100%;height:auto;min-height:0}.flow-tip{font-size:var(--fs-sm);color:var(--ink2)}.fl-node rect{fill:var(--sheet);stroke:var(--hair);stroke-width:2}.fl-node text{font:600 17px var(--font);fill:var(--ink)}.fl-node .sub{font-size:13px;font-weight:400;fill:var(--ink2)}.fl-node.act rect{stroke:var(--blue);fill:var(--blue-soft);stroke-width:3}.fl-node.blue rect{stroke:var(--blue)}.fl-node.amber rect,.fl-node.red rect{stroke:var(--amber)}.fl-node.green rect{stroke:var(--green)}.fl-edge{fill:none;stroke:var(--meta);stroke-width:2}.fl-edge.act{stroke:var(--blue);stroke-width:3}.fl-elab{font:13px var(--font);fill:var(--ink2)}
+.sim{margin:16px 0;padding:12px;border:1px solid var(--hair);border-radius:var(--r-lg);background:var(--sheet);display:flex;flex-direction:column;gap:12px}.sim .ctl{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.sim .ctl label{min-height:44px;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm)}.sim .ctl input[type=range]{min-width:110px}.sim .body{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}.sim .narr{order:-1;background:var(--blue-soft);padding:10px 12px;border-radius:var(--r-sm);font-size:var(--fs-md)}.sim .log{max-height:240px;overflow:auto;font:var(--fs-sm)/1.6 var(--mono)}.sim .msg{border-left:3px solid var(--hair);padding:8px;margin:6px 0;background:var(--paper);white-space:pre-wrap;overflow-wrap:anywhere}.msg b{display:block;font-family:var(--font)}.sim .msg.err{border-color:var(--amber)}.prediction{order:-2}.component-error{padding:16px;border:1px solid var(--amber);color:var(--amber)}
+.quiz{margin:16px 0;padding:16px;border:1px solid var(--hair);border-radius:var(--r-lg);background:var(--sheet)}.quiz .qn{font-size:var(--fs-sm);color:var(--ink2)}.quiz .qt{font-size:var(--fs-lg);font-weight:700;margin-bottom:12px}.quiz .opt{display:block;width:100%;text-align:left;margin:8px 0;font-weight:400}.quiz .opt.ok{border-color:var(--green);background:var(--green-soft)}.quiz .opt.no{border-color:var(--amber);background:var(--amber-soft)}.quiz .fb{margin:12px 0;font-size:var(--fs-md)}.quiz .nav{display:flex;gap:8px;margin-top:12px}.quiz label{display:block;font-size:var(--fs-sm)}.stack{display:grid;gap:6px;font-size:var(--fs-sm)}.stack .row{display:grid;grid-template-columns:28px 80px minmax(0,1fr);gap:8px;padding:8px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-sm)}.stack .t{overflow-wrap:anywhere;white-space:pre-wrap}.stack .new{background:var(--blue-soft)}.bar{display:grid;grid-template-columns:100px minmax(0,1fr) 80px;gap:8px;margin:8px 0;align-items:center;font-size:var(--fs-sm)}.bar .bt{height:20px;background:var(--hair2);border-radius:var(--r-xs);overflow:hidden}.bar .bt i{display:block;height:100%;background:var(--blue)}.bar .bn,.bar .bmiss{grid-column:2/4}.bars .bc{font-size:var(--fs-sm);color:var(--ink2)}
+/* Paired material stays inside its own container; highlighting never scrolls the page. */
+.pair.codewalk,.pair.read-pair,.pair.material-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start;margin:20px 0;position:relative;min-width:0}.pair-source{position:sticky;top:72px;max-height:calc(100dvh - 160px);overflow:auto;overscroll-behavior:contain;min-width:0;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);padding:12px;scroll-padding:16px}.pair-notes{min-width:0}.pair-notes .step{padding:16px 0 24px;border-top:1px solid var(--hair);scroll-margin-top:84px}.pair-notes .step.is-active{border-color:var(--blue)}.pair-source .source-block{padding:12px 8px;border-left:3px solid transparent}.pair-source .source-block.is-active{background:var(--blue-soft);border-color:var(--blue)}.source-text{overflow-wrap:anywhere}.pair-source pre{border:0;padding:0;margin:8px 0;overflow:visible}.code-line{display:block;min-height:1.65em;white-space:pre;padding-left:48px;position:relative}.code-line::before{content:attr(data-line);position:absolute;left:0;width:36px;text-align:right;color:var(--meta);user-select:none}.code-line.hl{background:var(--blue-soft)}.copy-code{position:static;flex:none;white-space:nowrap}.pair-source .source-anchor{font-size:var(--fs-xs)}
+/* A separate toolbar never shares the scrolling code viewport. */
+.heading-source{font-size:var(--fs-xs);margin:0 0 8px}
+.pair.codewalk{grid-template-columns:minmax(0,60%) minmax(0,1fr)}
+.code-panel{position:sticky;top:72px;display:flex;flex-direction:column;min-width:0;max-height:calc(100dvh - 160px);border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);overflow:hidden}
+.code-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;flex:none;border-bottom:1px solid var(--hair);font-size:var(--fs-xs);color:var(--ink2)}
+.code-panel .pair-source{position:static;max-height:none;min-height:0;flex:1 1 auto;border:0;border-radius:0;box-shadow:none;overflow:auto}
+.code-panel .pair-source pre{width:max-content;min-width:100%}
+dialog.image-dialog{width:calc(100vw - 24px);max-width:none;max-height:92dvh;padding:12px;border:1px solid var(--hair);background:var(--sheet);color:var(--ink);border-radius:var(--r-md);overflow:auto}dialog::backdrop{background:rgba(0,0,0,.75)}.image-dialog img{max-width:none;width:max(100%,min(1400px,180vw));height:auto}.image-dialog .dialog-close{position:sticky;top:0;left:0}.image-open{min-height:44px;border:0;background:transparent;padding:0;display:block;cursor:zoom-in;max-width:100%}.image-open img{max-width:100%}
+/* Only CSS changes the unchanged finish.js button. High specificity beats injected styles. */
+html body .fin-btn{bottom:calc(16px + env(safe-area-inset-bottom));right:16px;min-height:44px;z-index:35}html body #quiz-return{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:35;max-width:45vw}
+@media(min-width:1180px){.layout-article .deck{width:var(--reading-width);max-width:none;padding-left:0;padding-right:0;margin-left:max(260px,calc((100vw - 1192px)/2 + 236px));margin-right:0}.layout-article .sec>.doc-body>figure,.layout-article .sec>.doc-body>.table,.layout-article .sec>.codewalk{width:calc(100% + 120px);margin-left:0}.layout-article .aside{position:absolute;left:calc(100% + 28px);top:24px;width:var(--rail-width);margin:0}.layout-article .aside~figure{width:100%}html.layout-article body .fin-btn{left:max(20px,calc((100vw - 1192px)/2));right:auto;max-width:208px}.layout-pair .deck{max-width:1280px;margin-left:236px;margin-right:20px}.layout-pair .toc{width:188px;left:20px}html.layout-pair body .fin-btn{left:20px;right:auto;max-width:188px}}
+@media(max-width:1179px){.toc{display:none;visibility:hidden;left:0;top:var(--top-height);width:min(360px,90vw);max-height:calc(100dvh - 72px);background:var(--sheet);padding:16px;border-right:1px solid var(--hair);border-bottom:1px solid var(--hair)}html.toc-open .toc{display:block;visibility:visible}html.toc-open .toc-backdrop{display:block;position:fixed;inset:var(--top-height) 0 0;background:rgba(0,0,0,.3);z-index:24}}
+@media(max-width:820px){:root{--body-size:17px}.layout-article .deck,.layout-pair .deck{padding-left:18px;padding-right:18px}.top{gap:8px;padding:0 12px}.top .course{display:none}.top .count{max-width:44vw}.top .track{min-width:24px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stories,.compare,.roles{grid-template-columns:minmax(0,1fr)}.argmap ol{grid-template-columns:minmax(0,1fr)}table.data thead,.table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}table.data,table.data tbody,table.data tr,table.data td,.table table,.table tbody,.table tr,.table td{display:block;width:100%}table.data tr,.table tr{padding:8px 12px;margin-bottom:8px;border:1px solid var(--hair);background:var(--sheet);border-radius:var(--r-md)}table.data td,.table td{border:0;padding:4px 0}td[data-label]::before{content:attr(data-label)'：';font-size:var(--fs-sm);font-weight:700;color:var(--ink2)}.table caption,table.data caption{display:block;width:100%}.pair.codewalk,.pair.read-pair,.pair.material-pair{display:block}.pair-notes{margin-top:12px}.code-panel{top:var(--top-height);max-height:40dvh;z-index:15}.pair-source{top:var(--top-height);max-height:40dvh;z-index:15;box-shadow:var(--sh-1)}.pair-notes .step{scroll-margin-top:calc(40dvh + 80px)}.flow-scroll svg.flow{width:var(--flow-width);max-width:none;height:var(--flow-height)}.sim .flow-scroll svg.flow{width:100%;height:auto}.stack .row{grid-template-columns:22px 64px minmax(0,1fr)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+@media print{.top,.toc,.fin-btn,#quiz-return,.toc-backdrop,.zoom-toggle,.code-toolbar{display:none!important}.layout-article .deck,.layout-pair .deck{margin:0;padding:0;max-width:100%;width:auto}.pair-source,.code-panel{position:static;max-height:none;overflow:visible}.sec{break-inside:auto}figure,.stat{break-inside:avoid}}
+/* Applies after legacy CSS too. Zoom is an intentional local viewport; non-zoom stays unnested. */
+html body .sim .flow-scroll.zoom{overflow:auto;max-height:40dvh;min-height:0;height:auto;overscroll-behavior:contain;scroll-padding:16px;padding:16px}
+html body .sim .flow-scroll.zoom svg.flow{width:var(--flow-width);min-width:var(--flow-width);height:var(--flow-height);max-height:none;flex:none}
+html body .sim .zoom-toggle{min-height:44px;justify-self:start}.layout-deck .sim .body{position:relative}.layout-deck .card{padding-bottom:8px}.layout-deck .deck{bottom:calc(92px + env(safe-area-inset-bottom))}
+html body .fin-btn{bottom:calc(16px + env(safe-area-inset-bottom));right:16px;min-height:44px}html.layout-deck .bottom{padding-right:170px;padding-left:12px;height:76px}.layout-deck .btn,.layout-deck .sim .branches label{min-height:44px}.layout-deck details.more summary::before{content:none}.layout-deck .fl-edge.act{animation:none}
+@media(max-width:820px){html.layout-deck .bottom{padding-right:12px;gap:8px}.layout-deck .bottom .btn{padding:8px 10px;font-size:13px}html.layout-deck body .fin-btn{padding:8px 12px;font-size:13px}.layout-deck .card.full:has(.sim)>.head-full{position:sticky;top:0;z-index:4;background:var(--sheet);padding-top:12px;padding-bottom:12px}.layout-deck .sim .body{overflow:visible}.layout-deck .card .stage:has(.sim){overflow:visible}.layout-deck .sim .flow-scroll:not(.zoom){overflow:visible}}
 
-/* 与知识库首页（VitePress 风格）对齐：白底页面、12px 圆角、细边框卡片、深色模式 */
-html,body{background:var(--page,#fff)}
-.card{border:1px solid var(--hair);box-shadow:none}
-html.dark{--page:#1b1b1f;--paper:#2a2a31;--sheet:#202127;--ink:#fffff5;--ink2:rgba(235,235,245,.65);--hair:#3a3a40;
---blue:#7c9cff;--blue-soft:rgba(124,156,255,.16);--amber:#f0b429;--amber-soft:rgba(240,180,41,.14);--green:#3dd68c;--green-soft:rgba(61,214,140,.14);--red:#f66f81;--red-soft:rgba(246,111,129,.14);color-scheme:dark}
-html.dark .btn.main{color:#16202c}
-html.dark .fl-node .sub,html.dark .fl-elab{fill:var(--ink2)}html.dark .fl-elab{stroke:var(--page)!important}html.dark .fl-edge{stroke:#6b7280}
-html.dark .fl-elab.act{fill:var(--blue)}
+.layout-deck .card.doc.on{display:block;overflow:auto;padding:24px}.layout-deck .card.doc .doc-body{overflow:visible}.layout-deck .hero.card{height:auto}
+
+/* Legacy .stage svg also matches button icons: keep Lucide at its declared size. */
+html body svg.i{width:18px;height:18px;max-height:none;flex:none}
+
+/* Below the desktop sidebar breakpoint, finish lives in the opaque top bar.
+   Reserve its width before laying out the title; keep the deck footer for paging. */
+@media(max-width:1179px){
+ html body .top{gap:8px;padding:0 132px 0 12px;z-index:40;background:var(--paper)}
+ html body .top .course{display:none}
+ html body .top .count{flex:1;min-width:0;max-width:none;font-size:var(--fs-sm);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ html body .top .track{position:absolute;left:12px;right:12px;bottom:0;height:2px;min-width:0}
+ html body .top .toc-toggle{width:44px;flex:none;padding:0}
+ html body .top .theme-toggle{flex:none;padding:8px;font-size:var(--fs-sm)}
+ html body .fin-btn{top:6px;bottom:auto;left:auto;right:12px;width:112px;max-width:112px;height:44px;padding:8px;font-size:13px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:41;box-shadow:none}
+}
 </style></head><body>
-<header class="top"><span class="course">Claude Managed Agents 工作坊</span><span class="track"><i></i></span><span class="count"></span></header>
-<main class="deck">
-<section class="card">
-  <div class="stage"><svg class="flow" data-act="brain" data-edge="brain>hands" data-flow='{"nodes":[{"id":"session","x":110,"y":210,"t":"会话日志","s":"Session · 只追加","c":"amber"},{"id":"brain","x":340,"y":210,"t":"大脑","s":"Claude + harness · 无状态","c":"blue"},{"id":"hands","x":580,"y":210,"t":"手","s":"沙箱 / MCP · 按需创建","c":"green"}],"edges":[{"f":"brain","t":"session","l":"读写事件","bend":-30},{"f":"session","t":"brain","bend":-30},{"f":"brain","t":"hands","l":"工具调用","bend":-30},{"f":"hands","t":"brain","l":"字符串结果","bend":-30}]}'></svg></div>
-  <div class="say"><span class="kicker">这场工作坊一句话讲什么？</span><h2>把 agent 拆成会话日志、大脑、手三个接口</h2>
-  <p>会话日志（session，只追加的事件记录）最持久；大脑（Claude 加 agent 循环）不存状态；手（沙箱和工具）用完就扔。</p>
-  <p class="key">拆开后，只有会话日志值得保护，其他部件坏了都能重开。</p>
-  <details class="more"><summary></summary><p>讲者 Priyanka Phatak 讲架构（前 11 分钟），Gabe Cemaj 带动手部分 Research Desk。工作坊产品名是 Claude Managed Agents（CMA），Anthropic 托管 harness、沙箱、扩容和事件日志存储。</p><p>逐页幻灯片和英文原话：<a href="managed-agents-original.html">原文 + 幻灯片 🔒</a>（需要精读密码）。</p></details>
-  <div class="src official">视频 05:47–06:15，幻灯片「The agent became three separate interfaces」</div></div>
+<header class="top"><button class="btn toc-toggle" aria-label="打开目录" aria-expanded="false"><svg class="i i-menu" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h16"/></svg></button><span class="course">Claude Managed Agents 工作坊：把大脑和手拆开</span><span class="track" role="presentation"><i></i></span><span class="count"></span><button class="btn theme-toggle" aria-label="切换深浅色">深浅色</button></header><main class="deck"><section class="sec hero" id="s1" data-toc="开篇：这场工作坊讲什么" data-source-section="s1">
+  <header class="doc-head">
+    <span class="kicker">视频 · AI Engineer World's Fair 2026 · Anthropic 工作坊 · 2026-06-30</span>
+    <h1>把 agent 拆成会话日志、大脑、手三个接口</h1>
+    <p class="lede">会话日志（session，只追加的事件记录）最持久；大脑（Claude 加 agent 循环）不存状态；手（沙箱和工具）用完就扔。拆开后，只有会话日志值得保护。</p>
+    <p class="links"><a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU">官方 YouTube 第 1 段 <svg class="i i-external-link" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a><a href="https://www.anthropic.com/engineering/managed-agents">Anthropic 工程文章 <svg class="i i-external-link" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a><a href="https://platform.claude.com/docs/en/managed-agents/overview">官方文档 <svg class="i i-external-link" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a><a href="managed-agents-original.html">原文 + 幻灯片（精读版，需密码）</a><span>录像 94:45 · 本页约 20 分钟</span></p>
+    <ul class="points">
+      <li>讲者 Priyanka Phatak（Claude Managed Agents 工程负责人）讲架构，前 11 分钟；Gabe Cemaj 带动手部分 Research Desk。</li>
+      <li>产品名 Claude Managed Agents（CMA）：Anthropic 托管 harness、沙箱、扩容和事件日志存储。</li>
+      <li>第 2–8 节跟着 18 张幻灯片走，每张按原样截图，标「原图 N」；第 9–10 节是现场演示和问答，只有转写。</li>
+      <li>中间有一个会话恢复模拟器，最后 6 道小测。</li>
+    </ul>
+  </header>
 </section>
 
-<section class="card">
-  <div class="stage"><div class="stack">
-   <div class="row user"><span class="i">1</span><span class="r">现象</span><span class="t">Sonnet 4.5 感到快到上下文上限，就急着收尾（context anxiety）</span></div>
-   <div class="row assistant"><span class="i">2</span><span class="r">补丁</span><span class="t">harness 加入 context reset，这个行为消失</span></div>
-   <div class="row bad new"><span class="i">3</span><span class="r">过期</span><span class="t">Opus 4.5 没有这个问题，reset 成了累赘（dead weight）</span></div>
-  </div></div>
-  <div class="say"><span class="kicker">为什么要这样拆？</span><h2>harness 编码了对模型的假设，假设会过期</h2>
-  <p>harness（模型外面跑循环、转发工具、管上下文的那层程序）专门补模型做不到的事。</p>
-  <p class="key">模型一换代，补丁就可能变成负担，所以接口要比假设活得久。</p>
-  <div class="src official">视频 00:26–02:09、09:06；幻灯片「The harness encodes assumptions about the model」</div></div>
+<section class="sec" id="s2" data-toc="agent、harness、沙箱" data-source-section="s2">
+  <header class="doc-head">
+    <span class="kicker">基本概念 · 幻灯片 2–4</span>
+    <h2>harness 编码了对模型的假设，假设会过期</h2>
+  </header>
+  <div class="doc-body">
+    <figure class="figure orig" data-slide="2" data-points="p2" data-asset="img-p002" id="e1"><img src="img/MA/p002.png" alt="An agent is a model in a loop with tools：模型决定下一步，发出工具调用，环境返回结果，循环直到任务完成" loading="lazy"><figcaption><b>原图 1 · 幻灯片 2 · 录像 0:07 出现</b>讲者的定义：agent 是「a model in a loop with tools」，循环到任务完成为止。 <span class="source-anchor" data-source-section="s2">出处：Claude Managed Agents 工作坊幻灯片（Anthropic） · <a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU&amp;t=131s">YouTube 第 1 段 2:11</a></span><span class="how">怎么看：左边模型决定下一步动作，右边环境是工具、文件、代码。CMA 没改这个循环，改的是循环外面的部件放在哪里。</span></figcaption></figure>
+    <p class="callout extra" data-points="p2" id="e2">补充：这就是 CS146S 第 1 讲（L01）那个智能体循环。</p>
+    <figure class="figure orig" data-slide="3" data-points="p3" data-asset="img-p003" id="e3"><img src="img/MA/p003.png" alt="The harness encodes assumptions about the model：harness 跑循环、转发工具调用、管理上下文；右边是一条假设的保质期：Sonnet 4.5 的 context anxiety、加入 context reset、Opus 4.5 不再需要" loading="lazy"><figcaption><b>原图 2 · 幻灯片 3 · 录像 0:26 出现</b>harness（模型外面跑循环、转发工具、管上下文的那层程序）专门补模型自己做不到的事。 <span class="source-anchor" data-source-section="s3">出处：Claude Managed Agents 工作坊幻灯片（Anthropic） · <a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU&amp;t=150s">YouTube 第 1 段 2:30</a></span><span class="how">怎么看：右边三步是一条假设的保质期：① Sonnet 4.5 感到快到上下文上限就急着收尾（context anxiety）；② harness 加入 context reset，这个行为消失；③ Opus 4.5 没有这个问题，reset 成了累赘（dead weight）（视频 00:01:13–00:01:29）。</span></figcaption></figure>
+    <figure class="figure orig" data-slide="4" data-points="p4" data-asset="img-p004" id="e4"><img src="img/MA/p004.png" alt="The sandbox gives the agent a safe place to act：给 Claude 一台电脑；生成的代码不可信；沙箱隔离、用完即弃，限制爆炸半径" loading="lazy"><figcaption><b>原图 3 · 幻灯片 4 · 录像 2:10 出现</b>沙箱：agent 执行自己写的代码的地方。 <span class="source-anchor" data-source-section="s4">出处：Claude Managed Agents 工作坊幻灯片（Anthropic） · <a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU&amp;t=254s">YouTube 第 1 段 4:14</a></span><span class="how">怎么看：三栏依次说：有用的 agent 要跑代码、改文件、装依赖；生成的代码可能有 bug，也可能是提示注入让它做的；所以放进隔离、可丢弃的容器，限制爆炸半径，最好里面什么值钱的都没有。</span></figcaption></figure>
+  </div>
+  <p class="src official">本节对应幻灯片：<span class="source-anchor" data-source-section="s2"><a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU&amp;t=131s">幻灯片 2</a></span> <span class="source-anchor" data-source-section="s3"><a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU&amp;t=150s">幻灯片 3</a></span> <span class="source-anchor" data-source-section="s4"><a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU&amp;t=254s">幻灯片 4</a></span> · 视频：时间点指 X 转载的完整录像（94:45）；官方 YouTube 分 4 段：<a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU">第 1 段</a> · <a href="https://www.youtube.com/watch?v=FGftGOzfohc">第 2 段</a> · <a href="https://www.youtube.com/watch?v=qJtcEDc_WJU">第 3 段</a> · <a href="https://www.youtube.com/watch?v=QSeaZ6qHyXs">第 4 段</a></p>
 </section>
 
-<section class="card">
-  <div class="stage"><svg class="flow" data-act="model" data-edge="model>env" data-flow='{"nodes":[{"id":"model","x":150,"y":200,"t":"模型","s":"决定下一步","c":"amber"},{"id":"env","x":520,"y":200,"t":"环境","s":"工具、文件、代码","c":"green"}],"edges":[{"f":"model","t":"env","l":"工具调用","bend":-40},{"f":"env","t":"model","l":"结果","bend":-40}]}'></svg></div>
-  <div class="say"><span class="kicker">和学过的哪一讲相连？</span><h2>底层还是 CS146S 第 1 讲那个智能体循环</h2>
-  <p>讲者的定义：agent 是「a model in a loop with tools」，循环到任务完成为止。</p>
-  <p>CMA 没改循环本身，改的是循环外面的部件放在哪里。</p>
-  <div class="src official">视频 00:07–00:25；衔接 CS146S L01 为补充</div></div>
+<section class="sec" id="s3" data-toc="第一版：养了宠物" data-source-section="s5">
+  <header class="doc-head">
+    <span class="kicker">第一版架构 · 幻灯片 6–8</span>
+    <h2>全塞进一个容器，每个容器都成了宠物</h2>
+  </header>
+  <div class="doc-body">
+    <figure class="figure orig" data-slide="6" data-points="p6" data-asset="img-p006" id="e5"><img src="img/MA/p006.png" alt="One container held the brain, the hands, and the session：一个会话一个容器，harness、沙箱、会话日志和凭证都在里面" loading="lazy"><figcaption><b>原图 4 · 幻灯片 6 · 录像 3:28 出现</b>第一版（2025 年 12 月给早期客户，讲者说是「去年 12 月」）：一个容器装下 harness、沙箱、会话日志，连凭证也在里面（视频 00:03:14）。 <span class="source-anchor" data-source-section="s5">出处：Claude Managed Agents 工作坊幻灯片（Anthropic） · <a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU&amp;t=332s">YouTube 第 1 段 5:32</a></span><span class="how">怎么看：底部写着好处：改文件就是直接的系统调用，不用设计服务边界。</span></figcaption></figure>
+    <figure class="figure orig" data-slide="7" data-points="p7" data-asset="img-p007" id="e6"><img src="img/MA/p007.png" alt="We had adopted a pet：宠物有名字、要照料，病了要治好；牲口可替换，坏一个换一个；容器挂了里面的会话就丢了，所以每个容器都成了宠物" loading="lazy"><figcaption><b>原图 5 · 幻灯片 7 · 录像 4:01 出现</b>Pet（宠物）有名字、要照料，病了得治好，丢不起；Cattle（牲口）可替换，坏一个换一个。 <span class="source-anchor" data-source-section="s6">出处：Claude Managed Agents 工作坊幻灯片（Anthropic） · <a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU&amp;t=365s">YouTube 第 1 段 6:05</a></span><span class="how">怎么看：底部一句是原因：容器挂掉，里面的会话就丢了，所以每个容器都成了宠物。</span></figcaption></figure>
+    <blockquote class="quote"><p data-points="p7" id="e7">we realized we adopted a pet</p><cite>Priyanka Phatak，视频 00:03:56</cite><span class="source-anchor" data-source-section="s6"><a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU&amp;t=361s">YouTube 第 1 段 6:01</a></span></blockquote>
+    <figure class="figure orig" data-slide="8" data-points="p8" data-asset="img-p008" id="e8"><img src="img/MA/p008.png" alt="The pet became a liability：调试摸黑、进不去、绑死在我们的网络上" loading="lazy"><figcaption><b>原图 6 · 幻灯片 8 · 录像 4:50 出现</b>宠物带来三个运维问题，都来自同一个原因：所有部件和数据在同一个容器里。 <span class="source-anchor" data-source-section="s7">出处：Claude Managed Agents 工作坊幻灯片（Anthropic） · <a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU&amp;t=414s">YouTube 第 1 段 6:54</a></span><span class="how">怎么看：① 调试摸黑：harness bug、丢包、容器挂掉，从一条 WebSocket 看都一样；② 进不去：容器里有用户数据，不能开 shell 排查；③ 绑死网络：连客户 VPC 只能打通网络，或把 harness 交给客户跑。</span></figcaption></figure>
+  </div>
+  <p class="src official">本节对应幻灯片：<span class="source-anchor" data-source-section="s5"><a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU&amp;t=332s">幻灯片 6</a></span> <span class="source-anchor" data-source-section="s6"><a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU&amp;t=365s">幻灯片 7</a></span> <span class="source-anchor" data-source-section="s7"><a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU&amp;t=414s">幻灯片 8</a></span> · 视频：时间点指 X 转载的完整录像（94:45）；官方 YouTube 分 4 段：<a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU">第 1 段</a> · <a href="https://www.youtube.com/watch?v=FGftGOzfohc">第 2 段</a> · <a href="https://www.youtube.com/watch?v=qJtcEDc_WJU">第 3 段</a> · <a href="https://www.youtube.com/watch?v=QSeaZ6qHyXs">第 4 段</a></p>
 </section>
 
-<section class="card">
-  <div class="stage"><div class="pairs">
-   <div class="pair"><div class="a"><b>第一版（2025 年 12 月给早期客户）</b>一个容器装下 harness、沙箱、会话日志，连凭证也在里面</div><div class="b"><b>好处</b>改文件就是系统调用，不用设计服务边界</div></div>
-   <div class="pair"><div class="no"><b>Pet（宠物）</b>有名字、要照料；病了得治好，丢不起</div><div class="yes"><b>Cattle（牲口）</b>可替换；坏一个换一个</div></div>
-  </div></div>
-  <div class="say"><span class="kicker">第一版架构出了什么问题？</span><h2>全塞进一个容器，每个容器都成了宠物</h2>
-  <p>容器挂掉，里面的会话就丢了，所以每个容器都不能丢。</p>
-  <p class="key">讲者原话：「we realized we adopted a pet」。</p>
-  <div class="src official">视频 03:07–04:49；幻灯片「One container held the brain, the hands, and the session」「We had adopted a pet」</div></div>
+<section class="sec" id="s4" data-toc="三个接口，都是牲口" data-source-section="s8">
+  <header class="doc-head">
+    <span class="kicker">拆开 · 幻灯片 10–11</span>
+    <h2>沙箱和 harness 坏了都能直接换新的</h2>
+  </header>
+  <div class="doc-body">
+    <figure class="figure orig" data-slide="10" data-points="p10" data-asset="img-p010" id="e9"><img src="img/MA/p010.png" alt="The agent became three separate interfaces：会话是只追加的事件日志，大脑是 Claude 加 agent 循环、无状态，手是沙箱和工具、按需创建" loading="lazy"><figcaption><b>原图 7 · 幻灯片 10 · 录像 5:47 出现</b>三个接口：会话（只追加的事件日志，最持久）、大脑（Claude 加 agent 循环，无状态）、手（沙箱和工具，按需创建、做完就没了）。 <span class="source-anchor" data-source-section="s8">出处：Claude Managed Agents 工作坊幻灯片（Anthropic） · <a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU&amp;t=471s">YouTube 第 1 段 7:51</a></span><span class="how">怎么看：大脑和会话之间读写事件，大脑和手之间是工具调用。</span></figcaption></figure>
+    <figure class="figure orig" data-slide="11" data-points="p11" data-asset="img-p011" id="e10"><img src="img/MA/p011.png" alt="Every component became cattle：沙箱挂了，harness 当成一次失败的工具调用，Claude 在新容器上重试；harness 挂了，新 harness 读回事件日志，从最后一个事件继续" loading="lazy"><figcaption><b>原图 8 · 幻灯片 11 · 录像 6:16 出现</b>沙箱挂了：harness 把它当成一次失败的工具调用，错误像普通结果回给 Claude，Claude 在新容器上重试。 <span class="source-anchor" data-source-section="s9">出处：Claude Managed Agents 工作坊幻灯片（Anthropic） · <a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU&amp;t=500s">YouTube 第 1 段 8:20</a></span><span class="how">怎么看：harness 挂了：新 harness 读回会话日志，从最后一个事件继续，像什么都没发生。底部：唯一值得保护的是会话，而它只是一份日志。</span></figcaption></figure>
+    <h3>动手：一次托管会话怎么跑、怎么恢复</h3>
+    <div class="sim"><script type="application/json">{"label": "正常路径", "note": "串起来的示例，按幻灯片描述的机制编排，不是视频里的真实运行", "flow": {"nodes": [{"id": "user", "x": 100, "y": 80, "t": "你", "c": "blue"}, {"id": "log", "x": 100, "y": 300, "t": "会话日志", "c": "amber"}, {"id": "brain", "x": 360, "y": 190, "t": "大脑", "c": "blue"}, {"id": "hands", "x": 600, "y": 190, "t": "沙箱", "c": "green"}], "edges": [{"f": "user", "t": "log", "l": "user.message"}, {"f": "log", "t": "brain", "bend": -25}, {"f": "brain", "t": "log", "bend": -25}, {"f": "brain", "t": "hands", "bend": -25}, {"f": "hands", "t": "brain", "bend": -25}]}, "steps": [{"act": "user", "edge": "user>log", "msg": {"r": "user", "t": "user.message：分析 NVDA 最新季报"}, "say": "会话创建后是 idle；你发事件，它才开始。"}, {"act": "brain", "edge": "log>brain", "msg": {"r": "sys", "t": "harness 读取事件，Claude 开始推理"}, "say": "推理立刻开始，此时还没有沙箱。"}, {"act": "hands", "edge": "brain>hands", "msg": {"r": "asst", "t": "agent.tool_use：bash 拉取 10-Q"}, "say": "需要动手时才创建沙箱。"}, {"act": "brain", "edge": "hands>brain", "msg": {"r": "tool", "t": "工具结果（字符串）"}, "say": "结果回到大脑。"}, {"act": "log", "edge": "brain>log", "msg": {"r": "sys", "t": "事件写入会话日志"}, "say": "每一步都追加进日志。"}, {"act": "user", "edge": "brain>log", "msg": {"r": "asst", "t": "agent.message → session.status_idle"}, "say": "任务完成，会话回到 idle。"}], "alts": [{"label": "分支 A：沙箱中途挂了", "steps": [{"act": "hands", "edge": "brain>hands", "msg": {"r": "asst", "t": "agent.tool_use：bash 运行分析脚本"}, "say": "工具在沙箱里执行。"}, {"act": "hands", "edge": "hands>brain", "msg": {"r": "err", "t": "工具调用失败：容器不可用"}, "say": "harness 把它当成一次失败的工具调用。"}, {"act": "brain", "edge": "hands>brain", "msg": {"r": "sys", "t": "错误像普通结果一样回给 Claude"}, "say": "不用人去救那个容器。"}, {"act": "hands", "edge": "brain>hands", "msg": {"r": "asst", "t": "在新创建的容器上重试"}, "say": "沙箱是牲口：换一个继续。"}]}, {"label": "分支 B：harness 挂了", "steps": [{"act": "brain", "edge": "brain>log", "msg": {"r": "err", "t": "harness 进程退出"}, "say": "大脑本身不存状态。"}, {"act": "brain", "edge": "log>brain", "msg": {"r": "sys", "t": "新 harness 启动，读回会话日志"}, "say": "状态全在日志里。"}, {"act": "brain", "edge": "brain>hands", "msg": {"r": "asst", "t": "从最后一个事件继续"}, "say": "就像什么都没发生。"}]}], "predict": "沙箱中途挂了、harness 也挂了，这次会话的工作还接得下去吗？靠什么？"}</script></div>
+    <p class="callout extra" data-points="p11" id="e11">教学示例：按幻灯片 10–13、幻灯片 22–25 描述的机制编排，不是视频里的真实运行。</p>
+  </div>
+  <p class="src official">本节对应幻灯片：<span class="source-anchor" data-source-section="s8"><a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU&amp;t=471s">幻灯片 10</a></span> <span class="source-anchor" data-source-section="s9"><a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU&amp;t=500s">幻灯片 11</a></span> · 视频：时间点指 X 转载的完整录像（94:45）；官方 YouTube 分 4 段：<a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU">第 1 段</a> · <a href="https://www.youtube.com/watch?v=FGftGOzfohc">第 2 段</a> · <a href="https://www.youtube.com/watch?v=qJtcEDc_WJU">第 3 段</a> · <a href="https://www.youtube.com/watch?v=QSeaZ6qHyXs">第 4 段</a></p>
 </section>
 
-<section class="card">
-  <div class="stage"><div class="stack">
-   <div class="row bad"><span class="i">①</span><span class="r">调试摸黑</span><span class="t">harness bug、丢包、容器挂掉，从一条 WebSocket 看都一样</span></div>
-   <div class="row bad"><span class="i">②</span><span class="r">进不去</span><span class="t">容器里有用户数据，不能开 shell 排查</span></div>
-   <div class="row bad"><span class="i">③</span><span class="r">绑死网络</span><span class="t">连客户 VPC 只能打通网络，或把 harness 交给客户跑</span></div>
-  </div></div>
-  <div class="say"><span class="kicker">宠物具体坏在哪？</span><h2>宠物容器带来三个运维问题</h2>
-  <p>三个问题都来自同一个原因：所有部件和数据在同一个容器里。</p>
-  <div class="src official">视频 04:50–05:37；幻灯片「The pet became a liability」</div></div>
+<section class="sec" id="s5" data-toc="凭证放哪" data-source-section="s10">
+  <header class="doc-head">
+    <span class="kicker">凭证 · 幻灯片 12</span>
+    <h2>凭证不进沙箱，由代理在出口注入</h2>
+  </header>
+  <div class="doc-body">
+    <figure class="figure orig" data-slide="12" data-points="p12" data-asset="img-p012" id="e12"><img src="img/MA/p012.png" alt="Credentials never enter the sandbox：沙箱里跑不可信代码、没有 token；代理取凭证替会话外呼；token 存在沙箱外的 Vault，agent 和 harness 都看不到" loading="lazy"><figcaption><b>原图 9 · 幻灯片 12 · 录像 7:01 出现</b>沙箱里没有 token，提示注入也偷不到；代理替会话取凭证、发外部调用；token 存在 Vault。 <span class="source-anchor" data-source-section="s10">出处：Claude Managed Agents 工作坊幻灯片（Anthropic） · <a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU&amp;t=545s">YouTube 第 1 段 9:05</a></span><span class="how">怎么看：右栏最后一句：agent 和 harness 都看不到 token。</span></figcaption></figure>
+    <blockquote class="quote"><p data-points="p12" id="e13">the model never sees your credentials or tokens</p><cite>Priyanka Phatak，视频 00:07:26</cite><span class="source-anchor" data-source-section="s10"><a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU&amp;t=570s">YouTube 第 1 段 9:30</a></span></blockquote>
+    <p data-points="p12" id="e14">问答里补充了 Vaults 的用法：环境变量里放占位符，出口处只对你指定的域名换成真值（视频 00:38:35–00:38:52）。私有数据可以用 MCP 加 vault；不想把 MCP 暴露到公网，用 MCP Tunnels 从你的网络打隧道进来；再不行就自托管沙箱（视频 00:47:51–00:48:17）。</p>
+  </div>
+  <p class="src official">本节对应幻灯片：<span class="source-anchor" data-source-section="s10"><a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU&amp;t=545s">幻灯片 12</a></span> · 视频：时间点指 X 转载的完整录像（94:45）；官方 YouTube 分 4 段：<a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU">第 1 段</a> · <a href="https://www.youtube.com/watch?v=FGftGOzfohc">第 2 段</a> · <a href="https://www.youtube.com/watch?v=qJtcEDc_WJU">第 3 段</a> · <a href="https://www.youtube.com/watch?v=QSeaZ6qHyXs">第 4 段</a></p>
 </section>
 
-<section class="card">
-  <div class="stage"><svg class="flow" data-act="new" data-edge="log>new" data-flow='{"nodes":[{"id":"sb","x":120,"y":90,"t":"沙箱挂了","s":"=一次失败的工具调用","c":"red"},{"id":"claude","x":420,"y":90,"t":"Claude","s":"在新容器上重试","c":"amber"},{"id":"log","x":120,"y":300,"t":"会话日志","s":"只追加","c":"amber"},{"id":"new","x":420,"y":300,"t":"新 harness","s":"从最后一个事件继续","c":"blue"}],"edges":[{"f":"sb","t":"claude","l":"错误当结果"},{"f":"log","t":"new","l":"读回日志"}]}'></svg></div>
-  <div class="say"><span class="kicker">机制：坏了怎么恢复？</span><h2>沙箱和 harness 坏了都能直接换新的</h2>
-  <p>沙箱挂了，Claude 在新容器上重试；harness 挂了，新 harness 读回日志接着做。</p>
-  <p class="key">唯一值得保护的是会话日志，而它只是一份日志。</p>
-  <div class="src official">视频 06:16–07:00；幻灯片「Every component became cattle」</div></div>
+<section class="sec" id="s6" data-toc="会话日志比上下文活得久" data-source-section="s11">
+  <header class="doc-head">
+    <span class="kicker">上下文 · 幻灯片 13</span>
+    <h2>会话日志比上下文窗口活得久</h2>
+  </header>
+  <div class="doc-body">
+    <figure class="figure orig" data-slide="13" data-points="p13" data-asset="img-p013" id="e15"><img src="img/MA/p013.png" alt="The session outlives the context window：从第一个事件到最新事件，大脑读任意一段：回退、重读、续跑；什么都不丢，上下文策略可以随时换" loading="lazy"><figcaption><b>原图 10 · 幻灯片 13 · 录像 7:44 出现</b>日志从第一个事件到最新事件都留着，大脑可以读任意一段：回退、重读、续跑。 <span class="source-anchor" data-source-section="s11">出处：Claude Managed Agents 工作坊幻灯片（Anthropic） · <a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU&amp;t=588s">YouTube 第 1 段 9:48</a></span><span class="how">怎么看：左下：压缩和裁剪是对未来的不可逆猜测，完整日志让每个决定都能找回。右下：harness 按当前模型的需要把事件转成上下文，每次发版都可以换。</span></figcaption></figure>
+    <p data-points="p13" id="e16">讲者说压缩策略因此可以灵活换：全部总结、只取最近 N 条都行，日志不受影响（视频 00:07:51–00:08:00）。问答里讲：CMA 替你做压缩（compaction），生产中见过 10 小时的会话（视频 00:55:47–00:55:51）。</p>
+  </div>
+  <p class="src official">本节对应幻灯片：<span class="source-anchor" data-source-section="s11"><a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU&amp;t=588s">幻灯片 13</a></span> · 视频：时间点指 X 转载的完整录像（94:45）；官方 YouTube 分 4 段：<a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU">第 1 段</a> · <a href="https://www.youtube.com/watch?v=FGftGOzfohc">第 2 段</a> · <a href="https://www.youtube.com/watch?v=qJtcEDc_WJU">第 3 段</a> · <a href="https://www.youtube.com/watch?v=QSeaZ6qHyXs">第 4 段</a></p>
 </section>
 
-<section class="card">
-  <div class="stage"><svg class="flow" data-act="proxy" data-edge="proxy>vault" data-flow='{"nodes":[{"id":"sb","x":110,"y":200,"t":"沙箱","s":"跑不可信代码 · 无 token","c":"red"},{"id":"proxy","x":340,"y":200,"t":"代理","s":"替会话外呼","c":"blue"},{"id":"vault","x":570,"y":200,"t":"Vault","s":"token 只在这里","c":"green"}],"edges":[{"f":"sb","t":"proxy","l":"工具调用"},{"f":"proxy","t":"vault","l":"取凭证"}]}'></svg></div>
-  <div class="say"><span class="kicker">机制：凭证放哪？</span><h2>凭证不进沙箱，由代理在出口注入</h2>
-  <p>沙箱里没有 token，提示注入也偷不到。agent 和 harness 都看不到 token。</p>
-  <p class="key">讲者原话：「the model never sees your credentials」。</p>
-  <details class="more"><summary></summary><p>问答里补充了 Vaults 的用法：环境变量里放占位符，出口处只对你指定的域名换成真值（视频 38:46）。私有数据可以用 MCP + vault，不想暴露公网用 MCP Tunnels，或自托管沙箱。</p></details>
-  <div class="src official">视频 07:01–07:43、38:46；幻灯片「Credentials never enter the sandbox」</div></div>
+<section class="sec" id="s7" data-toc="拆开带来的数字" data-source-section="s12">
+  <header class="doc-head">
+    <span class="kicker">结果 · 幻灯片 14–16</span>
+    <h2>首 token 时间 p95 下降约 90%</h2>
+  </header>
+  <div class="doc-body">
+    <figure class="figure orig" data-slide="14" data-points="p14" data-asset="img-p014" id="e17"><img src="img/MA/p014.png" alt="大字 −90%：拆开后首 token 时间的 p95，中位数也下降约 60%" loading="lazy"><figcaption><b>原图 11 · 幻灯片 14 · 录像 8:18 出现</b>拆开后首 token 时间（p95）下降约 90%，中位数下降约 60%。 <span class="source-anchor" data-source-section="s12">出处：Claude Managed Agents 工作坊幻灯片（Anthropic） · <a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU&amp;t=622s">YouTube 第 1 段 10:22</a></span><span class="how">怎么看：原因写在下面：推理立刻开始，不用等容器起来；手在需要时才创建。</span></figcaption></figure>
+    <figure class="figure orig" data-slide="15" data-points="p15" data-asset="img-p015" id="e18"><img src="img/MA/p015.png" alt="One brain can reach many hands：一个大脑连到沙箱容器、客户 VPC、MCP 服务器，每只手都是同一个工具接口" loading="lazy"><figcaption><b>原图 12 · 幻灯片 15 · 录像 8:44 出现</b>一个大脑能连多只手：沙箱容器、客户 VPC、MCP 服务器。 <span class="source-anchor" data-source-section="s13">出处：Claude Managed Agents 工作坊幻灯片（Anthropic） · <a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU&amp;t=648s">YouTube 第 1 段 10:48</a></span><span class="how">怎么看：底部：每只手都是同一个工具接口，名字和输入进、字符串出。</span></figcaption></figure>
+    <figure class="figure orig" data-slide="16" data-points="p16" data-asset="img-p016" id="e19"><img src="img/MA/p016.png" alt="If you take one thing home：harness 编码假设，假设会过期；把接口设计得比假设活得久" loading="lazy"><figcaption><b>原图 13 · 幻灯片 16 · 录像 9:06 出现</b>讲者要大家带走的一句话。 <span class="source-anchor" data-source-section="s14">出处：Claude Managed Agents 工作坊幻灯片（Anthropic） · <a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU&amp;t=670s">YouTube 第 1 段 11:10</a></span><span class="how">怎么看：意思是：harness 编码假设，假设会过期，所以要设计比假设活得久的接口（视频 00:09:15）。</span></figcaption></figure>
+  </div>
+  <p class="src official">本节对应幻灯片：<span class="source-anchor" data-source-section="s12"><a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU&amp;t=622s">幻灯片 14</a></span> <span class="source-anchor" data-source-section="s13"><a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU&amp;t=648s">幻灯片 15</a></span> <span class="source-anchor" data-source-section="s14"><a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU&amp;t=670s">幻灯片 16</a></span> · 视频：时间点指 X 转载的完整录像（94:45）；官方 YouTube 分 4 段：<a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU">第 1 段</a> · <a href="https://www.youtube.com/watch?v=FGftGOzfohc">第 2 段</a> · <a href="https://www.youtube.com/watch?v=qJtcEDc_WJU">第 3 段</a> · <a href="https://www.youtube.com/watch?v=QSeaZ6qHyXs">第 4 段</a></p>
 </section>
 
-<section class="card">
-  <div class="stage"><div class="stack">
-   <div class="row developer"><span class="i">0</span><span class="r">first</span><span class="t">第一个事件</span></div>
-   <div class="row user"><span class="i">…</span><span class="r">log</span><span class="t">每个事件都留下，什么都不丢</span></div>
-   <div class="row result new"><span class="i">↺</span><span class="r">brain</span><span class="t">读任意一段：回退、重读、续跑</span></div>
-   <div class="row assistant"><span class="i">N</span><span class="r">latest</span><span class="t">最新事件</span></div>
-  </div></div>
-  <div class="say"><span class="kicker">机制：上下文满了怎么办？</span><h2>会话日志比上下文窗口活得久</h2>
-  <p>压缩和裁剪是对未来的不可逆猜测；完整日志让每个决定都能找回。</p>
-  <p class="key">压缩策略可以随模型换：全部总结、只取最近 N 条都行，日志不受影响。</p>
-  <details class="more"><summary></summary><p>问答里讲：CMA 会自动做压缩（compaction），生产中见过 10 小时的会话。</p></details>
-  <div class="src official">视频 07:44–08:17、54:08 之后问答；幻灯片「The session outlives the context window」</div></div>
+<section class="sec" id="s8" data-toc="API 四步" data-source-section="s15">
+  <header class="doc-head">
+    <span class="kicker">动手 · 幻灯片 22–25</span>
+    <h2>四步：环境、agent、会话、事件流</h2>
+    <p class="lede">API 怎么用：工作坊的第一个例子是一个讲笑话的 agent（视频 00:11:45）。</p>
+  </header>
+  <div class="doc-body">
+    <figure class="figure orig" data-slide="22" data-points="p22" data-asset="img-p022" id="e20"><img src="img/MA/p022.png" alt="Step 1 The hands：创建环境，沙箱配置建一次、跨会话复用，每个会话拿到自己全新的隔离云容器" loading="lazy"><figcaption><b>原图 14 · 幻灯片 22 · 录像 11:51 出现</b>第 1 步，手：client.beta.environments.create 建环境。 <span class="source-anchor" data-source-section="s15">出处：Claude Managed Agents 工作坊幻灯片（Anthropic） · <a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU&amp;t=835s">YouTube 第 1 段 13:55</a></span><span class="how">怎么看：沙箱配置建一次、复用 ID；每个会话都拿到自己全新的隔离云容器；也可以选 self_hosted，跑在你自己的基础设施上。</span></figcaption></figure>
+    <figure class="figure orig" data-slide="23" data-points="p23" data-asset="img-p023" id="e21"><img src="img/MA/p023.png" alt="Step 2 The brain：创建 agent，模型、系统提示词和工具组成可复用、有版本的定义，它不知道自己会跑在哪个环境上" loading="lazy"><figcaption><b>原图 15 · 幻灯片 23 · 录像 12:29 出现</b>第 2 步，大脑：client.beta.agents.create 建 agent。 <span class="source-anchor" data-source-section="s16">出处：Claude Managed Agents 工作坊幻灯片（Anthropic） · <a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU&amp;t=873s">YouTube 第 1 段 14:33</a></span><span class="how">怎么看：模型、系统提示词、工具组成一个有版本的定义；它不知道自己会跑在哪个环境上。</span></figcaption></figure>
+    <figure class="figure orig" data-slide="24" data-points="p24" data-asset="img-p024" id="e22"><img src="img/MA/p024.png" alt="Step 3 Bind them together：sessions.create 把 agent 和 environment 绑定，会话已准备好但是 idle，发事件之前什么都不发生" loading="lazy"><figcaption><b>原图 16 · 幻灯片 24 · 录像 13:14 出现</b>第 3 步：client.beta.sessions.create 把 agent.id 和 env.id 绑在一起。 <span class="source-anchor" data-source-section="s17">出处：Claude Managed Agents 工作坊幻灯片（Anthropic） · <a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU&amp;t=918s">YouTube 第 1 段 15:18</a></span><span class="how">怎么看：底部：会话已准备好但是 idle，发事件之前什么都不发生。</span></figcaption></figure>
+    <figure class="figure orig" data-slide="25" data-points="p25" data-asset="img-p025" id="e23"><img src="img/MA/p025.png" alt="Step 4 Talk to it：用户和 agent 共享一条事件流，左边是你发送的事件，右边是你收到的事件" loading="lazy"><figcaption><b>原图 17 · 幻灯片 25 · 录像 13:32 出现</b>第 4 步：你和 agent 共享一条事件流。POST /v1/sessions/{id}/events 发事件，GET /v1/sessions/{id}/stream 收事件。 <span class="source-anchor" data-source-section="s18">出处：Claude Managed Agents 工作坊幻灯片（Anthropic） · <a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU&amp;t=936s">YouTube 第 1 段 15:36</a></span><span class="how">怎么看：你发的：user.message、user.custom_tool_result、user.tool_confirmation、user.interrupt。你收的：agent.message、agent.tool_use、agent.custom_tool_use、agent.mcp_tool_use、session.status_idle（带 stop_reason）、session.error。</span></figcaption></figure>
+    <p data-points="p25" id="e24">Console 演示里一句「build me an agent that tells me jokes」就生成了 prompt、名字和模型（视频 00:15:31）。</p>
+  </div>
+  <p class="src official">本节对应幻灯片：<span class="source-anchor" data-source-section="s15"><a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU&amp;t=835s">幻灯片 22</a></span> <span class="source-anchor" data-source-section="s16"><a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU&amp;t=873s">幻灯片 23</a></span> <span class="source-anchor" data-source-section="s17"><a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU&amp;t=918s">幻灯片 24</a></span> <span class="source-anchor" data-source-section="s18"><a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU&amp;t=936s">幻灯片 25</a></span> · 视频：时间点指 X 转载的完整录像（94:45）；官方 YouTube 分 4 段：<a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU">第 1 段</a> · <a href="https://www.youtube.com/watch?v=FGftGOzfohc">第 2 段</a> · <a href="https://www.youtube.com/watch?v=qJtcEDc_WJU">第 3 段</a> · <a href="https://www.youtube.com/watch?v=QSeaZ6qHyXs">第 4 段</a></p>
 </section>
 
-<section class="card">
-  <div class="stage"><div class="bars" data-bars='{"unit":"%","items":[{"l":"p95 首 token 时间下降","v":90,"c":"blue","note":"幻灯片写 −90%"},{"l":"中位数下降","v":60,"note":"幻灯片写 roughly 60%"}],"caption":"拆分大脑和手之后的延迟变化（只用幻灯片给的数字）"}'></div></div>
-  <div class="say"><span class="kicker">拆开带来了什么数字？</span><h2>首 token 时间 p95 下降约 90%</h2>
-  <p class="key">推理立刻开始，不用等容器起来；手在需要时才创建。</p>
-  <details class="more"><summary></summary><p>一个大脑还能连多只手：沙箱、客户 VPC、MCP 服务器，接口都是名字和输入进、字符串出。</p></details>
-  <div class="src official">视频 08:18–09:05；幻灯片「−90%」「One brain can reach many hands」</div></div>
+<section class="sec" id="s9" data-toc="功能与 Research Desk" data-source-section="s19">
+  <header class="doc-head">
+    <span class="kicker">实例 · 幻灯片 26 与现场演示</span>
+    <h2>Outcomes 用 rubric 检查，不过就重来</h2>
+  </header>
+  <div class="doc-body">
+    <figure class="figure orig" data-slide="26" data-points="p26" data-asset="img-p026" id="e25"><img src="img/MA/p026.png" alt="Claude Managed Agents Features：Multiagent、Webhooks、Memory、Permission policies、Outcomes、Interrupt、Vaults、Console agent builder、MCP servers、Deployments" loading="lazy"><figcaption><b>原图 18 · 幻灯片 26 · 录像 14:31 出现</b>功能一览：多 agent（callable_agents）、Webhooks、记忆、权限策略、Outcomes、Interrupt、Vaults、Console agent builder、MCP 服务器、Deployments。 <span class="source-anchor" data-source-section="s19">出处：Claude Managed Agents 工作坊幻灯片（Anthropic） · <a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU&amp;t=995s">YouTube 第 1 段 16:35</a></span><span class="how">怎么看：例：权限策略设成 always_ask 时，循环会暂停，等 user.tool_confirmation。</span></figcaption></figure>
+    <p>Research Desk 是读 SEC 文件、比较标的的 app。NVIDIA 回放：记忆库里没有之前的笔记 → 起子 agent 做财务提取和风险评估 → 汇总成 JSON scorecard、写记忆 → 检查方对照 rubric 判定 satisfied（视频 00:33:06–00:35:36）。</p>
+    <blockquote class="quote"><p>Outcomes is how we've created self-supervision.</p><cite>Gabe Cemaj，视频 00:32:08</cite><span class="source-anchor"><a href="https://www.youtube.com/watch?v=FGftGOzfohc&amp;t=1061s">YouTube 第 2 段章节「Outcomes and self-supervision」17:41</a></span></blockquote>
+    <p>生成子 agent 时不复制会话记录，只复制工具描述、schema 和 prompt（视频 00:30:00–00:30:04）。Skill 是可更新的活文件：加入看新表单的能力后，新开的会话自动用新版（视频 00:36:49–00:37:06）。</p>
+    <p class="callout limit">这一段（约 18–33 分钟）现场网络差，转写质量最低；本节的细节以转写为准，未逐字核对画面。</p>
+  </div>
+  <p class="src official">本节对应幻灯片：<span class="source-anchor" data-source-section="s19"><a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU&amp;t=995s">幻灯片 26</a></span> · 视频：时间点指 X 转载的完整录像（94:45）；官方 YouTube 分 4 段：<a href="https://www.youtube.com/watch?v=Uv0nAf_7tyU">第 1 段</a> · <a href="https://www.youtube.com/watch?v=FGftGOzfohc">第 2 段</a> · <a href="https://www.youtube.com/watch?v=qJtcEDc_WJU">第 3 段</a> · <a href="https://www.youtube.com/watch?v=QSeaZ6qHyXs">第 4 段</a></p>
 </section>
 
-<section class="card full">
-  <div class="head-full"><span class="kicker">模拟器：一次托管会话怎么跑、怎么恢复</span><h2>坏掉的部件换新，会话日志让工作接着走</h2></div>
-  <div class="stage"><div class="sim" data-sim='{"label":"正常路径","note":"串起来的示例，按幻灯片描述的机制编排，不是视频里的真实运行","flow":{"nodes":[{"id":"user","x":100,"y":80,"t":"你","c":"blue"},{"id":"log","x":100,"y":300,"t":"会话日志","c":"amber"},{"id":"brain","x":360,"y":190,"t":"大脑","c":"blue"},{"id":"hands","x":600,"y":190,"t":"沙箱","c":"green"}],"edges":[{"f":"user","t":"log","l":"user.message"},{"f":"log","t":"brain","bend":-25},{"f":"brain","t":"log","bend":-25},{"f":"brain","t":"hands","bend":-25},{"f":"hands","t":"brain","bend":-25}]},
-  "steps":[
-   {"act":"user","edge":"user>log","msg":{"r":"user","t":"user.message：分析 NVDA 最新季报"},"say":"会话创建后是 idle；你发事件，它才开始。"},
-   {"act":"brain","edge":"log>brain","msg":{"r":"sys","t":"harness 读取事件，Claude 开始推理"},"say":"推理立刻开始，此时还没有沙箱。"},
-   {"act":"hands","edge":"brain>hands","msg":{"r":"asst","t":"agent.tool_use：bash 拉取 10-Q"},"say":"需要动手时才创建沙箱。"},
-   {"act":"brain","edge":"hands>brain","msg":{"r":"tool","t":"工具结果（字符串）"},"say":"结果回到大脑。"},
-   {"act":"log","edge":"brain>log","msg":{"r":"sys","t":"事件写入会话日志"},"say":"每一步都追加进日志。"},
-   {"act":"user","edge":"brain>log","msg":{"r":"asst","t":"agent.message → session.status_idle"},"say":"任务完成，会话回到 idle。"}],
-  "alts":[{"label":"分支 A：沙箱中途挂了","steps":[
-   {"act":"hands","edge":"brain>hands","msg":{"r":"asst","t":"agent.tool_use：bash 运行分析脚本"},"say":"工具在沙箱里执行。"},
-   {"act":"hands","edge":"hands>brain","msg":{"r":"err","t":"工具调用失败：容器不可用"},"say":"harness 把它当成一次失败的工具调用。"},
-   {"act":"brain","edge":"hands>brain","msg":{"r":"sys","t":"错误像普通结果一样回给 Claude"},"say":"不用人去救那个容器。"},
-   {"act":"hands","edge":"brain>hands","msg":{"r":"asst","t":"在新创建的容器上重试"},"say":"沙箱是牲口：换一个继续。"}]},
-   {"label":"分支 B：harness 挂了","steps":[
-   {"act":"brain","edge":"brain>log","msg":{"r":"err","t":"harness 进程退出"},"say":"大脑本身不存状态。"},
-   {"act":"brain","edge":"log>brain","msg":{"r":"sys","t":"新 harness 启动，读回会话日志"},"say":"状态全在日志里。"},
-   {"act":"brain","edge":"brain>hands","msg":{"r":"asst","t":"从最后一个事件继续"},"say":"就像什么都没发生。"}]}]}'></div></div>
+<section class="sec" id="s10" data-toc="编排与问答" data-source-section="extra">
+  <header class="doc-head">
+    <span class="kicker">深入一层 · 现场演示与问答（只有转写）</span>
+    <h2>多会话编排靠 custom tool，判断好坏靠 eval</h2>
+  </header>
+  <div class="doc-body">
+    <p>「Analyze Google and Microsoft」：主 agent 调 custom tool，为每个 ticker 开一个会话（视频 00:49:48–00:50:14）。</p>
+    <p>Deployments：agent 定义加定时、初始消息和记忆库等资源，按计划自动开会话，例如每季研究一次 NVIDIA（视频 00:51:25–00:51:42；视频 00:58:39–00:58:46）。</p>
+    <p>Dreaming（研究预览）：选一个记忆库，分析过去 30 天的会话，把学到的东西补进记忆库（视频 00:52:39–00:52:57；视频 01:03:56）。</p>
+    <p>今天没有按会话的 token 或金额预算上限；讲者说正在探索，「not something we offered today」（视频 00:41:55–00:42:05）。RBAC 在路线图上（视频 01:09:21）。</p>
+    <p>讲者说 Anthropic 拿到新模型先跑 eval，尽早更新 harness 假设、删掉不再需要的东西（视频 01:18:44–01:19:04）。</p>
+    <p>其他问答：Agent SDK 像无界面的 Claude Code（视频 00:40:41）；CMA 是受 Claude Code harness 启发重写的托管 harness（视频 00:41:13）。多租户建议用 workspace 做单元，不建议终端用户自带 key，因为会失去可观测性（视频 01:08:24–01:08:36）。CI/CD 用 ant CLI 把资源写成 YAML 同步（视频 01:16:17–01:16:38）。</p>
+    <p class="callout extra">补充：官方文档现在可能已有会话预算说明，视频里没讲，未确认。</p>
+  </div>
+  <div class="src extra">本节只有转写：transcript.md（机器转写）对应录像时间见各段。</div>
 </section>
 
-<section class="card">
-  <div class="stage"><pre>env = client.beta.<span class="f">environments</span>.create(...)   <span class="c"># 1 手：沙箱配置，建一次复用</span>
-agent = client.beta.<span class="f">agents</span>.create(          <span class="c"># 2 大脑：有版本的定义</span>
-    name=..., model=..., system=..., tools=[...])
-<span class="hl">session = client.beta.<span class="f">sessions</span>.create(</span><span class="hl">    agent=agent.id, environment_id=env.id)  <span class="c"># 3 绑定，此时 idle</span></span>
-<span class="c"># 4 对话：同一条事件流</span>
-POST /v1/sessions/{id}/events   <span class="s">user.message / user.interrupt ...</span>
-GET  /v1/sessions/{id}/stream   <span class="s">agent.tool_use / session.status_idle ...</span></pre></div>
-  <div class="say"><span class="kicker">API 怎么用？</span><h2>四步：环境、agent、会话、事件流</h2>
-  <p>agent 定义不知道自己会跑在哪个环境上；会话把两者绑在一起。</p>
-  <p class="key">会话创建后是 idle，发事件之前什么都不发生。</p>
-  <details class="more"><summary></summary><p>你发的事件：<code>user.message</code>、<code>user.custom_tool_result</code>、<code>user.tool_confirmation</code>、<code>user.interrupt</code>。你收的事件：<code>agent.message</code>、<code>agent.tool_use</code>、<code>agent.custom_tool_use</code>、<code>agent.mcp_tool_use</code>、<code>session.status_idle</code>（带 stop_reason）、<code>session.error</code>。Console 演示里一句「build me an agent that tells me jokes」就生成了 prompt、名字和模型。</p></details>
-  <div class="src official">视频 11:44–17:49；幻灯片 Step 1–4</div></div>
+<section class="sec" id="s11" data-toc="小测：6 道题" data-source-section="extra">
+  <header class="doc-head"><span class="kicker">小测（补充：题目由学习搭子出）</span><h2>用 6 个场景检查你懂不懂这套拆法</h2></header>
+  <div class="doc-body"><div class="quiz"><script type="application/json">[{"q": "会话进行中，沙箱容器突然挂了。按 CMA 的设计会发生什么？", "opts": ["整个会话丢失，只能从头再来一遍", "当成一次失败的工具调用，在新容器上重试", "工程师 shell 进容器，把它修好再继续"], "a": 1, "why": "沙箱是牲口：错误像普通结果回给 Claude。", "back": 4}, {"q": "harness 进程崩溃后，新 harness 靠什么继续工作？", "opts": ["从沙箱里的内存快照恢复上一次的状态", "从上下文窗口里的压缩摘要恢复", "读回会话日志，从最后一个事件继续"], "a": 2, "why": "大脑无状态，状态全在只追加的会话日志里。", "back": 4}, {"q": "沙箱里的代码被提示注入，想偷 GitHub token。能偷到吗？", "opts": ["不能，沙箱里没有 token", "能，token 就放在沙箱的环境变量里", "能，只要 harness 自己看得到 token"], "a": 0, "why": "凭证不进沙箱；代理在出口从 vault 取凭证，agent 和 harness 都看不到。", "back": 5}, {"q": "下一代模型不再有 context anxiety。CMA 的思路下该怎么做？", "opts": ["保留 context reset，多一层保险总没错", "把会话日志也一起裁剪，省下存储", "尽早删掉这个过时假设，用 eval 确认"], "a": 2, "why": "误区：补丁越多越安全。讲者说要尽早删掉不再需要的假设。", "back": 2}, {"q": "创建完会话，什么都没发生。为什么？", "opts": ["会话是 idle，要先发一个事件", "环境创建失败了，要重新建一次", "agent 没有版本号，所以不会启动"], "a": 0, "why": "幻灯片 Step 3：provisioned but idle。", "back": 8}, {"q": "想让 agent 自己判断「做完没有、做对没有」，用哪个功能？", "opts": ["Deployments，按计划定时开会话", "Outcomes，对照 rubric，不过就重来", "Webhooks，会话变 idle 时通知你"], "a": 1, "why": "Outcomes 是讲者说的 self-supervision。", "back": 9}]</script></div></div>
+  <div class="src extra">题目依据第 2、4、5、8、9 节（来源见各节）。</div>
 </section>
-
-<section class="card">
-  <div class="stage"><svg class="flow" data-act="grader" data-edge="lead>grader" data-flow='{"nodes":[{"id":"mem","x":110,"y":90,"t":"记忆库","s":"先查有没有研究过","c":"amber"},{"id":"lead","x":340,"y":200,"t":"主 agent","s":"NVDA 季报","c":"blue"},{"id":"sub","x":110,"y":320,"t":"2 个子 agent","s":"财务提取 / 风险评估","c":"green"},{"id":"grader","x":580,"y":200,"t":"Outcome 检查","s":"对照 rubric","c":"green"}],"edges":[{"f":"mem","t":"lead"},{"f":"lead","t":"sub","l":"派活","bend":-25},{"f":"sub","t":"lead","bend":-25},{"f":"lead","t":"grader","l":"做完了？","bend":-25},{"f":"grader","t":"lead","l":"不过就重来","bend":-25,"c":"red"}]}'></svg></div>
-  <div class="say"><span class="kicker">真实实例：Research Desk 怎么跑？</span><h2>Outcome 用 rubric 检查，不过就重来</h2>
-  <p>NVIDIA 回放：记忆里没有 → 起两个子 agent → 汇总成 JSON scorecard、写记忆 → 检查判定 satisfied。</p>
-  <p class="key">讲者原话：「Outcomes is how we’ve created self-supervision」。</p>
-  <details class="more"><summary></summary><p>生成子 agent 时不复制会话记录，只复制工具描述、schema 和 prompt。Skill 是可更新的文件：加入新表单类型后，新开的会话自动用新版。这一段（18–33 分钟）现场网络差，转写质量最低。</p></details>
-  <div class="src official">视频 27:44–37:38（转写低置信段）</div></div>
-</section>
-
-<section class="card">
-  <div class="stage"><div class="pairs">
-   <div class="pair"><div class="a"><b>Deployments</b>agent 定义 + 定时 + 初始消息 + 资源，按计划自动开会话</div><div class="b"><b>Dreaming（研究预览）</b>分析过去 30 天的会话，把学到的东西补进记忆库</div></div>
-   <div class="pair"><div class="a"><b>今天没有</b>按会话的 token 预算上限（「not something we offered today」）；RBAC 在路线图</div><div class="b"><b>讲者建议</b>用 eval 判断改动有没有变坏；新模型一来先删过时的 harness 假设</div></div>
-  </div></div>
-  <div class="say"><span class="kicker">深入一层：编排和问答里讲了什么？</span><h2>多会话编排靠 custom tool，判断好坏靠 eval</h2>
-  <p>「分析 Google 和 Microsoft」：主 agent 调 custom tool，为每个 ticker 开一个会话。</p>
-  <p class="key">讲者说 Anthropic 拿到新模型先跑 eval，尽早删掉不再需要的假设。</p>
-  <details class="more"><summary></summary><p>其他问答：Agent SDK 像无界面的 Claude Code；CMA 是受 Claude Code harness 启发重写的托管 harness。多租户用 workspace 做单元，不建议终端用户自带 key。CI/CD 用 ant CLI 把资源写成 YAML 同步。补充：官方文档现在可能已有会话预算说明，视频里没讲，未确认。</p></details>
-  <div class="src official">视频 49:27–54:08、42:05、01:19:02；最后一条为补充</div></div>
-</section>
-
-<section class="card full">
-  <div class="head-full"><span class="kicker">小测</span><h2>6 题，答错会带你回到对应卡片</h2></div>
-  <div class="stage"><div class="quiz" data-quiz='[
-   {"q":"会话进行中，沙箱容器突然挂了。按 CMA 的设计会发生什么？","opts":["整个会话丢失，要从头再来","harness 把它当作一次失败的工具调用，Claude 在新容器上重试","工程师 shell 进容器修复"],"a":1,"why":"沙箱是牲口：错误像普通结果回给 Claude。","back":6},
-   {"q":"harness 进程崩溃后，新 harness 靠什么继续工作？","opts":["读回会话日志，从最后一个事件继续","从沙箱里的内存恢复","从上下文窗口里的压缩摘要恢复"],"a":0,"why":"大脑无状态，状态全在只追加的会话日志里。","back":6},
-   {"q":"沙箱里的代码被提示注入，想偷 GitHub token。能偷到吗？","opts":["能，token 在环境变量里","不能，沙箱里没有 token；代理在出口从 vault 取凭证","能，只要 harness 看得到"],"a":1,"why":"凭证不进沙箱，agent 和 harness 都看不到。","back":7},
-   {"q":"下一代模型不再有 context anxiety。CMA 的思路下该怎么做？","opts":["保留 context reset，以防万一","尽早删掉这个过时的 harness 假设，用 eval 确认没变坏","把会话日志也一起裁剪"],"a":1,"why":"误区：补丁越多越安全。讲者说要尽早删掉不再需要的假设。","back":2},
-   {"q":"创建完会话，什么都没发生。为什么？","opts":["环境创建失败","会话创建后是 idle，要先发 user.message 之类的事件","agent 没有版本号"],"a":1,"why":"幻灯片 Step 3：provisioned but idle。","back":11},
-   {"q":"想让 agent 自己判断「做完没有、做对没有」，用哪个功能？","opts":["Deployments","Outcomes：给任务和 rubric，由检查方对照判断，不过就重来","Webhooks"],"a":1,"why":"Outcomes 是讲者说的 self-supervision。","back":12}]'></div></div>
-</section>
-</main>
-<nav class="bottom"><button class="btn" id="prev">上一张</button><button class="btn main" id="next">下一张</button></nav>
-<script>
-/* 学习搭子 固定组件库 — 不要在课程里改这个文件。 */
+</main><script>var __H=location.hash;window.lessonIcons={"menu": "<svg class=\"i i-menu\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/><\/svg>", "play": "<svg class=\"i i-play\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z\"/><\/svg>", "pause": "<svg class=\"i i-pause\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"14\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/><rect x=\"5\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/><\/svg>", "check": "<svg class=\"i i-check\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 6 9 17l-5-5\"/><\/svg>", "x": "<svg class=\"i i-x\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/><\/svg>", "zoom-in": "<svg class=\"i i-zoom-in\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><line x1=\"21\" x2=\"16.65\" y1=\"21\" y2=\"16.65\"/><line x1=\"11\" x2=\"11\" y1=\"8\" y2=\"14\"/><line x1=\"8\" x2=\"14\" y1=\"11\" y2=\"11\"/><\/svg>", "zoom-out": "<svg class=\"i i-zoom-out\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><line x1=\"21\" x2=\"16.65\" y1=\"21\" y2=\"16.65\"/><line x1=\"8\" x2=\"14\" y1=\"11\" y2=\"11\"/><\/svg>", "copy": "<svg class=\"i i-copy\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\"/><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"/><\/svg>", "chevron-right": "<svg class=\"i i-chevron-right\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m9 18 6-6-6-6\"/><\/svg>", "book-open": "<svg class=\"i i-book-open\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 5v16\"/><path d=\"M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z\"/><\/svg>", "external-link": "<svg class=\"i i-external-link\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M15 3h6v6\"/><path d=\"M10 14 21 3\"/><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/><\/svg>"};window.lessonIcon=n=>window.lessonIcons[n]||"";</script><script>/* Article/pair navigation only. No global swipe or arrow-key paging. */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const H=document.documentElement, sections=$$('main.deck > .sec, main.deck > .hero, .pair-notes > .sec');
+if(!sections.length)return;
+const ids=new Set($$('[id]').map(n=>n.id));
+sections.forEach((s,i)=>{if(!s.id){let n=i+1,id=s.classList.contains('hero')?'intro':'s'+n;while(ids.has(id))id='s'+(++n);s.id=id;ids.add(id)}});
+const title=s=>s.dataset.toc||$('h2,h1,h3',s)?.textContent||s.id;
+const toc=document.createElement('nav');toc.className='toc';toc.id='lesson-toc';toc.setAttribute('aria-label','目录');
+const heading=document.createElement('b');heading.textContent='目录';toc.appendChild(heading);const ol=document.createElement('ol');toc.appendChild(ol);
+sections.forEach((s,i)=>{const li=document.createElement('li'),a=document.createElement('a');a.href='#'+s.id;a.textContent=(i+1)+'. '+title(s);li.appendChild(a);ol.appendChild(li)});document.body.appendChild(toc);
+const links=$$('a',toc),toggle=$('.toc-toggle'),count=$('.count'),bar=$('.track i');
+const shade=document.createElement('div');shade.className='toc-backdrop';document.body.appendChild(shade);
+function open(value){H.classList.toggle('toc-open',value);toggle?.setAttribute('aria-expanded',String(value));if(value)links.find(a=>a.getAttribute('aria-current')==='true')?.focus();else toggle?.focus()}
+if(toggle){toggle.setAttribute('aria-controls',toc.id);toggle.onclick=()=>open(!H.classList.contains('toc-open'))}shade.onclick=()=>open(false);
+addEventListener('keydown',e=>{if(e.key==='Escape'&&H.classList.contains('toc-open'))open(false)});
+function locate(hash){let id;try{id=decodeURIComponent(hash.replace(/^#/,''))}catch(e){return null}if(/^\d+$/.test(id))return sections[+id-1];return document.getElementById(id)}
+function jump(target){if(!target)return;H.classList.remove('toc-open');toggle?.setAttribute('aria-expanded','false');target.scrollIntoView({block:'start',behavior:'instant'});history.replaceState(null,'','#'+target.id);update();dispatchEvent(new Event('lesson:navigate'))}
+window.lessonNav={layout:H.dataset.layout,go:n=>jump(document.getElementById('s'+n)||sections[n-1]),returnTo:box=>jump(box.closest('.sec')||box),jump};window.goCard=n=>window.lessonNav.go(n);
+toc.onclick=e=>{const a=e.target.closest('a');if(!a)return;e.preventDefault();jump(locate(a.hash))};
+const key='pos:'+location.pathname;let queued=false,restoring=true;
+function update(){queued=false;let current=sections[0];const line=H.dataset.layout==='pair'&&innerWidth<=820?innerHeight*.4+90:100;for(const s of sections)if(s.getBoundingClientRect().top<=line)current=s;
+ count.textContent=title(current);links.forEach(a=>a.setAttribute('aria-current',String(a.hash==='#'+current.id)));const max=H.scrollHeight-innerHeight;bar.style.width=Math.max(0,Math.min(100,max>0?scrollY/max*100:100))+'%';
+ if(!restoring)try{localStorage.setItem(key,JSON.stringify({id:current.id,offset:scrollY-(current.getBoundingClientRect().top+scrollY)}))}catch(e){}
+}
+addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(update)}},{passive:true});addEventListener('resize',update);addEventListener('hashchange',()=>jump(locate(location.hash)));
+addEventListener('load',()=>{const hash=window.__H||location.hash;let target=locate(hash),offset=0;if(!hash){try{const pos=JSON.parse(localStorage.getItem(key)||'null');if(pos){target=document.getElementById(pos.id);offset=Number(pos.offset)||0}}catch(e){}}
+ if(target){target.scrollIntoView({block:'start',behavior:'instant'});if(!hash)scrollBy(0,offset+72)}restoring=false;update();
+});update();
+})();
+</script><script>/* Reveal an offscreen simulator first, then move only its local SVG viewport. */
+(function(root){
+function delta(start,end,low,high,pad=16){if(start<low+pad)return start-low-pad;if(end>high-pad)return end-high+pad;return 0}
+function focus(svg,scroller){
+ let frame=scroller.getBoundingClientRect(),bottom=innerHeight-88;
+ const top=document.querySelector('.top')?.getBoundingClientRect().bottom||56;
+ if(frame.bottom<=top||frame.top+112>bottom){
+  scroller.closest('.sim').scrollIntoView({block:'start',behavior:'instant'});
+  frame=scroller.getBoundingClientRect();
+ }
+ for(let p=scroller.parentElement;p&&p!==document.body;p=p.parentElement){const c=getComputedStyle(p);if(/auto|scroll|hidden|clip/.test(c.overflowY)){const r=p.getBoundingClientRect();bottom=Math.min(bottom,r.top+p.clientHeight)}}
+ const space=Math.max(112,Math.min(innerHeight*.4,bottom-frame.top));scroller.style.maxHeight=space+'px';
+ frame=scroller.getBoundingClientRect();const node=svg.querySelector('.fl-node.act');if(!node)return;const r=node.getBoundingClientRect();
+ scroller.scrollTop+=delta(r.top,r.bottom,frame.top,frame.top+scroller.clientHeight);
+ scroller.scrollLeft+=delta(r.left,r.right,frame.left,frame.left+scroller.clientWidth);
+}
+root.LessonGeometry={delta,focus};if(typeof module!=='undefined')module.exports={delta,focus};
+})(typeof window==='undefined'?globalThis:window);
+</script><script>/* Shared material/explanation pairing, original-image dialog and copy actions. */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)],ic=window.lessonIcon;
+window.lessonCopy=async(text,button)=>{try{if(navigator.clipboard?.writeText)await navigator.clipboard.writeText(text);else{const t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();if(!document.execCommand('copy'))throw Error('copy');t.remove()}button.textContent='已复制'}catch(e){button.textContent='复制未成功，请选中文字复制'}};
+$$('.pair.codewalk,.pair.read-pair,.pair.material-pair').forEach(pair=>{
+ const source=$('.pair-source',pair),notes=$('.pair-notes',pair);if(!source||!notes)return;
+ const pre=$('pre[data-lines]',source),code=pre&&$('code',pre),steps=$$('.step',notes);let lines=[],raw='';
+ if(code){raw=code.textContent;const first=Number(pre.dataset.lines)||1;code.textContent='';const pieces=raw.replace(/\n$/,'').split('\n');pieces.forEach((text,i)=>{const line=document.createElement('span');line.className='code-line';line.dataset.line=String(first+i);line.textContent=text;code.appendChild(line);lines.push(line)});
+  const panel=document.createElement('div');panel.className='code-panel';source.before(panel);
+  const toolbar=document.createElement('div');toolbar.className='code-toolbar';
+  const hint=document.createElement('span');hint.className='code-scroll-hint';hint.textContent='长行可横向滚动';
+  const button=document.createElement('button');button.className='btn sm copy-code';button.innerHTML=ic('copy')+' 复制代码';button.onclick=()=>window.lessonCopy(raw,button);
+  toolbar.append(hint,button);panel.append(toolbar,source);
+ }
+ let active=null;
+ function select(step){if(!step||active===step)return;active=step;steps.forEach(s=>s.classList.toggle('is-active',s===step));let targets=[];
+  if(code){const ranges=(step.dataset.hl||'').split(',').map(v=>v.split('-').map(Number));lines.forEach(line=>{const n=Number(line.dataset.line),on=ranges.some(([a,b=a])=>n>=a&&n<=b);line.classList.toggle('hl',on);if(on)targets.push(line)})}
+  else{const ids=(step.dataset.explains||step.dataset.target||'').split(/\s+/);$$('.source-block,[data-material]',source).forEach(block=>{const on=ids.includes(block.dataset.sourceId||block.id);block.classList.toggle('is-active',on);if(on)targets.push(block)})}
+  if(targets.length){const a=targets[0].getBoundingClientRect(),b=targets[targets.length-1].getBoundingClientRect(),r=source.getBoundingClientRect();const bottom=r.top+source.clientHeight;source.scrollTop+=b.bottom-a.top>source.clientHeight-32?a.top-r.top-16:window.LessonGeometry.delta(a.top,b.bottom,r.top,bottom)}
+ }
+ const update=()=>{
+  const rect=notes.getBoundingClientRect(),material=source.closest('.code-panel')||source;
+  const top=Math.max(0,$(".top")?.getBoundingClientRect().bottom||0,innerWidth<=820?material.getBoundingClientRect().bottom:0),bottom=Math.min(innerHeight,rect.bottom);
+  if(bottom<=top)return;
+  const line=top+(bottom-top)*.4;let step=steps[0];
+  for(const s of steps)if(s.getBoundingClientRect().top<=line)step=s;
+  const last=steps.at(-1),lastRect=last?.getBoundingClientRect();
+  if(scrollY+innerHeight>=document.documentElement.scrollHeight-2&&lastRect?.top<bottom&&lastRect.bottom>top)step=last;
+  select(step);
+ };
+ let queued=false;addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(()=>{queued=false;update()})}},{passive:true});addEventListener('resize',update);
+ steps.forEach(step=>{step.addEventListener('focusin',()=>select(step));step.addEventListener('click',e=>{select(step);const a=e.target.closest('a');if(a?.hash&&source.querySelector(a.hash)){e.preventDefault();source.focus()}})});select(steps[0]);addEventListener('load',update);
+});
+$$('figure img').forEach(img=>{const button=document.createElement('button');button.className='image-open';button.type='button';button.setAttribute('aria-label','放大图片：'+img.alt);img.replaceWith(button);button.appendChild(img);button.onclick=()=>{
+ const dialog=document.createElement('dialog');dialog.className='image-dialog';dialog.setAttribute('aria-label',img.alt);const close=document.createElement('button');close.className='btn dialog-close';close.innerHTML=ic('x')+' 关闭';const large=img.cloneNode();large.removeAttribute('loading');dialog.append(close,large);document.body.appendChild(dialog);close.onclick=()=>dialog.close();dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close()});dialog.addEventListener('close',()=>{dialog.remove();button.focus()});dialog.showModal();close.focus();
+}});
+$$('details.more summary').forEach(s=>{if(!s.textContent.trim())s.textContent='展开细节';s.insertAdjacentHTML('afterbegin',ic('chevron-right'))});
+})();
+</script><script>/* 学习搭子 固定组件库 — 不要在课程里改这个文件。 */
 (()=>{
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const NS='http://www.w3.org/2000/svg';
+const data=(box,kind)=>JSON.parse(box.querySelector('script[type="application/json"]')?.textContent||box.dataset[kind]);
+const ic=window.lessonIcon;
 const el=(t,a={},p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p&&p.appendChild(e);return e};
 const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 
-/* ---------- 卡片翻页 ---------- */
-const cards=$$('.card');let cur=0;
-function go(i){i=Math.max(0,Math.min(cards.length-1,i));cards[cur].classList.remove('on');cur=i;cards[cur].classList.add('on');
-  $('.track i').style.width=((cur+1)/cards.length*100)+'%';$('.count').textContent=(cur+1)+' / '+cards.length;
-  $('#prev').disabled=cur===0;$('#next').disabled=cur===cards.length-1;history.replaceState(null,'','#'+(cur+1));}
-window.goCard=n=>go(n-1);
-$('#prev').onclick=()=>go(cur-1);$('#next').onclick=()=>go(cur+1);
-addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.key==='ArrowRight')go(cur+1);if(e.key==='ArrowLeft')go(cur-1)});
-let sx=null;addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
-addEventListener('touchend',e=>{if(sx===null)return;const d=e.changedTouches[0].clientX-sx;if(Math.abs(d)>60)go(cur+(d<0?1:-1));sx=null});
+function component(selector,render){
+  $$(selector).forEach(box=>{try{render(box)}catch(error){
+    const message=document.createElement('p');message.className='component-error';
+    message.textContent='这张图的数据有误';message.setAttribute('role','status');
+    box.replaceWith(message);console.error('组件数据有误',error);
+  }});
+}
 
 /* ---------- flow：用 JSON 画流程图 ----------
  spec = {w,h,nodes:[{id,x,y,t,s?,c?,w?}],edges:[{f,t,l?,bend?}]}  节点坐标是中心点 */
 function drawFlow(svg,spec){
   svg.innerHTML='';
   const defs=el('defs',{},svg);
-  [['a','#AEB8C6'],['b','#2550D9'],['red','#C8372D'],['amber','#C77A00'],['green','#16875A']].forEach(([id,c])=>{const m=el('marker',{id:'ar'+id+svg.dataset.uid,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:7,markerHeight:7,orient:'auto-start-reverse'},defs);el('path',{d:'M0,0L10,5L0,10z',fill:c},m)});
-  const N={};spec.nodes.forEach(n=>N[n.id]={...n,w:n.w||150,h:n.s?70:56});
+  [['a','var(--meta)'],['b','var(--blue)'],['red','var(--amber)'],['amber','var(--amber)'],['green','var(--green)']].forEach(([id,c])=>{const m=el('marker',{id:'ar'+id+svg.dataset.uid,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:7,markerHeight:7,orient:'auto-start-reverse'},defs);el('path',{d:'M0,0L10,5L0,10z',fill:c},m)});
+  const N={};spec.nodes.forEach(n=>N[n.id]={...n,w:n.w||150,h:n.h||(n.s?70:56)});
   const ns=Object.values(N);
   let x0=Math.min(...ns.map(n=>n.x-n.w/2)),x1=Math.max(...ns.map(n=>n.x+n.w/2)),y0=Math.min(...ns.map(n=>n.y-n.h/2)),y1=Math.max(...ns.map(n=>n.y+n.h/2));
   const B={x0,x1,y0,y1};
@@ -391,7 +362,7 @@ function drawFlow(svg,spec){
       const cx=mx-(q2-q1)/len*bd,cy=my+(p2-p1)/len*bd;d=`M${p1},${q1} Q${cx},${cy} ${p2},${q2}`;
       const qx=.25*p1+.5*cx+.25*p2,qy=.25*q1+.5*cy+.25*q2,sg=bd>=0?1:-1;lx=qx-(q2-q1)/len*sg*14;ly=qy+(p2-p1)/len*sg*14+4;}
     const mk=e.c||'a';const p=el('path',{d,class:'fl-edge '+(e.c||''),'marker-end':`url(#ar${mk}${svg.dataset.uid})`},eg);p._mk=mk;
-    let lab=null;if(e.l){const anc=e.route==='left'?'end':e.route==='right'?'start':'middle';lab=el('text',{x:lx,y:ly,'text-anchor':anc,class:'fl-elab '+(e.c||''),stroke:'#F2F4F7','stroke-width':5,'paint-order':'stroke'},eg);lab.textContent=e.l}
+    let lab=null;if(e.l){const anc=e.route==='left'?'end':e.route==='right'?'start':'middle';lab=el('text',{x:lx,y:ly,'text-anchor':anc,class:'fl-elab '+(e.c||''),stroke:'var(--paper)','stroke-width':5,'paint-order':'stroke'},eg);lab.textContent=e.l}
     svg._edges[e.f+'>'+e.t]={p,lab}});
   ns.forEach(n=>{const g=el('g',{class:'fl-node '+(n.c||'')},ng);
     el('rect',{x:n.x-n.w/2,y:n.y-n.h/2,width:n.w,height:n.h,rx:14},g);
@@ -399,61 +370,106 @@ function drawFlow(svg,spec){
     if(n.s){const s=el('text',{x:n.x,y:n.y+18,'text-anchor':'middle',class:'sub'},g);s.textContent=n.s}
     svg._nodes[n.id]=g});
   /* 自动贴合：viewBox 只包住内容，图会放大填满面板 */
-  const P=spec.pad??8;svg.setAttribute('viewBox',`${x0-P} ${y0-P-10} ${x1-x0+2*P} ${y1-y0+2*P+20}`);
+  const P=spec.pad??8,W=x1-x0+2*P,H=y1-y0+2*P+20;
+  svg.setAttribute('viewBox',`${x0-P} ${y0-P-10} ${W} ${H}`);
+  svg.style.setProperty('--flow-width',W+'px');svg.style.setProperty('--flow-height',H+'px');
+  const scroll=document.createElement('div');scroll.className='flow-scroll';
+  svg.replaceWith(scroll);scroll.appendChild(svg);
+  if(!scroll.closest('.sim')&&W>innerWidth-78){const t=document.createElement('p');t.className='flow-tip';t.textContent='← 左右滑动看全图 →';scroll.after(t)}
   svg._set=(act,edge)=>{for(const k in svg._nodes)svg._nodes[k].classList.toggle('act',k===act);
     for(const k in svg._edges){const on=k===edge,E=svg._edges[k];E.p.classList.toggle('act',on);E.p.setAttribute('marker-end',`url(#ar${on?'b':E.p._mk}${svg.dataset.uid})`);E.lab&&E.lab.classList.toggle('act',on)}};
   svg._set(svg.dataset.act,svg.dataset.edge);
+  svg._center=()=>{if(!matchMedia('(max-width:820px)').matches)return;
+    const active=Object.values(svg._nodes).find(n=>n.classList.contains('act'));if(!active)return;
+    const a=active.getBoundingClientRect(),r=scroll.getBoundingClientRect();
+    scroll.scrollLeft+=a.left+a.width/2-r.left-r.width/2;
+  };
 }
 let uid=0;
-$$('svg.flow').forEach(s=>{s.dataset.uid=++uid;drawFlow(s,JSON.parse(s.dataset.flow))});
+component('svg.flow',s=>{s.dataset.uid=++uid;drawFlow(s,data(s,'flow'))});
 
 /* ---------- sim：一步步走的模拟器 ----------
  data-sim = {flow:{...}, steps:[{act,edge,msg:{r:user|asst|tool|err|sys,n?,t},say}], alt?:{label,steps:[...]}} */
-$$('.sim').forEach(box=>{
-  const spec=JSON.parse(box.dataset.sim);if(spec.alt&&!spec.alts)spec.alts=[spec.alt];const AL=spec.alts||[];const gname='br'+(++uid);
-  box.innerHTML=`<div class="ctl"><button class="btn sm" data-a="step">下一步</button><button class="btn sm" data-a="play">▶ 自动</button><button class="btn sm" data-a="reset">重置</button>
+component('.sim',box=>{
+  const spec=data(box,'sim');if(spec.alt&&!spec.alts)spec.alts=[spec.alt];const AL=spec.alts||[];const gname='br'+(++uid);
+  box.innerHTML=`<div class="ctl"><button class="btn sm" data-a="step">下一步</button><button class="btn sm" data-a="play">${ic("play")} 自动</button><button class="btn sm" data-a="reset">重置</button>
    <label>速度 <input type="range" min="300" max="2500" step="100" value="1200"></label></div>${AL.length?`<div class="ctl branches"><label><input type="radio" name="${gname}" value="-1" checked> ${esc(spec.label||'正常路径')}</label>${AL.map((a,j)=>`<label><input type="radio" name="${gname}" value="${j}"> ${esc(a.label)}</label>`).join('')}</div>`:''}
    <div class="body"><svg class="flow"></svg><div class="log"></div></div><div class="narr"></div>`;
   if(spec.layout==='wide')box.classList.add('wide');
-  const svg=$('svg',box);svg.dataset.uid=++uid;drawFlow(svg,spec.flow);
+  const svg=$('.body > svg.flow',box);svg.dataset.uid=++uid;drawFlow(svg,spec.flow);
+  const fs=svg.parentElement,tip=document.createElement('p');tip.className='flow-tip';tip.textContent='点图放大看字，再点回到全图';fs.after(tip);
+  const focus=()=>{if(!fs.classList.contains('zoom'))return svg._center();window.LessonGeometry.focus(svg,fs)};
+  const zoom=document.createElement('button');zoom.className='btn sm zoom-toggle';zoom.innerHTML=ic('zoom-in')+' 放大图';zoom.setAttribute('aria-pressed','false');tip.replaceWith(zoom);const toggle=()=>{const on=fs.classList.toggle('zoom');zoom.innerHTML=ic(on?'zoom-out':'zoom-in')+(on?' 返回全图':' 放大图');zoom.setAttribute('aria-pressed',String(on));if(!on){fs.style.maxHeight='';fs.scrollTop=0}focus()};fs.onclick=toggle;zoom.onclick=toggle;window.addEventListener('resize',focus);window.addEventListener('load',()=>requestAnimationFrame(()=>{const params=new URLSearchParams(location.search);if((params.has('sim')||params.has('zoom'))&&!(window.__H??location.hash)&&box===$('.sim')){const section=box.closest('.sec,.card');if(window.lessonNav.layout==='deck')window.goCard($$('.card').indexOf(section)+1);else section.scrollIntoView({block:'start',behavior:'instant'})}focus()}));window.addEventListener('lesson:navigate',()=>requestAnimationFrame(focus));
   const log=$('.log',box),narr=$('.narr',box),radios=$$('input[type=radio]',box),spd=$('input[type=range]',box),play=$('[data-a=play]',box);
-  let i=0,timer=null;const sel=()=>{const r=radios.find(r=>r.checked);return r?+r.value:-1};const steps=()=>sel()>=0?AL[sel()].steps:spec.steps;
+  let i=0,timer=null,predicted=!spec.predict;const prediction=document.createElement('div');if(spec.predict){prediction.className='prediction callout';prediction.innerHTML='<p>先预测：'+esc(spec.predict)+'</p><label>你的判断<textarea rows="2"></textarea></label><button class="btn sm" data-a="predict">提交预测，再看过程</button>';box.prepend(prediction)};const sel=()=>{const r=radios.find(r=>r.checked);return r?+r.value:-1};const steps=()=>sel()>=0?AL[sel()].steps:spec.steps;
   const hint=spec.note?esc(spec.note)+'　点「下一步」开始。':'点「下一步」开始。';const reset=()=>{i=0;log.innerHTML='';narr.innerHTML=hint;svg._set(null,null);stop()};
-  const stop=()=>{clearTimeout(timer);timer=null;play.textContent='▶ 自动'};
+  const stop=()=>{clearTimeout(timer);timer=null;play.innerHTML=ic('play')+' 自动'};
   const step=()=>{const S=steps();if(i>=S.length){narr.textContent='流程结束。点「重置」再走一遍。';stop();return false}
-    const s=S[i++];svg._set(s.act,s.edge);if(s.msg){const d=document.createElement('div');d.className='msg '+s.msg.r;
+    const s=S[i++];svg._set(s.act,s.edge);focus();if(s.msg){const d=document.createElement('div');d.className='msg '+s.msg.r;
       d.innerHTML=`<b>${esc(s.msg.n||({user:'用户',asst:'模型',tool:'工具结果',err:'出错',sys:'系统提示词'}[s.msg.r]))}</b>${esc(s.msg.t)}`;log.appendChild(d);log.scrollTop=1e9}
     narr.innerHTML=`<b>第 ${i}/${S.length} 步</b>　${esc(s.say)}`;return true};
   const loop=()=>{if(step())timer=setTimeout(loop,+spd.value);else stop()};
-  box.onclick=e=>{const a=e.target.dataset.a;if(a==='step'){stop();step()}if(a==='reset')reset();if(a==='play'){if(timer)stop();else{play.textContent='❚❚ 暂停';loop()}}};
+  box.onclick=e=>{const a=e.target.closest('button')?.dataset.a;if(a==='predict'){predicted=true;prediction.hidden=true;step()}if(a==='step'){stop();if(predicted)step();else prediction.querySelector('textarea').focus()}if(a==='reset')reset();if(a==='play'){if(!predicted){prediction.querySelector('textarea').focus();return}if(timer)stop();else{play.innerHTML=ic('pause')+' 暂停';loop()}}};
   narr.innerHTML=hint;radios.forEach(r=>r.onchange=reset);
-  const P=new URLSearchParams(location.search);if(P.get('alt')&&radios[+P.get('alt')]){radios[+P.get('alt')].checked=true}for(let n=+P.get('sim')||0;n>0;n--)step(); /* 自查用：?sim=5&alt=1 */
+  const P=new URLSearchParams(location.search);if(P.get('alt')&&radios[+P.get('alt')]){radios[+P.get('alt')].checked=true}for(let n=+P.get('sim')||0;n>0;n--)step();if(P.get('sim')){predicted=true;prediction.hidden=true}if(P.get('zoom')){fs.classList.add('zoom');zoom.setAttribute('aria-pressed','true');zoom.innerHTML=ic('zoom-out')+' 返回全图'} /* 自查用：?sim=5&alt=1&zoom=1 */
 });
 
 /* ---------- bars：横向条形图 ----------
  data-bars = {unit, items:[{l,v,c?:blue|amber|green|red,note?}], caption?}  数字必须来自原文 */
-$$('.bars').forEach(box=>{const B=JSON.parse(box.dataset.bars),mx=Math.max(...B.items.filter(i=>i.v!=null).map(i=>i.v));
-  box.innerHTML=B.items.map(i=>`<div class="bar ${i.c||''}"><span class="bl">${esc(i.l)}</span>${i.v==null?`<span class="bmiss">${esc(i.miss||'原文未给数字')}</span>`:`<span class="bt"><i style="width:${(i.v/mx*100).toFixed(1)}%"></i></span><span class="bv">${esc(i.v)}${esc(B.unit||'')}</span>`}${i.note?`<span class="bn">${esc(i.note)}</span>`:''}</div>`).join('')+(B.caption?`<div class="bc">${esc(B.caption)}</div>`:'')});
+component('.bars',box=>{const B=data(box,'bars'),mx=Math.max(1,...B.items.filter(i=>i.v!=null).map(i=>i.v));
+  box.innerHTML=B.items.map(i=>`<div class="bar ${i.c||''}"><span class="bl">${esc(i.l)}</span>${i.v==null?`<span class="bmiss">${esc(i.miss||'原文未给数字')}</span>`:`<span class="bt"><i style="width:${(i.v/(B.axis==='independent'?Math.max(1,i.v):mx)*100).toFixed(1)}%"></i></span><span class="bv">${esc(i.v)}${esc(i.unit||B.unit||'')}</span>`}${i.note?`<span class="bn">${esc(i.note)}</span>`:''}</div>`).join('')+(B.caption?`<div class="bc">${esc(B.caption)}</div>`:'')});
 
 /* ---------- quiz：页内小测 ----------
  data-quiz = [{q,opts:[...],a:正确下标,why,back:答错时回到第几张卡片}] */
-$$('.quiz').forEach(box=>{
-  const Q=JSON.parse(box.dataset.quiz);let k=0,score=0;const done=new Set();
-  const render=()=>{const q=Q[k];box.innerHTML=`<div class="qn">第 ${k+1} / ${Q.length} 题　·　已答对 ${score}</div><div class="qt">${esc(q.q)}</div>
-    ${q.opts.map((o,j)=>`<button class="opt" data-j="${j}">${String.fromCharCode(65+j)}. ${esc(o)}</button>`).join('')}
-    <div class="fb"></div><div class="nav"><button class="btn sm" data-n="-1" ${k?'':'disabled'}>上一题</button><button class="btn sm main" data-n="1" ${k<Q.length-1?'':'disabled'}>下一题</button></div>`};
-  box.onclick=e=>{const t=e.target;if(t.dataset.n){k+=+t.dataset.n;render();return}
-    if(t.dataset.j===undefined||done.has(k))return;const q=Q[k],j=+t.dataset.j,fb=$('.fb',box);done.add(k);
-    $$('.opt',box)[q.a].classList.add('ok');
-    if(j===q.a){score++;fb.innerHTML='✓ 对。'+esc(q.why)}else{t.classList.add('no');fb.innerHTML='✗ 不对。'+esc(q.why)+(q.back?` <a onclick="goCard(${q.back})">回到第 ${q.back} 张再看看</a>`:'')}
-    $('.qn',box).textContent=`第 ${k+1} / ${Q.length} 题　·　已答对 ${score}`};
+component('.quiz,.checkpoint',box=>{
+  const checkpoint=box.classList.contains('checkpoint');box.classList.add('quiz');const raw=data(box,checkpoint?'checkpoint':'quiz'),Q=Array.isArray(raw)?raw:[raw],P=new URLSearchParams(checkpoint?'':location.search);
+  let k=Math.max(0,Math.min(Q.length-1,(parseInt(P.get('q'))||1)-1));
+  const answers=Q.map(()=>({first:null,selected:null,retries:0}));
+  const score=()=>answers.filter((s,i)=>s.first===Q[i].a).length;
+  const complete=()=>answers.every(s=>s.selected!==null);
+  const reviewButton=i=>{
+    const target=window.lessonNav.layout==='deck'?$$('.card')[Q[i].back-1]:document.getElementById('s'+Q[i].back);
+    const title=target.dataset.toc||$('h2,h1,h3',target)?.textContent||'相关内容';
+    return `<button class="btn sm" data-review="${i}">回看：${esc(title)}</button>`;
+  };
+  function summary(){
+    const wrong=answers.map((s,i)=>s.first!==Q[i].a?i:-1).filter(i=>i>=0);
+    const recovered=wrong.filter(i=>answers[i].selected===Q[i].a).length;
+    box.innerHTML=`<div class="qt">小测总结</div><p>首次得分：${score()} / ${Q.length}。重试答对：${recovered} 题。</p>
+      <div>${wrong.length?wrong.map(i=>`<p>第 ${i+1} 题：${esc(Q[i].q)} ${reviewButton(i)} <button class="btn sm" data-question="${i}">回到此题</button></p>`).join(''):'没有首次错题。'}</div>
+      <p>用自己的话复述这页的核心机制，再举一个新场景。</p><label>你的复述<textarea class="retelling" rows="3"></textarea></label><button class="btn sm" data-copy-result="1">${ic("copy")} 复制学习结果 JSON</button><button class="btn sm" data-question="0">查看作答</button>`;
+  }
+  function render(){const q=Q[k],s=answers[k];
+    box.innerHTML=`<div class="qn">第 ${k+1} / ${Q.length} 题 ${checkpoint?'· 不计分':'· 首次答对 '+score()}</div><div class="qt">${esc(q.q)}</div>
+      ${q.opts.map((o,j)=>`<button class="opt ${s.selected===null?'':j===s.selected?(j===q.a?'ok':'no'):''}" data-j="${j}" aria-pressed="${j===s.selected}">${String.fromCharCode(65+j)}. ${esc(o)}</button>`).join('')}
+      <div class="fb" aria-live="polite">${s.selected===null?'':s.selected===q.a?ic('check')+' 对。'+esc(q.why):ic('x')+' 不对。先回去看看，或再试一次。'}
+      ${s.selected!==null&&s.selected!==q.a?reviewButton(k)+' <button class="btn sm" data-retry="1">再试一次</button>':''}</div>
+      <div class="nav"><button class="btn sm" data-n="-1" ${k?'':'disabled'}>上一题</button>
+      <button class="btn sm main" data-n="1" ${s.selected===null?'disabled':''}>${checkpoint?'完成检查':k===Q.length-1?'查看总结':'下一题'}</button></div>`;
+  }
+  box.onclick=e=>{const t=e.target.closest('button');if(!t)return;
+    if(t.dataset.review!==undefined){const i=+t.dataset.review;window.lessonNav.go(Q[i].back);
+      let ret=$('#quiz-return');if(!ret){ret=document.createElement('button');ret.id='quiz-return';ret.className='btn sm';document.body.appendChild(ret)}
+      ret.textContent='回到小测';ret.onclick=()=>{window.lessonNav.returnTo(box);ret.remove()};return;
+    }
+    if(t.dataset.copyResult!==undefined){const result={path:location.pathname,firstScore:score(),total:Q.length,answers:answers.map((s,i)=>({question:i+1,first:s.first,selected:s.selected,retries:s.retries,wrong:s.first!==Q[i].a,review:'#s'+Q[i].back})),retelling:$('.retelling',box).value};window.lessonCopy(JSON.stringify(result,null,2),t);return}
+    if(t.dataset.question!==undefined){k=+t.dataset.question;render();return}
+    if(t.dataset.retry){answers[k].selected=null;answers[k].retries++;render();return}
+    if(t.dataset.n){if(checkpoint&&+t.dataset.n===1){box.querySelector('.nav').hidden=true;return}if(k===Q.length-1&&+t.dataset.n===1){if(complete())summary();else{k=answers.findIndex(s=>s.selected===null);render()}return}k+=+t.dataset.n;render();return}
+    if(t.dataset.j===undefined||answers[k].selected!==null)return;
+    const j=+t.dataset.j;answers[k].selected=j;if(answers[k].first===null)answers[k].first=j;render();const nv=$('.nav',box);nv&&nv.scrollIntoView&&nv.scrollIntoView({block:'nearest'});
+  };
   render();
-  const pk=new URLSearchParams(location.search).get('pick');if(pk!==null)$$('.opt',box)[+pk].click(); /* 自查用：?pick=0 */
+  const pk=P.get('pick'),pick=pk==='wrong'?Q[k].opts.findIndex((_,i)=>i!==Q[k].a):pk!==null&&/^\d+$/.test(pk)?+pk:-1;
+  if(pick>=0&&$$('.opt',box)[pick])$$('.opt',box)[pick].click();
+
 });
 
-go(Math.max(0,(parseInt(location.hash.slice(1))||1)-1));
 })();
-/* ---------- 学完了：点一下记为已学完（存在本机浏览器） ---------- */
+</script><script>/* End-of-build readiness marker, used by the screenshot harness. */
+document.querySelector('.theme-toggle').onclick=window.__tt;
+window.__lessonReady=true;
+</script><script>/* ---------- 学完了：点一下记为已学完（存在本机浏览器） ---------- */
 (function(){if(window.__finish)return;window.__finish=1;
 if(!document.querySelector('.deck'))return;
 const st=document.createElement('style');st.textContent=`.fin-btn{position:fixed;right:16px;bottom:76px;z-index:50;padding:10px 16px;border-radius:999px;border:0;background:#16a34a;color:#fff;font:600 15px system-ui;box-shadow:0 4px 14px rgba(0,0,0,.18);cursor:pointer}.fin-btn.done{background:#e5e7eb;color:#166534}`;document.head.appendChild(st);

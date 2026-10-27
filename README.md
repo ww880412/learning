@@ -35,6 +35,15 @@ node build.mjs
 
 首页「今日」的每日汇总行（A/B/C 同一行）始终显示最新一天。标「今天」只在这一天等于浏览者的北京时间今天时出现（`?today=YYYY-MM-DD` 可自查）；否则只标日期，例如「10/24」。
 
+## 公开页标准（王玮 2026-10-26 定，所有文章统一，以后不再逐篇问）
+
+- **重点是内容，不是布局。** 验收看信息有没有丢：要点、数字、表格、代码、原图都要在；布局问题记下来，不卡上线。
+- **公开页**只放三样：讲解、不超过 60 字并注明出处的短引用、原文链接。
+- **原图、原表都放公开页**，按出现顺序标「原图 N」「原表 N」，写出处，并链接到原文对应的章节（或课件页、视频时间点）。表格逐格照原文。
+- **原文全文只进精读版**，精读版用 staticrypt 加密后再发布（`npx staticrypt <file> -p <精读密码> --short --remember 30`）。明文放 `_private/`（不发布）。**密码不写进仓库、文档、提交说明或日志。**
+- **课程类**先对照官方材料（课件、讲义、作业、课程日历）；**文章类**只讲原文说了的东西。自己的推论标「补充」，没核实的标「未确认」。
+- **学习页只用 xuexi-template 生成**（`/workspace/skills-src/xuexi-template/build.sh`，只写 `lesson.html` 和 `terms.txt`，不手写 HTML/CSS/JS）。公开页用「图文长读」；讲代码的部分和精读版用「左右对照」。旧的翻卡片版只作历史，不再新做。
+
 ## 加一篇学习页
 1. 用 `/workspace/skills-src/xuexi-template/build.sh` 做好学习页，放到对应栏目目录（公开课放 `courses/<课程>/`，其他一篇一个目录）。
 2. 在 `data/items.json` 的 `items` 里加一条：`id, column, group(公开课填课程 id), order, label, title, href, preview, status(进行中/已学/待小测), start(YYYY-MM-DD), cards, note, source`。新课程还要在 `groups` 里加一条。

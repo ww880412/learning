@@ -1,380 +1,559 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<script>(function(){var s=localStorage.getItem("theme");if(s?s==="dark":matchMedia("(prefers-color-scheme: dark)").matches)document.documentElement.classList.add("dark")})()</script>
+<!DOCTYPE html><html lang="zh-CN" class="layout-article" data-layout="article"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<script>(function(){var v;try{v=localStorage.getItem('site-theme')}catch(e){}document.documentElement.dataset.theme=/^[ABC]$/.test(v||'')?v:'C'})();
+(function(){var k='theme',s=localStorage.getItem(k);if(s?s==='dark':matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark');
+window.__tt=function(){var f=function(){var d=document.documentElement.classList.toggle('dark');localStorage.setItem(k,d?'dark':'light')};if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.startViewTransition(f);else f()}})();</script>
 <title>EECS 498 AASE · L01</title><style>
-/* 学习搭子 固定设计系统 — 不要在课程里改这个文件。只改 lesson.html 的内容。 */
-:root{
-  --paper:#F6F6F7; --sheet:#FFFFFF; --ink:#16202C; --ink2:#4A5868; --hair:#E2E2E3;
-  --blue:#2550D9;  --blue-soft:#E3EAFD;   /* 主角：当前步骤 / 重点 */
-  --amber:#C77A00; --amber-soft:#FBEFD9; /* 数据 / 消息 */
-  --green:#16875A; --green-soft:#DDF3E9; /* 成功 / 工具结果 */
-  --red:#C8372D;   --red-soft:#FBE3E1;   /* 出错 */
-  --r-lg:12px; --r-sm:10px;
-  --font:"PingFang SC","Noto Sans CJK SC","Source Han Sans SC","Microsoft YaHei",system-ui,sans-serif;
-  --mono:"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;
-}
-*{box-sizing:border-box}
-html,body{margin:0;height:100%;background:var(--paper);color:var(--ink);font:17px/1.65 var(--font);-webkit-font-smoothing:antialiased}
-.top{position:fixed;inset:0 0 auto 0;height:56px;display:flex;align-items:center;gap:16px;padding:0 28px;z-index:5}
-.top .course{font-weight:700;font-size:15px}
-.top .track{flex:1;height:6px;background:var(--hair);border-radius:99px;overflow:hidden}
-.top .track i{display:block;height:100%;width:0;background:var(--blue);transition:width .35s ease}
-.top .count{font:600 14px var(--mono);color:var(--ink2);min-width:60px;text-align:right}
-.deck{position:fixed;inset:56px 0 76px 0;display:grid;place-items:center;padding:0 24px}
-.card{display:none;width:min(1120px,100%);height:100%;max-height:640px;background:var(--sheet);border-radius:var(--r-lg);
-  box-shadow:0 1px 0 var(--hair),0 18px 40px -24px rgba(22,32,44,.25);overflow:hidden}
-.card.on{display:grid;grid-template-columns:1.45fr 1fr}
-.card.full.on{grid-template-columns:1fr}
-.stage{background:var(--paper);margin:14px 0 14px 14px;border-radius:14px;display:grid;place-items:center;padding:18px;overflow:hidden;position:relative}
-.card.full .stage{margin:14px}
-.stage svg{width:100%;height:100%;max-height:560px}
-.say{padding:40px 40px 32px;display:flex;flex-direction:column;justify-content:center;gap:14px;overflow:auto}
-.say .kicker{font-size:14px;color:var(--blue);font-weight:700}
-.say h2{margin:0;font-size:32px;line-height:1.25;letter-spacing:.01em}
-.say p{margin:0;color:var(--ink2)}
-.say p b{color:var(--ink)}
-.src{margin-top:auto;font-size:13px;color:var(--ink2);border-top:1px solid var(--hair);padding-top:12px}
-.src.extra::before{content:"补充";background:var(--amber-soft);color:var(--amber);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
-.src.official::before{content:"官方";background:var(--green-soft);color:var(--green);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
-code{font:14px var(--mono);background:var(--blue-soft);color:var(--blue);padding:1px 6px;border-radius:6px}
-pre{margin:0;font:13.5px/1.6 var(--mono);background:#101826;color:#DCE3EE;border-radius:12px;padding:16px 18px;overflow:auto;width:100%}
-pre .k{color:#8FB1FF}pre .s{color:#9BE0B4}pre .c{color:#71819A}pre .f{color:#FFC86B}pre .hl{background:rgba(143,177,255,.16);display:block;margin:0 -18px;padding:0 18px}
-.bottom{position:fixed;inset:auto 0 0 0;height:76px;display:flex;align-items:center;justify-content:center;gap:14px}
-.btn{font:600 15px var(--font);border:0;border-radius:99px;padding:11px 22px;cursor:pointer;background:var(--sheet);color:var(--ink);box-shadow:0 0 0 1px var(--hair)}
-.btn:hover{box-shadow:0 0 0 2px var(--blue)}
-.btn.main{background:var(--blue);color:#fff;box-shadow:none}
-.btn:disabled{opacity:.35;cursor:default;box-shadow:0 0 0 1px var(--hair)}
-.btn:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
-.btn.sm{padding:7px 14px;font-size:14px}
-/* ---- 图元（flow 组件生成） ---- */
-.fl-node rect{fill:var(--sheet);stroke:var(--hair);stroke-width:2;transition:all .3s}
-.fl-node text{font:600 17px var(--font);fill:var(--ink)}
-.fl-node .sub{font:400 13px var(--font);fill:var(--ink2)}
-.fl-node.blue rect{stroke:var(--blue)} .fl-node.amber rect{stroke:var(--amber)} .fl-node.green rect{stroke:var(--green)} .fl-node.red rect{stroke:var(--red)}
-.fl-node.act rect{fill:var(--blue-soft);stroke:var(--blue);stroke-width:3}
-.fl-node.dim{opacity:.35}
-.fl-edge{fill:none;stroke:#AEB8C6;stroke-width:2.2;transition:all .3s}
-.fl-edge.act{stroke:var(--blue);stroke-width:3.5;stroke-dasharray:8 6;animation:dash .8s linear infinite}
-.fl-elab{font:500 13px var(--font);fill:var(--ink2)}
-.fl-elab.act{fill:var(--blue);font-weight:700}
-@keyframes dash{to{stroke-dashoffset:-28}}
-/* ---- 模拟器 ---- */
-.sim{display:grid;grid-template-rows:auto 1fr auto;gap:10px;width:100%;height:100%}
-.sim .ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.sim .ctl label{font-size:13px;color:var(--ink2);display:flex;align-items:center;gap:6px}
-.sim .body{display:grid;grid-template-columns:1.1fr 1fr;gap:12px;min-height:0}
-.sim .log{background:var(--sheet);border-radius:12px;padding:10px;overflow:auto;font:13px/1.5 var(--mono)}
-.sim .msg{border-left:4px solid var(--hair);padding:6px 10px;margin:0 0 8px;border-radius:6px;background:var(--paper);white-space:pre-wrap;word-break:break-word;animation:pop .25s ease}
-.sim .msg b{font-family:var(--font);display:block;font-size:12px;color:var(--ink2)}
-.msg.user{border-color:var(--blue)} .msg.asst{border-color:var(--amber)} .msg.tool{border-color:var(--green)} .msg.err{border-color:var(--red);background:var(--red-soft)} .msg.sys{border-color:var(--ink2)}
-.sim .narr{background:var(--blue-soft);color:var(--ink);border-radius:12px;padding:10px 14px;font-size:15px;min-height:48px}
-@keyframes pop{from{opacity:0;transform:translateY(6px)}}
-/* ---- 小测 ---- */
-.quiz{width:100%;max-width:760px;display:flex;flex-direction:column;gap:12px}
-.quiz .qn{font:600 13px var(--mono);color:var(--ink2)}
-.quiz .qt{font-size:22px;font-weight:700;line-height:1.4}
-.quiz .opt{display:block;width:100%;text-align:left;font:16px var(--font);background:var(--sheet);border:2px solid var(--hair);border-radius:12px;padding:12px 16px;cursor:pointer;color:var(--ink)}
-.quiz .opt:hover{border-color:var(--blue)}
-.quiz .opt.ok{border-color:var(--green);background:var(--green-soft)} .quiz .opt.no{border-color:var(--red);background:var(--red-soft)}
-.quiz .fb{min-height:52px;font-size:15px;color:var(--ink2)}
-.quiz .fb a{color:var(--blue);font-weight:700;cursor:pointer}
-.quiz .nav{display:flex;gap:8px;align-items:center}
-@media (max-width:820px){
-  .card.full.on{grid-template-rows:1fr}.card.full .stage{overflow:auto;place-items:start center}
-  .card.on{grid-template-columns:1fr;grid-template-rows:minmax(220px,48%) 1fr}
-  .stage{margin:10px 10px 0}.say{padding:18px 20px}.say h2{font-size:24px}
-  .sim .body{grid-template-columns:1fr}.top{padding:0 14px}.top .course{display:none}
-}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-/* ---- 展开细节 ---- */
-details.more{border-top:1px solid var(--hair);padding-top:10px;font-size:15px;color:var(--ink2)}
-details.more summary{cursor:pointer;font-weight:700;color:var(--blue);list-style:none}
-details.more summary::-webkit-details-marker{display:none}
-details.more summary::before{content:"＋ 展开细节";}
-details.more[open] summary::before{content:"－ 收起细节";}
-details.more>*:not(summary){margin:8px 0 0}
-details.more ul{padding-left:18px}details.more li{margin:4px 0}
-details.more table{border-collapse:collapse;width:100%;font-size:14px}
-details.more td,details.more th{border-bottom:1px solid var(--hair);padding:5px 6px;text-align:left;vertical-align:top}
-/* ---- 对话列表（状态追踪）---- */
-.stack{width:100%;display:flex;flex-direction:column;gap:6px;font:13px/1.45 var(--mono)}
-.stack .row{display:grid;grid-template-columns:28px 92px 1fr;gap:8px;align-items:start;background:var(--sheet);border-radius:8px;padding:7px 10px;border-left:4px solid var(--hair)}
-.stack .row .i{color:var(--ink2)}.stack .row .r{font-weight:700}
-.stack .row.developer{border-color:var(--ink2)}.stack .row.user{border-color:var(--blue)}.stack .row.assistant{border-color:var(--amber)}.stack .row.result{border-color:var(--green)}
-.stack .row.new{background:var(--blue-soft)}.stack .row.bad{border-color:var(--red);background:var(--red-soft)}
-.stack .row .t{white-space:pre-wrap;word-break:break-word}
-/* ---- 对比/误区 ---- */
-.pairs{width:100%;display:grid;gap:10px}
-.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.pair>div{background:var(--sheet);border-radius:12px;padding:12px 14px;font-size:15px}
-.pair .no{border-left:5px solid var(--red)}.pair .yes{border-left:5px solid var(--green)}
-.pair b{display:block;font-size:12px;color:var(--ink2);margin-bottom:4px}
-.say .more code{font-size:13px}
-@media (max-width:820px){.pair{grid-template-columns:1fr}.stack .row{grid-template-columns:22px 70px 1fr}}
-.pair .a{border-left:5px solid var(--blue)}.pair .b{border-left:5px solid var(--amber)}
-/* ===== v3：填满面板、原文标签、要点、条形图、分支 ===== */
-.stage{padding:10px}
-.stage svg.flow{width:100%;height:100%;max-height:none}
-.say p{font-size:17px}
-p.key{background:var(--blue-soft);color:var(--ink);border-radius:12px;padding:10px 14px;font-size:16px}
-p.key::before{content:"关键 ";font-weight:800;color:var(--blue)}
-.src.article::before{content:"原文";background:var(--blue-soft);color:var(--blue);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
-.stage>.stack{height:100%;justify-content:center;font-size:14.5px}
-.stage>.stack .row{padding:11px 12px;flex:0 1 auto}
-.stack .head{font:700 13px var(--font);color:var(--ink2);margin:8px 0 0}
-.stage>.pairs{height:100%;grid-auto-rows:minmax(0,1fr);align-content:stretch}
-.pair>div{font-size:16px;display:flex;flex-direction:column;justify-content:center}
-.bars{width:100%;display:flex;flex-direction:column;gap:16px;justify-content:center;height:100%;padding:0 10px}
-.bar{display:grid;grid-template-columns:150px 1fr 76px;gap:12px;align-items:center;font-size:15px}
-.bar .bl{font-weight:700;text-align:right}
-.bar .bt{height:30px;background:var(--sheet);border-radius:8px;overflow:hidden}
-.bar .bt i{display:block;height:100%;background:var(--ink2);border-radius:8px}
-.bar.blue .bt i{background:var(--blue)}.bar.amber .bt i{background:var(--amber)}.bar.green .bt i{background:var(--green)}.bar.red .bt i{background:var(--red)}
-.bar .bv{font:700 15px var(--mono)}
-.bar .bn{grid-column:2/4;font-size:13px;color:var(--ink2);margin-top:-8px}
-.bars .bc{font-size:13px;color:var(--ink2);text-align:center}
-.sim .branches{gap:14px;background:var(--sheet);border-radius:10px;padding:6px 10px}
-.sim .branches label{font-size:13.5px;color:var(--ink)}
-@media (max-width:820px){.bar{grid-template-columns:90px 1fr 60px}}
-.sim{grid-template-rows:auto auto 1fr auto}
-.sim.wide .body{grid-template-columns:1fr;grid-template-rows:minmax(0,1.1fr) minmax(0,1fr)}
-.sim:not(:has(.branches)){grid-template-rows:auto 1fr auto}
-.bar .bt.none{background:repeating-linear-gradient(45deg,var(--sheet) 0 8px,var(--hair) 8px 10px)}
-.say h2{font-size:28px;line-height:1.3}
-.sim .body{overflow:hidden}
-.sim .body>svg{min-height:0;height:100%;width:100%}
-.sim .narr{min-height:0}
-.stage>.stack{font-size:15.5px;gap:8px}
-.stage>.stack .row{padding:13px 14px}
-.stack .row .t{font-family:var(--font)}
-.stage:has(>.sim){place-items:stretch}
-.sim{min-height:0;height:100%;overflow:hidden}
-.sim.wide .body{grid-template-rows:minmax(0,55%) minmax(0,45%)}
-/* 讲解条放在图上方，永远可见 */
-.sim{grid-template-rows:auto auto auto minmax(0,1fr)}
-.sim:not(:has(.branches)){grid-template-rows:auto auto minmax(0,1fr)}
-.sim .ctl{order:0}.sim .branches{order:1}.sim .narr{order:2}.sim .body{order:3;min-height:0}
-/* ===== v4 ===== */
-.fl-node .sub{font-size:13.5px;fill:#3E4B5B}
-.fl-elab{font-size:13px;fill:#3E4B5B}
-.fl-edge.red{stroke:var(--red)}.fl-edge.amber{stroke:var(--amber)}.fl-edge.green{stroke:var(--green)}
-.fl-elab.red{fill:var(--red);font-weight:700}.fl-elab.amber{fill:var(--amber);font-weight:700}.fl-elab.green{fill:var(--green);font-weight:700}
-.stage{margin:10px 0 10px 10px;padding:4px}.card.full .stage{margin:0 10px 10px}
-.bar .bt i{background:#B8C2CF}
-.bar .bmiss{grid-column:2/4;color:var(--ink2);font-size:14px;font-style:italic}
-.sim .btn{background:transparent;box-shadow:0 0 0 1.5px var(--blue);color:var(--blue)}
-.sim .btn:hover{background:var(--blue-soft)}
-.say{justify-content:center}
-.src{margin-top:6px}
-.top .count{font-size:16px;color:var(--ink);font-weight:700}
-.top .track{height:6px}
-.card.full.on{grid-template-rows:auto minmax(0,1fr)}
-.head-full{padding:18px 26px 8px;display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
-.head-full .kicker{font-size:14px;color:var(--blue);font-weight:700}
-.head-full h2{margin:0;font-size:24px;line-height:1.3}
-.sim.wide .body{grid-template-rows:minmax(0,64%) minmax(0,36%)}
-@media (max-width:820px){.head-full{padding:12px 14px 6px}.head-full h2{font-size:19px}}
-.say{justify-content:safe center}
-@media (max-width:820px){.bars{gap:8px}.bar{font-size:13px;grid-template-columns:84px 1fr 56px}.bar .bt{height:20px}.bar .bn{font-size:12px;margin-top:-4px}.bars .bc{font-size:12px}
- .sim .ctl .btn{padding:5px 10px}.sim .branches{flex-direction:column;align-items:flex-start;gap:2px}}
+/* Site tokens copied verbatim, in cascade order, from ref/site-assets/site.css. */
+:root{--paper:#f6f7f9;--sheet:#fff;--card:#fff;--ink:#111827;--ink2:#4b5563;--meta:#6b7280;--hair:#e5e7eb;--hair2:#eef0f3;--blue:#2563eb;--blue-soft:#eff4ff;--red:#dc2626;--red-soft:#fef2f2;--green:#16a34a;--green-soft:#f0fdf4;--amber:#b45309;--amber-soft:#fffbeb;--purple:#7c3aed;--purple-soft:#f5f3ff;--font:system-ui,-apple-system,"PingFang SC","Noto Sans SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;--serif:var(--font);--mono:ui-monospace,SFMono-Regular,Menlo,monospace;--r-lg:12px;--r-sm:8px;--grad:none;color-scheme:light}
+html.dark{--paper:#0f1115;--sheet:#171a21;--card:#171a21;--ink:#e5e7eb;--ink2:#b6bcc6;--meta:#9ca3af;--hair:#2a2f3a;--hair2:#20242c;--blue:#7aa2ff;--blue-soft:rgba(122,162,255,.12);--red:#f87171;--red-soft:rgba(248,113,113,.12);--green:#4ade80;--green-soft:rgba(74,222,128,.12);--amber:#fbbf24;--amber-soft:rgba(251,191,36,.12);--purple:#c4b5fd;--purple-soft:rgba(196,181,253,.14);color-scheme:dark}
+[data-theme=B]{--paper:#fbfbfc;--sheet:#fff;--card:#fff;--ink:#16171a;--ink2:#4a4c55;--meta:#6e707a;--hair:#ececf0;--hair2:#f2f2f5;--blue:#5e6ad2;--blue-soft:#eef0fb;--red:#d4483b;--red-soft:#fdf0ee;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif}
+html.dark[data-theme=B]{--paper:#0e0f12;--sheet:#16171b;--card:#16171b;--ink:#e8e9ed;--ink2:#b3b5bd;--meta:#8b8d97;--hair:#26272d;--hair2:#1f2025;--blue:#8b93f0;--blue-soft:rgba(139,147,240,.14);--red:#f0776b}
+[data-theme=A]{--paper:#f7f4ee;--sheet:#fffdf9;--card:#fffdf9;--ink:#2b2722;--ink2:#5f574e;--meta:#8a8076;--hair:#e6dfd3;--hair2:#efe8dc;--blue:#b4532a;--blue-soft:#f6e1d6;--red:#a2461f;--red-soft:#f6e1d6;--green:#5f7a3a;--green-soft:#e7ecd9;--purple:#7a5a8c;--purple-soft:#eee4f1;--serif:"Noto Serif CJK SC","Noto Serif SC","Songti SC",serif;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif}
+html.dark[data-theme=A]{--paper:#1b1814;--sheet:#23201b;--card:#23201b;--ink:#ede6da;--ink2:#c7bdaf;--meta:#9b9184;--hair:#3a342c;--hair2:#2d2923;--blue:#e08a5f;--blue-soft:rgba(224,138,95,.15);--red:#e8916a;--red-soft:rgba(232,145,106,.15)}
+[data-theme=C]{--paper:#f3f5fb;--sheet:#fff;--card:#fff;--ink:#1d2340;--ink2:#5a6185;--meta:#8a90ad;--hair:#e6e9f4;--hair2:#eef0f7;--blue:#3b5bfd;--blue-soft:#e8edff;--red:#d4483b;--red-soft:#ffe6e3;--green:#1f9d5c;--green-soft:#e3f7ec;--amber:#d9771e;--amber-soft:#fff1e0;--purple:#7a4bf5;--purple-soft:#f2eaff;--r-lg:20px;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif;--sh:0 1px 2px rgba(30,40,90,.04),0 8px 24px rgba(30,40,90,.06)}
+html.dark[data-theme=C]{--paper:#0f1222;--sheet:#181c33;--card:#181c33;--ink:#e6e9fb;--ink2:#aab0d0;--meta:#7d84a8;--hair:#272c48;--hair2:#20253f;--blue:#7d93ff;--blue-soft:rgba(125,147,255,.15);--red:#ff8a7d;--red-soft:rgba(255,138,125,.15);--green-soft:rgba(31,157,92,.18);--amber-soft:rgba(217,119,30,.18);--purple-soft:rgba(122,75,245,.2);--sh:0 1px 2px rgba(0,0,0,.3)}
+:root{--acc2:#8b5cf6;--ease:cubic-bezier(.22,1,.36,1)}
+[data-theme=A]{--acc2:#c98a2b}
+html.dark[data-theme=A]{--paper:#181512;--sheet:#211d18;--card:#211d18;--meta:#a89d8f;--hair:#382f26;--acc2:#e3b15c}
+[data-theme=B]{--paper:#fafafb;--blue:#5b5bd6;--blue-soft:#efeffc;--acc2:#a855f7}
+html.dark[data-theme=B]{--paper:#0c0d10;--sheet:#14151a;--card:#14151a;--ink:#ececf1;--ink2:#babcc6;--meta:#9597a3;--hair:#262830;--hair2:#1c1d23;--blue:#9198ff;--blue-soft:rgba(145,152,255,.14);--acc2:#c084fc}
+[data-theme=C]{--acc2:#06b6d4}
+html.dark[data-theme=C]{--meta:#a3a9b8;--acc2:#22d3ee}
+html.dark{--meta:#a1a7b3}
+[data-theme=B]{--paper:#eef1f5;--hair:#dfe4ea;--hair2:#eef1f5;--green:#16a34a}
+html.dark[data-theme=B]{--paper:#0b0d12;--hair:#252a35;--hair2:#1a1e27}
+[data-theme=C]{--blue:#7b5cff;--blue-soft:#f0ecff;--acc2:#ff5e8a}
+html.dark[data-theme=C]{--paper:#0b0b0f;--sheet:#15151c;--card:#15151c;--ink:#f2f2f5;--ink2:#b8b8c6;--meta:#9a9aab;--hair:#26262f;--hair2:#1d1d25;--blue:#a08bff;--blue-soft:rgba(160,139,255,.14)}
+:root{--sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:24px;--sp-6:32px;--fs-xs:12px;--fs-sm:13.5px;--fs-md:15px;--fs-lg:18px;--fs-xl:24px;--fs-2xl:32px;--r-xs:6px;--r-sm:8px;--r-md:10px;--r-lg:12px;--r-xl:18px;--r-pill:999px;--sh-1:0 1px 2px rgba(15,23,42,.06);--sh-2:0 4px 16px -8px rgba(15,23,42,.22);--sh-3:0 14px 30px -12px rgba(15,23,42,.28);--dur-1:120ms;--dur-2:220ms;--dur-3:420ms;--ease:cubic-bezier(.22,1,.36,1);--ease-in-out:cubic-bezier(.65,0,.35,1);--spring:cubic-bezier(.34,1.3,.64,1);--icon-stroke:2}
+:root{--spring:linear(0,.0089,.0346,.0752,.1286,.1927,.2654,.3445,.4278,.5131,.5983,.6812,.7598,.8325,.8981,.9555,1.0042,1.0441,1.0753,1.0982,1.1134,1.1218,1.1243,1.1218,1.1155,1.1062,1.0949,1.0825,1.0697,1.0571,1.0451,1.034,1.0242,1.0157,1.0085,1.0027,.9982,.995,.9928,.9916,.9912,.9914,.9921,.9931,.9943,.9956,.9968,.998,.999,1)}
+html.dark{--sh-1:0 1px 2px rgba(0,0,0,.4);--sh-2:0 4px 16px -8px rgba(0,0,0,.6);--sh-3:0 14px 30px -12px rgba(0,0,0,.7)}
+/* Five reading levels: title / section / subsection / body / note. */
+:root{--reading-width:680px;--toc-width:208px;--rail-width:180px;--reading-gap:28px;--top-height:56px;--body-size:18px;--body-leading:1.8;--finish-space:104px}
+*{box-sizing:border-box}html{scroll-padding-top:72px}html,body{margin:0;background:var(--paper);color:var(--ink);font:var(--body-size)/var(--body-leading) var(--font);-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}a{color:var(--blue);text-underline-offset:3px;overflow-wrap:anywhere}a:hover{text-decoration-thickness:2px}button,input,textarea,select{font:inherit;color:inherit}button,a,summary{touch-action:manipulation}button{cursor:pointer}button:disabled{opacity:.5;cursor:default}:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+h1,h2,h3{color:var(--ink);font-family:var(--serif);line-height:1.35;letter-spacing:-.02em;overflow-wrap:anywhere}h1{font-size:var(--fs-2xl);margin:8px 0 16px}h2{font-size:var(--fs-xl);margin:8px 0 16px}h3{font-size:var(--fs-lg);margin:24px 0 8px}p{margin:0 0 12px}ul,ol{padding-left:24px}li{margin:4px 0}code{font:.88em var(--mono);background:var(--hair2);padding:1px 4px;border-radius:var(--r-xs)}pre{overflow:auto;white-space:pre;tab-size:4;font:14px/1.65 var(--mono);padding:16px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-md);margin:12px 0}pre code{font:inherit;white-space:inherit;background:none;padding:0}
+.i{display:inline-block;vertical-align:middle;flex:none;width:18px;height:18px;stroke-width:2}.btn,button.opt{min-height:44px;border:1px solid var(--hair);border-radius:var(--r-sm);background:var(--sheet);padding:8px 14px;font-size:var(--fs-md);font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:6px}.btn:hover{border-color:var(--blue);background:var(--blue-soft)}.btn.main{background:var(--blue);color:var(--sheet)}.btn.sm{font-size:var(--fs-sm)}textarea{display:block;width:100%;padding:10px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-sm);resize:vertical}
+.top{position:fixed;inset:0 0 auto;height:var(--top-height);z-index:30;display:flex;align-items:center;gap:16px;padding:0 20px;background:var(--paper);border-bottom:1px solid var(--hair)}.top .course{font-size:var(--fs-sm);font-weight:700;max-width:35vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.top .track{flex:1;height:4px;background:var(--hair);border-radius:var(--r-pill);overflow:hidden}.top .track i{display:block;width:0;height:100%;background:var(--blue);transition:width var(--dur-2) var(--ease)}.top .count{font-size:var(--fs-sm);max-width:32vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.toc-toggle{min-width:44px}.top .theme-toggle{font-size:var(--fs-sm);min-height:44px}
+.layout-article .deck,.layout-pair .deck{padding:80px 20px calc(var(--finish-space) + env(safe-area-inset-bottom));max-width:720px;margin:0 auto;min-width:0}.layout-article .sec{position:relative;margin:0 0 32px;padding-top:16px;border-top:1px solid var(--hair);scroll-margin-top:72px;min-width:0}.layout-article .hero{border:0;padding-top:0}.kicker,.meta,.src,.source-anchor,figcaption,caption,.aside{font-size:var(--fs-sm);line-height:1.65}.kicker{display:block;color:var(--blue);font-weight:700}.lede{font-size:var(--fs-lg);font-weight:600}.links{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:var(--fs-sm)}.links a{display:inline-flex;align-items:center;min-height:44px}.src{margin:16px 0 0;padding-top:8px;border-top:1px solid var(--hair);color:var(--ink2)}.source-anchor{display:block;color:var(--ink2);margin-top:6px;overflow-wrap:anywhere}.source-anchor a{min-height:44px;display:inline-flex;align-items:center}.src.extra::before{content:'补充 · ';color:var(--amber)}.src.official::before{content:'官方 · ';color:var(--blue)}.src.article::before{content:'原文 · ';color:var(--blue)}
+.toc{position:fixed;left:max(20px,calc((100vw - 1192px)/2));top:76px;width:var(--toc-width);max-height:calc(100dvh - 180px);overflow:auto;font-size:var(--fs-sm);line-height:1.5;z-index:25}.toc ol{list-style:none;margin:0;padding:0}.toc a{display:flex;gap:8px;align-items:center;min-height:44px;padding:6px 10px;color:var(--ink2);text-decoration:none;border-radius:var(--r-sm)}.toc a[aria-current=true]{background:var(--blue-soft);color:var(--blue);font-weight:700}.toc b{display:block;margin:0 10px 8px}.toc-backdrop{display:none}.tldr,.argmap{padding:16px;background:var(--blue-soft);border-radius:var(--r-lg);margin:16px 0}.tldr a,.argmap a{display:block;min-height:44px;align-content:center}.argmap ol{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 16px;margin:0}.points{padding:12px 16px 12px 36px;background:var(--hair2);border-radius:var(--r-md)}
+figure.orig,figure.redraw,.figure{margin:20px 0;min-width:0}figure img{display:block;max-width:100%;height:auto;border:1px solid var(--hair);border-radius:var(--r-md);cursor:zoom-in;background:var(--sheet)}figcaption{margin-top:8px;color:var(--ink2)}figcaption b{color:var(--ink)}.how{margin-top:6px}.table{margin:20px 0;overflow-x:auto}.table table,table.data{width:100%;border-collapse:collapse;background:var(--sheet);font-size:var(--fs-md)}th,td{border-bottom:1px solid var(--hair);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--hair2)}caption{text-align:left;font-weight:700;padding:8px 0}.table-note{font-size:var(--fs-sm);color:var(--ink2)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;margin:16px 0}.stat{padding:12px 14px;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet)}.stat b{display:block;font-size:var(--fs-xl);line-height:1.35;color:var(--blue);font-variant-numeric:tabular-nums}.stat span{display:block;font-size:var(--fs-sm);color:var(--ink2)}.stat .source-anchor{font-size:var(--fs-xs)}
+blockquote.quote{margin:16px 0;padding:12px 16px;border-left:3px solid var(--blue);background:var(--sheet)}.quote cite{display:block;font-style:normal;font-size:var(--fs-sm);color:var(--ink2)}.callout{padding:12px 16px;margin:16px 0;border-left:3px solid var(--blue);background:var(--blue-soft);border-radius:0 var(--r-sm) var(--r-sm) 0}.callout.limit{border-color:var(--amber);background:var(--amber-soft)}.callout.extra{border:1px dashed var(--meta);background:var(--sheet)}.callout.myth{border-color:var(--amber);background:var(--hair2)}.callout.limit::before{content:'作者的限定 · ';font-weight:700}.aside{padding:12px;border-left:2px solid var(--hair);color:var(--ink2);margin:12px 0}
+.stories,.compare,.roles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}.story,.compare>div,.roles>div{padding:12px;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);font-size:var(--fs-md)}.story b,.roles b{display:block}.story dt{font-weight:700;color:var(--ink2);font-size:var(--fs-sm)}.story dd{margin:0 0 8px}.story p,.story .fix{display:block;margin:8px 0}.steps,.ladder{display:grid;gap:8px;padding:0;list-style:none;counter-reset:step}.steps>li,.ladder>li{padding:10px 14px;background:var(--hair2);border-radius:var(--r-sm);counter-increment:step}.steps>li::before{content:counter(step)'. ';color:var(--blue);font-weight:700}.ladder i{font-style:normal;font-weight:700;margin-right:8px}.matrix{border:1px solid var(--hair);padding:16px;border-radius:var(--r-md)}.matrix .axes{font-size:var(--fs-sm);color:var(--ink2)}.matrix ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));list-style:none;padding:0;gap:1px;background:var(--hair)}.matrix li{margin:0;padding:16px;background:var(--sheet)}.refs{font-size:var(--fs-sm);line-height:1.7}.refs a{display:inline-block;min-height:44px;align-content:center}.thread{border-left:2px solid var(--hair);padding-left:16px}.formula{padding:16px;border:1px solid var(--hair);overflow:auto}.formula math{font-size:var(--fs-xl)}details.more{margin:12px 0;border-top:1px solid var(--hair);font-size:var(--fs-md)}summary{min-height:44px;cursor:pointer;display:flex;align-items:center;gap:8px}summary .i{transition:transform var(--dur-1)}details[open] summary .i{transform:rotate(90deg)}
+/* Shared interactive components. No fixed page/card height. */
+.flow-scroll{max-width:100%;overflow-x:auto;min-width:0;touch-action:pan-x pan-y}.flow-scroll svg.flow{display:block;width:100%;height:auto;min-height:0}.flow-tip{font-size:var(--fs-sm);color:var(--ink2)}.fl-node rect{fill:var(--sheet);stroke:var(--hair);stroke-width:2}.fl-node text{font:600 17px var(--font);fill:var(--ink)}.fl-node .sub{font-size:13px;font-weight:400;fill:var(--ink2)}.fl-node.act rect{stroke:var(--blue);fill:var(--blue-soft);stroke-width:3}.fl-node.blue rect{stroke:var(--blue)}.fl-node.amber rect,.fl-node.red rect{stroke:var(--amber)}.fl-node.green rect{stroke:var(--green)}.fl-edge{fill:none;stroke:var(--meta);stroke-width:2}.fl-edge.act{stroke:var(--blue);stroke-width:3}.fl-elab{font:13px var(--font);fill:var(--ink2)}
+.sim{margin:16px 0;padding:12px;border:1px solid var(--hair);border-radius:var(--r-lg);background:var(--sheet);display:flex;flex-direction:column;gap:12px}.sim .ctl{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.sim .ctl label{min-height:44px;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm)}.sim .ctl input[type=range]{min-width:110px}.sim .body{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}.sim .narr{order:-1;background:var(--blue-soft);padding:10px 12px;border-radius:var(--r-sm);font-size:var(--fs-md)}.sim .log{max-height:240px;overflow:auto;font:var(--fs-sm)/1.6 var(--mono)}.sim .msg{border-left:3px solid var(--hair);padding:8px;margin:6px 0;background:var(--paper);white-space:pre-wrap;overflow-wrap:anywhere}.msg b{display:block;font-family:var(--font)}.sim .msg.err{border-color:var(--amber)}.prediction{order:-2}.component-error{padding:16px;border:1px solid var(--amber);color:var(--amber)}
+.quiz{margin:16px 0;padding:16px;border:1px solid var(--hair);border-radius:var(--r-lg);background:var(--sheet)}.quiz .qn{font-size:var(--fs-sm);color:var(--ink2)}.quiz .qt{font-size:var(--fs-lg);font-weight:700;margin-bottom:12px}.quiz .opt{display:block;width:100%;text-align:left;margin:8px 0;font-weight:400}.quiz .opt.ok{border-color:var(--green);background:var(--green-soft)}.quiz .opt.no{border-color:var(--amber);background:var(--amber-soft)}.quiz .fb{margin:12px 0;font-size:var(--fs-md)}.quiz .nav{display:flex;gap:8px;margin-top:12px}.quiz label{display:block;font-size:var(--fs-sm)}.stack{display:grid;gap:6px;font-size:var(--fs-sm)}.stack .row{display:grid;grid-template-columns:28px 80px minmax(0,1fr);gap:8px;padding:8px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-sm)}.stack .t{overflow-wrap:anywhere;white-space:pre-wrap}.stack .new{background:var(--blue-soft)}.bar{display:grid;grid-template-columns:100px minmax(0,1fr) 80px;gap:8px;margin:8px 0;align-items:center;font-size:var(--fs-sm)}.bar .bt{height:20px;background:var(--hair2);border-radius:var(--r-xs);overflow:hidden}.bar .bt i{display:block;height:100%;background:var(--blue)}.bar .bn,.bar .bmiss{grid-column:2/4}.bars .bc{font-size:var(--fs-sm);color:var(--ink2)}
+/* Paired material stays inside its own container; highlighting never scrolls the page. */
+.pair.codewalk,.pair.read-pair,.pair.material-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start;margin:20px 0;position:relative;min-width:0}.pair-source{position:sticky;top:72px;max-height:calc(100dvh - 160px);overflow:auto;overscroll-behavior:contain;min-width:0;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);padding:12px;scroll-padding:16px}.pair-notes{min-width:0}.pair-notes .step{padding:16px 0 24px;border-top:1px solid var(--hair);scroll-margin-top:84px}.pair-notes .step.is-active{border-color:var(--blue)}.pair-source .source-block{padding:12px 8px;border-left:3px solid transparent}.pair-source .source-block.is-active{background:var(--blue-soft);border-color:var(--blue)}.source-text{overflow-wrap:anywhere}.pair-source pre{border:0;padding:0;margin:8px 0;overflow:visible}.code-line{display:block;min-height:1.65em;white-space:pre;padding-left:48px;position:relative}.code-line::before{content:attr(data-line);position:absolute;left:0;width:36px;text-align:right;color:var(--meta);user-select:none}.code-line.hl{background:var(--blue-soft)}.copy-code{position:static;flex:none;white-space:nowrap}.pair-source .source-anchor{font-size:var(--fs-xs)}
+/* A separate toolbar never shares the scrolling code viewport. */
+.heading-source{font-size:var(--fs-xs);margin:0 0 8px}
+.pair.codewalk{grid-template-columns:minmax(0,60%) minmax(0,1fr)}
+.code-panel{position:sticky;top:72px;display:flex;flex-direction:column;min-width:0;max-height:calc(100dvh - 160px);border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);overflow:hidden}
+.code-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;flex:none;border-bottom:1px solid var(--hair);font-size:var(--fs-xs);color:var(--ink2)}
+.code-panel .pair-source{position:static;max-height:none;min-height:0;flex:1 1 auto;border:0;border-radius:0;box-shadow:none;overflow:auto}
+.code-panel .pair-source pre{width:max-content;min-width:100%}
+dialog.image-dialog{width:calc(100vw - 24px);max-width:none;max-height:92dvh;padding:12px;border:1px solid var(--hair);background:var(--sheet);color:var(--ink);border-radius:var(--r-md);overflow:auto}dialog::backdrop{background:rgba(0,0,0,.75)}.image-dialog img{max-width:none;width:max(100%,min(1400px,180vw));height:auto}.image-dialog .dialog-close{position:sticky;top:0;left:0}.image-open{min-height:44px;border:0;background:transparent;padding:0;display:block;cursor:zoom-in;max-width:100%}.image-open img{max-width:100%}
+/* Only CSS changes the unchanged finish.js button. High specificity beats injected styles. */
+html body .fin-btn{bottom:calc(16px + env(safe-area-inset-bottom));right:16px;min-height:44px;z-index:35}html body #quiz-return{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:35;max-width:45vw}
+@media(min-width:1180px){.layout-article .deck{width:var(--reading-width);max-width:none;padding-left:0;padding-right:0;margin-left:max(260px,calc((100vw - 1192px)/2 + 236px));margin-right:0}.layout-article .sec>.doc-body>figure,.layout-article .sec>.doc-body>.table,.layout-article .sec>.codewalk{width:calc(100% + 120px);margin-left:0}.layout-article .aside{position:absolute;left:calc(100% + 28px);top:24px;width:var(--rail-width);margin:0}.layout-article .aside~figure{width:100%}html.layout-article body .fin-btn{left:max(20px,calc((100vw - 1192px)/2));right:auto;max-width:208px}.layout-pair .deck{max-width:1280px;margin-left:236px;margin-right:20px}.layout-pair .toc{width:188px;left:20px}html.layout-pair body .fin-btn{left:20px;right:auto;max-width:188px}}
+@media(max-width:1179px){.toc{display:none;visibility:hidden;left:0;top:var(--top-height);width:min(360px,90vw);max-height:calc(100dvh - 72px);background:var(--sheet);padding:16px;border-right:1px solid var(--hair);border-bottom:1px solid var(--hair)}html.toc-open .toc{display:block;visibility:visible}html.toc-open .toc-backdrop{display:block;position:fixed;inset:var(--top-height) 0 0;background:rgba(0,0,0,.3);z-index:24}}
+@media(max-width:820px){:root{--body-size:17px}.layout-article .deck,.layout-pair .deck{padding-left:18px;padding-right:18px}.top{gap:8px;padding:0 12px}.top .course{display:none}.top .count{max-width:44vw}.top .track{min-width:24px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stories,.compare,.roles{grid-template-columns:minmax(0,1fr)}.argmap ol{grid-template-columns:minmax(0,1fr)}table.data thead,.table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}table.data,table.data tbody,table.data tr,table.data td,.table table,.table tbody,.table tr,.table td{display:block;width:100%}table.data tr,.table tr{padding:8px 12px;margin-bottom:8px;border:1px solid var(--hair);background:var(--sheet);border-radius:var(--r-md)}table.data td,.table td{border:0;padding:4px 0}td[data-label]::before{content:attr(data-label)'：';font-size:var(--fs-sm);font-weight:700;color:var(--ink2)}.table caption,table.data caption{display:block;width:100%}.pair.codewalk,.pair.read-pair,.pair.material-pair{display:block}.pair-notes{margin-top:12px}.code-panel{top:var(--top-height);max-height:40dvh;z-index:15}.pair-source{top:var(--top-height);max-height:40dvh;z-index:15;box-shadow:var(--sh-1)}.pair-notes .step{scroll-margin-top:calc(40dvh + 80px)}.flow-scroll svg.flow{width:var(--flow-width);max-width:none;height:var(--flow-height)}.sim .flow-scroll svg.flow{width:100%;height:auto}.stack .row{grid-template-columns:22px 64px minmax(0,1fr)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+@media print{.top,.toc,.fin-btn,#quiz-return,.toc-backdrop,.zoom-toggle,.code-toolbar{display:none!important}.layout-article .deck,.layout-pair .deck{margin:0;padding:0;max-width:100%;width:auto}.pair-source,.code-panel{position:static;max-height:none;overflow:visible}.sec{break-inside:auto}figure,.stat{break-inside:avoid}}
+/* Applies after legacy CSS too. Zoom is an intentional local viewport; non-zoom stays unnested. */
+html body .sim .flow-scroll.zoom{overflow:auto;max-height:40dvh;min-height:0;height:auto;overscroll-behavior:contain;scroll-padding:16px;padding:16px}
+html body .sim .flow-scroll.zoom svg.flow{width:var(--flow-width);min-width:var(--flow-width);height:var(--flow-height);max-height:none;flex:none}
+html body .sim .zoom-toggle{min-height:44px;justify-self:start}.layout-deck .sim .body{position:relative}.layout-deck .card{padding-bottom:8px}.layout-deck .deck{bottom:calc(92px + env(safe-area-inset-bottom))}
+html body .fin-btn{bottom:calc(16px + env(safe-area-inset-bottom));right:16px;min-height:44px}html.layout-deck .bottom{padding-right:170px;padding-left:12px;height:76px}.layout-deck .btn,.layout-deck .sim .branches label{min-height:44px}.layout-deck details.more summary::before{content:none}.layout-deck .fl-edge.act{animation:none}
+@media(max-width:820px){html.layout-deck .bottom{padding-right:12px;gap:8px}.layout-deck .bottom .btn{padding:8px 10px;font-size:13px}html.layout-deck body .fin-btn{padding:8px 12px;font-size:13px}.layout-deck .card.full:has(.sim)>.head-full{position:sticky;top:0;z-index:4;background:var(--sheet);padding-top:12px;padding-bottom:12px}.layout-deck .sim .body{overflow:visible}.layout-deck .card .stage:has(.sim){overflow:visible}.layout-deck .sim .flow-scroll:not(.zoom){overflow:visible}}
 
-/* 与知识库首页（VitePress 风格）对齐：白底页面、12px 圆角、细边框卡片、深色模式 */
-html,body{background:var(--page,#fff)}
-.card{border:1px solid var(--hair);box-shadow:none}
-html.dark{--page:#1b1b1f;--paper:#2a2a31;--sheet:#202127;--ink:#fffff5;--ink2:rgba(235,235,245,.65);--hair:#3a3a40;
---blue:#7c9cff;--blue-soft:rgba(124,156,255,.16);--amber:#f0b429;--amber-soft:rgba(240,180,41,.14);--green:#3dd68c;--green-soft:rgba(61,214,140,.14);--red:#f66f81;--red-soft:rgba(246,111,129,.14);color-scheme:dark}
-html.dark .btn.main{color:#16202c}
-html.dark .fl-node .sub,html.dark .fl-elab{fill:var(--ink2)}html.dark .fl-elab{stroke:var(--page)!important}html.dark .fl-edge{stroke:#6b7280}
-html.dark .fl-elab.act{fill:var(--blue)}
+.layout-deck .card.doc.on{display:block;overflow:auto;padding:24px}.layout-deck .card.doc .doc-body{overflow:visible}.layout-deck .hero.card{height:auto}
+
+/* Legacy .stage svg also matches button icons: keep Lucide at its declared size. */
+html body svg.i{width:18px;height:18px;max-height:none;flex:none}
+
+/* Below the desktop sidebar breakpoint, finish lives in the opaque top bar.
+   Reserve its width before laying out the title; keep the deck footer for paging. */
+@media(max-width:1179px){
+ html body .top{gap:8px;padding:0 132px 0 12px;z-index:40;background:var(--paper)}
+ html body .top .course{display:none}
+ html body .top .count{flex:1;min-width:0;max-width:none;font-size:var(--fs-sm);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ html body .top .track{position:absolute;left:12px;right:12px;bottom:0;height:2px;min-width:0}
+ html body .top .toc-toggle{width:44px;flex:none;padding:0}
+ html body .top .theme-toggle{flex:none;padding:8px;font-size:var(--fs-sm)}
+ html body .fin-btn{top:6px;bottom:auto;left:auto;right:12px;width:112px;max-width:112px;height:44px;padding:8px;font-size:13px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:41;box-shadow:none}
+}
 </style></head><body>
-<header class="top"><span class="course">EECS 498 AASE · L01</span><span class="track"><i></i></span><span class="count"></span></header>
-<main class="deck">
-<section class="card">
-  <div class="stage"><svg class="flow" data-act="create" data-edge="analyze>create" data-flow='{"nodes":[{"id":"obj","x":330,"y":70,"t":"一个编码智能体","s":"同一个仓库，第 1–15 周","c":"blue","w":240},{"id":"apply","x":110,"y":300,"t":"Apply 用","s":"第 1–3 周"},{"id":"analyze","x":330,"y":300,"t":"Analyze 拆","s":"第 4–7 周"},{"id":"create","x":550,"y":300,"t":"Create 造","s":"第 8–15 周","c":"amber"}],"edges":[{"f":"obj","t":"apply"},{"f":"obj","t":"analyze"},{"f":"obj","t":"create"},{"f":"apply","t":"analyze"},{"f":"analyze","t":"create"}]}'></svg></div>
-  <div class="say"><span class="kicker">这门课一句话讲什么？</span><h2>一个对象，三个动词：用、拆、造</h2>
-  <p>Apply 用编码智能体做结对程序员；Analyze 把人移出循环再测量；Create 把它长成助手。</p>
-  <p class="key">全程是同一个仓库，同一个不断长大的作品。</p>
-  <details class="more"><summary></summary><ul><li>Apply：用 Aider 连你自己部署的模型端点，做一个 pair-programmer（结对程序员）。</li><li>Analyze：工具、停止条件，然后测量坏掉的地方。</li><li>Create：记忆、方法，以及一个不是终端的使用渠道。</li><li>讲师备注：要说出「这全是一个仓库，第 1 周到第 15 周」。</li></ul></details>
-  <div class="src official">S1 L01 slides「One object. Three verbs.」；S2 syllabus「Description」</div></div>
+<header class="top"><button class="btn toc-toggle" aria-label="打开目录" aria-expanded="false"><svg class="i i-menu" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h16"/></svg></button><span class="course">EECS 498 AASE · L01</span><span class="track" role="presentation"><i></i></span><span class="count"></span><button class="btn theme-toggle" aria-label="切换深浅色">深浅色</button></header><main class="deck"><header class="hero" id="intro">
+  <p class="kicker">EECS 498-016 AASE · L01 · 2026-09-01 · 讲者 Marcus Darden（密歇根大学）</p>
+  <h1>第 1 讲：一个对象、三个动词，以及从 Typist 变成 Curator</h1>
+  <p class="lede" id="e1" data-points="p0001 p0002 p0003">这是 2026 年 9 月 1 日的 Lecture 01（L01），开课第 1 天（Day 1）。讲者备注写明顺序：先定位课程，再讲清理念，然后讨论，最后才介绍工具。</p>
+  <p>约 25 分钟。材料：官方仓库 slides.md（含讲者备注）、同页 PDF，以及现场演示仓库的 README 和 <code>notes.py</code>。8 张原图是 slides.pdf 的同页渲染。</p>
+  <p class="links"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">slides.md 原文</a> <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.pdf">slides.pdf</a> <a href="https://github.com/eecs498-aase/materials/tree/main/demos/L01-notes-cli">演示仓库</a> <a href="https://eecs498-aase.github.io/syllabus.html">课程 syllabus</a></p>
+</header>
+
+<section class="sec" id="s1" data-source-section="s2" data-toc="开场与路线">
+  <span class="kicker">开场</span>
+  <h2>先原则，最后才是工具</h2>
+  <p id="e2" data-points="p0004 p0005 p0006 p0007">开场两页只有一句话：先是「Smile.」，再补上「You belong here.」。讲者备注说，第一页要真的等学生笑出来，依据是具身认知：姿态和表情会影响认知表现。第二页让学生转向邻座说这句话，然后马上往下讲。</p>
+  <p id="e3" data-points="p0008 p0009 p0010">路线图写着 80 分钟，共 7 段：一个对象三个动词、课程怎么运行、AI 编程的发展（到 2026 年走到了哪里）、Code Curator 理念、两个讨论题、工具 Aider、本周任务（<code>aider-practice</code>、setup gate、你要做的项目）。</p>
+  <p class="callout key" id="e4" data-points="p0011">讲者备注特意强调：工具放在最后。先讲原则，再拿到工具。</p>
+  <p class="src official">课件页： <span class="source-anchor" data-source-section="s1"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：Course intro + the AI coding landscape</a></span> <span class="source-anchor" data-source-section="s2"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：Lecture 01 · Sep 1, 2026</a></span> <span class="source-anchor" data-source-section="s3"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：Where we're headed today</a></span></p>
 </section>
 
-<section class="card">
-  <div class="stage"><div class="bars" data-bars='{"unit":"%","items":[{"l":"Administrative 出勤与加分","v":10},{"l":"Apply 第 1–3 周","v":18},{"l":"Analyze 第 4–7 周","v":22.5},{"l":"Create 第 8–15 周","v":49.5,"c":"blue"}],"caption":"三个阶段按 20 / 25 / 55 分剩下的 90%。没有考试。"}'></div></div>
-  <div class="say"><span class="kicker">分数怎么算？</span><h2>没有考试，一半分数在 Create 阶段</h2>
-  <p>出勤占 10%，其中讲课 60%、实验 40%；出勤达到 70% 就拿满分。</p>
-  <p class="key">迟交每天扣 10%，3 天后记零分；没有宽限日。</p>
-  <details class="more"><summary></summary><ul><li>五个地方：课程网站（日期和政策以它为准）、Ed（提问和通知）、GitHub aase-student（每个作业一个你自己的仓库）、Canvas（成绩）、可选播客。</li><li>日历：28 讲、13 次实验、3 个晚间 Hackathon（第 4、7、15 周，第一次 9 月 24 日周四）。</li><li>个人作业：可以自由讨论想法，不得分享代码或提示词。</li><li>费用：零。没有教材，没有大模型花费；笔记本跑不动模型时由 CAEN 提供。</li></ul></details>
-  <div class="src official">S1 L01 slides「How you’re graded」「The short version」「Where things live」「28 lectures · 13 labs · 3 evenings」</div></div>
+<section class="sec" id="s2" data-source-section="s6" data-toc="一个对象，三个动词">
+  <span class="kicker">课程形状</span>
+  <h2>15 周只做一件东西：编码智能体</h2>
+  <p id="e5" data-points="p0012 p0013 p0014 p0015 p0016">课程分 Apply、Analyze、Create 三段，共 15 周。三段对着同一个对象：一个编码智能体。</p>
+  <ul>
+    <li id="e6" data-points="p0017"><b>Apply（第 1–3 周）用它：</b>用 Aider 连你自己部署的模型端点，做出一个结对程序员（pair programmer）。</li>
+    <li id="e7" data-points="p0018"><b>Analyze（第 4–7 周）拆它：</b>把你自己移出循环，研究工具和停止条件，然后测量哪里坏了。</li>
+    <li id="e8" data-points="p0019"><b>Create（第 8–15 周）造它：</b>把它长成助手，加上记忆、方法，以及一个不是终端的使用渠道。</li>
+  </ul>
+  <figure class="figure orig" data-asset="b0020" id="e9" data-points="p0020"><img src="L01-img/p06.png" alt="幻灯片第 6 页：One object. Three verbs."><figcaption><b>原图 1 · 一个对象，三个动词</b> <span class="source-anchor">出处：Marcus Darden · EECS 498 L01 slides · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.pdf">第 6 页</a></span><span class="how">怎么看：Create 一栏用了琥珀色，讲者备注说它是终点，是这一页的重点。</span></figcaption></figure>
+  <p class="callout key" id="e10" data-points="p0021">讲者备注要求把这句话说出口：从第 1 周到第 15 周，全是同一个仓库。</p>
+  <p class="callout extra">补充（课程网站 syllabus，10 月 22 日修订版）：Apply 的项目一直做到第 6 周；从 Lab03 起，Analyze 改在你自己的 Aider 私有副本上做；Create 改为在现有 harness 上构建，不从零写。本页其余内容以 9 月 1 日的课件为准。</p>
+  <p class="src official">课件页： <span class="source-anchor" data-source-section="s4"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：Course Shape</a></span> <span class="source-anchor" data-source-section="s5"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：Apply · Analyze · Create</a></span> <span class="source-anchor" data-source-section="s6"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：One object. Three verbs.</a></span></p>
 </section>
 
-<section class="card">
-  <div class="stage"><div class="pairs">
-   <div class="pair"><div class="no"><b>误解</b>用 AI 写代码算作弊，最好少用。</div><div class="yes"><b>实际</b>本课要求使用 AI，不只是容忍。</div></div>
-   <div class="pair"><div class="no"><b>误解</b>交上去的代码能跑就算数。</div><div class="yes"><b>实际</b>评分看理解：你要能解释交上去的每一行。</div></div>
-   <div class="pair"><div class="no"><b>误解</b>用了什么工具不用说。</div><div class="yes"><b>实际</b>要记录用到的工具、模型和提示词。</div></div>
+<section class="sec" id="s3" data-source-section="s9" data-toc="课程在哪里、找谁">
+  <span class="kicker">课程怎么运行</span>
+  <h2>五个地方，四个人，一个邮箱</h2>
+  <p id="e11" data-points="p0022 p0023 p0024 p0025 p0026">这部分讲者备注要求讲得快：细节在 syllabus 里，这里只给地图。但讲到学术诚信和晚上的 Hackathon 时要放慢。</p>
+  <div class="table"><table class="data orig" data-asset="b0027" id="e12" data-points="p0027"><caption>原表 1 · Where things live <span class="source-anchor">出处：Marcus Darden · EECS 498 L01 slides · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.pdf">第 8 页</a></span></caption>
+    <thead><tr><th></th><th></th></tr></thead>
+    <tbody>
+      <tr><td data-label="地方"><b>Course site</b> <code>eecs498-aase.github.io</code></td><td data-label="用途">Syllabus + schedule. Wins on dates and policy</td></tr>
+      <tr><td data-label="地方"><b>Ed</b> <code>edstem.org</code></td><td data-label="用途">Questions <b>and announcements</b>. This is where we reach you</td></tr>
+      <tr><td data-label="地方"><b>GitHub</b> <code>aase-student</code></td><td data-label="用途">Everything you receive. Your own repo per handout. <b>Accept the invite in your email</b></td></tr>
+      <tr><td data-label="地方"><b>Canvas</b></td><td data-label="用途">Grades</td></tr>
+      <tr><td data-label="地方"><b>Podcast</b> (optional)</td><td data-label="用途">A Brief before each lecture, a Deep Dive after</td></tr>
+    </tbody></table><p class="table-note">原表两列都没有表头。</p></div>
+  <p id="e13" data-points="p0027">读法：日期和政策以课程网站为准；提问和通知都在 Ed；每份作业在 GitHub 的 aase-student 里有一个你自己的仓库，要先在邮件里接受邀请；成绩在 Canvas；播客可选，每讲前有一期 Brief，讲后有一期 Deep Dive。</p>
+  <p id="e14" data-points="p0028 p0029">课程会录像（CAEN + Zoom）。播客由 AI 根据课程材料和<b>去标识化</b>的转录生成，不点任何人的名字；想删掉某段内容，发邮件给课程组就会删。讲者备注：录像这件事要直接说，不要藏起来；Ed 是学生必须常看的地方，播客的通知已经发在那里。</p>
+  <p id="e15" data-points="p0030 p0031 p0032 p0033">课程组 4 人：讲者 Marcus Darden，两位 GSI（研究生助教）Rafe Symonds、Zilin Wang，一位 IA（本科助教）Rushil Kagithala。<code>eecs-aase-staff@umich.edu</code> 一个地址能找到全部 4 人。</p>
+  <p id="e16" data-points="p0034 p0035">个人的事（延期、学习支持安排、硬件问题）发邮件；全班都该听到的问题发 Ed。办公时间从本周开始，时间和教室会发在 Ed 上。</p>
+  <p class="src official">课件页： <span class="source-anchor" data-source-section="s7"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：How This Course Runs</a></span> <span class="source-anchor" data-source-section="s8"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：Sites · staff · grades · calendar</a></span> <span class="source-anchor" data-source-section="s9"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：Where things live</a></span> <span class="source-anchor" data-source-section="s10"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：Who you're dealing with</a></span></p>
+</section>
+
+<section class="sec" id="s4" data-source-section="s11" data-toc="分数怎么算">
+  <span class="kicker">评分</span>
+  <h2>没有考试，近一半分数在 Create</h2>
+  <div class="table"><table class="data orig" data-asset="b0038" id="e17" data-points="p0036 p0037 p0038"><caption>原表 2 · How you're graded <span class="source-anchor">出处：Marcus Darden · EECS 498 L01 slides · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.pdf">第 10 页</a></span></caption>
+    <thead><tr><th></th><th>Share of your grade</th></tr></thead>
+    <tbody>
+      <tr><td data-label="部分"><b>Administrative</b> — lecture + lab attendance, bonuses</td><td data-label="占比">10%</td></tr>
+      <tr><td data-label="部分"><b>Apply</b> — weeks 1–3, build to end of 4</td><td data-label="占比">18%</td></tr>
+      <tr><td data-label="部分"><b>Analyze</b> — weeks 4–7</td><td data-label="占比">22.5%</td></tr>
+      <tr><td data-label="部分"><b>Create</b> — weeks 8–15</td><td data-label="占比">49.5%</td></tr>
+    </tbody></table><p class="table-note">单位：占总成绩的百分比。</p></div>
+  <p id="e18" data-points="p0036 p0037 p0038">读法：出勤和加分占 10%；Apply 占 18%（第 1–3 周，项目做到第 4 周末）；Analyze（第 4–7 周）占 22.5%；Create（第 8–15 周）占 49.5%。课件标题写明没有考试。</p>
+  <div class="stat" data-unit="比例" data-source-lines="113" id="e19" data-points="p0039"><b>20 / 25 / 55</b><span>三个阶段按这个比例分掉剩下的 90%</span></div>
+  <p id="e20" data-points="p0040">讲者备注：用「关卡」的说法能消除「我过没过」的焦虑，也让学生自然想到早点运行检查。</p>
+  <p class="src official">课件页： <span class="source-anchor" data-source-section="s11"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：How you're graded</a></span></p>
+</section>
+
+<section class="sec" id="s5" data-source-section="s12" data-toc="日历">
+  <span class="kicker">日历</span>
+  <h2>28 讲、13 次实验、3 个晚上</h2>
+  <ul>
+    <li id="e21" data-points="p0041 p0042 p0043">全学期 28 讲、13 次实验、3 个晚上。讲课：周二、周四 3:00–4:30，教室 LCSIB 2365。</li>
+    <li id="e22" data-points="p0044">实验：周一 3:30（GGBL 2153）或周二 12:30（DOW 1005），内容相同，任选其一。</li>
+    <li id="e23" data-points="p0045">Hackathon：<b>晚上</b>，全班一起，第 4、7、15 周（weeks 4 · 7 · 15）。第一次是 <b>9 月 24 日周四</b>（Thu Sep 24）。</li>
+  </ul>
+  <figure class="figure orig" data-asset="b0047" id="e24" data-points="p0047"><img src="L01-img/p11.png" alt="幻灯片第 11 页：28 lectures · 13 labs · 3 evenings"><figcaption><b>原图 2 · 日历：讲课、实验、Hackathon</b> <span class="source-anchor">出处：Marcus Darden · EECS 498 L01 slides · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.pdf">第 11 页</a></span><span class="how">怎么看：三张卡分别是讲课、实验、Hackathon；Hackathon 用琥珀色标出。</span></figcaption></figure>
+  <p id="e25" data-points="p0046 p0048">课件要求当晚就把 Sep 24 写进日历。某个晚上实在来不了，要早点说，课程组会安排补做的路径。讲者备注解释了原因：教室里可能有人有工作或孩子，需要提前 3 周知道，而不是提前 3 天。</p>
+  <p class="src official">课件页： <span class="source-anchor" data-source-section="s12"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：28 lectures · 13 labs · 3 evenings</a></span></p>
+</section>
+
+<section class="sec" id="s6" data-source-section="s13" data-toc="课程要求">
+  <span class="kicker">课程要求</span>
+  <h2>出勤 70% 拿满分，迟交 3 天后记零</h2>
+  <ul>
+    <li id="e26" data-points="p0049 p0050 p0051"><b>出勤</b>占总成绩 10%，其中讲课 60%、实验 40%；用 Poll Everywhere 签到（App 或浏览器都行）。出勤达到 70% 就拿满分。</li>
+    <li id="e27" data-points="p0051"><b>迟交</b>每天扣 10%，扣 3 天，之后记零分；没有宽限日（late days）。</li>
+    <li id="e28" data-points="p0051"><b>独立完成</b>：想法可以自由讨论，代码和提示词绝不能分享。</li>
+    <li id="e29" data-points="p0051 p0052"><b>费用</b>：零。没有教材，不用花钱买大模型调用；笔记本跑不动模型时由 CAEN 提供，细节在 Ed。讲者备注说，这是让「本地模型」政策公平的承诺，所以谁都不需要买订阅。</li>
+  </ul>
+  <p class="src official">课件页： <span class="source-anchor" data-source-section="s13"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：The short version</a></span></p>
+</section>
+
+<section class="sec" id="s7" data-source-section="s13" data-toc="今天最重要的一句">
+  <span class="kicker">讲者备注：当天最重要的一页</span>
+  <h2>你能解释它，它才是你的</h2>
+  <blockquote class="quote"><p id="e30" data-points="p0053">If you can explain it, it's yours.</p><cite>Marcus Darden，L01 slides 第 13 页</cite></blockquote>
+  <figure class="figure orig" data-asset="b0054" id="e31" data-points="p0054"><img src="L01-img/p13.png" alt="幻灯片第 13 页：If you can explain it, it’s yours."><figcaption><b>原图 3 · 当天最重要的一页</b> <span class="source-anchor">出处：Marcus Darden · EECS 498 L01 slides · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.pdf">第 13 页</a></span><span class="how">怎么看：explain 一词用琥珀色强调。</span></figcaption></figure>
+  <p id="e32" data-points="p0055 p0056">讲者备注要求讲到这页时放慢。这门课<b>要求</b>使用 AI，不只是容忍。评分看的是理解：交上去的每一行你都要能解释，并记录用了哪些工具、模型和提示词。解释不了，代码就不是你的，这属于荣誉准则（Honor Code）问题。</p>
+  <p class="callout extra">补充（syllabus「Description」）：课程网站写的是同一个意思：「Understanding is what gets graded here, not generation.」</p>
+  <p class="src official">课件页： <span class="source-anchor" data-source-section="s13"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：The short version</a></span></p>
+</section>
+
+<section class="sec" id="s8" data-source-section="s16" data-toc="AI 编程的四波">
+  <span class="kicker">我们在哪里</span>
+  <h2>四波浪潮，现在是第 4 波：编排</h2>
+  <ol class="steps">
+    <li id="e33" data-points="p0057 p0058 p0059 p0060 p0061 p0062"><b>第 1 波 自动补全（2021–22）</b>：课件从这里讲到我们所在的 2026 年秋季（Fall 2026）。GitHub Copilot。一个文件，你来开车。</li>
+    <li id="e34" data-points="p0062"><b>第 2 波 对话（2022–23）</b>：先是 ChatGPT，然后是 IDE 里的对话。提问、粘贴、修改。</li>
+    <li id="e35" data-points="p0062"><b>第 3 波 智能体工具（2023–25）</b>：先是 Cursor 和 Aider，然后是 Claude Code 和 Codex。多文件编辑，工具会执行命令。</li>
+    <li id="e36" data-points="p0062"><b>第 4 波 编排（2025–now）</b>：多个智能体，长时间运行，有人监督。课程的 Create 阶段会走到这里。</li>
+  </ol>
+  <p id="e37" data-points="p0063">讲者备注：自动补全其实比第 1 波更早，比如 Kite、TabNine；但从 Copilot 开始它才真正被依赖，所以从它算起。大多数学生是在第 3 波入门的，课程要在 12 月走到第 4 波。</p>
+  <p id="e38" data-points="p0064 p0065">下一页只有一句：炒作很陡，现实<b>更有意思</b>。讲者备注说这是诚实的时刻：AI 没有取代程序员，而是出现了一类新的工作流；学会和 AI 一起工作的开发者，生产力明显提高。</p>
+  <p class="src official">课件页： <span class="source-anchor" data-source-section="s14"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：Where We Are</a></span> <span class="source-anchor" data-source-section="s15"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：Fall 2026</a></span> <span class="source-anchor" data-source-section="s16"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：A brief history</a></span></p>
+</section>
+
+<section class="sec" id="s9" data-source-section="s19" data-toc="Take Five 讨论">
+  <span class="kicker">Take Five · 和邻座聊 5 分钟</span>
+  <h2>写完代码，你是学到了，还是拿到了答案？</h2>
+  <p id="e39" data-points="p0066 p0067 p0068 p0069 p0070 p0071">和邻座聊 5 分钟。讨论题：回想上一次借助 AI 写代码，或者不用 AI 写代码。什么让你觉得高效？什么让你沮丧？写完以后，你觉得自己是<b>学到了</b>东西，还是只<b>拿到了答案</b>？</p>
+  <p id="e40" data-points="p0072">课件说，这个问题贯穿整门课。讲者在下一页的转场备注里请学生带着刚才的讨论进入 Curator 理念。</p>
+  <p class="src official">课件页： <span class="source-anchor" data-source-section="s17"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：Take Five</a></span> <span class="source-anchor" data-source-section="s18"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：Talk to your neighbor</a></span> <span class="source-anchor" data-source-section="s19"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：Compare notes</a></span></p>
+</section>
+
+<section class="sec" id="s10" data-source-section="s22" data-toc="Typist 与 Curator">
+  <span class="kicker">Code Curator · 理念</span>
+  <h2>Typist 对按键负责，Curator 对结果负责</h2>
+  <p id="e41" data-points="p0073 p0074 p0075">Typist（写代码行的人）和 Curator（把关代码的人）是这门课的思维模型。课件把两种角色并排放：</p>
+  <div class="table"><table class="data" id="e42" data-points="p0076 p0077 p0078 p0079 p0080 p0081 p0082 p0083"><caption>两种角色逐行对照（据原文整理，原文 L204–225，即原图 4）</caption>
+    <thead><tr><th>Typist（写代码行的人）</th><th>Curator（把关代码的人）</th></tr></thead>
+    <tbody>
+      <tr><td data-label="Typist"><b>写代码行</b>：语法、格式、样板代码。</td><td data-label="Curator"><b>说明意图</b>：写做什么、为什么，不写怎么做。</td></tr>
+      <tr><td data-label="Typist"><b>时间花在 HOW</b>：实现的具体操作。</td><td data-label="Curator"><b>评估输出</b>：审查、改方向、接受。</td></tr>
+      <tr><td data-label="Typist"><b>拥有按键</b>：「正确」= 我打对了。</td><td data-label="Curator"><b>拥有结果</b>：「正确」= 能运行，而且我能为它辩护，不管是谁打的。</td></tr>
+    </tbody></table></div>
+  <figure class="figure orig" data-asset="b0084" id="e43" data-points="p0084"><img src="L01-img/p20.png" alt="幻灯片第 20 页：Typist 与 Curator"><figcaption><b>原图 4 · Typist 与 Curator 两栏</b> <span class="source-anchor">出处：Marcus Darden · EECS 498 L01 slides · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.pdf">第 20 页</a></span><span class="how">怎么看：左右逐行对应，同一行是同一件事的两种做法。</span></figcaption></figure>
+  <p class="callout key" id="e44" data-points="p0085">讲者备注：这是理念上的转变。同一个工程师，只是时间分配不同。</p>
+  <p id="e45" data-points="p0086 p0087">接着一页是 KISS：提示词要聚焦，忍住过度解释的冲动。讲者备注特别说明，这里的 KISS 不是网络协议，在本课的意思是「清晰胜过啰嗦」。</p>
+  <p class="src official">课件页： <span class="source-anchor" data-source-section="s20"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：Code Curator</a></span> <span class="source-anchor" data-source-section="s21"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：The Philosophy</a></span> <span class="source-anchor" data-source-section="s22"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：Typist</a></span> <span class="source-anchor" data-source-section="s23"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：Curator</a></span></p>
+</section>
+
+<section class="sec" id="s11" data-source-section="s25" data-toc="Bad 与 Good 提示词">
+  <span class="kicker">KISS 的例子</span>
+  <h2>好提示词写出测试名、输入和期望行为</h2>
+  <p id="e46" data-points="p0088 p0089">KISS 之后，讲者切到浏览器做了一次 PollEv 投票。备注说要把问题和四个选项都念出来，给大约 60 秒（~60s），再回到课件；课件没有给出题目内容。</p>
+  <p id="e47" data-points="p0090 p0091 p0092">Bad 一栏有两个例子。写新东西时，提示词绕了一大圈：先客气地请求，再把实现步骤一条条说出来，最后自己又犹豫要不要用列表推导式。</p>
+  <p id="e48" data-points="p0093 p0094">追一个失败时，Bad 的写法是猜：是日期的问题？还是时区？然后让模型「just make it work」。</p>
+  <p id="e49" data-points="p0095 p0096 p0097">Good 一栏写新东西只用一句：提取列表里的偶数。</p>
+  <p id="e50" data-points="p0098 p0099">Good 一栏追失败时，先写明 <code>test_parse_date</code> 在输入 2026-02-30 上失败，再要求 <code>parse_date</code> 遇到无效日期时抛 <code>ValueError</code>，而不是返回 <code>None</code>。这一句写出了 4 样东西：哪个测试、哪个输入（2026-02-30）、期望行为、现在的错误行为。</p>
+  <figure class="figure orig" data-asset="b0100" id="e51" data-points="p0100"><img src="L01-img/p23.png" alt="幻灯片第 23 页：Bad 与 Good 提示词"><figcaption><b>原图 5 · Bad 与 Good 提示词全文</b> <span class="source-anchor">出处：Marcus Darden · EECS 498 L01 slides · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.pdf">第 23 页</a></span><span class="how">怎么看：左右各两个框，上面是写新东西，下面是追一个失败。四段提示词原文都在图里。</span></figcaption></figure>
+  <p class="callout key" id="e52" data-points="p0101">讲者备注：B 一栏几乎总是得到更好的结果，模型会推断剩下的部分。多加附带说明只会叠加歧义，不会消除歧义。</p>
+  <p class="src official">课件页： <span class="source-anchor" data-source-section="s24"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：PollEv</a></span> <span class="source-anchor" data-source-section="s25"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：Bad</a></span> <span class="source-anchor" data-source-section="s26"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：Good</a></span></p>
+</section>
+
+<section class="sec" id="s12" data-source-section="s27" data-toc="Big Three 预告">
+  <span class="kicker">预告 · L03</span>
+  <h2>Big Three：上下文、模型、提示词</h2>
+  <ul>
+    <li id="e53" data-points="p0102 p0103 p0104">（L03 预告）<b>Context 上下文</b>：AI 开始工作时知道什么？</li>
+    <li id="e54" data-points="p0105"><b>Model 模型</b>：用哪个 AI？在能力、成本、速度之间取舍。</li>
+    <li id="e55" data-points="p0106"><b>Prompt 提示词</b>：你怎样说明自己要什么？</li>
+  </ul>
+  <figure class="figure orig" data-asset="b0108" id="e56" data-points="p0107 p0108"><img src="L01-img/p24.png" alt="幻灯片第 24 页：The Big Three"><figcaption><b>原图 6 · The Big Three</b> <span class="source-anchor">出处：Marcus Darden · EECS 498 L01 slides · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.pdf">第 24 页</a></span><span class="how">怎么看：本讲只做预告，第 3 讲（L03）深入讲。</span></figcaption></figure>
+  <p class="callout extra">补充（syllabus 学习目标 /01）：学期结束时，学生要能用 Big Three 推理 AI 编码工具为什么失败。</p>
+  <p class="src official">课件页： <span class="source-anchor" data-source-section="s27"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：The Big Three</a></span></p>
+</section>
+
+<section class="sec" id="s13" data-source-section="s30" data-toc="两个讨论题">
+  <span class="kicker">讨论 · 每题想一分钟</span>
+  <h2>基础仍然重要，因为你要评估输出</h2>
+  <div class="table"><table class="data" id="e57" data-points="p0109 p0110 p0112 p0113 p0114 p0115"><caption>两个讨论题与讲者备注（据原文整理，原文 L304–310）</caption>
+    <thead><tr><th>问题</th><th>讲者备注里的答案要点</th></tr></thead>
+    <tbody>
+      <tr><td data-label="问题">Q1：既然 AI 能写代码，为什么还要学 EECS 281？</td><td data-label="答案要点">计算机基础仍然重要：你要评估输出。</td></tr>
+      <tr><td data-label="问题">Q2：什么时候你<b>不</b>想用 AI 写代码？</td><td data-label="答案要点">学习的时候、安全关键的代码、深度维护。</td></tr>
+    </tbody></table><p class="table-note">每题先各想一分钟，再全班讨论。</p></div>
+  <p id="e58" data-points="p0111">讲者备注说，这两个问题用来给刚提出的原则「施压」。</p>
+  <p class="src official">课件页： <span class="source-anchor" data-source-section="s28"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：Discussion</a></span> <span class="source-anchor" data-source-section="s29"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：Two Questions</a></span> <span class="source-anchor" data-source-section="s30"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：Two questions</a></span></p>
+</section>
+
+<section class="sec" id="s14" data-source-section="s33" data-toc="为什么用 Aider">
+  <span class="kicker">工具 · 教学上的选择</span>
+  <h2>选 Aider，是因为决定都摆在明面上</h2>
+  <ol class="steps">
+    <li id="e59" data-points="p0116 p0117 p0118 p0119 p0120 p0121"><b>Big Three 是显式的。</b>没有图形界面替你藏起上下文、模型或提示词的决定。</li>
+    <li id="e60" data-points="p0121"><b>讲 OpenAI 兼容 API。</b>所以它能连你自己部署的模型。</li>
+    <li id="e61" data-points="p0121"><b>小到能重建。</b>你会从第 3 周开始重建它。</li>
+  </ol>
+  <p class="callout key" id="e62" data-points="p0122">讲者备注要求重点讲第 2 条：模型只是一行配置，不是依赖，这就是这门课不花钱的原因。Claude Code 会在 L05 以演示的形式出现，不需要账号，这一点要直说。</p>
+  <p class="src official">课件页： <span class="source-anchor" data-source-section="s31"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：The Tool</a></span> <span class="source-anchor" data-source-section="s32"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：Why Aider — for now</a></span> <span class="source-anchor" data-source-section="s33"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：Why Aider in Apply?</a></span></p>
+</section>
+
+<section class="sec" id="s15" data-source-section="s36" data-toc="演示：三个提示词">
+  <span class="kicker">AI 结对编程 · 初体验</span>
+  <h2>你说结果，模型改代码，你判断</h2>
+  <p id="e63" data-points="p0123 p0124 p0125 p0126 p0127">讲者备注说这几分钟不是教程，只让学生感受一下 AI 结对编程是什么样子。环境在 Setup Lab 已经装好，命令在 <code>aider-practice</code> 里学。课件写明：3 个提示词，大约 5 分钟。</p>
+  <ol class="steps">
+    <li id="e64" data-points="p0128">提示词 1：重构 <code>parse_args()</code>，干净地处理没有参数的情况：打印用法后退出。</li>
+    <li id="e65" data-points="p0128">提示词 2：给无参数路径加一个单元测试。</li>
+    <li id="e66" data-points="p0128">提示词 3：把 <code>dispatch()</code> 里的 if 链换成字典查找。</li>
+  </ol>
+  <figure class="figure orig" data-asset="b0130" id="e67" data-points="p0129 p0130"><img src="L01-img/p30.png" alt="幻灯片第 30 页：What the loop feels like"><figcaption><b>原图 7 · 三个提示词原文</b> <span class="source-anchor">出处：Marcus Darden · EECS 498 L01 slides · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.pdf">第 30 页</a></span><span class="how">怎么看：图下小字是结果：三个协同修改，测试通过，讲者一行代码都没写。</span></figcaption></figure>
+  <blockquote class="quote"><p id="e68" data-points="p0131">I described outcomes. The model produced them. I judged.</p><cite>L01 slides 第 31 页</cite></blockquote>
+  <p id="e69" data-points="p0132">讲者备注：这就是协作的形状。要记住的不是命令，而是这个形状。</p>
+  <p class="callout limit" id="e70" data-points="p0163 p0164">演示 README 里的三个提示词和课件基本相同，只有提示词 1 的措辞略有不同（README 用破折号连接「处理无参数情况」和「打印用法、干净退出」）。README 要求接近原话地说出来，因为这三句就是演示本身。</p>
+  <p class="src official">课件页： <span class="source-anchor" data-source-section="s34"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：AI Pair-Coding</a></span> <span class="source-anchor" data-source-section="s35"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：A first look</a></span> <span class="source-anchor" data-source-section="s36"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：What the loop feels like</a></span></p>
+</section>
+
+<section class="sec" id="s16" data-source-section="s43" data-toc="演示代码 notes.py">
+  <span class="kicker">演示仓库 · demos/L01-notes-cli</span>
+  <h2>四个测试全绿，代码仍有两处缺陷</h2>
+  <p id="e71" data-points="p0149 p0150 p0151">L01 现场演示用的代码是 <code>notes.py</code>，约六十行的笔记命令行，故意留了两处缺陷；演示用三个提示词修好两处，没人敲一行代码。README 说给你代码是为了让你自己跑：看别人驾驶 Aider 和自己驾驶是两种技能。</p>
+  <div class="pair codewalk" id="codewalk" data-asset="notes-py"><div class="pair-source" tabindex="0" aria-label="notes.py 原代码"><span class="source-anchor">原代码：notes.py · L1–67 · <a href="https://github.com/eecs498-aase/materials/blob/main/demos/L01-notes-cli/src/notes.py">官方仓库</a></span><pre data-lines="1"><code data-language="python">"""notes - a very small note CLI.
+
+Deliberately imperfect in two places, both of which the L01 demo fixes live:
+parse_args() does not survive being called with no arguments, and dispatch()
+is an if-chain. Keep this file short: it goes on a projector.
+"""
+import sys
+from pathlib import Path
+
+NOTES = Path("notes.txt")
+
+
+def parse_args(argv):
+    """Split argv into a command and its arguments."""
+    return argv[0], argv[1:]
+
+
+def read_notes():
+    if not NOTES.exists():
+        return []
+    return [ln for ln in NOTES.read_text().splitlines() if ln.strip()]
+
+
+def cmd_add(args):
+    if not args:
+        print("add: nothing to add")
+        return 1
+    with NOTES.open("a") as f:
+        f.write(" ".join(args) + "\n")
+    return 0
+
+
+def cmd_list(args):
+    notes = read_notes()
+    if not notes:
+        print("no notes yet")
+        return 0
+    for i, note in enumerate(notes, 1):
+        print(f"{i}. {note}")
+    return 0
+
+
+def cmd_count(args):
+    print(len(read_notes()))
+    return 0
+
+
+def dispatch(command, args):
+    """Run one command by name."""
+    if command == "add":
+        return cmd_add(args)
+    elif command == "list":
+        return cmd_list(args)
+    elif command == "count":
+        return cmd_count(args)
+    else:
+        print(f"unknown command: {command}")
+        return 1
+
+
+def main(argv=None):
+    command, args = parse_args(argv if argv is not None else sys.argv[1:])
+    return dispatch(command, args)
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+</code></pre></div><div class="pair-notes">
+    <div class="step" tabindex="0" data-hl="1-6"><h3>文件头就写明了两处缺陷</h3><p id="e72" data-points="p0159">docstring 直说：<code>parse_args()</code> 撑不过无参数调用，<code>dispatch()</code> 是一串 if；还要求文件保持短小，因为要上投影。</p></div>
+    <div class="step" tabindex="0" data-hl="13-15"><h3>缺陷 1：没有参数就崩溃</h3><p id="e73" data-points="p0160">第 15 行直接取 <code>argv[0]</code>。列表为空时这里抛 <code>IndexError</code>；不带参数运行这个文件就能看到它崩溃。</p></div>
+    <div class="step" tabindex="0" data-hl="18-21"><h3>笔记存在 notes.txt</h3><p>文件不存在时返回空列表；存在时按行读出，跳过空行。</p></div>
+    <div class="step" tabindex="0" data-hl="24-45"><h3>三个命令：add、list、count</h3><p>add 没给内容时打印提示并返回 1；list 给每条笔记编号；count 打印笔记条数。</p></div>
+    <div class="step" tabindex="0" data-hl="48-58"><h3>缺陷 2：dispatch() 是 if 链</h3><p id="e74" data-points="p0160">它能工作，只是 README 说「不是你会写的样子」。提示词 3 要把它换成字典查找。</p></div>
+    <div class="step" tabindex="0" data-hl="61-63"><h3>main() 要把结果拆成两个值</h3><p id="e75" data-points="p0180">第 62 行写的是 <code>command, args = parse_args(...)</code>。所以提示词 1 的修复如果让无参数分支返回别的形状，这里就拆不开，所有命令都会坏。</p></div>
   </div></div>
-  <div class="say"><span class="kicker">今天最重要的一句话是什么？</span><h2>你能解释它，它才是你的</h2>
-  <p>课件原句：If you can explain it, it’s yours.</p>
-  <p class="key">解释不了你交的代码，它就不是你的，这属于荣誉准则（Honor Code）问题。</p>
-  <div class="src official">S1 L01 slides 讲师备注「THE slide of the day」；S2 syllabus「If you can’t explain it, you didn’t build it.」</div></div>
+  <p id="e76" data-points="p0158 p0161">即使有这两处缺陷，4 个测试照样全部通过。README 说这是第一件值得注意的事：测试全绿不等于代码好。</p>
+  <p class="src official">notes.py 两处缺陷所在：第 13–15 行、第 48–58 行。演示 README： <span class="source-anchor" data-source-section="s41"><a href="https://github.com/eecs498-aase/materials/tree/main/demos/L01-notes-cli">出处：notes: the L01 demo</a></span> <span class="source-anchor" data-source-section="s43"><a href="https://github.com/eecs498-aase/materials/blob/main/demos/L01-notes-cli/README.md#the-two-flaws">出处：The two flaws</a></span></p>
 </section>
 
-<section class="card">
-  <div class="stage"><svg class="flow" data-act="w4" data-edge="w3>w4" data-flow='{"nodes":[{"id":"w1","x":110,"y":80,"t":"1 自动补全","s":"2021–22 · Copilot"},{"id":"w2","x":450,"y":80,"t":"2 对话","s":"2022–23 · ChatGPT"},{"id":"w3","x":110,"y":300,"t":"3 智能体工具","s":"2023–25 · Cursor、Aider","c":"green"},{"id":"w4","x":450,"y":300,"t":"4 编排","s":"2025– · 多个智能体","c":"amber"}],"edges":[{"f":"w1","t":"w2"},{"f":"w2","t":"w3"},{"f":"w3","t":"w4","l":"Create 带你到这里"}]}'></svg></div>
-  <div class="say"><span class="kicker">AI 编程走到哪一步了？</span><h2>四波浪潮，现在是第 4 波：编排</h2>
-  <p>每一波，人做的事都在变：从自己写一个文件，到监督多个长时间运行的智能体。</p>
-  <p class="key">大多数学生从第 3 波入门；课程要在 12 月走到第 4 波。</p>
-  <details class="more"><summary></summary><ul><li>第 1 波 自动补全：一个文件，你来开。</li><li>第 2 波 对话：ChatGPT，然后是 IDE 里的对话；提问、粘贴、修改。</li><li>第 3 波 智能体工具：Cursor 和 Aider，然后是 Claude Code 和 Codex；多文件编辑，工具会执行命令。</li><li>第 4 波 编排：多个智能体，长时间运行，有人监督。</li><li>讲师备注：Kite、TabNine 比第 1 波早，但 Copilot 才让自动补全真正被依赖，所以从它算起。</li></ul></details>
-  <div class="src official">S1 L01 slides「A brief history」及讲师备注</div></div>
+<section class="sec" id="s17" data-source-section="s44" data-toc="自己跑一遍演示">
+  <span class="kicker">演示仓库 · 怎么跑</span>
+  <h2>每个提示词之后，先读 diff 再接受</h2>
+  <p id="e77" data-points="p0152 p0153 p0154">在演示目录运行 <code>./reset</code>。它在你的仓库根目录旁边（demo-scratch 目录下）建一个 L01 演示的可丢弃副本，配好 Aider，把副本做成 git 仓库（所以 <code>/undo</code> 能用），再跑一遍测试，最后打印副本的完整路径。想重来就再运行一次。</p>
+  <pre data-asset="b0153"><code data-language="sh">./reset</code></pre>
+  <p id="e78" data-points="p0154 p0155 p0156">不要在原目录里运行 Aider：那里的配置文件故意不带点（<code>aider.conf.yml</code> 而不是 <code>.aider.conf.yml</code>），Aider 会忽略它们，原目录保持干净。进副本后这样启动：</p>
+  <pre data-asset="b0156"><code data-language="sh">cd ../../demo-scratch/L01-notes-cli
+aider notes.py test_notes.py</code></pre>
+  <p id="e79" data-points="p0162 p0165 p0166">三个提示词，每个之后都<b>先读 diff 再接受</b>，README 说这是整个练习的重点：模型生成，你判断。测试要在看得见的地方跑：</p>
+  <pre data-asset="b0166"><code data-language="text">/run pytest -q</code></pre>
+  <p id="e80" data-points="p0167">预期：开始时 4 个测试，提示词 2 之后 5 个，提示词 3 之后仍全绿。</p>
+  <p id="e81" data-points="p0168 p0169 p0170">README 提醒别盯着命令，命令由 <code>aider-practice</code> 教，教得比五分钟演示好。要注意的是循环：你描述结果，模型提出修改，你读完再决定。五分钟三个协同修改、零行手写，这是协作的形状；判断那一步仍然是你的。</p>
+  <p class="src official">演示 README： <span class="source-anchor" data-source-section="s42"><a href="https://github.com/eecs498-aase/materials/blob/main/demos/L01-notes-cli/README.md#get-a-working-copy">出处：Get a working copy</a></span> <span class="source-anchor" data-source-section="s44"><a href="https://github.com/eecs498-aase/materials/blob/main/demos/L01-notes-cli/README.md#the-three-prompts">出处：The three prompts</a></span> <span class="source-anchor" data-source-section="s45"><a href="https://github.com/eecs498-aase/materials/blob/main/demos/L01-notes-cli/README.md#what-to-actually-pay-attention-to">出处：What to actually pay attention to</a></span></p>
 </section>
 
-<section class="card">
-  <div class="stage"><div class="pairs">
-   <div class="pair"><div class="a"><b>炒作</b>AI 会取代程序员。</div><div class="b"><b>现实</b>没有取代。出现了一类新的工作流。</div></div>
-   <div class="pair"><div class="a"><b>Take Five 讨论题</b>上次用 AI 写代码（或不用）时，什么让你觉得高效？什么让你沮丧？</div><div class="b"><b>追问</b>写完以后，你觉得自己「学到了东西」，还是只是「拿到了答案」？</div></div>
-  </div></div>
-  <div class="say"><span class="kicker">这和你自己的经验怎么连起来？</span><h2>炒作很陡，现实更有意思</h2>
-  <p>讲师备注：学会和 AI 一起工作的开发者，生产力明显提高。</p>
-  <p class="key">「学到了」还是「拿到答案」，课件说这个问题贯穿整门课。</p>
-  <div class="src official">S1 L01 slides「The hype was steep」「Compare notes」</div></div>
+<section class="sec" id="s18" data-source-section="s48" data-toc="提示词 1 的坑">
+  <span class="kicker">演示仓库 · 要警惕的地方</span>
+  <h2>提示词 1 之后测试全绿，什么也说明不了</h2>
+  <p id="e82" data-points="p0178 p0179">README 说，提示词 1 在 9B 模型上大约一半时候能成功；原文记录是「十次运行，三次修好」，换 Aider 的编辑格式也几乎没改善。</p>
+  <p id="e83" data-points="p0180">它每次失败的样子都不一样，所以别背失败特征。排练中见过两种：</p>
+  <ul>
+    <li id="e84" data-points="p0180"><b>形状 1：旧函数留在下面。</b>模型写了修好的 <code>parse_args()</code>，却把原来那个留在文件下方。Python 绑定的是后一个定义，什么也没变。</li>
+    <li id="e85" data-points="p0180"><b>形状 2：返回值拆不开。</b>无参数分支返回了 <code>main()</code> 拆不开的东西，所有命令都坏了。</li>
+  </ul>
+  <p class="callout key" id="e86" data-points="p0181 p0182">这两种在测试眼里完全不同。形状 1 在二十次运行里都让 4 个测试保持全绿，因为没有测试用空列表调用 <code>parse_args</code>；形状 2 会让测试立刻变红。所以提示词 1 之后要运行 <code>python3 notes.py</code>（提示词针对的就是它），并在接受前读 diff。README 说，注意到这一点才是真正的技能，也是给你代码而不是给视频的原因。</p>
+  <p id="e87" data-points="p0171 p0172 p0173">换 4B 模型再跑一次也值得：</p>
+  <pre data-asset="b0172"><code data-language="sh">./reset --model 4b</code></pre>
+  <p id="e88" data-points="p0157 p0173">加上这个参数就把模型固定为 4B。同样三个提示词，模型更小，要更费力：更多轮反馈，至少会遇到一个该拒绝的 diff。README 说这不是缺陷，而是更快学到这一课。要问的从来不是「这个模型差不差」，而是上下文、模型还是提示词出了问题，也就是 L03 的内容。</p>
+  <p id="e89" data-points="p0174 p0175 p0176">配置：<code>aider.conf.yml</code> 把主模型和弱模型都固定为 9B，这样 Ollama 只常驻一个模型，不会在每次自动提交时换来换去。它还设了 <code>think: false</code>：qwen3.5 是推理模型，放任不管会把预算花在思考上。在这个项目上实测，1200 个 token 的推理、0 个字符的输出，耗时 23 秒，关掉思考是 9 秒。如果每个提示词要 25 秒或更久，说明参数没传到 Ollama，就在每个提示词末尾加 <code>/no_think</code>。</p>
+  <p id="e90" data-points="p0177"><code>aider.model.metadata.json</code> 故意按前沿模型的价格给这些免费本地模型定价，这样 <code>/tokens</code> 能告诉你：如果付费，这次会话要花多少钱。</p>
+  <p class="src official">演示 README： <span class="source-anchor" data-source-section="s46"><a href="https://github.com/eecs498-aase/materials/blob/main/demos/L01-notes-cli/README.md#try-it-on-the-4b">出处：Try it on the 4B</a></span> <span class="source-anchor" data-source-section="s47"><a href="https://github.com/eecs498-aase/materials/blob/main/demos/L01-notes-cli/README.md#configuration">出处：Configuration</a></span> <span class="source-anchor" data-source-section="s48"><a href="https://github.com/eecs498-aase/materials/blob/main/demos/L01-notes-cli/README.md#the-thing-to-watch-for-on-prompt-1">出处：The thing to watch for on prompt 1</a></span></p>
 </section>
 
-<section class="card">
-  <div class="stage"><div class="pairs">
-   <div class="pair"><div class="a"><b>Typist：写代码行</b>语法、格式、样板代码。</div><div class="b"><b>Curator：说明意图</b>写做什么、为什么，不写怎么做。</div></div>
-   <div class="pair"><div class="a"><b>Typist：时间花在 HOW</b>实现的具体操作。</div><div class="b"><b>Curator：评估输出</b>审查、改方向、接受。</div></div>
-   <div class="pair"><div class="a"><b>Typist：拥有按键</b>「正确」= 我打对了。</div><div class="b"><b>Curator：拥有结果</b>「正确」= 能运行，而且我能为它辩护，不管是谁打的。</div></div>
-  </div></div>
-  <div class="say"><span class="kicker">这门课的思维模型是什么？</span><h2>从 Typist 变成 Curator</h2>
-  <p>Typist（写代码的人）对按键负责。Curator（代码把关人）对结果负责。</p>
-  <p class="key">讲师备注：同一个工程师，只是时间分配不同。</p>
-  <div class="src official">S1 L01 slides「Code Curator · The Philosophy」Typist / Curator 两栏</div></div>
+<section class="sec" id="s19" data-source-section="s39" data-toc="这周要做什么">
+  <span class="kicker">本周</span>
+  <h2>每一课都是一个失败的测试</h2>
+  <p id="e91" data-points="p0133 p0134 p0135 p0136 p0137">讲者备注：环境由你自己负责，这里讲清楚这一周怎么过。课后的 <code>aider-practice</code> 共十六课，每一课都是一个失败的测试：</p>
+  <ul>
+    <li id="e92" data-points="p0138"><b>Part 1，第 1–10 课</b>，本周：在 <code>qwen3.5:4b</code> 上做 <code>taskr</code> 的命令行。</li>
+    <li id="e93" data-points="p0138"><b>Part 2，第 11–16 课</b>，下周：在同一份数据上做网页前端。<b>建议</b>用 <code>9b</code>，但不强制。</li>
+    <li id="e94" data-points="p0138">你驾驶 Aider，直到测试通过。你永远不用猜自己是不是做完了。</li>
+    <li id="e95" data-points="p0138"><b>Setup gate 和全部十六课在 9 月 11 日周五截止</b>（Fri Sep 11）。</li>
+    <li id="e96" data-points="p0138"><b>Lab01</b> 在 9 月 14 日周一或 15 日周二，是「转折实验」。</li>
+  </ul>
+  <p id="e97" data-points="p0139">Aider 在 Setup Lab 里已经跑起来了。之后卡住就去办公时间，任何一位老师或助教都行；时间和教室周五前发在 Ed。</p>
+  <p id="e98" data-points="p0140 p0141 p0142">第一个项目今天只给形状，规格在 L03 给。<b>做什么</b>：一个结对程序员。所有人做同一个东西：<b>七个固定功能</b>，只凭课程给的规格从零写。</p>
+  <p id="e99" data-points="p0143"><b>什么时候</b>：第 3–6 周做（weeks 3–6），<b>10 月 6 日周二晚 11:59</b> 截止。</p>
+  <p id="e100" data-points="p0144"><b>交什么</b>：通过 <b>feature gate</b> 的代码，加上你的规格、会话日志和一份简短反思。</p>
+  <figure class="figure orig" data-asset="b0146" id="e101" data-points="p0145 p0146"><img src="L01-img/p34.png" alt="幻灯片第 34 页：Your first project"><figcaption><b>原图 8 · 第一个项目</b> <span class="source-anchor">出处：Marcus Darden · EECS 498 L01 slides · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.pdf">第 34 页</a></span><span class="how">怎么看：图下小字说这是形状，不是规格；规格或它的发布日期在 L03（9 月 8 日周二，Tue Sep 8）给，这周不用为它做任何事。</span></figcaption></figure>
+  <p class="callout key" id="e102" data-points="p0147 p0148">最后一页：Aider 会消失，原则不会。讲者备注：持久的是框架，工具来来去去；Claude Code 和 Codex 已经是它的后继者，有人问就直说。</p>
+  <p class="callout extra">补充（syllabus，10 月 22 日修订版）：项目要求后来细化为七个功能加 YAML 配置，评分一半看规格与设计、一半看实现与测试。</p>
+  <p class="src official">课件页： <span class="source-anchor" data-source-section="s37"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：This Week</a></span> <span class="source-anchor" data-source-section="s38"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：aider-practice · setup gate · the build</a></span> <span class="source-anchor" data-source-section="s39"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：Every lesson is a failing test</a></span> <span class="source-anchor" data-source-section="s40"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：Your first project</a></span></p>
 </section>
 
-<section class="card">
-  <div class="stage"><div class="pairs">
-   <div class="pair"><div class="no"><b>Bad · 写新东西</b>Please could you help me write a Python function that iterates through a list of integers… actually I think a list comprehension is cleaner but I’m not sure…</div><div class="yes"><b>Good</b>Write a function that extracts the even numbers from a list.</div></div>
-   <div class="pair"><div class="no"><b>Bad · 追一个失败</b>The tests are failing. Something with dates? Or the timezone maybe? Can you look at it and just make it work.</div><div class="yes"><b>Good</b>test_parse_date fails on "2026-02-30". Make parse_date raise ValueError on invalid dates instead of returning None.</div></div>
-  </div></div>
-  <div class="say"><span class="kicker">提示词该写多长？</span><h2>KISS：提示词要聚焦，别过度解释</h2>
-  <p>讲师备注：Good 一栏几乎总是得到更好的结果，模型会推断剩下的部分。</p>
-  <p class="key">多加的附带说明会叠加歧义，而不是消除歧义。</p>
-  <details class="more"><summary></summary><p>KISS 在本课的意思是「清晰胜过啰嗦」，不是网络协议。追失败的 Good 例子写出了：哪个测试、哪个输入、期望行为（抛 <code>ValueError</code>）和现在的错误行为（返回 <code>None</code>）。</p></details>
-  <div class="src official">S1 L01 slides「KISS」及 Bad / Good 两栏和讲师备注</div></div>
+<section class="sec" id="s20" data-toc="小测">
+  <span class="kicker">小测（补充：题目由学习搭子出）</span>
+  <h2>用 6 个场景检查你是不是 Curator</h2>
+  <div class="quiz"><script type="application/json">[
+   {"q":"你用 AI 生成了一段排序代码，测试全过，但你说不清它为什么对。按本课标准，这段代码算谁的？","opts":["算你的，测试过了","不算你的：解释不了就不是你的","算模型的，所以不用负责"],"a":1,"why":"能解释，它才是你的。评分看理解，不看生成。误区：测试全过就够了。","back":7},
+   {"q":"同学说：「代码是 AI 打的，出了 bug 不怪我。」这是哪种角色的想法？","opts":["Typist：只对按键负责","Curator：拥有结果","两者都不是"],"a":0,"why":"Curator 的「正确」是能运行且能为它辩护，不管是谁打的。","back":10},
+   {"q":"测试 test_parse_date 失败了。哪个提示词更符合 KISS？","opts":["测试挂了，可能是日期或时区？帮我弄好","请详细解释你的思路，再考虑所有可能原因，然后修好","写出测试名、输入 2026-02-30，要求无效日期抛 ValueError 而不是返回 None"],"a":2,"why":"聚焦：写出哪个测试、哪个输入、期望行为。附带说明会叠加歧义。","back":11},
+   {"q":"你用 9B 跑完提示词 1，4 个测试全绿。能说明修好了吗？","opts":["不能：形状 1 会让测试保持全绿，要运行 python3 notes.py 并读 diff","能，测试是最终标准","不能：测试本身一定写错了"],"a":0,"why":"README：没有测试用空列表调用 parse_args，所以测试全绿说明不了提示词 1 是否成功。","back":18},
+   {"q":"模型给出了提示词 3 的修改。Curator 下一步先做什么？","opts":["直接接受，再写下一个提示词","自己手动重写 dispatch","读 diff，再决定接受、改方向还是撤销"],"a":2,"why":"Curator 评估输出：审查、改方向、接受。README：接受前先读 diff。","back":17},
+   {"q":"为什么 Apply 阶段选 Aider，而不是有图形界面的工具？","opts":["Big Three 是显式的，能连你自己的模型，小到能重建","Aider 生成的代码最好","Aider 是唯一免费的工具"],"a":0,"why":"课件给的是教学理由。工具会消失，原则不会。","back":14}]</script></div>
+  <p class="src extra">小测题目由学习搭子出，依据第 7、10、11、14、17、18 节（来源见各节）。</p>
 </section>
-
-<section class="card">
-  <div class="stage"><svg class="flow" data-act="prompt" data-edge="model>prompt" data-flow='{"nodes":[{"id":"ctx","x":110,"y":110,"t":"Context 上下文","s":"AI 开始时知道什么？"},{"id":"model","x":330,"y":300,"t":"Model 模型","s":"能力 / 成本 / 速度"},{"id":"prompt","x":550,"y":110,"t":"Prompt 提示词","s":"怎么说明你要什么？","c":"amber"}],"edges":[{"f":"ctx","t":"model"},{"f":"model","t":"prompt"},{"f":"prompt","t":"ctx"}]}'></svg></div>
-  <div class="say"><span class="kicker">下一步用什么框架诊断？</span><h2>Big Three：上下文、模型、提示词</h2>
-  <p>本讲只预告；第 3 讲（L03）深入讲。</p>
-  <p class="key">课程目标之一：用 Big Three 推理 AI 编码工具为什么失败。</p>
-  <div class="src official">S1 L01 slides「Preview · L03 The Big Three」；S2 syllabus 学习目标 /01</div></div>
-</section>
-
-<section class="card">
-  <div class="stage"><div class="pairs">
-   <div class="pair"><div class="a"><b>问题 1</b>既然 AI 能写代码，为什么还要学 EECS 281？</div><div class="b"><b>讲师备注要点</b>计算机基础仍然重要：你要评估输出。</div></div>
-   <div class="pair"><div class="a"><b>问题 2</b>什么时候你不想用 AI 写代码？</div><div class="b"><b>讲师备注要点</b>学习时、安全关键的代码、深度维护。</div></div>
-  </div></div>
-  <div class="say"><span class="kicker">AI 能写代码，基础还有用吗？</span><h2>基础仍然重要，因为要评估输出</h2>
-  <p>两个讨论题用来检验 Curator 原则。</p>
-  <p class="key">Curator 要评估输出，评估靠的就是计算机基础。</p>
-  <div class="src official">S1 L01 slides「Two questions」及讲师备注</div></div>
-</section>
-
-<section class="card">
-  <div class="stage"><svg class="flow" data-act="aider" data-edge="aider>ep" data-flow='{"nodes":[{"id":"you","x":110,"y":80,"t":"你","s":"决定 Big Three","c":"blue"},{"id":"aider","x":330,"y":200,"t":"Aider","s":"没有 GUI 藏起决定"},{"id":"ep","x":550,"y":80,"t":"你部署的模型","s":"OpenAI 兼容 API","c":"amber"},{"id":"own","x":550,"y":330,"t":"你自己的版本","s":"第 3 周开始重建","c":"green"}],"edges":[{"f":"you","t":"aider","l":"上下文 / 模型 / 提示词"},{"f":"aider","t":"ep","l":"一行配置"},{"f":"aider","t":"own","l":"小到能重写"}]}'></svg></div>
-  <div class="say"><span class="kicker">为什么 Apply 阶段用 Aider？</span><h2>选 Aider 是教学理由：决定都摆在明面上</h2>
-  <p>它讲 OpenAI 兼容 API，所以能连你自己部署的模型；它也小到你能重建它。</p>
-  <p class="key">模型只是一行配置，不是依赖，所以这门课不花钱。</p>
-  <details class="more"><summary></summary><ul><li>三条理由：Big Three 是显式的；讲 OpenAI 兼容 API；小到能重建，从第 3 周开始。</li><li>讲师备注：Claude Code 在 L05 作为演示出现，不需要账号。</li></ul></details>
-  <div class="src official">S1 L01 slides「Why Aider in Apply?」及讲师备注</div></div>
-</section>
-
-<section class="card">
-  <div class="stage"><pre><span class="k">def</span> <span class="f">parse_args</span>(argv):
-    <span class="s">"""Split argv into a command and its arguments."""</span>
-<span class="hl">    <span class="k">return</span> argv[0], argv[1:]</span>
-<span class="k">def</span> <span class="f">dispatch</span>(command, args):
-<span class="hl">    <span class="k">if</span> command == <span class="s">"add"</span>:</span>        <span class="k">return</span> cmd_add(args)
-    <span class="k">elif</span> command == <span class="s">"list"</span>:
-        <span class="k">return</span> cmd_list(args)
-    <span class="k">elif</span> command == <span class="s">"count"</span>:
-        <span class="k">return</span> cmd_count(args)
-    <span class="c"># else: unknown command</span></pre></div>
-  <div class="say"><span class="kicker">现场演示改的是什么代码？</span><h2>四个测试全过，代码仍有两处缺陷</h2>
-  <p>没有参数时 <code>argv[0]</code> 抛 <code>IndexError</code>；<code>dispatch()</code> 是一串 if。</p>
-  <p class="key">测试全绿不等于代码好。</p>
-  <details class="more"><summary></summary><p>演示代码在官方仓库 <code>demos/L01-notes-cli</code>：<code>notes.py</code> 是约 60 行的笔记命令行，<code>test_notes.py</code> 有 4 个测试。<code>./reset</code> 生成一个可丢弃的副本，并做成 git 仓库，所以 Aider 的 <code>/undo</code> 能用。</p></details>
-  <div class="src official">S3 demos/L01-notes-cli/src/notes.py:13–15、48–59；README「The two flaws」</div></div>
-</section>
-
-<section class="card full">
-  <div class="head-full"><span class="kicker">动手：用 Curator 的方式走一遍现场演示</span><h2>三个提示词：你说结果，模型改代码，你判断</h2></div>
-  <div class="stage"><div class="sim" data-sim='{"label":"正常路径（课件演示）","note":"串起来的示例：三个提示词照课件和 README；每一步的分工照 Curator 一栏。具体 diff 内容没有写出，官方材料没给。","flow":{"nodes":[{"id":"you","x":110,"y":80,"t":"你（Curator）","s":"说明意图 · 评估 · 负责","c":"blue","w":220},{"id":"ai","x":480,"y":80,"t":"Aider + 模型","s":"生成修改","c":"amber"},{"id":"diff","x":480,"y":300,"t":"diff","s":"先读再接受"},{"id":"test","x":110,"y":300,"t":"测试","s":"/run pytest -q","c":"green"}],"edges":[{"f":"you","t":"ai","l":"提示词"},{"f":"ai","t":"diff","l":"修改"},{"f":"diff","t":"you","l":"你读 diff"},{"f":"you","t":"test","l":"运行"},{"f":"test","t":"you","bend":-30}]},
-  "steps":[
-   {"act":"you","edge":"you>ai","msg":{"r":"user","t":"Refactor parse_args() to handle the no-args case — print usage and exit cleanly."},"say":"提示词 1。你只说结果（WHAT），不说怎么写。"},
-   {"act":"ai","edge":"ai>diff","msg":{"r":"asst","t":"（模型给出对 notes.py 的修改）"},"say":"模型产出修改。打字的是模型。"},
-   {"act":"diff","edge":"diff>you","say":"README：每个提示词之后，接受前先读 diff。这是 Curator 的「评估输出」。"},
-   {"act":"test","edge":"you>test","msg":{"r":"tool","t":"/run pytest -q"},"say":"在看得见的地方跑测试。"},
-   {"act":"you","edge":"you>ai","msg":{"r":"user","t":"Add a unit test for the no-args path."},"say":"提示词 2：给无参数路径加单元测试。照样读 diff。"},
-   {"act":"you","edge":"you>ai","msg":{"r":"user","t":"Replace the if-chain in dispatch() with a dictionary lookup."},"say":"提示词 3：把 if 链换成字典查找。照样读 diff、跑测试。"},
-   {"act":"you","edge":"test>you","msg":{"r":"tool","t":"Tests pass. I wrote zero lines of code."},"say":"课件：三个协同修改，测试通过，讲师一行代码都没写。"},
-   {"act":"you","say":"课件：I described outcomes. The model produced them. I judged. Curator 拥有结果。"}],
-  "alts":[{"label":"分支：diff 不是你要的（补充示例）","steps":[
-   {"act":"you","edge":"you>ai","msg":{"r":"user","t":"Replace the if-chain in dispatch() with a dictionary lookup."},"say":"同样的提示词 3。"},
-   {"act":"diff","edge":"diff>you","msg":{"r":"err","t":"（假设）diff 里改动超出了 dispatch()"},"say":"教学假设，不是官方演示的结果。你读 diff 时发现它不符合意图。"},
-   {"act":"you","msg":{"r":"user","t":"/undo"},"say":"Curator 的「改方向」：撤销。reset 把副本做成 git 仓库，所以 /undo 能用。"},
-   {"act":"ai","edge":"you>ai","msg":{"r":"user","t":"（更聚焦地重说一次提示词）"},"say":"按 KISS 重写提示词：聚焦，不加附带说明。"},
-   {"act":"test","edge":"you>test","msg":{"r":"tool","t":"/run pytest -q"},"say":"读完新 diff 再跑测试；你能解释，才接受。"}]}]}'></div></div>
-</section>
-
-<section class="card">
-  <div class="stage"><svg class="flow" data-act="build" data-edge="p2>build" data-flow='{"nodes":[{"id":"p1","x":110,"y":80,"t":"Part 1 第 1–10 课","s":"taskr 命令行 · qwen3.5:4b"},{"id":"p2","x":450,"y":80,"t":"Part 2 第 11–16 课","s":"网页前端 · 建议 9b"},{"id":"gate","x":110,"y":300,"t":"9 月 11 日截止","s":"setup gate + 16 课","c":"red"},{"id":"build","x":450,"y":300,"t":"结对程序员","s":"第 3–6 周 · 10 月 6 日交","c":"amber"}],"edges":[{"f":"p1","t":"p2"},{"f":"p2","t":"gate"},{"f":"p2","t":"build"}]}'></svg></div>
-  <div class="say"><span class="kicker">这周要做什么？</span><h2>每一课都是一个失败的测试</h2>
-  <p><code>aider-practice</code> 共 16 课：你驱动 Aider，直到测试通过。你不用猜自己是不是做完了。</p>
-  <p class="key">结对程序员要做 7 个固定功能，只凭一份给定规格从零写；规格在 L03 发布。</p>
-  <details class="more"><summary></summary><ul><li>交付：通过 feature gate 的代码，加上规格、会话日志和一份简短反思。</li><li>Lab01（9 月 14/15 日）是「转折实验」。</li><li>结尾页：Aider will be gone. The principles won’t. 讲师备注：Claude Code 和 Codex 已经是它的后继者。</li></ul></details>
-  <div class="src official">S1 L01 slides「Every lesson is a failing test」「Your first project」「Aider will be gone」</div></div>
-</section>
-
-<section class="card full">
-  <div class="head-full"><span class="kicker">小测（补充：题目由学习搭子出）</span><h2>用 6 个场景检查你是不是 Curator</h2></div>
-  <div class="stage"><div class="quiz" data-quiz='[
-   {"q":"你用 AI 生成了一段排序代码，测试全过，但你说不清它为什么对。按本课标准，这段代码算谁的？","opts":["算你的，测试过了","不算你的：解释不了就不是你的","算模型的，所以不用负责"],"a":1,"why":"If you can explain it, it’s yours。评分看理解，不看生成。误区：测试全过就够了。","back":3},
-   {"q":"同学说：「代码是 AI 打的，出了 bug 不怪我。」这是哪种角色的想法？","opts":["Curator：拥有结果","Typist：只对按键负责","两者都不是"],"a":1,"why":"Curator 的「正确」是能运行且能为它辩护，不管是谁打的。","back":6},
-   {"q":"测试 test_parse_date 失败了。哪个提示词更符合 KISS？","opts":["测试挂了，可能是日期或时区？帮我弄好","test_parse_date fails on \"2026-02-30\". Make parse_date raise ValueError on invalid dates instead of returning None.","请详细解释你的思路，再考虑所有可能原因，然后修好"],"a":1,"why":"聚焦：写出哪个测试、哪个输入、期望行为。附带说明会叠加歧义。","back":7},
-   {"q":"notes.py 的 4 个测试全过。能说明代码没问题吗？","opts":["能","不能：无参数时仍会 IndexError，dispatch 仍是 if 链","不能：测试本身一定写错了"],"a":1,"why":"README：测试全绿不等于代码好。","back":11},
-   {"q":"模型给出了提示词 3 的修改。Curator 下一步先做什么？","opts":["直接接受，再写下一个提示词","读 diff，再决定接受、改方向还是撤销","自己手动重写 dispatch"],"a":1,"why":"Curator 评估输出：审查、改方向、接受。README：接受前先读 diff。","back":12},
-   {"q":"为什么 Apply 阶段选 Aider，而不是有图形界面的工具？","opts":["Aider 生成的代码最好","Big Three 是显式的，能连你自己的模型，小到能重建","Aider 是唯一免费的工具"],"a":1,"why":"课件给的是教学理由。工具会消失，原则不会。","back":10}]'></div></div>
-</section>
-</main>
-<nav class="bottom"><button class="btn" id="prev">上一张</button><button class="btn main" id="next">下一张</button></nav>
-<script>
-/* 学习搭子 固定组件库 — 不要在课程里改这个文件。 */
+</main><script>var __H=location.hash;window.lessonIcons={"menu": "<svg class=\"i i-menu\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/><\/svg>", "play": "<svg class=\"i i-play\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z\"/><\/svg>", "pause": "<svg class=\"i i-pause\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"14\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/><rect x=\"5\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/><\/svg>", "check": "<svg class=\"i i-check\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 6 9 17l-5-5\"/><\/svg>", "x": "<svg class=\"i i-x\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/><\/svg>", "zoom-in": "<svg class=\"i i-zoom-in\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><line x1=\"21\" x2=\"16.65\" y1=\"21\" y2=\"16.65\"/><line x1=\"11\" x2=\"11\" y1=\"8\" y2=\"14\"/><line x1=\"8\" x2=\"14\" y1=\"11\" y2=\"11\"/><\/svg>", "zoom-out": "<svg class=\"i i-zoom-out\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><line x1=\"21\" x2=\"16.65\" y1=\"21\" y2=\"16.65\"/><line x1=\"8\" x2=\"14\" y1=\"11\" y2=\"11\"/><\/svg>", "copy": "<svg class=\"i i-copy\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\"/><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"/><\/svg>", "chevron-right": "<svg class=\"i i-chevron-right\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m9 18 6-6-6-6\"/><\/svg>", "book-open": "<svg class=\"i i-book-open\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 5v16\"/><path d=\"M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z\"/><\/svg>", "external-link": "<svg class=\"i i-external-link\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M15 3h6v6\"/><path d=\"M10 14 21 3\"/><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/><\/svg>"};window.lessonIcon=n=>window.lessonIcons[n]||"";</script><script>/* Article/pair navigation only. No global swipe or arrow-key paging. */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const H=document.documentElement, sections=$$('main.deck > .sec, main.deck > .hero, .pair-notes > .sec');
+if(!sections.length)return;
+const ids=new Set($$('[id]').map(n=>n.id));
+sections.forEach((s,i)=>{if(!s.id){let n=i+1,id=s.classList.contains('hero')?'intro':'s'+n;while(ids.has(id))id='s'+(++n);s.id=id;ids.add(id)}});
+const title=s=>s.dataset.toc||$('h2,h1,h3',s)?.textContent||s.id;
+const toc=document.createElement('nav');toc.className='toc';toc.id='lesson-toc';toc.setAttribute('aria-label','目录');
+const heading=document.createElement('b');heading.textContent='目录';toc.appendChild(heading);const ol=document.createElement('ol');toc.appendChild(ol);
+sections.forEach((s,i)=>{const li=document.createElement('li'),a=document.createElement('a');a.href='#'+s.id;a.textContent=(i+1)+'. '+title(s);li.appendChild(a);ol.appendChild(li)});document.body.appendChild(toc);
+const links=$$('a',toc),toggle=$('.toc-toggle'),count=$('.count'),bar=$('.track i');
+const shade=document.createElement('div');shade.className='toc-backdrop';document.body.appendChild(shade);
+function open(value){H.classList.toggle('toc-open',value);toggle?.setAttribute('aria-expanded',String(value));if(value)links.find(a=>a.getAttribute('aria-current')==='true')?.focus();else toggle?.focus()}
+if(toggle){toggle.setAttribute('aria-controls',toc.id);toggle.onclick=()=>open(!H.classList.contains('toc-open'))}shade.onclick=()=>open(false);
+addEventListener('keydown',e=>{if(e.key==='Escape'&&H.classList.contains('toc-open'))open(false)});
+function locate(hash){let id;try{id=decodeURIComponent(hash.replace(/^#/,''))}catch(e){return null}if(/^\d+$/.test(id))return sections[+id-1];return document.getElementById(id)}
+function jump(target){if(!target)return;H.classList.remove('toc-open');toggle?.setAttribute('aria-expanded','false');target.scrollIntoView({block:'start',behavior:'instant'});history.replaceState(null,'','#'+target.id);update();dispatchEvent(new Event('lesson:navigate'))}
+window.lessonNav={layout:H.dataset.layout,go:n=>jump(document.getElementById('s'+n)||sections[n-1]),returnTo:box=>jump(box.closest('.sec')||box),jump};window.goCard=n=>window.lessonNav.go(n);
+toc.onclick=e=>{const a=e.target.closest('a');if(!a)return;e.preventDefault();jump(locate(a.hash))};
+const key='pos:'+location.pathname;let queued=false,restoring=true;
+function update(){queued=false;let current=sections[0];const line=H.dataset.layout==='pair'&&innerWidth<=820?innerHeight*.4+90:100;for(const s of sections)if(s.getBoundingClientRect().top<=line)current=s;
+ count.textContent=title(current);links.forEach(a=>a.setAttribute('aria-current',String(a.hash==='#'+current.id)));const max=H.scrollHeight-innerHeight;bar.style.width=Math.max(0,Math.min(100,max>0?scrollY/max*100:100))+'%';
+ if(!restoring)try{localStorage.setItem(key,JSON.stringify({id:current.id,offset:scrollY-(current.getBoundingClientRect().top+scrollY)}))}catch(e){}
+}
+addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(update)}},{passive:true});addEventListener('resize',update);addEventListener('hashchange',()=>jump(locate(location.hash)));
+addEventListener('load',()=>{const hash=window.__H||location.hash;let target=locate(hash),offset=0;if(!hash){try{const pos=JSON.parse(localStorage.getItem(key)||'null');if(pos){target=document.getElementById(pos.id);offset=Number(pos.offset)||0}}catch(e){}}
+ if(target){target.scrollIntoView({block:'start',behavior:'instant'});if(!hash)scrollBy(0,offset+72)}restoring=false;update();
+});update();
+})();
+</script><script>/* Reveal an offscreen simulator first, then move only its local SVG viewport. */
+(function(root){
+function delta(start,end,low,high,pad=16){if(start<low+pad)return start-low-pad;if(end>high-pad)return end-high+pad;return 0}
+function focus(svg,scroller){
+ let frame=scroller.getBoundingClientRect(),bottom=innerHeight-88;
+ const top=document.querySelector('.top')?.getBoundingClientRect().bottom||56;
+ if(frame.bottom<=top||frame.top+112>bottom){
+  scroller.closest('.sim').scrollIntoView({block:'start',behavior:'instant'});
+  frame=scroller.getBoundingClientRect();
+ }
+ for(let p=scroller.parentElement;p&&p!==document.body;p=p.parentElement){const c=getComputedStyle(p);if(/auto|scroll|hidden|clip/.test(c.overflowY)){const r=p.getBoundingClientRect();bottom=Math.min(bottom,r.top+p.clientHeight)}}
+ const space=Math.max(112,Math.min(innerHeight*.4,bottom-frame.top));scroller.style.maxHeight=space+'px';
+ frame=scroller.getBoundingClientRect();const node=svg.querySelector('.fl-node.act');if(!node)return;const r=node.getBoundingClientRect();
+ scroller.scrollTop+=delta(r.top,r.bottom,frame.top,frame.top+scroller.clientHeight);
+ scroller.scrollLeft+=delta(r.left,r.right,frame.left,frame.left+scroller.clientWidth);
+}
+root.LessonGeometry={delta,focus};if(typeof module!=='undefined')module.exports={delta,focus};
+})(typeof window==='undefined'?globalThis:window);
+</script><script>/* Shared material/explanation pairing, original-image dialog and copy actions. */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)],ic=window.lessonIcon;
+window.lessonCopy=async(text,button)=>{try{if(navigator.clipboard?.writeText)await navigator.clipboard.writeText(text);else{const t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();if(!document.execCommand('copy'))throw Error('copy');t.remove()}button.textContent='已复制'}catch(e){button.textContent='复制未成功，请选中文字复制'}};
+$$('.pair.codewalk,.pair.read-pair,.pair.material-pair').forEach(pair=>{
+ const source=$('.pair-source',pair),notes=$('.pair-notes',pair);if(!source||!notes)return;
+ const pre=$('pre[data-lines]',source),code=pre&&$('code',pre),steps=$$('.step',notes);let lines=[],raw='';
+ if(code){raw=code.textContent;const first=Number(pre.dataset.lines)||1;code.textContent='';const pieces=raw.replace(/\n$/,'').split('\n');pieces.forEach((text,i)=>{const line=document.createElement('span');line.className='code-line';line.dataset.line=String(first+i);line.textContent=text;code.appendChild(line);lines.push(line)});
+  const panel=document.createElement('div');panel.className='code-panel';source.before(panel);
+  const toolbar=document.createElement('div');toolbar.className='code-toolbar';
+  const hint=document.createElement('span');hint.className='code-scroll-hint';hint.textContent='长行可横向滚动';
+  const button=document.createElement('button');button.className='btn sm copy-code';button.innerHTML=ic('copy')+' 复制代码';button.onclick=()=>window.lessonCopy(raw,button);
+  toolbar.append(hint,button);panel.append(toolbar,source);
+ }
+ let active=null;
+ function select(step){if(!step||active===step)return;active=step;steps.forEach(s=>s.classList.toggle('is-active',s===step));let targets=[];
+  if(code){const ranges=(step.dataset.hl||'').split(',').map(v=>v.split('-').map(Number));lines.forEach(line=>{const n=Number(line.dataset.line),on=ranges.some(([a,b=a])=>n>=a&&n<=b);line.classList.toggle('hl',on);if(on)targets.push(line)})}
+  else{const ids=(step.dataset.explains||step.dataset.target||'').split(/\s+/);$$('.source-block,[data-material]',source).forEach(block=>{const on=ids.includes(block.dataset.sourceId||block.id);block.classList.toggle('is-active',on);if(on)targets.push(block)})}
+  if(targets.length){const a=targets[0].getBoundingClientRect(),b=targets[targets.length-1].getBoundingClientRect(),r=source.getBoundingClientRect();const bottom=r.top+source.clientHeight;source.scrollTop+=b.bottom-a.top>source.clientHeight-32?a.top-r.top-16:window.LessonGeometry.delta(a.top,b.bottom,r.top,bottom)}
+ }
+ const update=()=>{
+  const rect=notes.getBoundingClientRect(),material=source.closest('.code-panel')||source;
+  const top=Math.max(0,$(".top")?.getBoundingClientRect().bottom||0,innerWidth<=820?material.getBoundingClientRect().bottom:0),bottom=Math.min(innerHeight,rect.bottom);
+  if(bottom<=top)return;
+  const line=top+(bottom-top)*.4;let step=steps[0];
+  for(const s of steps)if(s.getBoundingClientRect().top<=line)step=s;
+  const last=steps.at(-1),lastRect=last?.getBoundingClientRect();
+  if(scrollY+innerHeight>=document.documentElement.scrollHeight-2&&lastRect?.top<bottom&&lastRect.bottom>top)step=last;
+  select(step);
+ };
+ let queued=false;addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(()=>{queued=false;update()})}},{passive:true});addEventListener('resize',update);
+ steps.forEach(step=>{step.addEventListener('focusin',()=>select(step));step.addEventListener('click',e=>{select(step);const a=e.target.closest('a');if(a?.hash&&source.querySelector(a.hash)){e.preventDefault();source.focus()}})});select(steps[0]);addEventListener('load',update);
+});
+$$('figure img').forEach(img=>{const button=document.createElement('button');button.className='image-open';button.type='button';button.setAttribute('aria-label','放大图片：'+img.alt);img.replaceWith(button);button.appendChild(img);button.onclick=()=>{
+ const dialog=document.createElement('dialog');dialog.className='image-dialog';dialog.setAttribute('aria-label',img.alt);const close=document.createElement('button');close.className='btn dialog-close';close.innerHTML=ic('x')+' 关闭';const large=img.cloneNode();large.removeAttribute('loading');dialog.append(close,large);document.body.appendChild(dialog);close.onclick=()=>dialog.close();dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close()});dialog.addEventListener('close',()=>{dialog.remove();button.focus()});dialog.showModal();close.focus();
+}});
+$$('details.more summary').forEach(s=>{if(!s.textContent.trim())s.textContent='展开细节';s.insertAdjacentHTML('afterbegin',ic('chevron-right'))});
+})();
+</script><script>/* 学习搭子 固定组件库 — 不要在课程里改这个文件。 */
 (()=>{
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const NS='http://www.w3.org/2000/svg';
+const data=(box,kind)=>JSON.parse(box.querySelector('script[type="application/json"]')?.textContent||box.dataset[kind]);
+const ic=window.lessonIcon;
 const el=(t,a={},p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p&&p.appendChild(e);return e};
 const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 
-/* ---------- 卡片翻页 ---------- */
-const cards=$$('.card');let cur=0;
-function go(i){i=Math.max(0,Math.min(cards.length-1,i));cards[cur].classList.remove('on');cur=i;cards[cur].classList.add('on');
-  $('.track i').style.width=((cur+1)/cards.length*100)+'%';$('.count').textContent=(cur+1)+' / '+cards.length;
-  $('#prev').disabled=cur===0;$('#next').disabled=cur===cards.length-1;history.replaceState(null,'','#'+(cur+1));}
-window.goCard=n=>go(n-1);
-$('#prev').onclick=()=>go(cur-1);$('#next').onclick=()=>go(cur+1);
-addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.key==='ArrowRight')go(cur+1);if(e.key==='ArrowLeft')go(cur-1)});
-let sx=null;addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
-addEventListener('touchend',e=>{if(sx===null)return;const d=e.changedTouches[0].clientX-sx;if(Math.abs(d)>60)go(cur+(d<0?1:-1));sx=null});
+function component(selector,render){
+  $$(selector).forEach(box=>{try{render(box)}catch(error){
+    const message=document.createElement('p');message.className='component-error';
+    message.textContent='这张图的数据有误';message.setAttribute('role','status');
+    box.replaceWith(message);console.error('组件数据有误',error);
+  }});
+}
 
 /* ---------- flow：用 JSON 画流程图 ----------
  spec = {w,h,nodes:[{id,x,y,t,s?,c?,w?}],edges:[{f,t,l?,bend?}]}  节点坐标是中心点 */
 function drawFlow(svg,spec){
   svg.innerHTML='';
   const defs=el('defs',{},svg);
-  [['a','#AEB8C6'],['b','#2550D9'],['red','#C8372D'],['amber','#C77A00'],['green','#16875A']].forEach(([id,c])=>{const m=el('marker',{id:'ar'+id+svg.dataset.uid,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:7,markerHeight:7,orient:'auto-start-reverse'},defs);el('path',{d:'M0,0L10,5L0,10z',fill:c},m)});
-  const N={};spec.nodes.forEach(n=>N[n.id]={...n,w:n.w||150,h:n.s?70:56});
+  [['a','var(--meta)'],['b','var(--blue)'],['red','var(--amber)'],['amber','var(--amber)'],['green','var(--green)']].forEach(([id,c])=>{const m=el('marker',{id:'ar'+id+svg.dataset.uid,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:7,markerHeight:7,orient:'auto-start-reverse'},defs);el('path',{d:'M0,0L10,5L0,10z',fill:c},m)});
+  const N={};spec.nodes.forEach(n=>N[n.id]={...n,w:n.w||150,h:n.h||(n.s?70:56)});
   const ns=Object.values(N);
   let x0=Math.min(...ns.map(n=>n.x-n.w/2)),x1=Math.max(...ns.map(n=>n.x+n.w/2)),y0=Math.min(...ns.map(n=>n.y-n.h/2)),y1=Math.max(...ns.map(n=>n.y+n.h/2));
   const B={x0,x1,y0,y1};
@@ -393,7 +572,7 @@ function drawFlow(svg,spec){
       const cx=mx-(q2-q1)/len*bd,cy=my+(p2-p1)/len*bd;d=`M${p1},${q1} Q${cx},${cy} ${p2},${q2}`;
       const qx=.25*p1+.5*cx+.25*p2,qy=.25*q1+.5*cy+.25*q2,sg=bd>=0?1:-1;lx=qx-(q2-q1)/len*sg*14;ly=qy+(p2-p1)/len*sg*14+4;}
     const mk=e.c||'a';const p=el('path',{d,class:'fl-edge '+(e.c||''),'marker-end':`url(#ar${mk}${svg.dataset.uid})`},eg);p._mk=mk;
-    let lab=null;if(e.l){const anc=e.route==='left'?'end':e.route==='right'?'start':'middle';lab=el('text',{x:lx,y:ly,'text-anchor':anc,class:'fl-elab '+(e.c||''),stroke:'#F2F4F7','stroke-width':5,'paint-order':'stroke'},eg);lab.textContent=e.l}
+    let lab=null;if(e.l){const anc=e.route==='left'?'end':e.route==='right'?'start':'middle';lab=el('text',{x:lx,y:ly,'text-anchor':anc,class:'fl-elab '+(e.c||''),stroke:'var(--paper)','stroke-width':5,'paint-order':'stroke'},eg);lab.textContent=e.l}
     svg._edges[e.f+'>'+e.t]={p,lab}});
   ns.forEach(n=>{const g=el('g',{class:'fl-node '+(n.c||'')},ng);
     el('rect',{x:n.x-n.w/2,y:n.y-n.h/2,width:n.w,height:n.h,rx:14},g);
@@ -401,60 +580,105 @@ function drawFlow(svg,spec){
     if(n.s){const s=el('text',{x:n.x,y:n.y+18,'text-anchor':'middle',class:'sub'},g);s.textContent=n.s}
     svg._nodes[n.id]=g});
   /* 自动贴合：viewBox 只包住内容，图会放大填满面板 */
-  const P=spec.pad??8;svg.setAttribute('viewBox',`${x0-P} ${y0-P-10} ${x1-x0+2*P} ${y1-y0+2*P+20}`);
+  const P=spec.pad??8,W=x1-x0+2*P,H=y1-y0+2*P+20;
+  svg.setAttribute('viewBox',`${x0-P} ${y0-P-10} ${W} ${H}`);
+  svg.style.setProperty('--flow-width',W+'px');svg.style.setProperty('--flow-height',H+'px');
+  const scroll=document.createElement('div');scroll.className='flow-scroll';
+  svg.replaceWith(scroll);scroll.appendChild(svg);
+  if(!scroll.closest('.sim')&&W>innerWidth-78){const t=document.createElement('p');t.className='flow-tip';t.textContent='← 左右滑动看全图 →';scroll.after(t)}
   svg._set=(act,edge)=>{for(const k in svg._nodes)svg._nodes[k].classList.toggle('act',k===act);
     for(const k in svg._edges){const on=k===edge,E=svg._edges[k];E.p.classList.toggle('act',on);E.p.setAttribute('marker-end',`url(#ar${on?'b':E.p._mk}${svg.dataset.uid})`);E.lab&&E.lab.classList.toggle('act',on)}};
   svg._set(svg.dataset.act,svg.dataset.edge);
+  svg._center=()=>{if(!matchMedia('(max-width:820px)').matches)return;
+    const active=Object.values(svg._nodes).find(n=>n.classList.contains('act'));if(!active)return;
+    const a=active.getBoundingClientRect(),r=scroll.getBoundingClientRect();
+    scroll.scrollLeft+=a.left+a.width/2-r.left-r.width/2;
+  };
 }
 let uid=0;
-$$('svg.flow').forEach(s=>{s.dataset.uid=++uid;drawFlow(s,JSON.parse(s.dataset.flow))});
+component('svg.flow',s=>{s.dataset.uid=++uid;drawFlow(s,data(s,'flow'))});
 
 /* ---------- sim：一步步走的模拟器 ----------
  data-sim = {flow:{...}, steps:[{act,edge,msg:{r:user|asst|tool|err|sys,n?,t},say}], alt?:{label,steps:[...]}} */
-$$('.sim').forEach(box=>{
-  const spec=JSON.parse(box.dataset.sim);if(spec.alt&&!spec.alts)spec.alts=[spec.alt];const AL=spec.alts||[];const gname='br'+(++uid);
-  box.innerHTML=`<div class="ctl"><button class="btn sm" data-a="step">下一步</button><button class="btn sm" data-a="play">▶ 自动</button><button class="btn sm" data-a="reset">重置</button>
+component('.sim',box=>{
+  const spec=data(box,'sim');if(spec.alt&&!spec.alts)spec.alts=[spec.alt];const AL=spec.alts||[];const gname='br'+(++uid);
+  box.innerHTML=`<div class="ctl"><button class="btn sm" data-a="step">下一步</button><button class="btn sm" data-a="play">${ic("play")} 自动</button><button class="btn sm" data-a="reset">重置</button>
    <label>速度 <input type="range" min="300" max="2500" step="100" value="1200"></label></div>${AL.length?`<div class="ctl branches"><label><input type="radio" name="${gname}" value="-1" checked> ${esc(spec.label||'正常路径')}</label>${AL.map((a,j)=>`<label><input type="radio" name="${gname}" value="${j}"> ${esc(a.label)}</label>`).join('')}</div>`:''}
    <div class="body"><svg class="flow"></svg><div class="log"></div></div><div class="narr"></div>`;
   if(spec.layout==='wide')box.classList.add('wide');
-  const svg=$('svg',box);svg.dataset.uid=++uid;drawFlow(svg,spec.flow);
+  const svg=$('.body > svg.flow',box);svg.dataset.uid=++uid;drawFlow(svg,spec.flow);
+  const fs=svg.parentElement,tip=document.createElement('p');tip.className='flow-tip';tip.textContent='点图放大看字，再点回到全图';fs.after(tip);
+  const focus=()=>{if(!fs.classList.contains('zoom'))return svg._center();window.LessonGeometry.focus(svg,fs)};
+  const zoom=document.createElement('button');zoom.className='btn sm zoom-toggle';zoom.innerHTML=ic('zoom-in')+' 放大图';zoom.setAttribute('aria-pressed','false');tip.replaceWith(zoom);const toggle=()=>{const on=fs.classList.toggle('zoom');zoom.innerHTML=ic(on?'zoom-out':'zoom-in')+(on?' 返回全图':' 放大图');zoom.setAttribute('aria-pressed',String(on));if(!on){fs.style.maxHeight='';fs.scrollTop=0}focus()};fs.onclick=toggle;zoom.onclick=toggle;window.addEventListener('resize',focus);window.addEventListener('load',()=>requestAnimationFrame(()=>{const params=new URLSearchParams(location.search);if((params.has('sim')||params.has('zoom'))&&!(window.__H??location.hash)&&box===$('.sim')){const section=box.closest('.sec,.card');if(window.lessonNav.layout==='deck')window.goCard($$('.card').indexOf(section)+1);else section.scrollIntoView({block:'start',behavior:'instant'})}focus()}));window.addEventListener('lesson:navigate',()=>requestAnimationFrame(focus));
   const log=$('.log',box),narr=$('.narr',box),radios=$$('input[type=radio]',box),spd=$('input[type=range]',box),play=$('[data-a=play]',box);
-  let i=0,timer=null;const sel=()=>{const r=radios.find(r=>r.checked);return r?+r.value:-1};const steps=()=>sel()>=0?AL[sel()].steps:spec.steps;
+  let i=0,timer=null,predicted=!spec.predict;const prediction=document.createElement('div');if(spec.predict){prediction.className='prediction callout';prediction.innerHTML='<p>先预测：'+esc(spec.predict)+'</p><label>你的判断<textarea rows="2"></textarea></label><button class="btn sm" data-a="predict">提交预测，再看过程</button>';box.prepend(prediction)};const sel=()=>{const r=radios.find(r=>r.checked);return r?+r.value:-1};const steps=()=>sel()>=0?AL[sel()].steps:spec.steps;
   const hint=spec.note?esc(spec.note)+'　点「下一步」开始。':'点「下一步」开始。';const reset=()=>{i=0;log.innerHTML='';narr.innerHTML=hint;svg._set(null,null);stop()};
-  const stop=()=>{clearTimeout(timer);timer=null;play.textContent='▶ 自动'};
+  const stop=()=>{clearTimeout(timer);timer=null;play.innerHTML=ic('play')+' 自动'};
   const step=()=>{const S=steps();if(i>=S.length){narr.textContent='流程结束。点「重置」再走一遍。';stop();return false}
-    const s=S[i++];svg._set(s.act,s.edge);if(s.msg){const d=document.createElement('div');d.className='msg '+s.msg.r;
+    const s=S[i++];svg._set(s.act,s.edge);focus();if(s.msg){const d=document.createElement('div');d.className='msg '+s.msg.r;
       d.innerHTML=`<b>${esc(s.msg.n||({user:'用户',asst:'模型',tool:'工具结果',err:'出错',sys:'系统提示词'}[s.msg.r]))}</b>${esc(s.msg.t)}`;log.appendChild(d);log.scrollTop=1e9}
     narr.innerHTML=`<b>第 ${i}/${S.length} 步</b>　${esc(s.say)}`;return true};
   const loop=()=>{if(step())timer=setTimeout(loop,+spd.value);else stop()};
-  box.onclick=e=>{const a=e.target.dataset.a;if(a==='step'){stop();step()}if(a==='reset')reset();if(a==='play'){if(timer)stop();else{play.textContent='❚❚ 暂停';loop()}}};
+  box.onclick=e=>{const a=e.target.closest('button')?.dataset.a;if(a==='predict'){predicted=true;prediction.hidden=true;step()}if(a==='step'){stop();if(predicted)step();else prediction.querySelector('textarea').focus()}if(a==='reset')reset();if(a==='play'){if(!predicted){prediction.querySelector('textarea').focus();return}if(timer)stop();else{play.innerHTML=ic('pause')+' 暂停';loop()}}};
   narr.innerHTML=hint;radios.forEach(r=>r.onchange=reset);
-  const P=new URLSearchParams(location.search);if(P.get('alt')&&radios[+P.get('alt')]){radios[+P.get('alt')].checked=true}for(let n=+P.get('sim')||0;n>0;n--)step(); /* 自查用：?sim=5&alt=1 */
+  const P=new URLSearchParams(location.search);if(P.get('alt')&&radios[+P.get('alt')]){radios[+P.get('alt')].checked=true}for(let n=+P.get('sim')||0;n>0;n--)step();if(P.get('sim')){predicted=true;prediction.hidden=true}if(P.get('zoom')){fs.classList.add('zoom');zoom.setAttribute('aria-pressed','true');zoom.innerHTML=ic('zoom-out')+' 返回全图'} /* 自查用：?sim=5&alt=1&zoom=1 */
 });
 
 /* ---------- bars：横向条形图 ----------
  data-bars = {unit, items:[{l,v,c?:blue|amber|green|red,note?}], caption?}  数字必须来自原文 */
-$$('.bars').forEach(box=>{const B=JSON.parse(box.dataset.bars),mx=Math.max(...B.items.filter(i=>i.v!=null).map(i=>i.v));
-  box.innerHTML=B.items.map(i=>`<div class="bar ${i.c||''}"><span class="bl">${esc(i.l)}</span>${i.v==null?`<span class="bmiss">${esc(i.miss||'原文未给数字')}</span>`:`<span class="bt"><i style="width:${(i.v/mx*100).toFixed(1)}%"></i></span><span class="bv">${esc(i.v)}${esc(B.unit||'')}</span>`}${i.note?`<span class="bn">${esc(i.note)}</span>`:''}</div>`).join('')+(B.caption?`<div class="bc">${esc(B.caption)}</div>`:'')});
+component('.bars',box=>{const B=data(box,'bars'),mx=Math.max(1,...B.items.filter(i=>i.v!=null).map(i=>i.v));
+  box.innerHTML=B.items.map(i=>`<div class="bar ${i.c||''}"><span class="bl">${esc(i.l)}</span>${i.v==null?`<span class="bmiss">${esc(i.miss||'原文未给数字')}</span>`:`<span class="bt"><i style="width:${(i.v/(B.axis==='independent'?Math.max(1,i.v):mx)*100).toFixed(1)}%"></i></span><span class="bv">${esc(i.v)}${esc(i.unit||B.unit||'')}</span>`}${i.note?`<span class="bn">${esc(i.note)}</span>`:''}</div>`).join('')+(B.caption?`<div class="bc">${esc(B.caption)}</div>`:'')});
 
 /* ---------- quiz：页内小测 ----------
  data-quiz = [{q,opts:[...],a:正确下标,why,back:答错时回到第几张卡片}] */
-$$('.quiz').forEach(box=>{
-  const Q=JSON.parse(box.dataset.quiz);let k=0,score=0;const done=new Set();
-  const render=()=>{const q=Q[k];box.innerHTML=`<div class="qn">第 ${k+1} / ${Q.length} 题　·　已答对 ${score}</div><div class="qt">${esc(q.q)}</div>
-    ${q.opts.map((o,j)=>`<button class="opt" data-j="${j}">${String.fromCharCode(65+j)}. ${esc(o)}</button>`).join('')}
-    <div class="fb"></div><div class="nav"><button class="btn sm" data-n="-1" ${k?'':'disabled'}>上一题</button><button class="btn sm main" data-n="1" ${k<Q.length-1?'':'disabled'}>下一题</button></div>`};
-  box.onclick=e=>{const t=e.target;if(t.dataset.n){k+=+t.dataset.n;render();return}
-    if(t.dataset.j===undefined||done.has(k))return;const q=Q[k],j=+t.dataset.j,fb=$('.fb',box);done.add(k);
-    $$('.opt',box)[q.a].classList.add('ok');
-    if(j===q.a){score++;fb.innerHTML='✓ 对。'+esc(q.why)}else{t.classList.add('no');fb.innerHTML='✗ 不对。'+esc(q.why)+(q.back?` <a onclick="goCard(${q.back})">回到第 ${q.back} 张再看看</a>`:'')}
-    $('.qn',box).textContent=`第 ${k+1} / ${Q.length} 题　·　已答对 ${score}`};
+component('.quiz,.checkpoint',box=>{
+  const checkpoint=box.classList.contains('checkpoint');box.classList.add('quiz');const raw=data(box,checkpoint?'checkpoint':'quiz'),Q=Array.isArray(raw)?raw:[raw],P=new URLSearchParams(checkpoint?'':location.search);
+  let k=Math.max(0,Math.min(Q.length-1,(parseInt(P.get('q'))||1)-1));
+  const answers=Q.map(()=>({first:null,selected:null,retries:0}));
+  const score=()=>answers.filter((s,i)=>s.first===Q[i].a).length;
+  const complete=()=>answers.every(s=>s.selected!==null);
+  const reviewButton=i=>{
+    const target=window.lessonNav.layout==='deck'?$$('.card')[Q[i].back-1]:document.getElementById('s'+Q[i].back);
+    const title=target.dataset.toc||$('h2,h1,h3',target)?.textContent||'相关内容';
+    return `<button class="btn sm" data-review="${i}">回看：${esc(title)}</button>`;
+  };
+  function summary(){
+    const wrong=answers.map((s,i)=>s.first!==Q[i].a?i:-1).filter(i=>i>=0);
+    const recovered=wrong.filter(i=>answers[i].selected===Q[i].a).length;
+    box.innerHTML=`<div class="qt">小测总结</div><p>首次得分：${score()} / ${Q.length}。重试答对：${recovered} 题。</p>
+      <div>${wrong.length?wrong.map(i=>`<p>第 ${i+1} 题：${esc(Q[i].q)} ${reviewButton(i)} <button class="btn sm" data-question="${i}">回到此题</button></p>`).join(''):'没有首次错题。'}</div>
+      <p>用自己的话复述这页的核心机制，再举一个新场景。</p><label>你的复述<textarea class="retelling" rows="3"></textarea></label><button class="btn sm" data-copy-result="1">${ic("copy")} 复制学习结果 JSON</button><button class="btn sm" data-question="0">查看作答</button>`;
+  }
+  function render(){const q=Q[k],s=answers[k];
+    box.innerHTML=`<div class="qn">第 ${k+1} / ${Q.length} 题 ${checkpoint?'· 不计分':'· 首次答对 '+score()}</div><div class="qt">${esc(q.q)}</div>
+      ${q.opts.map((o,j)=>`<button class="opt ${s.selected===null?'':j===s.selected?(j===q.a?'ok':'no'):''}" data-j="${j}" aria-pressed="${j===s.selected}">${String.fromCharCode(65+j)}. ${esc(o)}</button>`).join('')}
+      <div class="fb" aria-live="polite">${s.selected===null?'':s.selected===q.a?ic('check')+' 对。'+esc(q.why):ic('x')+' 不对。先回去看看，或再试一次。'}
+      ${s.selected!==null&&s.selected!==q.a?reviewButton(k)+' <button class="btn sm" data-retry="1">再试一次</button>':''}</div>
+      <div class="nav"><button class="btn sm" data-n="-1" ${k?'':'disabled'}>上一题</button>
+      <button class="btn sm main" data-n="1" ${s.selected===null?'disabled':''}>${checkpoint?'完成检查':k===Q.length-1?'查看总结':'下一题'}</button></div>`;
+  }
+  box.onclick=e=>{const t=e.target.closest('button');if(!t)return;
+    if(t.dataset.review!==undefined){const i=+t.dataset.review;window.lessonNav.go(Q[i].back);
+      let ret=$('#quiz-return');if(!ret){ret=document.createElement('button');ret.id='quiz-return';ret.className='btn sm';document.body.appendChild(ret)}
+      ret.textContent='回到小测';ret.onclick=()=>{window.lessonNav.returnTo(box);ret.remove()};return;
+    }
+    if(t.dataset.copyResult!==undefined){const result={path:location.pathname,firstScore:score(),total:Q.length,answers:answers.map((s,i)=>({question:i+1,first:s.first,selected:s.selected,retries:s.retries,wrong:s.first!==Q[i].a,review:'#s'+Q[i].back})),retelling:$('.retelling',box).value};window.lessonCopy(JSON.stringify(result,null,2),t);return}
+    if(t.dataset.question!==undefined){k=+t.dataset.question;render();return}
+    if(t.dataset.retry){answers[k].selected=null;answers[k].retries++;render();return}
+    if(t.dataset.n){if(checkpoint&&+t.dataset.n===1){box.querySelector('.nav').hidden=true;return}if(k===Q.length-1&&+t.dataset.n===1){if(complete())summary();else{k=answers.findIndex(s=>s.selected===null);render()}return}k+=+t.dataset.n;render();return}
+    if(t.dataset.j===undefined||answers[k].selected!==null)return;
+    const j=+t.dataset.j;answers[k].selected=j;if(answers[k].first===null)answers[k].first=j;render();const nv=$('.nav',box);nv&&nv.scrollIntoView&&nv.scrollIntoView({block:'nearest'});
+  };
   render();
-  const pk=new URLSearchParams(location.search).get('pick');if(pk!==null)$$('.opt',box)[+pk].click(); /* 自查用：?pick=0 */
+  const pk=P.get('pick'),pick=pk==='wrong'?Q[k].opts.findIndex((_,i)=>i!==Q[k].a):pk!==null&&/^\d+$/.test(pk)?+pk:-1;
+  if(pick>=0&&$$('.opt',box)[pick])$$('.opt',box)[pick].click();
+
 });
 
-go(Math.max(0,(parseInt(location.hash.slice(1))||1)-1));
 })();
+</script><script>/* End-of-build readiness marker, used by the screenshot harness. */
+document.querySelector('.theme-toggle').onclick=window.__tt;
+window.__lessonReady=true;
 </script><script>/* ---------- 学完了：点一下记为已学完（存在本机浏览器） ---------- */
 (function(){if(window.__finish)return;window.__finish=1;
 if(!document.querySelector('.deck'))return;

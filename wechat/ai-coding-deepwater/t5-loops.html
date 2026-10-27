@@ -1,362 +1,324 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<script>(function(){var s=localStorage.getItem("theme");if(s?s==="dark":matchMedia("(prefers-color-scheme: dark)").matches)document.documentElement.classList.add("dark")})()</script>
+<!DOCTYPE html><html lang="zh-CN" class="layout-article" data-layout="article"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<script>(function(){var v;try{v=localStorage.getItem('site-theme')}catch(e){}document.documentElement.dataset.theme=/^[ABC]$/.test(v||'')?v:'C'})();
+(function(){var k='theme',s=localStorage.getItem(k);if(s?s==='dark':matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark');
+window.__tt=function(){var f=function(){var d=document.documentElement.classList.toggle('dark');localStorage.setItem(k,d?'dark':'light')};if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.startViewTransition(f);else f()}})();</script>
 <title>AI Coding 深水区 · 主线 5 把判据变成流程</title><style>
-/* 学习搭子 固定设计系统 — 不要在课程里改这个文件。只改 lesson.html 的内容。 */
-:root{
-  --paper:#F6F6F7; --sheet:#FFFFFF; --ink:#16202C; --ink2:#4A5868; --hair:#E2E2E3;
-  --blue:#2550D9;  --blue-soft:#E3EAFD;   /* 主角：当前步骤 / 重点 */
-  --amber:#C77A00; --amber-soft:#FBEFD9; /* 数据 / 消息 */
-  --green:#16875A; --green-soft:#DDF3E9; /* 成功 / 工具结果 */
-  --red:#C8372D;   --red-soft:#FBE3E1;   /* 出错 */
-  --r-lg:12px; --r-sm:10px;
-  --font:"PingFang SC","Noto Sans CJK SC","Source Han Sans SC","Microsoft YaHei",system-ui,sans-serif;
-  --mono:"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;
-}
-*{box-sizing:border-box}
-html,body{margin:0;height:100%;background:var(--paper);color:var(--ink);font:17px/1.65 var(--font);-webkit-font-smoothing:antialiased}
-.top{position:fixed;inset:0 0 auto 0;height:56px;display:flex;align-items:center;gap:16px;padding:0 28px;z-index:5}
-.top .course{font-weight:700;font-size:15px}
-.top .track{flex:1;height:6px;background:var(--hair);border-radius:99px;overflow:hidden}
-.top .track i{display:block;height:100%;width:0;background:var(--blue);transition:width .35s ease}
-.top .count{font:600 14px var(--mono);color:var(--ink2);min-width:60px;text-align:right}
-.deck{position:fixed;inset:56px 0 76px 0;display:grid;place-items:center;padding:0 24px}
-.card{display:none;width:min(1120px,100%);height:100%;max-height:640px;background:var(--sheet);border-radius:var(--r-lg);
-  box-shadow:0 1px 0 var(--hair),0 18px 40px -24px rgba(22,32,44,.25);overflow:hidden}
-.card.on{display:grid;grid-template-columns:1.45fr 1fr}
-.card.full.on{grid-template-columns:1fr}
-.stage{background:var(--paper);margin:14px 0 14px 14px;border-radius:14px;display:grid;place-items:center;padding:18px;overflow:hidden;position:relative}
-.card.full .stage{margin:14px}
-.stage svg{width:100%;height:100%;max-height:560px}
-.say{padding:40px 40px 32px;display:flex;flex-direction:column;justify-content:center;gap:14px;overflow:auto}
-.say .kicker{font-size:14px;color:var(--blue);font-weight:700}
-.say h2{margin:0;font-size:32px;line-height:1.25;letter-spacing:.01em}
-.say p{margin:0;color:var(--ink2)}
-.say p b{color:var(--ink)}
-.src{margin-top:auto;font-size:13px;color:var(--ink2);border-top:1px solid var(--hair);padding-top:12px}
-.src.extra::before{content:"补充";background:var(--amber-soft);color:var(--amber);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
-.src.official::before{content:"官方";background:var(--green-soft);color:var(--green);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
-code{font:14px var(--mono);background:var(--blue-soft);color:var(--blue);padding:1px 6px;border-radius:6px}
-pre{margin:0;font:13.5px/1.6 var(--mono);background:#101826;color:#DCE3EE;border-radius:12px;padding:16px 18px;overflow:auto;width:100%}
-pre .k{color:#8FB1FF}pre .s{color:#9BE0B4}pre .c{color:#71819A}pre .f{color:#FFC86B}pre .hl{background:rgba(143,177,255,.16);display:block;margin:0 -18px;padding:0 18px}
-.bottom{position:fixed;inset:auto 0 0 0;height:76px;display:flex;align-items:center;justify-content:center;gap:14px}
-.btn{font:600 15px var(--font);border:0;border-radius:99px;padding:11px 22px;cursor:pointer;background:var(--sheet);color:var(--ink);box-shadow:0 0 0 1px var(--hair)}
-.btn:hover{box-shadow:0 0 0 2px var(--blue)}
-.btn.main{background:var(--blue);color:#fff;box-shadow:none}
-.btn:disabled{opacity:.35;cursor:default;box-shadow:0 0 0 1px var(--hair)}
-.btn:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
-.btn.sm{padding:7px 14px;font-size:14px}
-/* ---- 图元（flow 组件生成） ---- */
-.fl-node rect{fill:var(--sheet);stroke:var(--hair);stroke-width:2;transition:all .3s}
-.fl-node text{font:600 17px var(--font);fill:var(--ink)}
-.fl-node .sub{font:400 13px var(--font);fill:var(--ink2)}
-.fl-node.blue rect{stroke:var(--blue)} .fl-node.amber rect{stroke:var(--amber)} .fl-node.green rect{stroke:var(--green)} .fl-node.red rect{stroke:var(--red)}
-.fl-node.act rect{fill:var(--blue-soft);stroke:var(--blue);stroke-width:3}
-.fl-node.dim{opacity:.35}
-.fl-edge{fill:none;stroke:#AEB8C6;stroke-width:2.2;transition:all .3s}
-.fl-edge.act{stroke:var(--blue);stroke-width:3.5;stroke-dasharray:8 6;animation:dash .8s linear infinite}
-.fl-elab{font:500 13px var(--font);fill:var(--ink2)}
-.fl-elab.act{fill:var(--blue);font-weight:700}
-@keyframes dash{to{stroke-dashoffset:-28}}
-/* ---- 模拟器 ---- */
-.sim{display:grid;grid-template-rows:auto 1fr auto;gap:10px;width:100%;height:100%}
-.sim .ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.sim .ctl label{font-size:13px;color:var(--ink2);display:flex;align-items:center;gap:6px}
-.sim .body{display:grid;grid-template-columns:1.1fr 1fr;gap:12px;min-height:0}
-.sim .log{background:var(--sheet);border-radius:12px;padding:10px;overflow:auto;font:13px/1.5 var(--mono)}
-.sim .msg{border-left:4px solid var(--hair);padding:6px 10px;margin:0 0 8px;border-radius:6px;background:var(--paper);white-space:pre-wrap;word-break:break-word;animation:pop .25s ease}
-.sim .msg b{font-family:var(--font);display:block;font-size:12px;color:var(--ink2)}
-.msg.user{border-color:var(--blue)} .msg.asst{border-color:var(--amber)} .msg.tool{border-color:var(--green)} .msg.err{border-color:var(--red);background:var(--red-soft)} .msg.sys{border-color:var(--ink2)}
-.sim .narr{background:var(--blue-soft);color:var(--ink);border-radius:12px;padding:10px 14px;font-size:15px;min-height:48px}
-@keyframes pop{from{opacity:0;transform:translateY(6px)}}
-/* ---- 小测 ---- */
-.quiz{width:100%;max-width:760px;display:flex;flex-direction:column;gap:12px}
-.quiz .qn{font:600 13px var(--mono);color:var(--ink2)}
-.quiz .qt{font-size:22px;font-weight:700;line-height:1.4}
-.quiz .opt{display:block;width:100%;text-align:left;font:16px var(--font);background:var(--sheet);border:2px solid var(--hair);border-radius:12px;padding:12px 16px;cursor:pointer;color:var(--ink)}
-.quiz .opt:hover{border-color:var(--blue)}
-.quiz .opt.ok{border-color:var(--green);background:var(--green-soft)} .quiz .opt.no{border-color:var(--red);background:var(--red-soft)}
-.quiz .fb{min-height:52px;font-size:15px;color:var(--ink2)}
-.quiz .fb a{color:var(--blue);font-weight:700;cursor:pointer}
-.quiz .nav{display:flex;gap:8px;align-items:center}
-@media (max-width:820px){
-  .card.full.on{grid-template-rows:1fr}.card.full .stage{overflow:auto;place-items:start center}
-  .card.on{grid-template-columns:1fr;grid-template-rows:minmax(220px,48%) 1fr}
-  .stage{margin:10px 10px 0}.say{padding:18px 20px}.say h2{font-size:24px}
-  .sim .body{grid-template-columns:1fr}.top{padding:0 14px}.top .course{display:none}
-}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-/* ---- 展开细节 ---- */
-details.more{border-top:1px solid var(--hair);padding-top:10px;font-size:15px;color:var(--ink2)}
-details.more summary{cursor:pointer;font-weight:700;color:var(--blue);list-style:none}
-details.more summary::-webkit-details-marker{display:none}
-details.more summary::before{content:"＋ 展开细节";}
-details.more[open] summary::before{content:"－ 收起细节";}
-details.more>*:not(summary){margin:8px 0 0}
-details.more ul{padding-left:18px}details.more li{margin:4px 0}
-details.more table{border-collapse:collapse;width:100%;font-size:14px}
-details.more td,details.more th{border-bottom:1px solid var(--hair);padding:5px 6px;text-align:left;vertical-align:top}
-/* ---- 对话列表（状态追踪）---- */
-.stack{width:100%;display:flex;flex-direction:column;gap:6px;font:13px/1.45 var(--mono)}
-.stack .row{display:grid;grid-template-columns:28px 92px 1fr;gap:8px;align-items:start;background:var(--sheet);border-radius:8px;padding:7px 10px;border-left:4px solid var(--hair)}
-.stack .row .i{color:var(--ink2)}.stack .row .r{font-weight:700}
-.stack .row.developer{border-color:var(--ink2)}.stack .row.user{border-color:var(--blue)}.stack .row.assistant{border-color:var(--amber)}.stack .row.result{border-color:var(--green)}
-.stack .row.new{background:var(--blue-soft)}.stack .row.bad{border-color:var(--red);background:var(--red-soft)}
-.stack .row .t{white-space:pre-wrap;word-break:break-word}
-/* ---- 对比/误区 ---- */
-.pairs{width:100%;display:grid;gap:10px}
-.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.pair>div{background:var(--sheet);border-radius:12px;padding:12px 14px;font-size:15px}
-.pair .no{border-left:5px solid var(--red)}.pair .yes{border-left:5px solid var(--green)}
-.pair b{display:block;font-size:12px;color:var(--ink2);margin-bottom:4px}
-.say .more code{font-size:13px}
-@media (max-width:820px){.pair{grid-template-columns:1fr}.stack .row{grid-template-columns:22px 70px 1fr}}
-.pair .a{border-left:5px solid var(--blue)}.pair .b{border-left:5px solid var(--amber)}
-/* ===== v3：填满面板、原文标签、要点、条形图、分支 ===== */
-.stage{padding:10px}
-.stage svg.flow{width:100%;height:100%;max-height:none}
-.say p{font-size:17px}
-p.key{background:var(--blue-soft);color:var(--ink);border-radius:12px;padding:10px 14px;font-size:16px}
-p.key::before{content:"关键 ";font-weight:800;color:var(--blue)}
-.src.article::before{content:"原文";background:var(--blue-soft);color:var(--blue);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
-.stage>.stack{height:100%;justify-content:center;font-size:14.5px}
-.stage>.stack .row{padding:11px 12px;flex:0 1 auto}
-.stack .head{font:700 13px var(--font);color:var(--ink2);margin:8px 0 0}
-.stage>.pairs{height:100%;grid-auto-rows:minmax(0,1fr);align-content:stretch}
-.pair>div{font-size:16px;display:flex;flex-direction:column;justify-content:center}
-.bars{width:100%;display:flex;flex-direction:column;gap:16px;justify-content:center;height:100%;padding:0 10px}
-.bar{display:grid;grid-template-columns:150px 1fr 76px;gap:12px;align-items:center;font-size:15px}
-.bar .bl{font-weight:700;text-align:right}
-.bar .bt{height:30px;background:var(--sheet);border-radius:8px;overflow:hidden}
-.bar .bt i{display:block;height:100%;background:var(--ink2);border-radius:8px}
-.bar.blue .bt i{background:var(--blue)}.bar.amber .bt i{background:var(--amber)}.bar.green .bt i{background:var(--green)}.bar.red .bt i{background:var(--red)}
-.bar .bv{font:700 15px var(--mono)}
-.bar .bn{grid-column:2/4;font-size:13px;color:var(--ink2);margin-top:-8px}
-.bars .bc{font-size:13px;color:var(--ink2);text-align:center}
-.sim .branches{gap:14px;background:var(--sheet);border-radius:10px;padding:6px 10px}
-.sim .branches label{font-size:13.5px;color:var(--ink)}
-@media (max-width:820px){.bar{grid-template-columns:90px 1fr 60px}}
-.sim{grid-template-rows:auto auto 1fr auto}
-.sim.wide .body{grid-template-columns:1fr;grid-template-rows:minmax(0,1.1fr) minmax(0,1fr)}
-.sim:not(:has(.branches)){grid-template-rows:auto 1fr auto}
-.bar .bt.none{background:repeating-linear-gradient(45deg,var(--sheet) 0 8px,var(--hair) 8px 10px)}
-.say h2{font-size:28px;line-height:1.3}
-.sim .body{overflow:hidden}
-.sim .body>svg{min-height:0;height:100%;width:100%}
-.sim .narr{min-height:0}
-.stage>.stack{font-size:15.5px;gap:8px}
-.stage>.stack .row{padding:13px 14px}
-.stack .row .t{font-family:var(--font)}
-.stage:has(>.sim){place-items:stretch}
-.sim{min-height:0;height:100%;overflow:hidden}
-.sim.wide .body{grid-template-rows:minmax(0,55%) minmax(0,45%)}
-/* 讲解条放在图上方，永远可见 */
-.sim{grid-template-rows:auto auto auto minmax(0,1fr)}
-.sim:not(:has(.branches)){grid-template-rows:auto auto minmax(0,1fr)}
-.sim .ctl{order:0}.sim .branches{order:1}.sim .narr{order:2}.sim .body{order:3;min-height:0}
-/* ===== v4 ===== */
-.fl-node .sub{font-size:13.5px;fill:#3E4B5B}
-.fl-elab{font-size:13px;fill:#3E4B5B}
-.fl-edge.red{stroke:var(--red)}.fl-edge.amber{stroke:var(--amber)}.fl-edge.green{stroke:var(--green)}
-.fl-elab.red{fill:var(--red);font-weight:700}.fl-elab.amber{fill:var(--amber);font-weight:700}.fl-elab.green{fill:var(--green);font-weight:700}
-.stage{margin:10px 0 10px 10px;padding:4px}.card.full .stage{margin:0 10px 10px}
-.bar .bt i{background:#B8C2CF}
-.bar .bmiss{grid-column:2/4;color:var(--ink2);font-size:14px;font-style:italic}
-.sim .btn{background:transparent;box-shadow:0 0 0 1.5px var(--blue);color:var(--blue)}
-.sim .btn:hover{background:var(--blue-soft)}
-.say{justify-content:center}
-.src{margin-top:6px}
-.top .count{font-size:16px;color:var(--ink);font-weight:700}
-.top .track{height:6px}
-.card.full.on{grid-template-rows:auto minmax(0,1fr)}
-.head-full{padding:18px 26px 8px;display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
-.head-full .kicker{font-size:14px;color:var(--blue);font-weight:700}
-.head-full h2{margin:0;font-size:24px;line-height:1.3}
-.sim.wide .body{grid-template-rows:minmax(0,64%) minmax(0,36%)}
-@media (max-width:820px){.head-full{padding:12px 14px 6px}.head-full h2{font-size:19px}}
-.say{justify-content:safe center}
-@media (max-width:820px){.bars{gap:8px}.bar{font-size:13px;grid-template-columns:84px 1fr 56px}.bar .bt{height:20px}.bar .bn{font-size:12px;margin-top:-4px}.bars .bc{font-size:12px}
- .sim .ctl .btn{padding:5px 10px}.sim .branches{flex-direction:column;align-items:flex-start;gap:2px}}
+/* Site tokens copied verbatim, in cascade order, from ref/site-assets/site.css. */
+:root{--paper:#f6f7f9;--sheet:#fff;--card:#fff;--ink:#111827;--ink2:#4b5563;--meta:#6b7280;--hair:#e5e7eb;--hair2:#eef0f3;--blue:#2563eb;--blue-soft:#eff4ff;--red:#dc2626;--red-soft:#fef2f2;--green:#16a34a;--green-soft:#f0fdf4;--amber:#b45309;--amber-soft:#fffbeb;--purple:#7c3aed;--purple-soft:#f5f3ff;--font:system-ui,-apple-system,"PingFang SC","Noto Sans SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;--serif:var(--font);--mono:ui-monospace,SFMono-Regular,Menlo,monospace;--r-lg:12px;--r-sm:8px;--grad:none;color-scheme:light}
+html.dark{--paper:#0f1115;--sheet:#171a21;--card:#171a21;--ink:#e5e7eb;--ink2:#b6bcc6;--meta:#9ca3af;--hair:#2a2f3a;--hair2:#20242c;--blue:#7aa2ff;--blue-soft:rgba(122,162,255,.12);--red:#f87171;--red-soft:rgba(248,113,113,.12);--green:#4ade80;--green-soft:rgba(74,222,128,.12);--amber:#fbbf24;--amber-soft:rgba(251,191,36,.12);--purple:#c4b5fd;--purple-soft:rgba(196,181,253,.14);color-scheme:dark}
+[data-theme=B]{--paper:#fbfbfc;--sheet:#fff;--card:#fff;--ink:#16171a;--ink2:#4a4c55;--meta:#6e707a;--hair:#ececf0;--hair2:#f2f2f5;--blue:#5e6ad2;--blue-soft:#eef0fb;--red:#d4483b;--red-soft:#fdf0ee;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif}
+html.dark[data-theme=B]{--paper:#0e0f12;--sheet:#16171b;--card:#16171b;--ink:#e8e9ed;--ink2:#b3b5bd;--meta:#8b8d97;--hair:#26272d;--hair2:#1f2025;--blue:#8b93f0;--blue-soft:rgba(139,147,240,.14);--red:#f0776b}
+[data-theme=A]{--paper:#f7f4ee;--sheet:#fffdf9;--card:#fffdf9;--ink:#2b2722;--ink2:#5f574e;--meta:#8a8076;--hair:#e6dfd3;--hair2:#efe8dc;--blue:#b4532a;--blue-soft:#f6e1d6;--red:#a2461f;--red-soft:#f6e1d6;--green:#5f7a3a;--green-soft:#e7ecd9;--purple:#7a5a8c;--purple-soft:#eee4f1;--serif:"Noto Serif CJK SC","Noto Serif SC","Songti SC",serif;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif}
+html.dark[data-theme=A]{--paper:#1b1814;--sheet:#23201b;--card:#23201b;--ink:#ede6da;--ink2:#c7bdaf;--meta:#9b9184;--hair:#3a342c;--hair2:#2d2923;--blue:#e08a5f;--blue-soft:rgba(224,138,95,.15);--red:#e8916a;--red-soft:rgba(232,145,106,.15)}
+[data-theme=C]{--paper:#f3f5fb;--sheet:#fff;--card:#fff;--ink:#1d2340;--ink2:#5a6185;--meta:#8a90ad;--hair:#e6e9f4;--hair2:#eef0f7;--blue:#3b5bfd;--blue-soft:#e8edff;--red:#d4483b;--red-soft:#ffe6e3;--green:#1f9d5c;--green-soft:#e3f7ec;--amber:#d9771e;--amber-soft:#fff1e0;--purple:#7a4bf5;--purple-soft:#f2eaff;--r-lg:20px;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif;--sh:0 1px 2px rgba(30,40,90,.04),0 8px 24px rgba(30,40,90,.06)}
+html.dark[data-theme=C]{--paper:#0f1222;--sheet:#181c33;--card:#181c33;--ink:#e6e9fb;--ink2:#aab0d0;--meta:#7d84a8;--hair:#272c48;--hair2:#20253f;--blue:#7d93ff;--blue-soft:rgba(125,147,255,.15);--red:#ff8a7d;--red-soft:rgba(255,138,125,.15);--green-soft:rgba(31,157,92,.18);--amber-soft:rgba(217,119,30,.18);--purple-soft:rgba(122,75,245,.2);--sh:0 1px 2px rgba(0,0,0,.3)}
+:root{--acc2:#8b5cf6;--ease:cubic-bezier(.22,1,.36,1)}
+[data-theme=A]{--acc2:#c98a2b}
+html.dark[data-theme=A]{--paper:#181512;--sheet:#211d18;--card:#211d18;--meta:#a89d8f;--hair:#382f26;--acc2:#e3b15c}
+[data-theme=B]{--paper:#fafafb;--blue:#5b5bd6;--blue-soft:#efeffc;--acc2:#a855f7}
+html.dark[data-theme=B]{--paper:#0c0d10;--sheet:#14151a;--card:#14151a;--ink:#ececf1;--ink2:#babcc6;--meta:#9597a3;--hair:#262830;--hair2:#1c1d23;--blue:#9198ff;--blue-soft:rgba(145,152,255,.14);--acc2:#c084fc}
+[data-theme=C]{--acc2:#06b6d4}
+html.dark[data-theme=C]{--meta:#a3a9b8;--acc2:#22d3ee}
+html.dark{--meta:#a1a7b3}
+[data-theme=B]{--paper:#eef1f5;--hair:#dfe4ea;--hair2:#eef1f5;--green:#16a34a}
+html.dark[data-theme=B]{--paper:#0b0d12;--hair:#252a35;--hair2:#1a1e27}
+[data-theme=C]{--blue:#7b5cff;--blue-soft:#f0ecff;--acc2:#ff5e8a}
+html.dark[data-theme=C]{--paper:#0b0b0f;--sheet:#15151c;--card:#15151c;--ink:#f2f2f5;--ink2:#b8b8c6;--meta:#9a9aab;--hair:#26262f;--hair2:#1d1d25;--blue:#a08bff;--blue-soft:rgba(160,139,255,.14)}
+:root{--sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:24px;--sp-6:32px;--fs-xs:12px;--fs-sm:13.5px;--fs-md:15px;--fs-lg:18px;--fs-xl:24px;--fs-2xl:32px;--r-xs:6px;--r-sm:8px;--r-md:10px;--r-lg:12px;--r-xl:18px;--r-pill:999px;--sh-1:0 1px 2px rgba(15,23,42,.06);--sh-2:0 4px 16px -8px rgba(15,23,42,.22);--sh-3:0 14px 30px -12px rgba(15,23,42,.28);--dur-1:120ms;--dur-2:220ms;--dur-3:420ms;--ease:cubic-bezier(.22,1,.36,1);--ease-in-out:cubic-bezier(.65,0,.35,1);--spring:cubic-bezier(.34,1.3,.64,1);--icon-stroke:2}
+:root{--spring:linear(0,.0089,.0346,.0752,.1286,.1927,.2654,.3445,.4278,.5131,.5983,.6812,.7598,.8325,.8981,.9555,1.0042,1.0441,1.0753,1.0982,1.1134,1.1218,1.1243,1.1218,1.1155,1.1062,1.0949,1.0825,1.0697,1.0571,1.0451,1.034,1.0242,1.0157,1.0085,1.0027,.9982,.995,.9928,.9916,.9912,.9914,.9921,.9931,.9943,.9956,.9968,.998,.999,1)}
+html.dark{--sh-1:0 1px 2px rgba(0,0,0,.4);--sh-2:0 4px 16px -8px rgba(0,0,0,.6);--sh-3:0 14px 30px -12px rgba(0,0,0,.7)}
+/* Five reading levels: title / section / subsection / body / note. */
+:root{--reading-width:680px;--toc-width:208px;--rail-width:180px;--reading-gap:28px;--top-height:56px;--body-size:18px;--body-leading:1.8;--finish-space:104px}
+*{box-sizing:border-box}html{scroll-padding-top:72px}html,body{margin:0;background:var(--paper);color:var(--ink);font:var(--body-size)/var(--body-leading) var(--font);-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}a{color:var(--blue);text-underline-offset:3px;overflow-wrap:anywhere}a:hover{text-decoration-thickness:2px}button,input,textarea,select{font:inherit;color:inherit}button,a,summary{touch-action:manipulation}button{cursor:pointer}button:disabled{opacity:.5;cursor:default}:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+h1,h2,h3{color:var(--ink);font-family:var(--serif);line-height:1.35;letter-spacing:-.02em;overflow-wrap:anywhere}h1{font-size:var(--fs-2xl);margin:8px 0 16px}h2{font-size:var(--fs-xl);margin:8px 0 16px}h3{font-size:var(--fs-lg);margin:24px 0 8px}p{margin:0 0 12px}ul,ol{padding-left:24px}li{margin:4px 0}code{font:.88em var(--mono);background:var(--hair2);padding:1px 4px;border-radius:var(--r-xs)}pre{overflow:auto;white-space:pre;tab-size:4;font:14px/1.65 var(--mono);padding:16px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-md);margin:12px 0}pre code{font:inherit;white-space:inherit;background:none;padding:0}
+.i{display:inline-block;vertical-align:middle;flex:none;width:18px;height:18px;stroke-width:2}.btn,button.opt{min-height:44px;border:1px solid var(--hair);border-radius:var(--r-sm);background:var(--sheet);padding:8px 14px;font-size:var(--fs-md);font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:6px}.btn:hover{border-color:var(--blue);background:var(--blue-soft)}.btn.main{background:var(--blue);color:var(--sheet)}.btn.sm{font-size:var(--fs-sm)}textarea{display:block;width:100%;padding:10px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-sm);resize:vertical}
+.top{position:fixed;inset:0 0 auto;height:var(--top-height);z-index:30;display:flex;align-items:center;gap:16px;padding:0 20px;background:var(--paper);border-bottom:1px solid var(--hair)}.top .course{font-size:var(--fs-sm);font-weight:700;max-width:35vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.top .track{flex:1;height:4px;background:var(--hair);border-radius:var(--r-pill);overflow:hidden}.top .track i{display:block;width:0;height:100%;background:var(--blue);transition:width var(--dur-2) var(--ease)}.top .count{font-size:var(--fs-sm);max-width:32vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.toc-toggle{min-width:44px}.top .theme-toggle{font-size:var(--fs-sm);min-height:44px}
+.layout-article .deck,.layout-pair .deck{padding:80px 20px calc(var(--finish-space) + env(safe-area-inset-bottom));max-width:720px;margin:0 auto;min-width:0}.layout-article .sec{position:relative;margin:0 0 32px;padding-top:16px;border-top:1px solid var(--hair);scroll-margin-top:72px;min-width:0}.layout-article .hero{border:0;padding-top:0}.kicker,.meta,.src,.source-anchor,figcaption,caption,.aside{font-size:var(--fs-sm);line-height:1.65}.kicker{display:block;color:var(--blue);font-weight:700}.lede{font-size:var(--fs-lg);font-weight:600}.links{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:var(--fs-sm)}.links a{display:inline-flex;align-items:center;min-height:44px}.src{margin:16px 0 0;padding-top:8px;border-top:1px solid var(--hair);color:var(--ink2)}.source-anchor{display:block;color:var(--ink2);margin-top:6px;overflow-wrap:anywhere}.source-anchor a{min-height:44px;display:inline-flex;align-items:center}.src.extra::before{content:'补充 · ';color:var(--amber)}.src.official::before{content:'官方 · ';color:var(--blue)}.src.article::before{content:'原文 · ';color:var(--blue)}
+.toc{position:fixed;left:max(20px,calc((100vw - 1192px)/2));top:76px;width:var(--toc-width);max-height:calc(100dvh - 180px);overflow:auto;font-size:var(--fs-sm);line-height:1.5;z-index:25}.toc ol{list-style:none;margin:0;padding:0}.toc a{display:flex;gap:8px;align-items:center;min-height:44px;padding:6px 10px;color:var(--ink2);text-decoration:none;border-radius:var(--r-sm)}.toc a[aria-current=true]{background:var(--blue-soft);color:var(--blue);font-weight:700}.toc b{display:block;margin:0 10px 8px}.toc-backdrop{display:none}.tldr,.argmap{padding:16px;background:var(--blue-soft);border-radius:var(--r-lg);margin:16px 0}.tldr a,.argmap a{display:block;min-height:44px;align-content:center}.argmap ol{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 16px;margin:0}.points{padding:12px 16px 12px 36px;background:var(--hair2);border-radius:var(--r-md)}
+figure.orig,figure.redraw,.figure{margin:20px 0;min-width:0}figure img{display:block;max-width:100%;height:auto;border:1px solid var(--hair);border-radius:var(--r-md);cursor:zoom-in;background:var(--sheet)}figcaption{margin-top:8px;color:var(--ink2)}figcaption b{color:var(--ink)}.how{margin-top:6px}.table{margin:20px 0;overflow-x:auto}.table table,table.data{width:100%;border-collapse:collapse;background:var(--sheet);font-size:var(--fs-md)}th,td{border-bottom:1px solid var(--hair);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--hair2)}caption{text-align:left;font-weight:700;padding:8px 0}.table-note{font-size:var(--fs-sm);color:var(--ink2)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;margin:16px 0}.stat{padding:12px 14px;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet)}.stat b{display:block;font-size:var(--fs-xl);line-height:1.35;color:var(--blue);font-variant-numeric:tabular-nums}.stat span{display:block;font-size:var(--fs-sm);color:var(--ink2)}.stat .source-anchor{font-size:var(--fs-xs)}
+blockquote.quote{margin:16px 0;padding:12px 16px;border-left:3px solid var(--blue);background:var(--sheet)}.quote cite{display:block;font-style:normal;font-size:var(--fs-sm);color:var(--ink2)}.callout{padding:12px 16px;margin:16px 0;border-left:3px solid var(--blue);background:var(--blue-soft);border-radius:0 var(--r-sm) var(--r-sm) 0}.callout.limit{border-color:var(--amber);background:var(--amber-soft)}.callout.extra{border:1px dashed var(--meta);background:var(--sheet)}.callout.myth{border-color:var(--amber);background:var(--hair2)}.callout.limit::before{content:'作者的限定 · ';font-weight:700}.aside{padding:12px;border-left:2px solid var(--hair);color:var(--ink2);margin:12px 0}
+.stories,.compare,.roles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}.story,.compare>div,.roles>div{padding:12px;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);font-size:var(--fs-md)}.story b,.roles b{display:block}.story dt{font-weight:700;color:var(--ink2);font-size:var(--fs-sm)}.story dd{margin:0 0 8px}.story p,.story .fix{display:block;margin:8px 0}.steps,.ladder{display:grid;gap:8px;padding:0;list-style:none;counter-reset:step}.steps>li,.ladder>li{padding:10px 14px;background:var(--hair2);border-radius:var(--r-sm);counter-increment:step}.steps>li::before{content:counter(step)'. ';color:var(--blue);font-weight:700}.ladder i{font-style:normal;font-weight:700;margin-right:8px}.matrix{border:1px solid var(--hair);padding:16px;border-radius:var(--r-md)}.matrix .axes{font-size:var(--fs-sm);color:var(--ink2)}.matrix ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));list-style:none;padding:0;gap:1px;background:var(--hair)}.matrix li{margin:0;padding:16px;background:var(--sheet)}.refs{font-size:var(--fs-sm);line-height:1.7}.refs a{display:inline-block;min-height:44px;align-content:center}.thread{border-left:2px solid var(--hair);padding-left:16px}.formula{padding:16px;border:1px solid var(--hair);overflow:auto}.formula math{font-size:var(--fs-xl)}details.more{margin:12px 0;border-top:1px solid var(--hair);font-size:var(--fs-md)}summary{min-height:44px;cursor:pointer;display:flex;align-items:center;gap:8px}summary .i{transition:transform var(--dur-1)}details[open] summary .i{transform:rotate(90deg)}
+/* Shared interactive components. No fixed page/card height. */
+.flow-scroll{max-width:100%;overflow-x:auto;min-width:0;touch-action:pan-x pan-y}.flow-scroll svg.flow{display:block;width:100%;height:auto;min-height:0}.flow-tip{font-size:var(--fs-sm);color:var(--ink2)}.fl-node rect{fill:var(--sheet);stroke:var(--hair);stroke-width:2}.fl-node text{font:600 17px var(--font);fill:var(--ink)}.fl-node .sub{font-size:13px;font-weight:400;fill:var(--ink2)}.fl-node.act rect{stroke:var(--blue);fill:var(--blue-soft);stroke-width:3}.fl-node.blue rect{stroke:var(--blue)}.fl-node.amber rect,.fl-node.red rect{stroke:var(--amber)}.fl-node.green rect{stroke:var(--green)}.fl-edge{fill:none;stroke:var(--meta);stroke-width:2}.fl-edge.act{stroke:var(--blue);stroke-width:3}.fl-elab{font:13px var(--font);fill:var(--ink2)}
+.sim{margin:16px 0;padding:12px;border:1px solid var(--hair);border-radius:var(--r-lg);background:var(--sheet);display:flex;flex-direction:column;gap:12px}.sim .ctl{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.sim .ctl label{min-height:44px;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm)}.sim .ctl input[type=range]{min-width:110px}.sim .body{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}.sim .narr{order:-1;background:var(--blue-soft);padding:10px 12px;border-radius:var(--r-sm);font-size:var(--fs-md)}.sim .log{max-height:240px;overflow:auto;font:var(--fs-sm)/1.6 var(--mono)}.sim .msg{border-left:3px solid var(--hair);padding:8px;margin:6px 0;background:var(--paper);white-space:pre-wrap;overflow-wrap:anywhere}.msg b{display:block;font-family:var(--font)}.sim .msg.err{border-color:var(--amber)}.prediction{order:-2}.component-error{padding:16px;border:1px solid var(--amber);color:var(--amber)}
+.quiz{margin:16px 0;padding:16px;border:1px solid var(--hair);border-radius:var(--r-lg);background:var(--sheet)}.quiz .qn{font-size:var(--fs-sm);color:var(--ink2)}.quiz .qt{font-size:var(--fs-lg);font-weight:700;margin-bottom:12px}.quiz .opt{display:block;width:100%;text-align:left;margin:8px 0;font-weight:400}.quiz .opt.ok{border-color:var(--green);background:var(--green-soft)}.quiz .opt.no{border-color:var(--amber);background:var(--amber-soft)}.quiz .fb{margin:12px 0;font-size:var(--fs-md)}.quiz .nav{display:flex;gap:8px;margin-top:12px}.quiz label{display:block;font-size:var(--fs-sm)}.stack{display:grid;gap:6px;font-size:var(--fs-sm)}.stack .row{display:grid;grid-template-columns:28px 80px minmax(0,1fr);gap:8px;padding:8px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-sm)}.stack .t{overflow-wrap:anywhere;white-space:pre-wrap}.stack .new{background:var(--blue-soft)}.bar{display:grid;grid-template-columns:100px minmax(0,1fr) 80px;gap:8px;margin:8px 0;align-items:center;font-size:var(--fs-sm)}.bar .bt{height:20px;background:var(--hair2);border-radius:var(--r-xs);overflow:hidden}.bar .bt i{display:block;height:100%;background:var(--blue)}.bar .bn,.bar .bmiss{grid-column:2/4}.bars .bc{font-size:var(--fs-sm);color:var(--ink2)}
+/* Paired material stays inside its own container; highlighting never scrolls the page. */
+.pair.codewalk,.pair.read-pair,.pair.material-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start;margin:20px 0;position:relative;min-width:0}.pair-source{position:sticky;top:72px;max-height:calc(100dvh - 160px);overflow:auto;overscroll-behavior:contain;min-width:0;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);padding:12px;scroll-padding:16px}.pair-notes{min-width:0}.pair-notes .step{padding:16px 0 24px;border-top:1px solid var(--hair);scroll-margin-top:84px}.pair-notes .step.is-active{border-color:var(--blue)}.pair-source .source-block{padding:12px 8px;border-left:3px solid transparent}.pair-source .source-block.is-active{background:var(--blue-soft);border-color:var(--blue)}.source-text{overflow-wrap:anywhere}.pair-source pre{border:0;padding:0;margin:8px 0;overflow:visible}.code-line{display:block;min-height:1.65em;white-space:pre;padding-left:48px;position:relative}.code-line::before{content:attr(data-line);position:absolute;left:0;width:36px;text-align:right;color:var(--meta);user-select:none}.code-line.hl{background:var(--blue-soft)}.copy-code{position:static;flex:none;white-space:nowrap}.pair-source .source-anchor{font-size:var(--fs-xs)}
+/* A separate toolbar never shares the scrolling code viewport. */
+.heading-source{font-size:var(--fs-xs);margin:0 0 8px}
+.pair.codewalk{grid-template-columns:minmax(0,60%) minmax(0,1fr)}
+.code-panel{position:sticky;top:72px;display:flex;flex-direction:column;min-width:0;max-height:calc(100dvh - 160px);border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);overflow:hidden}
+.code-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;flex:none;border-bottom:1px solid var(--hair);font-size:var(--fs-xs);color:var(--ink2)}
+.code-panel .pair-source{position:static;max-height:none;min-height:0;flex:1 1 auto;border:0;border-radius:0;box-shadow:none;overflow:auto}
+.code-panel .pair-source pre{width:max-content;min-width:100%}
+dialog.image-dialog{width:calc(100vw - 24px);max-width:none;max-height:92dvh;padding:12px;border:1px solid var(--hair);background:var(--sheet);color:var(--ink);border-radius:var(--r-md);overflow:auto}dialog::backdrop{background:rgba(0,0,0,.75)}.image-dialog img{max-width:none;width:max(100%,min(1400px,180vw));height:auto}.image-dialog .dialog-close{position:sticky;top:0;left:0}.image-open{min-height:44px;border:0;background:transparent;padding:0;display:block;cursor:zoom-in;max-width:100%}.image-open img{max-width:100%}
+/* Only CSS changes the unchanged finish.js button. High specificity beats injected styles. */
+html body .fin-btn{bottom:calc(16px + env(safe-area-inset-bottom));right:16px;min-height:44px;z-index:35}html body #quiz-return{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:35;max-width:45vw}
+@media(min-width:1180px){.layout-article .deck{width:var(--reading-width);max-width:none;padding-left:0;padding-right:0;margin-left:max(260px,calc((100vw - 1192px)/2 + 236px));margin-right:0}.layout-article .sec>.doc-body>figure,.layout-article .sec>.doc-body>.table,.layout-article .sec>.codewalk{width:calc(100% + 120px);margin-left:0}.layout-article .aside{position:absolute;left:calc(100% + 28px);top:24px;width:var(--rail-width);margin:0}.layout-article .aside~figure{width:100%}html.layout-article body .fin-btn{left:max(20px,calc((100vw - 1192px)/2));right:auto;max-width:208px}.layout-pair .deck{max-width:1280px;margin-left:236px;margin-right:20px}.layout-pair .toc{width:188px;left:20px}html.layout-pair body .fin-btn{left:20px;right:auto;max-width:188px}}
+@media(max-width:1179px){.toc{display:none;visibility:hidden;left:0;top:var(--top-height);width:min(360px,90vw);max-height:calc(100dvh - 72px);background:var(--sheet);padding:16px;border-right:1px solid var(--hair);border-bottom:1px solid var(--hair)}html.toc-open .toc{display:block;visibility:visible}html.toc-open .toc-backdrop{display:block;position:fixed;inset:var(--top-height) 0 0;background:rgba(0,0,0,.3);z-index:24}}
+@media(max-width:820px){:root{--body-size:17px}.layout-article .deck,.layout-pair .deck{padding-left:18px;padding-right:18px}.top{gap:8px;padding:0 12px}.top .course{display:none}.top .count{max-width:44vw}.top .track{min-width:24px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stories,.compare,.roles{grid-template-columns:minmax(0,1fr)}.argmap ol{grid-template-columns:minmax(0,1fr)}table.data thead,.table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}table.data,table.data tbody,table.data tr,table.data td,.table table,.table tbody,.table tr,.table td{display:block;width:100%}table.data tr,.table tr{padding:8px 12px;margin-bottom:8px;border:1px solid var(--hair);background:var(--sheet);border-radius:var(--r-md)}table.data td,.table td{border:0;padding:4px 0}td[data-label]::before{content:attr(data-label)'：';font-size:var(--fs-sm);font-weight:700;color:var(--ink2)}.table caption,table.data caption{display:block;width:100%}.pair.codewalk,.pair.read-pair,.pair.material-pair{display:block}.pair-notes{margin-top:12px}.code-panel{top:var(--top-height);max-height:40dvh;z-index:15}.pair-source{top:var(--top-height);max-height:40dvh;z-index:15;box-shadow:var(--sh-1)}.pair-notes .step{scroll-margin-top:calc(40dvh + 80px)}.flow-scroll svg.flow{width:var(--flow-width);max-width:none;height:var(--flow-height)}.sim .flow-scroll svg.flow{width:100%;height:auto}.stack .row{grid-template-columns:22px 64px minmax(0,1fr)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+@media print{.top,.toc,.fin-btn,#quiz-return,.toc-backdrop,.zoom-toggle,.code-toolbar{display:none!important}.layout-article .deck,.layout-pair .deck{margin:0;padding:0;max-width:100%;width:auto}.pair-source,.code-panel{position:static;max-height:none;overflow:visible}.sec{break-inside:auto}figure,.stat{break-inside:avoid}}
+/* Applies after legacy CSS too. Zoom is an intentional local viewport; non-zoom stays unnested. */
+html body .sim .flow-scroll.zoom{overflow:auto;max-height:40dvh;min-height:0;height:auto;overscroll-behavior:contain;scroll-padding:16px;padding:16px}
+html body .sim .flow-scroll.zoom svg.flow{width:var(--flow-width);min-width:var(--flow-width);height:var(--flow-height);max-height:none;flex:none}
+html body .sim .zoom-toggle{min-height:44px;justify-self:start}.layout-deck .sim .body{position:relative}.layout-deck .card{padding-bottom:8px}.layout-deck .deck{bottom:calc(92px + env(safe-area-inset-bottom))}
+html body .fin-btn{bottom:calc(16px + env(safe-area-inset-bottom));right:16px;min-height:44px}html.layout-deck .bottom{padding-right:170px;padding-left:12px;height:76px}.layout-deck .btn,.layout-deck .sim .branches label{min-height:44px}.layout-deck details.more summary::before{content:none}.layout-deck .fl-edge.act{animation:none}
+@media(max-width:820px){html.layout-deck .bottom{padding-right:12px;gap:8px}.layout-deck .bottom .btn{padding:8px 10px;font-size:13px}html.layout-deck body .fin-btn{padding:8px 12px;font-size:13px}.layout-deck .card.full:has(.sim)>.head-full{position:sticky;top:0;z-index:4;background:var(--sheet);padding-top:12px;padding-bottom:12px}.layout-deck .sim .body{overflow:visible}.layout-deck .card .stage:has(.sim){overflow:visible}.layout-deck .sim .flow-scroll:not(.zoom){overflow:visible}}
 
-/* 与知识库首页（VitePress 风格）对齐：白底页面、12px 圆角、细边框卡片、深色模式 */
-html,body{background:var(--page,#fff)}
-.card{border:1px solid var(--hair);box-shadow:none}
-html.dark{--page:#1b1b1f;--paper:#2a2a31;--sheet:#202127;--ink:#fffff5;--ink2:rgba(235,235,245,.65);--hair:#3a3a40;
---blue:#7c9cff;--blue-soft:rgba(124,156,255,.16);--amber:#f0b429;--amber-soft:rgba(240,180,41,.14);--green:#3dd68c;--green-soft:rgba(61,214,140,.14);--red:#f66f81;--red-soft:rgba(246,111,129,.14);color-scheme:dark}
-html.dark .btn.main{color:#16202c}
-html.dark .fl-node .sub,html.dark .fl-elab{fill:var(--ink2)}html.dark .fl-elab{stroke:var(--page)!important}html.dark .fl-edge{stroke:#6b7280}
-html.dark .fl-elab.act{fill:var(--blue)}
+.layout-deck .card.doc.on{display:block;overflow:auto;padding:24px}.layout-deck .card.doc .doc-body{overflow:visible}.layout-deck .hero.card{height:auto}
+
+/* Legacy .stage svg also matches button icons: keep Lucide at its declared size. */
+html body svg.i{width:18px;height:18px;max-height:none;flex:none}
+
+/* Below the desktop sidebar breakpoint, finish lives in the opaque top bar.
+   Reserve its width before laying out the title; keep the deck footer for paging. */
+@media(max-width:1179px){
+ html body .top{gap:8px;padding:0 132px 0 12px;z-index:40;background:var(--paper)}
+ html body .top .course{display:none}
+ html body .top .count{flex:1;min-width:0;max-width:none;font-size:var(--fs-sm);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ html body .top .track{position:absolute;left:12px;right:12px;bottom:0;height:2px;min-width:0}
+ html body .top .toc-toggle{width:44px;flex:none;padding:0}
+ html body .top .theme-toggle{flex:none;padding:8px;font-size:var(--fs-sm)}
+ html body .fin-btn{top:6px;bottom:auto;left:auto;right:12px;width:112px;max-width:112px;height:44px;padding:8px;font-size:13px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:41;box-shadow:none}
+}
 </style></head><body>
-<header class="top"><span class="course">AI Coding 深水区 · 主线 5 把判据变成流程</span><span class="track"><i></i></span><span class="count"></span></header>
-<main class="deck">
-<section class="card">
-  <div class="stage"><svg class="flow" data-act="big" data-edge="small>big" data-flow='{"nodes":[{"id":"small","x":120,"y":90,"t":"小环 · 一次会话","s":"AI 写，AI 自己跑，人在会话里看","c":"amber","w":250},{"id":"big","x":460,"y":90,"t":"大环 · 会话结束后","s":"自动评审、checklist、静态检查、全面测试","c":"green","w":270},{"id":"human","x":300,"y":280,"t":"人","s":"只看例外，做判断","c":"blue","w":170}],"edges":[{"f":"small","t":"big"},{"f":"big","t":"human","l":"例外"},{"f":"human","t":"small","l":"判断回流"}]}'></svg></div>
-  <div class="say"><span class="kicker">这条主线讲什么？</span><h2>平台承载的不是功能，是嵌套的环</h2>
-  <p>环由人、agent、资产编织成，转速各异。</p>
-  <p class="key">原文声明：平台还在建设中，这一部分讲的是建设思路，不是建成报告。</p>
-  <div class="src article">第五部分 开头、（一）</div></div>
+<header class="top"><button class="btn toc-toggle" aria-label="打开目录" aria-expanded="false"><svg class="i i-menu" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h16"/></svg></button><span class="course">AI Coding 深水区 · 主线 5 把判据变成流程</span><span class="track" role="presentation"><i></i></span><span class="count"></span><button class="btn theme-toggle" aria-label="切换深浅色">深浅色</button></header><main class="deck"><section class="sec hero" data-no="5" data-toc="开篇：这条主线讲什么" id="s1" data-source-section="s1">
+  <header class="doc-head">
+    <span class="kicker">AI Coding 深水区 · 主线 5 / 5 · 原文第五部分</span>
+    <h1>把判据变成每天在跑的流程：平台承载的是嵌套的环</h1>
+    <p class="lede" data-points="p0001" id="e1">AI 一次写出的东西靠不住，人一次盯住的注意力也靠不住；可靠性只能靠多层彼此独立的检查环叠出来。</p>
+    <p class="links"><a href="https://mp.weixin.qq.com/s/tSmMdSSzLgTsAX1JUaZI9Q">公众号原文 <svg class="i i-external-link" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a><a href="index.html">回全文导读</a><a href="t5-loops-close.html">主线 5 精读版（需密码）</a><span>本页约 15 分钟</span></p>
+    <ul class="points">
+      <li data-points="p0001" id="e2">环与环之间只交接事实：生成方不直接写仓库，每种失败都要有名字，事实只有一个来源而且能推导出来。</li>
+      <li data-points="p0001" id="e3">不采信上一环的自我汇报：平台在自己的容器里重跑，把结果放到审批页，拍板留给人。</li>
+      <li data-points="p0001" id="e4">资产是有生命周期的活东西；人是环上的节点，平台要做的是让人下判断更省力。</li>
+      <li data-points="p0001" id="e5">要不要自建：能被替换的层本来就用现成的，自建的只有判据、资产模型和环的接线，这些「本体」不通用。</li>
+    </ul>
+  </header>
+  <div class="src article">黄迅《AI Coding 深水区》第五部分「本部分要点」 <span class="source-anchor" data-source-section="s1"><a href="https://mp.weixin.qq.com/s/tSmMdSSzLgTsAX1JUaZI9Q">原文链接</a></span></div>
 </section>
 
-<section class="card">
-  <div class="stage"><div class="pairs">
-   <div class="pair"><div class="no"><b>不可靠 1：AI 的单次产出</b>出错的绝对数量由累积量决定；一次会话写得再好，也不能指望无瑕</div><div class="no"><b>不可靠 2：人的单次注意</b>代码不是人写的，细节超出人的观测；长会话里注意力会疲劳、变形</div></div>
-   <div class="pair"><div class="b"><b>推不出</b>「更认真地检查一次」</div><div class="a"><b>推出</b>用多重独立检查叠加出可靠性</div></div>
-  </div></div>
-  <div class="say"><span class="kicker">为什么要多个环？</span><h2>AI 的产出和人的注意，单次都不可靠</h2>
-  <p>让人在一个环里盯到底，和让 AI 在一个环里写到底，是同一种侥幸心理。</p>
-  <p class="key">两个不可靠合在一起，推出多重独立检查。</p>
-  <div class="src article">第五部分 开头、（一）</div></div>
+<section class="sec" data-toc="两个不可靠" id="s2" data-source-section="s1">
+  <header class="doc-head"><span class="kicker">开头</span><h2>推导的起点：两个「单次不可靠」</h2></header>
+  <div class="doc-body">
+    <p data-points="p0008" id="e6">前四部分讲了让 AI 扛得住、量得出好坏、人退到哪里。最后一部分要把「机器提供事实、人做判断」从一句口号，做成每天都在运转的研发体系，这也是前言里那个平台的来历。</p>
+    <p class="callout limit" data-points="p0008" id="e7">作者先声明：平台仍在建设，这里讲的是思路而不是竣工报告。这么重的平台该由业务团队自己建吗，会不会被中台一下替掉，这是它最常被质疑的一点，答案留到最后一节。先给结论：平台承载的不是一堆功能，而是由人、agent、资产交织成、转速不同的嵌套环。</p>
+    <div class="compare"><div><b>不可靠一：AI 的单次产出</b><p data-points="p0010" id="e8">前言说过，出错的总数取决于累计产量，而不是单次准确率。一次会话写得再漂亮，也别指望零缺陷。</p></div><div><b>不可靠二：人的单次注意</b><p data-points="p0010" id="e9">这一条更难承认。代码不是自己写的，大量细节在人的视野之外；长会话里注意力会疲惫、走样，判断质量随产出量一路下滑。</p></div></div>
+    <p class="callout key" data-points="p0010" id="e10">作者的比喻：指望人在一个环里从头盯到尾，和指望 AI 在一个环里一口气写对，是同一种碰运气。</p>
+  </div>
 </section>
 
-<section class="card">
-  <div class="stage"><div class="stack">
-   <div class="row result"><span class="i">1</span><span class="r">每个环独立</span><span class="t">评审靠轮询提交触发，与会话无关；测试用平台自己的容器重跑，与自报无关</span></div>
-   <div class="row result"><span class="i">2</span><span class="r">拆解注意力</span><span class="t">同一件事拆到多个场景、多个时机触发；每个场景主题单一</span></div>
-   <div class="row result new"><span class="i">3</span><span class="r">闸门</span><span class="t">确定性的规则和 checklist，不消耗人的注意力，只把例外递到人面前</span></div>
-  </div></div>
-  <div class="say"><span class="kicker">大环要成立，靠什么？</span><h2>每个环独立触发，说出来的才是新话</h2>
-  <p>大环不消灭注意力问题，它拆解注意力问题：被反复暴露的问题，比被凝视一次的更容易被发现。</p>
-  <p class="key">闸门的判据必须是事实：是事实就硬拦截，是代理指标最多提醒（主线 1 的标准）。</p>
-  <div class="src article">第五部分（一）</div></div>
+<section class="sec" data-toc="（一）环为什么嵌套" id="s3" data-source-section="s2">
+  <header class="doc-head"><span class="kicker">（一）环为什么要嵌套</span><h2>不是「再认真查一遍」，而是多道独立检查叠加</h2></header>
+  <div class="doc-body">
+    <p data-points="p0012" id="e11">两个不可靠放在一起，结论不是更用心地检查一次，而是让好几道相互独立的检查叠出可靠性。</p>
+    <p data-points="p0012" id="e12">团队把环分大小两层。小环是一次会话里的开发和自测：AI 写、AI 自己跑、人在会话里看着。会话一结束就进大环：agent 自动评审代码、过各种清单和静态检查、跑更完整的测试。既不能指望小环里写出完美代码，也不能指望会话里的人一直盯得住。</p>
+    <p data-points="p0015" id="e13">大环要站得住，靠两个设计：</p>
+    <ol class="steps">
+      <li data-points="p0015" id="e14"><b>每个环独立</b>：评审由轮询提交来触发，跟会话无关；测试由平台自己的容器重跑，跟生产方的自我汇报无关。触发源和被验对象没有因果牵连，环得出的才是新信息，而不是把上一环的话再念一遍。</li>
+      <li data-points="p0015" id="e15"><b>把注意力问题拆开</b>：长会话需要持续又发散的注意，这正是人最弱的；多个环把同一件事分到不同场景、不同时间点触发，每次主题单一、关注点集中，效率完全不一样。同一个问题被不同角度的环一再提出，比被盯一次更容易暴露和修好。</li>
+    </ol>
+    <p data-points="p0015" id="e16">环里还有一种不耗人注意力的角色：闸门，即确定性的规则和清单。它们只把例外递给人，所以越多越好。唯一的要求沿用主线 1 的标准：判据是事实就硬拦，是代理指标就只提醒。常规情况被闸门消化掉，人只处理例外，环才转得起来。</p>
+  </div>
 </section>
 
-<section class="card">
-  <div class="stage"><svg class="flow" data-act="queue" data-edge="review>queue" data-flow='{"nodes":[{"id":"gen","x":100,"y":90,"t":"AI 生成候选","s":"只提交，不写仓库","c":"amber","w":180},{"id":"review","x":340,"y":90,"t":"人工审查","s":"改内容、挪归属、整条丢弃","c":"blue","w":220},{"id":"queue","x":600,"y":90,"t":"串行入库","s":"平台是唯一写者","c":"green","w":180},{"id":"asset","x":600,"y":270,"t":"沉淀为资产","s":"合并，不是追加","c":"green","w":180}],"edges":[{"f":"gen","t":"review"},{"f":"review","t":"queue"},{"f":"queue","t":"asset"}]}'></svg></div>
-  <div class="say"><span class="kicker">环和环之间传什么？机制一</span><h2>环的接口只许传事实，不许传声明</h2>
-  <p>接口处传一次声明，下游所有环都在验一个假东西。</p>
-  <p class="key">机制一：生产者不是写者——AI 负责快，人负责对；每个受治理的仓一条串行队列。</p>
-  <details class="more"><summary></summary><p>审批期间仓库可能已被别的入库推进，所以入库是合并：能自动合的自动合，合不了的标出来交给人。人只在真冲突时介入。</p><p>入库时平台把不再被引用的公共代码一并裁掉，不让垃圾进仓。</p><p>三个机制都从测试用例这条环上长出来：它是第一条转完整圈的环。</p></details>
-  <div class="src article">第五部分（二）机制一</div></div>
+<section class="sec" data-toc="（二）环的接口" id="s4" data-source-section="s3">
+  <header class="doc-head"><span class="kicker">（二）环的接口：只许传事实</span><h2>三个机制，都长在测试用例这条环上</h2></header>
+  <div class="doc-body">
+    <p data-points="p0019" id="e17">环一多，问题就落到接口：环之间交接什么？作者定了一条铁律，只交接事实，不交接声明。接口上混进一次声明，下游每个环都在核验一个假东西。这条规矩落成三个机制，都从测试用例这条最先转满一整圈的环里长出来。</p>
+    <h3>机制一：生成方不当写入方</h3>
+    <p data-points="p0022" id="e18">生成侧只交候选，写仓库的权力全部收归平台。平台是唯一的写入方，每个受管的仓库排一条串行队列。作者的分工是：AI 管快，人管对。</p>
+    <p data-points="p0022" id="e19">流程统一为：AI 产出候选，人审，串行入库，沉淀成资产。人审时不只是通过或驳回，还可以改内容、换归属、整条扔掉；入库时平台会顺手清掉已无人引用的公共代码。审批需要时间，期间仓库可能已被别的入库改过，所以入库是合并而不是追加：能自动合的自动合，合不上的标出来给人。只有真冲突才需要人。</p>
+    <h3>机制二：每种失败都要有名字</h3>
+    <p data-points="p0024" id="e20">环要跨天、跨容器、跨进程运转，一旦卡住，人得一眼看出卡在哪一步。</p>
+    <div class="story" data-points="p0024" id="e21"><p data-field="event"><b>事故</b>：一批用例入库长期停在「正在合并」，恢复了四次都没用。原因有三层叠加：底层仓库对象能判断有没有真实改动，但线上实现没把这个能力接出来，探测失败就默认「有改动」，于是硬去提交一个空 commit；一般报错找不到对应的失败状态可落，网关就只留日志、状态原地不动；服务重启后，恢复程序只认「正在合并」的任务并重新投递，空 commit 就这样自我循环。</p><p data-field="consequence"><b>最讽刺的一点</b>：测试替身恰好把那个可选能力实现了，测试一直是绿的，根本测不出线上漏接。</p><p data-field="prevention"><b>三处修法</b>：那项能力改为接口里必须实现的方法，忘了接编译就报错；没有真实差异时不再提交，直接收尾；一般错误、超时和 panic 统统落到能重试的「合并失败」状态，停机导致的取消则维持原状，恢复程序也不再自己去重试处于失败态的任务。</p></div>
+    <p data-points="p0024" id="e22">状态机由此扩到七个状态：原有的待审、正在合并、已入库、已丢弃、冲突、推送失败，外加这次事故换来的「合并失败」。作者的总结：没有名字的失败，对人等于没有事实；对环来说等于环消失了，它还在转，却永远转不完一圈。</p>
+    <h3>机制三：事实只有一个来源，而且能推导</h3>
+    <p data-points="p0028" id="e23">环和环之间不能有两份事实，也不能传「它说是这样」。AI 生成的测试怎么和覆盖率对上号？团队的做法是用文件路径约定来推导：用例放在按「被测文件路径 / 被测函数名」组织的目录里，路径本身就说明它测的是哪个函数。为什么不让 AI 在元数据里自己填？作者的话是：</p>
+    <blockquote class="quote"><p>因为声明会撒谎，路径不会。</p><cite><a href="https://mp.weixin.qq.com/s/tSmMdSSzLgTsAX1JUaZI9Q">原文第五部分（二）机制三</a></cite></blockquote>
+    <p class="callout limit" data-points="p0028" id="e24">作者随即补了一个诚实的注脚：线上有两千多条单测，归属一栏原本就是空的，团队其实没得挑；代码中也还留着「库里有值就先用库里的」这条分支，所以 AI 要是真填了，照样会被信。这件事只做到一半，剩下一半明确记作技术债。</p>
+    <p data-points="p0030" id="e25">覆盖率还有两条判断，都是被自己打脸后才定下的：</p>
+    <ul>
+      <li data-points="p0030" id="e26"><b>多条用例按行取并集</b>：单测一条条单独跑，每份快照只反映自己走到的分支，只取其中一份必然偏低。</li>
+      <li data-points="p0030" id="e27"><b>没跑过不等于跑了没覆盖</b>：分母只算真正跑到的函数，这两种情况都不显示 0%。</li>
+    </ul>
+    <p data-points="p0030" id="e28">第二条来自平台曾把「采集失败」显示成「没有数据」的教训。作者说上一篇讲过错误的覆盖率信号比没有更危险，主线 3 那两次是评测系统自身的 bug，这里是同一教训第四次出现，而这次说谎的是「事实」本身。</p>
+  </div>
 </section>
 
-<section class="card">
-  <div class="stage"><div class="stack">
-   <div class="head">一批用例卡在「正在合并」，四次恢复都失败：三层原因</div>
-   <div class="row bad"><span class="i">1</span><span class="r">能力没透传</span><span class="t">仓库对象能判断「有没有实际改动」，生产实现没透传；探测失败默认「有改动」→ 提交空 commit</span></div>
-   <div class="row bad"><span class="i">2</span><span class="r">没有失败态</span><span class="t">普通错误没有对应的失败状态，网关只记日志、不改状态</span></div>
-   <div class="row bad"><span class="i">3</span><span class="r">恢复逻辑</span><span class="t">重启后只重投「正在合并」的任务 → 同一个空 commit 循环</span></div>
-   <div class="row bad new"><span class="i">!</span><span class="r">测试</span><span class="t">替身实现直接实现了那个可选能力，测试永远绿，测不到生产漏接线</span></div>
-  </div></div>
-  <div class="say"><span class="kicker">机制二从哪来？</span><h2>没名字的失败，让环永远转不到头</h2>
-  <p>环跨天、跨容器、跨进程转；卡住时，人要一眼看到卡在哪一节。</p>
-  <p class="key">一个没有名字的失败，对人来说等于没有事实。</p>
-  <div class="src article">第五部分（二）机制二</div></div>
+<section class="sec" data-toc="（三）环的入口" id="s5" data-source-section="s4">
+  <header class="doc-head"><span class="kicker">（三）环的入口：不信上一环的自报</span><h2>平台自己重跑，结果放到审批页，判断交给人</h2></header>
+  <div class="doc-body">
+    <p data-points="p0034" id="e29">接口管交接什么，入口管信不信。生成侧的 AI 自己跑过测试、也交了覆盖率报告，但这份结果不能采信：它可能声称通过，覆盖率却是空的。</p>
+    <p data-points="p0034" id="e30">所以平台用自己的容器池，把待审用例独立重跑一遍，逐条结果直接放上审批页当材料。结果只做参考、不卡审批，仍然是机器给事实、人来判断。</p>
+    <p data-points="p0034" id="e31">容器池本身也按环的思路设计：池里的机器并非平台自建，而是各位管理员把手头的开发容器贡献出来。一台容器分出几个槽，同一个槽里一次只跑一件事，不同槽可以同时跑；运行记录只增不改；某个槽失败了就换一个重来。谁手动发起的就用谁的私有池，平台自动发起的验证走公共池，彼此不挤。</p>
+  </div>
 </section>
 
-<section class="card">
-  <div class="stage"><div class="stack">
-   <div class="head">修法三处</div>
-   <div class="row result"><span class="i">1</span><span class="r">必需方法</span><span class="t">把那个能力变成必需方法，漏接就编译不过</span></div>
-   <div class="row result"><span class="i">2</span><span class="r">直接收口</span><span class="t">没有实际差异就跳过提交</span></div>
-   <div class="row result"><span class="i">3</span><span class="r">失败入态</span><span class="t">普通失败、超时、panic 一律进可重试的「合并失败」；恢复逻辑不再自动重试失败态</span></div>
-   <div class="head">状态机：七态</div>
-   <div class="row developer"><span class="i">→</span><span class="r">状态</span><span class="t">待审 · 正在合并 · 已入库 · 已丢弃 · 冲突 · 推送失败</span></div>
-   <div class="row result new"><span class="i">7</span><span class="r">新增</span><span class="t">合并失败</span></div>
-  </div></div>
-  <div class="say"><span class="kicker">怎么修？</span><h2>「合并失败」这一态，是事故买来的</h2>
-  <p>停机取消保留原状态。</p>
-  <p class="key">失败必须有名字：前言里「这个失败必须有名字」的判断，在这里落成了状态机。</p>
-  <div class="src article">第五部分（二）机制二修法；前言（三）</div></div>
+<section class="sec" data-toc="（四）资产是活的" id="s6" data-source-section="s5">
+  <header class="doc-head"><span class="kicker">（四）环上的货币：资产要被治理，而且是活的</span><h2>为什么必须是平台，而不是一个仓库</h2></header>
+  <div class="doc-body">
+    <div class="compare"><div><b>不治理会怎样</b><p data-points="p0038" id="e32">AI 写的用例东一堆西一堆，没人说得清哪些能跑、哪些过时；评审意见发进企业微信就沉底，同样的误报下周再来；知识入库不设关，错误经验混进正式知识，比没有知识还危险。</p></div><div><b>治理的做法</b><p data-points="p0038" id="e33">需求、用例、知识在进仓前一律只是「候选」。作者把审批比作货币发行纪律：人判断过才能入库，入库后才算资产。</p></div></div>
+    <p data-points="p0038" id="e34">人的判断本身也是数据：丢掉一条用例的原因、把一条评审意见判为没价值的原因、驳回一条知识的原因，都和审批结论一起按结构存档，再反馈给生产那一端。某类候选老被丢，就说明上游的提示词或 skill 该在那儿改。</p>
+    <p class="callout limit" data-points="p0038" id="e35">不过往回喂要有节制：人的判断得先攒到值得信的程度，自动往回喂才谈得上。拿未经校准的标签去改提示词，就是用脏数据训练上游；作者说这和主线 3 那个有 bug 的评分器是一回事，区别只是这回被带偏的是生产方。</p>
+    <p data-points="p0041" id="e36">作者认为「资产是活的生命周期」是为什么要平台而不是仓库的最硬理由。放到版本节奏里看，一条需求的背景信息得同时服务两个版本：线上那个，和正在做的那个。上线后出 bug 要打补丁，补丁期的工作方式和开发期完全不同，格外看重改动最小、兼容、数据修复和可观测。这些正是前言说的价值观型约束，AI 交付功能的本事强于守纪律的本事，所以这些不能只写进提示词等它自觉，得变成需求状态流转时必须过的判据。仓库装得下文件，装不下一个要跨两个版本、两段纪律完全不同的上下文。</p>
+  </div>
 </section>
 
-<section class="card">
-  <div class="stage"><pre><span class="c">-- 用例文件路径 = 被测函数归属的事实源</span>
-<span class="hl">ucases/<span class="s">&lt;被测文件路径&gt;</span>/<span class="f">&lt;被测函数名&gt;</span>_unit.lua</span>
-<span class="c">-- 覆盖率事实的两条判断</span>
-<span class="k">合并</span>  多用例按行取并集
-<span class="k">区分</span>  「没跑过」≠「跑了没覆盖」
-      分母只含实际跑到的函数，两种都不显示 0%</pre></div>
-  <div class="say"><span class="kicker">机制三：事实源唯一、可推导</span><h2>归属从路径推导，因为声明会撒谎</h2>
-  <p>不让 AI 在元数据里声明被测函数归属：声明会撒谎，路径不会。</p>
-  <p class="key">诚实的注脚：代码里还保留「库里已有值就先用它」的分支，AI 真填了还是会被信——这一半是明确的技术债。</p>
-  <details class="more"><summary></summary><p>现网有两千多条单测的归属字段本来就是空的，作者说他们其实没得选。</p><p>多用例按行取并集：单测逐条单独跑，每条快照只反映自己覆盖的分支，取任何一条都会低估。</p><p>「没跑过」和「跑了没覆盖」的区分，立在平台曾把「采集失败」显示成「没有数据」的废墟上。作者说这是同一个教训的第四次，这次撒谎的是「事实」本身。</p></details>
-  <div class="src article">第五部分（二）机制三</div></div>
+<section class="sec" data-toc="（五）人是环里的节点" id="s7" data-source-section="s6">
+  <header class="doc-head"><span class="kicker">（五）人是环里的节点，不是环外的验收员</span><h2>平台的职责：让人下判断更省力</h2></header>
+  <div class="doc-body">
+    <p data-points="p0042" id="e37">平台刚起步时给自己划过线：只管外环，不碰云端写代码的环境，免得长成第二个 Codespaces。后来这条线被团队亲手拆了，做出了 AgentUI，一个开在浏览器里的会话工作台，背后直接连到容器内的命令行 agent；批权限、答提问、中途插手，都能在网页上做完。</p>
+    <p data-points="p0042" id="e38">推翻的理由比原边界更根本：人不在环外验收，而是环里的一个节点。节点要干活，要批权限、定稿、审批、随时找任一 agent 对话，平台就必须把交互做进来。作者说这是主线 2 那个需求在平台层面的重演：工作流引擎给不了的掌控感，环系统得给。</p>
+    <p data-points="p0045" id="e39">人在环里，接着的问题就是人怎么跟上环的转速。作者说本质不是让人多读，而是想尽办法降低人做判断的成本。办法没有尽头，眼下做了三件：</p>
+    <ol class="steps">
+      <li data-points="p0045" id="e40"><b>产物从 Markdown 换成 HTML</b>：一百多行的 Markdown 作者自己都读不完。HTML 能放表格、SVG 图、折叠和导航，还能一键分享。Anthropic 做 Claude Code 的那支团队专门写文章讲过这件事，说用了 HTML 之后人重新回到了循环里；最关键的是自定义界面要以「导出」收尾，比如导出 JSON 或提示词，让人在界面上的判断一键变回 AI 的输入。团队眼下只走了一段：trace 语义视图以及测试和覆盖率两类报告，已经做成单文件就能打开的 HTML；而需求文档、知识条目和评审意见仍停留在 Markdown。</li>
+      <li data-points="p0045" id="e41"><b>什么都能标注，标注回灌给 AI</b>：平台里还没有，但在开发流程插件里已经有个小回路能用：人在方案文字上圈选并写批注，批注当即被整理成结构化输入送回模型。作者的看法是，整套系统从外部得到的输入只有人的判断，所以机制要做的是别让它丢、让它能反复用。</li>
+      <li data-points="p0045" id="e42"><b>trace 报告可视化，数字不让模型碰</b>：LLM 只管起名、分组、写说明；所有数字由确定性脚本从原始证据重新算；守恒校验不通过就退回完整的原始视图。可视化不是把 JSON 画好看，而是在不失真的前提下让人一眼看懂。</li>
+    </ol>
+  </div>
 </section>
 
-<section class="card">
-  <div class="stage"><svg class="flow" data-act="page" data-edge="pool>page" data-flow='{"nodes":[{"id":"self","x":120,"y":80,"t":"生成侧自报","s":"跑过测试 + 覆盖率报告","c":"red","w":210},{"id":"pool","x":120,"y":270,"t":"平台容器池","s":"对待审用例独立重跑","c":"green","w":210},{"id":"page","x":450,"y":270,"t":"审批页","s":"逐条执行结果","c":"blue","w":190},{"id":"h","x":450,"y":80,"t":"人","s":"做判断","c":"blue","w":150}],"edges":[{"f":"pool","t":"page"},{"f":"page","t":"h","l":"仅供参考，不阻塞"}]}'></svg></div>
-  <div class="say"><span class="kicker">环的入口信不信上一环？</span><h2>平台自己重跑，结果摆上审批页</h2>
-  <p>生成侧的结果不能信：它可能声称成功而覆盖率为空。</p>
-  <p class="key">结果仅供参考、不阻塞审批——机器提供事实，人做判断。</p>
-  <details class="more"><summary></summary><p>容器池：管理员把自己的开发容器贡献进池子；每个容器若干执行槽位，槽位内严格串行、槽位间并行；执行记录只追加不修改；失败换槽位重试。手动触发跑在触发者的私有池，平台自动验证跑公共池。</p></details>
-  <div class="src article">第五部分（三）</div></div>
+<section class="sec" data-toc="（六）铺满研发周期" id="s8" data-source-section="s7">
+  <header class="doc-head"><span class="kicker">（六）环要铺满研发周期</span><h2>一副骨架，铺到需求、开发、评审、测试、上线、补丁</h2></header>
+  <div class="doc-body">
+    <p data-points="p0049" id="e43">前面的环大多围着测试和评审。但目标是整个研发周期，每个环节都值得有环。骨架只有一副：触发、生产、闸门、人审、入库、复用，铺到哪里都是它的一个实例。离团队最近的三个都在周期最前面：</p>
+    <ul>
+      <li data-points="p0049" id="e44"><b>需求预分析</b>：需求单一分配，agent 就开始做粗方案、找出策划案没写清的细节、评估影响面和工作量。作者强调最克制的是产出形式：待澄清清单才是核心价值，方案只是 AI 自圆其说的一种，不标清楚，读者会当成推荐。</li>
+      <li data-points="p0049" id="e45"><b>bug 预分析</b>：判断是不是 bug、出在客户端、DS 还是后台、原因和修法。它有别的环没有的优势：bug 最后真的会被修，真实答案免费回流，准确率能统计、能校准。</li>
+      <li data-points="p0049" id="e46"><b>评审预分析</b>：人工评审开始前，agent 先扫一轮，把常见类型的 bug 筛掉，人的注意力就能集中在确实需要拍板的地方。</li>
+    </ul>
+  </div>
 </section>
 
-<section class="card">
-  <div class="stage"><div class="pairs">
-   <div class="pair"><div class="no"><b>不治理</b>用例散落、没人知道哪些能跑；评审意见发完企微就沉了，同样的误报下周再来；错误经验写进正式知识</div><div class="yes"><b>治理</b>进仓前一律是「候选」；人做过判断才入库，入库才成为资产</div></div>
-   <div class="pair"><div class="b"><b>人的判断也是数据</b>丢弃、标无价值、拒绝的原因结构化落库，回流给生产端</div><div class="a"><b>需求上下文要活过两个版本</b>上线版本 + 在研版本；patch 期在意最小改动、兼容性、数据修复、可观测</div></div>
-  </div></div>
-  <div class="say"><span class="kicker">环上流动的是什么？</span><h2>资产不是文件，是活的生命周期</h2>
-  <p>patch 期那几条是「价值观型」约束，要做成挂在需求状态机上的判据，不能写进提示词指望自觉。</p>
-  <p class="key">回灌要克制：先把人的判断攒成可信的数据，再谈自动回灌。</p>
-  <details class="more"><summary></summary><p>作者的理由：拿一批没校准的标签去改提示词，等于用脏数据训练上游——主线 3 错误评分器的翻版，只是污染的是生产者。</p><p>作者说这是「为什么必须是平台而不是仓库」最硬的回答：仓库存得下文件，存不下要活过两个版本、两期纪律完全不同的上下文。</p></details>
-  <div class="src article">第五部分（四）</div></div>
+<section class="sec" data-toc="（七）该不该自建" id="s9" data-source-section="s8">
+  <header class="doc-head"><span class="kicker">（七）业务团队该不该自建这么重的平台</span><h2>壳用现成的，本体才自建</h2></header>
+  <div class="doc-body">
+    <p data-points="p0055" id="e47">环铺得越满，这个问题越躲不开：业务团队有必要自建这么重的平台吗？会不会被中台轻易替代、投入打水漂？作者分两层回答。</p>
+    <div class="compare"><div><b>第一层：能替换的本来就没自建</b><p data-points="p0055" id="e48">运行容器借用 AnyDev，命令行工具直接用现成的，需求单则从 TAPD 拉取。团队亲手建的只有中台提供不了的三样。一是判据，比如变异算子取自自家评审清单、补丁纪律取自自家的版本制度；二是资产模型，比如路径约定、知识模块和整套需求文档；三是环怎么接线，即哪类例外在什么时机递给谁。中台给得了壳，比如算力、会话、通用 CI，给不了本体。</p></div><div><b>第二层：钱花在哪，决定会不会白花</b><p data-points="p0058" id="e49">平台最值钱的产出不是代码，而是题集、判据、资产怎么建模、环怎么设计，再加上一路踩坑留下的失败记录；它们跟着团队走，不跟着代码走。和前言删掉 spec 文档同理：载体可以扔，想清楚的东西省不掉。即使明天平台整个被换掉，这些也一件不会浪费。</p></div></div>
+    <p class="callout key" data-points="p0055" id="e50">作者说这和主线 3 是同一个结论的两面：题集、判据、资产模型都是本体，本体都不通用，通用的都不是本体。哪天通用平台把壳做得更好就换掉；自建部分本来就是按「不可替代」筛出来的，这是建设原则而不是巧合。</p>
+    <p data-points="p0058" id="e51">全文的收尾：这个平台是研发体系的运行时。人、agent、资产交织成转速不同的嵌套环；人离开产出线，站到环的节点上只做判断；机器在环的接口处提供能核验的事实；资产在环之间流动、增值。<a href="index.html">回全文导读</a></p>
+  </div>
 </section>
 
-<section class="card">
-  <div class="stage"><div class="stack">
-   <div class="head">降低人做判断的成本：目前的三个例子</div>
-   <div class="row result"><span class="i">1</span><span class="r">HTML 产物</span><span class="t">测试报告、覆盖率报告、trace 语义视图已是自包含 HTML；需求文档、知识条目、评审意见还是 Markdown</span></div>
-   <div class="row assistant"><span class="i">2</span><span class="r">标注回灌</span><span class="t">平台里还没有；/dev 插件里跑通了小回路：划词批注当场变成结构化输入</span></div>
-   <div class="row result"><span class="i">3</span><span class="r">数字不许模型碰</span><span class="t">LLM 只命名、归组、写解释；数字由脚本从原始证据重算；守恒校验不过就退回原始视图</span></div>
-  </div></div>
-  <div class="say"><span class="kicker">人在环里干什么？</span><h2>人是环里的节点，平台要降低判断成本</h2>
-  <p>平台起初的边界是「只做外环，不做云端编码环境」，后来自己推翻了，做了浏览器里的会话工作台 AgentUI。</p>
-  <p class="key">人不是环外面的验收员；节点要批权限、定稿、审批、随时和任意 agent 对话。</p>
-  <details class="more"><summary></summary><p>作者引用 Claude Code 团队的文章：用 HTML 之后，人重新回到了循环里；自定义 HTML 界面必须以「导出」结尾（copy as JSON、copy as prompt），让判断一键变回给 AI 的输入。</p><p>这也是主线 2 那个需求的重演：workflow-engine 给不了的掌控感，环系统必须给。</p></details>
-  <div class="src article">第五部分（五）</div></div>
+<section class="sec" data-no="测" data-toc="小测：6 道题" id="s10" data-source-section="extra">
+  <div class="head-full"><span class="kicker">小测</span><h2>用 6 个场景检查：这个环设计对了吗？</h2></div>
+  <div class="stage"><div class="quiz"><script type="application/json">[{"q":"你的评审 agent 在开发会话结束时，由同一个会话顺手触发。按原文，这个环的问题是？","opts":["没问题，触发得越早越好","不独立：触发源和被验对象有因果关系","评审跑得太慢，应该改成并行"],"a":1,"why":"每个环独立触发，得出的才是新信息。","back":2},{"q":"一个任务失败后一直显示「处理中」。按原文最该补的是什么？","opts":["给这个失败一个可见的状态名","多打几行日志方便以后排查","让恢复逻辑自动重试所有任务"],"a":0,"why":"没有名字的失败，对人等于没有事实。","back":3},{"q":"让 AI 在测试元数据里自己填「我测的是哪个函数」。按原文更好的做法是？","opts":["提醒 AI 填得更认真一点","安排人逐条核对每个字段","按路径约定推导归属"],"a":2,"why":"声明会撒谎，路径不会。","back":3},{"q":"AI 上传了覆盖率报告，显示全部通过。审批前平台该做什么？","opts":["直接采信，节省机器时间","平台容器独立重跑并上审批页","一律拒绝 AI 交来的报告"],"a":1,"why":"入口不信上一环的自报；结果只做参考，判断留给人。","back":4},{"q":"你攒了 200 条「为什么丢弃这个用例」的标注，还没校准，想马上拿去自动改提示词。按原文？","opts":["先把判断攒成可信数据再回灌","马上回灌，越快越好","这些标注没用，直接扔掉"],"a":0,"why":"没校准的标签去改提示词，等于用脏数据训练上游。","back":5},{"q":"中台推出了更好的容器和 CI 服务。按原文，自建平台该怎么办？","opts":["整体废弃，全部迁到中台","拒绝迁移，继续维护自己的","换掉壳，留下判据和资产模型"],"a":2,"why":"通用的都不是本体；本体跟着团队走。","back":8}]</script></div></div>
+  <div class="src article">题目由学习搭子按原文第五部分出，答错会带你回到对应小节</div>
 </section>
-
-<section class="card">
-  <div class="stage"><div class="pairs">
-   <div class="pair"><div class="b"><b>环的骨架只有一副</b>触发 · 生产 · 闸门 · 人审 · 入库 · 复用</div><div class="a"><b>最近的三个环（研发最前段）</b>需求预分析（核心价值是待澄清清单）；bug 预分析（真值免费回流，可校准）；评审预分析</div></div>
-   <div class="pair"><div class="b"><b>不自建（可替代的壳）</b>容器用 AnyDev，CLI 用现成的，需求单从 TAPD 同步</div><div class="a"><b>自建（本体）</b>判据、资产模型、环的接线</div></div>
-  </div></div>
-  <div class="say"><span class="kicker">深入一层：业务团队该自建这么重的平台吗？</span><h2>凡是本体都不通用，凡是通用的都不是本体</h2>
-  <p>中台能给壳（算力、会话、通用 CI），给不了本体。</p>
-  <p class="key">平台最值钱的产出是判据、题集、资产模型、环的设计和失败史；它们跟着团队走，不跟着平台代码走。</p>
-  <details class="more"><summary></summary><p>需求预分析的产出：待澄清清单是核心价值，方案只是 AI 的一种自洽——不标注清楚，看的人会把它当推荐。</p><p>作者说：哪天通用平台把壳做得更好，换掉就是。环的目标是整个研发周期：需求、开发、评审、测试、上线、patch。</p></details>
-  <div class="src article">第五部分（六）（七）</div></div>
-</section>
-
-<section class="card full">
-  <div class="head-full"><span class="kicker">小测</span><h2>用 6 个新场景检查：环怎么接、信什么</h2></div>
-  <div class="stage"><div class="quiz" data-quiz='[
-   {"q":"你的评审 agent 在开发会话结束时，由同一个会话顺手触发。按原文，这个环的问题是？","opts":["没有问题","不独立：触发源和被验对象有因果关系，说出来的可能只是复述","评审太慢"],"a":1,"why":"每个环必须独立，才说得出新话。","back":3},
-   {"q":"一个任务失败后一直显示「处理中」。按原文，最该补的是什么？","opts":["多打几行日志","给这个失败一个名字：一个可见的失败状态","让恢复逻辑自动重试所有任务"],"a":1,"why":"一个没有名字的失败，对人来说等于没有事实。","back":5},
-   {"q":"让 AI 在测试的元数据里自己填「我测的是哪个函数」。按原文，更好的做法是？","opts":["让 AI 填得更认真","按路径规范推导归属：声明会撒谎，路径不会","让人逐条核对"],"a":1,"why":"事实源唯一，而且要能被推导。","back":7},
-   {"q":"AI 上传了覆盖率报告，显示全部通过。审批前平台该做什么？","opts":["直接采信","用平台自己的容器独立重跑，把逐条结果摆到审批页","直接拒绝"],"a":1,"why":"环的入口不信上一环的自报；结果仅供参考，判断留给人。","back":8},
-   {"q":"你攒了 200 条「人为什么丢弃这个用例」的标注，还没校准过，想马上拿去自动改提示词。按原文？","opts":["马上回灌，越快越好","先把判断攒成可信的数据，再谈自动回灌","扔掉这些标注"],"a":1,"why":"没校准的标签去改提示词，等于用脏数据训练上游。","back":9},
-   {"q":"中台推出了更好的容器和 CI 服务。按原文，你们自建平台该怎么办？","opts":["整体废弃","换掉壳，留下判据、资产模型和环的接线","拒绝迁移"],"a":1,"why":"凡是通用的都不是本体；本体跟着团队走。","back":11}]'></div></div>
-</section>
-</main>
-<nav class="bottom"><button class="btn" id="prev">上一张</button><button class="btn main" id="next">下一张</button></nav>
-<script>
-/* 学习搭子 固定组件库 — 不要在课程里改这个文件。 */
+</main><script>var __H=location.hash;window.lessonIcons={"menu": "<svg class=\"i i-menu\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/><\/svg>", "play": "<svg class=\"i i-play\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z\"/><\/svg>", "pause": "<svg class=\"i i-pause\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"14\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/><rect x=\"5\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/><\/svg>", "check": "<svg class=\"i i-check\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 6 9 17l-5-5\"/><\/svg>", "x": "<svg class=\"i i-x\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/><\/svg>", "zoom-in": "<svg class=\"i i-zoom-in\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><line x1=\"21\" x2=\"16.65\" y1=\"21\" y2=\"16.65\"/><line x1=\"11\" x2=\"11\" y1=\"8\" y2=\"14\"/><line x1=\"8\" x2=\"14\" y1=\"11\" y2=\"11\"/><\/svg>", "zoom-out": "<svg class=\"i i-zoom-out\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><line x1=\"21\" x2=\"16.65\" y1=\"21\" y2=\"16.65\"/><line x1=\"8\" x2=\"14\" y1=\"11\" y2=\"11\"/><\/svg>", "copy": "<svg class=\"i i-copy\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\"/><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"/><\/svg>", "chevron-right": "<svg class=\"i i-chevron-right\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m9 18 6-6-6-6\"/><\/svg>", "book-open": "<svg class=\"i i-book-open\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 5v16\"/><path d=\"M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z\"/><\/svg>", "external-link": "<svg class=\"i i-external-link\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M15 3h6v6\"/><path d=\"M10 14 21 3\"/><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/><\/svg>"};window.lessonIcon=n=>window.lessonIcons[n]||"";</script><script>/* Article/pair navigation only. No global swipe or arrow-key paging. */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const H=document.documentElement, sections=$$('main.deck > .sec, main.deck > .hero, .pair-notes > .sec');
+if(!sections.length)return;
+const ids=new Set($$('[id]').map(n=>n.id));
+sections.forEach((s,i)=>{if(!s.id){let n=i+1,id=s.classList.contains('hero')?'intro':'s'+n;while(ids.has(id))id='s'+(++n);s.id=id;ids.add(id)}});
+const title=s=>s.dataset.toc||$('h2,h1,h3',s)?.textContent||s.id;
+const toc=document.createElement('nav');toc.className='toc';toc.id='lesson-toc';toc.setAttribute('aria-label','目录');
+const heading=document.createElement('b');heading.textContent='目录';toc.appendChild(heading);const ol=document.createElement('ol');toc.appendChild(ol);
+sections.forEach((s,i)=>{const li=document.createElement('li'),a=document.createElement('a');a.href='#'+s.id;a.textContent=(i+1)+'. '+title(s);li.appendChild(a);ol.appendChild(li)});document.body.appendChild(toc);
+const links=$$('a',toc),toggle=$('.toc-toggle'),count=$('.count'),bar=$('.track i');
+const shade=document.createElement('div');shade.className='toc-backdrop';document.body.appendChild(shade);
+function open(value){H.classList.toggle('toc-open',value);toggle?.setAttribute('aria-expanded',String(value));if(value)links.find(a=>a.getAttribute('aria-current')==='true')?.focus();else toggle?.focus()}
+if(toggle){toggle.setAttribute('aria-controls',toc.id);toggle.onclick=()=>open(!H.classList.contains('toc-open'))}shade.onclick=()=>open(false);
+addEventListener('keydown',e=>{if(e.key==='Escape'&&H.classList.contains('toc-open'))open(false)});
+function locate(hash){let id;try{id=decodeURIComponent(hash.replace(/^#/,''))}catch(e){return null}if(/^\d+$/.test(id))return sections[+id-1];return document.getElementById(id)}
+function jump(target){if(!target)return;H.classList.remove('toc-open');toggle?.setAttribute('aria-expanded','false');target.scrollIntoView({block:'start',behavior:'instant'});history.replaceState(null,'','#'+target.id);update();dispatchEvent(new Event('lesson:navigate'))}
+window.lessonNav={layout:H.dataset.layout,go:n=>jump(document.getElementById('s'+n)||sections[n-1]),returnTo:box=>jump(box.closest('.sec')||box),jump};window.goCard=n=>window.lessonNav.go(n);
+toc.onclick=e=>{const a=e.target.closest('a');if(!a)return;e.preventDefault();jump(locate(a.hash))};
+const key='pos:'+location.pathname;let queued=false,restoring=true;
+function update(){queued=false;let current=sections[0];const line=H.dataset.layout==='pair'&&innerWidth<=820?innerHeight*.4+90:100;for(const s of sections)if(s.getBoundingClientRect().top<=line)current=s;
+ count.textContent=title(current);links.forEach(a=>a.setAttribute('aria-current',String(a.hash==='#'+current.id)));const max=H.scrollHeight-innerHeight;bar.style.width=Math.max(0,Math.min(100,max>0?scrollY/max*100:100))+'%';
+ if(!restoring)try{localStorage.setItem(key,JSON.stringify({id:current.id,offset:scrollY-(current.getBoundingClientRect().top+scrollY)}))}catch(e){}
+}
+addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(update)}},{passive:true});addEventListener('resize',update);addEventListener('hashchange',()=>jump(locate(location.hash)));
+addEventListener('load',()=>{const hash=window.__H||location.hash;let target=locate(hash),offset=0;if(!hash){try{const pos=JSON.parse(localStorage.getItem(key)||'null');if(pos){target=document.getElementById(pos.id);offset=Number(pos.offset)||0}}catch(e){}}
+ if(target){target.scrollIntoView({block:'start',behavior:'instant'});if(!hash)scrollBy(0,offset+72)}restoring=false;update();
+});update();
+})();
+</script><script>/* Reveal an offscreen simulator first, then move only its local SVG viewport. */
+(function(root){
+function delta(start,end,low,high,pad=16){if(start<low+pad)return start-low-pad;if(end>high-pad)return end-high+pad;return 0}
+function focus(svg,scroller){
+ let frame=scroller.getBoundingClientRect(),bottom=innerHeight-88;
+ const top=document.querySelector('.top')?.getBoundingClientRect().bottom||56;
+ if(frame.bottom<=top||frame.top+112>bottom){
+  scroller.closest('.sim').scrollIntoView({block:'start',behavior:'instant'});
+  frame=scroller.getBoundingClientRect();
+ }
+ for(let p=scroller.parentElement;p&&p!==document.body;p=p.parentElement){const c=getComputedStyle(p);if(/auto|scroll|hidden|clip/.test(c.overflowY)){const r=p.getBoundingClientRect();bottom=Math.min(bottom,r.top+p.clientHeight)}}
+ const space=Math.max(112,Math.min(innerHeight*.4,bottom-frame.top));scroller.style.maxHeight=space+'px';
+ frame=scroller.getBoundingClientRect();const node=svg.querySelector('.fl-node.act');if(!node)return;const r=node.getBoundingClientRect();
+ scroller.scrollTop+=delta(r.top,r.bottom,frame.top,frame.top+scroller.clientHeight);
+ scroller.scrollLeft+=delta(r.left,r.right,frame.left,frame.left+scroller.clientWidth);
+}
+root.LessonGeometry={delta,focus};if(typeof module!=='undefined')module.exports={delta,focus};
+})(typeof window==='undefined'?globalThis:window);
+</script><script>/* Shared material/explanation pairing, original-image dialog and copy actions. */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)],ic=window.lessonIcon;
+window.lessonCopy=async(text,button)=>{try{if(navigator.clipboard?.writeText)await navigator.clipboard.writeText(text);else{const t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();if(!document.execCommand('copy'))throw Error('copy');t.remove()}button.textContent='已复制'}catch(e){button.textContent='复制未成功，请选中文字复制'}};
+$$('.pair.codewalk,.pair.read-pair,.pair.material-pair').forEach(pair=>{
+ const source=$('.pair-source',pair),notes=$('.pair-notes',pair);if(!source||!notes)return;
+ const pre=$('pre[data-lines]',source),code=pre&&$('code',pre),steps=$$('.step',notes);let lines=[],raw='';
+ if(code){raw=code.textContent;const first=Number(pre.dataset.lines)||1;code.textContent='';const pieces=raw.replace(/\n$/,'').split('\n');pieces.forEach((text,i)=>{const line=document.createElement('span');line.className='code-line';line.dataset.line=String(first+i);line.textContent=text;code.appendChild(line);lines.push(line)});
+  const panel=document.createElement('div');panel.className='code-panel';source.before(panel);
+  const toolbar=document.createElement('div');toolbar.className='code-toolbar';
+  const hint=document.createElement('span');hint.className='code-scroll-hint';hint.textContent='长行可横向滚动';
+  const button=document.createElement('button');button.className='btn sm copy-code';button.innerHTML=ic('copy')+' 复制代码';button.onclick=()=>window.lessonCopy(raw,button);
+  toolbar.append(hint,button);panel.append(toolbar,source);
+ }
+ let active=null;
+ function select(step){if(!step||active===step)return;active=step;steps.forEach(s=>s.classList.toggle('is-active',s===step));let targets=[];
+  if(code){const ranges=(step.dataset.hl||'').split(',').map(v=>v.split('-').map(Number));lines.forEach(line=>{const n=Number(line.dataset.line),on=ranges.some(([a,b=a])=>n>=a&&n<=b);line.classList.toggle('hl',on);if(on)targets.push(line)})}
+  else{const ids=(step.dataset.explains||step.dataset.target||'').split(/\s+/);$$('.source-block,[data-material]',source).forEach(block=>{const on=ids.includes(block.dataset.sourceId||block.id);block.classList.toggle('is-active',on);if(on)targets.push(block)})}
+  if(targets.length){const a=targets[0].getBoundingClientRect(),b=targets[targets.length-1].getBoundingClientRect(),r=source.getBoundingClientRect();const bottom=r.top+source.clientHeight;source.scrollTop+=b.bottom-a.top>source.clientHeight-32?a.top-r.top-16:window.LessonGeometry.delta(a.top,b.bottom,r.top,bottom)}
+ }
+ const update=()=>{
+  const rect=notes.getBoundingClientRect(),material=source.closest('.code-panel')||source;
+  const top=Math.max(0,$(".top")?.getBoundingClientRect().bottom||0,innerWidth<=820?material.getBoundingClientRect().bottom:0),bottom=Math.min(innerHeight,rect.bottom);
+  if(bottom<=top)return;
+  const line=top+(bottom-top)*.4;let step=steps[0];
+  for(const s of steps)if(s.getBoundingClientRect().top<=line)step=s;
+  const last=steps.at(-1),lastRect=last?.getBoundingClientRect();
+  if(scrollY+innerHeight>=document.documentElement.scrollHeight-2&&lastRect?.top<bottom&&lastRect.bottom>top)step=last;
+  select(step);
+ };
+ let queued=false;addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(()=>{queued=false;update()})}},{passive:true});addEventListener('resize',update);
+ steps.forEach(step=>{step.addEventListener('focusin',()=>select(step));step.addEventListener('click',e=>{select(step);const a=e.target.closest('a');if(a?.hash&&source.querySelector(a.hash)){e.preventDefault();source.focus()}})});select(steps[0]);addEventListener('load',update);
+});
+$$('figure img').forEach(img=>{const button=document.createElement('button');button.className='image-open';button.type='button';button.setAttribute('aria-label','放大图片：'+img.alt);img.replaceWith(button);button.appendChild(img);button.onclick=()=>{
+ const dialog=document.createElement('dialog');dialog.className='image-dialog';dialog.setAttribute('aria-label',img.alt);const close=document.createElement('button');close.className='btn dialog-close';close.innerHTML=ic('x')+' 关闭';const large=img.cloneNode();large.removeAttribute('loading');dialog.append(close,large);document.body.appendChild(dialog);close.onclick=()=>dialog.close();dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close()});dialog.addEventListener('close',()=>{dialog.remove();button.focus()});dialog.showModal();close.focus();
+}});
+$$('details.more summary').forEach(s=>{if(!s.textContent.trim())s.textContent='展开细节';s.insertAdjacentHTML('afterbegin',ic('chevron-right'))});
+})();
+</script><script>/* 学习搭子 固定组件库 — 不要在课程里改这个文件。 */
 (()=>{
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const NS='http://www.w3.org/2000/svg';
+const data=(box,kind)=>JSON.parse(box.querySelector('script[type="application/json"]')?.textContent||box.dataset[kind]);
+const ic=window.lessonIcon;
 const el=(t,a={},p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p&&p.appendChild(e);return e};
 const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 
-/* ---------- 卡片翻页 ---------- */
-const cards=$$('.card');let cur=0;
-function go(i){i=Math.max(0,Math.min(cards.length-1,i));cards[cur].classList.remove('on');cur=i;cards[cur].classList.add('on');
-  $('.track i').style.width=((cur+1)/cards.length*100)+'%';$('.count').textContent=(cur+1)+' / '+cards.length;
-  $('#prev').disabled=cur===0;$('#next').disabled=cur===cards.length-1;history.replaceState(null,'','#'+(cur+1));}
-window.goCard=n=>go(n-1);
-$('#prev').onclick=()=>go(cur-1);$('#next').onclick=()=>go(cur+1);
-addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.key==='ArrowRight')go(cur+1);if(e.key==='ArrowLeft')go(cur-1)});
-let sx=null;addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
-addEventListener('touchend',e=>{if(sx===null)return;const d=e.changedTouches[0].clientX-sx;if(Math.abs(d)>60)go(cur+(d<0?1:-1));sx=null});
+function component(selector,render){
+  $$(selector).forEach(box=>{try{render(box)}catch(error){
+    const message=document.createElement('p');message.className='component-error';
+    message.textContent='这张图的数据有误';message.setAttribute('role','status');
+    box.replaceWith(message);console.error('组件数据有误',error);
+  }});
+}
 
 /* ---------- flow：用 JSON 画流程图 ----------
  spec = {w,h,nodes:[{id,x,y,t,s?,c?,w?}],edges:[{f,t,l?,bend?}]}  节点坐标是中心点 */
 function drawFlow(svg,spec){
   svg.innerHTML='';
   const defs=el('defs',{},svg);
-  [['a','#AEB8C6'],['b','#2550D9'],['red','#C8372D'],['amber','#C77A00'],['green','#16875A']].forEach(([id,c])=>{const m=el('marker',{id:'ar'+id+svg.dataset.uid,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:7,markerHeight:7,orient:'auto-start-reverse'},defs);el('path',{d:'M0,0L10,5L0,10z',fill:c},m)});
-  const N={};spec.nodes.forEach(n=>N[n.id]={...n,w:n.w||150,h:n.s?70:56});
+  [['a','var(--meta)'],['b','var(--blue)'],['red','var(--amber)'],['amber','var(--amber)'],['green','var(--green)']].forEach(([id,c])=>{const m=el('marker',{id:'ar'+id+svg.dataset.uid,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:7,markerHeight:7,orient:'auto-start-reverse'},defs);el('path',{d:'M0,0L10,5L0,10z',fill:c},m)});
+  const N={};spec.nodes.forEach(n=>N[n.id]={...n,w:n.w||150,h:n.h||(n.s?70:56)});
   const ns=Object.values(N);
   let x0=Math.min(...ns.map(n=>n.x-n.w/2)),x1=Math.max(...ns.map(n=>n.x+n.w/2)),y0=Math.min(...ns.map(n=>n.y-n.h/2)),y1=Math.max(...ns.map(n=>n.y+n.h/2));
   const B={x0,x1,y0,y1};
@@ -375,7 +337,7 @@ function drawFlow(svg,spec){
       const cx=mx-(q2-q1)/len*bd,cy=my+(p2-p1)/len*bd;d=`M${p1},${q1} Q${cx},${cy} ${p2},${q2}`;
       const qx=.25*p1+.5*cx+.25*p2,qy=.25*q1+.5*cy+.25*q2,sg=bd>=0?1:-1;lx=qx-(q2-q1)/len*sg*14;ly=qy+(p2-p1)/len*sg*14+4;}
     const mk=e.c||'a';const p=el('path',{d,class:'fl-edge '+(e.c||''),'marker-end':`url(#ar${mk}${svg.dataset.uid})`},eg);p._mk=mk;
-    let lab=null;if(e.l){const anc=e.route==='left'?'end':e.route==='right'?'start':'middle';lab=el('text',{x:lx,y:ly,'text-anchor':anc,class:'fl-elab '+(e.c||''),stroke:'#F2F4F7','stroke-width':5,'paint-order':'stroke'},eg);lab.textContent=e.l}
+    let lab=null;if(e.l){const anc=e.route==='left'?'end':e.route==='right'?'start':'middle';lab=el('text',{x:lx,y:ly,'text-anchor':anc,class:'fl-elab '+(e.c||''),stroke:'var(--paper)','stroke-width':5,'paint-order':'stroke'},eg);lab.textContent=e.l}
     svg._edges[e.f+'>'+e.t]={p,lab}});
   ns.forEach(n=>{const g=el('g',{class:'fl-node '+(n.c||'')},ng);
     el('rect',{x:n.x-n.w/2,y:n.y-n.h/2,width:n.w,height:n.h,rx:14},g);
@@ -383,60 +345,105 @@ function drawFlow(svg,spec){
     if(n.s){const s=el('text',{x:n.x,y:n.y+18,'text-anchor':'middle',class:'sub'},g);s.textContent=n.s}
     svg._nodes[n.id]=g});
   /* 自动贴合：viewBox 只包住内容，图会放大填满面板 */
-  const P=spec.pad??8;svg.setAttribute('viewBox',`${x0-P} ${y0-P-10} ${x1-x0+2*P} ${y1-y0+2*P+20}`);
+  const P=spec.pad??8,W=x1-x0+2*P,H=y1-y0+2*P+20;
+  svg.setAttribute('viewBox',`${x0-P} ${y0-P-10} ${W} ${H}`);
+  svg.style.setProperty('--flow-width',W+'px');svg.style.setProperty('--flow-height',H+'px');
+  const scroll=document.createElement('div');scroll.className='flow-scroll';
+  svg.replaceWith(scroll);scroll.appendChild(svg);
+  if(!scroll.closest('.sim')&&W>innerWidth-78){const t=document.createElement('p');t.className='flow-tip';t.textContent='← 左右滑动看全图 →';scroll.after(t)}
   svg._set=(act,edge)=>{for(const k in svg._nodes)svg._nodes[k].classList.toggle('act',k===act);
     for(const k in svg._edges){const on=k===edge,E=svg._edges[k];E.p.classList.toggle('act',on);E.p.setAttribute('marker-end',`url(#ar${on?'b':E.p._mk}${svg.dataset.uid})`);E.lab&&E.lab.classList.toggle('act',on)}};
   svg._set(svg.dataset.act,svg.dataset.edge);
+  svg._center=()=>{if(!matchMedia('(max-width:820px)').matches)return;
+    const active=Object.values(svg._nodes).find(n=>n.classList.contains('act'));if(!active)return;
+    const a=active.getBoundingClientRect(),r=scroll.getBoundingClientRect();
+    scroll.scrollLeft+=a.left+a.width/2-r.left-r.width/2;
+  };
 }
 let uid=0;
-$$('svg.flow').forEach(s=>{s.dataset.uid=++uid;drawFlow(s,JSON.parse(s.dataset.flow))});
+component('svg.flow',s=>{s.dataset.uid=++uid;drawFlow(s,data(s,'flow'))});
 
 /* ---------- sim：一步步走的模拟器 ----------
  data-sim = {flow:{...}, steps:[{act,edge,msg:{r:user|asst|tool|err|sys,n?,t},say}], alt?:{label,steps:[...]}} */
-$$('.sim').forEach(box=>{
-  const spec=JSON.parse(box.dataset.sim);if(spec.alt&&!spec.alts)spec.alts=[spec.alt];const AL=spec.alts||[];const gname='br'+(++uid);
-  box.innerHTML=`<div class="ctl"><button class="btn sm" data-a="step">下一步</button><button class="btn sm" data-a="play">▶ 自动</button><button class="btn sm" data-a="reset">重置</button>
+component('.sim',box=>{
+  const spec=data(box,'sim');if(spec.alt&&!spec.alts)spec.alts=[spec.alt];const AL=spec.alts||[];const gname='br'+(++uid);
+  box.innerHTML=`<div class="ctl"><button class="btn sm" data-a="step">下一步</button><button class="btn sm" data-a="play">${ic("play")} 自动</button><button class="btn sm" data-a="reset">重置</button>
    <label>速度 <input type="range" min="300" max="2500" step="100" value="1200"></label></div>${AL.length?`<div class="ctl branches"><label><input type="radio" name="${gname}" value="-1" checked> ${esc(spec.label||'正常路径')}</label>${AL.map((a,j)=>`<label><input type="radio" name="${gname}" value="${j}"> ${esc(a.label)}</label>`).join('')}</div>`:''}
    <div class="body"><svg class="flow"></svg><div class="log"></div></div><div class="narr"></div>`;
   if(spec.layout==='wide')box.classList.add('wide');
-  const svg=$('svg',box);svg.dataset.uid=++uid;drawFlow(svg,spec.flow);
+  const svg=$('.body > svg.flow',box);svg.dataset.uid=++uid;drawFlow(svg,spec.flow);
+  const fs=svg.parentElement,tip=document.createElement('p');tip.className='flow-tip';tip.textContent='点图放大看字，再点回到全图';fs.after(tip);
+  const focus=()=>{if(!fs.classList.contains('zoom'))return svg._center();window.LessonGeometry.focus(svg,fs)};
+  const zoom=document.createElement('button');zoom.className='btn sm zoom-toggle';zoom.innerHTML=ic('zoom-in')+' 放大图';zoom.setAttribute('aria-pressed','false');tip.replaceWith(zoom);const toggle=()=>{const on=fs.classList.toggle('zoom');zoom.innerHTML=ic(on?'zoom-out':'zoom-in')+(on?' 返回全图':' 放大图');zoom.setAttribute('aria-pressed',String(on));if(!on){fs.style.maxHeight='';fs.scrollTop=0}focus()};fs.onclick=toggle;zoom.onclick=toggle;window.addEventListener('resize',focus);window.addEventListener('load',()=>requestAnimationFrame(()=>{const params=new URLSearchParams(location.search);if((params.has('sim')||params.has('zoom'))&&!(window.__H??location.hash)&&box===$('.sim')){const section=box.closest('.sec,.card');if(window.lessonNav.layout==='deck')window.goCard($$('.card').indexOf(section)+1);else section.scrollIntoView({block:'start',behavior:'instant'})}focus()}));window.addEventListener('lesson:navigate',()=>requestAnimationFrame(focus));
   const log=$('.log',box),narr=$('.narr',box),radios=$$('input[type=radio]',box),spd=$('input[type=range]',box),play=$('[data-a=play]',box);
-  let i=0,timer=null;const sel=()=>{const r=radios.find(r=>r.checked);return r?+r.value:-1};const steps=()=>sel()>=0?AL[sel()].steps:spec.steps;
+  let i=0,timer=null,predicted=!spec.predict;const prediction=document.createElement('div');if(spec.predict){prediction.className='prediction callout';prediction.innerHTML='<p>先预测：'+esc(spec.predict)+'</p><label>你的判断<textarea rows="2"></textarea></label><button class="btn sm" data-a="predict">提交预测，再看过程</button>';box.prepend(prediction)};const sel=()=>{const r=radios.find(r=>r.checked);return r?+r.value:-1};const steps=()=>sel()>=0?AL[sel()].steps:spec.steps;
   const hint=spec.note?esc(spec.note)+'　点「下一步」开始。':'点「下一步」开始。';const reset=()=>{i=0;log.innerHTML='';narr.innerHTML=hint;svg._set(null,null);stop()};
-  const stop=()=>{clearTimeout(timer);timer=null;play.textContent='▶ 自动'};
+  const stop=()=>{clearTimeout(timer);timer=null;play.innerHTML=ic('play')+' 自动'};
   const step=()=>{const S=steps();if(i>=S.length){narr.textContent='流程结束。点「重置」再走一遍。';stop();return false}
-    const s=S[i++];svg._set(s.act,s.edge);if(s.msg){const d=document.createElement('div');d.className='msg '+s.msg.r;
+    const s=S[i++];svg._set(s.act,s.edge);focus();if(s.msg){const d=document.createElement('div');d.className='msg '+s.msg.r;
       d.innerHTML=`<b>${esc(s.msg.n||({user:'用户',asst:'模型',tool:'工具结果',err:'出错',sys:'系统提示词'}[s.msg.r]))}</b>${esc(s.msg.t)}`;log.appendChild(d);log.scrollTop=1e9}
     narr.innerHTML=`<b>第 ${i}/${S.length} 步</b>　${esc(s.say)}`;return true};
   const loop=()=>{if(step())timer=setTimeout(loop,+spd.value);else stop()};
-  box.onclick=e=>{const a=e.target.dataset.a;if(a==='step'){stop();step()}if(a==='reset')reset();if(a==='play'){if(timer)stop();else{play.textContent='❚❚ 暂停';loop()}}};
+  box.onclick=e=>{const a=e.target.closest('button')?.dataset.a;if(a==='predict'){predicted=true;prediction.hidden=true;step()}if(a==='step'){stop();if(predicted)step();else prediction.querySelector('textarea').focus()}if(a==='reset')reset();if(a==='play'){if(!predicted){prediction.querySelector('textarea').focus();return}if(timer)stop();else{play.innerHTML=ic('pause')+' 暂停';loop()}}};
   narr.innerHTML=hint;radios.forEach(r=>r.onchange=reset);
-  const P=new URLSearchParams(location.search);if(P.get('alt')&&radios[+P.get('alt')]){radios[+P.get('alt')].checked=true}for(let n=+P.get('sim')||0;n>0;n--)step(); /* 自查用：?sim=5&alt=1 */
+  const P=new URLSearchParams(location.search);if(P.get('alt')&&radios[+P.get('alt')]){radios[+P.get('alt')].checked=true}for(let n=+P.get('sim')||0;n>0;n--)step();if(P.get('sim')){predicted=true;prediction.hidden=true}if(P.get('zoom')){fs.classList.add('zoom');zoom.setAttribute('aria-pressed','true');zoom.innerHTML=ic('zoom-out')+' 返回全图'} /* 自查用：?sim=5&alt=1&zoom=1 */
 });
 
 /* ---------- bars：横向条形图 ----------
  data-bars = {unit, items:[{l,v,c?:blue|amber|green|red,note?}], caption?}  数字必须来自原文 */
-$$('.bars').forEach(box=>{const B=JSON.parse(box.dataset.bars),mx=Math.max(...B.items.filter(i=>i.v!=null).map(i=>i.v));
-  box.innerHTML=B.items.map(i=>`<div class="bar ${i.c||''}"><span class="bl">${esc(i.l)}</span>${i.v==null?`<span class="bmiss">${esc(i.miss||'原文未给数字')}</span>`:`<span class="bt"><i style="width:${(i.v/mx*100).toFixed(1)}%"></i></span><span class="bv">${esc(i.v)}${esc(B.unit||'')}</span>`}${i.note?`<span class="bn">${esc(i.note)}</span>`:''}</div>`).join('')+(B.caption?`<div class="bc">${esc(B.caption)}</div>`:'')});
+component('.bars',box=>{const B=data(box,'bars'),mx=Math.max(1,...B.items.filter(i=>i.v!=null).map(i=>i.v));
+  box.innerHTML=B.items.map(i=>`<div class="bar ${i.c||''}"><span class="bl">${esc(i.l)}</span>${i.v==null?`<span class="bmiss">${esc(i.miss||'原文未给数字')}</span>`:`<span class="bt"><i style="width:${(i.v/(B.axis==='independent'?Math.max(1,i.v):mx)*100).toFixed(1)}%"></i></span><span class="bv">${esc(i.v)}${esc(i.unit||B.unit||'')}</span>`}${i.note?`<span class="bn">${esc(i.note)}</span>`:''}</div>`).join('')+(B.caption?`<div class="bc">${esc(B.caption)}</div>`:'')});
 
 /* ---------- quiz：页内小测 ----------
  data-quiz = [{q,opts:[...],a:正确下标,why,back:答错时回到第几张卡片}] */
-$$('.quiz').forEach(box=>{
-  const Q=JSON.parse(box.dataset.quiz);let k=0,score=0;const done=new Set();
-  const render=()=>{const q=Q[k];box.innerHTML=`<div class="qn">第 ${k+1} / ${Q.length} 题　·　已答对 ${score}</div><div class="qt">${esc(q.q)}</div>
-    ${q.opts.map((o,j)=>`<button class="opt" data-j="${j}">${String.fromCharCode(65+j)}. ${esc(o)}</button>`).join('')}
-    <div class="fb"></div><div class="nav"><button class="btn sm" data-n="-1" ${k?'':'disabled'}>上一题</button><button class="btn sm main" data-n="1" ${k<Q.length-1?'':'disabled'}>下一题</button></div>`};
-  box.onclick=e=>{const t=e.target;if(t.dataset.n){k+=+t.dataset.n;render();return}
-    if(t.dataset.j===undefined||done.has(k))return;const q=Q[k],j=+t.dataset.j,fb=$('.fb',box);done.add(k);
-    $$('.opt',box)[q.a].classList.add('ok');
-    if(j===q.a){score++;fb.innerHTML='✓ 对。'+esc(q.why)}else{t.classList.add('no');fb.innerHTML='✗ 不对。'+esc(q.why)+(q.back?` <a onclick="goCard(${q.back})">回到第 ${q.back} 张再看看</a>`:'')}
-    $('.qn',box).textContent=`第 ${k+1} / ${Q.length} 题　·　已答对 ${score}`};
+component('.quiz,.checkpoint',box=>{
+  const checkpoint=box.classList.contains('checkpoint');box.classList.add('quiz');const raw=data(box,checkpoint?'checkpoint':'quiz'),Q=Array.isArray(raw)?raw:[raw],P=new URLSearchParams(checkpoint?'':location.search);
+  let k=Math.max(0,Math.min(Q.length-1,(parseInt(P.get('q'))||1)-1));
+  const answers=Q.map(()=>({first:null,selected:null,retries:0}));
+  const score=()=>answers.filter((s,i)=>s.first===Q[i].a).length;
+  const complete=()=>answers.every(s=>s.selected!==null);
+  const reviewButton=i=>{
+    const target=window.lessonNav.layout==='deck'?$$('.card')[Q[i].back-1]:document.getElementById('s'+Q[i].back);
+    const title=target.dataset.toc||$('h2,h1,h3',target)?.textContent||'相关内容';
+    return `<button class="btn sm" data-review="${i}">回看：${esc(title)}</button>`;
+  };
+  function summary(){
+    const wrong=answers.map((s,i)=>s.first!==Q[i].a?i:-1).filter(i=>i>=0);
+    const recovered=wrong.filter(i=>answers[i].selected===Q[i].a).length;
+    box.innerHTML=`<div class="qt">小测总结</div><p>首次得分：${score()} / ${Q.length}。重试答对：${recovered} 题。</p>
+      <div>${wrong.length?wrong.map(i=>`<p>第 ${i+1} 题：${esc(Q[i].q)} ${reviewButton(i)} <button class="btn sm" data-question="${i}">回到此题</button></p>`).join(''):'没有首次错题。'}</div>
+      <p>用自己的话复述这页的核心机制，再举一个新场景。</p><label>你的复述<textarea class="retelling" rows="3"></textarea></label><button class="btn sm" data-copy-result="1">${ic("copy")} 复制学习结果 JSON</button><button class="btn sm" data-question="0">查看作答</button>`;
+  }
+  function render(){const q=Q[k],s=answers[k];
+    box.innerHTML=`<div class="qn">第 ${k+1} / ${Q.length} 题 ${checkpoint?'· 不计分':'· 首次答对 '+score()}</div><div class="qt">${esc(q.q)}</div>
+      ${q.opts.map((o,j)=>`<button class="opt ${s.selected===null?'':j===s.selected?(j===q.a?'ok':'no'):''}" data-j="${j}" aria-pressed="${j===s.selected}">${String.fromCharCode(65+j)}. ${esc(o)}</button>`).join('')}
+      <div class="fb" aria-live="polite">${s.selected===null?'':s.selected===q.a?ic('check')+' 对。'+esc(q.why):ic('x')+' 不对。先回去看看，或再试一次。'}
+      ${s.selected!==null&&s.selected!==q.a?reviewButton(k)+' <button class="btn sm" data-retry="1">再试一次</button>':''}</div>
+      <div class="nav"><button class="btn sm" data-n="-1" ${k?'':'disabled'}>上一题</button>
+      <button class="btn sm main" data-n="1" ${s.selected===null?'disabled':''}>${checkpoint?'完成检查':k===Q.length-1?'查看总结':'下一题'}</button></div>`;
+  }
+  box.onclick=e=>{const t=e.target.closest('button');if(!t)return;
+    if(t.dataset.review!==undefined){const i=+t.dataset.review;window.lessonNav.go(Q[i].back);
+      let ret=$('#quiz-return');if(!ret){ret=document.createElement('button');ret.id='quiz-return';ret.className='btn sm';document.body.appendChild(ret)}
+      ret.textContent='回到小测';ret.onclick=()=>{window.lessonNav.returnTo(box);ret.remove()};return;
+    }
+    if(t.dataset.copyResult!==undefined){const result={path:location.pathname,firstScore:score(),total:Q.length,answers:answers.map((s,i)=>({question:i+1,first:s.first,selected:s.selected,retries:s.retries,wrong:s.first!==Q[i].a,review:'#s'+Q[i].back})),retelling:$('.retelling',box).value};window.lessonCopy(JSON.stringify(result,null,2),t);return}
+    if(t.dataset.question!==undefined){k=+t.dataset.question;render();return}
+    if(t.dataset.retry){answers[k].selected=null;answers[k].retries++;render();return}
+    if(t.dataset.n){if(checkpoint&&+t.dataset.n===1){box.querySelector('.nav').hidden=true;return}if(k===Q.length-1&&+t.dataset.n===1){if(complete())summary();else{k=answers.findIndex(s=>s.selected===null);render()}return}k+=+t.dataset.n;render();return}
+    if(t.dataset.j===undefined||answers[k].selected!==null)return;
+    const j=+t.dataset.j;answers[k].selected=j;if(answers[k].first===null)answers[k].first=j;render();const nv=$('.nav',box);nv&&nv.scrollIntoView&&nv.scrollIntoView({block:'nearest'});
+  };
   render();
-  const pk=new URLSearchParams(location.search).get('pick');if(pk!==null)$$('.opt',box)[+pk].click(); /* 自查用：?pick=0 */
+  const pk=P.get('pick'),pick=pk==='wrong'?Q[k].opts.findIndex((_,i)=>i!==Q[k].a):pk!==null&&/^\d+$/.test(pk)?+pk:-1;
+  if(pick>=0&&$$('.opt',box)[pick])$$('.opt',box)[pick].click();
+
 });
 
-go(Math.max(0,(parseInt(location.hash.slice(1))||1)-1));
 })();
+</script><script>/* End-of-build readiness marker, used by the screenshot harness. */
+document.querySelector('.theme-toggle').onclick=window.__tt;
+window.__lessonReady=true;
 </script><script>/* ---------- 学完了：点一下记为已学完（存在本机浏览器） ---------- */
 (function(){if(window.__finish)return;window.__finish=1;
 if(!document.querySelector('.deck'))return;

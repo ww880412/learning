@@ -51,6 +51,15 @@ Codex、Cursor、Claude Code、其他 Grok Bot 改这个仓库前先读这一页
 - **`favorites.js` 必须能单独引用。** X 简报、海报页只带 `<script src=".../assets/favorites.js">` 这一个脚本，缺 `gh.js` 时它自己补载 `gh.js`，再补 `progress.js`。不要改成依赖页面先引 `gh.js`（PR #7 这样改过，简报、海报页的收藏按钮全丢了，PR #9 修回）。
 - 学习页的「学完了」要同步到云端，页面末尾需要 `<script src="…/assets/gh.js" defer></script><script src="…/assets/progress.js" defer></script>`。现有学习页都有；xuexi-template 的 `build.sh`（`/workspace/skills-src/xuexi-template/`）从 2026-10-25 起会在输出位于本仓库时按相对路径自动加上（精读版不加），输出在仓库外时只告警。
 
+## 4.5 学习页公开页标准（王玮 2026-10-26 定，所有文章统一，以后不再逐篇问）
+
+- **重点是内容，不是布局。** 验收看信息有没有丢：要点、数字、表格、代码、原图都要在；布局问题记下来，不卡上线。
+- **公开页**只放三样：讲解、不超过 60 字并注明出处的短引用、原文链接。
+- **原图、原表都放公开页**，按出现顺序标「原图 N」「原表 N」，写出处，并链接到原文对应的章节（或课件页、视频时间点）。表格逐格照原文。
+- **原文全文只进精读版**，精读版用 staticrypt 加密后再发布（`npx staticrypt <file> -p <精读密码> --short --remember 30`）。明文放 `_private/`（不发布）。**密码不写进仓库、文档、提交说明或日志。**
+- **课程类**先对照官方材料（课件、讲义、作业、课程日历）；**文章类**只讲原文说了的东西。自己的推论标「补充」，没核实的标「未确认」。
+- **学习页只用 xuexi-template 生成**（`/workspace/skills-src/xuexi-template/build.sh`，只写 `lesson.html` 和 `terms.txt`，不手写 HTML/CSS/JS）。公开页用「图文长读」；讲代码的部分和精读版用「左右对照」。旧的翻卡片版只作历史，不再新做。
+
 ## 5. 规矩
 
 1. **不手改生成文件。** 改 `build.mjs`、`assets/` 或 `data/`，然后 `node build.mjs`。

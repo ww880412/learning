@@ -1,364 +1,415 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<script>(function(){var s=localStorage.getItem("theme");if(s?s==="dark":matchMedia("(prefers-color-scheme: dark)").matches)document.documentElement.classList.add("dark")})()</script>
-<title>李宏毅 ML 2026 · L03 加快生成速度</title><style>
-/* 学习搭子 固定设计系统 — 不要在课程里改这个文件。只改 lesson.html 的内容。 */
-:root{
-  --paper:#F6F6F7; --sheet:#FFFFFF; --ink:#16202C; --ink2:#4A5868; --hair:#E2E2E3;
-  --blue:#2550D9;  --blue-soft:#E3EAFD;   /* 主角：当前步骤 / 重点 */
-  --amber:#C77A00; --amber-soft:#FBEFD9; /* 数据 / 消息 */
-  --green:#16875A; --green-soft:#DDF3E9; /* 成功 / 工具结果 */
-  --red:#C8372D;   --red-soft:#FBE3E1;   /* 出错 */
-  --r-lg:12px; --r-sm:10px;
-  --font:"PingFang SC","Noto Sans CJK SC","Source Han Sans SC","Microsoft YaHei",system-ui,sans-serif;
-  --mono:"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;
-}
-*{box-sizing:border-box}
-html,body{margin:0;height:100%;background:var(--paper);color:var(--ink);font:17px/1.65 var(--font);-webkit-font-smoothing:antialiased}
-.top{position:fixed;inset:0 0 auto 0;height:56px;display:flex;align-items:center;gap:16px;padding:0 28px;z-index:5}
-.top .course{font-weight:700;font-size:15px}
-.top .track{flex:1;height:6px;background:var(--hair);border-radius:99px;overflow:hidden}
-.top .track i{display:block;height:100%;width:0;background:var(--blue);transition:width .35s ease}
-.top .count{font:600 14px var(--mono);color:var(--ink2);min-width:60px;text-align:right}
-.deck{position:fixed;inset:56px 0 76px 0;display:grid;place-items:center;padding:0 24px}
-.card{display:none;width:min(1120px,100%);height:100%;max-height:640px;background:var(--sheet);border-radius:var(--r-lg);
-  box-shadow:0 1px 0 var(--hair),0 18px 40px -24px rgba(22,32,44,.25);overflow:hidden}
-.card.on{display:grid;grid-template-columns:1.45fr 1fr}
-.card.full.on{grid-template-columns:1fr}
-.stage{background:var(--paper);margin:14px 0 14px 14px;border-radius:14px;display:grid;place-items:center;padding:18px;overflow:hidden;position:relative}
-.card.full .stage{margin:14px}
-.stage svg{width:100%;height:100%;max-height:560px}
-.say{padding:40px 40px 32px;display:flex;flex-direction:column;justify-content:center;gap:14px;overflow:auto}
-.say .kicker{font-size:14px;color:var(--blue);font-weight:700}
-.say h2{margin:0;font-size:32px;line-height:1.25;letter-spacing:.01em}
-.say p{margin:0;color:var(--ink2)}
-.say p b{color:var(--ink)}
-.src{margin-top:auto;font-size:13px;color:var(--ink2);border-top:1px solid var(--hair);padding-top:12px}
-.src.extra::before{content:"补充";background:var(--amber-soft);color:var(--amber);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
-.src.official::before{content:"官方";background:var(--green-soft);color:var(--green);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
-code{font:14px var(--mono);background:var(--blue-soft);color:var(--blue);padding:1px 6px;border-radius:6px}
-pre{margin:0;font:13.5px/1.6 var(--mono);background:#101826;color:#DCE3EE;border-radius:12px;padding:16px 18px;overflow:auto;width:100%}
-pre .k{color:#8FB1FF}pre .s{color:#9BE0B4}pre .c{color:#71819A}pre .f{color:#FFC86B}pre .hl{background:rgba(143,177,255,.16);display:block;margin:0 -18px;padding:0 18px}
-.bottom{position:fixed;inset:auto 0 0 0;height:76px;display:flex;align-items:center;justify-content:center;gap:14px}
-.btn{font:600 15px var(--font);border:0;border-radius:99px;padding:11px 22px;cursor:pointer;background:var(--sheet);color:var(--ink);box-shadow:0 0 0 1px var(--hair)}
-.btn:hover{box-shadow:0 0 0 2px var(--blue)}
-.btn.main{background:var(--blue);color:#fff;box-shadow:none}
-.btn:disabled{opacity:.35;cursor:default;box-shadow:0 0 0 1px var(--hair)}
-.btn:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
-.btn.sm{padding:7px 14px;font-size:14px}
-/* ---- 图元（flow 组件生成） ---- */
-.fl-node rect{fill:var(--sheet);stroke:var(--hair);stroke-width:2;transition:all .3s}
-.fl-node text{font:600 17px var(--font);fill:var(--ink)}
-.fl-node .sub{font:400 13px var(--font);fill:var(--ink2)}
-.fl-node.blue rect{stroke:var(--blue)} .fl-node.amber rect{stroke:var(--amber)} .fl-node.green rect{stroke:var(--green)} .fl-node.red rect{stroke:var(--red)}
-.fl-node.act rect{fill:var(--blue-soft);stroke:var(--blue);stroke-width:3}
-.fl-node.dim{opacity:.35}
-.fl-edge{fill:none;stroke:#AEB8C6;stroke-width:2.2;transition:all .3s}
-.fl-edge.act{stroke:var(--blue);stroke-width:3.5;stroke-dasharray:8 6;animation:dash .8s linear infinite}
-.fl-elab{font:500 13px var(--font);fill:var(--ink2)}
-.fl-elab.act{fill:var(--blue);font-weight:700}
-@keyframes dash{to{stroke-dashoffset:-28}}
-/* ---- 模拟器 ---- */
-.sim{display:grid;grid-template-rows:auto 1fr auto;gap:10px;width:100%;height:100%}
-.sim .ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.sim .ctl label{font-size:13px;color:var(--ink2);display:flex;align-items:center;gap:6px}
-.sim .body{display:grid;grid-template-columns:1.1fr 1fr;gap:12px;min-height:0}
-.sim .log{background:var(--sheet);border-radius:12px;padding:10px;overflow:auto;font:13px/1.5 var(--mono)}
-.sim .msg{border-left:4px solid var(--hair);padding:6px 10px;margin:0 0 8px;border-radius:6px;background:var(--paper);white-space:pre-wrap;word-break:break-word;animation:pop .25s ease}
-.sim .msg b{font-family:var(--font);display:block;font-size:12px;color:var(--ink2)}
-.msg.user{border-color:var(--blue)} .msg.asst{border-color:var(--amber)} .msg.tool{border-color:var(--green)} .msg.err{border-color:var(--red);background:var(--red-soft)} .msg.sys{border-color:var(--ink2)}
-.sim .narr{background:var(--blue-soft);color:var(--ink);border-radius:12px;padding:10px 14px;font-size:15px;min-height:48px}
-@keyframes pop{from{opacity:0;transform:translateY(6px)}}
-/* ---- 小测 ---- */
-.quiz{width:100%;max-width:760px;display:flex;flex-direction:column;gap:12px}
-.quiz .qn{font:600 13px var(--mono);color:var(--ink2)}
-.quiz .qt{font-size:22px;font-weight:700;line-height:1.4}
-.quiz .opt{display:block;width:100%;text-align:left;font:16px var(--font);background:var(--sheet);border:2px solid var(--hair);border-radius:12px;padding:12px 16px;cursor:pointer;color:var(--ink)}
-.quiz .opt:hover{border-color:var(--blue)}
-.quiz .opt.ok{border-color:var(--green);background:var(--green-soft)} .quiz .opt.no{border-color:var(--red);background:var(--red-soft)}
-.quiz .fb{min-height:52px;font-size:15px;color:var(--ink2)}
-.quiz .fb a{color:var(--blue);font-weight:700;cursor:pointer}
-.quiz .nav{display:flex;gap:8px;align-items:center}
-@media (max-width:820px){
-  .card.full.on{grid-template-rows:1fr}.card.full .stage{overflow:auto;place-items:start center}
-  .card.on{grid-template-columns:1fr;grid-template-rows:minmax(220px,48%) 1fr}
-  .stage{margin:10px 10px 0}.say{padding:18px 20px}.say h2{font-size:24px}
-  .sim .body{grid-template-columns:1fr}.top{padding:0 14px}.top .course{display:none}
-}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-/* ---- 展开细节 ---- */
-details.more{border-top:1px solid var(--hair);padding-top:10px;font-size:15px;color:var(--ink2)}
-details.more summary{cursor:pointer;font-weight:700;color:var(--blue);list-style:none}
-details.more summary::-webkit-details-marker{display:none}
-details.more summary::before{content:"＋ 展开细节";}
-details.more[open] summary::before{content:"－ 收起细节";}
-details.more>*:not(summary){margin:8px 0 0}
-details.more ul{padding-left:18px}details.more li{margin:4px 0}
-details.more table{border-collapse:collapse;width:100%;font-size:14px}
-details.more td,details.more th{border-bottom:1px solid var(--hair);padding:5px 6px;text-align:left;vertical-align:top}
-/* ---- 对话列表（状态追踪）---- */
-.stack{width:100%;display:flex;flex-direction:column;gap:6px;font:13px/1.45 var(--mono)}
-.stack .row{display:grid;grid-template-columns:28px 92px 1fr;gap:8px;align-items:start;background:var(--sheet);border-radius:8px;padding:7px 10px;border-left:4px solid var(--hair)}
-.stack .row .i{color:var(--ink2)}.stack .row .r{font-weight:700}
-.stack .row.developer{border-color:var(--ink2)}.stack .row.user{border-color:var(--blue)}.stack .row.assistant{border-color:var(--amber)}.stack .row.result{border-color:var(--green)}
-.stack .row.new{background:var(--blue-soft)}.stack .row.bad{border-color:var(--red);background:var(--red-soft)}
-.stack .row .t{white-space:pre-wrap;word-break:break-word}
-/* ---- 对比/误区 ---- */
-.pairs{width:100%;display:grid;gap:10px}
-.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.pair>div{background:var(--sheet);border-radius:12px;padding:12px 14px;font-size:15px}
-.pair .no{border-left:5px solid var(--red)}.pair .yes{border-left:5px solid var(--green)}
-.pair b{display:block;font-size:12px;color:var(--ink2);margin-bottom:4px}
-.say .more code{font-size:13px}
-@media (max-width:820px){.pair{grid-template-columns:1fr}.stack .row{grid-template-columns:22px 70px 1fr}}
-.pair .a{border-left:5px solid var(--blue)}.pair .b{border-left:5px solid var(--amber)}
-/* ===== v3：填满面板、原文标签、要点、条形图、分支 ===== */
-.stage{padding:10px}
-.stage svg.flow{width:100%;height:100%;max-height:none}
-.say p{font-size:17px}
-p.key{background:var(--blue-soft);color:var(--ink);border-radius:12px;padding:10px 14px;font-size:16px}
-p.key::before{content:"关键 ";font-weight:800;color:var(--blue)}
-.src.article::before{content:"原文";background:var(--blue-soft);color:var(--blue);font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px}
-.stage>.stack{height:100%;justify-content:center;font-size:14.5px}
-.stage>.stack .row{padding:11px 12px;flex:0 1 auto}
-.stack .head{font:700 13px var(--font);color:var(--ink2);margin:8px 0 0}
-.stage>.pairs{height:100%;grid-auto-rows:minmax(0,1fr);align-content:stretch}
-.pair>div{font-size:16px;display:flex;flex-direction:column;justify-content:center}
-.bars{width:100%;display:flex;flex-direction:column;gap:16px;justify-content:center;height:100%;padding:0 10px}
-.bar{display:grid;grid-template-columns:150px 1fr 76px;gap:12px;align-items:center;font-size:15px}
-.bar .bl{font-weight:700;text-align:right}
-.bar .bt{height:30px;background:var(--sheet);border-radius:8px;overflow:hidden}
-.bar .bt i{display:block;height:100%;background:var(--ink2);border-radius:8px}
-.bar.blue .bt i{background:var(--blue)}.bar.amber .bt i{background:var(--amber)}.bar.green .bt i{background:var(--green)}.bar.red .bt i{background:var(--red)}
-.bar .bv{font:700 15px var(--mono)}
-.bar .bn{grid-column:2/4;font-size:13px;color:var(--ink2);margin-top:-8px}
-.bars .bc{font-size:13px;color:var(--ink2);text-align:center}
-.sim .branches{gap:14px;background:var(--sheet);border-radius:10px;padding:6px 10px}
-.sim .branches label{font-size:13.5px;color:var(--ink)}
-@media (max-width:820px){.bar{grid-template-columns:90px 1fr 60px}}
-.sim{grid-template-rows:auto auto 1fr auto}
-.sim.wide .body{grid-template-columns:1fr;grid-template-rows:minmax(0,1.1fr) minmax(0,1fr)}
-.sim:not(:has(.branches)){grid-template-rows:auto 1fr auto}
-.bar .bt.none{background:repeating-linear-gradient(45deg,var(--sheet) 0 8px,var(--hair) 8px 10px)}
-.say h2{font-size:28px;line-height:1.3}
-.sim .body{overflow:hidden}
-.sim .body>svg{min-height:0;height:100%;width:100%}
-.sim .narr{min-height:0}
-.stage>.stack{font-size:15.5px;gap:8px}
-.stage>.stack .row{padding:13px 14px}
-.stack .row .t{font-family:var(--font)}
-.stage:has(>.sim){place-items:stretch}
-.sim{min-height:0;height:100%;overflow:hidden}
-.sim.wide .body{grid-template-rows:minmax(0,55%) minmax(0,45%)}
-/* 讲解条放在图上方，永远可见 */
-.sim{grid-template-rows:auto auto auto minmax(0,1fr)}
-.sim:not(:has(.branches)){grid-template-rows:auto auto minmax(0,1fr)}
-.sim .ctl{order:0}.sim .branches{order:1}.sim .narr{order:2}.sim .body{order:3;min-height:0}
-/* ===== v4 ===== */
-.fl-node .sub{font-size:13.5px;fill:#3E4B5B}
-.fl-elab{font-size:13px;fill:#3E4B5B}
-.fl-edge.red{stroke:var(--red)}.fl-edge.amber{stroke:var(--amber)}.fl-edge.green{stroke:var(--green)}
-.fl-elab.red{fill:var(--red);font-weight:700}.fl-elab.amber{fill:var(--amber);font-weight:700}.fl-elab.green{fill:var(--green);font-weight:700}
-.stage{margin:10px 0 10px 10px;padding:4px}.card.full .stage{margin:0 10px 10px}
-.bar .bt i{background:#B8C2CF}
-.bar .bmiss{grid-column:2/4;color:var(--ink2);font-size:14px;font-style:italic}
-.sim .btn{background:transparent;box-shadow:0 0 0 1.5px var(--blue);color:var(--blue)}
-.sim .btn:hover{background:var(--blue-soft)}
-.say{justify-content:center}
-.src{margin-top:6px}
-.top .count{font-size:16px;color:var(--ink);font-weight:700}
-.top .track{height:6px}
-.card.full.on{grid-template-rows:auto minmax(0,1fr)}
-.head-full{padding:18px 26px 8px;display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
-.head-full .kicker{font-size:14px;color:var(--blue);font-weight:700}
-.head-full h2{margin:0;font-size:24px;line-height:1.3}
-.sim.wide .body{grid-template-rows:minmax(0,64%) minmax(0,36%)}
-@media (max-width:820px){.head-full{padding:12px 14px 6px}.head-full h2{font-size:19px}}
-.say{justify-content:safe center}
-@media (max-width:820px){.bars{gap:8px}.bar{font-size:13px;grid-template-columns:84px 1fr 56px}.bar .bt{height:20px}.bar .bn{font-size:12px;margin-top:-4px}.bars .bc{font-size:12px}
- .sim .ctl .btn{padding:5px 10px}.sim .branches{flex-direction:column;align-items:flex-start;gap:2px}}
+<!DOCTYPE html><html lang="zh-CN" class="layout-article" data-layout="article"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<script>(function(){var v;try{v=localStorage.getItem('site-theme')}catch(e){}document.documentElement.dataset.theme=/^[ABC]$/.test(v||'')?v:'C'})();
+(function(){var k='theme',s=localStorage.getItem(k);if(s?s==='dark':matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark');
+window.__tt=function(){var f=function(){var d=document.documentElement.classList.toggle('dark');localStorage.setItem(k,d?'dark':'light')};if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.startViewTransition(f);else f()}})();</script>
+<title>加快语言模型生成速度：Flash Attention + KV Cache</title><style>
+/* Site tokens copied verbatim, in cascade order, from ref/site-assets/site.css. */
+:root{--paper:#f6f7f9;--sheet:#fff;--card:#fff;--ink:#111827;--ink2:#4b5563;--meta:#6b7280;--hair:#e5e7eb;--hair2:#eef0f3;--blue:#2563eb;--blue-soft:#eff4ff;--red:#dc2626;--red-soft:#fef2f2;--green:#16a34a;--green-soft:#f0fdf4;--amber:#b45309;--amber-soft:#fffbeb;--purple:#7c3aed;--purple-soft:#f5f3ff;--font:system-ui,-apple-system,"PingFang SC","Noto Sans SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;--serif:var(--font);--mono:ui-monospace,SFMono-Regular,Menlo,monospace;--r-lg:12px;--r-sm:8px;--grad:none;color-scheme:light}
+html.dark{--paper:#0f1115;--sheet:#171a21;--card:#171a21;--ink:#e5e7eb;--ink2:#b6bcc6;--meta:#9ca3af;--hair:#2a2f3a;--hair2:#20242c;--blue:#7aa2ff;--blue-soft:rgba(122,162,255,.12);--red:#f87171;--red-soft:rgba(248,113,113,.12);--green:#4ade80;--green-soft:rgba(74,222,128,.12);--amber:#fbbf24;--amber-soft:rgba(251,191,36,.12);--purple:#c4b5fd;--purple-soft:rgba(196,181,253,.14);color-scheme:dark}
+[data-theme=B]{--paper:#fbfbfc;--sheet:#fff;--card:#fff;--ink:#16171a;--ink2:#4a4c55;--meta:#6e707a;--hair:#ececf0;--hair2:#f2f2f5;--blue:#5e6ad2;--blue-soft:#eef0fb;--red:#d4483b;--red-soft:#fdf0ee;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif}
+html.dark[data-theme=B]{--paper:#0e0f12;--sheet:#16171b;--card:#16171b;--ink:#e8e9ed;--ink2:#b3b5bd;--meta:#8b8d97;--hair:#26272d;--hair2:#1f2025;--blue:#8b93f0;--blue-soft:rgba(139,147,240,.14);--red:#f0776b}
+[data-theme=A]{--paper:#f7f4ee;--sheet:#fffdf9;--card:#fffdf9;--ink:#2b2722;--ink2:#5f574e;--meta:#8a8076;--hair:#e6dfd3;--hair2:#efe8dc;--blue:#b4532a;--blue-soft:#f6e1d6;--red:#a2461f;--red-soft:#f6e1d6;--green:#5f7a3a;--green-soft:#e7ecd9;--purple:#7a5a8c;--purple-soft:#eee4f1;--serif:"Noto Serif CJK SC","Noto Serif SC","Songti SC",serif;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif}
+html.dark[data-theme=A]{--paper:#1b1814;--sheet:#23201b;--card:#23201b;--ink:#ede6da;--ink2:#c7bdaf;--meta:#9b9184;--hair:#3a342c;--hair2:#2d2923;--blue:#e08a5f;--blue-soft:rgba(224,138,95,.15);--red:#e8916a;--red-soft:rgba(232,145,106,.15)}
+[data-theme=C]{--paper:#f3f5fb;--sheet:#fff;--card:#fff;--ink:#1d2340;--ink2:#5a6185;--meta:#8a90ad;--hair:#e6e9f4;--hair2:#eef0f7;--blue:#3b5bfd;--blue-soft:#e8edff;--red:#d4483b;--red-soft:#ffe6e3;--green:#1f9d5c;--green-soft:#e3f7ec;--amber:#d9771e;--amber-soft:#fff1e0;--purple:#7a4bf5;--purple-soft:#f2eaff;--r-lg:20px;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif;--sh:0 1px 2px rgba(30,40,90,.04),0 8px 24px rgba(30,40,90,.06)}
+html.dark[data-theme=C]{--paper:#0f1222;--sheet:#181c33;--card:#181c33;--ink:#e6e9fb;--ink2:#aab0d0;--meta:#7d84a8;--hair:#272c48;--hair2:#20253f;--blue:#7d93ff;--blue-soft:rgba(125,147,255,.15);--red:#ff8a7d;--red-soft:rgba(255,138,125,.15);--green-soft:rgba(31,157,92,.18);--amber-soft:rgba(217,119,30,.18);--purple-soft:rgba(122,75,245,.2);--sh:0 1px 2px rgba(0,0,0,.3)}
+:root{--acc2:#8b5cf6;--ease:cubic-bezier(.22,1,.36,1)}
+[data-theme=A]{--acc2:#c98a2b}
+html.dark[data-theme=A]{--paper:#181512;--sheet:#211d18;--card:#211d18;--meta:#a89d8f;--hair:#382f26;--acc2:#e3b15c}
+[data-theme=B]{--paper:#fafafb;--blue:#5b5bd6;--blue-soft:#efeffc;--acc2:#a855f7}
+html.dark[data-theme=B]{--paper:#0c0d10;--sheet:#14151a;--card:#14151a;--ink:#ececf1;--ink2:#babcc6;--meta:#9597a3;--hair:#262830;--hair2:#1c1d23;--blue:#9198ff;--blue-soft:rgba(145,152,255,.14);--acc2:#c084fc}
+[data-theme=C]{--acc2:#06b6d4}
+html.dark[data-theme=C]{--meta:#a3a9b8;--acc2:#22d3ee}
+html.dark{--meta:#a1a7b3}
+[data-theme=B]{--paper:#eef1f5;--hair:#dfe4ea;--hair2:#eef1f5;--green:#16a34a}
+html.dark[data-theme=B]{--paper:#0b0d12;--hair:#252a35;--hair2:#1a1e27}
+[data-theme=C]{--blue:#7b5cff;--blue-soft:#f0ecff;--acc2:#ff5e8a}
+html.dark[data-theme=C]{--paper:#0b0b0f;--sheet:#15151c;--card:#15151c;--ink:#f2f2f5;--ink2:#b8b8c6;--meta:#9a9aab;--hair:#26262f;--hair2:#1d1d25;--blue:#a08bff;--blue-soft:rgba(160,139,255,.14)}
+:root{--sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:24px;--sp-6:32px;--fs-xs:12px;--fs-sm:13.5px;--fs-md:15px;--fs-lg:18px;--fs-xl:24px;--fs-2xl:32px;--r-xs:6px;--r-sm:8px;--r-md:10px;--r-lg:12px;--r-xl:18px;--r-pill:999px;--sh-1:0 1px 2px rgba(15,23,42,.06);--sh-2:0 4px 16px -8px rgba(15,23,42,.22);--sh-3:0 14px 30px -12px rgba(15,23,42,.28);--dur-1:120ms;--dur-2:220ms;--dur-3:420ms;--ease:cubic-bezier(.22,1,.36,1);--ease-in-out:cubic-bezier(.65,0,.35,1);--spring:cubic-bezier(.34,1.3,.64,1);--icon-stroke:2}
+:root{--spring:linear(0,.0089,.0346,.0752,.1286,.1927,.2654,.3445,.4278,.5131,.5983,.6812,.7598,.8325,.8981,.9555,1.0042,1.0441,1.0753,1.0982,1.1134,1.1218,1.1243,1.1218,1.1155,1.1062,1.0949,1.0825,1.0697,1.0571,1.0451,1.034,1.0242,1.0157,1.0085,1.0027,.9982,.995,.9928,.9916,.9912,.9914,.9921,.9931,.9943,.9956,.9968,.998,.999,1)}
+html.dark{--sh-1:0 1px 2px rgba(0,0,0,.4);--sh-2:0 4px 16px -8px rgba(0,0,0,.6);--sh-3:0 14px 30px -12px rgba(0,0,0,.7)}
+/* Five reading levels: title / section / subsection / body / note. */
+:root{--reading-width:680px;--toc-width:208px;--rail-width:180px;--reading-gap:28px;--top-height:56px;--body-size:18px;--body-leading:1.8;--finish-space:104px}
+*{box-sizing:border-box}html{scroll-padding-top:72px}html,body{margin:0;background:var(--paper);color:var(--ink);font:var(--body-size)/var(--body-leading) var(--font);-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}a{color:var(--blue);text-underline-offset:3px;overflow-wrap:anywhere}a:hover{text-decoration-thickness:2px}button,input,textarea,select{font:inherit;color:inherit}button,a,summary{touch-action:manipulation}button{cursor:pointer}button:disabled{opacity:.5;cursor:default}:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+h1,h2,h3{color:var(--ink);font-family:var(--serif);line-height:1.35;letter-spacing:-.02em;overflow-wrap:anywhere}h1{font-size:var(--fs-2xl);margin:8px 0 16px}h2{font-size:var(--fs-xl);margin:8px 0 16px}h3{font-size:var(--fs-lg);margin:24px 0 8px}p{margin:0 0 12px}ul,ol{padding-left:24px}li{margin:4px 0}code{font:.88em var(--mono);background:var(--hair2);padding:1px 4px;border-radius:var(--r-xs)}pre{overflow:auto;white-space:pre;tab-size:4;font:14px/1.65 var(--mono);padding:16px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-md);margin:12px 0}pre code{font:inherit;white-space:inherit;background:none;padding:0}
+.i{display:inline-block;vertical-align:middle;flex:none;width:18px;height:18px;stroke-width:2}.btn,button.opt{min-height:44px;border:1px solid var(--hair);border-radius:var(--r-sm);background:var(--sheet);padding:8px 14px;font-size:var(--fs-md);font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:6px}.btn:hover{border-color:var(--blue);background:var(--blue-soft)}.btn.main{background:var(--blue);color:var(--sheet)}.btn.sm{font-size:var(--fs-sm)}textarea{display:block;width:100%;padding:10px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-sm);resize:vertical}
+.top{position:fixed;inset:0 0 auto;height:var(--top-height);z-index:30;display:flex;align-items:center;gap:16px;padding:0 20px;background:var(--paper);border-bottom:1px solid var(--hair)}.top .course{font-size:var(--fs-sm);font-weight:700;max-width:35vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.top .track{flex:1;height:4px;background:var(--hair);border-radius:var(--r-pill);overflow:hidden}.top .track i{display:block;width:0;height:100%;background:var(--blue);transition:width var(--dur-2) var(--ease)}.top .count{font-size:var(--fs-sm);max-width:32vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.toc-toggle{min-width:44px}.top .theme-toggle{font-size:var(--fs-sm);min-height:44px}
+.layout-article .deck,.layout-pair .deck{padding:80px 20px calc(var(--finish-space) + env(safe-area-inset-bottom));max-width:720px;margin:0 auto;min-width:0}.layout-article .sec{position:relative;margin:0 0 32px;padding-top:16px;border-top:1px solid var(--hair);scroll-margin-top:72px;min-width:0}.layout-article .hero{border:0;padding-top:0}.kicker,.meta,.src,.source-anchor,figcaption,caption,.aside{font-size:var(--fs-sm);line-height:1.65}.kicker{display:block;color:var(--blue);font-weight:700}.lede{font-size:var(--fs-lg);font-weight:600}.links{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:var(--fs-sm)}.links a{display:inline-flex;align-items:center;min-height:44px}.src{margin:16px 0 0;padding-top:8px;border-top:1px solid var(--hair);color:var(--ink2)}.source-anchor{display:block;color:var(--ink2);margin-top:6px;overflow-wrap:anywhere}.source-anchor a{min-height:44px;display:inline-flex;align-items:center}.src.extra::before{content:'补充 · ';color:var(--amber)}.src.official::before{content:'官方 · ';color:var(--blue)}.src.article::before{content:'原文 · ';color:var(--blue)}
+.toc{position:fixed;left:max(20px,calc((100vw - 1192px)/2));top:76px;width:var(--toc-width);max-height:calc(100dvh - 180px);overflow:auto;font-size:var(--fs-sm);line-height:1.5;z-index:25}.toc ol{list-style:none;margin:0;padding:0}.toc a{display:flex;gap:8px;align-items:center;min-height:44px;padding:6px 10px;color:var(--ink2);text-decoration:none;border-radius:var(--r-sm)}.toc a[aria-current=true]{background:var(--blue-soft);color:var(--blue);font-weight:700}.toc b{display:block;margin:0 10px 8px}.toc-backdrop{display:none}.tldr,.argmap{padding:16px;background:var(--blue-soft);border-radius:var(--r-lg);margin:16px 0}.tldr a,.argmap a{display:block;min-height:44px;align-content:center}.argmap ol{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 16px;margin:0}.points{padding:12px 16px 12px 36px;background:var(--hair2);border-radius:var(--r-md)}
+figure.orig,figure.redraw,.figure{margin:20px 0;min-width:0}figure img{display:block;max-width:100%;height:auto;border:1px solid var(--hair);border-radius:var(--r-md);cursor:zoom-in;background:var(--sheet)}figcaption{margin-top:8px;color:var(--ink2)}figcaption b{color:var(--ink)}.how{margin-top:6px}.table{margin:20px 0;overflow-x:auto}.table table,table.data{width:100%;border-collapse:collapse;background:var(--sheet);font-size:var(--fs-md)}th,td{border-bottom:1px solid var(--hair);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--hair2)}caption{text-align:left;font-weight:700;padding:8px 0}.table-note{font-size:var(--fs-sm);color:var(--ink2)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;margin:16px 0}.stat{padding:12px 14px;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet)}.stat b{display:block;font-size:var(--fs-xl);line-height:1.35;color:var(--blue);font-variant-numeric:tabular-nums}.stat span{display:block;font-size:var(--fs-sm);color:var(--ink2)}.stat .source-anchor{font-size:var(--fs-xs)}
+blockquote.quote{margin:16px 0;padding:12px 16px;border-left:3px solid var(--blue);background:var(--sheet)}.quote cite{display:block;font-style:normal;font-size:var(--fs-sm);color:var(--ink2)}.callout{padding:12px 16px;margin:16px 0;border-left:3px solid var(--blue);background:var(--blue-soft);border-radius:0 var(--r-sm) var(--r-sm) 0}.callout.limit{border-color:var(--amber);background:var(--amber-soft)}.callout.extra{border:1px dashed var(--meta);background:var(--sheet)}.callout.myth{border-color:var(--amber);background:var(--hair2)}.callout.limit::before{content:'作者的限定 · ';font-weight:700}.aside{padding:12px;border-left:2px solid var(--hair);color:var(--ink2);margin:12px 0}
+.stories,.compare,.roles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}.story,.compare>div,.roles>div{padding:12px;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);font-size:var(--fs-md)}.story b,.roles b{display:block}.story dt{font-weight:700;color:var(--ink2);font-size:var(--fs-sm)}.story dd{margin:0 0 8px}.story p,.story .fix{display:block;margin:8px 0}.steps,.ladder{display:grid;gap:8px;padding:0;list-style:none;counter-reset:step}.steps>li,.ladder>li{padding:10px 14px;background:var(--hair2);border-radius:var(--r-sm);counter-increment:step}.steps>li::before{content:counter(step)'. ';color:var(--blue);font-weight:700}.ladder i{font-style:normal;font-weight:700;margin-right:8px}.matrix{border:1px solid var(--hair);padding:16px;border-radius:var(--r-md)}.matrix .axes{font-size:var(--fs-sm);color:var(--ink2)}.matrix ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));list-style:none;padding:0;gap:1px;background:var(--hair)}.matrix li{margin:0;padding:16px;background:var(--sheet)}.refs{font-size:var(--fs-sm);line-height:1.7}.refs a{display:inline-block;min-height:44px;align-content:center}.thread{border-left:2px solid var(--hair);padding-left:16px}.formula{padding:16px;border:1px solid var(--hair);overflow:auto}.formula math{font-size:var(--fs-xl)}details.more{margin:12px 0;border-top:1px solid var(--hair);font-size:var(--fs-md)}summary{min-height:44px;cursor:pointer;display:flex;align-items:center;gap:8px}summary .i{transition:transform var(--dur-1)}details[open] summary .i{transform:rotate(90deg)}
+/* Shared interactive components. No fixed page/card height. */
+.flow-scroll{max-width:100%;overflow-x:auto;min-width:0;touch-action:pan-x pan-y}.flow-scroll svg.flow{display:block;width:100%;height:auto;min-height:0}.flow-tip{font-size:var(--fs-sm);color:var(--ink2)}.fl-node rect{fill:var(--sheet);stroke:var(--hair);stroke-width:2}.fl-node text{font:600 17px var(--font);fill:var(--ink)}.fl-node .sub{font-size:13px;font-weight:400;fill:var(--ink2)}.fl-node.act rect{stroke:var(--blue);fill:var(--blue-soft);stroke-width:3}.fl-node.blue rect{stroke:var(--blue)}.fl-node.amber rect,.fl-node.red rect{stroke:var(--amber)}.fl-node.green rect{stroke:var(--green)}.fl-edge{fill:none;stroke:var(--meta);stroke-width:2}.fl-edge.act{stroke:var(--blue);stroke-width:3}.fl-elab{font:13px var(--font);fill:var(--ink2)}
+.sim{margin:16px 0;padding:12px;border:1px solid var(--hair);border-radius:var(--r-lg);background:var(--sheet);display:flex;flex-direction:column;gap:12px}.sim .ctl{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.sim .ctl label{min-height:44px;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm)}.sim .ctl input[type=range]{min-width:110px}.sim .body{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}.sim .narr{order:-1;background:var(--blue-soft);padding:10px 12px;border-radius:var(--r-sm);font-size:var(--fs-md)}.sim .log{max-height:240px;overflow:auto;font:var(--fs-sm)/1.6 var(--mono)}.sim .msg{border-left:3px solid var(--hair);padding:8px;margin:6px 0;background:var(--paper);white-space:pre-wrap;overflow-wrap:anywhere}.msg b{display:block;font-family:var(--font)}.sim .msg.err{border-color:var(--amber)}.prediction{order:-2}.component-error{padding:16px;border:1px solid var(--amber);color:var(--amber)}
+.quiz{margin:16px 0;padding:16px;border:1px solid var(--hair);border-radius:var(--r-lg);background:var(--sheet)}.quiz .qn{font-size:var(--fs-sm);color:var(--ink2)}.quiz .qt{font-size:var(--fs-lg);font-weight:700;margin-bottom:12px}.quiz .opt{display:block;width:100%;text-align:left;margin:8px 0;font-weight:400}.quiz .opt.ok{border-color:var(--green);background:var(--green-soft)}.quiz .opt.no{border-color:var(--amber);background:var(--amber-soft)}.quiz .fb{margin:12px 0;font-size:var(--fs-md)}.quiz .nav{display:flex;gap:8px;margin-top:12px}.quiz label{display:block;font-size:var(--fs-sm)}.stack{display:grid;gap:6px;font-size:var(--fs-sm)}.stack .row{display:grid;grid-template-columns:28px 80px minmax(0,1fr);gap:8px;padding:8px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-sm)}.stack .t{overflow-wrap:anywhere;white-space:pre-wrap}.stack .new{background:var(--blue-soft)}.bar{display:grid;grid-template-columns:100px minmax(0,1fr) 80px;gap:8px;margin:8px 0;align-items:center;font-size:var(--fs-sm)}.bar .bt{height:20px;background:var(--hair2);border-radius:var(--r-xs);overflow:hidden}.bar .bt i{display:block;height:100%;background:var(--blue)}.bar .bn,.bar .bmiss{grid-column:2/4}.bars .bc{font-size:var(--fs-sm);color:var(--ink2)}
+/* Paired material stays inside its own container; highlighting never scrolls the page. */
+.pair.codewalk,.pair.read-pair,.pair.material-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start;margin:20px 0;position:relative;min-width:0}.pair-source{position:sticky;top:72px;max-height:calc(100dvh - 160px);overflow:auto;overscroll-behavior:contain;min-width:0;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);padding:12px;scroll-padding:16px}.pair-notes{min-width:0}.pair-notes .step{padding:16px 0 24px;border-top:1px solid var(--hair);scroll-margin-top:84px}.pair-notes .step.is-active{border-color:var(--blue)}.pair-source .source-block{padding:12px 8px;border-left:3px solid transparent}.pair-source .source-block.is-active{background:var(--blue-soft);border-color:var(--blue)}.source-text{overflow-wrap:anywhere}.pair-source pre{border:0;padding:0;margin:8px 0;overflow:visible}.code-line{display:block;min-height:1.65em;white-space:pre;padding-left:48px;position:relative}.code-line::before{content:attr(data-line);position:absolute;left:0;width:36px;text-align:right;color:var(--meta);user-select:none}.code-line.hl{background:var(--blue-soft)}.copy-code{position:static;flex:none;white-space:nowrap}.pair-source .source-anchor{font-size:var(--fs-xs)}
+/* A separate toolbar never shares the scrolling code viewport. */
+.heading-source{font-size:var(--fs-xs);margin:0 0 8px}
+.pair.codewalk{grid-template-columns:minmax(0,60%) minmax(0,1fr)}
+.code-panel{position:sticky;top:72px;display:flex;flex-direction:column;min-width:0;max-height:calc(100dvh - 160px);border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);overflow:hidden}
+.code-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;flex:none;border-bottom:1px solid var(--hair);font-size:var(--fs-xs);color:var(--ink2)}
+.code-panel .pair-source{position:static;max-height:none;min-height:0;flex:1 1 auto;border:0;border-radius:0;box-shadow:none;overflow:auto}
+.code-panel .pair-source pre{width:max-content;min-width:100%}
+dialog.image-dialog{width:calc(100vw - 24px);max-width:none;max-height:92dvh;padding:12px;border:1px solid var(--hair);background:var(--sheet);color:var(--ink);border-radius:var(--r-md);overflow:auto}dialog::backdrop{background:rgba(0,0,0,.75)}.image-dialog img{max-width:none;width:max(100%,min(1400px,180vw));height:auto}.image-dialog .dialog-close{position:sticky;top:0;left:0}.image-open{min-height:44px;border:0;background:transparent;padding:0;display:block;cursor:zoom-in;max-width:100%}.image-open img{max-width:100%}
+/* Only CSS changes the unchanged finish.js button. High specificity beats injected styles. */
+html body .fin-btn{bottom:calc(16px + env(safe-area-inset-bottom));right:16px;min-height:44px;z-index:35}html body #quiz-return{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:35;max-width:45vw}
+@media(min-width:1180px){.layout-article .deck{width:var(--reading-width);max-width:none;padding-left:0;padding-right:0;margin-left:max(260px,calc((100vw - 1192px)/2 + 236px));margin-right:0}.layout-article .sec>.doc-body>figure,.layout-article .sec>.doc-body>.table,.layout-article .sec>.codewalk{width:calc(100% + 120px);margin-left:0}.layout-article .aside{position:absolute;left:calc(100% + 28px);top:24px;width:var(--rail-width);margin:0}.layout-article .aside~figure{width:100%}html.layout-article body .fin-btn{left:max(20px,calc((100vw - 1192px)/2));right:auto;max-width:208px}.layout-pair .deck{max-width:1280px;margin-left:236px;margin-right:20px}.layout-pair .toc{width:188px;left:20px}html.layout-pair body .fin-btn{left:20px;right:auto;max-width:188px}}
+@media(max-width:1179px){.toc{display:none;visibility:hidden;left:0;top:var(--top-height);width:min(360px,90vw);max-height:calc(100dvh - 72px);background:var(--sheet);padding:16px;border-right:1px solid var(--hair);border-bottom:1px solid var(--hair)}html.toc-open .toc{display:block;visibility:visible}html.toc-open .toc-backdrop{display:block;position:fixed;inset:var(--top-height) 0 0;background:rgba(0,0,0,.3);z-index:24}}
+@media(max-width:820px){:root{--body-size:17px}.layout-article .deck,.layout-pair .deck{padding-left:18px;padding-right:18px}.top{gap:8px;padding:0 12px}.top .course{display:none}.top .count{max-width:44vw}.top .track{min-width:24px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stories,.compare,.roles{grid-template-columns:minmax(0,1fr)}.argmap ol{grid-template-columns:minmax(0,1fr)}table.data thead,.table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}table.data,table.data tbody,table.data tr,table.data td,.table table,.table tbody,.table tr,.table td{display:block;width:100%}table.data tr,.table tr{padding:8px 12px;margin-bottom:8px;border:1px solid var(--hair);background:var(--sheet);border-radius:var(--r-md)}table.data td,.table td{border:0;padding:4px 0}td[data-label]::before{content:attr(data-label)'：';font-size:var(--fs-sm);font-weight:700;color:var(--ink2)}.table caption,table.data caption{display:block;width:100%}.pair.codewalk,.pair.read-pair,.pair.material-pair{display:block}.pair-notes{margin-top:12px}.code-panel{top:var(--top-height);max-height:40dvh;z-index:15}.pair-source{top:var(--top-height);max-height:40dvh;z-index:15;box-shadow:var(--sh-1)}.pair-notes .step{scroll-margin-top:calc(40dvh + 80px)}.flow-scroll svg.flow{width:var(--flow-width);max-width:none;height:var(--flow-height)}.sim .flow-scroll svg.flow{width:100%;height:auto}.stack .row{grid-template-columns:22px 64px minmax(0,1fr)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+@media print{.top,.toc,.fin-btn,#quiz-return,.toc-backdrop,.zoom-toggle,.code-toolbar{display:none!important}.layout-article .deck,.layout-pair .deck{margin:0;padding:0;max-width:100%;width:auto}.pair-source,.code-panel{position:static;max-height:none;overflow:visible}.sec{break-inside:auto}figure,.stat{break-inside:avoid}}
+/* Applies after legacy CSS too. Zoom is an intentional local viewport; non-zoom stays unnested. */
+html body .sim .flow-scroll.zoom{overflow:auto;max-height:40dvh;min-height:0;height:auto;overscroll-behavior:contain;scroll-padding:16px;padding:16px}
+html body .sim .flow-scroll.zoom svg.flow{width:var(--flow-width);min-width:var(--flow-width);height:var(--flow-height);max-height:none;flex:none}
+html body .sim .zoom-toggle{min-height:44px;justify-self:start}.layout-deck .sim .body{position:relative}.layout-deck .card{padding-bottom:8px}.layout-deck .deck{bottom:calc(92px + env(safe-area-inset-bottom))}
+html body .fin-btn{bottom:calc(16px + env(safe-area-inset-bottom));right:16px;min-height:44px}html.layout-deck .bottom{padding-right:170px;padding-left:12px;height:76px}.layout-deck .btn,.layout-deck .sim .branches label{min-height:44px}.layout-deck details.more summary::before{content:none}.layout-deck .fl-edge.act{animation:none}
+@media(max-width:820px){html.layout-deck .bottom{padding-right:12px;gap:8px}.layout-deck .bottom .btn{padding:8px 10px;font-size:13px}html.layout-deck body .fin-btn{padding:8px 12px;font-size:13px}.layout-deck .card.full:has(.sim)>.head-full{position:sticky;top:0;z-index:4;background:var(--sheet);padding-top:12px;padding-bottom:12px}.layout-deck .sim .body{overflow:visible}.layout-deck .card .stage:has(.sim){overflow:visible}.layout-deck .sim .flow-scroll:not(.zoom){overflow:visible}}
 
-/* 与知识库首页（VitePress 风格）对齐：白底页面、12px 圆角、细边框卡片、深色模式 */
-html,body{background:var(--page,#fff)}
-.card{border:1px solid var(--hair);box-shadow:none}
-html.dark{--page:#1b1b1f;--paper:#2a2a31;--sheet:#202127;--ink:#fffff5;--ink2:rgba(235,235,245,.65);--hair:#3a3a40;
---blue:#7c9cff;--blue-soft:rgba(124,156,255,.16);--amber:#f0b429;--amber-soft:rgba(240,180,41,.14);--green:#3dd68c;--green-soft:rgba(61,214,140,.14);--red:#f66f81;--red-soft:rgba(246,111,129,.14);color-scheme:dark}
-html.dark .btn.main{color:#16202c}
-html.dark .fl-node .sub,html.dark .fl-elab{fill:var(--ink2)}html.dark .fl-elab{stroke:var(--page)!important}html.dark .fl-edge{stroke:#6b7280}
-html.dark .fl-elab.act{fill:var(--blue)}
+.layout-deck .card.doc.on{display:block;overflow:auto;padding:24px}.layout-deck .card.doc .doc-body{overflow:visible}.layout-deck .hero.card{height:auto}
+
+/* Legacy .stage svg also matches button icons: keep Lucide at its declared size. */
+html body svg.i{width:18px;height:18px;max-height:none;flex:none}
+
+/* Below the desktop sidebar breakpoint, finish lives in the opaque top bar.
+   Reserve its width before laying out the title; keep the deck footer for paging. */
+@media(max-width:1179px){
+ html body .top{gap:8px;padding:0 132px 0 12px;z-index:40;background:var(--paper)}
+ html body .top .course{display:none}
+ html body .top .count{flex:1;min-width:0;max-width:none;font-size:var(--fs-sm);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ html body .top .track{position:absolute;left:12px;right:12px;bottom:0;height:2px;min-width:0}
+ html body .top .toc-toggle{width:44px;flex:none;padding:0}
+ html body .top .theme-toggle{flex:none;padding:8px;font-size:var(--fs-sm)}
+ html body .fin-btn{top:6px;bottom:auto;left:auto;right:12px;width:112px;max-width:112px;height:44px;padding:8px;font-size:13px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:41;box-shadow:none}
+}
 </style></head><body>
-<header class="top"><span class="course">李宏毅 ML 2026 · L03 加快生成速度</span><span class="track"><i></i></span><span class="count"></span></header>
-<main class="deck">
-<section class="card">
-  <div class="stage"><svg class="flow" data-act="dec" data-edge="pre>dec" data-flow='{"nodes":[{"id":"pre","x":150,"y":110,"t":"Prefill","s":"一次读进很长的输入","c":"amber","w":200},{"id":"dec","x":470,"y":110,"t":"Decode","s":"一个一个输出 token","c":"blue","w":200},{"id":"fa","x":150,"y":300,"t":"Flash Attention","s":"少搬资料","c":"green","w":200},{"id":"kv","x":470,"y":300,"t":"KV Cache","s":"不重算 key 和 value","c":"green","w":200}],"edges":[{"f":"pre","t":"dec"},{"f":"fa","t":"pre","l":"长输入"},{"f":"kv","t":"dec","l":"每一步"}]}'></svg></div>
-  <div class="say"><span class="kicker">这讲一句话讲什么？</span><h2>今天讲两招加速：少搬资料、不重算</h2>
-  <p>生成分两段：Prefill 读进整段输入，Decode 一次接一个 token。</p>
-  <p class="key">三个经典方法里今天讲 Flash Attention 和 KV Cache；Speculative Decoding 不讲，课件指向过去的影片。</p>
-  <details class="more"><summary></summary><ul><li>官方材料：inference.pdf（55 页，多数为图）；影片 1 Flash Attention（vXb2QYOUzl4，50 分）、影片 2 KV Cache（fDQaadKysSA，39 分）。</li><li>讲者：你多数时候其实已经用到 Flash Attention，只是不知道它怎么算（影片 1 05:01）。</li></ul></details>
-  <div class="src official">inference.pdf p5–7；影片 1 05:01；影片 2 01:01</div></div>
+<header class="top"><button class="btn toc-toggle" aria-label="打开目录" aria-expanded="false"><svg class="i i-menu" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h16"/></svg></button><span class="course">加快语言模型生成速度：Flash Attention + KV Cache</span><span class="track" role="presentation"><i></i></span><span class="count"></span><button class="btn theme-toggle" aria-label="切换深浅色">深浅色</button></header><main class="deck"><section class="sec hero" id="s1" data-toc="开篇：这讲讲什么" data-source-section="s1">
+  <header class="doc-head">
+    <span class="kicker">台大《机器学习 2026》 · 第 3 讲 · 李宏毅 · 2026-03-20</span>
+    <h1>今天讲两招加速：少搬资料、不重算</h1>
+    <p class="lede">模型训练好之后，生成时间花在哪里、怎么省：Flash Attention 减少搬运，KV Cache 把算过的 key 和 value 存起来。</p>
+    <p class="links"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf">官方课件 inference.pdf <svg class="i i-external-link" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pptx">inference.pptx <svg class="i i-external-link" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a><span>课件 55 页，多数为图 · 两段影片 · 本页约 25 分钟</span></p>
+    <ul class="points">
+      <li>影片 1（50 分）讲 Flash Attention，影片 2（39 分）讲 KV Cache 和让它变小的一系列方法。</li>
+      <li>这讲预设你已经清楚 Transformer 和 self-attention 的运作；课件第 2 页给了预习影片。</li>
+      <li>课件多数页只有图，本页把关键页按原样截图，标「原图 N」；第 55 页总表另外逐格转成「原表 1」。</li>
+      <li>中间有一个 KV Cache 模拟器，最后 6 道小测。</li>
+    </ul>
+  </header>
 </section>
 
-<section class="card">
-  <div class="stage"><svg class="flow" data-act="att" data-edge="q>att" data-flow='{"nodes":[{"id":"q","x":110,"y":110,"t":"query","s":"现在的位置","c":"blue"},{"id":"k","x":110,"y":300,"t":"key 1…L","s":"前面每个 token"},{"id":"att","x":380,"y":200,"t":"softmax","s":"得到注意力权重","c":"amber"},{"id":"o","x":650,"y":200,"t":"value 加权和","s":"这一层的输出","c":"green","w":200}],"edges":[{"f":"q","t":"att","l":"点积"},{"f":"k","t":"att"},{"f":"att","t":"o"}]}'></svg></div>
-  <div class="say"><span class="kicker">和前两讲怎么接？</span><h2>上下文越长，每层注意力要看的 key 越多</h2>
-  <p>每个位置的 query 和前面所有 key 做点积，softmax 后得到注意力权重，再对 value 加权求和。</p>
-  <p class="key">第 1 讲说过输入越长越难接准，并预告 3/20 回到这个主题；Agent 的输入往往上万到百万 token。</p>
-  <div class="src official">inference.pdf p3–4；intro.pdf p19；影片 1 01:01–03:01、11:01</div></div>
+<section class="sec" id="s2" data-toc="生成怎么进行" data-source-section="s2">
+  <header class="doc-head">
+    <span class="kicker">背景 · 课件第 1–7 页</span>
+    <h2>生成分两段：Prefill 读进整段输入，Decode 一次接一个 token</h2>
+    <p class="lede" data-points="p1" id="e1">这讲不讲训练，只讲模型训练好之后，怎么加快生成（推论，inference）的速度（影片 1 00:00）。</p>
+  </header>
+  <div class="doc-body">
+    <p data-points="p2" id="e2">先备知识：课件第 2 页指向《一堂課看懂語言模型內部運作》影片，讲 Transformer 内部怎么运作。</p>
+    <p data-points="p3" id="e3">Transformer 有很多层，每层都有 self-attention。输入一排向量 x1 到 x5，每个位置变成 query、key、value 三个向量（影片 1 01:01–02:01）。</p>
+    <figure class="figure orig" data-slide="4" data-points="p4" data-asset="img-p04" id="e4"><img src="img/L03/p04.jpg" alt="Self-Attention 计算：第 4 个位置的 query 和 key 1 到 key 4 做点积，经过 softmax 得到注意力权重，再对 value 加权求和" loading="lazy"><figcaption><b>原图 1 · 课件第 4 页</b>以第 4 个位置为例：q4 和 k1 到 k4 做点积得到 a1 到 a4，过 softmax 变成 â，再对 v 加权求和得到输出。 <span class="source-anchor" data-source-section="s5">出处：李宏毅《加快語言模型的生成速度》课件 · <a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=4">第 4 页</a></span><span class="how">怎么看：讲者把点积结果叫 attention 的 weight，加 hat 的代表做过 softmax（影片 1 02:01–03:01）。</span></figcaption></figure>
+    <figure class="figure orig" data-slide="5" data-points="p5" data-asset="img-p05" id="e5"><img src="img/L03/p05.jpg" alt="语言模型生成分两段：Prefill 一次读进李宏毅几班，Decode 一个一个输出大、金、END" loading="lazy"><figcaption><b>原图 2 · 课件第 5 页</b>Prefill：一次读进很长的输入「李宏毅几班」；Decode：一个一个输出「大」「金」，直到 [END]。 <span class="source-anchor" data-source-section="s6">出处：李宏毅《加快語言模型的生成速度》课件 · <a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=5">第 5 页</a></span><span class="how">怎么看：虚线左边是 Prefill，右边是 Decode；每个输出又接回去当输入（影片 2 00:03–01:01）。</span></figcaption></figure>
+    <p data-points="p6" id="e6">加快推论速度的三个经典方法：Flash Attention、KV Cache、Speculative Decoding；今天讲前两个。讲者说你多数时候其实已经用到第一招，只是不知道它怎么算（影片 1 05:01）。</p>
+    <p data-points="p7" id="e7">第三招很有效，但过去讲过，这堂课不讲，课件第 7 页指向旧影片（影片 1 05:01）。</p>
+    <p data-points="p4" id="e8">讲者先讲加速通常伴随的两种代价：改变 self-attention 的计算（变成近似），或绑定模型、要训练特定的模型才能用（影片 1 04:02）。课件最后的总表就是照这两项加上其他代价来比较。</p>
+  </div>
+  <p class="src official">本节对应课件：<span class="source-anchor" data-source-section="s2"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=1">p1</a></span> <span class="source-anchor" data-source-section="s3"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=2">p2</a></span> <span class="source-anchor" data-source-section="s4"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=3">p3</a></span> <span class="source-anchor" data-source-section="s5"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=4">p4</a></span> <span class="source-anchor" data-source-section="s6"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=5">p5</a></span> <span class="source-anchor" data-source-section="s7"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=6">p6</a></span> <span class="source-anchor" data-source-section="s8"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=7">p7</a></span> · 影片：影片 1 <a href="https://youtu.be/vXb2QYOUzl4">vXb2QYOUzl4</a>（Flash Attention） · 影片 2 <a href="https://youtu.be/fDQaadKysSA">fDQaadKysSA</a>（KV Cache）</p>
 </section>
 
-<section class="card">
-  <div class="stage"><svg class="flow" data-act="move" data-edge="hbm>sram" data-flow='{"nodes":[{"id":"hbm","x":150,"y":200,"t":"仓库（HBM）","s":"大，但远","w":200},{"id":"sram","x":520,"y":200,"t":"工作台（SRAM）","s":"小，但算得快","c":"green","w":220},{"id":"move","x":335,"y":60,"t":"搬运","s":"真正花时间的地方","c":"red"}],"edges":[{"f":"hbm","t":"sram","l":"读","bend":-30},{"f":"sram","t":"hbm","l":"写","bend":-30}]}'></svg></div>
-  <div class="say"><span class="kicker">GPU 上时间花在哪？</span><h2>瓶颈常在仓库和工作台之间搬资料</h2>
-  <p>资料只能搬「刚好放得上工作台」的量；上了工作台，运算一瞬间完成。</p>
-  <p class="key">长度 L 是十万、百万时，连一个位置的 L 个注意力权重都放不上工作台。</p>
-  <details class="more"><summary></summary><ul><li>讲者声明：这是简化说法，不精确，也不只适用于 GPU（影片 1 07:03）。</li><li>直接实作 softmax 要先求最大值 Amax 再算分母，同一批 key 要从仓库读好几次（课件 p17）。</li></ul></details>
-  <div class="src official">inference.pdf p9–17；影片 1 07:03–15:02</div></div>
+<section class="sec" id="s3" data-toc="时间花在搬资料" data-source-section="s9">
+  <header class="doc-head">
+    <span class="kicker">Flash Attention 的问题 · 课件第 8–17 页</span>
+    <h2>瓶颈常在仓库和工作台之间搬资料</h2>
+  </header>
+  <div class="doc-body">
+    <p data-points="p8" id="e9">Flash Attention 来自 2022 年的论文（arXiv 2205.14135）。它不改变 attention 的计算结果，不是近似；也随插即用，可以套到任何用 self-attention 的 Transformer（影片 1 06:01）。</p>
+    <figure class="figure orig" data-slide="9" data-points="p9" data-asset="img-p09" id="e10"><img src="img/L03/p09.jpg" alt="GPU 的比喻：左边仓库 HBM，右边工作台 SRAM，小精灵在两者之间搬资料" loading="lazy"><figcaption><b>原图 3 · 课件第 9 页</b>讲者的比喻：小精灵是 GPU 的执行单元，工作台是 on-chip 的 SRAM，仓库是 HBM。 <span class="source-anchor" data-source-section="s10">出处：李宏毅《加快語言模型的生成速度》课件 · <a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=9">第 9 页</a></span><span class="how">怎么看：工作台很小，只能放刚好放得上的资料；东西上了工作台，运算一瞬间完成；真正花时间的是来回搬资料（影片 1 07:03–09:01）。</span></figcaption></figure>
+    <blockquote class="quote"><p data-points="p9" id="e11">搬資料是花時間的 搬資料是拖慢運算的瓶頸</p><cite>李宏毅，影片 1 09:01</cite><span class="source-anchor" data-source-section="s10"><a href="https://youtu.be/vXb2QYOUzl4?t=541">影片 1 09:01</a></span></blockquote>
+    <p data-points="p9" id="e12">讲者声明：这是为了好懂的简化说法，不精确，也不只适用于 GPU，很多高速运算都有类似概念（影片 1 07:03）。</p>
+    <p data-points="p10 p11" id="e13">一般的 attention：query 要和一整排 key 做点积，但 key 太多放不上工作台，只能把长度 L 的序列切成一个个 chunk 读上来，算完再把点积结果放回仓库。Agent 的输入往往上万、10 万到百万 token（影片 1 10:00–12:00）。</p>
+    <p data-points="p11" id="e14">衔接第 1 讲：<a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/intro.pdf#page=19">intro.pdf 第 19 页</a>说，输入越长，就算还没到上限也往往接不准，并预告 3/20、3/27 再回到这个主题。</p>
+    <p data-points="p12" id="e15">实作上，softmax 会先把每个 a 减掉所有 a 里最大的 Amax 再取 exponential，避免数值 overflow，让指数项最大就是 0（影片 1 13:01–14:00）。</p>
+    <figure class="figure orig" data-slide="13" data-points="p13" data-asset="img-p13" id="e16"><img src="img/L03/p13.jpg" alt="不可以把整排 attention weight 一次放上工作台：工作台上不可以放跟长度 L 有关的东西" loading="lazy"><figcaption><b>原图 4 · 课件第 13 页</b>不能把整排 a 一次放上工作台算出 â。 <span class="source-anchor" data-source-section="s14">出处：李宏毅《加快語言模型的生成速度》课件 · <a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=13">第 13 页</a></span><span class="how">怎么看：讲者：例子里只放了 9 个数值，实际长度可能是 10 万、100 万，就算每个位置只有一个数值也放不下；工作台上不能放跟长度 L 有关的东西（影片 1 15:02）。</span></figcaption></figure>
+    <p data-points="p14" id="e17">直接实作先找 Amax：每个 chunk 找出最大值 D，和前面存的 D 比，留下大的；总共做 B 次，B 是 L 除以 chunk 大小 N。做完最后一个 chunk，D 就是 Amax（影片 1 16:01–17:02）。</p>
+    <p data-points="p15 p16" id="e18">有了 Amax，再一次一个 chunk 算出分子 exp(a − Amax)，叫 a′，再把 a′ 一块块加进 S 得到分母；然后再读一遍算出 â（影片 1 18:02–20:03）。</p>
+    <figure class="figure orig" data-slide="17" data-points="p17" data-asset="img-p17" id="e19"><img src="img/L03/p17.jpg" alt="直接实作 attention 要把 key 读好几次，最后再分块读进 value 做加权求和得到 attention layer 的输出" loading="lazy"><figcaption><b>原图 5 · 课件第 17 页</b>最后还要再搬 value，分块和 â 做加权求和，一块块累积出 O。 <span class="source-anchor" data-source-section="s18">出处：李宏毅《加快語言模型的生成速度》课件 · <a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=17">第 17 页</a></span><span class="how">怎么看：左边标着「讀好幾次」：整个过程对仓库读写了很多次，这招要问的就是真的需要这么多次吗（影片 1 20:03–21:00）。</span></figcaption></figure>
+  </div>
+  <p class="src official">本节对应课件：<span class="source-anchor" data-source-section="s9"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=8">p8</a></span> <span class="source-anchor" data-source-section="s10"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=9">p9</a></span> <span class="source-anchor" data-source-section="s11"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=10">p10</a></span> <span class="source-anchor" data-source-section="s12"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=11">p11</a></span> <span class="source-anchor" data-source-section="s13"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=12">p12</a></span> <span class="source-anchor" data-source-section="s14"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=13">p13</a></span> <span class="source-anchor" data-source-section="s15"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=14">p14</a></span> <span class="source-anchor" data-source-section="s16"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=15">p15</a></span> <span class="source-anchor" data-source-section="s17"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=16">p16</a></span> <span class="source-anchor" data-source-section="s18"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=17">p17</a></span> · 影片：影片 1 <a href="https://youtu.be/vXb2QYOUzl4">vXb2QYOUzl4</a>（Flash Attention） · 影片 2 <a href="https://youtu.be/fDQaadKysSA">fDQaadKysSA</a>（KV Cache）</p>
 </section>
 
-<section class="card">
-  <div class="stage"><pre><span class="c"># 一个 chunk 一个 chunk 读（课件 p22–27 整理）</span>
+<section class="sec" id="s4" data-toc="先假设最大值再修正" data-source-section="s19">
+  <header class="doc-head">
+    <span class="kicker">机制 1 · 课件第 18–24 页</span>
+    <h2>不知道最大值怎么办？先假设，看到更大的再修正</h2>
+  </header>
+  <div class="doc-body">
+    <p data-points="p18" id="e20">简化版：读进第一个 chunk，先把这块的最大值 D1 当成 Amax，算出 S1。如果 D1 真的是 Amax 就没事，但实际上通常不是（影片 1 22:04–23:00）。</p>
+    <p data-points="p19" id="e21">读进第二个 chunk，找到更大的 D2。S1 是假设 D1 为 Amax 算的，已经错了；但不能回头把第一个 chunk 再读进来重算，那就是浪费读写时间（影片 1 24:02–25:00）。</p>
+    <p data-points="p20 p21" id="e22">修法：S1 乘上 exp(D1 − D2)。代进去后 exp(−D1) 和 exp(D1) 互相消掉，就好像一开始就拿 D2 当 Amax 算出 1 到 2N 的总和。讲者说这是整个方法核心的技巧（影片 1 26:00–27:01）。</p>
+    <figure class="figure orig" data-slide="22" data-points="p22" data-asset="img-p22" id="e23"><img src="img/L03/p22.jpg" alt="第 k 个 chunk 和最后一个 chunk 的计算：每次用 exp(D 旧减 D 新) 修正之前的 S，加上这块的总和" loading="lazy"><figcaption><b>原图 6 · 课件第 22 页</b>第 k 个 chunk 照做：S(k−1) 乘上 exp(D(k−1) − Dk)，再加上本块 exp(a − Dk) 的总和。 <span class="source-anchor" data-source-section="s23">出处：李宏毅《加快語言模型的生成速度》课件 · <a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=22">第 22 页</a></span><span class="how">怎么看：到最后一个 chunk（第 B 个），D 就是 Amax，S 就是正确的分母（影片 1 28:00–29:01）。</span></figcaption></figure>
+    <pre><code># 补充：一个 chunk 一个 chunk 读（照课件第 22–27 页整理的示意）
 D = 目前见过的最大值；S = 目前的分母
 for 第 k 个 chunk:
     D_new = max(D, 这个 chunk 的最大值)
-    <span class="hl">S = S * exp(D - D_new)      # 修正旧的分母</span>
+    S = S * exp(D - D_new)        # 修正旧的分母
     S = S + Σ exp(A_i - D_new)
     D = D_new
-<span class="c"># 读到最后一个 chunk，D 就是 Amax，S 也对了</span></pre></div>
-  <div class="say"><span class="kicker">机制 1：不知道最大值怎么办？</span><h2>先假设最大值，看到更大的再修正</h2>
-  <p>第一块先把 D_1 当 Amax 算 S_1；下一块发现 D_2 更大，就把 S_1 乘上一个修正项。</p>
-  <p class="key">讲者：修正时不用回头看过去的数值，这是 Flash Attention 的核心技巧。</p>
-  <div class="src official">inference.pdf p22–27；影片 1 23:00–29:01</div></div>
+# 读到最后一个 chunk，D 就是 Amax，S 也对了</code></pre>
+    <p data-points="p23" id="e24">有了 D 和 S，再读一遍 a 就能算出 â，算 â 的过程从原来的多次读写变成两次（影片 1 30:00）。</p>
+    <figure class="figure orig" data-slide="24" data-points="p24" data-asset="img-p24" id="e25"><img src="img/L03/p24.jpg" alt="读好几次变成 2 次，旁边问：我们真的需要存下每一个 attention 的数值吗" loading="lazy"><figcaption><b>原图 7 · 课件第 24 页</b>「讀好幾次」被改成「2次」。 <span class="source-anchor" data-source-section="s25">出处：李宏毅《加快語言模型的生成速度》课件 · <a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=24">第 24 页</a></span><span class="how">怎么看：右下的问句是下一步的伏笔：真的需要把每个 attention 的权重 â 都存下来吗（影片 1 31:01）？</span></figcaption></figure>
+  </div>
+  <p class="src official">本节对应课件：<span class="source-anchor" data-source-section="s19"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=18">p18</a></span> <span class="source-anchor" data-source-section="s20"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=19">p19</a></span> <span class="source-anchor" data-source-section="s21"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=20">p20</a></span> <span class="source-anchor" data-source-section="s22"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=21">p21</a></span> <span class="source-anchor" data-source-section="s23"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=22">p22</a></span> <span class="source-anchor" data-source-section="s24"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=23">p23</a></span> <span class="source-anchor" data-source-section="s25"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=24">p24</a></span> · 影片：影片 1 <a href="https://youtu.be/vXb2QYOUzl4">vXb2QYOUzl4</a>（Flash Attention） · 影片 2 <a href="https://youtu.be/fDQaadKysSA">fDQaadKysSA</a>（KV Cache）</p>
 </section>
 
-<section class="card">
-  <div class="stage"><div class="stack">
-   <div class="row developer"><span class="i">1</span><span class="r">块</span><span class="t">chunk 1：读 K、V；用 D_1、S_1 算出 O_1（权重其实不对）</span></div>
-   <div class="row developer"><span class="i">2</span><span class="r">块</span><span class="t">chunk 2：读 K、V；用 D_2、S_2 修正 O_1，加上本块，得 O_2</span></div>
-   <div class="row developer"><span class="i">…</span><span class="r">块</span><span class="t">chunk k：每一块都修正上一块的结果</span></div>
-   <div class="row assistant new"><span class="i">B</span><span class="r">块</span><span class="t">最后一块：O_B 就是正确的注意力输出</span></div>
-  </div></div>
-  <div class="say"><span class="kicker">机制 2：为什么能一次读完？</span><h2>直接累积输出，注意力权重从不存下</h2>
-  <p>Flash Attention 在读 K 的同一时间读 V，边算边累积输出 O，每块都修正前面的误差。</p>
-  <p class="key">讲者：完整的注意力权重从来没被真正算出来，但最后的加权和是对的。</p>
-  <div class="src official">inference.pdf p27；影片 1 31:01–39:01</div></div>
+<section class="sec" id="s5" data-toc="不存注意力权重" data-source-section="s26">
+  <header class="doc-head">
+    <span class="kicker">机制 2 · 课件第 25–27 页</span>
+    <h2>直接累积输出，注意力权重从不存下</h2>
+  </header>
+  <div class="doc-body">
+    <p data-points="p25" id="e26">Flash Attention 的「灵魂拷问」：一定要先算出 attention weight，才能算最后的加权和 O 吗？它跳过算出 â 这一步，直接得到 O；所以用了它，你读不出 attention 的 weight（影片 1 31:01–32:00）。</p>
+    <p data-points="p26" id="e27">第一个 chunk：读 K 的同时把 V 也读进来，用还不对的权重 exp(a − D1)/S1 先算出 O1，将错就错（影片 1 33:00）。第二个 chunk：O1 乘上 S1 再除以 S2、乘上 exp(D1 − D2)，把差异补平，再加上本块的加权和（影片 1 35:02–37:05）。</p>
+    <figure class="figure orig" data-slide="27" data-points="p27" data-asset="img-p27" id="e28"><img src="img/L03/p27.jpg" alt="第 k 个 chunk 和最后一个 chunk：每一块都修正前面累积的输出 O，最后一块得到 What we want" loading="lazy"><figcaption><b>原图 8 · 课件第 27 页</b>每一块都「修正前面的错，再加新的东西」；最后一块的 O 标着 What we want! <span class="source-anchor" data-source-section="s28">出处：李宏毅《加快語言模型的生成速度》课件 · <a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=27">第 27 页</a></span><span class="how">怎么看：讲者：正确的注意力权重整个过程从来没被真正算出来，但最后得到的加权和是对的（影片 1 38:00–39:01）。</span></figcaption></figure>
+  </div>
+  <p class="src official">本节对应课件：<span class="source-anchor" data-source-section="s26"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=25">p25</a></span> <span class="source-anchor" data-source-section="s27"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=26">p26</a></span> <span class="source-anchor" data-source-section="s28"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=27">p27</a></span> · 影片：影片 1 <a href="https://youtu.be/vXb2QYOUzl4">vXb2QYOUzl4</a>（Flash Attention） · 影片 2 <a href="https://youtu.be/fDQaadKysSA">fDQaadKysSA</a>（KV Cache）</p>
 </section>
 
-<section class="card">
-  <div class="stage"><div class="bars" data-bars='{"unit":"倍","items":[{"l":"Flash vs Naive，序列 4096","v":9,"c":"blue","note":"讲者口述「9 倍左右」"},{"l":"其他长度","v":null}],"caption":"课件 p28 的 Colab 范例，讲者现场执行"}'></div></div>
-  <div class="say"><span class="kicker">实例：真的更快、又一样准吗？</span><h2>结果几乎一样，长序列快约 9 倍</h2>
-  <p>讲者现场比较 PyTorch 两种实作，最大差异约 10 的负 7 次方。</p>
-  <p class="key">在整个语言模型里，输入太短时用了 Flash Attention 也没快多少。</p>
-  <details class="more"><summary></summary><ul><li>讲者解释：模型里还有大量 feed forward 和 embedding 计算，不只有注意力（影片 1 48:00）。</li><li>输入再加长，出现 CUDA out of memory；讲者说爆的是仓库，不是工作台（影片 1 49:00）。</li></ul></details>
-  <div class="src official">inference.pdf p28；影片 1 41:00–49:00</div></div>
+<section class="sec" id="s6" data-toc="实测：更快、一样准" data-source-section="s29">
+  <header class="doc-head">
+    <span class="kicker">实例 · 课件第 28 页</span>
+    <h2>结果几乎一样，长序列快约 9 倍</h2>
+  </header>
+  <div class="doc-body">
+    <p data-points="p28" id="e29">课件第 28 页给了 Colab 范例程式。讲者用 A100（仓库 80GB，工作台通常只有十几 MB），比较 PyTorch 同一个函式的两种设定：Naive Attention 和 Flash Attention；参数 B、H、L、D 设成 4、8、256、64（影片 1 40:01–42:01）。</p>
+    <p data-points="p28" id="e30">两种输出最大差异约 10 的负 7 次方；序列设为 4096 时，加速约 9 倍（8 到 9 倍），代价只有演算法复杂和修正时多出的一点运算（影片 1 43:00–45:00）。</p>
+    <p data-points="p28" id="e31">放进整个语言模型：输入太短时用了也没快多少，因为模型里还有大量 feed forward 和 embedding 计算，不只有注意力（影片 1 48:00）。加长到 7 万 token，没用的花 2 秒、有用的 1.3 秒（影片 1 48:00）。</p>
+    <p data-points="p28" id="e32">再加长到 73 万 token，出现 CUDA out of memory；讲者说爆的是仓库，不是工作台，原因留到下一段 KV Cache 讲（影片 1 49:00）。</p>
+  </div>
+  <p class="src official">本节对应课件：<span class="source-anchor" data-source-section="s29"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=28">p28</a></span> · 影片：影片 1 <a href="https://youtu.be/vXb2QYOUzl4">vXb2QYOUzl4</a>（Flash Attention） · 影片 2 <a href="https://youtu.be/fDQaadKysSA">fDQaadKysSA</a>（KV Cache）</p>
 </section>
 
-<section class="card">
-  <div class="stage"><div class="stack">
-   <div class="row developer"><span class="i">1</span><span class="r">已存</span><span class="t">李：K1、V1</span></div>
-   <div class="row developer"><span class="i">2</span><span class="r">已存</span><span class="t">宏：K2、V2</span></div>
-   <div class="row developer"><span class="i">3</span><span class="r">已存</span><span class="t">毅：K3、V3</span></div>
-   <div class="row user new"><span class="i">4</span><span class="r">新</span><span class="t">算 Q4、K4、V4；Q4 和 K1–K4 算注意力；Q4 用完就丢</span></div>
-  </div></div>
-  <div class="say"><span class="kicker">机制 3：Decode 时什么可以不重算？</span><h2>每个 token 的 key 和 value 算一次就存下</h2>
-  <p>Decode 每一步只多一个 token；前面 token 的 K、V 不会变，存在仓库里。</p>
-  <p class="key">query 只有现在这个位置用得到，所以 Q 不存。</p>
-  <div class="src official">inference.pdf p29–33；影片 2 02:00–03:00</div></div>
+<section class="sec" id="s7" data-toc="KV Cache 怎么运作" data-source-section="s30">
+  <header class="doc-head">
+    <span class="kicker">机制 3 · 课件第 29–33 页</span>
+    <h2>每个 token 的 key 和 value 算一次就存下</h2>
+  </header>
+  <div class="doc-body">
+    <p data-points="p29 p30" id="e33">讲者先说 Cache 的发音和钱的 Cash 一样，它也确实和钱有关（影片 2 00:03）。Prefill 时每个输入 token 算出 Q、K、V，三个位置的输出可以平行算（影片 2 01:01–02:00）。</p>
+    <p data-points="p31 p32" id="e34">K 和 V 被存下来，Q 丢掉，这就是 KV Cache。Decode 时第 4 个 token 进来，如果把前面的 token 接上再丢进模型重算 V 和 K，实在太花时间；所以 q4 直接和存下的 k1 到 k3，加上自己的 k4 算注意力（影片 2 02:00–03:00）。</p>
+    <figure class="figure orig" data-slide="33" data-points="p33" data-asset="img-p33" id="e35"><img src="img/L03/p33.jpg" alt="KV Cache：每个位置的 key 和 value 存成一排，query 1 到 query 4 依序和前面所有 key 做注意力" loading="lazy"><figcaption><b>原图 9 · 课件第 33 页</b>存下的是每个位置的 key 和 value；query 只有当下这个位置用得到，所以不存。 <span class="source-anchor" data-source-section="s34">出处：李宏毅《加快語言模型的生成速度》课件 · <a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=33">第 33 页</a></span><span class="how">怎么看：产生第 5 个输出时，也不需要重算前面已经算出的 V 和 K（影片 2 04:00）。</span></figcaption></figure>
+    <h3>动手：Decode 三步，有无 KV Cache</h3>
+    <div class="sim"><script type="application/json">{"label": "有 KV Cache", "note": "串起来的示例：句子「李宏毅几班」取自课件 p3、p5；步骤是教学示例。", "flow": {"nodes": [{"id": "new", "x": 100, "y": 130, "t": "新 token", "c": "blue"}, {"id": "tf", "x": 330, "y": 130, "t": "Transformer", "s": "算 Q K V", "c": "amber"}, {"id": "kv", "x": 560, "y": 130, "t": "仓库", "s": "存 K、V", "c": "green"}], "edges": [{"f": "new", "t": "tf"}, {"f": "tf", "t": "kv", "l": "存", "bend": -30}, {"f": "kv", "t": "tf", "l": "读", "bend": -30}]}, "steps": [{"act": "tf", "edge": "new>tf", "msg": {"r": "sys", "t": "Prefill：李 宏 毅 几 班"}, "say": "Prefill 一次算出 5 个 token 的 K、V。"}, {"act": "kv", "edge": "tf>kv", "msg": {"r": "tool", "t": "仓库：K1–K5、V1–V5"}, "say": "全部存进仓库。"}, {"act": "tf", "edge": "kv>tf", "msg": {"r": "asst", "t": "输出「大」：只算它的 Q K V"}, "say": "新 token 的 Q 和仓库里的 K 做注意力。"}, {"act": "kv", "edge": "tf>kv", "msg": {"r": "tool", "t": "仓库：多了 K6、V6"}, "say": "每步只多存一组。"}, {"act": "tf", "msg": {"r": "asst", "t": "输出「金」"}, "say": "同样只算一个 token。"}], "alts": [{"label": "没有 KV Cache", "steps": [{"act": "tf", "edge": "new>tf", "msg": {"r": "sys", "t": "李 宏 毅 几 班 → 大"}, "say": "算完 5 个 token，输出「大」。"}, {"act": "tf", "msg": {"r": "err", "t": "重算 李 宏 毅 几 班 大 的 K、V"}, "say": "下一步把整句重新送进去。"}, {"act": "tf", "msg": {"r": "err", "t": "再重算 7 个 token"}, "say": "讲者：这样实在太花时间。"}]}, {"label": "仓库装不下", "steps": [{"act": "kv", "msg": {"r": "tool", "t": "每个 token 存约 0.72 MB（Gemma 2 例）"}, "say": "KV Cache 随长度一直长。"}, {"act": "kv", "msg": {"r": "err", "t": "CUDA out of memory"}, "say": "输入或输出太长，仓库放不下。"}]}], "predict": "同一句「李宏毅几班」，有和没有 KV Cache，Decode 第二步各要算几个 token 的 K、V？"}</script></div>
+    <p class="callout extra" data-points="p5" id="e36">教学示例：句子「李宏毅几班」取自课件第 3、5 页；步骤是为了练习编的。</p>
+  </div>
+  <p class="src official">本节对应课件：<span class="source-anchor" data-source-section="s30"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=29">p29</a></span> <span class="source-anchor" data-source-section="s31"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=30">p30</a></span> <span class="source-anchor" data-source-section="s32"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=31">p31</a></span> <span class="source-anchor" data-source-section="s33"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=32">p32</a></span> <span class="source-anchor" data-source-section="s34"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=33">p33</a></span> · 影片：影片 1 <a href="https://youtu.be/vXb2QYOUzl4">vXb2QYOUzl4</a>（Flash Attention） · 影片 2 <a href="https://youtu.be/fDQaadKysSA">fDQaadKysSA</a>（KV Cache）</p>
 </section>
 
-<section class="card full">
-  <div class="head-full"><span class="kicker">动手：Decode 三步，有无 KV Cache</span><h2>有 KV Cache 时，每步只算一个新 token</h2></div>
-  <div class="stage"><div class="sim" data-sim='{"label":"有 KV Cache","note":"串起来的示例：句子「李宏毅几班」取自课件 p3、p5；步骤是教学示例。","flow":{"nodes":[{"id":"new","x":100,"y":130,"t":"新 token","c":"blue"},{"id":"tf","x":330,"y":130,"t":"Transformer","s":"算 Q K V","c":"amber"},{"id":"kv","x":560,"y":130,"t":"仓库","s":"存 K、V","c":"green"}],"edges":[{"f":"new","t":"tf"},{"f":"tf","t":"kv","l":"存","bend":-30},{"f":"kv","t":"tf","l":"读","bend":-30}]},
-  "steps":[
-   {"act":"tf","edge":"new>tf","msg":{"r":"sys","t":"Prefill：李 宏 毅 几 班"},"say":"Prefill 一次算出 5 个 token 的 K、V。"},
-   {"act":"kv","edge":"tf>kv","msg":{"r":"tool","t":"仓库：K1–K5、V1–V5"},"say":"全部存进仓库。"},
-   {"act":"tf","edge":"kv>tf","msg":{"r":"asst","t":"输出「大」：只算它的 Q K V"},"say":"新 token 的 Q 和仓库里的 K 做注意力。"},
-   {"act":"kv","edge":"tf>kv","msg":{"r":"tool","t":"仓库：多了 K6、V6"},"say":"每步只多存一组。"},
-   {"act":"tf","msg":{"r":"asst","t":"输出「金」"},"say":"同样只算一个 token。"}],
-  "alts":[{"label":"没有 KV Cache","steps":[
-   {"act":"tf","edge":"new>tf","msg":{"r":"sys","t":"李 宏 毅 几 班 → 大"},"say":"算完 5 个 token，输出「大」。"},
-   {"act":"tf","msg":{"r":"err","t":"重算 李 宏 毅 几 班 大 的 K、V"},"say":"下一步把整句重新送进去。"},
-   {"act":"tf","msg":{"r":"err","t":"再重算 7 个 token"},"say":"讲者：这样实在太花时间。"}]},
-   {"label":"仓库装不下","steps":[
-   {"act":"kv","msg":{"r":"tool","t":"每个 token 存约 0.72 MB（Gemma 2 例）"},"say":"KV Cache 随长度一直长。"},
-   {"act":"kv","msg":{"r":"err","t":"CUDA out of memory"},"say":"输入或输出太长，仓库放不下。"}]}]}'></div></div>
+<section class="sec" id="s8" data-toc="KV Cache 的代价" data-source-section="s35">
+  <header class="doc-head">
+    <span class="kicker">代价 · 课件第 34–35 页</span>
+    <h2>KV Cache 用记忆换时间，仓库会被吃光</h2>
+  </header>
+  <div class="doc-body">
+    <p data-points="p34" id="e37">课件第 34 页画的是仓库（HBM）被撑爆：每输入或产生一个 token 就要存一组 K 和 V，序列很长就会撑爆；加上 Multi-Head Attention 每层不只一组 V 和 K（影片 2 04:00–05:04）。</p>
+    <figure class="figure orig" data-slide="35" data-points="p35" data-asset="img-p35" id="e38"><img src="img/L03/p35.jpg" alt="Gemma 2 的架构表和计算：每个 token 的 KV Cache 为 46 层乘 32 个 head 乘 128 维乘 2 字节乘 2，约 0.72MB，A100 80GB 约可存 114k tokens" loading="lazy"><figcaption><b>原图 10 · 课件第 35 页</b>讲者用 Gemma 2 的 27B 模型算：46 层 × 32 个 head × 128 维 × 2（FP16 每个数 2 byte）× 2（value 和 key）。 <span class="source-anchor" data-source-section="s36">出处：李宏毅《加快語言模型的生成速度》课件 · <a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=35">第 35 页</a></span><span class="how">怎么看：结果每个 token 是 753664 bytes（736 KB，0.72MB）；A100（80GB）大约只放得下 114k tokens。</span></figcaption></figure>
+    <p data-points="p35" id="e39">讲者：不到 1 MB 听起来不大，但一张 A100 只够存约 10 万 token，而很多时候需要的上下文远超过 10 万；序列太长就 CUDA out of memory（影片 2 06:00–07:01）。</p>
+    <p class="callout limit" data-points="p35" id="e40">未确认：字幕把 head 数听写成 30，课件第 35 页写 32；本页按课件写 32。</p>
+  </div>
+  <p class="src official">本节对应课件：<span class="source-anchor" data-source-section="s35"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=34">p34</a></span> <span class="source-anchor" data-source-section="s36"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=35">p35</a></span> · 影片：影片 1 <a href="https://youtu.be/vXb2QYOUzl4">vXb2QYOUzl4</a>（Flash Attention） · 影片 2 <a href="https://youtu.be/fDQaadKysSA">fDQaadKysSA</a>（KV Cache）</p>
 </section>
 
-<section class="card">
-  <div class="stage"><pre><span class="c"># Gemma 2 每个 token 的 KV Cache（课件 p35）</span>
-46 (layers) x 32 (heads) x 128 (dimension)
-  x 2 (FP16) x 2 (value, key)
-<span class="hl">= 753664 bytes  (736 KB, 0.72 MB)</span>
-
-<span class="c"># A100 (80GB) 大约能放</span>
-<span class="hl">About 114k tokens</span></pre></div>
-  <div class="say"><span class="kicker">失败：KV Cache 的代价是什么？</span><h2>KV Cache 用记忆换时间，仓库会被吃光</h2>
-  <p>每层、每个 head 都要存一组 key 和 value，所以每个 token 占很多空间。</p>
-  <p class="key">讲者：一张 A100 只够存约 10 万 token，而很多时候需要的上下文远超过 10 万。</p>
-  <div class="src official">inference.pdf p35；影片 2 05:04–07:01</div></div>
+<section class="sec" id="s9" data-toc="让 KV Cache 变小" data-source-section="s37">
+  <header class="doc-head">
+    <span class="kicker">取舍 · 课件第 36–48 页</span>
+    <h2>省 KV Cache 的方法：共享、压缩、缩小范围、丢弃</h2>
+  </header>
+  <div class="doc-body">
+    <p data-points="p36" id="e41">Multi-Query Attention：query 仍有多组，但所有 query 共用同一组 value 和 key，因为只有 V 和 K 会被存下来。讲者说它实际上表现并不好（影片 2 07:01–08:01）。</p>
+    <figure class="figure orig" data-slide="37" data-points="p37" data-asset="img-p37" id="e42"><img src="img/L03/p37.jpg" alt="Multi-query attention 和 Group-query attention 对比：前者所有 query 共用一组 key 和 value，后者分组共用，Llama、Gemma 等采用" loading="lazy"><figcaption><b>原图 11 · 课件第 37 页</b>折衷做法 Grouped-Query Attention：仍有多组 V 和 K，每组配给多个 query；Llama、Gemma 都用。 <span class="source-anchor" data-source-section="s38">出处：李宏毅《加快語言模型的生成速度》课件 · <a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=37">第 37 页</a></span><span class="how">怎么看：图里四个 query 只有两组 V、K。讲者提醒：是 query 共享 K、V，而不是反过来，原因就是只有 K、V 会被存下来（影片 2 08:01–09:01）。</span></figcaption></figure>
+    <p data-points="p38 p39 p40" id="e43">Multi-head Latent Attention（arXiv 2405.04434，DeepSeek 用）：在 x 和多组 V、K 之间放一个 bottleneck，把它们压成一个低维向量 c，仓库里只存 c；这要从训练一开始就教模型（影片 2 10:01–11:01）。</p>
+    <figure class="figure orig" data-slide="41" data-points="p41" data-asset="img-p41" id="e44"><img src="img/L03/p41.jpg" alt="MLA 不用解压缩：q 和 W_k c 的点积等于 W_k 转置乘 q 之后和 c 的点积" loading="lazy"><figcaption><b>原图 12 · 课件第 41 页</b>不用把 c 解压缩：k = Wk c，a = qᵀWk c = (Wkᵀq)ᵀc。 <span class="source-anchor" data-source-section="s42">出处：李宏毅《加快語言模型的生成速度》课件 · <a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=41">第 41 页</a></span><span class="how">怎么看：把 q 换成 q′ = Wkᵀq 再直接和 c 做点积。压缩 q 只做一次，解压缩 c 却要做序列长度那么多次（影片 2 12:00–14:02）。</span></figcaption></figure>
+    <p data-points="p42 p43" id="e45">value 那边也一样：O 的加权和可以直接做在压缩过的 c 上，最后再乘 Wv 解压缩一次。讲者说用这个方法，结果甚至可能比原来的 Multi-Head Attention 更好（影片 2 15:01–16:02）。</p>
+    <p data-points="p44" id="e46">Sliding Window Attention：每次只看前面固定范围（例如 4096），KV Cache 有固定上限。层数够深时，看到的范围会一层层扩大；Mistral 7B 的某个版本用过（影片 2 17:00–18:02）。</p>
+    <p data-points="p45" id="e47">GPT-OSS 是一层滑动窗口、一层完整 attention 交替（影片 2 18:02）。</p>
+    <figure class="figure orig" data-slide="46" data-points="p46" data-asset="img-p46" id="e48"><img src="img/L03/p46.jpg" alt="Streaming LLM：sliding window 加上序列最前面几个 token，下方曲线比较 Dense、Window、StreamingLLM 在 Llama-2-7B 和 Pythia-12B 上随输入长度的 perplexity" loading="lazy"><figcaption><b>原图 13 · 课件第 46 页</b>Streaming LLM（arXiv 2309.17453）：sliding window 再加上序列最前面几个 token。 <span class="source-anchor" data-source-section="s47">出处：李宏毅《加快語言模型的生成速度》课件 · <a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=46">第 46 页</a></span><span class="how">怎么看：纵轴是 perplexity，越小越好。只用 sliding window，长度超过 window 时表现瞬间变差；多看前几个 token 就好很多，还能处理训练时没看过的长度（影片 2 20:01–21:00）。</span></figcaption></figure>
+    <p data-points="p46" id="e49">讲者的解释：attention 权重加起来必须是 1，没什么好看的时候，模型预设就看第一个 token；拿掉它，模型的世界瞬间崩坏（影片 2 22:01）。</p>
+    <figure class="figure orig" data-slide="47" data-points="p47" data-asset="img-p47" id="e50"><img src="img/L03/p47.jpg" alt="Pruning KV Cache：attention map 显示每次只有小部分 token 被注意，少数 token 反复吸走大量注意力" loading="lazy"><figcaption><b>原图 14 · 课件第 47 页</b>Pruning KV Cache 的观察：每次只有小部分 token 有 attention，少数 token 反复吸走大量 attention。 <span class="source-anchor" data-source-section="s48">出处：李宏毅《加快語言模型的生成速度》课件 · <a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=47">第 47 页</a></span><span class="how">怎么看：Scissorhands 和 H2O 都是 2023 年的论文：一直没人 attend 的 K、V 就丢掉（影片 2 23:02–25:00）。</span></figcaption></figure>
+    <p data-points="p48" id="e51">Scissorhands 的结果：压缩 5 倍、丢掉 80% 的 K、V，很多任务表现差不多；但后来文献指出难任务会变差（影片 2 26:00）。</p>
+  </div>
+  <p class="src official">本节对应课件：<span class="source-anchor" data-source-section="s37"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=36">p36</a></span> <span class="source-anchor" data-source-section="s38"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=37">p37</a></span> <span class="source-anchor" data-source-section="s39"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=38">p38</a></span> <span class="source-anchor" data-source-section="s40"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=39">p39</a></span> <span class="source-anchor" data-source-section="s41"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=40">p40</a></span> <span class="source-anchor" data-source-section="s42"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=41">p41</a></span> <span class="source-anchor" data-source-section="s43"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=42">p42</a></span> <span class="source-anchor" data-source-section="s44"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=43">p43</a></span> <span class="source-anchor" data-source-section="s45"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=44">p44</a></span> <span class="source-anchor" data-source-section="s46"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=45">p45</a></span> <span class="source-anchor" data-source-section="s47"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=46">p46</a></span> <span class="source-anchor" data-source-section="s48"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=47">p47</a></span> <span class="source-anchor" data-source-section="s49"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=48">p48</a></span> · 影片：影片 1 <a href="https://youtu.be/vXb2QYOUzl4">vXb2QYOUzl4</a>（Flash Attention） · 影片 2 <a href="https://youtu.be/fDQaadKysSA">fDQaadKysSA</a>（KV Cache）</p>
 </section>
 
-<section class="card">
-  <div class="stage"><div class="pairs">
-   <div class="pair"><div class="a"><b>共享</b>MQA：所有 query 共用一组 K、V；GQA：分组共用（Llama、Gemma）</div><div class="b"><b>压缩</b>MLA（DeepSeek）：把 K、V 压成低维向量</div></div>
-   <div class="pair"><div class="a"><b>缩小范围</b>Sliding Window（Mistral 7B、GPT-OSS）；Streaming LLM 加看最前面几个 token</div><div class="b"><b>丢弃</b>Pruning：一直没人注意的 K、V 丢掉（Scissorhands、H2O）</div></div>
-  </div></div>
-  <div class="say"><span class="kicker">取舍：怎么让 KV Cache 变小？</span><h2>省 KV Cache 的方法多半要改注意力</h2>
-  <p>共享、压缩、缩小范围、丢弃四类，都在减少要存的 K、V。</p>
-  <p class="key">课件总表：Flash Attention 和 KV Cache 不改注意力、不需训练；MQA、GQA、MLA 要改注意力也要训练。</p>
-  <details class="more"><summary></summary><ul><li>课件总表对 Sliding Window 和 Pruning 的代价都写「可能明显伤害模型能力」（p55）。</li><li>Pruning：压缩 5 倍、丢掉 80% 的 K、V，很多任务表现差不多；但后来文献指出难任务会变差（影片 2 26:00）。</li><li>Streaming LLM：只用 sliding window 时，长度超过 window 表现瞬间变差；多看前几个 token 就好很多（影片 2 21:00）。</li></ul></details>
-  <div class="src official">inference.pdf p36–48、p55；影片 2 08:01–26:00</div></div>
+<section class="sec" id="s10" data-toc="跨对话的 Cache" data-source-section="s50">
+  <header class="doc-head">
+    <span class="kicker">深入一层 · 课件第 49–54 页</span>
+    <h2>前缀相同，KV Cache 就能跨对话共用</h2>
+  </header>
+  <div class="doc-body">
+    <figure class="figure orig" data-slide="49" data-points="p49" data-asset="img-p49" id="e52"><img src="img/L03/p49.jpg" alt="跨对话的 Cache：大家好我是大金和大家好我是小金前五个 token 相同，可以把 KV Cache 复制过去，金字因为前面不同而不能复制" loading="lazy"><figcaption><b>原图 15 · 课件第 49 页</b>「大家好我是大金」和「大家好我是小金」前五个 token 一样，KV Cache 可以直接复制过去。 <span class="source-anchor" data-source-section="s50">出处：李宏毅《加快語言模型的生成速度》课件 · <a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=49">第 49 页</a></span><span class="how">怎么看：最后的「金」不能复制：前面一个字变了，后面的 K、V 就不同。只有相同前缀能共用（影片 2 27:01–28:00）。</span></figcaption></figure>
+    <p data-points="p50" id="e53">ChatGPT、Gemini、Claude、DeepSeek 都有 cache input 折扣。以 GPT-4o 为例，一般输入每一百万 token 收 2.5 美金（长序列 5 美金），cache 到的输入只收十分之一，因为几乎不用额外计算（影片 2 28:00–29:00）。</p>
+    <p data-points="p51" id="e54">AI Agent 正好前缀大多一样：第 1 讲说过，你对 Agent 说一句话，它都会在前面附上很长的系统提示词，而这段内容通常不变（影片 2 30:02）。</p>
+    <figure class="figure orig" data-slide="52" data-points="p52" data-asset="img-p52" id="e55"><img src="img/L03/p52.jpg" alt="系统提示词的排列：工具说明、AGENTS.md、记忆位置、身份相关的 SOUL.md、IDENTITY.md、USER.md、MEMORY.md、SKILL；稳定不动的放前面，可能变动的放后面" loading="lazy"><figcaption><b>原图 16 · 课件第 52 页</b>稳定不动的放前面（工具说明、AGENTS.md、身份相关的 .md），可能变动的放后面。 <span class="source-anchor" data-source-section="s53">出处：李宏毅《加快語言模型的生成速度》课件 · <a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=52">第 52 页</a></span><span class="how">怎么看：讲者举例：Claude 的系统提示词最前面是工具说明；日期一变就破坏 cache，应该放后面。课件引了 OpenClaw 的 issue #27732，讨论系统提示词怎么排（影片 2 31:00–32:02）。</span></figcaption></figure>
+    <blockquote class="quote"><p data-points="p52" id="e56">越穩定不動的內容 應該放在越前面 越可能變動的內容 應該放在越後面</p><cite>李宏毅，影片 2 31:00</cite><span class="source-anchor" data-source-section="s53"><a href="https://youtu.be/fDQaadKysSA?t=1860">影片 2 31:00</a></span></blockquote>
+    <p data-points="p53" id="e57">同一个原则也适用于你自己写的 prompt：「帮我订从台北到波士顿的班机」和「从旧金山到纽约」只共用很短的前缀；改写成「帮我订从 x 到 y 的班机」并把变数放最后，就能 hit 到更长的 cache（影片 2 32:02–33:02）。</p>
+    <p data-points="p54" id="e58">真的省得到钱吗？课件引了 arXiv 2601.06007 的实测：在 Gemini 2.5 Pro 和 GPT-4o 等模型上，至少能省下 50% 甚至更多（影片 2 33:02–34:00）。</p>
+  </div>
+  <p class="src official">本节对应课件：<span class="source-anchor" data-source-section="s50"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=49">p49</a></span> <span class="source-anchor" data-source-section="s51"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=50">p50</a></span> <span class="source-anchor" data-source-section="s52"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=51">p51</a></span> <span class="source-anchor" data-source-section="s53"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=52">p52</a></span> <span class="source-anchor" data-source-section="s54"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=53">p53</a></span> <span class="source-anchor" data-source-section="s55"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=54">p54</a></span> · 影片：影片 1 <a href="https://youtu.be/vXb2QYOUzl4">vXb2QYOUzl4</a>（Flash Attention） · 影片 2 <a href="https://youtu.be/fDQaadKysSA">fDQaadKysSA</a>（KV Cache）</p>
 </section>
 
-<section class="card">
-  <div class="stage"><div class="pairs">
-   <div class="pair"><div class="no"><b>Cache hit 少</b>帮我订从台北到波士顿的班机</div><div class="yes"><b>Cache hit 多</b>帮我订从 x 到 y 的班机。x=台北，y=波士顿</div></div>
-   <div class="pair"><div class="a"><b>放前面</b>稳定不动的：身分、工具说明、AGENTS.md</div><div class="b"><b>放后面</b>可能变动的：记忆、本次任务</div></div>
-  </div></div>
-  <div class="say"><span class="kicker">深入一层：这和 Agent 有什么关系？</span><h2>前缀相同，KV Cache 就能跨对话共用</h2>
-  <p>前缀里任何一个 token 变了，后面的 K、V 就不同，只有相同前缀能共用。</p>
-  <p class="key">Agent 每次都附上同一份系统提示词，所以稳定的内容放前面，变数放最后。</p>
-  <details class="more"><summary></summary><ul><li>讲者举 OpenAI：cache 到的输入只收约十分之一的钱，因为几乎不用额外计算（影片 2 29:00）。</li><li>课件 p52 引用 OpenClaw 的 issue #27732，讨论系统提示词的排列。</li><li>衔接：系统提示词由多个 .md 拼成，见第 1 讲。</li></ul></details>
-  <div class="src official">inference.pdf p49–54；影片 2 27:01–33:02</div></div>
+<section class="sec" id="s11" data-toc="总表" data-source-section="s56">
+  <header class="doc-head">
+    <span class="kicker">结论 · 课件第 55 页</span>
+    <h2>Flash Attention 和 KV Cache 不改注意力、不需训练，其他方法多半要改</h2>
+  </header>
+  <div class="doc-body">
+    <div class="table">
+      <table class="data orig" data-asset="tbl-p55">
+        <caption>原表 1 · 课件第 55 页「結論」总表（逐格转录，合并格在每行重复）</caption>
+        <thead><tr><th></th><th>方法</th><th>是否改變原有的 Attention</th><th>是否需要訓練模型</th><th>其他代價</th></tr></thead>
+        <tbody>
+          <tr><th>Flash Attention</th><td data-label="方法">少搬資料</td><td data-label="改變 Attention">X</td><td data-label="需要訓練">X</td><td data-label="其他代價">一點額外運算+一點點燒腦</td></tr>
+          <tr><th>KV Cache</th><td data-label="方法">儲存已經算出來的 key 和 value</td><td data-label="改變 Attention">X</td><td data-label="需要訓練">X</td><td data-label="其他代價">占用記憶體</td></tr>
+          <tr><th>Multi-query attention</th><td data-label="方法">多個 query 共享 key 和 value</td><td data-label="改變 Attention">O</td><td data-label="需要訓練">O</td><td data-label="其他代價">可能明顯傷害模型能力</td></tr>
+          <tr><th>Group-query attention</th><td data-label="方法">多個 query 共享 key 和 value</td><td data-label="改變 Attention">O</td><td data-label="需要訓練">O</td><td data-label="其他代價"></td></tr>
+          <tr><th>Multi-head Latent Attention</th><td data-label="方法">壓縮 key 和 value</td><td data-label="改變 Attention">O</td><td data-label="需要訓練">O</td><td data-label="其他代價"></td></tr>
+          <tr><th>Sliding Window Attention</th><td data-label="方法">改變 Attention 範圍</td><td data-label="改變 Attention">O</td><td data-label="需要訓練">?</td><td data-label="其他代價"></td></tr>
+          <tr><th>Streaming LLM</th><td data-label="方法">改變 Attention 範圍</td><td data-label="改變 Attention">O</td><td data-label="需要訓練">?</td><td data-label="其他代價"></td></tr>
+          <tr><th>Pruning KV Cache</th><td data-label="方法">丟棄 key 和 value</td><td data-label="改變 Attention">O</td><td data-label="需要訓練">X</td><td data-label="其他代價">可能明顯傷害模型能力</td></tr>
+          <tr><th>Speculative Decoding</th><td data-label="方法">用小模型來預言生成結果</td><td data-label="改變 Attention">X (理論上)</td><td data-label="需要訓練">X</td><td data-label="其他代價">小模型還是需要耗費額外算力</td></tr>
+        </tbody>
+      </table>
+      <p class="source-anchor" data-source-section="s56">出处：李宏毅《加快語言模型的生成速度》课件 · <a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=55">第 55 页</a></p>
+    </div>
+    <figure class="figure orig" data-slide="55" data-points="p55" data-asset="img-p55" id="e59"><img src="img/L03/p55.jpg" alt="课件结论页的总表截图：九种方法各自是否改变原有的 Attention、是否需要训练模型、其他代价" loading="lazy"><figcaption><b>原图 17 · 课件第 55 页</b>同一张总表的原始截图，供核对合并格。 <span class="source-anchor" data-source-section="s56">出处：李宏毅《加快語言模型的生成速度》课件 · <a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=55">第 55 页</a></span><span class="how">怎么看：看法：前两列打 X 的方法随插即用；打 O 的要改注意力，多数还要训练模型。</span></figcaption></figure>
+    <p data-points="p55" id="e60">讲者补充（影片 2 34:00–38:02）：少搬资料这招的代价是一点额外运算和「有一点烧腦」；MQA 在文献上明显伤害能力；MLA 虽改了注意力，有时反而更好；Streaming LLM 可以拿现成模型只要求它多看最前面的 token；用小模型预言的第三招可以拿任何小模型搭配任何大模型。</p>
+    <h3>课件里的链接</h3>
+    <ul class="refs">
+      <li><a href="https://youtu.be/8iFvM7WUUs8?si=gymWr9Vurpb8ri2Z">先备知识影片</a> · <a href="https://youtu.be/MAbGgsWKrg8?si=88lZbhk0GVJtN0Yi">Speculative Decoding 影片</a></li>
+      <li><a href="https://arxiv.org/abs/2205.14135">Flash Attention 2205.14135</a> · <a href="https://colab.research.google.com/drive/1KoeKKIXSXI9b-pYg0kun3-uLQkP6p_hC?usp=sharing">Colab 范例程式</a></li>
+      <li><a href="https://arxiv.org/abs/2405.04434">MLA 2405.04434</a> · <a href="https://arxiv.org/abs/2309.17453">Streaming LLM 2309.17453</a> · <a href="https://arxiv.org/abs/2305.17118">Scissorhands 2305.17118</a> · <a href="https://arxiv.org/abs/2306.14048">H2O 2306.14048</a></li>
+      <li><a href="https://developers.openai.com/api/docs/guides/prompt-caching/">OpenAI prompt caching</a> · <a href="https://developers.openai.com/api/docs/pricing">OpenAI pricing</a> · <a href="https://github.com/openclaw/openclaw/issues/27732">OpenClaw issue #27732</a> · <a href="https://arxiv.org/abs/2601.06007">2601.06007</a></li>
+    </ul>
+  </div>
+  <p class="src official">本节对应课件：<span class="source-anchor" data-source-section="s56"><a href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/inference.pdf#page=55">p55</a></span> · 影片：影片 1 <a href="https://youtu.be/vXb2QYOUzl4">vXb2QYOUzl4</a>（Flash Attention） · 影片 2 <a href="https://youtu.be/fDQaadKysSA">fDQaadKysSA</a>（KV Cache）</p>
 </section>
 
-<section class="card full">
-  <div class="head-full"><span class="kicker">小测（补充：题目由学习搭子出）</span><h2>用 6 个场景检查你懂不懂两种加速</h2></div>
-  <div class="stage"><div class="quiz" data-quiz='[
-   {"q":"Flash Attention 为什么能变快，同时结果几乎不变？","opts":["它跳过了一部分 token","它减少仓库和工作台之间的搬运，数学上算的是同一个结果","它用了更小的模型"],"a":1,"why":"误区：Flash Attention 是近似算法。它不改注意力。","back":3},
-   {"q":"读第 3 个 chunk 时发现比之前更大的值。Flash Attention 怎么处理已算好的分母 S？","opts":["从第 1 个 chunk 重新读","乘上 exp(旧最大值 − 新最大值) 修正","丢掉不管"],"a":1,"why":"不用回头看过去的数值。","back":4},
-   {"q":"你用 Gemma 2 在一张 A100 上跑 30 万 token 的输入，出现 out of memory。最可能的原因？","opts":["工作台太小","KV Cache 吃光仓库：约 114k token 就满","Flash Attention 没开"],"a":1,"why":"每 token 约 0.72 MB。","back":9},
-   {"q":"你在系统提示词最前面放了「现在时间：10:37:05」。按本讲，这会怎样？","opts":["没影响","每次前缀都不同，跨对话的 cache 几乎打不中","模型更准时"],"a":1,"why":"变动的内容要放最后。","back":11},
-   {"q":"想省 KV Cache 又不想重新训练模型，下面哪个最符合课件总表？","opts":["改用 GQA","Streaming LLM：拿现成模型多看最前面几个 token","MLA"],"a":1,"why":"讲者：现成模型只要求它多看最前面的 token，表现就变好；GQA、MLA 要训练。","back":10},
-   {"q":"输入只有 20 个 token，开了 Flash Attention 却没明显变快。为什么？","opts":["Flash Attention 坏了","序列太短，时间主要花在注意力以外的计算","GPU 没暖机"],"a":1,"why":"讲者现场观察。","back":6}
-  ]'></div></div>
+<section class="sec" id="s12" data-toc="小测：6 道题" data-source-section="extra">
+  <header class="doc-head"><span class="kicker">小测（补充：题目由学习搭子出）</span><h2>用 6 个场景检查你懂不懂两种加速</h2></header>
+  <div class="doc-body"><div class="quiz"><script type="application/json">[{"q": "Flash Attention 为什么能变快，同时结果几乎不变？", "opts": ["减少仓库和工作台之间的搬运，算的是同一个结果", "跳过一部分 token，只算比较重要的那些位置", "换成一个参数更少、算得更快的小模型"], "a": 0, "why": "误区：Flash Attention 是近似算法。它不改注意力。", "back": 4}, {"q": "读第 3 个 chunk 时发现比之前更大的值。它怎么处理已算好的分母 S？", "opts": ["回到第 1 个 chunk，从头再读一遍", "丢掉不管，最后再统一修正一次", "乘上 exp(旧最大值 − 新最大值)"], "a": 2, "why": "不用回头看过去的数值。", "back": 4}, {"q": "你用 Gemma 2 在一张 A100 上跑 30 万 token 的输入，出现 out of memory。最可能的原因？", "opts": ["工作台太小，放不下这么多数值", "KV Cache 吃光仓库，约 114k token 就满", "没有打开少搬资料的那个加速设定"], "a": 1, "why": "每 token 约 0.72 MB。", "back": 8}, {"q": "你在系统提示词最前面放了「现在时间：10:37:05」。按本讲，这会怎样？", "opts": ["每次前缀都不同，cache 几乎打不中", "没有影响，cache 只看最后几个 token", "模型会更准时，回答也更可靠"], "a": 0, "why": "变动的内容要放最后。", "back": 10}, {"q": "想省 KV Cache 又不想重新训练模型，下面哪个最符合课件总表？", "opts": ["改用 GQA，让多个 query 分组共用", "改用 MLA，把 key 和 value 压缩", "Streaming LLM，多看最前面几个 token"], "a": 2, "why": "讲者：现成模型只要求它多看最前面的 token，表现就变好；GQA、MLA 要训练。", "back": 9}, {"q": "输入只有 20 个 token，开了 Flash Attention 却没明显变快。为什么？", "opts": ["序列太短，时间花在注意力以外", "这个加速功能坏掉了，需要重装", "GPU 还没暖机，第一次跑一定慢"], "a": 0, "why": "讲者现场观察。", "back": 6}]</script></div></div>
+  <div class="src extra">题目依据第 4、6、8、9、10 节（来源见各节）。</div>
 </section>
-</main>
-<nav class="bottom"><button class="btn" id="prev">上一张</button><button class="btn main" id="next">下一张</button></nav>
-<script>
-/* 学习搭子 固定组件库 — 不要在课程里改这个文件。 */
+</main><script>var __H=location.hash;window.lessonIcons={"menu": "<svg class=\"i i-menu\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/><\/svg>", "play": "<svg class=\"i i-play\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z\"/><\/svg>", "pause": "<svg class=\"i i-pause\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"14\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/><rect x=\"5\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/><\/svg>", "check": "<svg class=\"i i-check\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 6 9 17l-5-5\"/><\/svg>", "x": "<svg class=\"i i-x\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/><\/svg>", "zoom-in": "<svg class=\"i i-zoom-in\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><line x1=\"21\" x2=\"16.65\" y1=\"21\" y2=\"16.65\"/><line x1=\"11\" x2=\"11\" y1=\"8\" y2=\"14\"/><line x1=\"8\" x2=\"14\" y1=\"11\" y2=\"11\"/><\/svg>", "zoom-out": "<svg class=\"i i-zoom-out\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><line x1=\"21\" x2=\"16.65\" y1=\"21\" y2=\"16.65\"/><line x1=\"8\" x2=\"14\" y1=\"11\" y2=\"11\"/><\/svg>", "copy": "<svg class=\"i i-copy\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\"/><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"/><\/svg>", "chevron-right": "<svg class=\"i i-chevron-right\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m9 18 6-6-6-6\"/><\/svg>", "book-open": "<svg class=\"i i-book-open\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 5v16\"/><path d=\"M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z\"/><\/svg>", "external-link": "<svg class=\"i i-external-link\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M15 3h6v6\"/><path d=\"M10 14 21 3\"/><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/><\/svg>"};window.lessonIcon=n=>window.lessonIcons[n]||"";</script><script>/* Article/pair navigation only. No global swipe or arrow-key paging. */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const H=document.documentElement, sections=$$('main.deck > .sec, main.deck > .hero, .pair-notes > .sec');
+if(!sections.length)return;
+const ids=new Set($$('[id]').map(n=>n.id));
+sections.forEach((s,i)=>{if(!s.id){let n=i+1,id=s.classList.contains('hero')?'intro':'s'+n;while(ids.has(id))id='s'+(++n);s.id=id;ids.add(id)}});
+const title=s=>s.dataset.toc||$('h2,h1,h3',s)?.textContent||s.id;
+const toc=document.createElement('nav');toc.className='toc';toc.id='lesson-toc';toc.setAttribute('aria-label','目录');
+const heading=document.createElement('b');heading.textContent='目录';toc.appendChild(heading);const ol=document.createElement('ol');toc.appendChild(ol);
+sections.forEach((s,i)=>{const li=document.createElement('li'),a=document.createElement('a');a.href='#'+s.id;a.textContent=(i+1)+'. '+title(s);li.appendChild(a);ol.appendChild(li)});document.body.appendChild(toc);
+const links=$$('a',toc),toggle=$('.toc-toggle'),count=$('.count'),bar=$('.track i');
+const shade=document.createElement('div');shade.className='toc-backdrop';document.body.appendChild(shade);
+function open(value){H.classList.toggle('toc-open',value);toggle?.setAttribute('aria-expanded',String(value));if(value)links.find(a=>a.getAttribute('aria-current')==='true')?.focus();else toggle?.focus()}
+if(toggle){toggle.setAttribute('aria-controls',toc.id);toggle.onclick=()=>open(!H.classList.contains('toc-open'))}shade.onclick=()=>open(false);
+addEventListener('keydown',e=>{if(e.key==='Escape'&&H.classList.contains('toc-open'))open(false)});
+function locate(hash){let id;try{id=decodeURIComponent(hash.replace(/^#/,''))}catch(e){return null}if(/^\d+$/.test(id))return sections[+id-1];return document.getElementById(id)}
+function jump(target){if(!target)return;H.classList.remove('toc-open');toggle?.setAttribute('aria-expanded','false');target.scrollIntoView({block:'start',behavior:'instant'});history.replaceState(null,'','#'+target.id);update();dispatchEvent(new Event('lesson:navigate'))}
+window.lessonNav={layout:H.dataset.layout,go:n=>jump(document.getElementById('s'+n)||sections[n-1]),returnTo:box=>jump(box.closest('.sec')||box),jump};window.goCard=n=>window.lessonNav.go(n);
+toc.onclick=e=>{const a=e.target.closest('a');if(!a)return;e.preventDefault();jump(locate(a.hash))};
+const key='pos:'+location.pathname;let queued=false,restoring=true;
+function update(){queued=false;let current=sections[0];const line=H.dataset.layout==='pair'&&innerWidth<=820?innerHeight*.4+90:100;for(const s of sections)if(s.getBoundingClientRect().top<=line)current=s;
+ count.textContent=title(current);links.forEach(a=>a.setAttribute('aria-current',String(a.hash==='#'+current.id)));const max=H.scrollHeight-innerHeight;bar.style.width=Math.max(0,Math.min(100,max>0?scrollY/max*100:100))+'%';
+ if(!restoring)try{localStorage.setItem(key,JSON.stringify({id:current.id,offset:scrollY-(current.getBoundingClientRect().top+scrollY)}))}catch(e){}
+}
+addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(update)}},{passive:true});addEventListener('resize',update);addEventListener('hashchange',()=>jump(locate(location.hash)));
+addEventListener('load',()=>{const hash=window.__H||location.hash;let target=locate(hash),offset=0;if(!hash){try{const pos=JSON.parse(localStorage.getItem(key)||'null');if(pos){target=document.getElementById(pos.id);offset=Number(pos.offset)||0}}catch(e){}}
+ if(target){target.scrollIntoView({block:'start',behavior:'instant'});if(!hash)scrollBy(0,offset+72)}restoring=false;update();
+});update();
+})();
+</script><script>/* Reveal an offscreen simulator first, then move only its local SVG viewport. */
+(function(root){
+function delta(start,end,low,high,pad=16){if(start<low+pad)return start-low-pad;if(end>high-pad)return end-high+pad;return 0}
+function focus(svg,scroller){
+ let frame=scroller.getBoundingClientRect(),bottom=innerHeight-88;
+ const top=document.querySelector('.top')?.getBoundingClientRect().bottom||56;
+ if(frame.bottom<=top||frame.top+112>bottom){
+  scroller.closest('.sim').scrollIntoView({block:'start',behavior:'instant'});
+  frame=scroller.getBoundingClientRect();
+ }
+ for(let p=scroller.parentElement;p&&p!==document.body;p=p.parentElement){const c=getComputedStyle(p);if(/auto|scroll|hidden|clip/.test(c.overflowY)){const r=p.getBoundingClientRect();bottom=Math.min(bottom,r.top+p.clientHeight)}}
+ const space=Math.max(112,Math.min(innerHeight*.4,bottom-frame.top));scroller.style.maxHeight=space+'px';
+ frame=scroller.getBoundingClientRect();const node=svg.querySelector('.fl-node.act');if(!node)return;const r=node.getBoundingClientRect();
+ scroller.scrollTop+=delta(r.top,r.bottom,frame.top,frame.top+scroller.clientHeight);
+ scroller.scrollLeft+=delta(r.left,r.right,frame.left,frame.left+scroller.clientWidth);
+}
+root.LessonGeometry={delta,focus};if(typeof module!=='undefined')module.exports={delta,focus};
+})(typeof window==='undefined'?globalThis:window);
+</script><script>/* Shared material/explanation pairing, original-image dialog and copy actions. */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)],ic=window.lessonIcon;
+window.lessonCopy=async(text,button)=>{try{if(navigator.clipboard?.writeText)await navigator.clipboard.writeText(text);else{const t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();if(!document.execCommand('copy'))throw Error('copy');t.remove()}button.textContent='已复制'}catch(e){button.textContent='复制未成功，请选中文字复制'}};
+$$('.pair.codewalk,.pair.read-pair,.pair.material-pair').forEach(pair=>{
+ const source=$('.pair-source',pair),notes=$('.pair-notes',pair);if(!source||!notes)return;
+ const pre=$('pre[data-lines]',source),code=pre&&$('code',pre),steps=$$('.step',notes);let lines=[],raw='';
+ if(code){raw=code.textContent;const first=Number(pre.dataset.lines)||1;code.textContent='';const pieces=raw.replace(/\n$/,'').split('\n');pieces.forEach((text,i)=>{const line=document.createElement('span');line.className='code-line';line.dataset.line=String(first+i);line.textContent=text;code.appendChild(line);lines.push(line)});
+  const panel=document.createElement('div');panel.className='code-panel';source.before(panel);
+  const toolbar=document.createElement('div');toolbar.className='code-toolbar';
+  const hint=document.createElement('span');hint.className='code-scroll-hint';hint.textContent='长行可横向滚动';
+  const button=document.createElement('button');button.className='btn sm copy-code';button.innerHTML=ic('copy')+' 复制代码';button.onclick=()=>window.lessonCopy(raw,button);
+  toolbar.append(hint,button);panel.append(toolbar,source);
+ }
+ let active=null;
+ function select(step){if(!step||active===step)return;active=step;steps.forEach(s=>s.classList.toggle('is-active',s===step));let targets=[];
+  if(code){const ranges=(step.dataset.hl||'').split(',').map(v=>v.split('-').map(Number));lines.forEach(line=>{const n=Number(line.dataset.line),on=ranges.some(([a,b=a])=>n>=a&&n<=b);line.classList.toggle('hl',on);if(on)targets.push(line)})}
+  else{const ids=(step.dataset.explains||step.dataset.target||'').split(/\s+/);$$('.source-block,[data-material]',source).forEach(block=>{const on=ids.includes(block.dataset.sourceId||block.id);block.classList.toggle('is-active',on);if(on)targets.push(block)})}
+  if(targets.length){const a=targets[0].getBoundingClientRect(),b=targets[targets.length-1].getBoundingClientRect(),r=source.getBoundingClientRect();const bottom=r.top+source.clientHeight;source.scrollTop+=b.bottom-a.top>source.clientHeight-32?a.top-r.top-16:window.LessonGeometry.delta(a.top,b.bottom,r.top,bottom)}
+ }
+ const update=()=>{
+  const rect=notes.getBoundingClientRect(),material=source.closest('.code-panel')||source;
+  const top=Math.max(0,$(".top")?.getBoundingClientRect().bottom||0,innerWidth<=820?material.getBoundingClientRect().bottom:0),bottom=Math.min(innerHeight,rect.bottom);
+  if(bottom<=top)return;
+  const line=top+(bottom-top)*.4;let step=steps[0];
+  for(const s of steps)if(s.getBoundingClientRect().top<=line)step=s;
+  const last=steps.at(-1),lastRect=last?.getBoundingClientRect();
+  if(scrollY+innerHeight>=document.documentElement.scrollHeight-2&&lastRect?.top<bottom&&lastRect.bottom>top)step=last;
+  select(step);
+ };
+ let queued=false;addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(()=>{queued=false;update()})}},{passive:true});addEventListener('resize',update);
+ steps.forEach(step=>{step.addEventListener('focusin',()=>select(step));step.addEventListener('click',e=>{select(step);const a=e.target.closest('a');if(a?.hash&&source.querySelector(a.hash)){e.preventDefault();source.focus()}})});select(steps[0]);addEventListener('load',update);
+});
+$$('figure img').forEach(img=>{const button=document.createElement('button');button.className='image-open';button.type='button';button.setAttribute('aria-label','放大图片：'+img.alt);img.replaceWith(button);button.appendChild(img);button.onclick=()=>{
+ const dialog=document.createElement('dialog');dialog.className='image-dialog';dialog.setAttribute('aria-label',img.alt);const close=document.createElement('button');close.className='btn dialog-close';close.innerHTML=ic('x')+' 关闭';const large=img.cloneNode();large.removeAttribute('loading');dialog.append(close,large);document.body.appendChild(dialog);close.onclick=()=>dialog.close();dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close()});dialog.addEventListener('close',()=>{dialog.remove();button.focus()});dialog.showModal();close.focus();
+}});
+$$('details.more summary').forEach(s=>{if(!s.textContent.trim())s.textContent='展开细节';s.insertAdjacentHTML('afterbegin',ic('chevron-right'))});
+})();
+</script><script>/* 学习搭子 固定组件库 — 不要在课程里改这个文件。 */
 (()=>{
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const NS='http://www.w3.org/2000/svg';
+const data=(box,kind)=>JSON.parse(box.querySelector('script[type="application/json"]')?.textContent||box.dataset[kind]);
+const ic=window.lessonIcon;
 const el=(t,a={},p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p&&p.appendChild(e);return e};
 const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 
-/* ---------- 卡片翻页 ---------- */
-const cards=$$('.card');let cur=0;
-function go(i){i=Math.max(0,Math.min(cards.length-1,i));cards[cur].classList.remove('on');cur=i;cards[cur].classList.add('on');
-  $('.track i').style.width=((cur+1)/cards.length*100)+'%';$('.count').textContent=(cur+1)+' / '+cards.length;
-  $('#prev').disabled=cur===0;$('#next').disabled=cur===cards.length-1;history.replaceState(null,'','#'+(cur+1));}
-window.goCard=n=>go(n-1);
-$('#prev').onclick=()=>go(cur-1);$('#next').onclick=()=>go(cur+1);
-addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.key==='ArrowRight')go(cur+1);if(e.key==='ArrowLeft')go(cur-1)});
-let sx=null;addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
-addEventListener('touchend',e=>{if(sx===null)return;const d=e.changedTouches[0].clientX-sx;if(Math.abs(d)>60)go(cur+(d<0?1:-1));sx=null});
+function component(selector,render){
+  $$(selector).forEach(box=>{try{render(box)}catch(error){
+    const message=document.createElement('p');message.className='component-error';
+    message.textContent='这张图的数据有误';message.setAttribute('role','status');
+    box.replaceWith(message);console.error('组件数据有误',error);
+  }});
+}
 
 /* ---------- flow：用 JSON 画流程图 ----------
  spec = {w,h,nodes:[{id,x,y,t,s?,c?,w?}],edges:[{f,t,l?,bend?}]}  节点坐标是中心点 */
 function drawFlow(svg,spec){
   svg.innerHTML='';
   const defs=el('defs',{},svg);
-  [['a','#AEB8C6'],['b','#2550D9'],['red','#C8372D'],['amber','#C77A00'],['green','#16875A']].forEach(([id,c])=>{const m=el('marker',{id:'ar'+id+svg.dataset.uid,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:7,markerHeight:7,orient:'auto-start-reverse'},defs);el('path',{d:'M0,0L10,5L0,10z',fill:c},m)});
-  const N={};spec.nodes.forEach(n=>N[n.id]={...n,w:n.w||150,h:n.s?70:56});
+  [['a','var(--meta)'],['b','var(--blue)'],['red','var(--amber)'],['amber','var(--amber)'],['green','var(--green)']].forEach(([id,c])=>{const m=el('marker',{id:'ar'+id+svg.dataset.uid,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:7,markerHeight:7,orient:'auto-start-reverse'},defs);el('path',{d:'M0,0L10,5L0,10z',fill:c},m)});
+  const N={};spec.nodes.forEach(n=>N[n.id]={...n,w:n.w||150,h:n.h||(n.s?70:56)});
   const ns=Object.values(N);
   let x0=Math.min(...ns.map(n=>n.x-n.w/2)),x1=Math.max(...ns.map(n=>n.x+n.w/2)),y0=Math.min(...ns.map(n=>n.y-n.h/2)),y1=Math.max(...ns.map(n=>n.y+n.h/2));
   const B={x0,x1,y0,y1};
@@ -377,7 +428,7 @@ function drawFlow(svg,spec){
       const cx=mx-(q2-q1)/len*bd,cy=my+(p2-p1)/len*bd;d=`M${p1},${q1} Q${cx},${cy} ${p2},${q2}`;
       const qx=.25*p1+.5*cx+.25*p2,qy=.25*q1+.5*cy+.25*q2,sg=bd>=0?1:-1;lx=qx-(q2-q1)/len*sg*14;ly=qy+(p2-p1)/len*sg*14+4;}
     const mk=e.c||'a';const p=el('path',{d,class:'fl-edge '+(e.c||''),'marker-end':`url(#ar${mk}${svg.dataset.uid})`},eg);p._mk=mk;
-    let lab=null;if(e.l){const anc=e.route==='left'?'end':e.route==='right'?'start':'middle';lab=el('text',{x:lx,y:ly,'text-anchor':anc,class:'fl-elab '+(e.c||''),stroke:'#F2F4F7','stroke-width':5,'paint-order':'stroke'},eg);lab.textContent=e.l}
+    let lab=null;if(e.l){const anc=e.route==='left'?'end':e.route==='right'?'start':'middle';lab=el('text',{x:lx,y:ly,'text-anchor':anc,class:'fl-elab '+(e.c||''),stroke:'var(--paper)','stroke-width':5,'paint-order':'stroke'},eg);lab.textContent=e.l}
     svg._edges[e.f+'>'+e.t]={p,lab}});
   ns.forEach(n=>{const g=el('g',{class:'fl-node '+(n.c||'')},ng);
     el('rect',{x:n.x-n.w/2,y:n.y-n.h/2,width:n.w,height:n.h,rx:14},g);
@@ -385,61 +436,106 @@ function drawFlow(svg,spec){
     if(n.s){const s=el('text',{x:n.x,y:n.y+18,'text-anchor':'middle',class:'sub'},g);s.textContent=n.s}
     svg._nodes[n.id]=g});
   /* 自动贴合：viewBox 只包住内容，图会放大填满面板 */
-  const P=spec.pad??8;svg.setAttribute('viewBox',`${x0-P} ${y0-P-10} ${x1-x0+2*P} ${y1-y0+2*P+20}`);
+  const P=spec.pad??8,W=x1-x0+2*P,H=y1-y0+2*P+20;
+  svg.setAttribute('viewBox',`${x0-P} ${y0-P-10} ${W} ${H}`);
+  svg.style.setProperty('--flow-width',W+'px');svg.style.setProperty('--flow-height',H+'px');
+  const scroll=document.createElement('div');scroll.className='flow-scroll';
+  svg.replaceWith(scroll);scroll.appendChild(svg);
+  if(!scroll.closest('.sim')&&W>innerWidth-78){const t=document.createElement('p');t.className='flow-tip';t.textContent='← 左右滑动看全图 →';scroll.after(t)}
   svg._set=(act,edge)=>{for(const k in svg._nodes)svg._nodes[k].classList.toggle('act',k===act);
     for(const k in svg._edges){const on=k===edge,E=svg._edges[k];E.p.classList.toggle('act',on);E.p.setAttribute('marker-end',`url(#ar${on?'b':E.p._mk}${svg.dataset.uid})`);E.lab&&E.lab.classList.toggle('act',on)}};
   svg._set(svg.dataset.act,svg.dataset.edge);
+  svg._center=()=>{if(!matchMedia('(max-width:820px)').matches)return;
+    const active=Object.values(svg._nodes).find(n=>n.classList.contains('act'));if(!active)return;
+    const a=active.getBoundingClientRect(),r=scroll.getBoundingClientRect();
+    scroll.scrollLeft+=a.left+a.width/2-r.left-r.width/2;
+  };
 }
 let uid=0;
-$$('svg.flow').forEach(s=>{s.dataset.uid=++uid;drawFlow(s,JSON.parse(s.dataset.flow))});
+component('svg.flow',s=>{s.dataset.uid=++uid;drawFlow(s,data(s,'flow'))});
 
 /* ---------- sim：一步步走的模拟器 ----------
  data-sim = {flow:{...}, steps:[{act,edge,msg:{r:user|asst|tool|err|sys,n?,t},say}], alt?:{label,steps:[...]}} */
-$$('.sim').forEach(box=>{
-  const spec=JSON.parse(box.dataset.sim);if(spec.alt&&!spec.alts)spec.alts=[spec.alt];const AL=spec.alts||[];const gname='br'+(++uid);
-  box.innerHTML=`<div class="ctl"><button class="btn sm" data-a="step">下一步</button><button class="btn sm" data-a="play">▶ 自动</button><button class="btn sm" data-a="reset">重置</button>
+component('.sim',box=>{
+  const spec=data(box,'sim');if(spec.alt&&!spec.alts)spec.alts=[spec.alt];const AL=spec.alts||[];const gname='br'+(++uid);
+  box.innerHTML=`<div class="ctl"><button class="btn sm" data-a="step">下一步</button><button class="btn sm" data-a="play">${ic("play")} 自动</button><button class="btn sm" data-a="reset">重置</button>
    <label>速度 <input type="range" min="300" max="2500" step="100" value="1200"></label></div>${AL.length?`<div class="ctl branches"><label><input type="radio" name="${gname}" value="-1" checked> ${esc(spec.label||'正常路径')}</label>${AL.map((a,j)=>`<label><input type="radio" name="${gname}" value="${j}"> ${esc(a.label)}</label>`).join('')}</div>`:''}
    <div class="body"><svg class="flow"></svg><div class="log"></div></div><div class="narr"></div>`;
   if(spec.layout==='wide')box.classList.add('wide');
-  const svg=$('svg',box);svg.dataset.uid=++uid;drawFlow(svg,spec.flow);
+  const svg=$('.body > svg.flow',box);svg.dataset.uid=++uid;drawFlow(svg,spec.flow);
+  const fs=svg.parentElement,tip=document.createElement('p');tip.className='flow-tip';tip.textContent='点图放大看字，再点回到全图';fs.after(tip);
+  const focus=()=>{if(!fs.classList.contains('zoom'))return svg._center();window.LessonGeometry.focus(svg,fs)};
+  const zoom=document.createElement('button');zoom.className='btn sm zoom-toggle';zoom.innerHTML=ic('zoom-in')+' 放大图';zoom.setAttribute('aria-pressed','false');tip.replaceWith(zoom);const toggle=()=>{const on=fs.classList.toggle('zoom');zoom.innerHTML=ic(on?'zoom-out':'zoom-in')+(on?' 返回全图':' 放大图');zoom.setAttribute('aria-pressed',String(on));if(!on){fs.style.maxHeight='';fs.scrollTop=0}focus()};fs.onclick=toggle;zoom.onclick=toggle;window.addEventListener('resize',focus);window.addEventListener('load',()=>requestAnimationFrame(()=>{const params=new URLSearchParams(location.search);if((params.has('sim')||params.has('zoom'))&&!(window.__H??location.hash)&&box===$('.sim')){const section=box.closest('.sec,.card');if(window.lessonNav.layout==='deck')window.goCard($$('.card').indexOf(section)+1);else section.scrollIntoView({block:'start',behavior:'instant'})}focus()}));window.addEventListener('lesson:navigate',()=>requestAnimationFrame(focus));
   const log=$('.log',box),narr=$('.narr',box),radios=$$('input[type=radio]',box),spd=$('input[type=range]',box),play=$('[data-a=play]',box);
-  let i=0,timer=null;const sel=()=>{const r=radios.find(r=>r.checked);return r?+r.value:-1};const steps=()=>sel()>=0?AL[sel()].steps:spec.steps;
+  let i=0,timer=null,predicted=!spec.predict;const prediction=document.createElement('div');if(spec.predict){prediction.className='prediction callout';prediction.innerHTML='<p>先预测：'+esc(spec.predict)+'</p><label>你的判断<textarea rows="2"></textarea></label><button class="btn sm" data-a="predict">提交预测，再看过程</button>';box.prepend(prediction)};const sel=()=>{const r=radios.find(r=>r.checked);return r?+r.value:-1};const steps=()=>sel()>=0?AL[sel()].steps:spec.steps;
   const hint=spec.note?esc(spec.note)+'　点「下一步」开始。':'点「下一步」开始。';const reset=()=>{i=0;log.innerHTML='';narr.innerHTML=hint;svg._set(null,null);stop()};
-  const stop=()=>{clearTimeout(timer);timer=null;play.textContent='▶ 自动'};
+  const stop=()=>{clearTimeout(timer);timer=null;play.innerHTML=ic('play')+' 自动'};
   const step=()=>{const S=steps();if(i>=S.length){narr.textContent='流程结束。点「重置」再走一遍。';stop();return false}
-    const s=S[i++];svg._set(s.act,s.edge);if(s.msg){const d=document.createElement('div');d.className='msg '+s.msg.r;
+    const s=S[i++];svg._set(s.act,s.edge);focus();if(s.msg){const d=document.createElement('div');d.className='msg '+s.msg.r;
       d.innerHTML=`<b>${esc(s.msg.n||({user:'用户',asst:'模型',tool:'工具结果',err:'出错',sys:'系统提示词'}[s.msg.r]))}</b>${esc(s.msg.t)}`;log.appendChild(d);log.scrollTop=1e9}
     narr.innerHTML=`<b>第 ${i}/${S.length} 步</b>　${esc(s.say)}`;return true};
   const loop=()=>{if(step())timer=setTimeout(loop,+spd.value);else stop()};
-  box.onclick=e=>{const a=e.target.dataset.a;if(a==='step'){stop();step()}if(a==='reset')reset();if(a==='play'){if(timer)stop();else{play.textContent='❚❚ 暂停';loop()}}};
+  box.onclick=e=>{const a=e.target.closest('button')?.dataset.a;if(a==='predict'){predicted=true;prediction.hidden=true;step()}if(a==='step'){stop();if(predicted)step();else prediction.querySelector('textarea').focus()}if(a==='reset')reset();if(a==='play'){if(!predicted){prediction.querySelector('textarea').focus();return}if(timer)stop();else{play.innerHTML=ic('pause')+' 暂停';loop()}}};
   narr.innerHTML=hint;radios.forEach(r=>r.onchange=reset);
-  const P=new URLSearchParams(location.search);if(P.get('alt')&&radios[+P.get('alt')]){radios[+P.get('alt')].checked=true}for(let n=+P.get('sim')||0;n>0;n--)step(); /* 自查用：?sim=5&alt=1 */
+  const P=new URLSearchParams(location.search);if(P.get('alt')&&radios[+P.get('alt')]){radios[+P.get('alt')].checked=true}for(let n=+P.get('sim')||0;n>0;n--)step();if(P.get('sim')){predicted=true;prediction.hidden=true}if(P.get('zoom')){fs.classList.add('zoom');zoom.setAttribute('aria-pressed','true');zoom.innerHTML=ic('zoom-out')+' 返回全图'} /* 自查用：?sim=5&alt=1&zoom=1 */
 });
 
 /* ---------- bars：横向条形图 ----------
  data-bars = {unit, items:[{l,v,c?:blue|amber|green|red,note?}], caption?}  数字必须来自原文 */
-$$('.bars').forEach(box=>{const B=JSON.parse(box.dataset.bars),mx=Math.max(...B.items.filter(i=>i.v!=null).map(i=>i.v));
-  box.innerHTML=B.items.map(i=>`<div class="bar ${i.c||''}"><span class="bl">${esc(i.l)}</span>${i.v==null?`<span class="bmiss">${esc(i.miss||'原文未给数字')}</span>`:`<span class="bt"><i style="width:${(i.v/mx*100).toFixed(1)}%"></i></span><span class="bv">${esc(i.v)}${esc(B.unit||'')}</span>`}${i.note?`<span class="bn">${esc(i.note)}</span>`:''}</div>`).join('')+(B.caption?`<div class="bc">${esc(B.caption)}</div>`:'')});
+component('.bars',box=>{const B=data(box,'bars'),mx=Math.max(1,...B.items.filter(i=>i.v!=null).map(i=>i.v));
+  box.innerHTML=B.items.map(i=>`<div class="bar ${i.c||''}"><span class="bl">${esc(i.l)}</span>${i.v==null?`<span class="bmiss">${esc(i.miss||'原文未给数字')}</span>`:`<span class="bt"><i style="width:${(i.v/(B.axis==='independent'?Math.max(1,i.v):mx)*100).toFixed(1)}%"></i></span><span class="bv">${esc(i.v)}${esc(i.unit||B.unit||'')}</span>`}${i.note?`<span class="bn">${esc(i.note)}</span>`:''}</div>`).join('')+(B.caption?`<div class="bc">${esc(B.caption)}</div>`:'')});
 
 /* ---------- quiz：页内小测 ----------
  data-quiz = [{q,opts:[...],a:正确下标,why,back:答错时回到第几张卡片}] */
-$$('.quiz').forEach(box=>{
-  const Q=JSON.parse(box.dataset.quiz);let k=0,score=0;const done=new Set();
-  const render=()=>{const q=Q[k];box.innerHTML=`<div class="qn">第 ${k+1} / ${Q.length} 题　·　已答对 ${score}</div><div class="qt">${esc(q.q)}</div>
-    ${q.opts.map((o,j)=>`<button class="opt" data-j="${j}">${String.fromCharCode(65+j)}. ${esc(o)}</button>`).join('')}
-    <div class="fb"></div><div class="nav"><button class="btn sm" data-n="-1" ${k?'':'disabled'}>上一题</button><button class="btn sm main" data-n="1" ${k<Q.length-1?'':'disabled'}>下一题</button></div>`};
-  box.onclick=e=>{const t=e.target;if(t.dataset.n){k+=+t.dataset.n;render();return}
-    if(t.dataset.j===undefined||done.has(k))return;const q=Q[k],j=+t.dataset.j,fb=$('.fb',box);done.add(k);
-    $$('.opt',box)[q.a].classList.add('ok');
-    if(j===q.a){score++;fb.innerHTML='✓ 对。'+esc(q.why)}else{t.classList.add('no');fb.innerHTML='✗ 不对。'+esc(q.why)+(q.back?` <a onclick="goCard(${q.back})">回到第 ${q.back} 张再看看</a>`:'')}
-    $('.qn',box).textContent=`第 ${k+1} / ${Q.length} 题　·　已答对 ${score}`};
+component('.quiz,.checkpoint',box=>{
+  const checkpoint=box.classList.contains('checkpoint');box.classList.add('quiz');const raw=data(box,checkpoint?'checkpoint':'quiz'),Q=Array.isArray(raw)?raw:[raw],P=new URLSearchParams(checkpoint?'':location.search);
+  let k=Math.max(0,Math.min(Q.length-1,(parseInt(P.get('q'))||1)-1));
+  const answers=Q.map(()=>({first:null,selected:null,retries:0}));
+  const score=()=>answers.filter((s,i)=>s.first===Q[i].a).length;
+  const complete=()=>answers.every(s=>s.selected!==null);
+  const reviewButton=i=>{
+    const target=window.lessonNav.layout==='deck'?$$('.card')[Q[i].back-1]:document.getElementById('s'+Q[i].back);
+    const title=target.dataset.toc||$('h2,h1,h3',target)?.textContent||'相关内容';
+    return `<button class="btn sm" data-review="${i}">回看：${esc(title)}</button>`;
+  };
+  function summary(){
+    const wrong=answers.map((s,i)=>s.first!==Q[i].a?i:-1).filter(i=>i>=0);
+    const recovered=wrong.filter(i=>answers[i].selected===Q[i].a).length;
+    box.innerHTML=`<div class="qt">小测总结</div><p>首次得分：${score()} / ${Q.length}。重试答对：${recovered} 题。</p>
+      <div>${wrong.length?wrong.map(i=>`<p>第 ${i+1} 题：${esc(Q[i].q)} ${reviewButton(i)} <button class="btn sm" data-question="${i}">回到此题</button></p>`).join(''):'没有首次错题。'}</div>
+      <p>用自己的话复述这页的核心机制，再举一个新场景。</p><label>你的复述<textarea class="retelling" rows="3"></textarea></label><button class="btn sm" data-copy-result="1">${ic("copy")} 复制学习结果 JSON</button><button class="btn sm" data-question="0">查看作答</button>`;
+  }
+  function render(){const q=Q[k],s=answers[k];
+    box.innerHTML=`<div class="qn">第 ${k+1} / ${Q.length} 题 ${checkpoint?'· 不计分':'· 首次答对 '+score()}</div><div class="qt">${esc(q.q)}</div>
+      ${q.opts.map((o,j)=>`<button class="opt ${s.selected===null?'':j===s.selected?(j===q.a?'ok':'no'):''}" data-j="${j}" aria-pressed="${j===s.selected}">${String.fromCharCode(65+j)}. ${esc(o)}</button>`).join('')}
+      <div class="fb" aria-live="polite">${s.selected===null?'':s.selected===q.a?ic('check')+' 对。'+esc(q.why):ic('x')+' 不对。先回去看看，或再试一次。'}
+      ${s.selected!==null&&s.selected!==q.a?reviewButton(k)+' <button class="btn sm" data-retry="1">再试一次</button>':''}</div>
+      <div class="nav"><button class="btn sm" data-n="-1" ${k?'':'disabled'}>上一题</button>
+      <button class="btn sm main" data-n="1" ${s.selected===null?'disabled':''}>${checkpoint?'完成检查':k===Q.length-1?'查看总结':'下一题'}</button></div>`;
+  }
+  box.onclick=e=>{const t=e.target.closest('button');if(!t)return;
+    if(t.dataset.review!==undefined){const i=+t.dataset.review;window.lessonNav.go(Q[i].back);
+      let ret=$('#quiz-return');if(!ret){ret=document.createElement('button');ret.id='quiz-return';ret.className='btn sm';document.body.appendChild(ret)}
+      ret.textContent='回到小测';ret.onclick=()=>{window.lessonNav.returnTo(box);ret.remove()};return;
+    }
+    if(t.dataset.copyResult!==undefined){const result={path:location.pathname,firstScore:score(),total:Q.length,answers:answers.map((s,i)=>({question:i+1,first:s.first,selected:s.selected,retries:s.retries,wrong:s.first!==Q[i].a,review:'#s'+Q[i].back})),retelling:$('.retelling',box).value};window.lessonCopy(JSON.stringify(result,null,2),t);return}
+    if(t.dataset.question!==undefined){k=+t.dataset.question;render();return}
+    if(t.dataset.retry){answers[k].selected=null;answers[k].retries++;render();return}
+    if(t.dataset.n){if(checkpoint&&+t.dataset.n===1){box.querySelector('.nav').hidden=true;return}if(k===Q.length-1&&+t.dataset.n===1){if(complete())summary();else{k=answers.findIndex(s=>s.selected===null);render()}return}k+=+t.dataset.n;render();return}
+    if(t.dataset.j===undefined||answers[k].selected!==null)return;
+    const j=+t.dataset.j;answers[k].selected=j;if(answers[k].first===null)answers[k].first=j;render();const nv=$('.nav',box);nv&&nv.scrollIntoView&&nv.scrollIntoView({block:'nearest'});
+  };
   render();
-  const pk=new URLSearchParams(location.search).get('pick');if(pk!==null)$$('.opt',box)[+pk].click(); /* 自查用：?pick=0 */
+  const pk=P.get('pick'),pick=pk==='wrong'?Q[k].opts.findIndex((_,i)=>i!==Q[k].a):pk!==null&&/^\d+$/.test(pk)?+pk:-1;
+  if(pick>=0&&$$('.opt',box)[pick])$$('.opt',box)[pick].click();
+
 });
 
-go(Math.max(0,(parseInt(location.hash.slice(1))||1)-1));
 })();
-/* ---------- 学完了：点一下记为已学完（存在本机浏览器） ---------- */
+</script><script>/* End-of-build readiness marker, used by the screenshot harness. */
+document.querySelector('.theme-toggle').onclick=window.__tt;
+window.__lessonReady=true;
+</script><script>/* ---------- 学完了：点一下记为已学完（存在本机浏览器） ---------- */
 (function(){if(window.__finish)return;window.__finish=1;
 if(!document.querySelector('.deck'))return;
 const st=document.createElement('style');st.textContent=`.fin-btn{position:fixed;right:16px;bottom:76px;z-index:50;padding:10px 16px;border-radius:999px;border:0;background:#16a34a;color:#fff;font:600 15px system-ui;box-shadow:0 4px 14px rgba(0,0,0,.18);cursor:pointer}.fin-btn.done{background:#e5e7eb;color:#166534}`;document.head.appendChild(st);
