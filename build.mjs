@@ -460,7 +460,10 @@ ${nx ? `<a class="nx" href="${esc(nx.href)}"${ext(nx.href)}><b>${['已学完', '
   const TD_RD = RADAR ? (() => { const L = RADAR.entries.filter(e => e.added === RADAR.updated).sort((a, b) => b.id - a.id); const e = L[0];
     if (rdPick && e) return [{ d: RADAR.updated, href: rdPick.href, title: rdPick.title, sub: rdPick.sub, n: L.length }];
     return e ? [{ d: RADAR.updated, href: `radar/index.html#r${e.id}`, title: e.name, sub: e.what, n: L.length }] : []; })() : [];
-  const tdPayload = { dg: TD_DG, radar: TD_RD, ic: { dg: icDg, radar: icRd, brief: icBrief, poster: icPost, ph: icPh, rev: icRev } };
+  const colTitle = id => (columns.find(c => c.id === id) || {}).title || '';
+  const TD_CONT = items.filter(i => isPage(i) && stateOf(i) === '进行中').sort((a, b) => String(b.start || '').localeCompare(String(a.start || '')))
+    .slice(0, 1).map(i => ({ href: i.href, title: i.title, sub: [colTitle(i.column), i.label, i.start ? `${i.start.slice(5).replace('-', '/')} 开始` : '', lessonSecs(i) ? `${lessonSecs(i)} 节` : ''].filter(Boolean).join(' · ') }));
+  const tdPayload = { cont: TD_CONT, dg: TD_DG, radar: TD_RD, ic: { dg: icDg, radar: icRd, brief: icBrief, poster: icPost, ph: icPh, rev: icRev } };
   // 汇总那一行：Node 端先按北京时间渲染，浏览器端用同一个函数（toString 注入）按浏览者的北京时间重渲染
   function dgRow(x, fresh, on, CKH, E, IC) {
     var md = function (d) { return d.slice(5).replace('-', '/'); };
@@ -487,6 +490,7 @@ ${nx ? `<a class="nx" href="${esc(nx.href)}"${ext(nx.href)}><b>${['已学完', '
     g0 ? dgRow(g0, g0.fresh, false, CK, esc, tdPayload.ic) : ssrEmpty('每日汇总', icDg, '还没有汇总'),
     ...(RADAR ? [r0 ? ssrRow({ id: 'radar:' + r0.d, src: '雷达', ic: icRd, href: r0.href, title: r0.title, sub: r0.sub, meta: metaDate(r0.fresh, r0.d, '新增 ' + r0.n + ' 条').replace('最近一天', '最近一次') }) : ssrEmpty('雷达', icRd, '雷达还没有条目')] : []),
     ssrEmpty('复习', icRev, '今天没有到期的复习 ' + ic('party-popper', 15)),
+    ...TD_CONT.map(c => `<div class="row td-empty"><span class="td-src">${icRev}<span>继续学</span></span><span class="t"><a href="${esc(c.href)}">${esc(c.title)}</a><small>${esc(c.sub)}</small></span></div>`),
   ].join('');
   const latestStart = id => { const ds = items.filter(i => i.column === id && i.start).map(i => i.start).sort(); return ds.length ? ds[ds.length - 1] : null; };
   const colCount = id => items.filter(i => i.column === id).length;
@@ -502,7 +506,9 @@ ${nx ? `<a class="nx" href="${esc(nx.href)}"${ext(nx.href)}><b>${['已学完', '
   ];
   if (RADAR) newsList.push({ href: 'radar/index.html', ic: ic('radar', 20), t: '雷达', desc: '企业级 coding agent 工作台的开源参考，按工具链方向分组。', count: `${RADAR.entries.length} 条`, when: '每周一更新，平时随时补录' });
   const learnList = [];
-  const pushCol = c => learnList.push({ href: `${c.dir}/index.html`, ic: colIc(c, 20), t: c.title, desc: c.desc, count: `${colCount(c.id)} 条`, d: latestStart(c.id) });
+  const colProg = id => { const L = items.filter(i => i.column === id), done = L.filter(i => ['已学完', '已掌握'].includes(stateOf(i))).length, doing = L.filter(i => stateOf(i) === '进行中').length;
+    return { count: `已学完 ${done}/${L.length}`, when: doing ? `进行中 ${doing} 篇` : (L.length - done ? `还有 ${L.length - done} 篇未开始` : '全部学完') }; };
+  const pushCol = c => learnList.push({ href: `${c.dir}/index.html`, ic: colIc(c, 20), t: c.title, desc: c.desc, ...colProg(c.id), d: latestStart(c.id) });
   const courseCol = columns.find(c => c.id === 'courses');
   if (courseCol) pushCol(courseCol);
   learnList.push({ href: 'glossary.html', ic: ic('puzzle', 20), t: '概念卡', desc: '一个术语一张卡，跨栏目串起来。', count: `${concepts.length} 张`, d: gitDay('data/concepts.json') });
@@ -519,7 +525,7 @@ ${nx ? `<a class="nx" href="${esc(nx.href)}"${ext(nx.href)}><b>${['已学完', '
 <div class="sub">简报、海报、灵感每天刷新，看过即过</div>
 <div class="td-cols">${newsList.map(v2card).join('')}</div>
 <div class="kicker" id="k-learn">学习 <span class="n">${learnList.length}</span></div>
-<div class="sub">按进度走，按需查</div>
+<div class="sub">${(() => { const L = items.filter(i => columns.some(c => c.id === i.column)), done = L.filter(i => ['已学完', '已掌握'].includes(stateOf(i))).length, doing = L.filter(i => stateOf(i) === '进行中').length; return `按进度走：已学完 ${done} 篇，进行中 ${doing} 篇，共 ${L.length} 篇`; })()}</div>
 <div class="td-cols">${learnList.map(v2card).join('')}</div>
 </div>`;
   const body = layC;
@@ -585,7 +591,7 @@ function tdRows(){var rows=[],src=TD.dg&&TD.dg.length?TD.dg.slice().sort(functio
  if(g)rows.push({id:'digest:'+g.d,dg:g});else rows.push({src:'每日汇总',ic:TD.ic.dg,title:'还没有汇总'});
  if(TD.radar.length){if(rd)rows.push({id:'radar:'+rd.d,src:'雷达',ic:TD.ic.radar,href:rd.href,title:rd.title,sub:rd.sub||'',meta:tdMeta(rd.fresh,rd.d,'新增 '+rd.n+' 条').replace('最近一天','最近一次')});else rows.push({src:'雷达',ic:TD.ic.radar,title:'雷达还没有条目'})}
  var due=[].concat(G.over,G.today,G.seen);
- if(!due.length)rows.push({src:'复习',ic:TD.ic.rev,title:'今天没有到期的复习 '+__ic('party-popper',15),html:1});
+ if(!due.length){var nx=G.later[0],ni=nx&&R.items[nx.item];rows.push({src:'复习',ic:TD.ic.rev,title:'今天没有到期的复习 '+__ic('party-popper',15)+(ni?'<small>下一次 '+E(nx.date.slice(5).replace('-','/'))+'：'+E(ni.title)+'</small>':''),html:1});(TD.cont||[]).forEach(function(c){rows.push({src:'继续学',ic:TD.ic.rev,title:'<a href="'+E(c.href)+'">'+E(c.title)+'</a><small>'+E(c.sub)+'</small>',html:1})})}
  else due.forEach(function(r){var it=R.items[r.item];if(!it)return;var q=R.queue.find(function(x){return x.item===r.item}),lo=q&&q.start?q.start.slice(5).replace('-','/'):'';rows.push({id:'rev:'+r.item,src:'复习',ic:TD.ic.rev,href:it.href,title:it.title,sub:(it.col?it.col+' · ':'')+(it.label?it.label+' · ':'')+(lo?lo+' 学完，':'')+'第 '+r.day+' 天复习'+(r.n>1?' · 积压 '+r.n+' 次':''),meta:r.late>0?('逾期 '+r.late+' 天'):'今天到期',over:r.late>0,on:r.on?1:0})});
  return rows}
 var tdFirst=1;
