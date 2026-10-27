@@ -1106,11 +1106,23 @@ details.panel.about{margin-top:14px}details.panel.about>summary{font-weight:550;
 /* 产品灵感：更早的榜单收起；每天的说明收成一个小按钮 */
 details.panel.pi-old{margin-top:20px}details.panel.pi-old .pi-day{margin-top:14px}
 .pi-note{display:inline}.pi-note>summary{display:inline;cursor:pointer;color:var(--blue);list-style:none}.pi-note>summary::-webkit-details-marker{display:none}.pi-note[open]{display:block;margin-top:4px}
+/* 产品灵感：标题下「先看 3 个」 */
+.pi-picks{margin:10px 0 12px;padding:10px 12px;border:1px solid var(--hair);border-radius:var(--r-sm);background:var(--card)}
+.pi-picks .lb{font-size:13px;font-weight:600;color:var(--ink2);margin-bottom:4px}
+.pi-picks ol{margin:0;padding-left:22px}.pi-picks li{margin:6px 0;font-size:15px;line-height:1.6}
+.pi-picks li a{color:var(--ink);text-decoration:none}.pi-picks li a b{border-bottom:1px solid var(--blue)}
+.pi-picks .lim{display:block;font-size:14px;color:var(--ink);margin-top:2px}.pi-picks .lim .tag{margin-right:6px;font-size:12px}
+.pi-card:target{outline:2px solid var(--blue);outline-offset:2px}
+/* 雷达周报「结论先说」：每条拆成 解决什么 / 抄哪一处 / 还要确认 三行 */
+.quick li .ql{display:block;font-size:14.5px;line-height:1.6;margin-top:3px;color:var(--ink)}
+.quick li .ql b{display:inline-block;min-width:4.6em;margin-right:6px;color:var(--ink2);font-weight:600}
 .pgrid{display:grid;gap:18px}.pc{display:grid;grid-template-columns:300px 1fr;gap:20px;align-items:start}
 .pc img{width:100%;border-radius:12px;border:1px solid var(--hair);display:block}.pc h3{margin-top:0}
 .xi{font-size:14.5px}.xi .who{font-weight:700}.xi .h{color:var(--ink2)}.xi blockquote{margin:10px 0;padding:10px 14px;background:var(--paper);border-radius:10px;white-space:pre-wrap;font-size:14px}
 .thumbs{display:flex;gap:6px;overflow-x:auto}.ptoc{margin:4px 0 10px;gap:2px;grid-template-columns:1fr!important}.ptoc li{padding:5px 8px 5px 36px;line-height:1.5;font-size:15px;background:none!important;border:0!important;box-shadow:none!important}.ptoc li::before{top:6px;left:8px}.sa{margin:0 0 8px}.sa .xref{margin:0 6px 4px 0}.thumbs img{height:120px;border-radius:6px;border:1px solid var(--hair)}
-@media(max-width:700px){.pc{grid-template-columns:1fr}}</style><script>/*ICONS lucide v1.60.0 ISC*/window.__IC={"menu":"<path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/>","x":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","star":"<path d=\"M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z\"/>","party-popper":"<path d=\"M5.8 11.3 2 22l10.7-3.79\"/><path d=\"M4 3h.01\"/><path d=\"M22 8h.01\"/><path d=\"M15 2h.01\"/><path d=\"M22 20h.01\"/><path d=\"m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10\"/><path d=\"m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17\"/><path d=\"m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7\"/><path d=\"M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z\"/>"};window.__ic=function(n,s,c){return '<svg class="i i-'+n+(c?' '+c:'')+'" width="'+(s||16)+'" height="'+(s||16)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(window.__IC[n]||'')+'</svg>'};/*END ICONS*/
+@media(max-width:700px){.pc{grid-template-columns:1fr}}
+.pc2 h3{margin:4px 0 6px}.pc2 .tags{margin:0 0 6px;display:flex;gap:6px;flex-wrap:wrap}.pc2 .tag.amber{background:var(--amber-soft);color:var(--amber)}.pc2 .new{font-size:14.5px;color:var(--ink2);margin:0 0 6px}.pc2 .take{font-size:16px;font-weight:600;margin:8px 0}.pc2 .pts{margin:0 0 10px;padding-left:20px}.pc2 .pts li{margin:3px 0}.pc2 .q{font-size:14.5px;margin:0 0 10px;color:var(--ink)}.pc2 .q span{color:var(--ink2);margin-left:4px}
+.pc2 .thumb{display:block;max-width:420px}.pc2 .thumb{background:none;overflow:visible}.pc2 .thumb img{width:100%;height:auto;aspect-ratio:auto;object-fit:contain;border-radius:var(--r-sm);border:1px solid var(--hair);display:block}.pc2 .thumb span{display:block;font-size:13px;color:var(--blue);margin-top:4px}.pc2 .srcl{font-size:13.5px;color:var(--ink2);margin:8px 0 0}</style><script>/*ICONS lucide v1.60.0 ISC*/window.__IC={"menu":"<path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/>","x":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","star":"<path d=\"M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z\"/>","party-popper":"<path d=\"M5.8 11.3 2 22l10.7-3.79\"/><path d=\"M4 3h.01\"/><path d=\"M22 8h.01\"/><path d=\"M15 2h.01\"/><path d=\"M22 20h.01\"/><path d=\"m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10\"/><path d=\"m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17\"/><path d=\"m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7\"/><path d=\"M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z\"/>"};window.__ic=function(n,s,c){return '<svg class="i i-'+n+(c?' '+c:'')+'" width="'+(s||16)+'" height="'+(s||16)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(window.__IC[n]||'')+'</svg>'};/*END ICONS*/
 (function(){var T='site-theme',v;try{v=localStorage.getItem(T)}catch(e){}if(!/^[ABC]$/.test(v||''))v='C';document.documentElement.setAttribute('data-theme',v);
 window.__setTheme=function(t){var go=function(){__applyTheme(t)};if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.startViewTransition(go);else go()};window.__applyTheme=function(t){document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem(T,t)}catch(e){}[].forEach.call(document.querySelectorAll('.thsw button'),function(b){b.setAttribute('aria-pressed',b.dataset.t===t)})}})();
 (function(){var k='theme',s=localStorage.getItem(k);if(s?s==='dark':matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark');
@@ -1138,90 +1150,9 @@ document.addEventListener('DOMContentLoaded',go);addEventListener('hashchange',g
 document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href^="#"]');if(a&&a.getAttribute('href')===location.hash)setTimeout(go,0)})})();
 </script><script src="../../assets/favorites.js" defer></script></head><body>
 <header class="top"><div class="in"><a class="brand" href="../../index.html"><i><svg class="i i-book-open" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/></svg></i>王玮的学习库</a><nav><a href="../../index.html" class="">首页</a><a href="../../favorites/index.html" class="">收藏</a><a href="../../courses/index.html" class="s1">公开课</a><a href="../../x-posts/index.html" class="">X 好文</a><a href="../../research/index.html" class="">技术研究</a><a href="../../wechat/index.html" class="">微信公众号</a><a href="../../video/index.html" class="">视频</a><a href="../../glossary.html" class="">概念卡</a><a href="../../x-brief/index.html" class="s2">X 简报</a><a href="../../x-posters/index.html" class="on">X 海报</a><a href="../../ph-inspo/index.html" class="">产品灵感</a><a href="../../radar/index.html" class="">雷达</a><a href="../../dsh-plugins/index.html" class="">DSH 插件</a></nav><button class="dm" onclick="__tt()" aria-label="切换深色模式"><svg class="i i-sun-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2"/><path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715"/><path d="M16 12a4 4 0 0 0-4-4"/><path d="m19 5-1.256 1.256"/><path d="M20 12h2"/></svg></button></div></header>
-<main><div class="crumb"><a href="../../index.html">首页</a> / <a href="../index.html">X 海报</a> / 2026-10-25（周日）</div><section class="sheet"><span class="kk">DAILY · 2026-10-25（周日） · 北京时间</span><h1>5 张技术海报</h1><ol class="quick ptoc"><li><a href="#p1">多 Agent 协作：实测 YC 开源 Agent Relay，让 Claude Code 和 Codex 直接对话</a></li><li><a href="#p2">GitHub 日榜：反「AI 味」设计 Skill 集体上榜（impeccable / hallmark / cindy）</a></li><li><a href="#p3">SimRun：在 Mac 上把 iOS App 直接跑成普通窗口（含 IPA 运行与 Agent 脚本化）</a></li><li><a href="#p4">去 AI 味 3 步法：先查问题、保事实改写、再校准个人文风（22 个开源工具 + 审改指令）</a></li><li><a href="#p5">Matt Pocock 的 AI Coding Dictionary：用大白话讲清 Agent/Harness/上下文等 AI 编程术语</a></li></ol><p class="muted">点标题跳到那张海报；点海报看原图。发帖时间是北京时间。</p></section><div class="pgrid"><section class="sheet pc" id="p1"><a href="img/01-agent-relay-claude-code-codex.png" target="_blank"><img src="img/01-agent-relay-claude-code-codex.webp" alt="多 Agent 协作：实测 YC 开源 Agent Relay，让 Claude Code 和 Codex 直接对话" loading="lazy"></a>
-<div><span class="kk">#1 · X 原帖信息</span><h3>多 Agent 协作：实测 YC 开源 Agent Relay，让 Claude Code 和 Codex 直接对话</h3><div class="xi"><span class="who">龙海</span> <span class="h">@longhaiqwe123</span><br>发帖时间：2026-10-25 00:30 北京<br>原帖：<a href="https://x.com/longhaiqwe123/status/2114031712430948410" target="_blank" rel="noopener">https://x.com/longhaiqwe123/status/2114031712430948410</a><br>原文链接：<a href="https://agentrelay.com" target="_blank" rel="noopener">https://agentrelay.com</a><blockquote>我终于不用在两个终端之间当人肉复制粘贴机了！
-
-实测 YC 刚发布的开源神器 Agent Relay：我只发了一句话，Claude Code 写完代码直接呼叫 Codex 审查，俩 AI 自己在后台 battle 两轮，最终把产品完整交付。
-
-附手把手小白教程与施测过程👇
-
-[X Article] 多 Agent 协作终极解：实测 YC 开源新作 Agent Relay，让 Claude Code 和 Codex 直接对话
-
-这周，美国创业孵化器 Y Combinator 2026 年秋季营（YC Fall 2026）的创业公司 Agent Workforce 发布了开源项目 Agent Relay。公司的两位联合创始人分别是 CEO Will Washburn 和 CTO Khaliq Gant，其中 Khaliq Gant 毕业于康奈尔大学与哥伦比亚大学，此前曾任 YC W23 开源项目 Nango 的创始工程师和 YC W19 项目 Overview 的主程，之前一直做开发者工具。这个项目要解决一个具体问题：现在不少程序员写代码时会同时开几个 AI Agent（如 Claude Code、Codex、Cursor），但这些工具各自运行在独立的终端窗口里互不相通，人只能在中间把一边的输出手动复制粘贴给另一边。Agent Relay 的做法是在不替换现有工具的前提下，让不同 Ag…</blockquote></div><p class="muted"><a href="img/01-agent-relay-claude-code-codex.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p2"><a href="img/02-github-daily-anti-ai-slop-design-skills.png" target="_blank"><img src="img/02-github-daily-anti-ai-slop-design-skills.webp" alt="GitHub 日榜：反「AI 味」设计 Skill 集体上榜（impeccable / hallmark / cindy）" loading="lazy"></a>
-<div><span class="kk">#2 · X 原帖信息</span><h3>GitHub 日榜：反「AI 味」设计 Skill 集体上榜（impeccable / hallmark / cindy）</h3><div class="xi"><span class="who">GitTrend</span> <span class="h">@GitTrend0x</span><br>发帖时间：2026-10-25 08:30 北京<br>原帖：<a href="https://x.com/GitTrend0x/status/2114152481881989579" target="_blank" rel="noopener">https://x.com/GitTrend0x/status/2114152481881989579</a><br>原文链接：<a href="https://github.com/pbakaus/impeccable" target="_blank" rel="noopener">https://github.com/pbakaus/impeccable</a><blockquote>今天 GitHub 日榜：AI 审美觉醒日，设计 Skill 集体起义，专治&quot;一眼 AI 味&quot;！
-
-5 个星标暴增最狠的项目，专业拆解下！
-
-1. pbakaus/impeccable
-
-让 AI 编程助手更懂设计的设计语言。
-1 个 skill + 24 条命令 + 浏览器实时迭代 + 62 条确定性检测规则，专抓紫蓝渐变、卡片套卡片这些 AI 前端通病。
-
-🔗 直达：https://github.com/pbakaus/impeccable
-
-AI 写的页面终于不再千篇一律&quot;Inter 字体 + 紫色渐变&quot;了。619 星一天，总星冲破 8.6 万，审美革命正式打响！
-
-🟢
-
-2. makecindy/cindy
-
-开源、开箱即用的 AI Agent。
-把多种 harness、模型和工具整合进一个 Agent，在你自己的电脑上真刀真枪干活，桌面端、移动端全覆盖。
-
-🔗 直达：https://github.com/makecindy/cindy
-
-&quot;想到，就能做到&quot;，这口号够狂，Agent 已经从玩具变成打工人。477 星一天，个人 Agent 赛道又来猛将！
-
-🟢🟢
-
-3. Nutlope/hallmark
-
-拒绝 AI 味的设计 Skill，支持 Claude Code、Codex、Cursor、OpenCode。
-48 套主题随机发牌，在真实浏览器里逐条检查&quot;机器味&quot;痕迹，最…</blockquote></div><p class="muted"><a href="img/02-github-daily-anti-ai-slop-design-skills.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p3"><a href="img/03-simrun-ios-apps-on-mac.png" target="_blank"><img src="img/03-simrun-ios-apps-on-mac.webp" alt="SimRun：在 Mac 上把 iOS App 直接跑成普通窗口（含 IPA 运行与 Agent 脚本化）" loading="lazy"></a>
-<div><span class="kk">#3 · X 原帖信息</span><h3>SimRun：在 Mac 上把 iOS App 直接跑成普通窗口（含 IPA 运行与 Agent 脚本化）</h3><div class="xi"><span class="who">Cyandev</span> <span class="h">@unixzii</span><br>发帖时间：2026-10-23 13:58 北京<br>原帖：<a href="https://x.com/unixzii/status/2113510411396084153" target="_blank" rel="noopener">https://x.com/unixzii/status/2113510411396084153</a><br>原文链接：<a href="https://github.com/unixzii/SimRun" target="_blank" rel="noopener">https://github.com/unixzii/SimRun</a><blockquote>未曾设想的道路，一键运行任何 iOS app，IPA 下载、离线砸壳、导入 SimRun 一气呵成。可以随时随地研究各种 app 了。
-
-[作者回复] IPA 下载用的什么？—— @unixzii: ipatool
-[作者回复] 解密需要越狱设备上的密钥：the key itself cannot be decrypted without a jailbroken device.
-
-[unixzii/SimRun README; repo created 2026-10-10]
-# SimRun
-
-SimRun runs iPhone apps on your Mac, each in its own ordinary Mac window.
-
-It takes the app you already build for the iOS Simulator in Xcode, unchanged, and starts it directly. There is no simulated iPhone to boot, no home screen, no device frame: just your app, in a
-window, controlled with your mouse, trackpad and keyboard.
-
-&gt; SimRun is an exper…</blockquote></div><p class="muted"><a href="img/03-simrun-ios-apps-on-mac.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p4"><a href="img/04-de-ai-writing-3-steps.png" target="_blank"><img src="img/04-de-ai-writing-3-steps.webp" alt="去 AI 味 3 步法：先查问题、保事实改写、再校准个人文风（22 个开源工具 + 审改指令）" loading="lazy"></a>
-<div><span class="kk">#4 · X 原帖信息</span><h3>去 AI 味 3 步法：先查问题、保事实改写、再校准个人文风（22 个开源工具 + 审改指令）</h3><div class="xi"><span class="who">Haosen</span> <span class="h">@Haosen9527</span><br>发帖时间：2026-10-24 20:15 北京<br>原帖：<a href="https://x.com/Haosen9527/status/2113967668546187326" target="_blank" rel="noopener">https://x.com/Haosen9527/status/2113967668546187326</a><br>原文链接：<a href="https://x.com/i/article/2113967110384947200" target="_blank" rel="noopener">https://x.com/i/article/2113967110384947200</a><blockquote>AI 稿子读起来很顺，为什么还是像套模板？
-
-把清单里的工具按自查、改写和文风校准分开，附具体项目地址与一段可复制的审改指令。先找出问题，再保住事实改表达，别只盯着检测分数。
-
-[X Article] AI 写得快，却总有机器腔？去 AI 味，按这 3 步来
-
-文章写得很顺，读完却记不住一句具体的话。开头先讲宏大背景，段段都在强调意义，结尾还要替读者总结一次。
-遇到这种稿子，可以先查问题、再改表达，最后校准文风。把这几件事分开，挑工具会容易很多。
-这份清单去重后有 22 个名称，混合了改稿 Skill、检测研究项目和内容系统。下面按用途整理，链接指向能核对的具体实现；同名项目仍要看作者，顺序也不代表效果排名。
-第一步，先查清哪里不好读
-普通写作者可以先从编辑规则入手。
-humanizer（https://github.com/blader/humanizer）整理常见 AI 写作模式，适合检查夸大表达、模糊归因和机械句式。
-Humanizer-zh（https://github.com/op7418/Humanizer-zh）提供中文版本的编辑思路，适合审阅已有中文稿。
-stop-slop（https://github.com/hardikpandya/stop-slop）可以当作删套话、减冗余的规则清单。stop-slop-zh（https://github.com/wdkang…</blockquote></div><p class="muted"><a href="img/04-de-ai-writing-3-steps.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p5"><a href="img/05-ai-coding-dictionary-matt-pocock.png" target="_blank"><img src="img/05-ai-coding-dictionary-matt-pocock.webp" alt="Matt Pocock 的 AI Coding Dictionary：用大白话讲清 Agent/Harness/上下文等 AI 编程术语" loading="lazy"></a>
-<div><span class="kk">#5 · X 原帖信息</span><h3>Matt Pocock 的 AI Coding Dictionary：用大白话讲清 Agent/Harness/上下文等 AI 编程术语</h3><p class="sa"><a class="xref" href="../../x-brief/2026-10-24.html#s2">另见：X 简报</a></p><div class="xi"><span class="who">Viking</span> <span class="h">@vikingmute</span><br>发帖时间：2026-10-24 20:08 北京<br>原帖：<a href="https://x.com/vikingmute/status/2113965773534400682" target="_blank" rel="noopener">https://x.com/vikingmute/status/2113965773534400682</a><br>原文链接：<a href="https://www.aicodingdictionary.com/" target="_blank" rel="noopener">https://www.aicodingdictionary.com/</a><blockquote>推荐 Matt Pocock 做的的一个网站，AI Coding Dictionary 
-
-https://www.aicodingdictionary.com/
-
-用大白话解释 AI coding 术语的词典 并且做成了可交互的关系图 
-AI coding 领域现在术语爆炸 很多词被用得模糊 好多营销话术 这个站点把核心概念拆成短小和非常准确的解释 而且这些词还是非常新的 里面好多词我都没有听说过
-
-比如我视频中搜索的 software factory / dark factory / 以及 AFK （away from keyboard） 都非常长知识
-
-[aicodingdictionary.com — site text; repo mattpocock/dictionary-of-ai-coding created 2026-05-01; latest additions 2026-09-24: Software factory / Dark factory]
-The AI Coding Dictionary
-Skip to main content
-The
-AI
-Coding
-Dictionary
-The AI Coding Dictionary
-The vocabulary of AI coding, in plain English. Source:
-aihero.…</blockquote></div><p class="muted"><a href="img/05-ai-coding-dictionary-matt-pocock.png" target="_blank">查看原图 PNG →</a></p></div></section></div><div class="pn"><a href="../2026-10-26/index.html">← 2026-10-26</a><a href="../index.html">往期目录</a><a href="../2026-10-24/index.html">2026-10-24 →</a></div><div class="foot">王玮的 X 海报日报 · 每天从 X 推荐流挑技术帖，用 ChatGPT 生成康奈尔笔记海报 · 每张都附 X 原帖信息 · 风格改编自 <a href="https://github.com/vuejs/vitepress">VitePress</a>（MIT）</div></main></body></html>
+<main><div class="crumb"><a href="../../index.html">首页</a> / <a href="../index.html">X 海报</a> / 2026-10-25（周日）</div><section class="sheet"><span class="kk">DAILY · 2026-10-25（周日） · 北京时间</span><h1>5 张技术海报</h1><ol class="quick ptoc"><li><a href="#p1">Agent Relay：让 Claude Code 和 Codex 直接对话的多 Agent 协作通道（老项目 + 这次新在哪：新发布 Relay Connect 临时房间）</a></li><li><a href="#p2">反「AI 味」设计 Skill：impeccable 4.7 与 hallmark 的确定性检测规则（老项目 + 这次新在哪：impeccable Skill 4.7 新增桌面应用审查与排版检测）</a></li><li><a href="#p3">SimRun：在 Mac 上把 iOS App 直接跑成普通窗口，并可让 Agent 脚本化操作</a></li><li><a href="#p4">去 AI 味 3 步法：先查问题、保住事实改写、再校准个人文风</a></li><li><a href="#p5">AI Coding Dictionary：用大白话讲清 Harness、上下文、工具调用等 AI 编程术语（老项目 + 这次新在哪：新增 Software factory / Dark factory 词条）</a></li></ol><p class="muted">点标题跳到那张海报；点海报看原图。发帖时间是北京时间。</p></section><div class="pgrid"><section class="sheet pc" id="p1"><a href="img/01-agent-relay-claude-code-codex.png" target="_blank"><img src="img/01-agent-relay-claude-code-codex.webp" alt="Agent Relay：让 Claude Code 和 Codex 直接对话的多 Agent 协作通道（老项目 + 这次新在哪：新发布 Relay Connect 临时房间）" loading="lazy"></a>
+<div><span class="kk">#1 · X 原帖信息</span><h3>Agent Relay：让 Claude Code 和 Codex 直接对话的多 Agent 协作通道（老项目 + 这次新在哪：新发布 Relay Connect 临时房间）</h3><p class="tip">老项目 + 这次新在哪：见海报</p><div class="xi"><span class="who">龙海</span> <span class="h">@longhaiqwe123</span><br>发帖时间：2026-10-25 00:30 北京<br>原帖：<a href="https://x.com/longhaiqwe123/status/2114031712430948410" target="_blank" rel="noopener">https://x.com/longhaiqwe123/status/2114031712430948410</a><br>原文链接：<a href="https://agentrelay.com" target="_blank" rel="noopener">https://agentrelay.com</a></div><p class="muted"><a href="img/01-agent-relay-claude-code-codex.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p2"><a href="img/02-github-daily-anti-ai-slop-design-skills.png" target="_blank"><img src="img/02-github-daily-anti-ai-slop-design-skills.webp" alt="反「AI 味」设计 Skill：impeccable 4.7 与 hallmark 的确定性检测规则（老项目 + 这次新在哪：impeccable Skill 4.7 新增桌面应用审查与排版检测）" loading="lazy"></a>
+<div><span class="kk">#2 · X 原帖信息</span><h3>反「AI 味」设计 Skill：impeccable 4.7 与 hallmark 的确定性检测规则（老项目 + 这次新在哪：impeccable Skill 4.7 新增桌面应用审查与排版检测）</h3><p class="tip">老项目 + 这次新在哪：见海报</p><div class="xi"><span class="who">GitTrend</span> <span class="h">@GitTrend0x</span><br>发帖时间：2026-10-25 08:30 北京<br>原帖：<a href="https://x.com/GitTrend0x/status/2114152481881989579" target="_blank" rel="noopener">https://x.com/GitTrend0x/status/2114152481881989579</a><br>原文链接：<a href="https://github.com/pbakaus/impeccable" target="_blank" rel="noopener">https://github.com/pbakaus/impeccable</a></div><p class="muted"><a href="img/02-github-daily-anti-ai-slop-design-skills.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p3"><a href="img/03-simrun-ios-apps-on-mac.png" target="_blank"><img src="img/03-simrun-ios-apps-on-mac.webp" alt="SimRun：在 Mac 上把 iOS App 直接跑成普通窗口，并可让 Agent 脚本化操作" loading="lazy"></a>
+<div><span class="kk">#3 · X 原帖信息</span><h3>SimRun：在 Mac 上把 iOS App 直接跑成普通窗口，并可让 Agent 脚本化操作</h3><div class="xi"><span class="who">Cyandev</span> <span class="h">@unixzii</span><br>发帖时间：2026-10-23 13:58 北京<br>原帖：<a href="https://x.com/unixzii/status/2113510411396084153" target="_blank" rel="noopener">https://x.com/unixzii/status/2113510411396084153</a><br>原文链接：<a href="https://github.com/unixzii/SimRun" target="_blank" rel="noopener">https://github.com/unixzii/SimRun</a></div><p class="muted"><a href="img/03-simrun-ios-apps-on-mac.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p4"><a href="img/04-de-ai-writing-3-steps.png" target="_blank"><img src="img/04-de-ai-writing-3-steps.webp" alt="去 AI 味 3 步法：先查问题、保住事实改写、再校准个人文风" loading="lazy"></a>
+<div><span class="kk">#4 · X 原帖信息</span><h3>去 AI 味 3 步法：先查问题、保住事实改写、再校准个人文风</h3><div class="xi"><span class="who">Haosen</span> <span class="h">@Haosen9527</span><br>发帖时间：2026-10-24 20:15 北京<br>原帖：<a href="https://x.com/Haosen9527/status/2113967668546187326" target="_blank" rel="noopener">https://x.com/Haosen9527/status/2113967668546187326</a><br>原文链接：<a href="https://x.com/i/article/2113967110384947200" target="_blank" rel="noopener">https://x.com/i/article/2113967110384947200</a></div><p class="muted"><a href="img/04-de-ai-writing-3-steps.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p5"><a href="img/05-ai-coding-dictionary-matt-pocock.png" target="_blank"><img src="img/05-ai-coding-dictionary-matt-pocock.webp" alt="AI Coding Dictionary：用大白话讲清 Harness、上下文、工具调用等 AI 编程术语（老项目 + 这次新在哪：新增 Software factory / Dark factory 词条）" loading="lazy"></a>
+<div><span class="kk">#5 · X 原帖信息</span><h3>AI Coding Dictionary：用大白话讲清 Harness、上下文、工具调用等 AI 编程术语（老项目 + 这次新在哪：新增 Software factory / Dark factory 词条）</h3><p class="sa"><a class="xref" href="../../x-brief/2026-10-24.html#s2">另见：X 简报</a></p><p class="tip">老项目 + 这次新在哪：见海报</p><div class="xi"><span class="who">Viking</span> <span class="h">@vikingmute</span><br>发帖时间：2026-10-24 20:08 北京<br>原帖：<a href="https://x.com/vikingmute/status/2113965773534400682" target="_blank" rel="noopener">https://x.com/vikingmute/status/2113965773534400682</a><br>原文链接：<a href="https://www.aicodingdictionary.com/" target="_blank" rel="noopener">https://www.aicodingdictionary.com/</a></div><p class="muted"><a href="img/05-ai-coding-dictionary-matt-pocock.png" target="_blank">查看原图 PNG →</a></p></div></section></div><div class="pn"><a href="../2026-10-26/index.html">← 2026-10-26</a><a href="../index.html">往期目录</a><a href="../2026-10-24/index.html">2026-10-24 →</a></div><div class="foot">王玮的 X 海报日报 · 每天从 X 推荐流挑技术帖，用 ChatGPT 生成康奈尔笔记海报 · 每张都附 X 原帖信息 · 风格改编自 <a href="https://github.com/vuejs/vitepress">VitePress</a>（MIT）</div></main></body></html>

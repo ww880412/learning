@@ -1106,11 +1106,23 @@ details.panel.about{margin-top:14px}details.panel.about>summary{font-weight:550;
 /* 产品灵感：更早的榜单收起；每天的说明收成一个小按钮 */
 details.panel.pi-old{margin-top:20px}details.panel.pi-old .pi-day{margin-top:14px}
 .pi-note{display:inline}.pi-note>summary{display:inline;cursor:pointer;color:var(--blue);list-style:none}.pi-note>summary::-webkit-details-marker{display:none}.pi-note[open]{display:block;margin-top:4px}
+/* 产品灵感：标题下「先看 3 个」 */
+.pi-picks{margin:10px 0 12px;padding:10px 12px;border:1px solid var(--hair);border-radius:var(--r-sm);background:var(--card)}
+.pi-picks .lb{font-size:13px;font-weight:600;color:var(--ink2);margin-bottom:4px}
+.pi-picks ol{margin:0;padding-left:22px}.pi-picks li{margin:6px 0;font-size:15px;line-height:1.6}
+.pi-picks li a{color:var(--ink);text-decoration:none}.pi-picks li a b{border-bottom:1px solid var(--blue)}
+.pi-picks .lim{display:block;font-size:14px;color:var(--ink);margin-top:2px}.pi-picks .lim .tag{margin-right:6px;font-size:12px}
+.pi-card:target{outline:2px solid var(--blue);outline-offset:2px}
+/* 雷达周报「结论先说」：每条拆成 解决什么 / 抄哪一处 / 还要确认 三行 */
+.quick li .ql{display:block;font-size:14.5px;line-height:1.6;margin-top:3px;color:var(--ink)}
+.quick li .ql b{display:inline-block;min-width:4.6em;margin-right:6px;color:var(--ink2);font-weight:600}
 .pgrid{display:grid;gap:18px}.pc{display:grid;grid-template-columns:300px 1fr;gap:20px;align-items:start}
 .pc img{width:100%;border-radius:12px;border:1px solid var(--hair);display:block}.pc h3{margin-top:0}
 .xi{font-size:14.5px}.xi .who{font-weight:700}.xi .h{color:var(--ink2)}.xi blockquote{margin:10px 0;padding:10px 14px;background:var(--paper);border-radius:10px;white-space:pre-wrap;font-size:14px}
 .thumbs{display:flex;gap:6px;overflow-x:auto}.ptoc{margin:4px 0 10px;gap:2px;grid-template-columns:1fr!important}.ptoc li{padding:5px 8px 5px 36px;line-height:1.5;font-size:15px;background:none!important;border:0!important;box-shadow:none!important}.ptoc li::before{top:6px;left:8px}.sa{margin:0 0 8px}.sa .xref{margin:0 6px 4px 0}.thumbs img{height:120px;border-radius:6px;border:1px solid var(--hair)}
-@media(max-width:700px){.pc{grid-template-columns:1fr}}</style><script>/*ICONS lucide v1.60.0 ISC*/window.__IC={"menu":"<path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/>","x":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","star":"<path d=\"M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z\"/>","party-popper":"<path d=\"M5.8 11.3 2 22l10.7-3.79\"/><path d=\"M4 3h.01\"/><path d=\"M22 8h.01\"/><path d=\"M15 2h.01\"/><path d=\"M22 20h.01\"/><path d=\"m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10\"/><path d=\"m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17\"/><path d=\"m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7\"/><path d=\"M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z\"/>"};window.__ic=function(n,s,c){return '<svg class="i i-'+n+(c?' '+c:'')+'" width="'+(s||16)+'" height="'+(s||16)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(window.__IC[n]||'')+'</svg>'};/*END ICONS*/
+@media(max-width:700px){.pc{grid-template-columns:1fr}}
+.pc2 h3{margin:4px 0 6px}.pc2 .tags{margin:0 0 6px;display:flex;gap:6px;flex-wrap:wrap}.pc2 .tag.amber{background:var(--amber-soft);color:var(--amber)}.pc2 .new{font-size:14.5px;color:var(--ink2);margin:0 0 6px}.pc2 .take{font-size:16px;font-weight:600;margin:8px 0}.pc2 .pts{margin:0 0 10px;padding-left:20px}.pc2 .pts li{margin:3px 0}.pc2 .q{font-size:14.5px;margin:0 0 10px;color:var(--ink)}.pc2 .q span{color:var(--ink2);margin-left:4px}
+.pc2 .thumb{display:block;max-width:420px}.pc2 .thumb{background:none;overflow:visible}.pc2 .thumb img{width:100%;height:auto;aspect-ratio:auto;object-fit:contain;border-radius:var(--r-sm);border:1px solid var(--hair);display:block}.pc2 .thumb span{display:block;font-size:13px;color:var(--blue);margin-top:4px}.pc2 .srcl{font-size:13.5px;color:var(--ink2);margin:8px 0 0}</style><script>/*ICONS lucide v1.60.0 ISC*/window.__IC={"menu":"<path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/>","x":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","star":"<path d=\"M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z\"/>","party-popper":"<path d=\"M5.8 11.3 2 22l10.7-3.79\"/><path d=\"M4 3h.01\"/><path d=\"M22 8h.01\"/><path d=\"M15 2h.01\"/><path d=\"M22 20h.01\"/><path d=\"m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10\"/><path d=\"m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17\"/><path d=\"m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7\"/><path d=\"M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z\"/>"};window.__ic=function(n,s,c){return '<svg class="i i-'+n+(c?' '+c:'')+'" width="'+(s||16)+'" height="'+(s||16)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(window.__IC[n]||'')+'</svg>'};/*END ICONS*/
 (function(){var T='site-theme',v;try{v=localStorage.getItem(T)}catch(e){}if(!/^[ABC]$/.test(v||''))v='C';document.documentElement.setAttribute('data-theme',v);
 window.__setTheme=function(t){var go=function(){__applyTheme(t)};if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.startViewTransition(go);else go()};window.__applyTheme=function(t){document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem(T,t)}catch(e){}[].forEach.call(document.querySelectorAll('.thsw button'),function(b){b.setAttribute('aria-pressed',b.dataset.t===t)})}})();
 (function(){var k='theme',s=localStorage.getItem(k);if(s?s==='dark':matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark');
@@ -1139,148 +1151,10 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
 </script><script src="../../assets/favorites.js" defer></script></head><body>
 <header class="top"><div class="in"><a class="brand" href="../../index.html"><i><svg class="i i-book-open" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/></svg></i>王玮的学习库</a><nav><a href="../../index.html" class="">首页</a><a href="../../favorites/index.html" class="">收藏</a><a href="../../courses/index.html" class="s1">公开课</a><a href="../../x-posts/index.html" class="">X 好文</a><a href="../../research/index.html" class="">技术研究</a><a href="../../wechat/index.html" class="">微信公众号</a><a href="../../video/index.html" class="">视频</a><a href="../../glossary.html" class="">概念卡</a><a href="../../x-brief/index.html" class="s2">X 简报</a><a href="../../x-posters/index.html" class="on">X 海报</a><a href="../../ph-inspo/index.html" class="">产品灵感</a><a href="../../radar/index.html" class="">雷达</a><a href="../../dsh-plugins/index.html" class="">DSH 插件</a></nav><button class="dm" onclick="__tt()" aria-label="切换深色模式"><svg class="i i-sun-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2"/><path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715"/><path d="M16 12a4 4 0 0 0-4-4"/><path d="m19 5-1.256 1.256"/><path d="M20 12h2"/></svg></button></div></header>
 <main><div class="crumb"><a href="../../index.html">首页</a> / <a href="../index.html">X 海报</a> / 2026-10-24（周六）</div><section class="sheet"><span class="kk">DAILY · 2026-10-24（周六） · 北京时间</span><h1>7 张技术海报</h1><ol class="quick ptoc"><li><a href="#p1">用 AI 时怎样「想得更大」：Anthropic 的 Felix Rieseberg 给出速度、高度、深度、广度四个方向</a></li><li><a href="#p2">ns2jb：首个 Switch 2 纯软件越狱，作者搭 Harness 让 Codex 参与漏洞研究与魔改马车</a></li><li><a href="#p3">Video Editor Skills：12 个 Skill 把 Claude Code 变成 DaVinci Resolve 初剪剪辑师</a></li><li><a href="#p4">AI 设计词典（中篇）：用字体、色彩、质感、光线等视觉词汇精确控制 AI 出图</a></li><li><a href="#p5">让 Agent 写技术文档：pstack /technical-writing「代码库即词汇表」+ yomiyasu 日语润色 Skill</a></li><li><a href="#p6">TTR-Compressor：把序列压缩改写成测试时岭回归，稀疏注意力与视觉 token 合并双双提升</a></li><li><a href="#p7">Anthropic：什么时候该把子智能体收回主循环——企业 Agent 从多 Subagent 到「单 Agent + Skills」</a></li></ol><p class="muted">点标题跳到那张海报；点海报看原图。发帖时间是北京时间。</p></section><div class="pgrid"><section class="sheet pc" id="p1"><a href="img/01-felix-ambitious-4-directions.png" target="_blank"><img src="img/01-felix-ambitious-4-directions.webp" alt="用 AI 时怎样「想得更大」：Anthropic 的 Felix Rieseberg 给出速度、高度、深度、广度四个方向" loading="lazy"></a>
-<div><span class="kk">#1 · X 原帖信息</span><h3>用 AI 时怎样「想得更大」：Anthropic 的 Felix Rieseberg 给出速度、高度、深度、广度四个方向</h3><div class="xi"><span class="who">meng shao</span> <span class="h">@shao__meng</span><br>发帖时间：2026-10-23 22:16 北京<br>原帖：<a href="https://x.com/shao__meng/status/2113635635705921655" target="_blank" rel="noopener">https://x.com/shao__meng/status/2113635635705921655</a><br>原文链接：<a href="https://felixrieseberg.com/how-to-be-more-ambitious-a-tutorial-for-humans-with-models/" target="_blank" rel="noopener">https://felixrieseberg.com/how-to-be-more-ambitious-a-tutorial-for-humans-with-models/</a><blockquote>https://t.co/ZXwzruyq7n
-
-[X Article]
- 
-多数人用 AI 时，卡住他们的往往不是模型能力，是不敢提要求。Claude 团队 Felix Rieseberg 把“更有野心”拆成四个方向：速度、高度、深度、广度，并用同一个例子（季度业务回顾 QBR）逐级演示怎么提问。
-四个方向
-速度（Speed）：同样的事做得更快。这是 AI 最主要的经济价值，但不需要什么创造力，作者略过不讲。
-高度（Altitude）：不交代单个任务，而是交代你想要的结果。比如他不再让 Claude 修某个崩溃，而是让它“保持应用不崩溃”。
-深度（Depth）：用领域顶尖专家的方法做事，直接处理底层数据和工具，不停留在任务表面。
-广度（Range）：引入原本不会请到的其他领域的知识和手段。
-高度：从 “做一份 PPT” 往上推三层
-给模型尽可能多的数据，让它回答三个问题：这季度变了什么、为什么变、该怎么办。不要只替换模板里的数字。
-让它找出最急的三个决策，并为每个方向写出支持和反对的理由。
-回到 QBR 本来的目的，也就是让管理层尽早发现问题、把钱和人投到对的地方。让模型设计一套比季度 PPT 更好的机制，用公司自己的历史数据证明它能更早发现问题，再和现有流程并行跑一个季度。
-Felix 提到几个适用条件：
-你追求的是一个明确的最终结果时最有效，创意类工作效果较差。
-一个判断信号…</blockquote></div><p class="muted"><a href="img/01-felix-ambitious-4-directions.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p2"><a href="img/02-switch2-ns2jb-codex-jailbreak.png" target="_blank"><img src="img/02-switch2-ns2jb-codex-jailbreak.webp" alt="ns2jb：首个 Switch 2 纯软件越狱，作者搭 Harness 让 Codex 参与漏洞研究与魔改马车" loading="lazy"></a>
-<div><span class="kk">#2 · X 原帖信息</span><h3>ns2jb：首个 Switch 2 纯软件越狱，作者搭 Harness 让 Codex 参与漏洞研究与魔改马车</h3><div class="xi"><span class="who">sin</span> <span class="h">@sin952204814464</span><br>发帖时间：2026-10-23 10:00 北京<br>原帖：<a href="https://x.com/sin952204814464/status/2113450341618577707" target="_blank" rel="noopener">https://x.com/sin952204814464/status/2113450341618577707</a><br>原文链接：<a href="https://pepsipu.com/blog/2026-10-switch2-jailbreak-ns2jb/" target="_blank" rel="noopener">https://pepsipu.com/blog/2026-10-switch2-jailbreak-ns2jb/</a><blockquote>switch2被破解了，心情很复杂，一方面用正版很多年了，但上了日版的车玩rpg不太方便，但想想也没这么多时间玩游戏了。
-对于中国的ns2销量和盗版用户是好事吧。
-至于之前的那些所谓用mac iphone玩转译的，我反而觉得没什么，愿意这么费劲的下载rom或找一体包的精力不在这边
-https://t.co/eaV3qzIHXY
-
----
-[Original article: jailbreaking the switch 2 — pepsipu.com]
-jailbreaking the switch 2 
- ns2jb is a software-only jailbreak of the switch 2 for the current latest firmware 23.0.1 
- October 18, 2026 
- cs 
-Introduction
-You can get a copy of the exploit from the 
-ns2jb
- repository.
-ns2jb is a software-only, tethered jailbreak for the Switch 2. It allows running arbitrary native code as any ordinary sysmodule, and as the built-in…</blockquote></div><p class="muted"><a href="img/02-switch2-ns2jb-codex-jailbreak.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p3"><a href="img/03-video-editor-skills-claude-code.png" target="_blank"><img src="img/03-video-editor-skills-claude-code.webp" alt="Video Editor Skills：12 个 Skill 把 Claude Code 变成 DaVinci Resolve 初剪剪辑师" loading="lazy"></a>
-<div><span class="kk">#3 · X 原帖信息</span><h3>Video Editor Skills：12 个 Skill 把 Claude Code 变成 DaVinci Resolve 初剪剪辑师</h3><div class="xi"><span class="who">（作者名缺失）</span> <span class="h">@appariciojunior</span><br>发帖时间：2026-10-23 15:53 北京<br>原帖：<a href="https://x.com/appariciojunior/status/2113539208237535658" target="_blank" rel="noopener">https://x.com/appariciojunior/status/2113539208237535658</a><br>原文链接：<a href="https://github.com/appariciojunior/video-editor-skills" target="_blank" rel="noopener">https://github.com/appariciojunior/video-editor-skills</a><blockquote>segue aqui
-https://t.co/OmaWaGrFkq
-
-liberado. https://t.co/qEK4CwtW3V
-
----
-[Repository README + LEARNINGS + selected SKILL.md — github.com/appariciojunior/video-editor-skills]
-# Video Editor Skills for Claude Code
-
-Turn Claude Code into a **first-pass video editor** for your YouTube vlogs and classes in **DaVinci Resolve Studio**. You film and make the taste calls; Claude imports, cuts retakes and dead air, keeps your B-roll, scores the video, writes clean captions, adds brand motion graphics and helps you export.
-
-These are **skills only**: the method, the numbers, the rules and the traps, le…</blockquote></div><p class="muted"><a href="img/03-video-editor-skills-claude-code.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p4"><a href="img/04-ai-design-dictionary-visual-terms.png" target="_blank"><img src="img/04-ai-design-dictionary-visual-terms.webp" alt="AI 设计词典（中篇）：用字体、色彩、质感、光线等视觉词汇精确控制 AI 出图" loading="lazy"></a>
-<div><span class="kk">#4 · X 原帖信息</span><h3>AI 设计词典（中篇）：用字体、色彩、质感、光线等视觉词汇精确控制 AI 出图</h3><div class="xi"><span class="who">Morry.AI</span> <span class="h">@Morry4AI</span><br>发帖时间：2026-10-23 14:16 北京<br>原帖：<a href="https://x.com/Morry4AI/status/2113514783010148821" target="_blank" rel="noopener">https://x.com/Morry4AI/status/2113514783010148821</a><br>原文链接：<a href="https://x.com/i/article/2112219249456680968" target="_blank" rel="noopener">https://x.com/i/article/2112219249456680968</a><blockquote>https://t.co/UT52az3cYj
-
-[X Article]
-上一篇「AI 设计词典」，我们解决了一个问题：
-怎么准确描述一个画面。
-学会以后，你已经可以把一张图的「结构（Structure）」说清楚。
- 
-但使用 AI 做设计时，我们还经常会说：
-「字体高级一点。」
-「绿色别这么艳。」
-「整体柔和一点。」
-「加一点质感。」
-「做得更像杂志。」
-这些词的问题是：
-人能大概理解，但 AI 还需要自己猜。
-所以这一篇继续整理一组 AI 设计中真正高频的视觉词汇。
-不是为了让你背设计术语。
-而是给你增加一些控制 AI 视觉效果的旋钮。
-依然是：
-中文帮你理解，英文帮你更准确地调用 AI。
- 
-01｜字体 Typography
-先从最常见的文字开始。
-当你觉得：
-「这个字体不对。」
-真正需要调整的，可能不是「换一个好看的字体」。
-而是：
-字体类型、粗细、宽窄、字距和行距。
-——
-★★★★★ 衬线体｜Serif
-字形笔画末端带有额外的小笔画，也就是「衬线」。
-通常容易产生：
-经典 / 编辑 / 文化 / 优雅
-的视觉感受。
-常见于书籍、杂志、文化类设计。
-例如：
-英文标题使用 Serif，增加经典的编辑设计感。
-——
-★★★★★ 无衬线体｜Sans Serif
-没有明显衬线，结构通常更加简洁。
-容易产生：
-现代 / 简洁 / 理性 / 科技
-的视觉感受。
-UI、信息图、现代海报、…</blockquote></div><p class="muted"><a href="img/04-ai-design-dictionary-visual-terms.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p5"><a href="img/05-technical-writing-yomiyasu.png" target="_blank"><img src="img/05-technical-writing-yomiyasu.webp" alt="让 Agent 写技术文档：pstack /technical-writing「代码库即词汇表」+ yomiyasu 日语润色 Skill" loading="lazy"></a>
-<div><span class="kk">#5 · X 原帖信息</span><h3>让 Agent 写技术文档：pstack /technical-writing「代码库即词汇表」+ yomiyasu 日语润色 Skill</h3><div class="xi"><span class="who">kaito</span> <span class="h">@cu30rry_</span><br>发帖时间：2026-10-23 18:20 北京<br>原帖：<a href="https://x.com/cu30rry_/status/2113576162932765183" target="_blank" rel="noopener">https://x.com/cu30rry_/status/2113576162932765183</a><br>原文链接：<a href="https://github.com/nanaism/yomiyasu" target="_blank" rel="noopener">https://github.com/nanaism/yomiyasu</a><blockquote>技術記事やドキュメントをエージェントに書かせるなら、pstack の /technical-writing を使いましょう
-
-とはいえ、/technical-wirting を含め、pstack のSkill は英語を前提にしているので、私は一緒に yomiyasu を日本語のために実行しているよ
-
-/techinical-writingは「コードベースが単語帳」という決まりがあり、同義語や言い換えではなく、実際のシンボル名・ファイル名・フラグ・コマンド名を書かせる
-
-それに、文書には /unslop もかけ、AIスロップを削るから、文書の質は高いが、日本語で書かせると不自然だ
-
-だから、/technical-writing explain the code with /yomiyasu と指示するか、英語の文章を日本語化させるときに /yomiyasu を使うようにしちえる
-
-読み手は記事に書いてある名前でそのままコードを検索できるので、文書とコードのトラッキングをしやすいし、日本語も読みやすいし、おすすめ！
-
-https://t.co/HdR0ovvYz1
-
----
-[Linked repository README — github.com/nanaism/yomiyasu]
-&lt;p align=&quot;center&quot;&gt;
-  &lt;img src=&quot;./assets/yomiyasu_l…</blockquote></div><p class="muted"><a href="img/05-technical-writing-yomiyasu.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p6"><a href="img/06-ttr-compressor-test-time-regression.png" target="_blank"><img src="img/06-ttr-compressor-test-time-regression.webp" alt="TTR-Compressor：把序列压缩改写成测试时岭回归，稀疏注意力与视觉 token 合并双双提升" loading="lazy"></a>
-<div><span class="kk">#6 · X 原帖信息</span><h3>TTR-Compressor：把序列压缩改写成测试时岭回归，稀疏注意力与视觉 token 合并双双提升</h3><div class="xi"><span class="who">卡夫卡</span> <span class="h">@kafkaup</span><br>发帖时间：2026-10-23 18:46 北京<br>原帖：<a href="https://x.com/kafkaup/status/2113582714876018840" target="_blank" rel="noopener">https://x.com/kafkaup/status/2113582714876018840</a><br>原文链接：<a href="https://arxiv.org/abs/2610.31574" target="_blank" rel="noopener">https://arxiv.org/abs/2610.31574</a><blockquote>📄 Rethinking Sequence Compression with Test-time Regression
-
-概述：该论文将序列压缩重新表述为测试时回归问题，提出了 TTR-Compressor，作者称其在稀疏注意力与视觉令牌合并任务上优于池化、投影及基于注意力的压缩方法。
-
-核心贡献：论文提出 TTR-Compressor，将压缩表示定义为对输入令牌拟合的闭式回归系数，并通过反向传播端到端训练，同时在前向推理中以闭式方式高效计算该系数。
-
-实验结果：作者报告称，TTR-Compressor 在分块稀疏注意力上的 RULER 表现大幅优于基于注意力的压缩器，在视觉令牌合并中也持续优于标准 MLP 合并器，并能以减少 55.6% 的视觉令牌数量达到相当性能；摘要未给出绝对数值或实验细节。
-
----
-[Project page — spherelab.ai/ttr-compressor]
-TTR-Compressor | Rethinking Sequence Compression with Test-time Regression
-Skip to content
-TTR
-TTR-Compressor
-Paper 
-↗
- SphereLab · Technical Report
-TTR-Compressor
-Rethinking Sequence Compression…</blockquote></div><p class="muted"><a href="img/06-ttr-compressor-test-time-regression.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p7"><a href="img/07-anthropic-fold-subagents.png" target="_blank"><img src="img/07-anthropic-fold-subagents.webp" alt="Anthropic：什么时候该把子智能体收回主循环——企业 Agent 从多 Subagent 到「单 Agent + Skills」" loading="lazy"></a>
-<div><span class="kk">#7 · X 原帖信息</span><h3>Anthropic：什么时候该把子智能体收回主循环——企业 Agent 从多 Subagent 到「单 Agent + Skills」</h3><div class="xi"><span class="who">南晚Nanwan</span> <span class="h">@snwiki238337</span><br>发帖时间：2026-10-23 19:02 北京<br>原帖：<a href="https://x.com/snwiki238337/status/2113586733560328459" target="_blank" rel="noopener">https://x.com/snwiki238337/status/2113586733560328459</a><br>原文链接：<a href="https://claude.com/resources/articles/building-agents-when-to-fold-subagents-into-your-main-agent-loop" target="_blank" rel="noopener">https://claude.com/resources/articles/building-agents-when-to-fold-subagents-into-your-main-agent-loop</a><blockquote>Anthropic 的这篇文章可以看看，《构建智能体：何时把子智能体合并回主智能体循环》
-
-文里提出了一个观察就是我们目前的大多数公司的 Agent 架构，不知不觉就变成了公司内部组织架构图的翻版。
-
-意思就是说比如做客服或企业中台，市场部、财务部、订单部各自造一个独立的 Subagent，然后中台团队在上面搭一个中央调度器。
-
-其实在我们的视角来看的话是很好的，很清晰和完整的分类。但在实际生产中不是。
-
-每个子 Agent 都有自己独立的 Prompt 和上下文，跨智能体转交任务就像玩传话游戏，每一次 handoff 都在丢失关键细节。
-
-而且呢各个业务线为了向其中加入自己的规则，最后把系统提示词搞成了一个人格分裂的弗兰肯斯坦，而且呢架构中的多层嵌套的 LLM 循环直接让端到端延迟翻了整整一倍。
-
-Anthropic 的应用 AI 团队在实际帮企业调优后给出了一种方法：他们把绝大多数调度器和 Subagent 砍掉，收进单一大模型的主循环里。
-
-他们发现，随着 Opus 4.5 到 5.5 这代前沿模型自带的思考和自我修正能力大幅进化，原本靠外部复杂框架硬编码约束的很多繁琐环节，模型自己就能处理得很好。
-
-他们把子智能体的业务经验降维沉淀为 Skill，把数据读写拆解为标准的 MCP Tools，主循环只加载极短的描述，只有在模型实际需要调用时才动态加载细节。
-
-Anthropi…</blockquote></div><p class="muted"><a href="img/07-anthropic-fold-subagents.png" target="_blank">查看原图 PNG →</a></p></div></section></div><div class="pn"><a href="../2026-10-25/index.html">← 2026-10-25</a><a href="../index.html">往期目录</a><a href="../2026-10-23/index.html">2026-10-23 →</a></div><div class="foot">王玮的 X 海报日报 · 每天从 X 推荐流挑技术帖，用 ChatGPT 生成康奈尔笔记海报 · 每张都附 X 原帖信息 · 风格改编自 <a href="https://github.com/vuejs/vitepress">VitePress</a>（MIT）</div></main></body></html>
+<div><span class="kk">#1 · X 原帖信息</span><h3>用 AI 时怎样「想得更大」：Anthropic 的 Felix Rieseberg 给出速度、高度、深度、广度四个方向</h3><div class="xi"><span class="who">meng shao</span> <span class="h">@shao__meng</span><br>发帖时间：2026-10-23 22:16 北京<br>原帖：<a href="https://x.com/shao__meng/status/2113635635705921655" target="_blank" rel="noopener">https://x.com/shao__meng/status/2113635635705921655</a><br>原文链接：<a href="https://felixrieseberg.com/how-to-be-more-ambitious-a-tutorial-for-humans-with-models/" target="_blank" rel="noopener">https://felixrieseberg.com/how-to-be-more-ambitious-a-tutorial-for-humans-with-models/</a></div><p class="muted"><a href="img/01-felix-ambitious-4-directions.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p2"><a href="img/02-switch2-ns2jb-codex-jailbreak.png" target="_blank"><img src="img/02-switch2-ns2jb-codex-jailbreak.webp" alt="ns2jb：首个 Switch 2 纯软件越狱，作者搭 Harness 让 Codex 参与漏洞研究与魔改马车" loading="lazy"></a>
+<div><span class="kk">#2 · X 原帖信息</span><h3>ns2jb：首个 Switch 2 纯软件越狱，作者搭 Harness 让 Codex 参与漏洞研究与魔改马车</h3><div class="xi"><span class="who">sin</span> <span class="h">@sin952204814464</span><br>发帖时间：2026-10-23 10:00 北京<br>原帖：<a href="https://x.com/sin952204814464/status/2113450341618577707" target="_blank" rel="noopener">https://x.com/sin952204814464/status/2113450341618577707</a><br>原文链接：<a href="https://pepsipu.com/blog/2026-10-switch2-jailbreak-ns2jb/" target="_blank" rel="noopener">https://pepsipu.com/blog/2026-10-switch2-jailbreak-ns2jb/</a></div><p class="muted"><a href="img/02-switch2-ns2jb-codex-jailbreak.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p3"><a href="img/03-video-editor-skills-claude-code.png" target="_blank"><img src="img/03-video-editor-skills-claude-code.webp" alt="Video Editor Skills：12 个 Skill 把 Claude Code 变成 DaVinci Resolve 初剪剪辑师" loading="lazy"></a>
+<div><span class="kk">#3 · X 原帖信息</span><h3>Video Editor Skills：12 个 Skill 把 Claude Code 变成 DaVinci Resolve 初剪剪辑师</h3><div class="xi"><span class="who">（作者名缺失）</span> <span class="h">@appariciojunior</span><br>发帖时间：2026-10-23 15:53 北京<br>原帖：<a href="https://x.com/appariciojunior/status/2113539208237535658" target="_blank" rel="noopener">https://x.com/appariciojunior/status/2113539208237535658</a><br>原文链接：<a href="https://github.com/appariciojunior/video-editor-skills" target="_blank" rel="noopener">https://github.com/appariciojunior/video-editor-skills</a></div><p class="muted"><a href="img/03-video-editor-skills-claude-code.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p4"><a href="img/04-ai-design-dictionary-visual-terms.png" target="_blank"><img src="img/04-ai-design-dictionary-visual-terms.webp" alt="AI 设计词典（中篇）：用字体、色彩、质感、光线等视觉词汇精确控制 AI 出图" loading="lazy"></a>
+<div><span class="kk">#4 · X 原帖信息</span><h3>AI 设计词典（中篇）：用字体、色彩、质感、光线等视觉词汇精确控制 AI 出图</h3><div class="xi"><span class="who">Morry.AI</span> <span class="h">@Morry4AI</span><br>发帖时间：2026-10-23 14:16 北京<br>原帖：<a href="https://x.com/Morry4AI/status/2113514783010148821" target="_blank" rel="noopener">https://x.com/Morry4AI/status/2113514783010148821</a><br>原文链接：<a href="https://x.com/i/article/2112219249456680968" target="_blank" rel="noopener">https://x.com/i/article/2112219249456680968</a></div><p class="muted"><a href="img/04-ai-design-dictionary-visual-terms.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p5"><a href="img/05-technical-writing-yomiyasu.png" target="_blank"><img src="img/05-technical-writing-yomiyasu.webp" alt="让 Agent 写技术文档：pstack /technical-writing「代码库即词汇表」+ yomiyasu 日语润色 Skill" loading="lazy"></a>
+<div><span class="kk">#5 · X 原帖信息</span><h3>让 Agent 写技术文档：pstack /technical-writing「代码库即词汇表」+ yomiyasu 日语润色 Skill</h3><div class="xi"><span class="who">kaito</span> <span class="h">@cu30rry_</span><br>发帖时间：2026-10-23 18:20 北京<br>原帖：<a href="https://x.com/cu30rry_/status/2113576162932765183" target="_blank" rel="noopener">https://x.com/cu30rry_/status/2113576162932765183</a><br>原文链接：<a href="https://github.com/nanaism/yomiyasu" target="_blank" rel="noopener">https://github.com/nanaism/yomiyasu</a></div><p class="muted"><a href="img/05-technical-writing-yomiyasu.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p6"><a href="img/06-ttr-compressor-test-time-regression.png" target="_blank"><img src="img/06-ttr-compressor-test-time-regression.webp" alt="TTR-Compressor：把序列压缩改写成测试时岭回归，稀疏注意力与视觉 token 合并双双提升" loading="lazy"></a>
+<div><span class="kk">#6 · X 原帖信息</span><h3>TTR-Compressor：把序列压缩改写成测试时岭回归，稀疏注意力与视觉 token 合并双双提升</h3><div class="xi"><span class="who">卡夫卡</span> <span class="h">@kafkaup</span><br>发帖时间：2026-10-23 18:46 北京<br>原帖：<a href="https://x.com/kafkaup/status/2113582714876018840" target="_blank" rel="noopener">https://x.com/kafkaup/status/2113582714876018840</a><br>原文链接：<a href="https://arxiv.org/abs/2610.31574" target="_blank" rel="noopener">https://arxiv.org/abs/2610.31574</a></div><p class="muted"><a href="img/06-ttr-compressor-test-time-regression.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p7"><a href="img/07-anthropic-fold-subagents.png" target="_blank"><img src="img/07-anthropic-fold-subagents.webp" alt="Anthropic：什么时候该把子智能体收回主循环——企业 Agent 从多 Subagent 到「单 Agent + Skills」" loading="lazy"></a>
+<div><span class="kk">#7 · X 原帖信息</span><h3>Anthropic：什么时候该把子智能体收回主循环——企业 Agent 从多 Subagent 到「单 Agent + Skills」</h3><div class="xi"><span class="who">南晚Nanwan</span> <span class="h">@snwiki238337</span><br>发帖时间：2026-10-23 19:02 北京<br>原帖：<a href="https://x.com/snwiki238337/status/2113586733560328459" target="_blank" rel="noopener">https://x.com/snwiki238337/status/2113586733560328459</a><br>原文链接：<a href="https://claude.com/resources/articles/building-agents-when-to-fold-subagents-into-your-main-agent-loop" target="_blank" rel="noopener">https://claude.com/resources/articles/building-agents-when-to-fold-subagents-into-your-main-agent-loop</a></div><p class="muted"><a href="img/07-anthropic-fold-subagents.png" target="_blank">查看原图 PNG →</a></p></div></section></div><div class="pn"><a href="../2026-10-25/index.html">← 2026-10-25</a><a href="../index.html">往期目录</a><a href="../2026-10-23/index.html">2026-10-23 →</a></div><div class="foot">王玮的 X 海报日报 · 每天从 X 推荐流挑技术帖，用 ChatGPT 生成康奈尔笔记海报 · 每张都附 X 原帖信息 · 风格改编自 <a href="https://github.com/vuejs/vitepress">VitePress</a>（MIT）</div></main></body></html>

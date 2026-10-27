@@ -20,6 +20,14 @@ const J = f => readJson(path.join('data', f));
 const columns = J('columns.json'), { groups, items } = J('items.json'), concepts = J('concepts.json'), inbox = J('inbox.json');
 // 产品灵感（PH灵感箱）：data/ph-inspo.json，每天追加一个 day；没有文件时板块为空
 const PHI = fs.existsSync(path.join(ROOT, 'data', 'ph-inspo.json')) ? J('ph-inspo.json') : { statuses: ['新发现', '在跟进', '已试用', '归档'], tags: [], days: [] };
+// picks（先看 3 个）由 PH灵感箱 写进数据；有就严格校验，不合规直接停
+const PICKS_FROM = '2026-10-28'; // 这天起每天都要写 picks（先看 3 个）；缺了构建照常，但大声告警
+for (const d of PHI.days || []) { if (!d.picks) { if (d.date >= PICKS_FROM) console.warn(`\n⚠️  warn: ph-inspo ${d.date} 没写 picks（先看 3 个），页面顶部不会显示这一天的推荐。按 /workspace/ph-inspo/RUNBOOK.md 补上 picks 再发布。\n`); continue; }
+  const ids = new Set(d.items.map(i => i.id)), P = d.picks;
+  if (P.length !== 3) throw new Error(`ph-inspo ${d.date}: picks 要正好 3 个，现在 ${P.length} 个`);
+  if (new Set(P.map(x => x.id)).size !== 3) throw new Error(`ph-inspo ${d.date}: picks 有重复`);
+  for (const x of P) { if (!ids.has(x.id)) throw new Error(`ph-inspo ${d.date}: picks 里的 ${x.id} 不在当天 items 里`); if (!x.why || !x.limit) throw new Error(`ph-inspo ${d.date}: picks ${x.id} 缺 why 或 limit`); }
+  if (P.some((x, k) => d.items[k].id !== x.id)) throw new Error(`ph-inspo ${d.date}: items 的前 3 个要和 picks 顺序一致`); }
 // DSH 插件市场盘点：data/dsh-plugins.json；没有文件时不出现导航和首页入口
 const DSH = fs.existsSync(path.join(ROOT, 'data', 'dsh-plugins.json')) ? J('dsh-plugins.json') : null;
 // Agent 工作台雷达：data/radar.json（scripts/sync-radar.mjs 同步）；没有文件时不出现导航和首页卡片
@@ -298,14 +306,15 @@ const XR = (() => {
   const word = n => new RegExp('(?<![A-Za-z0-9])' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?![A-Za-z0-9])', 'i');
   const phAll = (PHI.days || []).flatMap(d => (d.items || []).map(i => ({ ...i, date: d.date })));
   const posts = DG.list.flatMap(x => x.posters ? x.posters.items.map(p => ({ ...p, d: x.date })) : []);
-  const radarOf = name => (RADAR?.entries || []).filter(e => short(e.name).length >= 5 && short(e.name).toLowerCase() === short(name).toLowerCase());
+  const repoKey = u => { const m = /github\.com\/([^/?#\s]+\/[^/?#\s]+)/i.exec(String(u || '')); return m ? m[1].replace(/\.git$/, '').toLowerCase() : ''; };
+  const radarOf = it => (RADAR?.entries || []).filter(e => (repoKey(it.repo) && repoKey(e.repo ? 'github.com/' + e.repo : e.url) === repoKey(it.repo)) || (short(e.name).length >= 5 && short(e.name).toLowerCase() === short(it.name).toLowerCase()));
   return {
     // 产品灵感卡片 → 雷达
-    ph: it => radarOf(it.name).map(e => `<a class="xref" href="../radar/index.html#r${e.id}">另见：雷达 #${e.id}</a>`),
+    ph: it => radarOf(it).map(e => `<a class="xref" href="../radar/index.html#r${e.id}">另见：雷达 #${e.id}</a>`),
     // 雷达卡片 → 产品灵感、X 海报（同一项目只出现在不超过 3 张海报标题里才算，太常见的名字不连）
-    radar: e => { const n = short(e.name); if (n.length < 5) return [];
-      const ph = phAll.filter(i => i.name.toLowerCase() === n.toLowerCase()).map(i => `<a class="xref" href="../ph-inspo/index.html#${esc(i.id)}">另见：产品灵感 · 榜单 ${esc(i.date.slice(5).replace('-', '/'))}</a>`);
-      const ps = posts.filter(p => { const m = word(n).exec(p.title); return m && m.index < 16; }); // 名字在海报标题开头一段才算（和 publish_gallery.py 的 name_hit 一致）
+    radar: e => { const n = short(e.name); const rk = repoKey(e.repo ? 'github.com/' + e.repo : e.url);
+      const ph = phAll.filter(i => (rk && repoKey(i.repo) === rk) || (n.length >= 5 && i.name.toLowerCase() === n.toLowerCase())).map(i => `<a class="xref" href="../ph-inspo/index.html#${esc(i.id)}">另见：产品灵感 · 榜单 ${esc(i.date.slice(5).replace('-', '/'))}</a>`);
+      const ps = n.length < 5 ? [] : posts.filter(p => { const m = word(n).exec(p.title); return m && m.index < 16; }); // 名字在海报标题开头一段才算（和 publish_gallery.py 的 name_hit 一致）
       return [...ph, ...(ps.length && ps.length <= 3 ? [`<a class="xref" href="../${esc(ps[0].href)}">另见：X 海报 ${esc(ps[0].d.slice(5).replace('-', '/'))}</a>`] : [])]; },
   };
 })();
@@ -427,7 +436,18 @@ ${nx ? `<a class="nx" href="${esc(nx.href)}"${ext(nx.href)}><b>${['已学完', '
   const TD_DG = DG.list.map(x => ({ d: x.date, href: x.href, brief: x.brief ? { href: x.brief.href, t: x.brief.lines[0] || x.brief.title } : null,
     poster: x.posters ? { href: x.posters.href, n: x.posters.n, items: x.posters.items.slice(0, 2).map(p => [p.href, p.title]) } : null,
     ph: x.ph ? { href: x.ph.href, n: x.ph.n, list: x.ph.listDate, items: x.ph.items.slice(0, 3).map(i => [i.href, (i.rank != null ? '#' + i.rank + ' ' : '') + i.name]) } : null }));
+  // 雷达那一行 =「本周首选」：取最新一份周报「结论先说」第 1 条；这份没写就往前找上一份；都没有才退回最新入库的一条
+  const rdPick = (() => { const D = path.join(ROOT, 'data', 'radar-weekly'); if (!fs.existsSync(D)) return null;
+    const plain = t => t.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').replace(/\*\*|`/g, '').trim();
+    for (const x of fs.readdirSync(D).filter(x => /^\d{4}-\d{2}-\d{2}\.md$/.test(x)).sort().reverse()) {
+      const L = fs.readFileSync(path.join(D, x), 'utf8').replace(/\r/g, '').split('\n'); const k = L.findIndex(l => /^\*\*结论先说\*\*$/.test(l.trim())); if (k < 0) continue;
+      const m = L.slice(k + 1).map(l => l.trim()).filter(Boolean)[0]?.match(/^1\.\s+(.*)$/); if (!m) continue;
+      const nx = L.slice(k + 1).filter(l => l.trim()); const why = (nx[1] && /^\s+解决什么[：:]/.test(nx[1])) ? plain(nx[1].trim().replace(/^解决什么[：:]\s*/, '')) : '';
+      const t = plain(m[1]), cut = why ? -1 : t.search(/[：:。]/);
+      return { d: x.slice(0, 10), href: `radar/weekly/${x.slice(0, 10)}.html`, title: '本周首选：' + (cut > 0 ? t.slice(0, cut) : t), sub: why || (cut > 0 ? t.slice(cut + 1).trim() : '') }; }
+    return null; })();
   const TD_RD = RADAR ? (() => { const L = RADAR.entries.filter(e => e.added === RADAR.updated).sort((a, b) => b.id - a.id); const e = L[0];
+    if (rdPick && e) return [{ d: RADAR.updated, href: rdPick.href, title: rdPick.title, sub: rdPick.sub, n: L.length }];
     return e ? [{ d: RADAR.updated, href: `radar/index.html#r${e.id}`, title: e.name, sub: e.what, n: L.length }] : []; })() : [];
   const tdPayload = { dg: TD_DG, radar: TD_RD, ic: { dg: icDg, radar: icRd, brief: icBrief, poster: icPost, ph: icPh, rev: icRev } };
   // 汇总那一行：Node 端先按北京时间渲染，浏览器端用同一个函数（toString 注入）按浏览者的北京时间重渲染
@@ -660,6 +680,7 @@ document.addEventListener('DOMContentLoaded',tks);`;
 // ---- 产品灵感（数据 data/ph-inspo.json；按天归档，可按标签、状态筛选） ----
 {
   const f = 'ph-inspo/index.html';
+  const PK = (PHI.days || []).find(d => d.picks); // 最近一天写了 picks 的榜单
   const ST_CLS = { '新发现': 'blue', '在跟进': 'amber', '已试用': 'green', '归档': '' };
   const all = PHI.days.flatMap(d => d.items.map(i => ({ ...i, date: d.date })));
   const tags = [...new Set([...(PHI.tags || []), ...all.flatMap(i => i.tags || [])])].filter(t => all.some(i => (i.tags || []).includes(t)));
@@ -674,13 +695,13 @@ document.addEventListener('DOMContentLoaded',tks);`;
 <div class="pi-ft"><span title="PH 综合分（抓取时）">${ic('trending-up', 13)}分数 ${num(it.score)}</span><span>${ic('message-square', 13)}评论 ${num(it.comments)}</span>${xa(it.ph, 'PH', 'rocket')}${xa(it.site, '官网', 'external-link')}${xa(it.repo, '仓库', 'git-fork')}</div>
 ${fuHtml(it)}</article>`;
   const dayHtml = d => `<section class="pi-day" data-day="${esc(d.date)}"><div class="kicker">${ic('calendar', 16)} 榜单 ${esc(d.date.slice(5).replace('-', '/'))} <span class="n">${d.items.length}</span></div><div class="sub"><a href="${esc(d.source)}" target="_blank" rel="noopener">Product Hunt 日榜</a>（太平洋时间）· ${bjStamp(d.fetched) ? `北京 ${bjStamp(d.fetched)} 抓取` : `抓取于 ${esc(d.fetched || '未记录')}`}${d.note ? ` <details class="pi-note"><summary>说明</summary>${esc(d.note)}</details>` : ''}</div>
-<div class="pi-grid">${[...d.items].sort((a, b) => (a.rank ?? 999) - (b.rank ?? 999)).map(card).join('')}</div></section>`;
+<div class="pi-grid">${(d.picks ? d.items : [...d.items].sort((a, b) => (a.rank ?? 999) - (b.rank ?? 999))).map(card).join('')}</div></section>`;
   // 最新一天展开，更早的收起来
   const [d0, ...older] = PHI.days;
   const days = (d0 ? dayHtml(d0) : '') + (older.length ? `<details class="panel pi-old"><summary>${ic('history', 15)} 更早的榜单 <span class="s">${older.length} 天 · ${older.reduce((n, d) => n + d.items.length, 0)} 个产品</span></summary><div class="pb">${older.map(dayHtml).join('')}</div></details>` : '');
   const chip = (k, v, label, n) => `<button type="button" class="chip${v ? '' : ' on'}" data-k="${k}" data-v="${esc(v)}">${esc(label)}${n != null ? `<em>${n}</em>` : ''}</button>`;
   const body = `<div class="crumb"><a href="../index.html">首页</a> / 产品灵感</div>
-<section class="hero sheet pi-hero"><div class="say"><span class="kk">PH灵感箱 · ${PHI.days.length} 天</span><h1>${ic('rocket', 26)} 产品灵感</h1><p>每天从 Product Hunt 日榜挑 5–8 个新产品，写清是什么、能抄什么。</p></div>
+<section class="hero sheet pi-hero"><div class="say"><span class="kk">PH灵感箱 · ${PHI.days.length} 天</span><h1>${ic('rocket', 26)} 产品灵感</h1>${PK ? `<div class="pi-picks"><div class="lb">先看 3 个 · 榜单 ${esc(PK.date.slice(5).replace('-', '/'))}${PK === PHI.days[0] ? '' : '（最新一天没写推荐，这是最近一次）'}</div><ol>${PK.picks.map(x => { const it = PK.items.find(i => i.id === x.id); return `<li><a href="#${esc(x.id)}"><b>${esc(it.name)}</b></a>：${esc(x.why)}<span class="lim"><span class="tag amber">限制</span>${esc(x.limit)}</span></li>`; }).join('')}</ol></div>` : ''}<p>每天从 Product Hunt 日榜挑 5–8 个新产品，写清是什么、能抄什么。</p></div>
 <div class="stage">${[['blue', all.length, '个产品'], ['amber', cnt('在跟进'), '在跟进'], ['green', cnt('已试用'), '已试用'], ['purple', all.filter(i => (i.tags || []).includes('coding agent')).length, 'coding agent 相关']].filter(([, n]) => n).map(([c, n, t]) => `<div class="stat ${c}"><b>${n}</b><span>${t}</span></div>`).join('')}</div></section>
 ${about(`<p>从 Product Hunt 日榜里挑 5–8 个和 coding agent 工作台、AI 工具、开发者工具、效率、创作、教育相关的新产品，写清楚是什么、解决什么、能抄什么。</p><p>「榜单 10/25」是 Product Hunt 的榜单日，按太平洋时间算；北京时间早上能看到的最新一份，是两天前的榜。抓取时间已换成北京时间。数据在 <code>data/ph-inspo.json</code>。</p>`)}
 ${all.length ? `<div class="pi-bar"><span class="lb">${ic('tag', 13)}标签</span>${chip('tag', '', '全部')}${tags.map(t => chip('tag', t, t, all.filter(i => (i.tags || []).includes(t)).length)).join('')}</div>
@@ -781,7 +802,9 @@ if (RADAR) {
     for (const ln of lines.slice(1)) {
       const s = ln.trim();
       if (/^\*\*结论先说\*\*$/.test(s)) { closeTo(0); mode = 'q'; continue; }
-      if (mode === 'q') { const m = s.match(/^\d+\.\s+(.*)$/); if (m) { quick.push(wkInline(m[1])); continue; } if (!s) continue; mode = ''; }
+      if (mode === 'q') { const m = s.match(/^\d+\.\s+(.*)$/); if (m) { quick.push(wkInline(m[1])); continue; } if (!s) continue;
+        if (/^\s+\S/.test(ln) && quick.length) { const lb = s.match(/^(解决什么|抄哪一处|还要确认)[：:]\s*(.*)$/); quick[quick.length - 1] += lb ? `<span class="ql"><b>${lb[1]}</b>${wkInline(lb[2])}</span>` : '<br>' + wkInline(s); continue; }
+        mode = ''; }
       if (!s) { closeTo(0); continue; }
       if (s.startsWith('## ')) { closeTo(0); secs.push(s.slice(3).trim()); out.push(`<h2 id="s${secs.length}">${wkInline(secs.at(-1))}</h2>`); continue; }
       if (s.startsWith('### ')) { closeTo(0); out.push(`<h3>${wkInline(s.slice(4))}</h3>`); continue; }
@@ -804,7 +827,7 @@ if (RADAR) {
     const newer = i ? `<a href="${WK[i - 1].d}.html">← ${WK[i - 1].d}</a>` : '<span></span>';
     const older = i + 1 < WK.length ? `<a href="${WK[i + 1].d}.html">${WK[i + 1].d} →</a>` : '<span></span>';
     const b = `<div class="crumb"><a href="../../index.html">首页</a> / <a href="../index.html">雷达</a> / 周报 ${esc(w.d)}</div>
-<section class="sheet"><span class="kk">雷达周报 · ${esc(w.d)}（北京时间）</span><h1>${wkInline(w.title)}</h1>${w.quick.length ? `<div class="kk" style="margin:4px 0">结论先说</div><ol class="quick">${w.quick.map(x => `<li>${x}</li>`).join('')}</ol>` : ''}</section>
+<section class="sheet"><span class="kk">${/^雷达周报/.test(w.title) ? `${esc(w.d)} 发布 · 日期均为北京时间` : `雷达周报 · ${esc(w.d)}（北京时间）`}</span><h1>${wkInline(w.title)}</h1>${w.quick.length ? `<div class="kk" style="margin:4px 0">结论先说</div><ol class="quick">${w.quick.map(x => `<li>${x}</li>`).join('')}</ol>` : ''}</section>
 <nav class="tabs">${tabs}</nav><section class="sheet">${w.body}</section><div class="pn">${newer}<a href="../index.html#weekly">周报目录</a>${older}</div>`;
     write(wf, page(wf, w.title, 'radar', b));
   });

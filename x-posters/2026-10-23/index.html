@@ -1106,11 +1106,23 @@ details.panel.about{margin-top:14px}details.panel.about>summary{font-weight:550;
 /* 产品灵感：更早的榜单收起；每天的说明收成一个小按钮 */
 details.panel.pi-old{margin-top:20px}details.panel.pi-old .pi-day{margin-top:14px}
 .pi-note{display:inline}.pi-note>summary{display:inline;cursor:pointer;color:var(--blue);list-style:none}.pi-note>summary::-webkit-details-marker{display:none}.pi-note[open]{display:block;margin-top:4px}
+/* 产品灵感：标题下「先看 3 个」 */
+.pi-picks{margin:10px 0 12px;padding:10px 12px;border:1px solid var(--hair);border-radius:var(--r-sm);background:var(--card)}
+.pi-picks .lb{font-size:13px;font-weight:600;color:var(--ink2);margin-bottom:4px}
+.pi-picks ol{margin:0;padding-left:22px}.pi-picks li{margin:6px 0;font-size:15px;line-height:1.6}
+.pi-picks li a{color:var(--ink);text-decoration:none}.pi-picks li a b{border-bottom:1px solid var(--blue)}
+.pi-picks .lim{display:block;font-size:14px;color:var(--ink);margin-top:2px}.pi-picks .lim .tag{margin-right:6px;font-size:12px}
+.pi-card:target{outline:2px solid var(--blue);outline-offset:2px}
+/* 雷达周报「结论先说」：每条拆成 解决什么 / 抄哪一处 / 还要确认 三行 */
+.quick li .ql{display:block;font-size:14.5px;line-height:1.6;margin-top:3px;color:var(--ink)}
+.quick li .ql b{display:inline-block;min-width:4.6em;margin-right:6px;color:var(--ink2);font-weight:600}
 .pgrid{display:grid;gap:18px}.pc{display:grid;grid-template-columns:300px 1fr;gap:20px;align-items:start}
 .pc img{width:100%;border-radius:12px;border:1px solid var(--hair);display:block}.pc h3{margin-top:0}
 .xi{font-size:14.5px}.xi .who{font-weight:700}.xi .h{color:var(--ink2)}.xi blockquote{margin:10px 0;padding:10px 14px;background:var(--paper);border-radius:10px;white-space:pre-wrap;font-size:14px}
 .thumbs{display:flex;gap:6px;overflow-x:auto}.ptoc{margin:4px 0 10px;gap:2px;grid-template-columns:1fr!important}.ptoc li{padding:5px 8px 5px 36px;line-height:1.5;font-size:15px;background:none!important;border:0!important;box-shadow:none!important}.ptoc li::before{top:6px;left:8px}.sa{margin:0 0 8px}.sa .xref{margin:0 6px 4px 0}.thumbs img{height:120px;border-radius:6px;border:1px solid var(--hair)}
-@media(max-width:700px){.pc{grid-template-columns:1fr}}</style><script>/*ICONS lucide v1.60.0 ISC*/window.__IC={"menu":"<path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/>","x":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","star":"<path d=\"M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z\"/>","party-popper":"<path d=\"M5.8 11.3 2 22l10.7-3.79\"/><path d=\"M4 3h.01\"/><path d=\"M22 8h.01\"/><path d=\"M15 2h.01\"/><path d=\"M22 20h.01\"/><path d=\"m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10\"/><path d=\"m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17\"/><path d=\"m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7\"/><path d=\"M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z\"/>"};window.__ic=function(n,s,c){return '<svg class="i i-'+n+(c?' '+c:'')+'" width="'+(s||16)+'" height="'+(s||16)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(window.__IC[n]||'')+'</svg>'};/*END ICONS*/
+@media(max-width:700px){.pc{grid-template-columns:1fr}}
+.pc2 h3{margin:4px 0 6px}.pc2 .tags{margin:0 0 6px;display:flex;gap:6px;flex-wrap:wrap}.pc2 .tag.amber{background:var(--amber-soft);color:var(--amber)}.pc2 .new{font-size:14.5px;color:var(--ink2);margin:0 0 6px}.pc2 .take{font-size:16px;font-weight:600;margin:8px 0}.pc2 .pts{margin:0 0 10px;padding-left:20px}.pc2 .pts li{margin:3px 0}.pc2 .q{font-size:14.5px;margin:0 0 10px;color:var(--ink)}.pc2 .q span{color:var(--ink2);margin-left:4px}
+.pc2 .thumb{display:block;max-width:420px}.pc2 .thumb{background:none;overflow:visible}.pc2 .thumb img{width:100%;height:auto;aspect-ratio:auto;object-fit:contain;border-radius:var(--r-sm);border:1px solid var(--hair);display:block}.pc2 .thumb span{display:block;font-size:13px;color:var(--blue);margin-top:4px}.pc2 .srcl{font-size:13.5px;color:var(--ink2);margin:8px 0 0}</style><script>/*ICONS lucide v1.60.0 ISC*/window.__IC={"menu":"<path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/>","x":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","star":"<path d=\"M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z\"/>","party-popper":"<path d=\"M5.8 11.3 2 22l10.7-3.79\"/><path d=\"M4 3h.01\"/><path d=\"M22 8h.01\"/><path d=\"M15 2h.01\"/><path d=\"M22 20h.01\"/><path d=\"m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10\"/><path d=\"m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17\"/><path d=\"m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7\"/><path d=\"M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z\"/>"};window.__ic=function(n,s,c){return '<svg class="i i-'+n+(c?' '+c:'')+'" width="'+(s||16)+'" height="'+(s||16)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(window.__IC[n]||'')+'</svg>'};/*END ICONS*/
 (function(){var T='site-theme',v;try{v=localStorage.getItem(T)}catch(e){}if(!/^[ABC]$/.test(v||''))v='C';document.documentElement.setAttribute('data-theme',v);
 window.__setTheme=function(t){var go=function(){__applyTheme(t)};if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.startViewTransition(go);else go()};window.__applyTheme=function(t){document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem(T,t)}catch(e){}[].forEach.call(document.querySelectorAll('.thsw button'),function(b){b.setAttribute('aria-pressed',b.dataset.t===t)})}})();
 (function(){var k='theme',s=localStorage.getItem(k);if(s?s==='dark':matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark');
@@ -1139,100 +1151,9 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
 </script><script src="../../assets/favorites.js" defer></script></head><body>
 <header class="top"><div class="in"><a class="brand" href="../../index.html"><i><svg class="i i-book-open" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/></svg></i>王玮的学习库</a><nav><a href="../../index.html" class="">首页</a><a href="../../favorites/index.html" class="">收藏</a><a href="../../courses/index.html" class="s1">公开课</a><a href="../../x-posts/index.html" class="">X 好文</a><a href="../../research/index.html" class="">技术研究</a><a href="../../wechat/index.html" class="">微信公众号</a><a href="../../video/index.html" class="">视频</a><a href="../../glossary.html" class="">概念卡</a><a href="../../x-brief/index.html" class="s2">X 简报</a><a href="../../x-posters/index.html" class="on">X 海报</a><a href="../../ph-inspo/index.html" class="">产品灵感</a><a href="../../radar/index.html" class="">雷达</a><a href="../../dsh-plugins/index.html" class="">DSH 插件</a></nav><button class="dm" onclick="__tt()" aria-label="切换深色模式"><svg class="i i-sun-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2"/><path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715"/><path d="M16 12a4 4 0 0 0-4-4"/><path d="m19 5-1.256 1.256"/><path d="M20 12h2"/></svg></button></div></header>
 <main><div class="crumb"><a href="../../index.html">首页</a> / <a href="../index.html">X 海报</a> / 2026-10-23（周五）</div><section class="sheet"><span class="kk">DAILY · 2026-10-23（周五） · 北京时间</span><h1>6 张技术海报</h1><ol class="quick ptoc"><li><a href="#p1">OpenAI FDE 是什么：Codex 变强后删掉约 90% 定制代码，把定制应用沉淀为 Skills/插件</a></li><li><a href="#p2">Harness Self-Evolution 综述（66 页）：Prompt/Memory/Skill/Workflow/代码的自进化路线与 Eval 三问</a></li><li><a href="#p3">Agent Infra 六步学习路径：Runtime、可靠性、编排、沙箱、可观测与评估、生产平台</a></li><li><a href="#p4">老项目 + 这次新在哪：Ponytail 5 重写——让 Agent 先找现成代码再动手（少写 53% 代码）</a></li><li><a href="#p5">主动式 Agent 八层搭建法：Context + Watch + Judgment + Gate（Claude Duet 帖子整理）</a></li><li><a href="#p6">Codealong：一个窗口管理所有编程 Agent 会话（Claude Code / Codex / OpenCode / Cursor）</a></li></ol><p class="muted">点标题跳到那张海报；点海报看原图。发帖时间是北京时间。</p></section><div class="pgrid"><section class="sheet pc" id="p1"><a href="img/01-openai-fde-codex-deleted-90pct.png" target="_blank"><img src="img/01-openai-fde-codex-deleted-90pct.webp" alt="OpenAI FDE 是什么：Codex 变强后删掉约 90% 定制代码，把定制应用沉淀为 Skills/插件" loading="lazy"></a>
-<div><span class="kk">#1 · X 原帖信息</span><h3>OpenAI FDE 是什么：Codex 变强后删掉约 90% 定制代码，把定制应用沉淀为 Skills/插件</h3><div class="xi"><span class="who">Xudong Han</span> <span class="h">@Xudong07452910</span><br>发帖时间：2026-10-23 07:40 北京<br>原帖：<a href="https://x.com/Xudong07452910/status/2113415101877559707" target="_blank" rel="noopener">https://x.com/Xudong07452910/status/2113415101877559707</a><br>原文链接：<a href="https://openai.com/index/forward-deployed-engineering-means" target="_blank" rel="noopener">https://openai.com/index/forward-deployed-engineering-means</a><blockquote>非常推荐读一下 OpenAI FDE 负责人 Colin Jarvis 今天发的这篇工程博客！
-
-他们的 FDE 团队花了几个月给客户做 AI 系统，结果 Codex 变强后，直接删掉了约 90% 的定制代码。
-
-文章用一个半导体客户的真实项目，讲清楚了 FDE 到底在做什么。
-
-工程师直接深入客户团队，跟芯片专家一起设计 Eval、搭建 Harness，把 AI 真正用到芯片验证和调试流程里。
-
-在这个行业，验证约占项目工作量的 70%。前 3–6 个月，几个场景都上了生产：定向测试生成节省约 48% 的时间，几周的调试被压缩到几小时。
-
-但项目上线只是第一步。
-
-随着 Codex 能力提升，团队把原来的定制应用逐步改造成通用 Harness 上的 Skills 和插件。Codex 本身成了交互界面，原来各场景单独写的终端界面和命令行工具全部退役。
-
-扩展到新团队时，基本只需要换上新的连接器和 MCP，再用一个 Skill 生成新的 Eval。第一次部署花了两个月，复制到第二个团队只用了一天。
-
-而当模型能力不够时，FDE 还要把真实业务中的失败案例和能力缺口反馈给 Research。一家电信客户做语音客服，模型一开始在关键 Eval 上只有约 60%，六个月里随着新模型迭代涨到 90% 以上，才达到上线标准。
-
-我很喜欢作者提到的一个目标：让 FDE 不断减少别人对自己的依赖。…</blockquote></div><p class="muted"><a href="img/01-openai-fde-codex-deleted-90pct.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p2"><a href="img/02-harness-self-evolution-survey.png" target="_blank"><img src="img/02-harness-self-evolution-survey.webp" alt="Harness Self-Evolution 综述（66 页）：Prompt/Memory/Skill/Workflow/代码的自进化路线与 Eval 三问" loading="lazy"></a>
-<div><span class="kk">#2 · X 原帖信息</span><h3>Harness Self-Evolution 综述（66 页）：Prompt/Memory/Skill/Workflow/代码的自进化路线与 Eval 三问</h3><div class="xi"><span class="who">Xudong Han</span> <span class="h">@Xudong07452910</span><br>发帖时间：2026-10-23 08:33 北京<br>原帖：<a href="https://x.com/Xudong07452910/status/2113428439630020858" target="_blank" rel="noopener">https://x.com/Xudong07452910/status/2113428439630020858</a><br>原文链接：<a href="https://github.com/zgcagi/Harness-RSI" target="_blank" rel="noopener">https://github.com/zgcagi/Harness-RSI</a><blockquote>Agent 一口气改了 Prompt、Skill，还动了执行代码，分数也涨了。可到底是哪一处改动起了作用？很多自进化实验其实答不上来。
-
-最近看到一份 66 页的 Harness Self-Evolution 综述，挺值得收藏。
-
-它系统梳理了 Prompt、Memory、Skill、Workflow 到可执行代码的自进化路线，还整理了 179 篇相关文献，附有中文版本。
-
-我比较喜欢它对 Eval 的讨论。Harness 改了、分数涨了，还得看改动有没有真正生效、提升是不是它带来的，以及换个任务还能不能保持。
-
-这三个问题我会直接拿来检查自己的实验：只要有一个答不上来，这次的「变强」就先别当真。
-
-做 Agent 自进化、Harness 和 Eval 研究的建议先收藏，可以拿来当文献地图和梳理相关工作。
-
-GitHub：https://t.co/ajg6DuvA6D
-项目主页：https://t.co/Dr8pPgsz8I
-
-[GitHub README zgcagi/Harness-RSI — repo created 2026-10-01; project page https://zgcagi.github.io/Harness-RSI]
-
-
-Harness Self-Evolution: Theory, Algorithms, Evaluation, Applicatio…</blockquote></div><p class="muted"><a href="img/02-harness-self-evolution-survey.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p3"><a href="img/03-agent-infra-6-step-path.png" target="_blank"><img src="img/03-agent-infra-6-step-path.webp" alt="Agent Infra 六步学习路径：Runtime、可靠性、编排、沙箱、可观测与评估、生产平台" loading="lazy"></a>
-<div><span class="kk">#3 · X 原帖信息</span><h3>Agent Infra 六步学习路径：Runtime、可靠性、编排、沙箱、可观测与评估、生产平台</h3><div class="xi"><span class="who">Jerry Fang</span> <span class="h">@Jerry_fsy</span><br>发帖时间：2026-10-22 19:52 北京<br>原帖：<a href="https://x.com/Jerry_fsy/status/2113237100871200970" target="_blank" rel="noopener">https://x.com/Jerry_fsy/status/2113237100871200970</a><blockquote>想深入 Agent Infra，别只盯着 Prompt 和框架。
-
-我落地过 2 个生产级 Agent。在这些项目中，我发现最难的不是模型本身，而是重试、状态管理、沙箱隔离和监控这些工程问题。Agent 能不能在生产环境中稳定运行，很大程度上取决于底层 Infra。
-
-我把Agent Infra的学习之路拆成了 6 步，从 Runtime 一直到生产平台。下面是完整的学习路径。
-
-开始前先说清楚 4 件事。
-•这是一份公开的学习计划，大约按 6 个月的节奏走。重点是吃透，不比速度。
-•Agent Infra 不是 AI Infra。这里不讲 CUDA，也不讲训练和推理。
-•已经熟悉 Runtime 的人，可以跳过第 1 步。
-•第 2 步最容易被低估。
-
-6 步依次是 Runtime、可靠性、编排、沙箱、可观测与评估、生产平台。
-
-1. 先自己写一个 Agent Runtime
-目标：不依赖现成框架，搞懂 Agent 是如何完成一个用户任务的。
-
-学什么：从零写一个 Agent Loop，也就是&quot;思考、调用工具、拿到结果、再思考&quot;这一圈。然后学 Tool Calling、Context Engineering、Streaming、State 和 MCP。可以跟着三元同学的 Super Agent 实战课走一遍，也可以跟着Datawhale的hello-agents做一遍（hello…</blockquote></div><p class="muted"><a href="img/03-agent-infra-6-step-path.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p4"><a href="img/04-ponytail-5-rewrite.png" target="_blank"><img src="img/04-ponytail-5-rewrite.webp" alt="老项目 + 这次新在哪：Ponytail 5 重写——让 Agent 先找现成代码再动手（少写 53% 代码）" loading="lazy"></a>
-<div><span class="kk">#4 · X 原帖信息</span><h3>老项目 + 这次新在哪：Ponytail 5 重写——让 Agent 先找现成代码再动手（少写 53% 代码）</h3><div class="xi"><span class="who">Vox</span> <span class="h">@Voxyz_ai</span><br>发帖时间：2026-10-23 03:00 北京<br>原帖：<a href="https://x.com/Voxyz_ai/status/2113344640959250912" target="_blank" rel="noopener">https://x.com/Voxyz_ai/status/2113344640959250912</a><br>原文链接：<a href="https://github.com/DietrichGebert/ponytail" target="_blank" rel="noopener">https://github.com/DietrichGebert/ponytail</a><blockquote>The new Ponytail 5 is a complete rewrite. Same request, &quot;add a date picker to the frontend&quot;: without it, the agent wrote 335 lines. With it, 𝗷𝘂𝘀𝘁 𝟭𝟬 𝗹𝗶𝗻𝗲𝘀, using the repo&#x27;s existing Input component and letting the browser supply the calendar.
-
-In the maker&#x27;s own benchmark, 39 tasks in Claude Code with Opus 5.5, the agent with Ponytail wrote 53% less code, took 41% less time and cost 26% less. It wrote less, yet 𝟵𝟴% 𝗼𝗳 𝗶𝘁𝘀 𝗿𝗶𝘀𝗸𝘆 𝗹𝗼𝗴𝗶𝗰 𝘀𝗵𝗶𝗽𝗽𝗲𝗱 𝘄𝗶𝘁𝗵 𝗮 𝘁𝗲𝘀𝘁, against 68% without.
-
-Before writing code, it reads the parts the change touches, then asks these in order and stops at the first one that ho…</blockquote></div><p class="muted"><a href="img/04-ponytail-5-rewrite.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p5"><a href="img/05-proactive-agent-8-layers.png" target="_blank"><img src="img/05-proactive-agent-8-layers.webp" alt="主动式 Agent 八层搭建法：Context + Watch + Judgment + Gate（Claude Duet 帖子整理）" loading="lazy"></a>
-<div><span class="kk">#5 · X 原帖信息</span><h3>主动式 Agent 八层搭建法：Context + Watch + Judgment + Gate（Claude Duet 帖子整理）</h3><div class="xi"><span class="who">chuplung</span> <span class="h">@choopyplug1</span><br>发帖时间：2026-10-23 05:19 北京<br>原帖：<a href="https://x.com/choopyplug1/status/2113379716975538332" target="_blank" rel="noopener">https://x.com/choopyplug1/status/2113379716975538332</a><blockquote>Anthropic just dropped a 15-page PDF on building your own Claude Duet - 8 layers to an agent that works while you sleep and texts you first:
-
-the formula: Proactive Agent = Context + Watch + Judgment + Gate
-
-here&#x27;s how to build your own in 8 layers:
-
-layer 1 → context - one thread + your rules stored word for word. no memory without a source
-
-layer 2 → watch - one event schema for every app. a dedupe key turns 14 error pings into 1 event
-
-layer 3 → judge - anomaly score in code, then the model fills an 8-field rubric. no evidence link, no P0
-
-layer 4 → speak - 1 brief at 8am. alerts only for P…</blockquote></div><p class="muted"><a href="img/05-proactive-agent-8-layers.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p6"><a href="img/06-codealong-multi-agent-desktop.png" target="_blank"><img src="img/06-codealong-multi-agent-desktop.webp" alt="Codealong：一个窗口管理所有编程 Agent 会话（Claude Code / Codex / OpenCode / Cursor）" loading="lazy"></a>
-<div><span class="kk">#6 · X 原帖信息</span><h3>Codealong：一个窗口管理所有编程 Agent 会话（Claude Code / Codex / OpenCode / Cursor）</h3><div class="xi"><span class="who">小弟调调</span> <span class="h">@jaywcjlove</span><br>发帖时间：2026-10-22 15:46 北京<br>原帖：<a href="https://x.com/jaywcjlove/status/2113175166293356751" target="_blank" rel="noopener">https://x.com/jaywcjlove/status/2113175166293356751</a><br>原文链接：<a href="https://github.com/codealong/codealong" target="_blank" rel="noopener">https://github.com/codealong/codealong</a><blockquote>Codealong - 在同一窗口中运行和管理多个编程智能体的桌面应用
-
-👉 https://t.co/vkyetvJDan https://t.co/ZXrKP6i9Sk
-
-[GitHub README codealong/codealong — repo created 2026-10-19]
-
-  
-
-Codealong
-
-Every coding agent you run, in one window.
-
-  A free, open-source macOS and Linux app for people who run more than one coding agent at a time:
-  Claude Code, Codex, OpenCode, Antigravity and Cursor, on every account you have.
-
-  codealong.com
-  &amp;nbsp;·&amp;nbsp; Download for macOS
-  &amp;nbsp;·&amp;nbsp; Build for Linux
-  &amp;nbsp;·&amp;nbsp; Get started
-  &amp;nbsp;·&amp;nbsp; Tour
-  &amp;nbsp;·&amp;nbsp; Supported agents
-  &amp;nbsp;·&amp;nbsp; FAQ
-  &amp;nbsp;·&amp;nbsp; Full g…</blockquote></div><p class="muted"><a href="img/06-codealong-multi-agent-desktop.png" target="_blank">查看原图 PNG →</a></p></div></section></div><div class="pn"><a href="../2026-10-24/index.html">← 2026-10-24</a><a href="../index.html">往期目录</a><a href="../2026-10-22/index.html">2026-10-22 →</a></div><div class="foot">王玮的 X 海报日报 · 每天从 X 推荐流挑技术帖，用 ChatGPT 生成康奈尔笔记海报 · 每张都附 X 原帖信息 · 风格改编自 <a href="https://github.com/vuejs/vitepress">VitePress</a>（MIT）</div></main></body></html>
+<div><span class="kk">#1 · X 原帖信息</span><h3>OpenAI FDE 是什么：Codex 变强后删掉约 90% 定制代码，把定制应用沉淀为 Skills/插件</h3><div class="xi"><span class="who">Xudong Han</span> <span class="h">@Xudong07452910</span><br>发帖时间：2026-10-23 07:40 北京<br>原帖：<a href="https://x.com/Xudong07452910/status/2113415101877559707" target="_blank" rel="noopener">https://x.com/Xudong07452910/status/2113415101877559707</a><br>原文链接：<a href="https://openai.com/index/forward-deployed-engineering-means" target="_blank" rel="noopener">https://openai.com/index/forward-deployed-engineering-means</a></div><p class="muted"><a href="img/01-openai-fde-codex-deleted-90pct.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p2"><a href="img/02-harness-self-evolution-survey.png" target="_blank"><img src="img/02-harness-self-evolution-survey.webp" alt="Harness Self-Evolution 综述（66 页）：Prompt/Memory/Skill/Workflow/代码的自进化路线与 Eval 三问" loading="lazy"></a>
+<div><span class="kk">#2 · X 原帖信息</span><h3>Harness Self-Evolution 综述（66 页）：Prompt/Memory/Skill/Workflow/代码的自进化路线与 Eval 三问</h3><div class="xi"><span class="who">Xudong Han</span> <span class="h">@Xudong07452910</span><br>发帖时间：2026-10-23 08:33 北京<br>原帖：<a href="https://x.com/Xudong07452910/status/2113428439630020858" target="_blank" rel="noopener">https://x.com/Xudong07452910/status/2113428439630020858</a><br>原文链接：<a href="https://github.com/zgcagi/Harness-RSI" target="_blank" rel="noopener">https://github.com/zgcagi/Harness-RSI</a></div><p class="muted"><a href="img/02-harness-self-evolution-survey.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p3"><a href="img/03-agent-infra-6-step-path.png" target="_blank"><img src="img/03-agent-infra-6-step-path.webp" alt="Agent Infra 六步学习路径：Runtime、可靠性、编排、沙箱、可观测与评估、生产平台" loading="lazy"></a>
+<div><span class="kk">#3 · X 原帖信息</span><h3>Agent Infra 六步学习路径：Runtime、可靠性、编排、沙箱、可观测与评估、生产平台</h3><div class="xi"><span class="who">Jerry Fang</span> <span class="h">@Jerry_fsy</span><br>发帖时间：2026-10-22 19:52 北京<br>原帖：<a href="https://x.com/Jerry_fsy/status/2113237100871200970" target="_blank" rel="noopener">https://x.com/Jerry_fsy/status/2113237100871200970</a></div><p class="muted"><a href="img/03-agent-infra-6-step-path.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p4"><a href="img/04-ponytail-5-rewrite.png" target="_blank"><img src="img/04-ponytail-5-rewrite.webp" alt="老项目 + 这次新在哪：Ponytail 5 重写——让 Agent 先找现成代码再动手（少写 53% 代码）" loading="lazy"></a>
+<div><span class="kk">#4 · X 原帖信息</span><h3>老项目 + 这次新在哪：Ponytail 5 重写——让 Agent 先找现成代码再动手（少写 53% 代码）</h3><div class="xi"><span class="who">Vox</span> <span class="h">@Voxyz_ai</span><br>发帖时间：2026-10-23 03:00 北京<br>原帖：<a href="https://x.com/Voxyz_ai/status/2113344640959250912" target="_blank" rel="noopener">https://x.com/Voxyz_ai/status/2113344640959250912</a><br>原文链接：<a href="https://github.com/DietrichGebert/ponytail" target="_blank" rel="noopener">https://github.com/DietrichGebert/ponytail</a></div><p class="muted"><a href="img/04-ponytail-5-rewrite.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p5"><a href="img/05-proactive-agent-8-layers.png" target="_blank"><img src="img/05-proactive-agent-8-layers.webp" alt="主动式 Agent 八层搭建法：Context + Watch + Judgment + Gate（Claude Duet 帖子整理）" loading="lazy"></a>
+<div><span class="kk">#5 · X 原帖信息</span><h3>主动式 Agent 八层搭建法：Context + Watch + Judgment + Gate（Claude Duet 帖子整理）</h3><div class="xi"><span class="who">chuplung</span> <span class="h">@choopyplug1</span><br>发帖时间：2026-10-23 05:19 北京<br>原帖：<a href="https://x.com/choopyplug1/status/2113379716975538332" target="_blank" rel="noopener">https://x.com/choopyplug1/status/2113379716975538332</a></div><p class="muted"><a href="img/05-proactive-agent-8-layers.png" target="_blank">查看原图 PNG →</a></p></div></section><section class="sheet pc" id="p6"><a href="img/06-codealong-multi-agent-desktop.png" target="_blank"><img src="img/06-codealong-multi-agent-desktop.webp" alt="Codealong：一个窗口管理所有编程 Agent 会话（Claude Code / Codex / OpenCode / Cursor）" loading="lazy"></a>
+<div><span class="kk">#6 · X 原帖信息</span><h3>Codealong：一个窗口管理所有编程 Agent 会话（Claude Code / Codex / OpenCode / Cursor）</h3><div class="xi"><span class="who">小弟调调</span> <span class="h">@jaywcjlove</span><br>发帖时间：2026-10-22 15:46 北京<br>原帖：<a href="https://x.com/jaywcjlove/status/2113175166293356751" target="_blank" rel="noopener">https://x.com/jaywcjlove/status/2113175166293356751</a><br>原文链接：<a href="https://github.com/codealong/codealong" target="_blank" rel="noopener">https://github.com/codealong/codealong</a></div><p class="muted"><a href="img/06-codealong-multi-agent-desktop.png" target="_blank">查看原图 PNG →</a></p></div></section></div><div class="pn"><a href="../2026-10-24/index.html">← 2026-10-24</a><a href="../index.html">往期目录</a><a href="../2026-10-22/index.html">2026-10-22 →</a></div><div class="foot">王玮的 X 海报日报 · 每天从 X 推荐流挑技术帖，用 ChatGPT 生成康奈尔笔记海报 · 每张都附 X 原帖信息 · 风格改编自 <a href="https://github.com/vuejs/vitepress">VitePress</a>（MIT）</div></main></body></html>

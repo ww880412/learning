@@ -30,23 +30,23 @@
       "note": "排名为当日结束时的名次；分数是 PH 页面给出的综合分（投票、讨论等），抓取时的数值，不是纯票数。当天是周日，榜单共 12 个产品。星数为抓取时 GitHub API 数值。今日未与《P-Hunt内容速览》交叉核对。",
       "items": [
         {
-          "id": "2026-10-25-moli",
-          "name": "Moli by Lexmount",
-          "tagline": "The fastest headless browser for agents and harnesses",
-          "ph": "https://www.producthunt.com/products/lexmount-browser",
-          "site": "https://browser.lexmount.com/",
-          "repo": null,
-          "rank": 1,
-          "score": 284,
-          "comments": 68,
-          "what": "专门给 AI agent 从零写的无头浏览器引擎，通过 Lexmount Browser 云平台提供，多会话隔离、带代理。",
-          "problem": "agent 跑网页任务时用 Chrome 冷启动慢、吃内存，自己维护浏览器集群又麻烦。",
-          "highlight": "官方基准称冷启动约为 Chrome 的 5 倍快、内存约 1/7（厂商自测，未独立验证）；SDK 支持 Playwright、CDP、扩展、下载和会话回放；结果可交付成带来源链接的 CSV。$12/月含 100 浏览器小时、25 并发。引擎本身不开源，GitHub 上只有 JS/Python SDK 示例仓库。",
-          "inspo": "工作台里给 agent 配「浏览器能力」时，会话回放 + 可核对来源的结果是值得抄的验收形态；浏览器层建议直接接现成服务或 Playwright，不必自研。",
+          "id": "2026-10-25-git-flow-next",
+          "name": "git-flow-next",
+          "tagline": "Your favorite Git workflow. Reimagined.",
+          "ph": "https://www.producthunt.com/products/tower",
+          "site": "https://git-flow.sh",
+          "repo": "https://github.com/gittower/git-flow-next",
+          "rank": 5,
+          "score": 133,
+          "comments": 2,
+          "what": "Tower 团队用 Go 重写的 git-flow 继任者，2.1 版加入 worktree 支持。",
+          "problem": "多个 coding agent 并行改同一个仓库时互相踩脚，要么来回 stash/切分支，要么手工管 worktree。",
+          "highlight": "--worktree 让每个 feature 起在独立目录；可把 worktree 设为默认，这样 Claude Code、Codex 开的每个 feature 自动有自己的目录；feature 收尾时自动清理 worktree。兼容旧 git-flow 配置，获原作者 Vincent Driessen 认可。开源 BSD-2-Clause（抓取时约 470 星），brew install git-flow-next。",
+          "inspo": "按功能分支建独立 worktree、收尾自动清理。给不同 agent 分不同分支，就能隔离并行任务；王玮这边已有多 worktree 并行的场景，可以试，但得先给每个 agent 分好分支。",
           "tags": [
             "coding agent",
             "开发者工具",
-            "AI工具"
+            "开源"
           ],
           "status": "新发现",
           "followups": []
@@ -64,11 +64,33 @@
           "what": "人和多个 AI agent 共用的「云盘」：文档、报告、幻灯片、网页应用、设计都放在同一份在线产物上一起改。",
           "problem": "AI 做出来的东西散落在各个聊天窗口里，没法共享、没法接力改，也看不出谁改了什么。",
           "highlight": "对人是 Google Docs 式多人编辑，对 agent 是 Markdown + Git 接口；Claude、ChatGPT、Codex、Cursor 等通过 MCP、CLI、API 接入；每份产物有固定链接、版本历史和按 agent 的读写权限。出自 Anima 团队，有免费档。",
-          "inspo": "「对人像文档、对 agent 像 Git」正是企业工作台里共享资产/知识库的一种做法：同一份产物两种接口、按 agent 分权限、全程留版本。可以拿它的权限和版本模型做对照。",
+          "inspo": "官网称「对人像文档、对 agent 像 Git」，这正是企业工作台里共享资产/知识库的一种做法：同一份产物两种接口、按 agent 分权限、全程留版本。可以拿它的权限和版本模型做对照。",
           "tags": [
             "coding agent",
             "AI工具",
             "效率"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-25-llama-windows",
+          "name": "Llama Windows",
+          "tagline": "One local AI server for all your Windows apps",
+          "ph": "https://www.producthunt.com/products/llama-windows",
+          "site": "https://llama.app/",
+          "repo": "https://github.com/ggml-org/Llama-Windows",
+          "rank": 6,
+          "score": 125,
+          "comments": 4,
+          "what": "llama.cpp 团队和 Hugging Face 出的 Windows 11 托盘应用，一键下开源模型、Alt+Space 本地聊天。",
+          "problem": "每个本地 AI 应用都各自下一份几十 GB 的模型、各起一个服务，普通用户还得敲命令行。",
+          "highlight": "提供一个共享的本地 OpenAI 兼容接口（localhost:9931/v1），coding agent、编辑器、脚本都连它；模型放在通用的 Hugging Face 缓存里不重复下载；按电脑配置推荐模型；不需要终端和管理员权限。免费开源（MIT，C#，抓取时约 290 星）。",
+          "inspo": "「一台机器一个本地模型服务、所有工具共享」的思路适合企业工作台的本地/离线模式：统一入口 + 共享缓存，比每个插件各自管模型省事。",
+          "tags": [
+            "AI工具",
+            "开发者工具",
+            "开源"
           ],
           "status": "新发现",
           "followups": []
@@ -95,44 +117,44 @@
           "followups": []
         },
         {
-          "id": "2026-10-25-git-flow-next",
-          "name": "git-flow-next",
-          "tagline": "Your favorite Git workflow. Reimagined.",
-          "ph": "https://www.producthunt.com/products/tower",
-          "site": "https://git-flow.sh",
-          "repo": "https://github.com/gittower/git-flow-next",
-          "rank": 5,
-          "score": 133,
-          "comments": 2,
-          "what": "Tower 团队用 Go 重写的 git-flow 继任者，2.1 版加入 worktree 支持。",
-          "problem": "多个 coding agent 并行改同一个仓库时互相踩脚，要么来回 stash/切分支，要么手工管 worktree。",
-          "highlight": "--worktree 让每个 feature 起在独立目录；可把 worktree 设为默认，这样 Claude Code、Codex 开的每个 feature 自动有自己的目录；feature 收尾时自动清理 worktree。兼容旧 git-flow 配置，获原作者 Vincent Driessen 认可。开源 BSD-2-Clause（抓取时约 470 星），brew install git-flow-next。",
-          "inspo": "「每个 agent 一个 worktree、结束自动清理」是多 agent 并行的基础设施，王玮这边已有多 worktree 并行的实际场景，可以直接试用或把这套约定写进工作台的任务启动/收尾流程。",
+          "id": "2026-10-25-moli",
+          "name": "Moli by Lexmount",
+          "tagline": "The fastest headless browser for agents and harnesses",
+          "ph": "https://www.producthunt.com/products/lexmount-browser",
+          "site": "https://browser.lexmount.com/",
+          "repo": null,
+          "rank": 1,
+          "score": 284,
+          "comments": 68,
+          "what": "专门给 AI agent 从零写的无头浏览器引擎，通过 Lexmount Browser 云平台提供，多会话隔离、带代理。",
+          "problem": "agent 跑网页任务时用 Chrome 冷启动慢、吃内存，自己维护浏览器集群又麻烦。",
+          "highlight": "官方基准称冷启动约为 Chrome 的 5 倍快、内存约 1/7（厂商自测，未独立验证）；SDK 支持 Playwright、CDP、扩展、下载和会话回放；结果可交付成带来源链接的 CSV。$12/月含 100 浏览器小时、25 并发。引擎本身不开源，GitHub 上只有 JS/Python SDK 示例仓库。",
+          "inspo": "工作台里给 agent 配「浏览器能力」时，会话回放 + 可核对来源的结果是值得抄的验收形态；浏览器层建议直接接现成服务或 Playwright，不必自研。",
           "tags": [
             "coding agent",
             "开发者工具",
-            "开源"
+            "AI工具"
           ],
           "status": "新发现",
           "followups": []
         },
         {
-          "id": "2026-10-25-llama-windows",
-          "name": "Llama Windows",
-          "tagline": "One local AI server for all your Windows apps",
-          "ph": "https://www.producthunt.com/products/llama-windows",
-          "site": "https://llama.app/",
-          "repo": "https://github.com/ggml-org/Llama-Windows",
-          "rank": 6,
-          "score": 125,
+          "id": "2026-10-25-yourcast",
+          "name": "Yourcast 2.0",
+          "tagline": "AI summaries with tap-to-jump timestamps, right in Telegram",
+          "ph": "https://www.producthunt.com/products/yourcast",
+          "site": "https://t.me/yourcastbot",
+          "repo": "https://github.com/amadevstudio/yourcastbot",
+          "rank": 11,
+          "score": 89,
           "comments": 4,
-          "what": "llama.cpp 团队和 Hugging Face 出的 Windows 11 托盘应用，一键下开源模型、Alt+Space 本地聊天。",
-          "problem": "每个本地 AI 应用都各自下一份几十 GB 的模型、各起一个服务，普通用户还得敲命令行。",
-          "highlight": "提供一个共享的本地 OpenAI 兼容接口（localhost:9931/v1），coding agent、编辑器、脚本都连它；模型放在通用的 Hugging Face 缓存里不重复下载；按电脑配置推荐模型；不需要终端和管理员权限。免费开源（MIT，C#，抓取时约 290 星）。",
-          "inspo": "「一台机器一个本地模型服务、所有工具共享」的思路适合企业工作台的本地/离线模式：统一入口 + 共享缓存，比每个插件各自管模型省事。",
+          "what": "Telegram 里的播客机器人：搜索订阅播客、新集自动推到聊天里，2.0 加了 AI 摘要。",
+          "problem": "想先判断一集播客值不值得花一小时听，又不想为播客再装一个 App。",
+          "highlight": "AI 摘要带时间戳，点时间直接跳到音频对应位置，还能就单集提问；失效的订阅源每天自动重找新地址；用 Telegram Stars 收费（免费每周 10 集）。作者说过去 7 周合并了 85 个 PR，主要由 LLM 写。开源 GPL-3.0（Python）。",
+          "inspo": "「摘要 + 可点击跳回原文时间点」适合 DXK 和学习站：每条要点都能跳回原帖/原视频位置，方便核对出处。",
           "tags": [
+            "创作",
             "AI工具",
-            "开发者工具",
             "开源"
           ],
           "status": "新发现",
@@ -161,28 +183,6 @@
           "followups": []
         },
         {
-          "id": "2026-10-25-yourcast",
-          "name": "Yourcast 2.0",
-          "tagline": "AI summaries with tap-to-jump timestamps, right in Telegram",
-          "ph": "https://www.producthunt.com/products/yourcast",
-          "site": "https://t.me/yourcastbot",
-          "repo": "https://github.com/amadevstudio/yourcastbot",
-          "rank": 11,
-          "score": 89,
-          "comments": 4,
-          "what": "Telegram 里的播客机器人：搜索订阅播客、新集自动推到聊天里，2.0 加了 AI 摘要。",
-          "problem": "想先判断一集播客值不值得花一小时听，又不想为播客再装一个 App。",
-          "highlight": "AI 摘要带时间戳，点时间直接跳到音频对应位置，还能就单集提问；失效的订阅源每天自动重找新地址；用 Telegram Stars 收费（免费每周 10 集）。作者说过去 7 周合并了 85 个 PR，主要由 LLM 写。开源 GPL-3.0（Python）。",
-          "inspo": "「摘要 + 可点击跳回原文时间点」适合 DXK 和学习站：每条要点都能跳回原帖/原视频位置，方便核对出处。",
-          "tags": [
-            "创作",
-            "AI工具",
-            "开源"
-          ],
-          "status": "新发现",
-          "followups": []
-        },
-        {
           "id": "2026-10-25-how-it-spread",
           "name": "How It Spread",
           "tagline": "See how anything went viral, from the first post",
@@ -201,6 +201,23 @@
           ],
           "status": "新发现",
           "followups": []
+        }
+      ],
+      "picks": [
+        {
+          "id": "2026-10-25-git-flow-next",
+          "why": "多 agent 并行的现成约定：按分支开 worktree，收尾自动清理。",
+          "limit": "按分支隔离，要先给每个 agent 分好分支。"
+        },
+        {
+          "id": "2026-10-25-agentgrid",
+          "why": "官网称同一份产物对人是文档、对 agent 是 Git，可对照共享资产的权限和版本设计。",
+          "limit": "没有公开仓库，只能借鉴设计。"
+        },
+        {
+          "id": "2026-10-25-llama-windows",
+          "why": "一台机器一个本地模型接口，所有工具共用，适合工作台的离线模式。",
+          "limit": "只有 Windows 11 版。"
         }
       ]
     },

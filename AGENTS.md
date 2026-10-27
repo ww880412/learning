@@ -34,7 +34,7 @@ Codex、Cursor、Claude Code、其他 Grok Bot 改这个仓库前先读这一页
 |---|---|---|---|
 | X Brief（`/workspace/x-brief/site/publish.sh`，工作区 `/workspace/learning`，detached HEAD，推 `HEAD:main`） | 每天北京 09:00 | `x-brief/`（含 `weekly/`）、`index.html`、`digest/`、`data/digest/` | `x-brief: update <日期>` |
 | X海报日报（`publish_gallery.py`，工作区 `/workspace/learning-main` 的 `main`） | 每天北京 08:15 起，约 25 分钟 | `x-posters/`、`index.html`、`digest/`、`data/digest/` | `x-posters: update <日期>` |
-| PH灵感箱 | 约北京 20:00 | `data/ph-inspo.json`、`ph-inspo/index.html`、`index.html`、`digest/`、`data/digest/` | `ph-inspo: …` |
+| PH灵感箱（自己的 worktree `/workspace/learning-ph`，步骤见 `/workspace/ph-inspo/RUNBOOK.md`） | 约北京 20:00 | `data/ph-inspo.json`、`ph-inspo/index.html`、`index.html`、`digest/`、`data/digest/` | `ph-inspo: …` |
 | Agent工作台雷达（指挥家代为发布，步骤见 `/workspace/agent-workbench/SYNC.md`） | 每周一（北京 09:00 周报），平时随时补录 | 先 `node scripts/sync-radar.mjs`（读 `/workspace/agent-workbench`）写 `data/radar.json` 和 `data/radar-weekly/`，再 `node build.mjs` 写 `radar/index.html`、`radar/weekly/<日期>.html` 等 | `radar: …` |
 | 学习搭子 | 不定时 | 学习页（`courses/…`、`x-posts/…`、`research/…`、`wechat/…`、`video/…`）、`data/items.json`、`data/concepts.json`、`data/review.json`，以及构建后的全部生成页 | `courses: …`、`x-posts: …`、`review.json：…` |
 | 浏览器（王玮点收藏、学完了、今日勾选） | 随时 | `favorites.json`、`data/review.json`（GitHub Contents API 直接提交） | `fav: + / - …`、`learn: …`、`review: …` |
@@ -87,7 +87,7 @@ git add -A && git commit -m "…" && git push -u origin <分支>
 
 - **改样式或模板前先读 `DESIGN.md`**：令牌、组件、只用 Lucide 图标、动效规则、布局要紧凑。
 - 新增界面图标：先把名字加进 `scripts/vendor-icons.mjs` 的 `NAMES`，运行后再用 `ic('name')`。不要写 emoji 图标。
-- 产品灵感（PH灵感箱）：数据在 `data/ph-inspo.json`，每天在 `days` 最前面追加一天 `{date, source, fetched, note, items}`；改状态改 `item.status`（新发现/在跟进/已试用/归档），跟进写进 `item.followups`（`{date, type: 新版本|融资|定价|开源替代|其他, text, url}`）。改完 `node build.mjs`，生成 `ph-inspo/index.html` 和首页入口。
+- 产品灵感（PH灵感箱）：数据在 `data/ph-inspo.json`，每天在 `days` 最前面追加一天 `{date, source, fetched, note, items}`；改状态改 `item.status`（新发现/在跟进/已试用/归档），跟进写进 `item.followups`（`{date, type: 新版本|融资|定价|开源替代|其他, text, url}`）。改完 `node build.mjs`，生成 `ph-inspo/index.html` 和首页入口。2026-10-28 起每天还要写 `picks`（先看 3 个，`{id, why, limit}` × 3，items 前 3 个与之同序）：写错 build.mjs 报错，没写会打 `⚠️ warn`。PH灵感箱用自己的 worktree `/workspace/learning-ph` 发布，不在 `/workspace/learning` 里改；完整步骤见 `/workspace/ph-inspo/RUNBOOK.md`。
 - **呈现规则（2026-10-26 jobs-fix1）**：简报、海报页用学习库同一套顶栏和面包屑（`/workspace/x-brief/site/build.py` 的 `header()`、`crumb()`，海报脚本复用）；简报各栏目默认折叠，第一屏只留「今日主线」；雷达每个方向只露最新 3 条，产品灵感只展开最新一天；页头说明收进「关于这页数据」。链接指向折叠内容时，`assets/vp-head.js` 会先展开再滚过去。
 - **另见**：同一件事出现在几个栏目时都保留，互相加 `<a class="xref">另见：…</a>`。简报 ↔ 海报（同一北京日）按标题里少见的英文专名匹配（`build.py` 的 `same_story`，宁可漏不乱连）；雷达 ↔ 产品灵感按项目名相同；海报 → 雷达/产品灵感按项目名出现在海报标题开头（前 16 个字符），名字在 3 张以上海报里出现就不连。`build.mjs` 取摘要前会去掉这些链接（`noXref`）。
 - DSH 插件市场盘点：数据在 `data/dsh-plugins.json`，苏茶原文归档在 `sources/suercha-50-plugins.md`（只作引用）。改完 `node build.mjs`，生成 `dsh-plugins/index.html`、顶栏和首页入口。只写盘点里已核实的事实，不补数字或仓库。
