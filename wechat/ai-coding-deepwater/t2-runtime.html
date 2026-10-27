@@ -107,7 +107,7 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
     <h2>状态机编排换来了稳定，但光稳已经不够</h2>
   </header>
   <div class="doc-body">
-    <p data-points="p0007" id="e6">主线 1 结尾说，框架层能解决的都解决了，剩下的要么解决不了，要么就像 ut-lint，卡在底层不开放接口。于是问题变成：编排顺序、上下文压缩、工具参数拼接，到底归哪一层管？</p>
+    <p data-points="p0007" id="e6">框架层能解决的都解决了，剩下的要么解决不了，要么就像 ut-lint，被底座的口子卡着。于是问题变成：编排顺序、上下文压缩、工具参数拼接，到底归哪一层管？</p>
     <p data-points="p0008" id="e7">上一篇结束时，团队的多 agent 编排靠 workflow-engine 编排：让主 agent 当状态机，按固定流程派生子 agent。当时的判断是「最贵的不是 token，是失控」，所以选了稳定。一个季度后，稳定有了，三个问题却越来越显眼：</p>
     <ol class="steps">
       <li data-points="p0008" id="e8"><b>耗 token</b>：子 agent 每次都从空白上下文开始，同一份代码反复摸索。评审打回三次，实现者就把相关代码读三遍。</li>
@@ -115,7 +115,7 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
       <li data-points="p0008" id="e10"><b>主 agent 闲置</b>：它只负责维持秩序，最有价值的本事（直接和用户对话）却用不上。</li>
     </ol>
     <p data-points="p0014" id="e11">作者强调，重新打开这扇门，不是因为「失控比 token 贵」判断错了，而是只有「稳」已经不够。两个方案同时推进。方案二风险大：官方把它标为实验特性，公开实践几乎为零，所以由作者亲自去趟。</p>
-    <div class="compare"><div><b>方案一（风险低，已落地）</b><p>交互最多的需求分析和架构设计收回给主 agent 亲自做；需要子 agent 时优先接着上一轮的会话（resume），不重新派生。这样体验接近单 agent，派活时能带更多上下文，子 agent 也不用重新摸索。已经用在现在的 /dev 流程里。</p></div><div><b>方案二（风险高，作者亲自试）</b><p>agent teams（只有 Claude Code 有）：成员一直在线，彼此直接发消息，共用任务看板。常驻适合多轮来回，网状通信让编排最灵活。理论上正好解决上面三个问题。</p></div></div>
+    <div class="compare"><div><b>方案一（风险低，已落地）</b><p data-points="p0014" id="e54">交互最多的需求分析和架构设计收回给主 agent 亲自做；需要子 agent 时优先接着上一轮的会话（resume），不重新派生。这样体验接近单 agent，派活时能带更多上下文，子 agent 也不用重新摸索。已经用在现在的 /dev 流程里。</p></div><div><b>方案二（风险高，作者亲自试）</b><p data-points="p0014" id="e55">agent teams（只有 Claude Code 有）：成员一直在线，彼此直接发消息，共用任务看板。常驻适合多轮来回，网状通信让编排最灵活。理论上正好解决上面三个问题。</p></div></div>
   </div>
 </section>
 
@@ -125,23 +125,23 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
     <h2>实验一把整个开发流程搬上 Team：纸面很美，实跑全是补丁</h2>
   </header>
   <div class="doc-body">
-    <p data-points="p0018" id="e12">五月底，作者做了第一项实验（实验目录名里带着日期 2026-05-29），设计相当激进：</p>
+    <p data-points="p0018" id="e12">五月底，作者做了第一项实验（实验目录 experiments/2026-05-29-team-driven-dev），设计相当激进：</p>
     <ul>
-      <li data-points="p0018" id="e13">拿掉 /dev 命令和状态机，改成两个 skill 前后衔接：先由主 agent 和用户交互做设计（产出 arch.md、plan.md），再由 Team 执行。</li>
+      <li data-points="p0018" id="e13">拿掉 /dev 命令和状态机，改成两个 skill 前后衔接：先用 brainstorming 由主 agent 和用户交互做设计（产出 arch.md、plan.md），再用 team-execution 交给 Team 执行。</li>
       <li data-points="p0018" id="e14">不再用 state.json 文件记状态，而是看磁盘：没有 arch.md 就从头开始，有 plan.md 就直接执行。中断后也靠磁盘上的文件恢复。</li>
       <li data-points="p0018" id="e15">七个角色进 Team：负责规划、实现、评审（可以多个）、测试规划、测试编写、探索和守护。实现者和评审者直接互发消息对审，不经过主 agent。</li>
       <li data-points="p0018" id="e16">守护者 guardian 在一旁异步盯着一件事：用户原话与主 agent 的理解有没有偏差，防止长对话里把需求理解歪。</li>
     </ul>
-    <p data-points="p0024" id="e17">实跑之后，提交记录里几乎全是补丁。作者把踩过的坑分成四类，由浅到深：</p>
+    <p data-points="p0024" id="e17">实跑之后，提交记录里全是补丁。作者把踩过的坑分成四类，由浅到深：</p>
     <h3>第一类：模型不认识这套机制</h3>
-    <p data-points="p0024" id="e18">agent teams 没有被训练进模型，所有行为只能靠提示词现场教。主 agent 一接到需求就开始聊、忘了先建 Team，只好在 skill 里规定「第 0 步」必须先做、不能跳过（原文写作 STEP 0）；目录命名在几种风格之间来回变，只好把占位符写死；guardian 以为 tracesift 是内置工具，找不到就放弃，只好注明它是要用 Bash 调的命令行。每一条补丁背后都是一次失败的会话。</p>
+    <p data-points="p0024" id="e18">agent teams 没有被训练进模型，所有行为只能靠提示词现场教。主 agent 一接到需求就开始聊、忘了先建 Team，只好在 skill 里规定「第 0 步」必须先做、不能跳过（原文写作 STEP 0）；工作流目录命名在 kebab-case、CamelCase、中文之间来回摇摆，只好把占位符直接写死成 snake_case；guardian 以为 tracesift 是内置工具，找不到就放弃，只好注明它是要用 Bash 调的命令行。每一条补丁背后都是一次失败的会话。</p>
     <h3>第二类：中断活锁，栽得最重</h3>
     <div class="story" data-points="p0026" id="e19"><p data-field="event"><b>事件</b>：一个真实需求完整跑了约 2.5 小时，复盘时发现 planner 一再莫名停下，plan.md 迟迟写不出来。作者拿 tracesift 分析会话才找到原因：主 agent 大约每分钟催一次，而 planner 每轮光热身（重载方法论、读一遍 arch.md、把被打断的验证补上）就超过一分钟。</p><p data-field="consequence"><b>后果</b>：每次催促都打断它正在进行的工具调用，这一轮白做。每轮产出越来越少，从 580 token 降到 278，最后只有 1。planner 在记录里抱怨自己又被消息打断。主 agent 却把这误判为 Team 续接后失效，重建团队接着催，活锁自己喂养自己。</p><p data-field="prevention"><b>换来的三条铁律</b>（后来都写进 skill）：不催正在干活的 agent，只认对方明确发出的 DONE 或 BLOCKED，闲着是正常状态（团队内部称为 PROTOCOL-A 协议）；像 planner 这样的角色，改为有任务时一次性派生、独立做完；测试断言按架构文档的验收标准提前定死，等实现写完只往占位里填值，以免写偏的实现倒过来影响测试。</p></div>
     <p data-points="p0026" id="e20">这起活锁的教训是：在 Team 里，催促本身会制造故障；判断一个成员是否卡死，不能看它暂时没出声。</p>
     <h3>第三类：成员的存活靠不住</h3>
     <p data-points="p0028" id="e21">成员跑在主进程里，主进程一结束它们就没了；会话续接后活着的状态全部丢失，主 agent 仍在给已经消失的成员发消息。唯一的对策：一切以磁盘上的文件为准，联系不上就用磁盘上的架构文档和测试计划原样重建成员。</p>
     <h3>第四类：机制本身反直觉</h3>
-    <p data-points="p0028" id="e22">不配合的成员其实杀不掉：强制结束要 taskId，派生时得到的是 agentId，二者对不上。成员不肯退出时，解散团队一直失败，只能手动编辑团队目录里的 config.json 把它删掉。任务一旦指定了负责人，成员之间就不能互相接活，它卡死后那份活没人能接。这些都没有文档，全靠读源码和实机试错。</p>
+    <p data-points="p0028" id="e22">不配合的成员其实杀不掉：强制结束要 taskId，派生时得到的是 agentId，二者对不上。成员不肯退出时，解散团队一直失败，只能手动编辑 ~/.claude/teams/ 下的 config.json 把它删掉。任务一旦指定了负责人，成员之间就不能互相接活，它卡死后那份活没人能接。这些都没有文档，全靠读源码和实机试错。</p>
     <h3>结局：流程没推广，留下一份运维手册</h3>
     <p data-points="p0030" id="e23">全流程编排最后没有推广：能跑通，但太脆，作者不放心交给同事用。留下来最值钱的是 agent-teams skill，一份从上百次失败会话里提炼的运维手册：怎么看 idleReason 的三种值；失败看 failureReason 分流，限流就等一会儿再试同一个成员，不换人，身份认证失效就停手找人；判断卡死看超时内有没有消息，不看状态标记；还有防止消息刷屏和中断活锁的沟通规矩。</p>
     <p class="callout key" data-points="p0030" id="e24">作者指出这些规矩有一个共同点：都是「不信声明，信事实」。不看状态标记，看超时内有没有消息；不信成员还活着，信磁盘上的文件。</p>
@@ -157,12 +157,12 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
     <p data-points="p0032" id="e25">全流程不可靠，就缩小范围：只把测试流程放上 Team，并严格限定通信方式和步骤。现在用的 /module-test 就是这样：</p>
     <ol class="steps">
       <li data-points="p0032" id="e26">spec 由主 agent 亲手写。作者称它是「自带答案的交接物」：协议锚点、怎么读回结果、验证点矩阵都要对照代码核实过，不许留空。</li>
-      <li data-points="p0032" id="e27">Team 只留两人：一个负责写计划、写代码、跑测试，一个 reviewer 独立审查。两人直接互审，主 agent 不转话、不替人审，只照那份运维手册盯进度、兜底容错，三轮还谈不拢就交给用户。</li>
+      <li data-points="p0032" id="e27">Team 只留两人：test-engineer 负责写计划、写代码、跑测试，一个 reviewer 独立审查。两人直接互审，主 agent 不转话、不替人审，只照那份运维手册盯进度、兜底容错，三轮还谈不拢就交给用户。</li>
       <li data-points="p0032" id="e28">spec 里的验证点矩阵是审查的标准，很早就冻结。测试红了并且对得上某个验证点，就按代码缺陷处理，绝不放松断言去换绿灯。</li>
     </ol>
     <p data-points="p0037" id="e29">作者用这套编排跑了几十次各种任务。靠运维手册和 test-generator 这两份 skill 撑着，流程大体能稳定跑完，agent teams 最大的好处也留住了：他随时能和任意一个 agent 直接对话、插手任何环节。这是状态机编排给不了的。</p>
     <p class="callout limit" data-points="p0037" id="e30">它有一个编排层面解决不了的毛病：评审者一直在线，再审时会被自己上一轮的意见牵着走，只盯老问题，看不全。根治只能每轮都派生新的评审 agent。考虑到评审时间和 token 开销，团队最后还是保留了常驻 reviewer，作者明说这是明知有损的取舍。</p>
-    <p class="callout key" data-points="p0039" id="e31">两项实验后作者的判断：agent teams 这个方向对（网状通信、常驻成员、可随时插手），但现在的实现不完整。模型没学过这套机制，工具的提示和行为也不适合大模型，建在上面的编排怎么写都不牢。skill 可以弥补机制不够好，补不了机制缺了一块。</p>
+    <p class="callout key" data-points="p0039" id="e31">两项实验后作者的判断：agent teams 这个方向对（网状通信、常驻成员、可以自由干预），但现在的实现不完整。模型没学过这套机制，工具的提示和行为也不适合大模型，建在上面的编排怎么写都不牢。skill 可以弥补机制不够好，补不了机制缺了一块。</p>
     <p data-points="p0039" id="e32">缺的那一块是什么？作者的回答是：runtime 的主权不在团队手里。下面三起真实事故就是证据。</p>
   </div>
 </section>
@@ -175,7 +175,7 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
   <div class="doc-body">
     <p data-points="p0041" id="e33"><b>第一起是 Claude Code 遥测事件。</b>作者说，claude code 会暗中判断使用者是否在中国，若判定是，就往提示词和工具调用里下毒。他没有展开细节，但这件事直接动摇了一个前提：生产流程能不能依赖一个看不见内部的 CLI。</p>
     <p data-points="p0043" id="e34"><b>第二起：长中文文件的 UTF-8 损坏。</b>团队批量让 CLI 写中文技术文档，在 37 份产出中有 36 份损坏，一共 370 处 U+FFFD 乱码。原因是 CLI 在拼工具调用参数时以字节为单位切分，把多字节字符切断了（主线 4 讲验收时还会从另一面碰到）。这段代码藏在黑盒里，作者改不了。</p>
-    <div class="story" data-points="p0044" id="e35"><p data-field="event"><b>第三起：压缩 bug 导致空转 11 小时。</b>一个只读的探索任务跑了 11 个小时，调用工具 6556 次，input token 用掉 1.23 亿，什么也没找到。团队博客上有一篇专门的复盘。</p><p data-field="consequence"><b>四个因素叠加</b>：max_turns 上限形同虚设；压缩在 100K 就触发，而模型窗口有 200K，只用了一半；生成的摘要误把「生成摘要」这句指令当成用户的请求，恢复最需要的「当前进度」「待办事项」两节常常只剩标题；于是每次压缩后 agent 都忘了做过什么，用同一组关键词重新搜索。一共压缩 203 轮，等于 203 次从零开始。</p><p data-field="prevention"><b>作者的结论</b>：这些环节必须能查、能改，否则只能事后靠逆向会话记录去还原。</p></div>
+    <div class="story" data-points="p0044" id="e35"><p data-field="event"><b>第三起：压缩 bug 导致空转 11 小时。</b>一个只读的探索任务跑了 11 个小时，调用工具 6556 次，input token 用掉 1.23 亿，什么也没找到。完整复盘见团队博客《一个 agent 空转 11 小时的复盘》。</p><p data-field="consequence"><b>四个因素叠加</b>：max_turns 上限形同虚设；压缩在 100K 就触发，而模型窗口有 200K，只用了一半；生成的摘要误把「生成摘要」这句指令当成用户的请求，恢复最需要的「当前进度」「待办事项」两节常常只剩标题；于是每次压缩后 agent 都忘了做过什么，用同一组关键词重新搜索。一共压缩 203 轮，等于 203 次从零开始。</p><p data-field="prevention"><b>作者的结论</b>：这些环节必须能查、能改，否则只能事后靠逆向会话记录去还原。</p></div>
   </div>
 </section>
 
@@ -185,7 +185,7 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
     <h2>自建 runtime 有必要；先动证据最足的 pi，DeepSeek Harness 跟进验证</h2>
   </header>
   <div class="doc-body">
-    <p data-points="p0045" id="e36">两条线在这里汇合。编排实验说明：机制缺了一块，skill 补不上，只能动 runtime 本身。三起事故说明：agent 循环里的每一环（压缩上下文、拼接工具参数、执行上限、上报遥测）都必须能审计、能干预。claude code、codebuddy 都是闭源的，开发者只好用提示词和 hook 从外面够，出了问题要靠逆向会话记录定位。对垂类场景来说，这种定制能力太弱。所以作者的结论是：有必要自己建 agent runtime。</p>
+    <p data-points="p0045" id="e36">两条线在这里汇合。编排实验说明：机制缺了一块，skill 补不上，只能动 runtime 本身。三起事故说明：agent 循环里的每一环（上下文怎么压缩、工具参数怎么拼、限额怎么执行、遥测发了什么）都必须可审计、可干预。claude code、codebuddy 都是闭源的，开发者只好用提示词和 hook 从外面够，出了问题要靠逆向会话记录定位。对垂类场景来说，这种定制能力太弱。所以作者的结论是：有必要自己建 agent runtime。</p>
     <h3>成本会不会是重复造轮子？作者摆出六个选项</h3>
     <ul>
       <li data-points="p0048" id="e37"><b>以 trpc-agent-go 等框架为起点从头写</b>：真是重复造轮子，循环、协议、上下文都得自己管。</li>
@@ -193,9 +193,9 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
       <li data-points="p0048" id="e39"><b>用 claude 或 codebuddy 提供的 agent SDK</b>：底下仍是黑盒，三起事故一件也躲不过。</li>
       <li data-points="p0048" id="e40"><b>codex（CLI 和 SDK）</b>：代码公开可改，但体量大、难读懂，而且开源得没那么彻底（见下）。</li>
       <li data-points="p0048" id="e41"><b>pi agent</b>：MIT 协议开源，自我介绍为最小的 harness；系统提示词少于 1000 token；plan mode、子 agent 这类功能故意不内置，要用就自己拿 TypeScript 写扩展，扩展能动工具、命令、事件和整个终端界面，还能打包分发。它主打的卖点正好戳中团队痛处：提示词极简、可扩展，让你真正掌控窗口里放什么。边界也说得清楚：能改的只有预留的扩展点，agent 循环本身写死在 core 里。</li>
-      <li data-points="p0048" id="e42"><b>DeepSeek Harness（下称 DSH）</b>：作者写文章时刚放出的 v0.1 开发者预览版，MIT 协议，主张「一切皆插件」：从模型、工具到会话、技能，再到沙箱、存储、调度、循环和界面，全是插件，底层的 Cordis 元框架只管加载、卸载和依赖。不改源码就能替换任何一项能力，连 agent 循环也能换。</li>
+      <li data-points="p0048" id="e42"><b>DeepSeek Harness（下称 DSH）</b>：作者写文章时刚放出的 v0.1 开发者预览版，MIT 协议，主张「一切皆插件」：模型、工具、技能、会话，以及沙箱、存储、循环、调度和界面，全是插件，底层的 Cordis 元框架只管加载、卸载和依赖。不改源码就能替换任何一项能力，连 agent 循环也能换。</li>
     </ul>
-    <p class="callout key" data-points="p0055" id="e43">codex 还揭出一个更不显眼的问题：代码开源，不代表有主权。它新版多 agent 通信会把子 agent 的任务内容加密，只有 OpenAI 服务端能解开。只有父、子 agent 都连 OpenAI 时才通；子 agent 换成别家模型就不通；本地调试看不到真实任务文本；第三方想做兼容 Responses API 的服务也过不了解密这一关。作者的评价是：代码公开，协议上锁，主权仍在别人手里。</p>
+    <p class="callout key" data-points="p0055" id="e43">codex 还揭出一个更不显眼的问题：代码开源，不代表有主权。它名义上支持多家 provider，核心协议却焊死在一家服务上。它新版多 agent 通信会把子 agent 的任务内容加密，只有 OpenAI 服务端能解开。只有父、子 agent 都连 OpenAI 时才通；子 agent 换成别家模型就不通；本地调试看不到真实任务文本；第三方想做兼容 Responses API 的服务也过不了解密这一关。作者的评价是：代码公开，协议上锁，主权仍在别人手里。</p>
     <h3>选型的真问题：主权边界划在哪一层</h3>
     <p data-points="p0056" id="e44">作者说，选型要回答的不是「选哪个产品」，而是能插件化到哪一层。三起事故正好是量这条边界的尺子，要求一条比一条深：</p>
     <ol class="ladder">
@@ -203,8 +203,9 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
       <li data-points="p0056" id="e46"><b>上下文里注入了哪些内容、遥测上报了什么</b>：模型看到的每样东西都要能按来源回查，这是审计的底线。</li>
       <li data-points="p0056" id="e47"><b>上下文怎么压缩</b>：要能把压缩策略整个换掉，而不是去猜阈值和摘要模板。这一层最深，它在 agent 循环的内部。</li>
     </ol>
-    <p data-points="p0056" id="e48">回看那次空转 11 小时：根因当时只能反推会话记录才拼出来。假如每一次注入本来就有记录可查，复盘就不必从考古开始。</p>
-    <div class="compare"><div><b>pi agent</b><p>循环和压缩都在 core 里，改不了。作者关注了几个月，亲手试过，不过试出的成果还很少。</p></div><div><b>DSH</b><p>连循环和压缩都做成插件，元框架只管装卸；审计也接得住：模型看到的一切（系统提示词、工具调用和结果、思维链、子 agent 调度、每次上下文注入）都写进只追加的会话日志，恢复、分叉、回放共用这份事件流。</p></div></div>
+    <p data-points="p0056" id="e48">回看那次空转 11 小时：根因是压缩摘要把「生成摘要」当成了用户请求，对恢复最关键的两节只剩标题；这当时只能反推会话记录才拼出来。假如每一次注入本来就有记录可查，复盘就不必从考古开始。</p>
+    <div class="compare"><div><b>pi agent</b><p>agent 循环写在 core 里，是代码而不是插件，只能通过预留的扩展点改。作者关注了几个月，亲手试过，不过试出的成果还很少。</p></div><div><b>DSH</b><p>连循环和压缩都做成插件，元框架只管装卸；审计也接得住：模型看到的一切（系统提示词、工具调用和结果、思维链、子 agent 调度、每次上下文注入）都写进只追加的会话日志，恢复、分叉、回放共用这份事件流。</p></div></div>
+    <p data-points="p0061" id="e56">用这把尺子一量，pi agent 和 DeepSeek Harness（DSH）的差别不在新旧，而在边界划在哪：pi 把 loop 和压缩策略留在 core 里，DSH 连这两样也做成了插件，元框架只负责装卸。审计这条 DSH 也接得住：模型看到的一切都写进只追加的会话日志，包括系统提示词、思维链、工具调用与结果、子 agent 调度，以及每一次上下文注入，都能按来源回看。恢复、分叉和回放用的也是同一份事件流。</p>
     <p class="callout limit" data-points="p0061" id="e49">作者的取舍：架构上 DSH 更彻底，但两者在他手上的证据强度差得远。DSH 他只读过一篇官方博客，「一切皆插件」还是它自己的说法，作者还没亲手量过。按本文的尺子，声明归声明，事实归事实，所以先后顺序不是个人偏好。</p>
     <ol class="steps">
       <li data-points="p0063" id="e50"><b>pi agent 先动</b>：有几个月接触打底，扩展门槛低，它的定位重心正是上下文治理。扩充垂类能力先从改提示词、加工具做起，每撞到一次 core 的边界就记一笔，记下的就是下一步的需求清单。</li>

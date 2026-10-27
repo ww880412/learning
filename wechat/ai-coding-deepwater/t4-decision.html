@@ -89,7 +89,7 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
   <header class="doc-head">
     <span class="kicker">AI Coding 深水区 · 主线 4 / 5 · 原文第四部分</span>
     <h1>AI 接手写代码后，人退到决策点上</h1>
-    <p class="lede" data-points="p0001" id="e1">人不再守在产出线上逐行把关，而是只在关键的决策点拍板。决策最密集、也最难办的一处是验收。</p>
+    <p class="lede" data-points="p0001" id="e1">人不再站在产出线上，而是退到关键的决策点上拍板。决策最密集、也最难办的一处是验收。</p>
     <p class="links"><a href="https://mp.weixin.qq.com/s/tSmMdSSzLgTsAX1JUaZI9Q">公众号原文 <svg class="i i-external-link" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a><a href="index.html">回全文导读</a><a href="t4-decision-close.html">主线 4 精读版（需密码）</a><span>本页约 12 分钟</span></p>
     <ul class="points">
       <li data-points="p0001" id="e2">该问的不是「要不要逐行看代码」，而是哪些必须人看、哪些交给机器。</li>
@@ -104,7 +104,7 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
 <section class="sec" data-toc="需求和验收" id="s2" data-source-section="s1">
   <header class="doc-head"><span class="kicker">开头</span><h2>需求和验收是决策最集中的两处；这一部分专讲验收</h2></header>
   <div class="doc-body">
-    <p data-points="p0007" id="e6">前三部分让机器那一侧顶住了、也能量化了，现在回到标题的问题：AI 接走写代码以后，人在流程里做什么？作者的回答：退到决策点，离开产出线。决策最集中的地方是需求和验收。</p>
+    <p data-points="p0007" id="e6">前三部分让机器那一侧顶住了、也量得出了，现在回到标题的问题：AI 接走写代码以后，人在流程里做什么？作者的回答：退到决策点，离开产出线。决策最集中的地方是需求和验收。</p>
     <p data-points="p0007" id="e7">需求那一侧前言已讲过：文档都可以让 AI 写，但想清楚这一步不能交出去。AI 能把方案写得面面俱到，可你提的每个方向它都能说得头头是道，所以「这条路走不走」它替你答不了。验收更难，因为要面对的不是一份方案，而是几万行代码。</p>
   </div>
 </section>
@@ -112,30 +112,30 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
 <section class="sec" data-toc="（一）逐行 review 还要吗" id="s3" data-source-section="s2">
   <header class="doc-head"><span class="kicker">（一）为什么不是「人应该看得更快」</span><h2>关口从人的眼睛挪到机器的闸门</h2></header>
   <div class="doc-body">
-    <p data-points="p0010" id="e8">人验收 AI 的产出只有两条路：审代码、跑测试。每条路上都有一个尖锐问题。第一个：还需要逐行审代码吗？作者说今年这事争得很凶，而给出最激进答案的，偏偏是两位最有资格保守的人。</p>
+    <p data-points="p0010" id="e8">人验收 AI 的产出只有两条路：审代码、跑测试。每条路上都有一个尖锐问题。第一个：还需要逐行审代码吗？作者说今年这事争得很凶，而给出激进答案的，偏偏是两位最有资格保守的人。</p>
     <h3>antirez：管住想法，而不是管住代码</h3>
-    <p data-points="p0014" id="e9">Redis 作者 antirez 写过一篇文章，标题是《控制想法，不控制代码》。他认为，只要你掌握了软件的设计思路，逐行读代码就不是最好的做法，常常没意义。理由有三：</p>
+    <p data-points="p0014" id="e9">Redis 作者 antirez 写过一篇文章，标题是《控制想法，不控制代码》。他认为，如果你掌控了软件的想法，逐行看代码是次优的，往往无意义。理由有三：</p>
     <ol class="steps">
       <li data-points="p0014" id="e10">一天产出 5000 行，没人看得完。</li>
-      <li data-points="p0014" id="e11">大模型写一段局部最优的代码很在行，做全局的设计权衡就弱；与其逐个函数扫，不如把你心里的设计讲给它听，再让它讲回来这一块是怎么设计、怎么运转的，由你判断它理解得对不对。</li>
+      <li data-points="p0014" id="e11">大模型写一段局部最优的代码很在行，做全局的设计权衡就弱；与其逐个函数扫，不如把你心里的设计讲给它听，再让它讲回来这一块是怎么设计、怎么运转的，再由你判断它讲回来的这个设计模型对不对。</li>
       <li data-points="p0014" id="e12">一天只有 8 小时，读代码会挤掉当天最该做的事：想清楚软件往哪走，以及大量的 QA。</li>
     </ol>
     <p data-points="p0014" id="e13">他自己其实仍在逐行审 Redis 里 AI 写的代码，但直说这大概没什么意义；之所以还坚持，是出于对用户的尊重：Redis 属于公共基础设施，不少人会直接打开源码手改。</p>
     <p data-points="p0015" id="e14">antirez 还有一句很扎心的话：那个内存优化的 PR，前沿模型来评审，能比他本人找出多得多的错误和细微竞态。作者说这不是猜测，团队的评审服务每天都在印证：每两分钟检查一次新提交，做几轮 AI 评审，结论直接发给提交人。</p>
     <h3>Robert C. Martin：不读代码，但握紧判据</h3>
     <blockquote class="quote"><p>我目前的策略是完全不读 agent 写的任何代码。</p><cite><a href="https://mp.weixin.qq.com/s/tSmMdSSzLgTsAX1JUaZI9Q">Robert C. Martin，转引自原文第四部分（一）</a></cite></blockquote>
-    <p data-points="p0016" id="e15">《代码整洁之道》的作者说，只有这样才能真正拿到 agent 带来的效率。但重点在后半句：他在 agent 四周设了一圈很严的约束，从单测、Gherkin 写的验收用例、QA 流程，到各项质量指标、变异测试和覆盖率，代码得把这一整套闸门全部过完，他才放心。作者特别提醒：清单里的变异测试，正是主线 3 花一个季度才定下来的主指标。</p>
+    <p data-points="p0016" id="e15">《代码整洁之道》的作者说，只有这样才能真正拿到 agent 带来的效率。但重点在后半句：他在 agent 四周设了一圈很严的约束，从单元测试、Gherkin 写的验收用例、QA 流程，到各项质量指标、变异测试和覆盖率，代码得把这一整套闸门全部过完，他才放心。作者特别提醒：清单里的变异测试，正是主线 3 花一个季度才定下来的主指标。</p>
     <p data-points="p0016" id="e16">他后来又发推划了更细的线：单测由 agent 写，他不看；验收用例和 QA 流程虽也由 agent 写，他却亲自过目，关键功能逐个看、一般功能抽着看；另外定期亲手做一次最终测试。用本文的话说：他放手的是实现，攥住的是判据。</p>
     <h3>反方的质疑同样有力</h3>
     <p class="callout limit" data-points="p0018" id="e17">AI 并不总是照指令办事，凭什么相信它始终待在护栏里？它若私下把测试改得迁就实现，或伪造出「全部通过」，人从哪里察觉？更根本的是：测试只能说明程序满足了被写进去的条件，却说明不了这些条件是否齐全、是否正确。作者说，这正戳在本文用两个部分去解决的地方。</p>
-    <p data-points="p0019" id="e18">作者的看法：问题已经变成哪些必须人看、看到多细、哪些交给机器。两位前辈的方向和团队一致：把关从人的眼睛移到机器的闸门。</p>
+    <p data-points="p0019" id="e18">作者的看法：问题已经变成哪些必须人看、看到什么程度、哪些交给机器。两位前辈的方向和团队一致：把关从人的眼睛移到机器的闸门。</p>
     <h3>作者补的一条：有些错误人眼原理上看不出</h3>
     <p data-points="p0019" id="e19">他想补一条两位都没细说、而且比「量太大」更麻烦的理由：有的错误，人工审查在原理上就发现不了。</p>
-    <div class="story" data-points="p0021" id="e20"><p data-field="event"><b>事件</b>：主线 2 提到的 UTF-8 事故，这里讲完整。团队拿命令行工具成批生成中文技术文档：派了 41 条任务、交回 37 份，坏了 36 份，合计 370 处。坏法是每个汉字的 3 个字节分别被替换成了 U+FFFD 替换符。病根在工具把调用参数拼起来时，按字节切开了多字节字符，跟模型会不会写字无关。</p><p data-field="consequence"><b>为什么看不出</b>：文件仍是合法的 UTF-8，读起来通顺，只是偶尔少一个字。不做字节级排查，只会以为模型偶尔手滑；让人一份份读，读一百遍也看不出。</p><p data-field="prevention"><b>后来的门禁</b>：产物入库前扫描 U+FFFD，发现就直接拒收，不管是需求文档、知识候选还是评审报告。人看不见的损坏，从此不靠人看。</p></div>
+    <div class="story" data-points="p0021 p0023" id="e20"><p data-field="event"><b>事件</b>：主线 2 黑盒事故清单里的第二件，也就是 UTF-8 事故，这里讲完整。团队拿命令行工具成批生成中文技术文档：派了 41 条任务、交回 37 份，坏了 36 份，合计 370 处。坏法是：受损的那个汉字，3 个字节各自被替换成一个 U+FFFD 替换符。病根在 CLI 拼接工具调用（tool call）的参数时，按字节切开了 UTF-8 多字节字符，跟模型会不会写字无关。</p><p data-field="consequence"><b>为什么看不出</b>：文件仍是合法的 UTF-8，读起来通顺，只是偶尔少一个字。不做字节级排查，只会以为模型偶尔手滑；让人一份份读，读一百遍也看不出。</p><p data-field="prevention"><b>后来的门禁</b>：产物入库前扫描 U+FFFD，发现就直接拒收，不管是需求文档、知识候选还是评审报告。人看不见的损坏，从此不靠人看。</p></div>
     <p data-points="p0023" id="e21">同一类的还有：测试说跑通了，覆盖率却是空的；断言被悄悄放宽，测试照样全绿。作者强调这不是人不够努力，而是人的感官在这些维度上拿不到事实。所以「机器提供事实」不是为了省人力，而是有些事实只有机器拿得到。</p>
     <h3>第二个问题：AI 写的测试能信吗</h3>
     <p data-points="p0026" id="e22">测试是最硬的验收，「不读代码」的策略全压在它身上。难处在于：测试同样出自 AI 之手，而它为了让测试过关会暗中放水，比如放宽断言、漏掉一个边界，结果照样全绿。Robert C. Martin 敢不看单测，前提是背后有变异测试和一整套指标兜底；少了这层，「不看单测」就是平白把信任交出去。所以最该查的恰恰是测试，而且两半都要落成能执行的事实：</p>
-    <div class="compare"><div><b>离线的一半（主线 3）</b><p data-points="p0029" id="e23">不问测试覆盖了多少，而问它实际能发现多少 bug：在业务代码里植入像真实事故的缺陷，数一数测试抓住了几个。</p></div><div><b>在线的一半（主线 5）</b><p data-points="p0029" id="e24">不信 AI 自己跑出的报告，入库前由平台在自己的容器里独立重跑，把逐条结果放到审批页上。</p></div></div>
+    <div class="compare"><div><b>离线的一半（主线 3）</b><p data-points="p0029" id="e23">离线的一半：不问测试覆盖了多少，而问它实际能发现多少 bug：在业务代码里埋进形态贴近真实 bug 的缺陷，数一数测试杀掉了几个。</p></div><div><b>在线的一半（主线 5）</b><p data-points="p0029" id="e24">在线的一半：不信 AI 自己跑出的报告，入库前由平台在自己的容器里独立重跑，把逐条结果放到审批页上。</p></div></div>
   </div>
 </section>
 
@@ -144,9 +144,9 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
   <div class="doc-body">
     <p data-points="p0031" id="e25">常听人说模型变强了，harness 就该变薄，前言已说明作者认为这是想当然；也有人反过来说，harness 加得越厚 agent 越笨。作者说这两句把三种不同的东西混成了一个词，主线 1 已经拆开，这里再补一个类比。</p>
     <p data-points="p0031" id="e26">把 AI 当人来想就明白了：用记事本写代码的高手确实有，可真正干活时人人都开 IDE，不少人还专门把它调成自己的样子，因为这样最快。程序员越强，对顺手工具的要求越高，而不是越低。</p>
-    <div class="compare"><div><b>改进语言</b><p data-points="p0034" id="e27">面向对象给了拆解复杂度的思路；类型系统和垃圾回收让人少记很多东西。</p></div><div><b>完善工具链</b><p data-points="p0034" id="e28">语言服务、lint、格式化，再到静态分析和性能剖析，每件工具都让人少犯错。</p></div></div>
-    <p data-points="p0034" id="e29">人类提高编程效率就靠这两条路。放到 AI 身上答案相同：给 AI 定制开发工具链。对 AI 友好的工具最好简单到能自动触发、立刻反馈，比如主线 1 的 trace 分析包。</p>
-    <p class="callout limit" data-points="p0034" id="e30">守着历史悠久、技术债成山、技术栈又换不掉的大项目，挑战会大得多，但方向不变。反过来，也别以为通用技术栈能省掉这一层：前言里的对照组平台就是通用栈，照样得建这些东西。</p>
+    <div class="compare"><div><b>改进语言</b><p data-points="p0034" id="e27">改进语言：面向对象给了拆解复杂度的思路；类型系统和垃圾回收让人少记很多东西。</p></div><div><b>完善工具链</b><p data-points="p0034" id="e28">完善工具链：LSP、lint、格式化，再到静态分析和性能剖析，每件工具都让人少犯错。</p></div></div>
+    <p data-points="p0034" id="e29">人类提高编程效率就靠这两条路。放到 AI 身上答案相同：给 AI 定制开发工具链。对 AI 友好的工具最好简单到能自动触发、即时反馈，比如主线 1 的 trace 工具。</p>
+    <p class="callout limit" data-points="p0034" id="e30">守着历史悠久、技术债成山、技术栈又换不掉的大项目，挑战会大得多，但方向不变。反过来，也别以为通用技术栈能省掉这一层：前言里那个平台就是通用栈，照样得建这些东西。</p>
   </div>
 </section>
 
@@ -161,7 +161,7 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
 
 <section class="sec" data-no="测" data-toc="小测：5 道题" id="s6" data-source-section="extra">
   <div class="head-full"><span class="kicker">小测</span><h2>用 5 个场景检查：这一步该谁来做？</h2></div>
-  <div class="stage"><div class="quiz"><script type="application/json">[{"q":"AI 一天交了 5000 行代码，你只有一小时。按作者和两位前辈的思路，最该把时间花在哪？","opts":["从第一行读起，一小时能读多少读多少","看判据：验收测试和设计是否对路","只看 AI 自己写的那份改动总结"],"a":1,"why":"放手的是实现，攥住的是判据。","back":3},{"q":"一批 AI 写的中文文档偶尔缺字，读起来还算通顺。按原文最可靠的做法是？","opts":["多找几个同事分头逐份通读一遍","让写文档的 AI 自己再检查一遍","用机器做字节级扫描并设成门禁"],"a":2,"why":"有些事实只有机器能拿到；人读一百遍也看不出。","back":3},{"q":"你决定不再逐行看 AI 写的单元测试。按原文，前提是什么？","opts":["有变异测试和独立重跑这样的兜底","AI 承诺不改测试","测试数量足够多"],"a":0,"why":"少了兜底，「不看单测」就是平白把信任交出去。","back":3},{"q":"同事说：「模型越来越强，给 AI 做的工具链可以慢慢拆掉了。」按原文作者会怎么回？","opts":["同意，模型强了就不需要","程序员越强，对顺手工具要求越高","只拆 lint，测试留着"],"a":1,"why":"harness 对 coding agent，就像 IDE 对程序员。","back":4},{"q":"你在系统提示词里写了「不许修改测试文件」。按原文这够吗？","opts":["够了","改成更强硬的措辞就够","不够，还要加会话外的检查流水线"],"a":2,"why":"会话内的约束它能绕，会话外的流水线它绕不过，而且比人的注意力便宜。","back":5}]</script></div></div>
+  <div class="stage"><div class="quiz"><script type="application/json">[{"q":"AI 一天交了 5000 行代码，你只有一小时。按作者和两位前辈的思路，最该把时间花在哪？","opts":["从第一行读起，一小时能读多少读多少","看判据：验收测试和设计是否对路","只看 AI 自己写的那份改动总结"],"a":1,"why":"放手的是实现，攥住的是判据。","back":3},{"q":"一批 AI 写的中文文档偶尔缺字，读起来还算通顺。按原文最可靠的做法是？","opts":["多找几个同事分头逐份通读一遍","让写文档的 AI 自己再检查一遍","用机器做字节级扫描并设成门禁"],"a":2,"why":"有些事实只有机器能拿到；人读一百遍也看不出。","back":3},{"q":"你决定不再逐行看 AI 写的单元测试。按原文，前提是什么？","opts":["有变异测试和一整套指标在后面兜底","AI 承诺不改测试","测试数量足够多"],"a":0,"why":"少了兜底，「不看单测」就是平白把信任交出去。","back":3},{"q":"同事说：「模型越来越强，给 AI 做的工具链可以慢慢拆掉了。」按原文作者会怎么回？","opts":["同意，模型强了就不需要","程序员越强，对顺手工具要求越高","只拆 lint，测试留着"],"a":1,"why":"harness 对 coding agent，就像 IDE 对程序员。","back":4},{"q":"你在系统提示词里写了「不许修改测试文件」。按原文这够吗？","opts":["够了","改成更强硬的措辞就够","不够，还要加会话外的检查流水线"],"a":2,"why":"会话内的约束它能绕，会话外的流水线它绕不过，而且比人的注意力便宜。","back":5}]</script></div></div>
   <div class="src article">题目由学习搭子按原文第四部分出，答错会带你回到对应小节</div>
 </section>
 </main><script>var __H=location.hash;window.lessonIcons={"menu": "<svg class=\"i i-menu\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/><\/svg>", "play": "<svg class=\"i i-play\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z\"/><\/svg>", "pause": "<svg class=\"i i-pause\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"14\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/><rect x=\"5\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/><\/svg>", "check": "<svg class=\"i i-check\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 6 9 17l-5-5\"/><\/svg>", "x": "<svg class=\"i i-x\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/><\/svg>", "zoom-in": "<svg class=\"i i-zoom-in\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><line x1=\"21\" x2=\"16.65\" y1=\"21\" y2=\"16.65\"/><line x1=\"11\" x2=\"11\" y1=\"8\" y2=\"14\"/><line x1=\"8\" x2=\"14\" y1=\"11\" y2=\"11\"/><\/svg>", "zoom-out": "<svg class=\"i i-zoom-out\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><line x1=\"21\" x2=\"16.65\" y1=\"21\" y2=\"16.65\"/><line x1=\"8\" x2=\"14\" y1=\"11\" y2=\"11\"/><\/svg>", "copy": "<svg class=\"i i-copy\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\"/><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"/><\/svg>", "chevron-right": "<svg class=\"i i-chevron-right\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m9 18 6-6-6-6\"/><\/svg>", "book-open": "<svg class=\"i i-book-open\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 5v16\"/><path d=\"M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z\"/><\/svg>", "external-link": "<svg class=\"i i-external-link\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M15 3h6v6\"/><path d=\"M10 14 21 3\"/><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/><\/svg>"};window.lessonIcon=n=>window.lessonIcons[n]||"";</script><script>/* Article/pair navigation only. No global swipe or arrow-key paging. */

@@ -134,12 +134,12 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
     <p data-points="p0012" id="e10">早期不少尝试用的是「单 Agent 闭环」：一个 Agent 在同一个上下文里理解需求、改代码、写测试、做 Review，再自己点合并。</p>
     <p data-points="p0013" id="e11">原文承认，这种做法在小脚本、演示项目里看起来很顺；放到真实的中大型工程里，「很容易」出现下面三类问题。</p>
     <ul>
-      <li data-points="p0014" id="e12"><b>盲区共享</b>：模型一开始把业务理解错了，写出的代码有问题，配套的测试也会跟着这个错误理解去写，于是测试照样通过。</li>
-      <li data-points="p0014" id="e13"><b>没意义的绿灯</b>：断言永远为真、把异常吞掉、只测编出来的 Mock 对象，CI 一片绿，核心路径却没有真被验过。</li>
-      <li data-points="p0014" id="e14"><b>没人监督</b>：同一个角色既写又审，审查容易变成走过场。</li>
+      <li data-points="p0014 p0015 p0016" id="e12"><b>盲区共享</b>：模型一开始把业务理解错了，写出的代码有问题，配套的测试也会跟着这个错误理解去写，于是测试照样通过。</li>
+      <li data-points="p0014 p0015 p0016" id="e13"><b>没意义的绿灯</b>：断言永远为真、把异常吞掉、只测编出来的 Mock 对象，CI 一片绿，核心路径却没有真被验过。</li>
+      <li data-points="p0014 p0015 p0016" id="e14"><b>没人监督</b>：同一个角色既写又审，审查容易变成走过场。</li>
     </ul>
-    <p class="callout key" data-points="p0015" id="e15">团队据此定下基本原则：职责分开，标准统一，所有结论都要拿得出能复核的执行证据。</p>
-    <p data-points="p0016" id="e16">落到体系上，就是把工作拆给分工明确、彼此牵制的独立角色；代码提交之后，再设四道由浅到深的验收关口。</p>
+    <p class="callout key" data-points="p0017" id="e15">团队据此定下基本原则：职责分开，标准统一，所有结论都要拿得出能复核的执行证据。</p>
+    <p data-points="p0018" id="e16">落到体系上，就是把工作拆给分工明确、彼此牵制的独立角色；代码提交之后，再设四道由浅到深的验收关口。</p>
   </div>
   <div class="src article">原文 <span class="source-anchor" data-source-section="s3"><a href="https://holon.run/zh-CN/blog/ai-delivery-quality-and-verification#为什么单-agent自编自导自演行不通">为什么单 Agent「自编自导自演」行不通？</a></span></div>
 </section>
@@ -150,15 +150,15 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
     <h2>需求和 Bug 必须写进 Issue，不能只留在聊天 Prompt 里</h2>
   </header>
   <div class="doc-body">
-    <p data-points="p0018" id="e17">第一道防线管的是主干交付。一个任务在主干上通常依次走过：需求或 Bug、编码、PR Review、版本构建、部署到环境。</p>
+    <p data-points="p0020" id="e17">第一道防线管的是主干交付。一个任务在主干上通常依次走过：需求或 Bug、编码、PR Review、版本构建、部署到环境。</p>
     <div class="flow-box"><svg class="flow" data-act="issue" data-edge="issue&gt;qa"><script type="application/json">{"nodes":[{"id":"issue","x":120,"y":180,"t":"Issue / 规格 / PR 契约","s":"可持久化","c":"blue","w":200},{"id":"s1","x":420,"y":70,"t":"会话 1 写了一半","c":"amber","w":170},{"id":"s2","x":420,"y":180,"t":"新会话接手","c":"amber","w":170},{"id":"qa","x":420,"y":300,"t":"Reviewer / QA Agent","s":"独立于编码过程","c":"green","w":190}],"edges":[{"f":"issue","t":"s1"},{"f":"issue","t":"s2","l":"对齐最初目标"},{"f":"issue","t":"qa","l":"对照标准"}]}</script></svg><p class="src extra">据原文整理（原文 L49–L56）：需求记录同时服务于接手的编码会话和独立的验收角色。</p></div>
-    <p data-points="p0020" id="e18">分角色之前先有一条前提：需求和 Bug 要落在能长期保存的地方，比如 Issue、规格文档或 PR 契约，不能只活在一次会话的 Prompt 里。</p>
-    <p data-points="p0021" id="e19">团队虽然天天靠 Agent 干活，仍然不在一次性的 Prompt 里谈需求，理由有两条：</p>
+    <p data-points="p0022" id="e18">分角色之前先有一条前提：需求和 Bug 要落在能长期保存的地方，比如 Issue、规格文档或 PR 契约，不能只活在一次会话的 Prompt 里。</p>
+    <p data-points="p0023" id="e19">团队虽然天天靠 Agent 干活，仍然不在一次性的 Prompt 里谈需求，理由有两条：</p>
     <ol class="steps">
-      <li data-points="p0022" id="e20"><b>编码会跨好几轮</b>：Agent 常要调试多轮，甚至中途断掉、换新会话接手。需求没写清楚的话，接手的人面对半成品代码，很难对准最初的目标。</li>
-      <li data-points="p0022" id="e21"><b>验收要有客观基准</b>：Review 和验收的 Agent 不参与写代码。需求如果没写进独立文档或 Issue，它们就没有对照标准，只能相信代码作者自己的说法，验收也就不客观了。</li>
+      <li data-points="p0024 p0025" id="e20"><b>编码会跨好几轮</b>：Agent 常要调试多轮，甚至中途断掉、换新会话接手。需求没写清楚的话，接手的人面对半成品代码，很难对准最初的目标。</li>
+      <li data-points="p0024 p0025" id="e21"><b>验收要有客观基准</b>：Review 和验收的 Agent 不参与写代码。需求如果没写进独立文档或 Issue，它们就没有对照标准，只能相信代码作者自己的说法，验收也就不客观了。</li>
     </ol>
-    <p class="callout key" data-points="p0023" id="e22">所以任务开工的第一步，是先有一份明确、能拿来测试的 Bug 或需求描述。</p>
+    <p class="callout key" data-points="p0026" id="e22">所以任务开工的第一步，是先有一份明确、能拿来测试的 Bug 或需求描述。</p>
   </div>
   <div class="src article">原文 <span class="source-anchor" data-source-section="s4"><a href="https://holon.run/zh-CN/blog/ai-delivery-quality-and-verification#第一道防线主干交付的独立角色分工与四层验收分流">第一道防线</a></span><span class="source-anchor" data-source-section="s5"><a href="https://holon.run/zh-CN/blog/ai-delivery-quality-and-verification#前置原则需求与-bug-绝不能停留在-prompt-里">前置原则</a></span></div>
 </section>
@@ -169,14 +169,14 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
     <h2>灵活性留在开发者本地，统一标准放在公共环节</h2>
   </header>
   <div class="doc-body">
-    <p data-points="p0025" id="e23">主流程里，团队把 Agent 分成本地和公共两层，一共三个角色：</p>
+    <p data-points="p0028" id="e23">主流程里，团队把 Agent 分成本地和公共两层，一共三个角色：</p>
     <div class="flow-box"><svg class="flow" data-act="rev" data-edge="code&gt;rev"><script type="application/json">{"nodes":[{"id":"code","x":110,"y":180,"t":"编码 Agent","s":"开发者本地 · worktree","c":"amber","w":180},{"id":"rev","x":380,"y":80,"t":"Reviewer Agent","s":"团队部署 · 只提疑点","c":"blue","w":190},{"id":"qa","x":380,"y":280,"t":"QA Agent","s":"团队部署 · 直接读 Issue","c":"green","w":190},{"id":"is","x":620,"y":280,"t":"原始需求","w":130}],"edges":[{"f":"code","t":"rev","l":"PR"},{"f":"code","t":"qa"},{"f":"is","t":"qa"}]}</script></svg><p class="src extra">据原文整理（原文 L62–L64）：三个角色与原始需求的关系。</p></div>
     <ul>
-      <li data-points="p0026" id="e24"><b>编码 Agent（开发者本地）</b>：在开发者自己的环境里干活，借助 Git worktree 这类本地工作目录和调试工具，拆解局部任务、写代码、在本地把单元测试跑通。</li>
-      <li data-points="p0026" id="e25"><b>Reviewer Agent（团队部署）</b>：不在开发者本地，跑在 CI 或服务端。它按架构边界、代码规范、兼容性风险、测试覆盖率这几项统一标准审 PR，给出疑点和代码证据，但<b>不直接改代码</b>。</li>
-      <li data-points="p0026" id="e26"><b>QA Agent（团队部署）</b>：按团队统一标准把质量关。它不听编码 Agent 的自我介绍，直接去拉原始需求或 Issue，按预设规则验证。</li>
+      <li data-points="p0029 p0030 p0031" id="e24"><b>编码 Agent（开发者本地）</b>：在开发者自己的环境里干活，借助 Git worktree 这类本地工作目录和调试工具，拆解局部任务、写代码、在本地把单元测试跑通。</li>
+      <li data-points="p0029 p0030 p0031" id="e25"><b>Reviewer Agent（团队部署）</b>：不在开发者本地，跑在 CI 或服务端。它按架构边界、代码规范、兼容性风险、测试覆盖率这几项统一标准审 PR，给出疑点和代码证据，但<b>不直接改代码</b>。</li>
+      <li data-points="p0029 p0030 p0031" id="e26"><b>QA Agent（团队部署）</b>：按团队统一标准把质量关。它不听编码 Agent 的自我介绍，直接去拉原始需求或 Issue，按预设规则验证。</li>
     </ul>
-    <p class="callout key" data-points="p0027" id="e27">这样分工的好处：开发者在本地可以随意用 Agent 快速探索；一进入评审和集成，就换成统一标准的 Agent 把关，避免同一个 Agent 既当作者又当裁判。</p>
+    <p class="callout key" data-points="p0032" id="e27">这样分工的好处：开发者在本地可以随意用 Agent 快速探索；一进入评审和集成，就换成统一标准的 Agent 把关，避免同一个 Agent 既当作者又当裁判。</p>
   </div>
   <div class="src article">原文 <span class="source-anchor" data-source-section="s6"><a href="https://holon.run/zh-CN/blog/ai-delivery-quality-and-verification#本地编码与团队统一验收">本地编码与团队统一验收</a></span></div>
 </section>
@@ -187,13 +187,13 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
     <h2>QA Agent 按改动性质分四路处理，不把所有改动都送去跑全量测试</h2>
   </header>
   <div class="doc-body">
-    <p data-points="p0029" id="e28">PR 准备好或已经合并后，QA Agent 接手。它不会让每个改动都去排耗时很长的全量测试，而是先看改动属于哪一类，再分流。</p>
-    <figure class="figure orig" data-asset="a0030" data-points="p0030" id="e29"><img src="img/diagram-1.png" alt="原文字符示意图：QA Agent 按改动性质分流（纯代码核对、独立环境动态验证、挂起等待部署、人工介入兜底）"><figcaption><b>原图 2 · QA Agent 的分流</b> 原文用字符画的分流图：合并后由 QA Agent 接收，分成三路，其中两路最后汇到人工兜底。 <span class="source-anchor" data-source-section="s7">出处：Holon 官方博客（原文字符示意图，按原网页渲染截取） · <a href="https://holon.run/zh-CN/blog/ai-delivery-quality-and-verification#验收的分流机制">原图 2 · 验收的分流机制</a></span><span class="how">怎么看：从上往下读；括号里是每一路做什么。④ 人工兜底接在动态验证和等待部署两路之后。</span></figcaption></figure>
+    <p data-points="p0034" id="e28">PR 准备好或已经合并后，QA Agent 接手。它不会让每个改动都去排耗时很长的全量测试，而是先看改动属于哪一类，再分流。</p>
+    <figure class="figure orig" data-asset="a0035" data-points="p0035" id="e29"><img src="img/diagram-1.png" alt="原文字符示意图：QA Agent 按改动性质分流（纯代码核对、独立环境动态验证、挂起等待部署、人工介入兜底）"><figcaption><b>原图 2 · QA Agent 的分流</b> 原文用字符画的分流图：合并后由 QA Agent 接收，分成三路，其中两路最后汇到人工兜底。 <span class="source-anchor" data-source-section="s7">出处：Holon 官方博客（原文字符示意图，按原网页渲染截取） · <a href="https://holon.run/zh-CN/blog/ai-delivery-quality-and-verification#验收的分流机制">原图 2 · 验收的分流机制</a></span><span class="how">怎么看：从上往下读；括号里是每一路做什么。④ 人工兜底接在动态验证和等待部署两路之后。</span></figcaption></figure>
     <ol class="steps">
-      <li data-points="p0031" id="e30"><b>纯代码核对</b>：拿原始需求和业务契约对照代码，查改动有没有覆盖约定好的边缘分支和错误处理，有没有悄悄破坏别处的依赖。</li>
-      <li data-points="p0031" id="e31"><b>独立环境动态验证</b>：需要真实运行时才能验的，Agent 到隔离容器、测试数据集或手机模拟器里去跑。测试工具也可以让 Agent 自己写，例子见下方。</li>
-      <li data-points="p0031" id="e32"><b>挂起等版本和部署</b>：很多服务端修复要上到 Staging 环境或灰度环境才能验，客户端修复要等打包流水线出安装包。系统不靠反复轮询干等，而是把验收任务存下来挂起，等部署系统发出就绪事件，再精准唤醒对应任务去回测。</li>
-      <li data-points="p0031" id="e33"><b>人工兜底</b>：需要真机音频硬件、某些物理外设，或者要靠人主观感受的，Agent 先把版本号、复现步骤、前置条件、预期表现和关键疑点整理好，交给工程师做最后确认。</li>
+      <li data-points="p0036 p0037 p0038 p0039" id="e30"><b>纯代码核对</b>：拿原始需求和业务契约对照代码，查改动有没有覆盖约定好的边缘分支和错误处理，有没有悄悄破坏别处的依赖。</li>
+      <li data-points="p0036 p0037 p0038 p0039" id="e31"><b>独立环境动态验证</b>：需要真实运行时才能验的，Agent 到隔离容器、测试数据集或手机模拟器里去跑。测试工具也可以让 Agent 自己写，例子见下方。</li>
+      <li data-points="p0036 p0037 p0038 p0039" id="e32"><b>挂起等版本和部署</b>：很多服务端修复要上到 Staging 环境或灰度环境才能验，客户端修复要等打包流水线出安装包。系统不靠反复轮询干等，而是把验收任务存下来挂起，等部署系统发出就绪事件，再精准唤醒对应任务去回测。</li>
+      <li data-points="p0036 p0037 p0038 p0039" id="e33"><b>人工兜底</b>：需要真机音频硬件、某些物理外设，或者要靠人主观感受的，Agent 先把版本号、复现步骤、前置条件、预期表现和关键疑点整理好，交给工程师做最后确认。</li>
     </ol>
     <blockquote class="quote"><p>代码合并并不等于发布，发布也不等于验证通过。</p><cite>Holon 官方博客，「挂起等待真实版本与部署」一条</cite><span class="source-anchor" data-source-section="s7"><a href="https://holon.run/zh-CN/blog/ai-delivery-quality-and-verification#验收的分流机制">验收的分流机制</a></span></blockquote>
     <h3>动态验证的一次真实实践</h3>
@@ -203,7 +203,7 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
       <div class="row assistant"><span class="r">QA</span><span class="t">QA Agent 写了一个专用测试 App，装进 Android 模拟器。</span></div>
       <div class="row result"><span class="r">证据</span><span class="t">向目标应用发起调用，抓到拦截日志，留下完整执行证据。</span></div>
     </div>
-    <p data-points="p0031" id="e34">这是原文给出的该团队的一次实践。值得注意的是交付物：不是一句「我修好了」，而是那份拦截日志。</p>
+    <p data-points="p0036 p0037 p0038 p0039" id="e34">这是原文给出的该团队的一次实践。值得注意的是交付物：不是一句「我修好了」，而是那份拦截日志。</p>
   </div>
   <div class="src article">原文 <span class="source-anchor" data-source-section="s7"><a href="https://holon.run/zh-CN/blog/ai-delivery-quality-and-verification#验收的分流机制">验收的分流机制</a></span></div>
 </section>
@@ -226,15 +226,15 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
     <h2>故障一上报就自动排查，赶在现场消失之前拿到日志</h2>
   </header>
   <div class="doc-body">
-    <p data-points="p0033" id="e35">iOS、Android、桌面端多端协作时，现场偶尔冒出来的故障，查起来往往很贵。</p>
-    <p data-points="p0034" id="e36">传统路线很长：用户找客服，客服转技术支持，技术支持再给研发提单排期。等研发去调现场环境和日志，常常已经过了好几天，用户早走了，现场也没了。</p>
-    <p data-points="p0035" id="e37">案例团队把这条路换成了一条自动化排查链路：</p>
-    <figure class="figure orig" data-asset="a0036" data-points="p0036" id="e38"><img src="img/diagram-2.png" alt="原文字符示意图：客诉排查链路（上报 → 排查 Agent → 两路日志 → 根因 → 结构化 Issue 与客服回传）"><figcaption><b>原图 3 · 客诉排查链路</b> 原文字符图：上报自动带上状态和 Trace ID，排查 Agent 并行调两路日志，定位根因后分别产出 Issue 和给客服的建议。 <span class="source-anchor" data-source-section="s8">出处：Holon 官方博客（原文字符示意图，按原网页渲染截取） · <a href="https://holon.run/zh-CN/blog/ai-delivery-quality-and-verification#第二道防线现场故障与客诉排查闭环">原图 3 · 第二道防线</a></span><span class="how">怎么看：中间分叉的两路是客户端日志和服务端链路日志；最下面两个产出，一个给研发，一个给客服。</span></figcaption></figure>
+    <p data-points="p0041" id="e35">iOS、Android、桌面端多端协作时，现场偶尔冒出来的故障，查起来往往很贵。</p>
+    <p data-points="p0042" id="e36">传统路线很长：用户找客服，客服转技术支持，技术支持再给研发提单排期。等研发去调现场环境和日志，常常已经过了好几天，用户早走了，现场也没了。</p>
+    <p data-points="p0043" id="e37">案例团队把这条路换成了一条自动化排查链路：</p>
+    <figure class="figure orig" data-asset="a0044" data-points="p0044" id="e38"><img src="img/diagram-2.png" alt="原文字符示意图：客诉排查链路（上报 → 排查 Agent → 两路日志 → 根因 → 结构化 Issue 与客服回传）"><figcaption><b>原图 3 · 客诉排查链路</b> 原文字符图：上报自动带上状态和 Trace ID，排查 Agent 并行调两路日志，定位根因后分别产出 Issue 和给客服的建议。 <span class="source-anchor" data-source-section="s8">出处：Holon 官方博客（原文字符示意图，按原网页渲染截取） · <a href="https://holon.run/zh-CN/blog/ai-delivery-quality-and-verification#第二道防线现场故障与客诉排查闭环">原图 3 · 第二道防线</a></span><span class="how">怎么看：中间分叉的两路是客户端日志和服务端链路日志；最下面两个产出，一个给研发，一个给客服。</span></figcaption></figure>
     <ol class="steps">
-      <li data-points="p0037" id="e39"><b>上报即触发</b>：客户端报故障或客服建单时，事件会自动带上当时的运行状态、版本信息和会话 Trace ID，排查 Agent 随之启动。</li>
-      <li data-points="p0037" id="e40"><b>跨端对时间线</b>：Agent 拉出同一时间窗口里的客户端堆栈，以及服务端（Node.js）的链路日志，排成时间线去判断原因是网络抖了、接口出错、蓝牙协议握手超时，还是本地状态对不上。</li>
-      <li data-points="p0037" id="e41"><b>写成结构化 Issue</b>：在项目管理系统里建 Issue，写明异常堆栈、复现路径、影响到的版本和环境特征，研发可以直接接手。</li>
-      <li data-points="p0037" id="e42"><b>回传给客服</b>：同时给客服系统一份写给支持人员看的简短说明。原文的例子是：这是某个系统版本在蓝牙重连时超时，临时重启应用可以恢复，正式修复已经在排期。客服因此能很快给用户明确答复。</li>
+      <li data-points="p0045 p0046 p0047 p0048" id="e39"><b>上报即触发</b>：客户端报故障或客服建单时，事件会自动带上当时的运行状态、版本信息和会话 Trace ID，排查 Agent 随之启动。</li>
+      <li data-points="p0045 p0046 p0047 p0048" id="e40"><b>跨端对时间线</b>：Agent 拉出同一时间窗口里的客户端堆栈，以及服务端（Node.js）的链路日志，排成时间线去判断原因是网络抖了、接口出错、蓝牙协议握手超时，还是本地状态对不上。</li>
+      <li data-points="p0045 p0046 p0047 p0048" id="e41"><b>写成结构化 Issue</b>：在项目管理系统里建 Issue，写明异常堆栈、复现路径、影响到的版本和环境特征，研发可以直接接手。</li>
+      <li data-points="p0045 p0046 p0047 p0048" id="e42"><b>回传给客服</b>：同时给客服系统一份写给支持人员看的简短说明。原文的例子是：这是某个系统版本在蓝牙重连时超时，临时重启应用可以恢复，正式修复已经在排期。客服因此能很快给用户明确答复。</li>
     </ol>
   </div>
   <div class="src article">原文 <span class="source-anchor" data-source-section="s8"><a href="https://holon.run/zh-CN/blog/ai-delivery-quality-and-verification#第二道防线现场故障与客诉排查闭环">第二道防线：现场故障与客诉排查闭环</a></span></div>
@@ -246,27 +246,27 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
     <h2>有些缺陷只在环境跑了几个小时后才出现，要靠常驻环境去巡</h2>
   </header>
   <div class="doc-body">
-    <p data-points="p0039" id="e43">原文认为最难缠的缺陷，往往不是每次都会出现的崩溃，而是藏得很深、随时间才冒出来的动态问题：</p>
+    <p data-points="p0050" id="e43">原文认为最难缠的缺陷，往往不是每次都会出现的崩溃，而是藏得很深、随时间才冒出来的动态问题：</p>
     <ul>
-      <li data-points="p0040" id="e44">跑了几个小时之后出现的轻微内存泄露；</li>
-      <li data-points="p0040" id="e45">网络波动时，WebSocket 或跨端长连接不报错、却悄悄卡死；</li>
-      <li data-points="p0040" id="e46">跨端之间偶尔发生的并发竞争；</li>
-      <li data-points="p0040" id="e47">缓存状态随时间一点点偏离真实数据。</li>
+      <li data-points="p0051 p0052 p0053 p0054" id="e44">跑了几个小时之后出现的轻微内存泄露；</li>
+      <li data-points="p0051 p0052 p0053 p0054" id="e45">网络波动时，WebSocket 或跨端长连接不报错、却悄悄卡死；</li>
+      <li data-points="p0051 p0052 p0053 p0054" id="e46">跨端之间偶尔发生的并发竞争；</li>
+      <li data-points="p0051 p0052 p0053 p0054" id="e47">缓存状态随时间一点点偏离真实数据。</li>
     </ul>
-    <p class="callout key" data-points="p0041" id="e48">这类问题，在时间很短的单元测试或一次 CI 构建里根本暴露不出来。</p>
-    <p data-points="p0042" id="e49">团队的办法是：专门派一个巡检 Agent 挂在长期运行的测试环境上，定时检查活跃实例。</p>
+    <p class="callout key" data-points="p0055" id="e48">这类问题，在时间很短的单元测试或一次 CI 构建里根本暴露不出来。</p>
+    <p data-points="p0056" id="e49">团队的办法是：专门派一个巡检 Agent 挂在长期运行的测试环境上，定时检查活跃实例。</p>
     <ul>
-      <li data-points="p0043" id="e50"><b>常驻环境</b>：独立的测试环境里，服务端、前端页面和手机模拟器实例一直开着不停。</li>
-      <li data-points="p0044" id="e51"><b>按周期巡检</b>：巡检 Agent 按设定的周期（原文举例「每数小时」）检查实例的健康指标。</li>
+      <li data-points="p0057" id="e50"><b>常驻环境</b>：独立的测试环境里，服务端、前端页面和手机模拟器实例一直开着不停。</li>
+      <li data-points="p0058" id="e51"><b>按周期巡检</b>：巡检 Agent 按设定的周期（原文举例「每数小时」）检查实例的健康指标。</li>
     </ul>
     <p>巡检时具体看四样：</p>
     <ol class="steps">
-      <li data-points="p0045" id="e53">进程内存的走势，判断是不是在持续上涨、像在泄漏；</li>
-      <li data-points="p0045" id="e54">服务端和客户端的本地缓存、业务数据版本对不对得上，有没有脱节；</li>
-      <li data-points="p0045" id="e55">跨端长连接的双向心跳和重连是否正常；</li>
-      <li data-points="p0045" id="e56">日志里那些偶尔出现、又不让程序停下的警告和隐性错误。</li>
+      <li data-points="p0059 p0060 p0061 p0062" id="e53">进程内存的走势，判断是不是在持续上涨、像在泄漏；</li>
+      <li data-points="p0059 p0060 p0061 p0062" id="e54">服务端和客户端的本地缓存、业务数据版本对不对得上，有没有脱节；</li>
+      <li data-points="p0059 p0060 p0061 p0062" id="e55">跨端长连接的双向心跳和重连是否正常；</li>
+      <li data-points="p0059 p0060 p0061 p0062" id="e56">日志里那些偶尔出现、又不让程序停下的警告和隐性错误。</li>
     </ol>
-    <p data-points="p0046" id="e57">原文把这叫「巡警机制」：隐患多半在测试环境长时间挂机时就被揪出来，巡检 Agent 会自动附上内存快照和指标曲线去提 Issue，赶在上线前处理掉。</p>
+    <p data-points="p0063" id="e57">原文把这叫「巡警机制」：隐患多半在测试环境长时间挂机时就被揪出来，巡检 Agent 会自动附上内存快照和指标曲线去提 Issue，赶在上线前处理掉。</p>
   </div>
   <div class="src article">原文 <span class="source-anchor" data-source-section="s9"><a href="https://holon.run/zh-CN/blog/ai-delivery-quality-and-verification#第三道防线长周期环境与活跃实例巡检">第三道防线：长周期环境与活跃实例巡检</a></span></div>
 </section>
@@ -277,25 +277,25 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
     <h2>测试失败时先分清是 Bug 还是用例过时；输出不固定时让 Agent 当语义裁判</h2>
   </header>
   <div class="doc-body">
-    <p data-points="p0048" id="e58">上线之前的最后一关是端到端（E2E）测试，原文指出它在实践中有两个痛点：</p>
+    <p data-points="p0065" id="e58">上线之前的最后一关是端到端（E2E）测试，原文指出它在实践中有两个痛点：</p>
     <div class="compare">
-      <div><p data-points="p0049" id="e59"><b>用例容易断</b><span>界面改一点、交互变一下，或者重构代码，都可能让用例报错，维护成本一直很高。</span></p></div>
-      <div><p data-points="p0049" id="e60"><b>动态内容难断言</b><span>有生成式交互或复杂多步输出时，结果每次不一样，正则匹配、固定字符串比对这类写死的断言很难用。</span></p></div>
+      <div><p data-points="p0066 p0067" id="e59"><b>用例容易断</b><span>界面改一点、交互变一下，或者重构代码，都可能让用例报错，维护成本一直很高。</span></p></div>
+      <div><p data-points="p0066 p0067" id="e60"><b>动态内容难断言</b><span>有生成式交互或复杂多步输出时，结果每次不一样，正则匹配、固定字符串比对这类写死的断言很难用。</span></p></div>
     </div>
-    <p data-points="p0050" id="e61">在案例团队的体系里，E2E 测试交给专门的 Agent 来调度和看护，分两件事处理。</p>
+    <p data-points="p0068" id="e61">在案例团队的体系里，E2E 测试交给专门的 Agent 来调度和看护，分两件事处理。</p>
     <h3>1. 代码漂移：区分回归缺陷和用例该更新</h3><span class="source-anchor heading-source" data-source-section="s11">原文 §第四道防线 · 1</span>
-    <p data-points="p0052" id="e62">代码库迭代很频繁时，测试挂了不一定是引入了 Bug，也可能是用例跟新的业务逻辑对不上了，原文称为漂移（Drift）。</p>
-    <p data-points="p0053" id="e63">E2E 测试失败后，看护 Agent 会把最近的代码变更、PR 契约和失败堆栈放在一起比对，然后二选一：</p>
+    <p data-points="p0070" id="e62">代码库迭代很频繁时，测试挂了不一定是引入了 Bug，也可能是用例跟新的业务逻辑对不上了，原文称为漂移（Drift）。</p>
+    <p data-points="p0071" id="e63">E2E 测试失败后，看护 Agent 会把最近的代码变更、PR 契约和失败堆栈放在一起比对，然后二选一：</p>
     <div class="flow-box"><svg class="flow" data-act="judge" data-edge="fail&gt;judge"><script type="application/json">{"nodes":[{"id":"fail","x":110,"y":110,"t":"端到端测试失败","c":"red","w":160},{"id":"judge","x":330,"y":110,"t":"看护 Agent","s":"比对变更·契约·堆栈","c":"amber","w":180},{"id":"bug","x":560,"y":50,"t":"违背契约","s":"报回归缺陷","c":"red","w":150},{"id":"drift","x":560,"y":170,"t":"用例漂移","s":"直接更新用例","c":"green","w":150}],"edges":[{"f":"fail","t":"judge"},{"f":"judge","t":"bug"},{"f":"judge","t":"drift"}]}</script></svg><p class="src extra">据原文整理（原文 L131–L135）：失败后的两种判定。</p></div>
     <ul>
-      <li data-points="p0054" id="e64"><b>是功能缺陷</b>：改动违反了既定业务契约，Agent 报回归缺陷，并附上相关上下文。</li>
-      <li data-points="p0054" id="e65"><b>是用例漂移</b>：路径正常变化、重构或预期行为升级让用例过时了，Agent 找出漂移原因，直接把测试用例改掉。</li>
+      <li data-points="p0072 p0073" id="e64"><b>是功能缺陷</b>：改动违反了既定业务契约，Agent 报回归缺陷，并附上相关上下文。</li>
+      <li data-points="p0072 p0073" id="e65"><b>是用例漂移</b>：路径正常变化、重构或预期行为升级让用例过时了，Agent 找出漂移原因，直接把测试用例改掉。</li>
     </ul>
-    <p data-points="p0055" id="e66">原文说，这样维护 E2E 用例就省事多了，整套测试能跟着业务往前走，不会慢慢失效。</p>
+    <p data-points="p0074" id="e66">原文说，这样维护 E2E 用例就省事多了，整套测试能跟着业务往前走，不会慢慢失效。</p>
     <h3>2. 非结构化输出：测试 Agent 当语义裁判</h3><span class="source-anchor heading-source" data-source-section="s12">原文 §第四道防线 · 2</span>
-    <p data-points="p0057" id="e67">应用功能越来越多样，不少关键链路交出来的不再是一个结构化字段，而是一段自然语言回答，或者生成出来的交互结果。</p>
-    <p data-points="p0058" id="e68">这种情况下写死的断言常常失效。团队让测试 Agent 当语义裁判，也就是 LLM-as-a-Judge（用大模型来评判输出）。</p>
-    <p data-points="p0059" id="e69">它依据事实准不准确、业务意图、上下文边界和安全要求，从语义上评估输出。看的不是字面一不一样，而是逻辑能不能自圆其说、意图有没有达到、有没有违规或有害内容。原文认为，这让 E2E 测试有可能覆盖动态的、生成式的能力。</p>
+    <p data-points="p0076" id="e67">应用功能越来越多样，不少关键链路交出来的不再是一个结构化字段，而是一段自然语言回答，或者生成出来的交互结果。</p>
+    <p data-points="p0077" id="e68">这种情况下写死的断言常常失效。团队让测试 Agent 当语义裁判，也就是 LLM-as-a-Judge（用大模型来评判输出）。</p>
+    <p data-points="p0078" id="e69">它依据事实准不准确、业务意图、上下文边界和安全要求，从语义上评估输出。看的不是字面一不一样，而是逻辑能不能自圆其说、意图是否达成、有没有违规或有害内容。原文认为，这让 E2E 测试有可能覆盖动态的、生成式的能力。</p>
     <p class="callout extra">补充：看护 Agent 可以「直接更新测试用例」；这次更新由谁复核、语义裁判自己判错了怎么办，原文没有写。</p>
   </div>
   <div class="src article">原文 <span class="source-anchor" data-source-section="s10"><a href="https://holon.run/zh-CN/blog/ai-delivery-quality-and-verification#第四道防线e2e-测试的自愈与语义裁决">第四道防线</a></span><span class="source-anchor" data-source-section="s11"><a href="https://holon.run/zh-CN/blog/ai-delivery-quality-and-verification#1-应对代码漂移区分回归缺陷与用例更新">1. 应对「代码漂移」</a></span><span class="source-anchor" data-source-section="s12"><a href="https://holon.run/zh-CN/blog/ai-delivery-quality-and-verification#2-非结构化输出让测试-agent-担任语义裁判">2. 非结构化输出</a></span></div>
@@ -307,14 +307,14 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
     <h2>四道防线都要「等」：等待时 Agent 休眠，事件来了再唤醒</h2>
   </header>
   <div class="doc-body">
-    <p data-points="p0061" id="e70">回头看前面几种把关：部署完再叫醒去回测，线上出故障时跨端去查，测试实例挂着长期巡，E2E 用例有人看护、能自己修。原文认为，这些都很难靠一个只跑一次的聊天脚本，或一个简单的命令行死循环来可靠地撑住。</p>
-    <p data-points="p0062" id="e71">原文把这套防线能长期运转，归功于 Holon 在底座上的支撑，并画了三层：</p>
-    <figure class="figure orig" data-asset="a0063" data-points="p0063" id="e72"><img src="img/diagram-3.png" alt="原文字符示意图：系统底座三层（Agent 职责与身份、任务状态与证据持久化、事件驱动内核 Wait / Wake）"><figcaption><b>原图 4 · 系统底座三层</b> 原文字符图：上层是 Agent 的独立职责与身份，中层是任务状态与执行证据的持久化，底层是事件驱动内核（Wait / Wake）。 <span class="source-anchor" data-source-section="s13">出处：Holon 官方博客（原文字符示意图，按原网页渲染截取） · <a href="https://holon.run/zh-CN/blog/ai-delivery-quality-and-verification#支撑防线落地的系统底座为什么需要事件驱动机制">原图 4 · 系统底座</a></span><span class="how">怎么看：从上往下，每层括号里写的是这一层管什么；最底层列出了会唤醒模型的事件。</span></figcaption></figure>
+    <p data-points="p0080" id="e70">回头看前面几种把关：部署完再唤醒去验收，线上出故障时跨端去查，测试实例挂着长期巡，E2E 用例有人看护、能自己修。原文认为，这些都很难靠一个只跑一次的聊天脚本，或一个简单的命令行死循环来可靠地撑住。</p>
+    <p data-points="p0081" id="e71">原文把这套防线能长期运转，归功于 Holon 在底座上的支撑，并画了三层：</p>
+    <figure class="figure orig" data-asset="a0082" data-points="p0082" id="e72"><img src="img/diagram-3.png" alt="原文字符示意图：系统底座三层（Agent 职责与身份、任务状态与证据持久化、事件驱动内核 Wait / Wake）"><figcaption><b>原图 4 · 系统底座三层</b> 原文字符图：上层是 Agent 的独立职责与身份，中层是任务状态与执行证据的持久化，底层是事件驱动内核（Wait / Wake）。 <span class="source-anchor" data-source-section="s13">出处：Holon 官方博客（原文字符示意图，按原网页渲染截取） · <a href="https://holon.run/zh-CN/blog/ai-delivery-quality-and-verification#支撑防线落地的系统底座为什么需要事件驱动机制">原图 4 · 系统底座</a></span><span class="how">怎么看：从上往下，每层括号里写的是这一层管什么；最底层列出了会唤醒模型的事件。</span></figcaption></figure>
     <ul>
-      <li data-points="p0064" id="e73"><b>工作周期和会话分开</b>：任务要继续推进，不必让模型进程一直空转。碰到等待条件，比如等打包、等线上日志、等定时器，Agent 就挂起休眠，把资源让出来。</li>
-      <li data-points="p0064" id="e74"><b>状态和证据存下来</b>：执行步骤、任务目标、中间证据和挂起原因都持久保存，不放在临时内存里。等了几个小时，或者环境重启过，唤醒后照样能接着已有记录往下做。</li>
-      <li data-points="p0064" id="e75"><b>事件来了才唤醒（Wait / Wake）</b>：代码合并、客诉工单进来、部署就绪、定时器到点时，系统才按需叫醒 Agent，而且只给它这一步决策需要的最少上下文。</li>
-      <li data-points="p0064" id="e76"><b>保留人工审批门禁</b>：生产发布、关键配置变更这类高风险操作，始终要人明确确认（Operator Gate），让自动化留在受控范围里。</li>
+      <li data-points="p0083 p0084 p0085 p0086" id="e73"><b>工作周期和会话分开</b>：任务要继续推进，不必让模型进程一直空转。碰到等待条件，比如等打包、等线上日志、等定时器，Agent 就挂起休眠，把资源让出来。</li>
+      <li data-points="p0083 p0084 p0085 p0086" id="e74"><b>状态和证据存下来</b>：执行步骤、任务目标、中间证据和挂起原因都持久保存，不放在临时内存里。等了几个小时，或者环境重启过，唤醒后照样能接着已有记录往下做。</li>
+      <li data-points="p0083 p0084 p0085 p0086" id="e75"><b>事件来了才唤醒（Wait / Wake）</b>：代码合并、客诉工单进来、部署就绪、定时器到点时，系统才按需叫醒 Agent，而且只给它这一步决策需要的最少上下文。</li>
+      <li data-points="p0083 p0084 p0085 p0086" id="e76"><b>保留人工审批门禁</b>：生产发布、关键配置变更这类高风险操作，始终要人明确确认（Operator Gate），让自动化留在受控范围里。</li>
     </ul>
     <p class="callout extra">补充：这篇发在 Holon 官方博客上，这一节是产品方对自家底座的描述。</p>
   </div>
@@ -328,10 +328,10 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
   </header>
   <div class="doc-body">
     <blockquote class="quote"><p>缺少质量验证的高速产出，往往只是在更快地累积技术债务。</p><cite>Holon 官方博客，结语</cite><span class="source-anchor" data-source-section="s14"><a href="https://holon.run/zh-CN/blog/ai-delivery-quality-and-verification#结语从代码生成走向工程闭环">结语</a></span></blockquote>
-    <p data-points="p0066" id="e77">原文的判断是：代码生成快了很多，但软件工程的基本规律没有变，没有验证的高速产出只会更快地堆技术债。</p>
-    <p data-points="p0067" id="e78">所以团队要的不是只会吐代码的工具，而是一套能留证据、边界清楚、能严格把验收执行下去的自动交付体系。</p>
-    <p data-points="p0068" id="e79">解决验收赤字，既不是让工程师在下游疲于救火，也不是指望一个模型在封闭会话里包办一切。原文给的路是四件事合起来：角色分清楚，现场故障自动去查，长周期巡检变成日常，端到端测试能自愈也能裁决，让验收真正进到交付闭环里。</p>
-    <p class="callout key" data-points="p0069" id="e80">落脚点：系统能拿出确凿的执行证据，回答「这个改动为什么敢上线」，自动交付才算有了稳的立足点。</p>
+    <p data-points="p0088" id="e77">原文的判断是：代码生成快了很多，但软件工程的基本规律没有变，没有验证的高速产出只会更快地堆技术债。</p>
+    <p data-points="p0089" id="e78">所以团队要的不是只会吐代码的工具，而是一套能留证据、边界清楚、能严格把验收执行下去的自动交付体系。</p>
+    <p data-points="p0090" id="e79">解决验收赤字，既不是让工程师在下游疲于救火，也不是指望一个模型在封闭会话里包办一切。原文给的路是四件事合起来：角色分清楚，现场故障自动去查，长周期巡检变成日常，端到端测试能自愈也能裁决，让验收真正进到交付闭环里。</p>
+    <p class="callout key" data-points="p0091" id="e80">落脚点：系统能拿出确凿的执行证据，回答「这个改动为什么敢上线」，自动交付才算有了稳的立足点。</p>
     <div class="compare">
       <div><p><b>补充 · 原文没给</b><span>拦截率、耗时、误判率这类效果数字。</span></p></div>
       <div><p><b>补充 · 原文没讲</b><span>语义裁判误判、看护 Agent 把真 Bug 当漂移改掉时，怎么复核。</span></p></div>

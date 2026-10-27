@@ -88,7 +88,7 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
 <header class="top"><button class="btn toc-toggle" aria-label="打开目录" aria-expanded="false"><svg class="i i-menu" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h16"/></svg></button><span class="course">CS146S · L02</span><span class="track" role="presentation"><i></i></span><span class="count"></span><button class="btn theme-toggle" aria-label="切换深浅色">深浅色</button></header><main class="deck"><header class="hero" id="intro">
   <p class="kicker">Stanford CS146S · The Modern Software Developer · 第 2 讲 · 讲者 Mihail Eric</p>
   <h1>第 2 讲：拆开一个现代编码智能体的 Harness</h1>
-  <p class="lede" id="e1" data-points="p0001 p0002 p0003 p0006 p0007 p0037">上一讲用约 200 行代码搭出了编码智能体的核心循环。这一讲是 CS146S 在 Stanford Fall 2026 学期第 1 周周四（2026 年 9 月 24 日）的课，讲者把一个当时最新的 Claude Code 请求截下来，逐块拆看：循环之外，Harness 还往模型面前放了什么。</p>
+  <p class="lede" id="e1" data-points="p0001 p0002 p0003 p0014 p0015 p0077">上一讲用约 200 行代码搭出了编码智能体的核心循环。这一讲是 CS146S 在 Stanford Fall 2026 学期第 1 周周四（2026 年 9 月 24 日）的课，讲者把一个当时最新的 Claude Code 请求截下来，逐块拆看：循环之外，Harness 还往模型面前放了什么。</p>
   <p>材料：讲义 17 页（文字取自讲义导出文本，3 张原图是 PDF 同页渲染）和讲课实录全文。实录的公开地址未确认。</p>
   <p class="links"><a href="https://themodernsoftware.dev">课程网站 themodernsoftware.dev</a> <a href="https://docs.google.com/document/d/1W11sWBigWIsi9wVIhhFx3wajIEnP0Qfb-ei8Ecf5VKU/edit">FA26 课程日历</a></p>
 </header>
@@ -97,11 +97,11 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
   <span class="kicker">开场 · 课程事务</span>
   <h2>期末项目、额度和候补名单</h2>
   <ul>
-    <li id="e2" data-points="p0004 p0005 p0041 p0042 p0043 p0044 p0046">期末项目说明已发布，学季里约有四个里程碑（含提案）。课件：团队可以额外加 1 名成员，再加一群编码智能体；讲者说独自做也可以，现在甚至很合适。</li>
-    <li id="e3" data-points="p0005 p0047 p0048 p0049 p0050">课程拿到了几家编码智能体厂商的额度：Claude（Claude Code）、Factory、X.AI、Devin（讲者说 Windsurf 和 Devin 同属 Cognition）。预计下周发放，可能收集邮箱或用二维码。</li>
-    <li id="e4" data-points="p0005 p0051 p0053">开源合作伙伴（OSS）的具体形式下周讲。有一两位合作方会来课前讲五到十分钟，也可能开线上或线下答疑。</li>
-    <li id="e5" data-points="p0005 p0054 p0055">候补名单申请的截止日：课件写 9/27，讲者说是 27 号、大概是周日；申请在 Google 表单里排队，未来几天处理。先修要求不算高，在别校修过同等课程可以申请例外。</li>
-    <li id="e6" data-points="p0041 p0057 p0061">学生问课件：周二的已在课程网站上，今天的还没有，讲者答应以后课前上传；进不了 Ed 讨论区的注册学生可以私信助教。开场时讲者说已经晚了 35 秒。</li>
+    <li id="e2" data-points="p0004 p0005 p0006 p0007 p0008 p0009 p0010 p0011 p0012 p0013 p0081 p0082 p0083 p0084 p0086">期末项目说明已发布，学季里约有四个里程碑（含提案）。课件：团队可以额外加 1 名成员，再加一群编码智能体；讲者说独自做也可以，现在甚至很合适。</li>
+    <li id="e3" data-points="p0005 p0006 p0007 p0008 p0009 p0010 p0011 p0012 p0013 p0087 p0088 p0089 p0090">课程拿到了几家编码智能体厂商的额度（Credits）：Claude（Claude Code）、Factory、X.AI、Devin（讲者说 Windsurf 和 Devin 同属 Cognition）。预计下周发放，可能收集邮箱或用二维码。</li>
+    <li id="e4" data-points="p0005 p0006 p0007 p0008 p0009 p0010 p0011 p0012 p0013 p0091 p0093">开源合作伙伴（OSS）的具体形式下周讲。有一两位合作方会来课前讲五到十分钟，也可能开线上或线下答疑。</li>
+    <li id="e5" data-points="p0005 p0006 p0007 p0008 p0009 p0010 p0011 p0012 p0013 p0094 p0095">候补名单申请的截止日：课件写 9/27，讲者说是 27 号、大概是周日；申请在 Google 表单里排队，未来几天处理。先修要求不算高，在别校修过同等课程可以申请例外。</li>
+    <li id="e6" data-points="p0081 p0097 p0101">学生问课件：周二的已在课程网站上，今天的还没有，讲者答应以后课前上传；进不了 Ed 讨论区的注册学生可以私信助教。开场时讲者说已经晚了 35 秒。</li>
   </ul>
   <p class="callout extra">补充（据 <a href="https://docs.google.com/document/d/1W11sWBigWIsi9wVIhhFx3wajIEnP0Qfb-ei8Ecf5VKU/edit">FA26 课程日历</a>，2026-10-26 读取）：本讲日历标题是「How state-of-the-art coding agents are designed (system prompts deep dive)」；第 1 个作业「Claude Code dissection」在 9 月 27 日周日截止。</p>
   <p class="src official">讲义： <span class="source-anchor" data-source-section="s2"><a href="https://themodernsoftware.dev">出处：The Modern Software Developer</a></span> <span class="source-anchor" data-source-section="s3"><a href="https://themodernsoftware.dev">出处：Logistics</a></span></p>
@@ -111,26 +111,26 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
 <section class="sec" id="s2" data-source-section="s7" data-toc="循环外面是 Harness">
   <span class="kicker">从 200 行到现代 Harness</span>
   <h2>循环没变，变的是包在外面的 Harness</h2>
-  <p id="e7" data-points="p0064 p0065">讲者回顾：周二演示了用 150 到 200 行代码搭出编码智能体的骨架，能理解请求、改代码和文件，从 Hello world 做到有点复杂的东西。那是概念验证；这一讲要拆一个最先进的编码智能体。</p>
-  <p id="e8" data-points="p0066">讲者说：除了智能层（模型）都能看见。模型是私有的，是放在世界各地服务器上、两万亿以上参数级别的一组模型；我们看不到它，但能看到它外面的 Harness。</p>
-  <figure class="figure orig" data-asset="b0010" id="e9" data-points="p0008 p0009 p0010 p0067 p0069"><img src="L02-img/p04.png" alt="讲义第 4 页：Recap（循环示意图）"><figcaption><b>原图 1 · 回顾：核心循环</b> <span class="source-anchor">出处：Mihail Eric · CS146S L02 讲义 · <a href="https://themodernsoftware.dev">第 4 页</a></span><span class="how">怎么看：用户和编码智能体客户端（Windsurf、Cursor、Claude Code）交互，客户端和模型来回跑循环；模型有时发起工具调用，由客户端在模型之外执行。</span></figcaption></figure>
-  <p id="e10" data-points="p0067 p0069 p0070">讲者解释图：模型是训练出来的一组参数，训练本身不在本课范围；工具让模型落地，能搜网页、读写文件系统。循环还在，这一讲关注循环周围的那些附加功能，合起来叫 Harness。</p>
-  <p id="e11" data-points="p0071 p0072 p0011 p0012">拆的对象是 Claude Code 搭配 Opus 5.5。讲者说这个模型大约两天前才发布，按 Anthropic 公布的基准是最先进的；同一天 OpenAI 也发了新模型，两家习惯同日发布。</p>
-  <figure class="figure orig" data-asset="b0013" id="e12" data-points="p0013"><img src="L02-img/p05.png" alt="讲义第 5 页：Opus 5.5 与其他模型的基准表"><figcaption><b>原图 2 · Opus 5.5 与其他模型的基准对比</b> <span class="source-anchor">出处：Mihail Eric · CS146S L02 讲义 · <a href="https://themodernsoftware.dev">第 5 页</a></span><span class="how">怎么看：表头是 Opus 5.5、Fable 5.1、Opus 5、GPT-6 Astra、GPT-5.6 Sol；Opus 5.5 一列标色，例如 Terminal-Bench 4.0 上是 66.4%。图里数字只在图中，正文没有展开。</span></figcaption></figure>
-  <p id="e13" data-points="p0073 p0075 p0014 p0015">讲者：除了简单的「工具加模型」循环，今天的编码 Harness 复杂得多。课件说 Harness 设计是编码智能体最重要的问题之一；讲者说它可能是最难的问题之一，而且这些原则也适用于销售、法律、客服等领域的智能体。</p>
+  <p id="e7" data-points="p0104 p0105">讲者回顾：周二演示了用 150 到 200 行代码搭出编码智能体的骨架，能理解请求、改代码和文件，从 Hello world 做到有点复杂的东西。那是概念验证；这一讲要拆一个最先进的编码智能体。</p>
+  <p id="e8" data-points="p0106">讲者说：除了智能层（模型）都能看见。模型是私有的，是放在世界各地服务器上、两万亿以上参数级别的一组模型；我们看不到它，但能看到它外面的 Harness。</p>
+  <figure class="figure orig" data-asset="b0018" id="e9" data-points="p0016 p0017 p0018 p0107 p0109"><img src="L02-img/p04.png" alt="讲义第 4 页：Recap（循环示意图）"><figcaption><b>原图 1 · 回顾：核心循环</b> <span class="source-anchor">出处：Mihail Eric · CS146S L02 讲义 · <a href="https://themodernsoftware.dev">第 4 页</a></span><span class="how">怎么看：用户和编码智能体客户端（Windsurf、Cursor、Claude Code）交互，客户端和模型来回跑循环；模型有时发起工具调用，由客户端在模型之外执行。</span></figcaption></figure>
+  <p id="e10" data-points="p0107 p0109 p0110">讲者解释图：模型是训练出来的一组参数，训练本身不在本课范围；工具让模型落地，能搜网页、读写文件系统。循环还在，这一讲关注循环周围的那些附加功能，合起来叫 Harness。</p>
+  <p id="e11" data-points="p0111 p0112 p0019 p0020">拆的对象是 Claude Code 搭配 Opus 5.5。讲者说这个模型大约两天前才发布，按 Anthropic 公布的基准是最先进的；同一天 OpenAI 也发了新模型，两家习惯同日发布。</p>
+  <figure class="figure orig" data-asset="b0021" id="e12" data-points="p0021"><img src="L02-img/p05.png" alt="讲义第 5 页：Opus 5.5 与其他模型的基准表"><figcaption><b>原图 2 · Opus 5.5 与其他模型的基准对比</b> <span class="source-anchor">出处：Mihail Eric · CS146S L02 讲义 · <a href="https://themodernsoftware.dev">第 5 页</a></span><span class="how">怎么看：表头是 Opus 5.5、Fable 5.1、Opus 5、GPT-6 Astra、GPT-5.6 Sol；Opus 5.5 一列标色，例如 Terminal-Bench 4.0 上是 66.4%。图里数字只在图中，正文没有展开。</span></figcaption></figure>
+  <p id="e13" data-points="p0113 p0115 p0022 p0023 p0024 p0025 p0026 p0027 p0028 p0029 p0030 p0031 p0032">讲者：除了简单的「工具加模型」循环，今天的编码 Harness 复杂得多。课件说 Harness 设计是编码智能体最重要的问题之一；讲者说它可能是最难的问题之一，而且这些原则也适用于销售、法律、客服等领域的智能体。</p>
   <ol class="steps">
-    <li id="e14" data-points="p0015 p0076">系统提示词：Harness 写给模型的行为蓝图（第 5 节）</li>
-    <li id="e15" data-points="p0015 p0076">自定义配置文件：AGENTS.md、CLAUDE.md 等，由你来写（第 7 节）</li>
-    <li id="e16" data-points="p0015 p0076">工具列表：模型能调用的全部工具定义（第 3、4 节）</li>
-    <li id="e17" data-points="p0015 p0077">Plan 模式：先写规格再动手的一段提示词（第 8 节）</li>
-    <li id="e18" data-points="p0015 p0077">子智能体：用全新上下文分担任务（第 10 节）</li>
-    <li id="e19" data-points="p0015 p0077">Skill：写好的多步流程，用到才加载（第 9 节）</li>
-    <li id="e20" data-points="p0015 p0077">Hook：在生命周期各点插入的提示词或代码（第 10 节）</li>
-    <li id="e21" data-points="p0015 p0077">压缩：上下文快满时用摘要替换历史（第 11 节）</li>
+    <li id="e14" data-points="p0023 p0024 p0025 p0026 p0027 p0028 p0029 p0030 p0031 p0032 p0116">系统提示词（System prompt）：Harness 写给模型的行为蓝图（第 5 节）</li>
+    <li id="e15" data-points="p0023 p0024 p0025 p0026 p0027 p0028 p0029 p0030 p0031 p0032 p0116">自定义配置文件：AGENTS.md、CLAUDE.md 等，由你来写（第 7 节）</li>
+    <li id="e16" data-points="p0023 p0024 p0025 p0026 p0027 p0028 p0029 p0030 p0031 p0032 p0116">工具列表（Tool list）：模型能调用的全部工具定义（第 3、4 节）</li>
+    <li id="e17" data-points="p0023 p0024 p0025 p0026 p0027 p0028 p0029 p0030 p0031 p0032 p0117">Plan 模式：先写规格再动手的一段提示词（第 8 节）</li>
+    <li id="e18" data-points="p0023 p0024 p0025 p0026 p0027 p0028 p0029 p0030 p0031 p0032 p0117">子智能体（Subagents）：用全新上下文分担任务（第 10 节）</li>
+    <li id="e19" data-points="p0023 p0024 p0025 p0026 p0027 p0028 p0029 p0030 p0031 p0032 p0117">Skill：写好的多步流程，用到才加载（第 9 节）</li>
+    <li id="e20" data-points="p0023 p0024 p0025 p0026 p0027 p0028 p0029 p0030 p0031 p0032 p0117">Hook：在生命周期各点插入的提示词或代码（第 10 节）</li>
+    <li id="e21" data-points="p0023 p0024 p0025 p0026 p0027 p0028 p0029 p0030 p0031 p0032 p0117">压缩（Compaction）：上下文快满时用摘要替换历史（第 11 节）</li>
   </ol>
-  <p id="e22" data-points="p0015">课件列的这 8 个组件，下面按讲课顺序逐个拆。</p>
-  <figure class="figure orig" data-asset="b0017" id="e23" data-points="p0016 p0017 p0078 p0079"><img src="L02-img/p07.png" alt="讲义第 7 页：Agent loop 与各组件"><figcaption><b>原图 3 · Claude 这类智能体的组件</b> <span class="source-anchor">出处：Mihail Eric · CS146S L02 讲义 · <a href="https://themodernsoftware.dev">第 7 页</a></span><span class="how">怎么看：中间虚线框是上一讲的循环（上下文窗口 → 模型 → 工具执行）；左边紫色是送进上下文的输入（系统提示词、AGENTS.md、工具列表、Skill），右边绿色是 Harness 机制（压缩、Plan 模式、子智能体）。</span></figcaption></figure>
-  <p id="e24" data-points="p0083">讲者说本讲边讲原则边看真实请求，在幻灯片和演示之间切换。</p>
+  <p id="e22" data-points="p0023 p0024 p0025 p0026 p0027 p0028 p0029 p0030 p0031 p0032">课件列的这 8 个组件（Components），下面按讲课顺序逐个拆。</p>
+  <figure class="figure orig" data-asset="b0034" id="e23" data-points="p0033 p0034 p0118 p0119"><img src="L02-img/p07.png" alt="讲义第 7 页：Agent loop 与各组件"><figcaption><b>原图 3 · Claude 这类智能体的组件</b> <span class="source-anchor">出处：Mihail Eric · CS146S L02 讲义 · <a href="https://themodernsoftware.dev">第 7 页</a></span><span class="how">怎么看：中间虚线框是上一讲的循环（上下文窗口 → 模型 → 工具执行）；左边紫色是送进上下文的输入（系统提示词、AGENTS.md、工具列表、Skill），右边绿色是 Harness 机制（压缩、Plan 模式、子智能体）。</span></figcaption></figure>
+  <p id="e24" data-points="p0123">讲者说本讲边讲原则边看真实请求，在幻灯片和演示之间切换。</p>
   <p class="src official">讲义： <span class="source-anchor" data-source-section="s1"><a href="https://themodernsoftware.dev">出处：讲义 · The Anatomy of a Modern Coding Agent</a></span> <span class="source-anchor" data-source-section="s4"><a href="https://themodernsoftware.dev">出处：The Anatomy of a Modern Coding Agent</a></span> <span class="source-anchor" data-source-section="s5"><a href="https://themodernsoftware.dev">出处：Recap</a></span> <span class="source-anchor" data-source-section="s6"><a href="https://themodernsoftware.dev">出处：Enter a state-of-the-art coding agent</a></span> <span class="source-anchor" data-source-section="s7"><a href="https://themodernsoftware.dev">出处：Modern coding harnesses are more complex</a></span> <span class="source-anchor" data-source-section="s8"><a href="https://themodernsoftware.dev">出处：Some of the components in an agent like claude</a></span></p>
   <p class="src official">实录： <span class="source-anchor" data-source-section="s26"><a href="https://themodernsoftware.dev">出处：Mihail Eric (07:58.626)</a></span> <span class="source-anchor" data-source-section="s27"><a href="https://themodernsoftware.dev">出处：Mihail Eric (10:20.666)</a></span> <span class="source-anchor" data-source-section="s28"><a href="https://themodernsoftware.dev">出处：Mihail Eric (12:16.582)</a></span> <span class="source-anchor" data-source-section="s30"><a href="https://themodernsoftware.dev">出处：Mihail Eric (14:20.888)</a></span></p>
 </section>
@@ -138,23 +138,23 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
 <section class="sec" id="s3" data-source-section="s9" data-toc="工具列表">
   <span class="kicker">组件 1 · 工具列表</span>
   <h2>工具的名字、描述和签名都进提示词</h2>
-  <p id="e25" data-points="p0018 p0019 p0084 p0085">工具是模型在静态权重之外接触真实世界的方式：本地文件系统、你的电脑、网页。课件：能力要精简但强大，覆盖搜索、shell 命令、智能体任务。讲者补充，编码以外的智能体也越来越多地围绕编码能力来设计。</p>
-  <p id="e26" data-points="p0019 p0086 p0087">Claude Code 约有 40 个内置工具，是 Anthropic 团队决定它该有的能力。讲者进一步认为，模型经过后训练，专门优化过使用这些工具。</p>
-  <p id="e27" data-points="p0019 p0089 p0090 p0091">另外还有 MCP 工具（把外部工具和资源接进 Harness 的方式）。工具可以看作函数：描述、注释、名字和完整签名都会注入上下文。所以写工具时，docstring 和参数类型要清楚一致，模型靠它们判断做什么、何时用。</p>
+  <p id="e25" data-points="p0035 p0036 p0037 p0038 p0039 p0124 p0125">工具是模型在静态权重之外接触真实世界的方式：本地文件系统、你的电脑、网页。课件：能力要精简但强大，覆盖搜索、shell 命令、智能体任务。讲者补充，编码以外的智能体也越来越多地围绕编码能力来设计。</p>
+  <p id="e26" data-points="p0036 p0037 p0038 p0039 p0126 p0127">Claude Code 约有 40 个内置工具，是 Anthropic 团队决定它该有的能力。讲者进一步认为，模型经过后训练，专门优化过使用这些工具。</p>
+  <p id="e27" data-points="p0036 p0037 p0038 p0039 p0129 p0130 p0131">另外还有 MCP 工具（把外部工具和资源接进 Harness 的方式）。工具可以看作函数：描述、注释、名字和完整签名（full signature）都会注入上下文。所以写工具时，docstring 和参数类型要清楚一致，模型靠它们判断做什么、何时用。</p>
   <h3>真实请求里的 tools 块</h3>
-  <p id="e28" data-points="p0092 p0093 p0095 p0096">第 1 个作业今天发布、周日截止，内容和下面的演示类似：截下 Claude Code 的请求和响应，拆开看。讲者用一个代理工具截请求，比作 Wireshark 抓包（问在座有没有上过 144），也比作浏览器的调试控制台。</p>
-  <p id="e29" data-points="p0097 p0098 p0099 p0101">演示项目是讲者用 Claude Code 写出来的命令行待办工具，能加任务、列任务、标完成、加子任务。他凌晨 4 点和 Claude Code 聊了一轮，把请求记到文件里；完整记录是一个 JSON 文件。</p>
-  <p id="e30" data-points="p0102 p0103 p0104 p0105 p0106">请求里有模型名和 messages。messages 就是第 1 讲那个不断追加的对话列表，同样有角色：user（通常是你说的话，也可能是工具调用的结果）、system（Harness 在幕后注入的内容）、assistant（Claude 的动作，比如发起工具调用）。有些消息被 Harness 加了你平时看不到的内容，这就是要截请求的原因。</p>
-  <blockquote class="quote"><p id="e31" data-points="p0192">What are the core components of this to-do app?</p><cite>讲者在演示里输入的第一句话（讲课实录 20:40 段）</cite><span class="source-anchor">实录 20:40 · <a href="https://themodernsoftware.dev">课程网站</a></span></blockquote>
-  <p id="e32" data-points="p0109 p0110 p0111 p0112">tools 块在 user 和 assistant 消息下面，是一个列表，每项是一个字典。例如 Agent 工具：描述说它启动一个新智能体处理复杂的多步任务；还有一个 schema，相当于函数签名，properties 是调用时可以填的参数。这些全部注入模型的上下文窗口。</p>
+  <p id="e28" data-points="p0132 p0133 p0135 p0136">第 1 个作业今天发布、周日截止，内容和下面的演示类似：截下 Claude Code 的请求和响应，拆开看。讲者用一个代理工具截请求，比作 Wireshark 抓包（问在座有没有上过 144），也比作浏览器的调试控制台。</p>
+  <p id="e29" data-points="p0137 p0138 p0139 p0141">演示项目是讲者用 Claude Code 写出来的命令行待办工具，能加任务、列任务、标完成、加子任务。他凌晨 4 点和 Claude Code 聊了一轮，把请求记到文件里；完整记录是一个 JSON 文件。</p>
+  <p id="e30" data-points="p0142 p0143 p0144 p0145 p0146">请求里有模型名和 messages。messages 就是第 1 讲那个不断追加的对话列表，同样有角色：user（通常是你说的话，也可能是工具调用的结果）、system（Harness 在幕后注入的内容）、assistant（Claude 的动作，比如发起工具调用）。有些消息被 Harness 加了你平时看不到的内容，这就是要截请求的原因。</p>
+  <blockquote class="quote"><p id="e31" data-points="p0232">What are the core components of this to-do app?</p><cite>讲者在演示里输入的第一句话（讲课实录 20:40 段）</cite><span class="source-anchor">实录 20:40 · <a href="https://themodernsoftware.dev">课程网站</a></span></blockquote>
+  <p id="e32" data-points="p0149 p0150 p0151 p0152">tools 块在 user 和 assistant 消息下面，是一个列表，每项是一个字典。例如 Agent 工具：描述说它启动一个新智能体处理复杂的多步任务；还有一个 schema，相当于函数签名，properties 是调用时可以填的参数。这些全部注入模型的上下文窗口。</p>
   <p class="callout extra">补充：Anthropic API 里这个签名字段叫 input_schema；讲课只说「有一个 schema，相当于函数签名」。</p>
-  <p id="e33" data-points="p0114 p0115 p0116 p0117 p0118">讲者把内置工具和 MCP 工具分开列出，约 40 个内置工具包括：读写文件、通过 Bash 操作 shell、类似 cron 的监控和定时、网页搜索、LSP 搜索（LSP 是 Language Server Protocol）、智能体相关、计划与隔离、创建 artifact、列 MCP 资源（和 MCP 工具不同）、向用户提问、调用 Skill、推送通知、发送反馈。学生问这些是不是同一个请求的正文，讲者说是。</p>
-  <p id="e34" data-points="p0120 p0121 p0122 p0123 p0124">讲者：MCP 先出现，Skill 后来才有，引入 Skill 的一个原因是渐进披露（相关时才把信息放进上下文）。MCP 工具则全部放进来：每个加载的 MCP 服务器（包括第三方）都在 tools 块里，每次请求都带。所以要谨慎添加 MCP 服务器，无关内容越多，智能体越可能做不好；已有研究在测 token 多到什么程度时表现开始下降。</p>
-  <p id="e35" data-points="p0126 p0127">学生问：为什么 Claude 启动子智能体时用自然语言而不是向量？讲者说细节不清楚，但训练大多基于自然语言文本，人也很难用向量交流。</p>
-  <p id="e36" data-points="p0129 p0130 p0132">讲者说：这是能解析到的最可读的原始形式，送进模型前几乎肯定还有压缩、改写之类的处理，具体是什么看不到，可能是他们的独门做法。</p>
-  <p id="e37" data-points="p0133 p0134 p0135">内置工具之外还有外部 MCP 工具。名字以 <code>mcp__</code> 开头的就是外部工具，例如 <code>mcp__claude_ai</code> 开头的 Claude Docs 工具（确切名字实录里没听清），讲者还有 Mintlify（文档托管）的；Notion、Slack 等也会进工具列表。</p>
-  <p id="e38" data-points="p0137">学生问到元数据：对象上有校验和、哈希、UID，讲者没有逐个展开，说缺了这些可能造成安全漏洞。</p>
-  <p id="e39" data-points="p0139 p0140">MCP 和 Skill 的区别：MCP 工具是最小的原语，像一次 API 调用，一个输入一个输出；Skill 把多步操作写成流程，多个工具调用、脚本，中间用提示词串起来。</p>
+  <p id="e33" data-points="p0154 p0155 p0156 p0157 p0158">讲者把内置工具和 MCP 工具分开列出，约 40 个内置工具包括：读写文件、通过 Bash 操作 shell、类似 cron 的监控和定时、网页搜索、LSP 搜索（LSP 是 Language Server Protocol）、智能体相关、计划与隔离、创建 artifact、列 MCP 资源（和 MCP 工具不同）、向用户提问、调用 Skill、推送通知、发送反馈。学生问这些是不是同一个请求的正文，讲者说是。</p>
+  <p id="e34" data-points="p0160 p0161 p0162 p0163 p0164">讲者：MCP 先出现，Skill 后来才有，引入 Skill 的一个原因是渐进披露（相关时才把信息放进上下文）。MCP 工具则全部放进来：每个加载的 MCP 服务器（包括第三方）都在 tools 块里，每次请求都带。所以要谨慎添加 MCP 服务器，无关内容越多，智能体越可能做不好；已有研究在测 token 多到什么程度时表现开始下降。</p>
+  <p id="e35" data-points="p0166 p0167">学生问：为什么 Claude 启动子智能体时用自然语言而不是向量？讲者说细节不清楚，但训练大多基于自然语言文本，人也很难用向量交流。</p>
+  <p id="e36" data-points="p0169 p0170 p0172">讲者说：这是能解析到的最可读的原始形式，送进模型前几乎肯定还有压缩、改写之类的处理，具体是什么看不到，可能是他们的独门做法。</p>
+  <p id="e37" data-points="p0173 p0174 p0175">内置工具之外还有外部 MCP 工具。名字以 <code>mcp__</code> 开头的就是外部工具，例如 <code>mcp__claude_ai</code> 开头的 Claude Docs 工具（确切名字实录里没听清），讲者还有 Mintlify（文档托管）的；Notion、Slack 等也会进工具列表。</p>
+  <p id="e38" data-points="p0177">学生问到元数据：对象上有校验和、哈希、UID，讲者没有逐个展开，说缺了这些可能造成安全漏洞。</p>
+  <p id="e39" data-points="p0179 p0180">MCP 和 Skill 的区别：MCP 工具是最小的原语，像一次 API 调用，一个输入一个输出；Skill 把多步操作写成流程，多个工具调用、脚本，中间用提示词串起来。</p>
   <p class="src official">讲义： <span class="source-anchor" data-source-section="s9"><a href="https://themodernsoftware.dev">出处：Tool List</a></span></p>
   <p class="src official">实录： <span class="source-anchor" data-source-section="s29"><a href="https://themodernsoftware.dev">出处：Mihail Eric (14:11.202)</a></span> <span class="source-anchor" data-source-section="s30"><a href="https://themodernsoftware.dev">出处：Mihail Eric (14:20.888)</a></span> <span class="source-anchor" data-source-section="s31"><a href="https://themodernsoftware.dev">出处：Mihail Eric (16:38.412)</a></span> <span class="source-anchor" data-source-section="s32"><a href="https://themodernsoftware.dev">出处：Mihail Eric (18:33.782)</a></span> <span class="source-anchor" data-source-section="s33"><a href="https://themodernsoftware.dev">出处：Mihail Eric (20:40.62)</a></span> <span class="source-anchor" data-source-section="s34"><a href="https://themodernsoftware.dev">出处：Mihail Eric (22:42.862)</a></span> <span class="source-anchor" data-source-section="s35"><a href="https://themodernsoftware.dev">出处：Mihail Eric (24:11.47)</a></span> <span class="source-anchor" data-source-section="s36"><a href="https://themodernsoftware.dev">出处：Mihail Eric (25:58.866)</a></span> <span class="source-anchor" data-source-section="s37"><a href="https://themodernsoftware.dev">出处：Mihail Eric (27:41.454)</a></span> <span class="source-anchor" data-source-section="s38"><a href="https://themodernsoftware.dev">出处：Mihail Eric (28:36.396)</a></span> <span class="source-anchor" data-source-section="s39"><a href="https://themodernsoftware.dev">出处：Mihail Eric (29:18.286)</a></span> <span class="source-anchor" data-source-section="s40"><a href="https://themodernsoftware.dev">出处：Mihail Eric (30:54.658)</a></span> <span class="source-anchor" data-source-section="s41"><a href="https://themodernsoftware.dev">出处：Mihail Eric (31:25.272)</a></span></p>
 </section>
@@ -162,23 +162,23 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
 <section class="sec" id="s4" data-source-section="s42" data-toc="工具为什么越来越少">
   <span class="kicker">工具列表 · 一点历史</span>
   <h2>少而强的工具胜过一长串工具</h2>
-  <p id="e40" data-points="p0143 p0144">内置约 40 个，加了 MCP 服务器会多得多。讲者说 Claude Code 大约在去年 12 月走红，一个原因是 Harness 极简：很长时间里工具很少，却几乎什么都能做。40 个在这个意义上仍然不多。</p>
-  <p id="e41" data-points="p0145">强大的工具如 Bash 和 SQL：给模型文件系统和命令行，就能做复杂操作；讲者说 Bash 本身就是一门完整的语言。</p>
-  <p id="e42" data-points="p0146 p0147">早期（约 2024 年底 MCP 刚出来时），GitHub 的 MCP 服务器自带约 110 个工具：列 issue、建 issue、评论 issue 等。有用，但占上下文；上下文越膨胀，模型越可能做不好。Claude 的做法是从三到五个能做很多事的工具起步再扩展；业界趋势是降低复杂度，找瑞士军刀式的工具。</p>
+  <p id="e40" data-points="p0183 p0184">内置约 40 个，加了 MCP 服务器会多得多。讲者说 Claude Code 大约在去年 12 月走红，一个原因是 Harness 极简：很长时间里工具很少，却几乎什么都能做。40 个在这个意义上仍然不多。</p>
+  <p id="e41" data-points="p0185">强大的工具如 Bash 和 SQL：给模型文件系统和命令行，就能做复杂操作；讲者说 Bash 本身就是一门完整的语言。</p>
+  <p id="e42" data-points="p0186 p0187">早期（约 2024 年底 MCP 刚出来时），GitHub 的 MCP 服务器自带约 110 个工具：列 issue、建 issue、评论 issue 等。有用，但占上下文；上下文越膨胀，模型越可能做不好。Claude 的做法是从三到五个能做很多事的工具起步再扩展；业界趋势是降低复杂度，找瑞士军刀式的工具。</p>
   <p class="src official">实录： <span class="source-anchor" data-source-section="s42"><a href="https://themodernsoftware.dev">出处：Mihail Eric (32:19.66)</a></span></p>
 </section>
 
 <section class="sec" id="s5" data-source-section="s45" data-toc="系统提示词">
   <span class="kicker">组件 2 · 系统提示词</span>
   <h2>系统提示词由 Harness 写死，你控制不了</h2>
-  <p id="e43" data-points="p0020 p0021 p0148 p0150 p0151">课件：系统提示词是系统级蓝图，定义 Harness 的行为、护栏和环境（这是什么系统、在哪里）。讲者说它由 Harness 在你不说话时注入，你控制不了，而且每次请求都带上。</p>
-  <p id="e44" data-points="p0152 p0154 p0155">请求里工具占了大量篇幅，对话正文大约到第 600 行就结束。往上有一块就叫 system，其中两块和我们有关。第一块告诉模型它是什么：</p>
-  <blockquote class="quote"><p id="e45" data-points="p0155">You are Claude Code, Anthropic's official CLI for Claude.</p><cite>Claude Code 请求里 system 的第一块（讲课实录 35:32 段）</cite><span class="source-anchor">实录 35:32 · <a href="https://themodernsoftware.dev">课程网站</a></span></blockquote>
-  <p id="e46" data-points="p0156 p0157 p0158">第二块是正式说明，这是 Opus 5.5 版的系统提示词，讲者先说约 80 行，又改口说接近 50 行，比以前短得多。内容包括：你是帮用户做软件工程任务的交互式智能体；要小心的事（含安全相关说明）；Harness 是什么、怎样和它交互；会话信息；还有一大块关于记忆。</p>
-  <p id="e47" data-points="p0160 p0161 p0162">记忆是 Anthropic 较新的加入：一个从你的行为中学习的隐式记忆机制。提示词规定记忆存放在文件系统的哪个位置，模型决定写记忆时用什么格式。另外还有环境信息（例如有哪些 Claude 模型可用）和少量上下文管理说明。</p>
-  <p id="e48" data-points="p0163 p0164 p0165">讲者说：直到最近一两个月，系统提示词还有 200 到 250 行，很多是教模型怎样用 Git、怎样发任务。他推测这些知识已经通过训练进入模型参数；大约一个月前他们把系统提示词缩减了约 8%，和减少 MCP 工具一样，都是为了减少上下文膨胀。</p>
-  <p class="callout key" id="e49" data-points="p0167 p0168">讲者说：这些内容不是他写的，他也看不到，但每次请求都在他的上下文窗口里；第一个请求发出时，可能已经有上万 token 被他控制不了的内容占用（实录里那句数字比较没听清）。然后效果不好时用户会困惑，他认为厂商想减少这种意外。</p>
-  <p id="e50" data-points="p0171 p0173 p0174 p0175">学生问到能否篡改或防护。讲者说肯定改不了，提示词注入早有人试，最简单的攻击应该已被处理。他认为看到系统提示词不算大的攻击面：截请求不难，有开源工具；而且他们约六个月前整个系统泄露过。讲者没用泄露的代码，在泄露前就用 Wireshark 式的检查做到了；Codex 的 Harness 本身就在 GitHub 上。</p>
+  <p id="e43" data-points="p0040 p0041 p0042 p0043 p0044 p0045 p0188 p0190 p0191">课件：系统提示词是系统级蓝图（System level blueprint），定义 Harness 的行为、护栏（Guardrails）和环境（Environment：这是什么系统、在哪里）。讲者说它由 Harness 在你不说话时注入，你控制不了，而且每次请求都带上。</p>
+  <p id="e44" data-points="p0192 p0194 p0195">请求里工具占了大量篇幅，对话正文大约到第 600 行就结束。往上有一块就叫 system，其中两块和我们有关。第一块告诉模型它是什么：</p>
+  <blockquote class="quote"><p id="e45" data-points="p0195">You are Claude Code, Anthropic's official CLI for Claude.</p><cite>Claude Code 请求里 system 的第一块（讲课实录 35:32 段）</cite><span class="source-anchor">实录 35:32 · <a href="https://themodernsoftware.dev">课程网站</a></span></blockquote>
+  <p id="e46" data-points="p0196 p0197 p0198">第二块是正式说明，这是 Opus 5.5 版的系统提示词，讲者先说约 80 行，又改口说接近 50 行，比以前短得多。内容包括：你是帮用户做软件工程任务的交互式智能体；要小心的事（含安全相关说明）；Harness 是什么、怎样和它交互；会话信息；还有一大块关于记忆。</p>
+  <p id="e47" data-points="p0200 p0201 p0202">记忆是 Anthropic 较新的加入：一个从你的行为中学习的隐式记忆机制。提示词规定记忆存放在文件系统的哪个位置，模型决定写记忆时用什么格式。另外还有环境信息（例如有哪些 Claude 模型可用）和少量上下文管理说明。</p>
+  <p id="e48" data-points="p0203 p0204 p0205">讲者说：直到最近一两个月，系统提示词还有 200 到 250 行，很多是教模型怎样用 Git、怎样发任务。他推测这些知识已经通过训练进入模型参数；大约一个月前他们把系统提示词缩减了约 8%，和减少 MCP 工具一样，都是为了减少上下文膨胀。</p>
+  <p class="callout key" id="e49" data-points="p0207 p0208">讲者说：这些内容不是他写的，他也看不到，但每次请求都在他的上下文窗口里；第一个请求发出时，可能已经有上万 token 被他控制不了的内容占用（实录里那句数字比较没听清）。然后效果不好时用户会困惑，他认为厂商想减少这种意外。</p>
+  <p id="e50" data-points="p0211 p0213 p0214 p0215">学生问到能否篡改或防护。讲者说肯定改不了，提示词注入早有人试，最简单的攻击应该已被处理。他认为看到系统提示词不算大的攻击面：截请求不难，有开源工具；而且他们约六个月前整个系统泄露过。讲者没用泄露的代码，在泄露前就用 Wireshark 式的检查做到了；Codex 的 Harness 本身就在 GitHub 上。</p>
   <p class="src official">讲义： <span class="source-anchor" data-source-section="s10"><a href="https://themodernsoftware.dev">出处：System Prompt</a></span></p>
   <p class="src official">实录： <span class="source-anchor" data-source-section="s43"><a href="https://themodernsoftware.dev">出处：Mihail Eric (34:30.87)</a></span> <span class="source-anchor" data-source-section="s44"><a href="https://themodernsoftware.dev">出处：Mihail Eric (35:32.942)</a></span> <span class="source-anchor" data-source-section="s45"><a href="https://themodernsoftware.dev">出处：Mihail Eric (37:08.974)</a></span> <span class="source-anchor" data-source-section="s46"><a href="https://themodernsoftware.dev">出处：Mihail Eric (39:11.008)</a></span> <span class="source-anchor" data-source-section="s47"><a href="https://themodernsoftware.dev">出处：Mihail Eric (39:55.074)</a></span> <span class="source-anchor" data-source-section="s48"><a href="https://themodernsoftware.dev">出处：Mihail Eric (40:19.137)</a></span></p>
 </section>
@@ -186,21 +186,21 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
 <section class="sec" id="s6" data-source-section="s50" data-toc="记忆">
   <span class="kicker">深入一层 · 记忆</span>
   <h2>记忆用平面文件，复杂检索不一定更好</h2>
-  <p id="e51" data-points="p0178 p0179 p0180 p0181">学生问：记忆是每次运行各自独立的吗？讲者看路径的定义，认为是按项目区分的。记忆是否追加到系统提示词？讲者说「追加」太重，应理解为拼进请求的另一块，属于提示词，但和系统提示词是不同的对象。</p>
-  <p id="e52" data-points="p0183 p0184 p0185">另一个问题：检索在哪里发生，该不该用 RAG 或 GraphRAG 取记忆？讲者说这类设计由基准测试决定；研究发现复杂检索不总比让系统直接读平面文本好，要看任务，不能一概而论。他所在的公司做销售（不是编码）智能体，自建 Harness，也用平面文件存记忆。</p>
+  <p id="e51" data-points="p0218 p0219 p0220 p0221">学生问：记忆是每次运行各自独立的吗？讲者看路径的定义，认为是按项目区分的。记忆是否追加到系统提示词？讲者说「追加」太重，应理解为拼进请求的另一块，属于提示词，但和系统提示词是不同的对象。</p>
+  <p id="e52" data-points="p0223 p0224 p0225">另一个问题：检索在哪里发生，该不该用 RAG 或 GraphRAG 取记忆？讲者说这类设计由基准测试决定；研究发现复杂检索不总比让系统直接读平面文本好，要看任务，不能一概而论。他所在的公司做销售（不是编码）智能体，自建 Harness，也用平面文件存记忆。</p>
   <p class="src official">实录： <span class="source-anchor" data-source-section="s49"><a href="https://themodernsoftware.dev">出处：Mihail Eric (41:30.849)</a></span> <span class="source-anchor" data-source-section="s50"><a href="https://themodernsoftware.dev">出处：Mihail Eric (42:44.417)</a></span></p>
 </section>
 
 <section class="sec" id="s7" data-source-section="s52" data-toc="CLAUDE.md">
   <span class="kicker">组件 3 · 配置文件</span>
   <h2>CLAUDE.md 是你能控制的那份提示词</h2>
-  <p id="e53" data-points="p0022 p0023 p0186 p0188">课件：CLAUDE.md、AGENTS.md 是用户级的智能体定制，优先于其他命令。讲者说 CLAUDE.md 是 Claude 专用名，AGENTS.md 是更通用的标准；几周前 Anthropic 也开始支持 AGENTS.md，可以用符号链接把 CLAUDE.md 指向 AGENTS.md。两者作用相同，只是名字不同，在 Codex 和 Anthropic 之间切换时有点烦，讲者说这是很弱的围墙花园。</p>
-  <p id="e54" data-points="p0189">它是系统提示词的用户版：系统提示词静态、由 Harness 设定、在幕后注入；CLAUDE.md 同样被注入，但由你控制。</p>
-  <p id="e55" data-points="p0190 p0191">演示项目里有一个 CLAUDE.md，内容是项目结构的高层描述，由讲者和 Claude 一起写。怎样写好它，课程后面有一整讲。</p>
+  <p id="e53" data-points="p0046 p0047 p0048 p0226 p0228">课件：CLAUDE.md、AGENTS.md 是用户级的智能体定制，优先于其他命令（Take precedence）。讲者说 CLAUDE.md 是 Claude 专用名，AGENTS.md 是更通用的标准；几周前 Anthropic 也开始支持 AGENTS.md，可以用符号链接把 CLAUDE.md 指向 AGENTS.md。两者作用相同，只是名字不同，在 Codex 和 Anthropic 之间切换时有点烦，讲者说这是很弱的围墙花园。</p>
+  <p id="e54" data-points="p0229">它是系统提示词的用户版：系统提示词静态、由 Harness 设定、在幕后注入；CLAUDE.md 同样被注入，但由你控制。</p>
+  <p id="e55" data-points="p0230 p0231">演示项目里有一个 CLAUDE.md，内容是项目结构的高层描述，由讲者和 Claude 一起写。怎样写好它，课程后面有一整讲。</p>
   <p class="callout extra">补充（据课程日历）：那一讲是第 4 周周二（10 月 13 日）的「Customizing your agentic setup (CLAUDE.md, AGENTS.md, hooks)」。</p>
-  <p id="e56" data-points="p0192 p0193 p0195">回到请求顶部：讲者只输入了那一句问题，它上面的内容技术上属于同一个 user 块，但「system reminder」之类都是 Harness 在幕后加的。其中一项就是 CLAUDE.md 的全文，最上面写明这些指令覆盖默认行为、必须严格照做，然后给出 CLAUDE.md 的路径。</p>
-  <p id="e57" data-points="p0196 p0197 p0205 p0206">讲者把这一块从 JSON 里复制到一个空文件，内容和他的 CLAUDE.md 一致；学生问为什么是 .md 文件，讲者说只是为了显示好看，用 .txt 也行，追踪记录里并没有单独的 Markdown 文件。这里就是你能控制模型行为的地方。</p>
-  <p class="callout limit" id="e58" data-points="p0200 p0201 p0202">讲者说业界共识：放一些运行代码的说明，例如跑测试、启动服务器，但不要太多。写太多会过度约束系统，几乎是让它对你的指令过拟合；这也是系统提示词越来越精简的原因之一。通常不放整段代码，只放一两条命令，例如跑单元测试或启动服务器的确切命令。</p>
+  <p id="e56" data-points="p0232 p0233 p0235">回到请求顶部：讲者只输入了那一句问题，它上面的内容技术上属于同一个 user 块，但「system reminder」之类都是 Harness 在幕后加的。其中一项就是 CLAUDE.md 的全文，最上面写明这些指令覆盖默认行为、必须严格照做，然后给出 CLAUDE.md 的路径。</p>
+  <p id="e57" data-points="p0236 p0237 p0245 p0246">讲者把这一块从 JSON 里复制到一个空文件，内容和他的 CLAUDE.md 一致；学生问为什么是 .md 文件，讲者说只是为了显示好看，用 .txt 也行，追踪记录里并没有单独的 Markdown 文件。这里就是你能控制模型行为的地方。</p>
+  <p class="callout limit" id="e58" data-points="p0240 p0241 p0242">讲者说业界共识：放一些运行代码的说明，例如跑测试、启动服务器，但不要太多。写太多会过度约束系统，几乎是让它对你的指令过拟合；这也是系统提示词越来越精简的原因之一。通常不放整段代码，只放一两条命令，例如跑单元测试或启动服务器的确切命令。</p>
   <p class="src official">讲义： <span class="source-anchor" data-source-section="s11"><a href="https://themodernsoftware.dev">出处：Agent Configuration Files</a></span></p>
   <p class="src official">实录： <span class="source-anchor" data-source-section="s51"><a href="https://themodernsoftware.dev">出处：Mihail Eric (44:22.863)</a></span> <span class="source-anchor" data-source-section="s52"><a href="https://themodernsoftware.dev">出处：Mihail Eric (46:09.871)</a></span> <span class="source-anchor" data-source-section="s53"><a href="https://themodernsoftware.dev">出处：Mihail Eric (47:05.085)</a></span> <span class="source-anchor" data-source-section="s54"><a href="https://themodernsoftware.dev">出处：Mihail Eric (48:03.021)</a></span></p>
 </section>
@@ -208,14 +208,14 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
 <section class="sec" id="s8" data-source-section="s55" data-toc="Plan 模式">
   <span class="kicker">组件 4 · Plan 模式</span>
   <h2>Plan 模式就是一段注入的提示词</h2>
-  <p id="e59" data-points="p0024 p0025 p0207 p0208">课件：一个明确的工具让智能体为改动写规格，还可以继续向用户提问澄清需求。讲者说大约九个月或更早以前，大多数编码 Harness 都加了 Plan 模式，用来写规格、和用户来回澄清需求和架构。</p>
-  <p id="e60" data-points="p0209 p0210">讲者没在现场展示追踪，说会分享给学生，作业里也会自己截到。Plan 模式的提示词就是一段文字；Codex 等现代 Harness 也有同样的东西。Claude 有一个进入该模式的工具（确切名字讲者没记清），Harness 随即注入这段文字；结束时用另一个工具退出。</p>
+  <p id="e59" data-points="p0049 p0050 p0051 p0247 p0248">课件：一个明确的工具让智能体为改动写规格（spec），还可以继续向用户提问澄清需求（clarify requirements）。讲者说大约九个月或更早以前，大多数编码 Harness 都加了 Plan 模式，用来写规格、和用户来回澄清需求和架构。</p>
+  <p id="e60" data-points="p0249 p0250">讲者没在现场展示追踪，说会分享给学生，作业里也会自己截到。Plan 模式的提示词就是一段文字；Codex 等现代 Harness 也有同样的东西。Claude 有一个进入该模式的工具（确切名字讲者没记清），Harness 随即注入这段文字；结束时用另一个工具退出。</p>
   <ol class="steps">
-    <li id="e61" data-points="p0211 p0213">第一阶段：理解用户需求，提示词里甚至让你派智能体去探索代码库。</li>
-    <li id="e62" data-points="p0213">第二阶段：根据理解的需求做设计。</li>
-    <li id="e63" data-points="p0213">然后是审查、最终计划，做完退出 Plan 模式。</li>
+    <li id="e61" data-points="p0251 p0253">第一阶段：理解用户需求，提示词里甚至让你派智能体去探索代码库。</li>
+    <li id="e62" data-points="p0253">第二阶段：根据理解的需求做设计。</li>
+    <li id="e63" data-points="p0253">然后是审查、最终计划，做完退出 Plan 模式。</li>
   </ol>
-  <p id="e64" data-points="p0214 p0215">关键产物是最后的 plan 文件。演示里讲者想给待办工具加周期提醒，例如每周给植物浇水：进入 Plan 模式，来回讨论，产出计划。</p>
+  <p id="e64" data-points="p0254 p0255">关键产物是最后的 plan 文件。演示里讲者想给待办工具加周期提醒，例如每周给植物浇水：进入 Plan 模式，来回讨论，产出计划。</p>
   <p class="src official">讲义： <span class="source-anchor" data-source-section="s12"><a href="https://themodernsoftware.dev">出处：Plan Mode</a></span></p>
   <p class="src official">实录： <span class="source-anchor" data-source-section="s54"><a href="https://themodernsoftware.dev">出处：Mihail Eric (48:03.021)</a></span> <span class="source-anchor" data-source-section="s55"><a href="https://themodernsoftware.dev">出处：Mihail Eric (50:12.483)</a></span></p>
 </section>
@@ -223,12 +223,12 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
 <section class="sec" id="s9" data-source-section="s57" data-toc="Skill">
   <span class="kicker">组件 5 · Skill</span>
   <h2>Skill 用到时才进上下文</h2>
-  <p id="e65" data-points="p0026 p0027 p0217 p0218 p0219">课件：Skill 描述一段由智能体执行的书面流程，是带工具调用和本地脚本的提示词，可以主动调用，也可以明确调用。讲者举例：你可以让它审查代码，它也可能判断任务完成后自己调用代码审查 Skill。课程后面有一整讲讲 Skill 设计。</p>
+  <p id="e65" data-points="p0052 p0053 p0054 p0055 p0257 p0258 p0259">课件：Skill 描述一段由智能体执行的书面流程（written procedure），是带工具调用和本地脚本（local script）的提示词，可以主动调用，也可以明确调用（proactively or explicitly）。讲者举例：你可以让它审查代码，它也可能判断任务完成后自己调用代码审查 Skill。课程后面有一整讲讲 Skill 设计。</p>
   <p class="callout extra">补充（据课程日历）：第 3 周周二（10 月 6 日）讲「All about agent skills」，第 3 个作业是写一个 Skill。</p>
-  <p id="e66" data-points="p0220 p0221 p0223 p0224">讲者为课程写了一个 check code quality Skill：定义一个 SKILL.md，写明做什么、好代码和差代码的区别。为了让它出现在追踪里，他明确调用了它：</p>
-  <blockquote class="quote"><p id="e67" data-points="p0223">Check my code quality. Use the skill.</p><cite>讲者在演示里的输入（讲课实录 52:41 段）</cite><span class="source-anchor">实录 52:41 · <a href="https://themodernsoftware.dev">课程网站</a></span></blockquote>
-  <p id="e68" data-points="p0224">幕后，Harness 注入一段带 check code quality 命令消息的文字，告诉模型该检查代码质量了；接着找到 Skill 文件，把内容放进上下文。</p>
-  <div class="table"><table class="data" id="e69" data-points="p0121 p0122 p0139 p0140"><caption>MCP 工具与 Skill（据实录 25:58、31:25 两段整理）</caption>
+  <p id="e66" data-points="p0260 p0261 p0263 p0264">讲者为课程写了一个 check code quality Skill：定义一个 SKILL.md，写明做什么、好代码和差代码的区别。为了让它出现在追踪里，他明确调用了它：</p>
+  <blockquote class="quote"><p id="e67" data-points="p0263">Check my code quality. Use the skill.</p><cite>讲者在演示里的输入（讲课实录 52:41 段）</cite><span class="source-anchor">实录 52:41 · <a href="https://themodernsoftware.dev">课程网站</a></span></blockquote>
+  <p id="e68" data-points="p0264">幕后，Harness 注入一段带 check code quality 命令消息的文字，告诉模型该检查代码质量了；接着找到 Skill 文件，把内容放进上下文。</p>
+  <div class="table"><table class="data" id="e69" data-points="p0161 p0162 p0179 p0180"><caption>MCP 工具与 Skill（据实录 25:58、31:25 两段整理）</caption>
     <thead><tr><th></th><th>MCP 工具</th><th>Skill</th></tr></thead>
     <tbody>
       <tr><td data-label="项目">是什么</td><td data-label="MCP 工具">最小原语，像一次 API 调用</td><td data-label="Skill">写好的多步流程，用提示词串起工具和脚本</td></tr>
@@ -241,9 +241,9 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
 <section class="sec" id="s10" data-source-section="s59" data-toc="子智能体与 Hook">
   <span class="kicker">组件 6、7 · 子智能体与 Hook</span>
   <h2>子智能体的探索不留在主对话列表里</h2>
-  <p id="e70" data-points="p0028 p0029 p0228 p0229">课件：子智能体通过明确的工具调用启动，在会话内用全新上下文和自定义系统提示词工作，可以并行（但 token 花费会上升），最后把结果交回父智能体。讲者说主编排智能体就是 Claude Code 的主控制循环；子智能体不继承父智能体的全部上下文，探索在主流程之外进行，是更好地管理上下文的方式。</p>
-  <p id="e71" data-points="p0230">讲者在追踪里调用过一次子智能体，大概是让它检查性能，他记不清了。要点是：一次工具调用生成智能体，它做完把结果交回。</p>
-  <p id="e72" data-points="p0030 p0031 p0231">Hook：在 Harness 生命周期不同点插入的提示词或代码片段，需要做前处理、后处理时特别有用。课件说最佳实践后面再讲，讲者本讲只提了一句。</p>
+  <p id="e70" data-points="p0056 p0057 p0058 p0059 p0060 p0268 p0269">课件：子智能体通过明确的工具调用启动，在会话内用全新上下文（Fresh context）和自定义系统提示词工作，可以并行（但 token 花费会上升），最后把结果交回父智能体（parent）。讲者说主编排智能体就是 Claude Code 的主控制循环；子智能体不继承父智能体的全部上下文，探索在主流程之外进行，是更好地管理上下文的方式。</p>
+  <p id="e71" data-points="p0270">讲者在追踪里调用过一次子智能体，大概是让它检查性能，他记不清了。要点是：一次工具调用生成智能体，它做完把结果交回。</p>
+  <p id="e72" data-points="p0061 p0062 p0063 p0064 p0271">Hook：在 Harness 生命周期不同点插入的提示词或代码片段，需要做前处理、后处理时特别有用。课件说最佳实践（best practices）后面再讲，讲者本讲只提了一句。</p>
   <p class="src official">讲义： <span class="source-anchor" data-source-section="s14"><a href="https://themodernsoftware.dev">出处：Subagents</a></span> <span class="source-anchor" data-source-section="s15"><a href="https://themodernsoftware.dev">出处：Hooks</a></span></p>
   <p class="src official">实录： <span class="source-anchor" data-source-section="s58"><a href="https://themodernsoftware.dev">出处：Mihail Eric (53:30.029)</a></span> <span class="source-anchor" data-source-section="s59"><a href="https://themodernsoftware.dev">出处：Mihail Eric (53:40.343)</a></span></p>
 </section>
@@ -251,8 +251,8 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
 <section class="sec" id="s11" data-source-section="s60" data-toc="压缩">
   <span class="kicker">组件 8 · 压缩</span>
   <h2>压缩用一份摘要替换整段对话列表</h2>
-  <p id="e73" data-points="p0032 p0033 p0233">课件：上下文快超出时，为这次运行的要点生成合并摘要，用摘要替换已有历史；手动或自动触发；会丢信息，所以你可能要改写自己的版本。讲者说自动触发是快超出上下文窗口时，比如接近一百万 token 或别的上限；手动是你自己调用。</p>
-  <p id="e74" data-points="p0234">有一整段提示词规定怎样写摘要，摘要随后替换被概括的上下文。讲者的例子：把 500,000 个 token 压成 150,000 个，之后模型只看到这些。何时主动压缩的最佳实践后面讲。</p>
+  <p id="e73" data-points="p0065 p0066 p0067 p0068 p0069 p0273">课件：上下文快超出时，为这次运行的要点生成合并摘要（consolidated summary），用摘要替换已有历史（Replace existing history）；手动或自动触发（manually or automatically）；会丢信息（lossy），所以你可能要改写自己的版本。讲者说自动触发是快超出上下文窗口时，比如接近一百万 token 或别的上限；手动是你自己调用。</p>
+  <p id="e74" data-points="p0274">有一整段提示词规定怎样写摘要，摘要随后替换被概括的上下文。讲者的例子：把 500,000 个 token 压成 150,000 个，之后模型只看到这些。何时主动压缩的最佳实践后面讲。</p>
   <p class="src official">讲义： <span class="source-anchor" data-source-section="s16"><a href="https://themodernsoftware.dev">出处：Compaction</a></span></p>
   <p class="src official">实录： <span class="source-anchor" data-source-section="s60"><a href="https://themodernsoftware.dev">出处：Mihail Eric (55:25.327)</a></span></p>
 </section>
@@ -268,13 +268,13 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
   <span class="kicker">收尾 · 原则</span>
   <h2>Harness 越来越依赖模型本身的能力</h2>
   <ul>
-    <li id="e75" data-points="p0034 p0035 p0236 p0237">简单：更少、更强的工具更好（SQL、Bash 等）。讲者说约 40 个原生工具比过去版本的 Harness 少，设计者越来越依赖底层模型的能力。</li>
-    <li id="e76" data-points="p0035 p0242">留意上下文窗口：避开 dumb zone，小心工具膨胀。讲者说 dumb zone 只是非正式叫法，指模型开始变得不那么有效的区域；怎样避开，后面的上下文工程会讲。</li>
-    <li id="e77" data-points="p0035 p0243">提示词的内容和长度会变，要让它们容易调整。讲者说现在倾向更短的提示词，既避免膨胀，也更容易按任务调整。</li>
+    <li id="e75" data-points="p0070 p0071 p0072 p0073 p0074 p0075 p0276 p0277">简单（Simplicity）：更少、更强的工具更好（SQL、Bash 等）。讲者说约 40 个原生工具比过去版本的 Harness 少，设计者越来越依赖底层模型的能力。</li>
+    <li id="e76" data-points="p0071 p0072 p0073 p0074 p0075 p0282">留意上下文窗口：避开 dumb zone，小心工具膨胀。讲者说 dumb zone 只是非正式叫法，指模型开始变得不那么有效的区域；怎样避开，后面的上下文工程（context engineering）会讲。</li>
+    <li id="e77" data-points="p0071 p0072 p0073 p0074 p0075 p0283">提示词的内容和长度会变（evolve），要让它们容易调整。讲者说现在倾向更短的提示词，既避免膨胀，也更容易按任务调整。</li>
   </ul>
   <p class="callout extra">补充（学习搭子归纳）：本讲提到的三种失败都来自塞进上下文的东西太多：工具列表膨胀（只加真正用到的 MCP 服务器）；CLAUDE.md 写太多（只写一两条关键命令）；自动压缩丢细节（需要时改写自己的压缩方式）。</p>
-  <p id="e78" data-points="p0239 p0240 p0241">讲者说：投入模型还是投入 Harness，是智能体设计的大问题，业界一直来回摇摆：有时说价值和护城河在 Harness，有时又指着训练模型花掉的数十亿美元说该投模型。眼下大家希望 Harness 尽量简单，可以在里面做有趣的事，但要小心别撑爆上下文。</p>
-  <p id="e79" data-points="p0036 p0235 p0244">讲者说超时了一点，课后留下答疑，下周继续。</p>
+  <p id="e78" data-points="p0279 p0280 p0281">讲者说：投入模型还是投入 Harness，是智能体设计的大问题，业界一直来回摇摆：有时说价值和护城河在 Harness，有时又指着训练模型花掉的数十亿美元说该投模型。眼下大家希望 Harness 尽量简单，可以在里面做有趣的事，但要小心别撑爆上下文。</p>
+  <p id="e79" data-points="p0076 p0275 p0284">讲者说超时了一点，课后留下答疑，下周继续。</p>
   <p class="src official">讲义： <span class="source-anchor" data-source-section="s17"><a href="https://themodernsoftware.dev">出处：Principles of Effective Harnesses</a></span> <span class="source-anchor" data-source-section="s18"><a href="https://themodernsoftware.dev">出处：Questions?</a></span></p>
   <p class="src official">实录： <span class="source-anchor" data-source-section="s60"><a href="https://themodernsoftware.dev">出处：Mihail Eric (55:25.327)</a></span> <span class="source-anchor" data-source-section="s61"><a href="https://themodernsoftware.dev">出处：Mihail Eric (57:04.491)</a></span></p>
 </section>

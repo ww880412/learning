@@ -119,9 +119,9 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
   <div class="doc-body">
     <p id="explain-3" data-points="p0003">这篇文章由两段共 80 多分钟的语音整理而来。作者说，人只需要读懂思路和逻辑，具体执行细节把文章交给 Agent 就行。</p>
     <h3>这篇的主线 </h3><span class="source-anchor heading-source">原图 2</span>
-    <p id="explain-8" data-points="p0010 p0011 p0012"><b>静态 Context</b>＝事先准备好的：规则文件、Skill、Memory、工具配置。<b>动态 Context</b>＝只能靠 Loop 产生：验证之后得到结果、把错误复盘清楚，这些新东西再成为下一轮的材料。</p>
+    <p id="explain-8" data-points="p0010 p0011 p0012"><b>静态 Context</b>＝事先准备好的：规则文件、Skill（技能包）、Memory（记忆）、工具配置。<b>动态 Context</b>＝只能靠 Loop 产生：验证之后得到结果、把错误复盘清楚，这些新东西再成为下一轮的材料。</p>
     <p id="explain-7" data-points="p0009">作者说，Loop 已经有点模型训练的雏形，再往前一步就是大家常说的「自我进化」；它完全能放进自己的日常工作流：主动去搭 Context，主动去搭 Loop。</p>
-    <figure class="figure orig" data-asset="a0013" id="explain-9" data-points="p0013"><img src="img/d1-context-loop.png" alt="全文主线：静态的 Context 预先写好，动态的 Context 从 Loop 里长出来"><figcaption><b>原图 2 · 全文主线</b> 左边是预先写好的静态 Context，右边是从 Loop 里长出来的动态 Context。 <span class="source-anchor" data-source-section="s2">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#引子两个关键词">原图 2 · 对应小节</a></span><span class="how">怎么看：先识别对象与标记，再对照本节的解释和限定。</span></figcaption></figure>
+    <figure class="figure orig" data-asset="a0013" id="explain-9" data-points="p0013"><img src="img/d1-context-loop.png" alt="全文主线：静态的 Context 预先写好，动态的 Context 从 Loop 里长出来"><figcaption><b>原图 2 · 全文主线</b> 左边是预先写好的静态 Context，右边是从 Loop 里长出来的动态 Context。 <span class="source-anchor" data-source-section="s2">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#引子两个关键词">原图 2 · 对应小节</a></span><span class="how">怎么看：从左往右读，左边是事先写好的材料，右边是从闭环里长出来的新材料，两边一起才构成 Context。</span></figcaption></figure>
     <h3>先看一组数字</h3>
     <p id="explain-10" data-points="p0014">作者有个名为 agent-config 的仓库，集中存放各种 AI 工具的规则与调度脚本，建于 7 月 23 日。两个月后：</p>
     <div class="stats">
@@ -130,8 +130,8 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
       <div class="stat" data-unit="个" id="explain-13" data-points="p0014" data-source-lines="35"><b>≈2000</b><span>个合并的 PR，全部由 AI 提交</span></div>
       <div class="stat" data-unit="Token" id="explain-14" data-points="p0015" data-source-lines="37"><b>20–30 亿</b><span>每天的 Token 用量（缓存读取也算在内）</span></div>
     </div>
-    <p id="explain-15" data-points="p0015 p0018">几个月前，每天约 40 亿 Token 得靠他守在旁边频繁干预（人在环内）。如今用量相近，他每天只分出一小块时间照看 Agent。按他的体感，投入的精力降了一个数量级。</p>
-    <figure class="figure orig" data-asset="a0016" id="explain-16" data-points="p0016 p0017"><img src="img/token-trend.png" alt="8 月 1 日至 10 月 4 日的 Token 处理量：上半部分按 Coding Agent 堆叠，下半部分按模型分布"><figcaption><b>原图 3 · 每天的 Token 处理量（8/1–10/4）</b> 上图按工具分：8 月初基本只有两家官方客户端，9 月下旬起 Pi（黄色）占比明显上升。下图按模型分：列出 19 个，另有 37 个未列，没有哪一家独占。 <span class="source-anchor" data-source-section="s2">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#引子两个关键词">原图 3 · 对应小节</a></span><span class="how">怎么看：先识别对象与标记，再对照本节的解释和限定。</span></figcaption></figure>
+    <p id="explain-15" data-points="p0015 p0018">几个月前，每天约 40 亿 Token 得靠他高频盯着、频繁干预（人在环内）。如今用量相近，他每天只分出一小块时间照看 Agent。按他的体感，投入的精力降了一个数量级。</p>
+    <figure class="figure orig" data-asset="a0016" id="explain-16" data-points="p0016 p0017"><img src="img/token-trend.png" alt="8 月 1 日至 10 月 4 日的 Token 处理量：上半部分按 Coding Agent 堆叠，下半部分按模型分布"><figcaption><b>原图 3 · 每天的 Token 处理量（8/1–10/4）</b> 上图按工具分：8 月初基本只有两家官方客户端，9 月下旬起 Pi（黄色）占比明显上升。下图按模型分：列出 19 个，另有 37 个未列；Claude、GPT、Grok、DeepSeek、MiniMax、Kimi 混着用，没有哪一家独占。 <span class="source-anchor" data-source-section="s2">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#引子两个关键词">原图 3 · 对应小节</a></span><span class="how">怎么看：先看上半部分各工具色块怎么随时间变化（黄色的 Pi 在 9 月下旬变多），再看下半部分有没有哪个模型独大。</span></figcaption></figure>
     <h3>后文反复出现的三个角色</h3>
     <div class="roles compare">
       <div><p id="explain-17" data-points="p0019 p0282"><b>主脑</b><span>拆任务、做判断、验收的 AI，相当于项目经理。</span></p></div>
@@ -158,9 +158,9 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
     <div class="stats">
       <div class="callout key" id="explain-21" data-points="p0022"><b>高价值</b><span>写代码成本高，省下的就是钱。</span></div>
       <div class="callout key" id="explain-22" data-points="p0023 p0025"><b>数据充分 → Context</b><span>开源项目、文档、问答网站，提供了大量训练材料。</span></div>
-      <div class="callout key" id="explain-23" data-points="p0024 p0025"><b>验证可闭环 → Loop</b><span>程序能运行、能测试，写错了编译器会提示。</span></div>
+      <div class="callout key" id="explain-23" data-points="p0024 p0025"><b>验证可闭环 → Loop</b><span>代码能跑、测试能过，写错了编译器会提示。</span></div>
     </div>
-    <p id="explain-24" data-points="p0026">作者强调：这两样建好以后，贵模型、便宜模型都会判断得更准、少浪费 Token。模型进步靠厂商；你自己能改的，只有上下文和闭环。</p>
+    <p id="explain-24" data-points="p0026">作者强调：这两样建好以后，贵模型、便宜模型都能帮你提高决策质量、少浪费 Token。模型进步靠厂商；你自己能改的，只有上下文和闭环。</p>
     <blockquote class="quote"><p id="explain-25" data-points="p0027 p0028">AI 把过去最慢、最贵的那一步——实现——变成了最快、最便宜的。</p><cite>Cloudflare《The Agent Development Lifecycle has arrived on Cloudflare》（作者译文）</cite><span class="source-anchor" data-source-section="s3"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#一为什么偏偏是这两个词">第一章引文</a></span></blockquote>
   </div>
   <div class="src article">原文 <span class="source-anchor" data-source-section="s3"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#一为什么偏偏是这两个词">一、为什么偏偏是这两个词</a></span></div>
@@ -193,7 +193,7 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
       </tbody></table><p class="table-note">单位按原表表头及单元格；原文没有另列脚注。</p></div>
     <p id="explain-31" data-points="p0038 p0039">换成日常的话：<b>规则文件</b>＝每回开场必读的守则；<b>Skill</b>＝要用时才翻开的手册，平常只露一行简介；<b>MCP</b>＝接外部服务的插头，每个都附一本厚说明书。近一个月作者把这几层逐一删改、实测，只为两件事：活干得更好，Token 花得更少。</p>
     <h3>Git 是基石</h3>
-    <p id="explain-32" data-points="p0041">作者把 Git 看成这个时代最好的软件：它把每次修改的差异都存下来，任何一条行为记录都能查到当时用的提示词、上下文、harness 和代码版本。（harness：套在模型外面的那层客户端软件，决定 AI 能用什么工具、一开始读什么。）所以上面每一层都该进 Git 仓库，最好同步到 GitHub。</p>
+    <p id="explain-32" data-points="p0041">作者把 Git 这种能随时回到旧版本的工具看成这个时代最好的软件：它把每次修改的差异都存下来，任何一条行为记录都能查到当时用的提示词、上下文、harness 和当时的代码逻辑。（harness：套在模型外面的那层客户端软件，决定 AI 能用什么工具、一开场先读什么。）所以上面每一层都该进 Git 仓库，最好同步到 GitHub，长期迭代。</p>
     <h3>预置 prompt：多半不用动 </h3><span class="source-anchor heading-source">原文 §2.3</span>
     <p id="explain-33" data-points="p0042 p0043">闭源客户端改不动，开源的能自己拼。多数时候保持默认即可；第三章讲执行器时会再回到这里。</p>
   </div>
@@ -206,7 +206,7 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
     <h2>一份底稿，按「工具 × 角色」拼接</h2>
     <p class="lede" id="explain-36" data-points="p0050">大厂说可以删掉旧补丁。作者的建议是：方向照着走，节奏晚半年。</p>
     <ul class="points">
-      <li id="explain-34" data-points="p0044 p0045">全局规则不是写完就不管，要进仓库，有加法也有减法。</li>
+      <li id="explain-34" data-points="p0044 p0045">全局规则不是写完就不管，要进仓库、长期迭代，有加法也有减法。</li>
       <li>大厂敢删，是因为 Token 几乎无限；普通用户额度会用完。</li>
       <li id="explain-43" data-points="p0060">规则不按模型分，按「工具 × 角色」分三块拼。</li>
       <li>注入量上硬闸：主脑 ≤24KB，执行器 ≤12KB。</li>
@@ -214,23 +214,24 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
   </header>
   <div class="doc-body">
     <h3>大厂的建议：删掉旧补丁</h3>
+    <p id="explain-35p" data-points="p0048">各家发布新模型时都有类似建议：针对顶级模型，删掉历史提示里那些补丁，别再反复强调「多想一点、再深一点」。</p>
     <blockquote class="quote"><p id="explain-35" data-points="p0046 p0047 p0048">针对 Opus 5 和 Fable 5 这类模型，我们删掉了 Claude Code 八成以上的系统提示，编码评测没有可测量的损失。</p><cite>Thariq《The new rules of context engineering for Claude 5 generation models》（作者译文）</cite><span class="source-anchor" data-source-section="s8"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#全局规则不是一次性的而且要分层拼接">§2.4 引文</a></span></blockquote>
-    <p id="explain-37" data-points="p0049 p0051 p0052 p0053 p0054">作者认为方向没错，可大厂这么做有个外人没有的条件：好模型的 Token 几乎不限量。三处都能看到这一点：Pragmatic Engineer 那篇讲 OpenAI 软件工厂的报道的开篇，Thariq 接受 Latent Space 采访时随口说的「Token 很多」，以及 Orca 创始人的访谈。</p>
+    <p id="explain-37" data-points="p0049 p0051 p0052 p0053 p0054">作者认为方向没错，可大厂这么做有个外人没有的条件：好模型的 Token 几乎不限量。三处都能看到这一点：Pragmatic Engineer 那篇讲 OpenAI 软件工厂的报道的开篇，Thariq 接受 Latent Space 采访时随口说的「Token 很多」，以及 Orca 创始人的访谈：模型公司里的人，很少遇上外部用户天天碰到的额度耗尽、换供应商接着跑的麻烦。</p>
     <p id="explain-38" data-points="p0055 p0056">风险是：你照着顶级模型把提示词精简完，没几天额度耗尽、只能换回普通模型，可原先为普通模型加的补丁已经删掉了。所以在高智力 Token 变便宜之前（作者寄希望于大约六个月之后），先保留这些补丁。</p>
     <h3>为什么不按模型各写一份</h3>
-    <p id="explain-39" data-points="p0057 p0058 p0059">Thariq 也说过，每个模型出错的方式都不一样；但为每个模型各写一份很累，不停追加出错记录还会把模型管得太死。作者用的模型更多更杂，也考虑过「强模型一套、普通模型一套」，最后放弃，原因有二：</p>
+    <p id="explain-39" data-points="p0057 p0058 p0059">Thariq 也说过，每个模型出错的方式都不一样；主持人顺口说那就得有 Fable.md、Opus.md；Thariq 说为每个模型各写一份很累，不停追加出错记录还会把模型管得太死。作者用的模型更多更杂（Claude、Codex、Cursor、Kimi、Grok、GLM、MiniMax、Gemini、DeepSeek，外加不少免费模型），也考虑过「强模型一套、普通模型一套」，最后放弃，原因有二：</p>
     <ul class="plain">
       <li id="explain-41" data-points="p0059">证据不足：很多问题说不清该怪模型，还是该怪外壳或任务卡。</li>
       <li id="explain-42" data-points="p0059">分不开：执行器多数跑在 Pi 上，同一个外壳换着接不同模型。</li>
     </ul>
     <h3>他的做法：底稿拆成三块</h3>
     <div class="roles compare">
-      <div><p id="explain-44" data-points="p0061"><b>共用底座</b><span>个人的工程习惯（比如测试先行）。不分工具、不分角色，人人都带。</span></p></div>
-      <div><p id="explain-45" data-points="p0062"><b>主脑专属</b><span>怎么派活、怎么评审、跨会话的记忆、交付权限。这些给执行器只会添乱。</span></p></div>
+      <div><p id="explain-44" data-points="p0061"><b>共用底座</b><span>个人的工程习惯（比如先写测试、再写代码）和你独有的验证手段。这层所有工具、所有角色都带着，一直有效。</span></p></div>
+      <div><p id="explain-45" data-points="p0062"><b>主脑专属</b><span>派发路由、评审纪律、跨会话记忆、交付授权。这些给执行器只会添乱。</span></p></div>
       <div><p id="explain-46" data-points="p0063"><b>工具专属</b><span>各家工具的用法和行为微调。比如 Codex 那边带全套「别过度设计」的约束，原因是 GPT 系模型往往格外严谨，容易设计过度；别的工具只带简版。微调绑在工具上，不绑在模型上。</span></p></div>
     </div>
     <p id="explain-47" data-points="p0064">主脑这边：三块合成每家工具的全局规则，Skill 用到再加载。执行器这边：派活那一刻临时生成，只取底座中用得上的、对应工具那一段，再加任务卡与「你是谁」的声明。跑在 Pi 上的执行器干脆不加载 Skill，系统提示总共约 <b>7KB</b>。</p>
-    <figure class="figure orig" data-asset="a0065" id="explain-48" data-points="p0065"><img src="img/d2-rule-layering.png" alt="一份底稿，按工具和角色渲染：主脑拿三块，执行器只拿底座和工具段"><figcaption><b>原图 4 · 规则分层拼接</b> 主脑三块全拿；执行器只拿底座加自家工具那段。 <span class="source-anchor" data-source-section="s8">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#全局规则不是一次性的而且要分层拼接">原图 4 · 对应小节</a></span><span class="how">怎么看：先识别对象与标记，再对照本节的解释和限定。</span></figcaption></figure>
+    <figure class="figure orig" data-asset="a0065" id="explain-48" data-points="p0065"><img src="img/d2-rule-layering.png" alt="一份底稿，按工具和角色渲染：主脑拿三块，执行器只拿底座和工具段"><figcaption><b>原图 4 · 规则分层拼接</b> 主脑三块全拿；执行器只拿底座加自家工具那段。 <span class="source-anchor" data-source-section="s8">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#全局规则不是一次性的而且要分层拼接">原图 4 · 对应小节</a></span><span class="how">怎么看：同一份底稿按角色渲染，对比主脑和执行器各拿到哪几块。</span></figcaption></figure>
     <h3>给注入量上硬闸</h3>
     <div class="stats">
       <div class="stat" data-unit="KB" id="explain-49" data-points="p0066" data-source-lines="148"><b>≤ 24KB</b><span>主脑每一侧注入的规则上限（约 1.2 万汉字）</span></div>
@@ -261,8 +262,8 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
       <div><p id="explain-56" data-points="p0072"><b>Memory</b><span>事实和偏好，例如某台服务器怎么部署。</span></p></div>
       <div><p id="explain-57" data-points="p0073"><b>教训单（issue）</b><span>踩过的坑不直接写进规则，先开单，再固化成脚本、测试或闸门（第五章展开）。</span></p></div>
     </div>
-    <p id="explain-59" data-points="p0075 p0076 p0077"><b>为什么自己管 Memory：</b>作者同时在用 7 个客户端（Claude Code、Codex、Cursor、Grok、Kimi、OpenCode 和 Pi）。方案在 Claude 里定下，实现却由别的 Agent 完成，它们不会回写 Claude 的记忆，于是 Claude 记的反倒最过时。他就停用了 Claude Code 的内置记忆，改用「索引目录 + 若干 Markdown 文件」，并在全局规则里要求每个 Agent 都参与增、改、删。</p>
-    <p id="explain-60" data-points="p0078 p0079">他也没用语义检索。在他看来，常见的问题不是找不到，而是把过时的笔记又带进了对话；比起搜得更准，更要紧的是存下的内容正确。小项目就别用 Memory，以代码为准，靠清晰的结构、命名和文件长度限制让 Agent 更容易读懂。</p>
+    <p id="explain-59" data-points="p0075 p0076 p0077"><b>为什么自己管 Memory：</b>作者同时在用 7 个客户端（Claude Code、Codex、Cursor、Grok、Kimi、OpenCode 和 Pi）。方案在 Claude 里定下，实现却由别的 Agent 完成，它们不会回写 Claude 的记忆，于是 Claude 记的反倒最过时。他就停用了 Claude Code 的内置记忆，改用「索引目录 + 若干 Markdown 文件」，记忆有增加、有更新、有删除，并在全局规则里要求每个 Agent 都参与维护。</p>
+    <p id="explain-60" data-points="p0078 p0079">他也没用语义检索。在他看来，常见的问题不是找不到，而是把过时的笔记又带进了对话；比起搜得更准，更要紧的是存下的内容正确。小项目就别用 Memory，以代码为准，靠优化代码结构、建立代码图谱、优化命名、限制文件行数让 Agent 更容易读懂。</p>
     <h3>MCP：有命令行工具就先用工具 </h3><span class="source-anchor heading-source">原文 §2.6</span>
     <p id="explain-61" data-points="p0080 p0081 p0082">对做 SaaS 平台的人，MCP 把登录授权这类麻烦处理得很好；可对用 Agent 的人，它太占上下文。所以只要有现成的命令行工具，就先让 Agent 用 CLI；MCP 只在项目里按需打开。</p>
     <h3>Skill：先吸收，再装项目，最后才全局 </h3><span class="source-anchor heading-source">原文 §2.7</span>
@@ -272,8 +273,8 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
       <div class="stat" data-unit="个" id="explain-64" data-points="p0087" data-source-lines="190"><b>197 个 → 41 个</b><span>Grok 主脑常驻的 Skill 数，单独治理前后</span></div>
       <div class="stat" data-unit="Token" id="explain-65" data-points="p0087" data-source-lines="190"><b>50 万 Token</b><span>Grok 的窗口大小；活还没开始，就被重复和无关内容吃掉一截</span></div>
     </div>
-    <p id="explain-66" data-points="p0087 p0088">原因：Grok 把 Claude 的规则文件、自家的规则文件和 Claude 的整个 skills 目录一并读入，重复的内容没有合并。因此检查启动上下文时，除了数 Skill，还得看规则文件有没有被重复加载。</p>
-    <p id="explain-67" data-points="p0089"><b>多家 Agent 通用的「项目开关」：</b>全局只放各家都能用、天天要用的 Skill；某项目专用的，放进该项目目录。这样换哪家 Agent 打开，看到的都是「通用 + 本项目所需」。只用 Claude Code 的人，直接用它内置的开关。</p>
+    <p id="explain-66" data-points="p0087 p0088">原因：Grok 把 Claude 的 CLAUDE.md、自己的 AGENTS.md 和 Claude 的整个 skills 目录一并读入，重复的内容没有合并。因此检查启动上下文时，除了数 Skill，还得看规则文件有没有被重复加载。</p>
+    <p id="explain-67" data-points="p0089"><b>多家 Agent 通用的「项目开关」：</b>全局只放各家都能用、天天要用的 Skill；某项目专用的，放进该项目目录。这样换哪家 Agent 打开，看到的都是「通用 + 本项目所需」，变相实现了跨平台的项目级开关。只用 Claude Code 的人，直接用它内置的开关。</p>
     <p class="callout key" id="explain-68" data-points="p0090">看到别人的 Skill：首选消化进自己的流程，其次装进某个仓库，全局安装排最后；都要入版本管理，过时就删。</p>
   <p id="explain-58" data-points="p0074">这三类记录都要能补充、更新和撤销，不能只增不减。</p></div>
   <div class="src article">原文 <span class="source-anchor" data-source-section="s9"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#项目规则memory-与教训各有各的去处">项目规则、Memory 与教训</a></span><span class="source-anchor" data-source-section="s10"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#mcp能用-cli-就用-cli">MCP：能用 CLI 就用 CLI</a></span><span class="source-anchor" data-source-section="s11"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#skill优先吸收要装就装到项目里">Skill：优先吸收；要装就装到项目里</a></span></div>
@@ -292,17 +293,17 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
   </header>
   <div class="doc-body">
     <h3>便宜快速的模型，写代码已经够格 </h3><span class="source-anchor heading-source">原文 §3.1</span>
-    <p id="explain-71" data-points="p0095 p0096 p0097">作者几乎买齐了各家套餐，用量先分散、后又集中。比较了几千张执行器任务卡后发现：在主脑派活、执行器干活的模式下，各家的成功率和质量相差不大。</p>
+    <p id="explain-71" data-points="p0095 p0096 p0097">作者几乎买齐了各家套餐（Claude、Codex、Grok、Kimi、MiniMax、GLM），用量先分散、后又集中。比较了几千张执行器任务卡后发现：至少在主脑调度、执行器干活的模式下，各家的成功率和质量相差不大。</p>
     <div class="stats">
       <div class="stat" data-unit="%" id="explain-72" data-points="p0097" data-source-lines="210"><b>88%–93%</b><span>最近 90 天各主流执行器的验收通过率</span></div>
       <div class="stat" data-unit="%" id="explain-73" data-points="p0097" data-source-lines="210"><b>50%</b><span>有一家只有这么多，已经下线</span></div>
     </div>
-    <p class="callout limit" id="explain-74" data-points="p0097">各家分到的任务不同，所以这只能说明「都用得上」，证明不了质量一样。</p>
-    <p id="explain-75" data-points="p0098 p0099 p0100 p0101 p0102">过了这条线，挑执行模型时质量已拉不开，只看价格和速度。作者把「强」分成两类：<b>全面强</b>（审美、思考、执行俱佳，如 Fable 5、Opus 5.5）和<b>专项强</b>（经过后训练在写代码或办公上特别划算，如 DeepSeek v4.1 Flash）。前者负责关键判断，后者负责执行；后者每秒能吐一两百 Token，并发也好扩。</p>
+    <p class="callout limit" id="explain-74" data-points="p0097">各家分到的任务不同，所以这只能说明各家执行器「都用得上」，证明不了质量一样。</p>
+    <p id="explain-75" data-points="p0098 p0099 p0100 p0101 p0102">各家 Flash 级别的模型（各家主打便宜、快速的那一档）已经跨过这条线。过了这条线，选模型要考虑的成本、速度、质量三个维度里，质量已拉不开，只看成本和速度。作者把「强」分成两类：<b>全面强</b>（审美、思考、执行都很强，如 Fable 5、Opus 5.5）和<b>专项强</b>（经过后训练在写代码或办公上特别划算，如 DeepSeek v4.1 Flash）。前者负责关键判断，后者负责执行；后者每秒能吐一两百 Token，并发也好扩。</p>
     <h3>让 Pi 给各个主脑打下手 </h3><span class="source-anchor heading-source">原文 §3.2</span>
     <p id="explain-77" data-points="p0103 p0104 p0105 p0114">Pi 是外壳而不是模型：开源，用途与 Claude Code 一类工具相同。它的系统提示很精简，塞进对话的内容几乎都由你决定，模型可以接任意一家。</p>
-    <p id="explain-78" data-points="p0106 p0108">他仍认为强模型最好配自家的 harness，但补了条件：只在<b>难度高、开放式</b>的任务上成立。子任务已由主脑拆好时，模型和上下文都相同，跑在 Pi 上和跑在官方客户端上差不多。</p>
-    <div class="table"><table class="data orig" data-asset="a0110" id="explain-80" data-points="p0109 p0110"><caption>原表 2 · 同日同批任务卡：同一模型，Pi 对官方客户端（人工对照 12 对）<span class="source-anchor" data-source-section="s14">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#把-pi-当成所有主脑的子代理">§3.2 原表</a></span></caption>
+    <p id="explain-78" data-points="p0106 p0108">他仍认为强模型最好配自家的 harness，但补了条件：只适用于<b>高难度、开放式的任务</b>。子任务已由主脑拆好时，同一个模型、同样的上下文，跑在 Pi 上和跑在官方客户端上差不多。</p>
+    <div class="table"><table class="data orig" data-asset="a0110" id="explain-80" data-points="p0109 p0110"><caption>原表 2 · 同一天、同批任务卡：同一模型，Pi 对官方客户端（人工对照 12 对）<span class="source-anchor" data-source-section="s14">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#把-pi-当成所有主脑的子代理">§3.2 原表</a></span></caption>
       <thead><tr><th>模型</th><th>Pi 胜</th><th>原生胜</th><th>结论</th></tr></thead>
       <tbody>
         <tr><td data-label="模型">gpt-6-luna（原生：Codex）</td><td data-label="Pi 胜">3（其中 1 场暂计）</td><td data-label="原生胜">1</td><td data-label="结论">Pi 不比原生差</td></tr>
@@ -319,7 +320,7 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
       <div class="stat" data-unit="个" id="explain-86" data-points="p0112" data-source-lines="244"><b>8 个例子，赢 5 个</b><span>第三批对比，质量持平略优</span></div>
       <div class="stat" data-unit="%" id="explain-87" data-points="p0112" data-source-lines="244"><b>约 −40%</b><span>每份任务的成本</span></div>
     </div>
-    <p class="callout key" id="explain-79" data-points="p0107 p0113 p0115 p0116">拉开差距的是外壳喂进去的上下文，模型本身反倒其次。于是：官方客户端里只跑最强的模型负责动脑，杂活全交给 Pi + 任意第三方模型。</p>
+    <p class="callout key" id="explain-79" data-points="p0107 p0113 p0115 p0116">拉开差距的是外壳喂进去的上下文，模型本身反倒其次。于是：官方客户端里只跑最强的模型负责动脑，杂活全交给 Pi + 任意第三方模型；Codex、Grok、Kimi、MiniMax、GLM 这些额度对应的执行任务，优先统一交给 Pi 来跑。</p>
   <p id="explain-76" data-points="p0102">作者用「500 刀会员」的体验打比方，描述便宜模型跑并发的感受；这不是统一口径的套餐价格比较。</p></div>
   <div class="src article">原文 <span class="source-anchor" data-source-section="s12"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#三执行层flash-模型已经够用外壳比模型更重要">三、执行层</a></span><span class="source-anchor" data-source-section="s13"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#flash-级模型已经跨过了-coding-的基准线">Flash 级模型已经跨过了 Coding 的基准线</a></span><span class="source-anchor" data-source-section="s14"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#把-pi-当成所有主脑的子代理">把 Pi 当成所有主脑的子代理</a></span></div>
 </section>
@@ -358,7 +359,7 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
     <p class="callout key" id="explain-102" data-points="p0133 p0134">判断力更强，解决第一个问题；不带会话历史、没有沉没成本，解决第二个问题。</p>
     <h3>人人可用的简化版：回退 </h3><span class="source-anchor heading-source">原文 §4.3</span>
     <p id="explain-103" data-points="p0135 p0136 p0138 p0139">模型靠前文推出后文，前面说过的每句话都在影响它。一旦发现跑偏，别在原对话里纠正，而要退回到出错前的节点重来（Claude Code 用 /rewind，Pi 用 /tree），这样它根本不记得那条错路。回退时还能补一句：「XX 这条路试过了，别再走。」没有回退功能，就开新对话，只带上已确认的事实。</p>
-    <figure class="figure orig" data-asset="a0137" id="explain-104" data-points="p0137"><img src="img/rewind.png" alt="Claude Code 的 /rewind：把代码和对话恢复到之前的某个节点"><figcaption><b>原图 5 · /rewind 回退</b> 代码和对话一起退回到较早的节点。 <span class="source-anchor" data-source-section="s18">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#你自己就能用的最简单版本回退">原图 5 · 对应小节</a></span><span class="how">怎么看：先识别对象与标记，再对照本节的解释和限定。</span></figcaption></figure>
+    <figure class="figure orig" data-asset="a0137" id="explain-104" data-points="p0137"><img src="img/rewind.png" alt="Claude Code 的 /rewind：把代码和对话恢复到之前的某个节点"><figcaption><b>原图 5 · /rewind 回退</b> 代码和对话一起退回到较早的节点。 <span class="source-anchor" data-source-section="s18">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#你自己就能用的最简单版本回退">原图 5 · 对应小节</a></span><span class="how">怎么看：注意回退的是代码和对话两样，不只是聊天记录。</span></figcaption></figure>
   <p id="explain-94" data-points="p0124">他最初请教的模型包括 GPT-6、Opus、Fable 和 Kimi，侧重关键判断，而非把执行工作再做一遍。</p></div>
   <div class="src article">原文 <span class="source-anchor" data-source-section="s15"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#四advisor更强的判断加一份干净的上下文">四、Advisor</a></span><span class="source-anchor" data-source-section="s16"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#两个问题判断力一般加上上下文腐烂">两个问题</a></span><span class="source-anchor" data-source-section="s17"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#后来发现干净的上下文同样关键">后来发现：干净的上下文同样关键</a></span><span class="source-anchor" data-source-section="s18"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#你自己就能用的最简单版本回退">回退</a></span></div>
 <div class="checkpoint"><script type="application/json">{"q": "换成弱一点的顾问，还能发现方案从一开始就不该做吗？", "opts": ["一定可以，只要上下文干净就够了", "未必；盲测里弱模型只说该停手"], "a": 1, "why": "作者同时要求判断力更强和上下文干净。", "back": 8}</script></div></section>
@@ -370,14 +371,14 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
     <p class="lede">21 次决策请教里，顾问 10 次直接反对，11 次改掉了关键前提，没有一次完全同意。</p>
     <ul class="points">
       <li id="explain-106" data-points="p0143">顾问在只读沙箱里，看不到之前的对话。</li>
-      <li id="explain-107" data-points="p0144">请教卡分三栏：已知事实 / 我怎么判断 / 我想听到什么（第三栏就是给顾问挑错的）。</li>
+      <li id="explain-107" data-points="p0144">请教卡分三栏：机械事实 / 我的判断 / 我希望听到的答案（第三栏就是给顾问挑错的）。</li>
       <li>什么时候请教，看机械信号，不看模型自己的把握。</li>
       <li>顾问也会错，它的意见同样要验证。</li>
     </ul>
   </header>
   <div class="doc-body">
     <h3>三个设计 </h3><span class="source-anchor heading-source">原文 §4.4</span>
-    <figure class="figure orig" data-asset="a0141" id="explain-105" data-points="p0140 p0141 p0142"><img src="img/d3-advisor-flow.png" alt="Advisor 请教流程：机械信号触发、三栏请教卡、沙箱里的顾问"><figcaption><b>原图 6 · Advisor 请教流程</b> 机械信号触发 → 三栏请教卡 → 沙箱里的顾问。 <span class="source-anchor" data-source-section="s19">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#我的-advisor-工具长什么样">原图 6 · 对应小节</a></span><span class="how">怎么看：先识别对象与标记，再对照本节的解释和限定。</span></figcaption></figure>
+    <figure class="figure orig" data-asset="a0141" id="explain-105" data-points="p0140 p0141 p0142"><img src="img/d3-advisor-flow.png" alt="Advisor 请教流程：机械信号触发、三栏请教卡、沙箱里的顾问"><figcaption><b>原图 6 · Advisor 请教流程</b> 机械信号触发 → 三栏请教卡 → 沙箱里的顾问。 <span class="source-anchor" data-source-section="s19">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#我的-advisor-工具长什么样">原图 6 · 对应小节</a></span><span class="how">怎么看：按箭头顺序读，先是机械信号触发，再写三栏请教卡，最后送到沙箱里的顾问。</span></figcaption></figure>
     <p id="explain-108" data-points="p0145"><b>机械信号</b>有四种：一张卡的修复次数用光；门禁连着两轮冒出新问题；定期审计把某张卡标成「升级」；主脑在定方向前自己发起。之所以不让模型自己决定，是因为它估不准自己有多大把握。</p>
     <div class="stats">
       <div class="stat" data-unit="次" id="explain-109" data-points="p0146" data-source-lines="312"><b>21</b><span>次决策类请教（抽样）</span></div>
@@ -386,7 +387,7 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
       <div class="stat" data-unit="次" id="explain-112" data-points="p0146" data-source-lines="312"><b>0</b><span>次顾问完全赞同主脑的方案</span></div>
     </div>
     <p class="callout limit" id="explain-113" data-points="p0146">送去请教的大多本来就是主脑觉得不对或卡住的情况；反对率高，不等于顾问应该一律反对。</p>
-    <figure class="figure orig" data-asset="a0147" id="explain-114" data-points="p0147"><img src="img/consult-reply.png" alt="一次真实的请教：Opus 5.5 指出主脑之前的推荐可能在优化一个错误的前提"><figcaption><b>原图 7 · 一次真实的请教</b> 顾问（Opus 5.5）指出：主脑先前的推荐，可能建立在错的前提上。 <span class="source-anchor" data-source-section="s19">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#我的-advisor-工具长什么样">原图 7 · 对应小节</a></span><span class="how">怎么看：先识别对象与标记，再对照本节的解释和限定。</span></figcaption></figure>
+    <figure class="figure orig" data-asset="a0147" id="explain-114" data-points="p0147"><img src="img/consult-reply.png" alt="一次真实的请教：Opus 5.5 指出主脑之前的推荐可能在优化一个错误的前提"><figcaption><b>原图 7 · 一次真实的请教</b> 顾问（Opus 5.5）指出：主脑先前的推荐，可能建立在错的前提上。 <span class="source-anchor" data-source-section="s19">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#我的-advisor-工具长什么样">原图 7 · 对应小节</a></span><span class="how">怎么看：重点看顾问怎样质疑主脑先前推荐所依据的前提。</span></figcaption></figure>
     <h3>三个真实故事</h3>
     <div class="stories">
       <div class="story" id="explain-115" data-points="p0148 p0149"><b>建议放弃：这张卡守的不是红线</b><p data-field="event">一段门禁判定逻辑改了三轮仍不收敛，主脑正准备从两个降级方案里选一个。<span data-field="prevention">顾问说都别选：越修红线越松</span>；三轮的问题集中在一处，是因为这张卡走了唯一一条只能靠猜的路。</p><span class="fix" data-field="consequence">PR 关闭，没有合并。</span></div>
@@ -416,18 +417,18 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
     <p id="explain-121" data-points="p0156 p0157 p0158 p0162">这个仓库一开始只用来管上下文（规则文件同步、Skill 管理），之后陆续加了主脑派活给执行器的机制、终端状态角标，最终变成作者一切 AI 实践的大本营。下面三步没有事先规划，都是边用边长出来的：</p>
     <ol class="ladder steps">
       <li id="explain-122" data-points="p0159"><i>第 1 步</i>规矩先入版本库：公共规则一份，每个工具再配一小段专属内容。</li>
-      <li id="explain-123" data-points="p0160"><i>第 2 步</i>所有问题都报回一处：派活、验收、打分时遇到的坑集中回流。</li>
-      <li id="explain-124" data-points="p0161"><i>第 3 步</i>靠脚本和闸门不让老问题回来：注入上限、自管的 Memory、Advisor 都出自这一步。</li>
+      <li id="explain-123" data-points="p0160"><i>第 2 步</i>所有问题都报回一处：调度、派卡、验收、记分时遇到的坑集中回流。</li>
+      <li id="explain-124" data-points="p0161"><i>第 3 步</i>靠脚本和闸门不让老问题回来：注入预算、自建记忆、请教顾问（Advisor）都出自这一步。</li>
     </ol>
     <p id="explain-125" data-points="p0163">Loop 的雏形就在这里：其他仓库里的会话，凡是碰到调度或脚本层的问题，收工前都去 agent-config 开 issue；作者每天专门派 Agent 清理这些 issue。</p>
-    <figure class="figure orig" data-asset="a0164" id="explain-126" data-points="p0164"><img src="img/agent-config-repo.png" alt="agent-config 仓库首页"><figcaption><b>原图 8 · 仓库首页截图</b> <span class="source-anchor" data-source-section="s21">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#它是怎么长成这样的">原图 8 · 对应小节</a></span><span class="how">怎么看：先识别对象与标记，再对照本节的解释和限定。</span></figcaption></figure>
+    <figure class="figure orig" data-asset="a0164" id="explain-126" data-points="p0164"><img src="img/agent-config-repo.png" alt="agent-config 仓库首页"><figcaption><b>原图 8 · 仓库首页截图</b> <span class="source-anchor" data-source-section="s21">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#它是怎么长成这样的">原图 8 · 对应小节</a></span><span class="how">怎么看：看左上的 Issues 数和右下的提交数，能感到这个仓库的迭代量；它是私有仓库。</span></figcaption></figure>
     <div class="stats">
       <div class="stat" data-unit="张" id="explain-127" data-points="p0165" data-source-lines="350"><b>1100+</b><span>张教训单（在 1800 多个 issue 里）</span></div>
       <div class="stat" data-unit="排名" id="explain-128" data-points="p0165" data-source-lines="350"><b>第 1 / 第 2</b><span>Token 消耗最多的仓库：agent-config，其次是门禁系统</span></div>
     </div>
     <h3>飞机引擎边飞边换 </h3><span class="source-anchor heading-source">原文 §5.2</span>
-    <p id="explain-129" data-points="p0166 p0167 p0168">这个仓库一边当发动机，一边又在被拆修。起初乱成一团、冲突不断，过了一阵才稳定：新冒出的问题，要么能挂到旧问题上，要么出现得越来越少。</p>
-    <figure class="figure orig" data-asset="a0170" id="explain-130" data-points="p0169 p0170"><img src="img/d4-weekly-issues.png" alt="agent-config 每周新开 issue 数：8 月底到 9 月初达峰，之后逐步回落"><figcaption><b>原图 9 · 每周新开 issue 数</b> 高峰在 8 月底、9 月初那周（<b>305</b> 张），到 9 月最后一周降到 <b>159</b> 张。 <span class="source-anchor" data-source-section="s22">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#飞机引擎边飞边换">原图 9 · 对应小节</a></span><span class="how">怎么看：先识别对象与标记，再对照本节的解释和限定。</span></figcaption></figure>
+    <p id="explain-129" data-points="p0166 p0167 p0168">这个仓库一边当发动机，一边又是他要修理、要更换的东西。起初乱成一团、冲突不断，过了一阵才慢慢收敛、平稳下来：新冒出的问题，要么能挂到旧问题上，要么出现得越来越少。</p>
+    <figure class="figure orig" data-asset="a0170" id="explain-130" data-points="p0169 p0170"><img src="img/d4-weekly-issues.png" alt="agent-config 每周新开 issue 数：8 月底到 9 月初达峰，之后逐步回落"><figcaption><b>原图 9 · 每周新开 issue 数</b> 高峰在 8 月底、9 月初那周（<b>305</b> 张），到 9 月最后一周降到 <b>159</b> 张。 <span class="source-anchor" data-source-section="s22">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#飞机引擎边飞边换">原图 9 · 对应小节</a></span><span class="how">怎么看：看曲线的峰值出现在哪一周，以及之后是否一路回落。</span></figcaption></figure>
     <p id="explain-131" data-points="p0171"><b>关单标准：</b>只问一句：这个坑现在还会踩到吗？「修过了」不够，要做到「机制上再也不会发生」才关。</p>
     <h3>同样的错只犯一次 </h3><span class="source-anchor heading-source">原文 §5.3</span>
     <div class="stories">
@@ -480,13 +481,13 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
       <div><p id="explain-153" data-points="p0196"><b>高成本</b><span>需要人来看。人的工夫最贵，只用在必须靠人判断的环节。</span></p></div>
     </div>
     <p id="explain-154" data-points="p0197 p0199">门禁负责把低、中两档连成一串：都通过才准合并，尽量别让检查落到人身上。这些通道会把反馈马上回传给 Agent；生产 bug 修掉后也要回溯为什么犯、下次怎么避免，这也是一个 Loop。</p>
-    <figure class="figure orig" data-asset="a0198" id="explain-155" data-points="p0198"><img src="img/d5a-verify-cost.png" alt="验证通道按综合成本分三档"><figcaption><b>原图 10 · 验证通道按综合成本分三档</b> <span class="source-anchor" data-source-section="s27">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#验证通道的光谱">原图 10 · 对应小节</a></span><span class="how">怎么看：先识别对象与标记，再对照本节的解释和限定。</span></figcaption></figure>
+    <figure class="figure orig" data-asset="a0198" id="explain-155" data-points="p0198"><img src="img/d5a-verify-cost.png" alt="验证通道按综合成本分三档"><figcaption><b>原图 10 · 验证通道按综合成本分三档</b> <span class="source-anchor" data-source-section="s27">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#验证通道的光谱">原图 10 · 对应小节</a></span><span class="how">怎么看：从左到右成本递增：低档是编译、基础测试、lint，中档要花 Token，高档要人参与；门禁把前两档串起来，能用低一档就别升档。</span></figcaption></figure>
     <h3>选语言：一个十字坐标 </h3><span class="source-anchor heading-source">原文 §6.2</span>
-    <p id="explain-156" data-points="p0201 p0202">过去挑语言，首先看人写起来难不难；如今动手写代码的是 AI，这一点就没那么要紧了。作者手上 Go、Java 和 Python 项目都有；做出一个功能已不难，难的始终是管住复杂度。</p>
-    <figure class="figure orig" data-asset="a0204" id="explain-157" data-points="p0200 p0203 p0204 p0205 p0206"><img src="img/d5b-language-axes.png" alt="选底层语言的十字坐标：纵轴是可自动验证程度，横轴是领域生态匹配程度"><figcaption><b>原图 11 · 选语言的十字坐标</b> 纵轴：可自动验证程度（Rust 最高，Go、Java 其次，Python 更依赖自己补测试）。横轴：领域生态匹配程度（脚本和脚手架选 Python，高性能服务看 Go 和 Rust）。 <span class="source-anchor" data-source-section="s28">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#选语言一个十字坐标">原图 11 · 对应小节</a></span><span class="how">怎么看：先识别对象与标记，再对照本节的解释和限定。</span></figcaption></figure>
+    <p id="explain-156" data-points="p0201 p0202">过去挑语言，首先看人写起来难不难（Python 简单、Rust 复杂），大家就挑自己擅长、顺手的；如今动手写代码的是 AI，这一点就没那么要紧了。作者手上 Go、Java 和 Python 项目都有；写一个功能乃至一个模块已经不难，难的始终是管住复杂度。</p>
+    <figure class="figure orig" data-asset="a0204" id="explain-157" data-points="p0200 p0203 p0204 p0205 p0206"><img src="img/d5b-language-axes.png" alt="选底层语言的十字坐标：纵轴是可自动验证程度，横轴是领域生态匹配程度"><figcaption><b>原图 11 · 选语言的十字坐标</b> 纵轴：可自动验证程度（Rust 最高，很多错误编译都过不去，Agent 写错了马上知道，也就能修掉；Go、Java 其次，Python 更依赖自己补测试）。横轴：领域生态匹配程度（脚本和脚手架选 Python，高性能服务看 Go 和 Rust）。 <span class="source-anchor" data-source-section="s28">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#选语言一个十字坐标">原图 11 · 对应小节</a></span><span class="how">怎么看：先看纵轴（能不能自动验证），再看横轴（生态合不合适），两条一起决定选哪门语言。</span></figcaption></figure>
     <p class="callout limit" id="explain-158" data-points="p0207">纵轴并非越高越好：Rust 编译耗 CPU、产物占硬盘，并发多了都是成本。没有万能解，只能取舍；不过对 Agent 而言，纵轴意味着便宜的反馈渠道，分量很重。</p>
     <h3>代码廉价，测试高价值 </h3><span class="source-anchor heading-source">原文 §6.3</span>
-    <p id="explain-160" data-points="p0210 p0211 p0212">目标一旦能拆成一条条可验收的标准，剩下的不过是花时间、花钱。比如重写数据库或迁移仓库：只要有测试能证明新旧行为一致，主要就是投入最好的模型与 harness；测试没盖到的地方照样难。最难办的是说不清怎么打分的目标：后端性能有延迟、吞吐这些数字，好反复改；前端好不好看难以打分，Loop 就转不起来。</p>
+    <p id="explain-160" data-points="p0210 p0211 p0212">验收标准是否清晰明确、能否形成反馈，已成了现代软件工程的核心目标。目标一旦能拆成一条条可验收的标准，剩下的不过是时间问题、成本问题。比如重写数据库或迁移仓库：只要有测试能证明新旧行为一致、踩过的坑也都已化成测试，主要就是投入最好的模型与 harness；测试没盖到的地方照样难。最难办的是说不清怎么打分的目标：后端性能有延迟、吞吐这些数字，很容易形成「改一版、测一下、再改」的循环；前端好不好看难以打分，Loop 就转不起来。</p>
     <h3>判据也会失效 </h3><span class="source-anchor heading-source">原文 §6.4</span>
     <p id="explain-162" data-points="p0215">门禁系统（作者第二费 Token 的仓库）里，这类坑他踩过不少：</p>
     <div class="stories">
@@ -524,11 +525,11 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
     <div class="stats">
       <div class="stat" data-unit="工位" id="explain-177" data-points="p0232" data-source-lines="485"><b>6 个 → 84 个</b><span>门禁 CI 能同时开工的工位，分布在四台机器上</span></div>
     </div>
-    <figure class="figure orig" data-asset="a0233" id="explain-178" data-points="p0233"><img src="img/cpu-full.png" alt="某个下午的机器监控：三台 CI 机器都在 90% 上下，开发机 99%"><figcaption><b>原图 12 · 某天下午的监控</b> 3 台 CI 机器约 90%，开发机到了 99%。 <span class="source-anchor" data-source-section="s32">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#ci-成了新的堵点">原图 12 · 对应小节</a></span><span class="how">怎么看：先识别对象与标记，再对照本节的解释和限定。</span></figcaption></figure>
+    <figure class="figure orig" data-asset="a0233" id="explain-178" data-points="p0233"><img src="img/cpu-full.png" alt="某个下午的机器监控：三台 CI 机器都在 90% 上下，开发机 99%"><figcaption><b>原图 12 · 某天下午的监控</b> 3 台 CI 机器约 90%，开发机到了 99%。 <span class="source-anchor" data-source-section="s32">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#ci-成了新的堵点">原图 12 · 对应小节</a></span><span class="how">怎么看：对比三台 CI 机器和开发机的负载数字，看机器忙到了什么程度。</span></figcaption></figure>
     <p id="explain-179" data-points="p0234">没有一次解决所有问题的办法，只能碰到一个解一个。如果会长期用，硬件宜早升级：内存、硬盘涨价已很明显，CPU 多半也要涨。</p>
     <h3>Linux 还是 Mac </h3><span class="source-anchor heading-source">原文 §7.2</span>
     <p id="explain-180" data-points="p0235 p0236 p0237 p0238 p0239">Loop 最怕卡在等人这一步。若看 Computer Use（AI 操作图形界面），Mac 是最佳选择：图形软件多，系统又是 Unix。但从 Agent 自己用的角度看，最佳的一定是 Linux：改什么都靠配置文件，用不着人再点一次授权；Mac 上不少权限要人亲手点「允许」，AI 做不到，循环在这里断掉。Codex 负责人 Tibo 认为 Linux 元年可能就在 2026 年，作者赞同。</p>
-    <p class="callout limit" id="explain-181" data-points="p0240">前提是只做 Coding、也不被某个平台绑住（像 iOS 开发离不开 Mac）；浏览器里的验证、操作界面这类能力，得另外配。</p>
+    <p class="callout limit" id="explain-181" data-points="p0240">前提是只做 Coding、也不被某个平台绑住（像 iOS 开发离不开 Mac）；浏览器验证、Computer Use 这些能力，得另外补齐。</p>
   </div>
   <div class="src article">原文 <span class="source-anchor" data-source-section="s31"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#七瓶颈转移从精力到硬件再回到精力">七、瓶颈转移</a></span><span class="source-anchor" data-source-section="s32"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#ci-成了新的堵点">CI 成了新的堵点</a></span><span class="source-anchor" data-source-section="s33"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#linux-还是-mac">Linux 还是 Mac</a></span></div>
 </section>
@@ -554,14 +555,14 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
       <div><p id="explain-186" data-points="p0246"><b>方向 3</b><span>让验证过的东西顺顺当当进入生产环境。</span></p></div>
     </div>
     <h3>Coding 之外 </h3><span class="source-anchor heading-source">原文 §8.2</span>
-    <p id="explain-188" data-points="p0249 p0283">作者在《老树开新花》里讲过 AI Native 组织分三层；一个代码仓库，可以看成缩小版的组织。</p>
+    <p id="explain-188" data-points="p0249 p0283">作者在《老树开新花》里讲过 AI Native 组织分三层（可读、可写、可闭环）；一个代码仓库，可以看成缩小版的组织。</p>
     <ol class="ladder steps">
       <li id="explain-210" data-points="p0249"><i>可读</i>AI 能获取组织内的资料</li>
       <li id="explain-189" data-points="p0249"><i>可写</i>允许 AI 修改系统中的记录</li>
       <li id="explain-190" data-points="p0249"><i>可闭环</i>改完后能自动判对错，错误会被记录</li>
     </ol>
     <h3>学习本身也是一个 Loop </h3><span class="source-anchor heading-source">原文 §8.3</span>
-    <p id="explain-191" data-points="p0250 p0251 p0252 p0253 p0254">过去大厂的好做法离不开重型基础设施，个人很难照搬；现在有 Agent 帮忙，个人能做的工程几乎没有上限。作者怎么决定学不学：把文章交给 Agent，对照自己的日志、踩过的坑、旧 issue 和单人负责的处境，挑出值得吸收的部分。RTK 装了又卸、Advisor 借来再改，都是这么来的。</p>
+    <p id="explain-191" data-points="p0250 p0251 p0252 p0253 p0254">过去大厂的好做法离不开重型基础设施，个人很难照搬；现在有 Agent 帮忙，个人能做的工程几乎没有上限。作者怎么决定学不学：把文章交给 Agent，对照自己的日志、过程中犯过的错、旧 issue 和单人负责的处境，判断哪些值得吸收、哪些不用管。RTK 装了又卸、Advisor 借来再改，都是这么来的。</p>
   </div>
   <div class="src article">原文 <span class="source-anchor" data-source-section="s34"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#八从-coding-到组织再到学习本身">八、从 Coding 到组织</a></span><span class="source-anchor" data-source-section="s35"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#名字不同干的是同一层的事">名字不同，干的是同一层的事</a></span><span class="source-anchor" data-source-section="s36"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#不止于-coding">不止于 Coding</a></span><span class="source-anchor" data-source-section="s37"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#学习本身也是一个-loop">学习本身也是一个 Loop</a></span></div>
 </section>
@@ -578,23 +579,23 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
     </ul>
   </header>
   <div class="doc-body">
-    <p id="explain-193" data-points="p0257 p0263">暂时还无法自动判对错的工作，觉得累很正常：先把「做对的标准」补上，再谈调度。起码在工程上，应当越干越轻松，把注意力腾出来，去管流量、权力分配这些工程以外的事。</p>
+    <p id="explain-193" data-points="p0257 p0263">暂时还无法自动判对错的工作（前端审美、产品方向、权衡取舍），人留在环内、觉得累都很正常：先把「做对的标准」补上，再谈调度。起码在工程上，应当越干越轻松，把注意力腾出来，去管流量、权力分配这些工程以外的事。</p>
     <div class="roles compare">
-      <div><p id="explain-211" data-points="p0258 p0259"><b>人在环内</b><span>每步都得人来看、来判、来定。开头说的「守在旁边才撑得住每天约 40 亿 Token」就是这样。循环的速度，受限于你每天醒着的时长。</span></p></div>
+      <div><p id="explain-211" data-points="p0258 p0259"><b>人在环内</b><span>每一步都要人看、人判断、人拍板。开头说的「守在旁边才撑得住每天约 40 亿 Token」就是这样。循环的速度，受限于你每天醒着的时长。</span></p></div>
       <div><p id="explain-212" data-points="p0258 p0260"><b>人在环外</b><span>人只负责两件事：讲清楚「做对是什么样」，以及系统确实需要拍板时出来拍板。其余环节（派活、执行、验证、复盘、沉淀）由环自己运转。</span></p></div>
     </div>
-    <figure class="figure orig" data-asset="a0262" id="explain-194" data-points="p0262"><img src="img/d6-people-loop.png" alt="左：人在环内，每一步都要人拍板；右：人在环外，只定义怎样算做对，必要时出场"><figcaption><b>原图 13 · 人在环内 vs 人在环外</b> 左边每步都等人决定；右边人只给出「对」的标准，需要时才出面。 <span class="source-anchor" data-source-section="s38">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#写在最后">原图 13 · 对应小节</a></span><span class="how">怎么看：先识别对象与标记，再对照本节的解释和限定。</span></figcaption></figure>
+    <figure class="figure orig" data-asset="a0262" id="explain-194" data-points="p0262"><img src="img/d6-people-loop.png" alt="左：人在环内，每一步都要人拍板；右：人在环外，只定义怎样算做对，必要时出场"><figcaption><b>原图 13 · 人在环内 vs 人在环外</b> 左边每步都等人决定；右边人只给出「对」的标准，需要时才出面。 <span class="source-anchor" data-source-section="s38">出处：张立行《Context 与 Loop》 · <a href="https://zj1123581321.com/posts/261004-context-and-loop/#写在最后">原图 13 · 对应小节</a></span><span class="how">怎么看：左右对照，看人在两种模式里各出现在哪几步。</span></figcaption></figure>
     <p class="callout key" id="explain-195" data-points="p0261 p0264">从环内走到环外，靠的不是更强的模型，而是本文那两样：有了 Context，旁边不必有人解释；有了 Loop，旁边不必有人纠错。</p>
     <div class="roles compare">
       <div><p><b>Context</b><span>有意识地准备上下文：每样东西都要说得出留下的理由，能加也能删。</span></p></div>
       <div><p><b>Loop</b><span>有意识地构建闭环：每一次犯错都被记下、被验证，再写进下一次的上下文。</span></p></div>
     </div>
-    <p id="explain-196" data-points="p0266 p0267">要做的就是持续把可验证的部分拆出来，交回给循环。开头会不顺，等 Loop 转起来，旧错几乎不会重犯；出现新问题，也有日志能查。人站得越远，循环转得越快。</p>
+    <p id="explain-196" data-points="p0266 p0267">要做的就是持续把可验证的部分拆出来，交回给循环，让每次犯错都被记下来、验证，再写进下一次的上下文。开头会不顺，等 Loop 转起来，旧错几乎不会重犯；只会遇到些新的、没料到的问题，也有日志能查。人站得越远，循环转得越快。</p>
     <blockquote class="quote"><p id="explain-197" data-points="p0268">吃一堑，长一智。前提是，这一堑被记下来了。</p><cite>张立行，原文结尾</cite><span class="source-anchor" data-source-section="s38"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#写在最后">写在最后</a></span></blockquote>
     <p class="callout limit" id="explain-198" data-points="p0269">作者自称「一家之言，不一定对」。</p>
     <h3>附录：参考资料 </h3><span class="source-anchor heading-source">原文附录</span>
     <p id="explain-199" data-points="p0270 p0271 p0272 p0280">原文附录列了 7 篇外部文章和访谈，以及本系列 3 篇前文。作者说人类读者可以跳过，把链接交给 Agent 即可。</p>
-    <div class="src article refs-box">原文附录链接<ol class="refs"><li id="explain-200" data-points="p0273"><a href="https://claude.dev/blog/the-new-rules-of-context-engineering-for-claude-5-generation-models/">The new rules of context engineering for Claude 5 generation models</a> · Thariq / Claude</li><li id="explain-201" data-points="p0274"><a href="https://www.latent.space/p/thariq">Latent Space 对 Thariq 的访谈</a> · Latent Space</li><li id="explain-202" data-points="p0275"><a href="https://claude.com/blog/the-ai-native-sdlc-playbook">The AI-native SDLC playbook</a> · Anthropic</li><li id="explain-203" data-points="p0276"><a href="https://newsletter.pragmaticengineer.com/p/openai-software-factory">Inside OpenAI’s agentic software factory</a> · The Pragmatic Engineer</li><li id="explain-204" data-points="p0277"><a href="https://blog.cloudflare.com/agent-development-lifecycle/">The Agent Development Lifecycle has arrived on Cloudflare</a> · Cloudflare</li><li id="explain-205" data-points="p0278"><a href="https://www.superlinear.academy/c/recording/orca">Orca CEO 访谈</a> · Superlinear Academy</li><li id="explain-206" data-points="p0279"><a href="https://sum.zlxlabs.com/view/view_v8LdbUib-upySmXHKwv8LhiRPZNc1gzl9gqCYXJ8uFY">Lauren（xAI）分享的总结与校对稿</a> · xAI</li><li id="explain-208" data-points="p0281"><a href="https://zj1123581321.com/posts/context-is-all-you-need/">Context is All You Need</a> · 本系列前文</li><li><a href="https://zj1123581321.com/posts/260809-multi-agent-scheduling-architecture/">将军赶路不追小兔</a> · 本系列前文</li><li><a href="https://zj1123581321.com/posts/260908-smb-agent-framework/">老树开新花</a> · 本系列前文</li><li><a href="https://zj1123581321.com/posts/261004-context-and-loop/">博客原文</a></li><li><a href="https://x.com/bylixing/status/2106757373834780723">X Article</a></li></ol></div>
+    <div class="src article refs-box">原文附录链接<ol class="refs"><li id="explain-200" data-points="p0273"><a href="https://claude.dev/blog/the-new-rules-of-context-engineering-for-claude-5-generation-models/">The new rules of context engineering for Claude 5 generation models</a> · Thariq / Claude：系统提示删减八成、渐进式披露、CLAUDE.md 只写坑</li><li id="explain-201" data-points="p0274"><a href="https://www.latent.space/p/thariq">Latent Space 对 Thariq 的访谈</a> · Latent Space：失败模式随模型变化、累积失败日志会过度约束</li><li id="explain-202" data-points="p0275"><a href="https://claude.com/blog/the-ai-native-sdlc-playbook">The AI-native SDLC playbook</a> · Anthropic</li><li id="explain-203" data-points="p0276"><a href="https://newsletter.pragmaticengineer.com/p/openai-software-factory">Inside OpenAI’s agentic software factory</a> · The Pragmatic Engineer</li><li id="explain-204" data-points="p0277"><a href="https://blog.cloudflare.com/agent-development-lifecycle/">The Agent Development Lifecycle has arrived on Cloudflare</a> · Cloudflare</li><li id="explain-205" data-points="p0278"><a href="https://www.superlinear.academy/c/recording/orca">Orca CEO 访谈</a> · Superlinear Academy</li><li id="explain-206" data-points="p0279"><a href="https://sum.zlxlabs.com/view/view_v8LdbUib-upySmXHKwv8LhiRPZNc1gzl9gqCYXJ8uFY">Lauren（xAI）分享的总结与校对稿</a> · xAI：信任分层、验证技能、代码库就是最好的记忆</li><li id="explain-208" data-points="p0281"><a href="https://zj1123581321.com/posts/context-is-all-you-need/">Context is All You Need</a> · 本系列前文</li><li><a href="https://zj1123581321.com/posts/260809-multi-agent-scheduling-architecture/">将军赶路不追小兔</a> · 本系列前文</li><li><a href="https://zj1123581321.com/posts/260908-smb-agent-framework/">老树开新花</a> · 本系列前文</li><li><a href="https://zj1123581321.com/posts/261004-context-and-loop/">博客原文</a></li><li><a href="https://x.com/bylixing/status/2106757373834780723">X Article</a></li></ol></div>
   <p id="explain-207" data-points="p0279 p0284">写作说明：底稿来自飞书录音豆；Claude Code 与 Opus 5.5 做结构和整理，Codex 负责事实校核；稿件审阅分别交给 Kimi、Grok 和 Codex。附录 Lauren 的材料标题还注明上月有 2,500 个 PR 进入生产。</p></div>
   <div class="src article">原文 <span class="source-anchor" data-source-section="s38"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#写在最后">写在最后</a></span><span class="source-anchor" data-source-section="s39"><a href="https://zj1123581321.com/posts/261004-context-and-loop/#附录参考资料">附录：参考资料</a></span></div>
 </section>

@@ -111,22 +111,22 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
 <section class="sec" id="s2" data-source-section="s7" data-toc="Token 化">
   <span class="kicker">Token 化 · 模型看到什么</span>
   <h2>模型看到的是 token，不是字符，也不是单词</h2>
-  <p id="e8" data-points="p0013 p0014 p0015 p0016 p0017">token 是模型在训练中见过的文本片段。模型看不到一个个字符，也看不到一个个单词，只看到 token。</p>
-  <p id="e9" data-points="p0018 p0019 p0020">字节对编码（BPE）的直觉：把最常见的相邻对合并起来，重复下去，直到词表约 100K 个。课件用 <code>getOrderById</code> 走了一遍：</p>
+  <p id="e8" data-points="p0013 p0014 p0015 p0016 p0017 p0018 p0019">token 是模型在训练中见过的文本片段。模型看不到一个个字符（does not see characters），也看不到一个个单词（does not see words），只看到 token。</p>
+  <p id="e9" data-points="p0020 p0021 p0022">字节对编码（BPE）的直觉：把最常见的相邻对合并起来，重复下去，直到词表约 100K 个。课件用 <code>getOrderById</code> 走了一遍：</p>
   <ol class="steps">
-    <li id="e10" data-points="p0021">第 1 步，从字符开始：g e t O r d e r B y I d，共 12 个 token。</li>
-    <li id="e11" data-points="p0021">第 2 步，合并最常见的相邻对，重复约 100K 次，例如 e+r 变 er、g+et 变 get、O+rder 变 Order。</li>
-    <li id="e12" data-points="p0021">第 3 步，训练后留下来的合并就是词表：get、Order、By、Id，共 4 个 token。</li>
+    <li id="e10" data-points="p0023 p0024 p0025">第 1 步，从字符开始：g e t O r d e r B y I d，共 12 个 token。</li>
+    <li id="e11" data-points="p0023 p0024 p0025">第 2 步，合并最常见的相邻对，重复约 100K 次，例如 e+r 变 er、g+et 变 get、O+rder 变 Order。</li>
+    <li id="e12" data-points="p0023 p0024 p0025">第 3 步，训练后留下来的合并就是词表：get、Order、By、Id，共 4 个 token。</li>
   </ol>
-  <figure class="figure orig" data-asset="b0023" id="e13" data-points="p0022 p0023"><img src="L02-img/p06.png" alt="幻灯片第 6 页：Where getOrderById goes"><figcaption><b>原图 2 · getOrderById 怎样被切开</b> <span class="source-anchor">出处：Marcus Darden · EECS 498 L02 slides · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.pdf">第 6 页</a></span><span class="how">怎么看：图下小字说，没人挑选这四块；它们只是常见到足以占一个词表位置的片段。</span></figcaption></figure>
+  <figure class="figure orig" data-asset="b0027" id="e13" data-points="p0026 p0027"><img src="L02-img/p06.png" alt="幻灯片第 6 页：Where getOrderById goes"><figcaption><b>原图 2 · getOrderById 怎样被切开</b> <span class="source-anchor">出处：Marcus Darden · EECS 498 L02 slides · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.pdf">第 6 页</a></span><span class="how">怎么看：图下小字说，没人挑选这四块；它们只是常见到足以占一个词表位置的片段。</span></figcaption></figure>
   <p class="src official">课件页： <span class="source-anchor" data-source-section="s4"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.md">出处：Tokenization</a></span> <span class="source-anchor" data-source-section="s5"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.md">出处：What the model sees</a></span> <span class="source-anchor" data-source-section="s6"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.md">出处：Tokens, not words</a></span> <span class="source-anchor" data-source-section="s7"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.md">出处：Where getOrderById goes</a></span></p>
 </section>
 
 <section class="sec" id="s3" data-source-section="s8" data-toc="真实的 token">
   <span class="kicker">o200k_base 编码</span>
   <h2>42 个字符切成 11 个 token</h2>
-  <p id="e14" data-points="p0024 p0025 p0026">课件用 GPT-4o 和 5 用的 o200k_base 编码，切这一行代码：<code>const order = await getOrderById(orderId);</code></p>
-  <div class="table"><table class="data" id="e15" data-points="p0027"><caption>11 个 token 与编号（据原文整理，原文 L73–83，即原图 3）</caption>
+  <p id="e14" data-points="p0028 p0029 p0030">课件用 GPT-4o 和 5 用的 o200k_base 编码，切这一行代码：<code>const order = await getOrderById(orderId);</code></p>
+  <div class="table"><table class="data" id="e15" data-points="p0031 p0032 p0033 p0034 p0035 p0036 p0037 p0038 p0039 p0040 p0041"><caption>11 个 token 与编号（据原文整理，原文 L73–83，即原图 3）</caption>
     <thead><tr><th>token（· 表示前导空格）</th><th>编号</th></tr></thead>
     <tbody>
       <tr><td data-label="token">const</td><td data-label="编号">1671</td></tr>
@@ -141,12 +141,12 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
       <tr><td data-label="token">Id</td><td data-label="编号">906</td></tr>
       <tr><td data-label="token">);</td><td data-label="编号">2245</td></tr>
     </tbody></table></div>
-  <p id="e16" data-points="p0028">课件：42 个字符切成 11 个 token。琥珀色的四块（·get、Order、By、Id）正是上一页预测的切法，而且 <code>Id</code> 两次都是 906 号。</p>
-  <figure class="figure orig" data-asset="b0029" id="e17" data-points="p0029 p0030"><img src="L02-img/p07.png" alt="幻灯片第 7 页：Real tokens, real IDs"><figcaption><b>原图 3 · 真实的 token 和编号</b> <span class="source-anchor">出处：Marcus Darden · EECS 498 L02 slides · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.pdf">第 7 页</a></span><span class="how">怎么看：每块上面的小字是编号；讲者备注说，这页兑现了上一页的预测。</span></figcaption></figure>
+  <p id="e16" data-points="p0042">课件：42 个字符切成 11 个 token。琥珀色的四块（·get、Order、By、Id）正是上一页预测的切法，而且 <code>Id</code> 两次都是 906 号。</p>
+  <figure class="figure orig" data-asset="b0043" id="e17" data-points="p0043 p0044"><img src="L02-img/p07.png" alt="幻灯片第 7 页：Real tokens, real IDs"><figcaption><b>原图 3 · 真实的 token 和编号</b> <span class="source-anchor">出处：Marcus Darden · EECS 498 L02 slides · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.pdf">第 7 页</a></span><span class="how">怎么看：每块上面的小字是编号；讲者备注说，这页兑现了上一页的预测。</span></figcaption></figure>
   <ul>
-    <li id="e18" data-points="p0031">讲者备注：块中间的点是前导空格，它属于 token，所以「 order」和「order」是不同的 token。</li>
-    <li id="e19" data-points="p0031">讲者备注：「(order」是一个 token，切分器把括号和单词吞在一起，所以 token 数很难猜。</li>
-    <li class="callout limit" id="e20" data-points="p0032">讲者备注（被问到时说）：这些编号属于 o200k_base；课程用的 qwen3.5 词表不同，编号也不同，但道理一样。</li>
+    <li id="e18" data-points="p0045">讲者备注：块中间的点是前导空格，它属于 token，所以「 order」和「order」是不同的 token。</li>
+    <li id="e19" data-points="p0045">讲者备注：「(order」是一个 token，切分器把括号和单词吞在一起，所以 token 数很难猜。</li>
+    <li class="callout limit" id="e20" data-points="p0046">讲者备注（被问到时说）：这些编号属于 o200k_base；课程用的 qwen3.5 词表不同，编号也不同，但道理一样。</li>
   </ul>
   <p class="src official">课件页： <span class="source-anchor" data-source-section="s8"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.md">出处：Real tokens, real IDs</a></span></p>
 </section>
@@ -155,23 +155,23 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
   <span class="kicker">两个后果</span>
   <h2>token 既是花费的单位，也是注意力的单位</h2>
   <ul>
-    <li id="e21" data-points="p0033 p0034 p0035"><b>花费单位</b>：啰嗦的代码更贵。用厂商 API 花美元，在自己机器上花内存和秒数。</li>
-    <li id="e22" data-points="p0036"><b>注意力单位</b>：每个 token 都在争注意力。你的标识符被切成常见碎片，所以不会因为是你起的名字而得到特别的重视。</li>
+    <li id="e21" data-points="p0047 p0048 p0049"><b>花费单位</b>：啰嗦的代码更贵。用厂商 API 花美元，在自己机器上花内存和秒数。</li>
+    <li id="e22" data-points="p0050"><b>注意力单位</b>：每个 token 都在争注意力。你的标识符被切成常见碎片，所以不会因为是你起的名字而得到特别的重视。</li>
   </ul>
-  <p id="e23" data-points="p0037 p0038">同一个函数，短写法课件标为 9 tokens：</p>
-  <pre data-asset="b0038"><code data-language="python">def f(x):
+  <p id="e23" data-points="p0051 p0052">同一个函数，短写法课件标为 9 tokens：</p>
+  <pre data-asset="b0052"><code data-language="python">def f(x):
     return x * 2</code></pre>
-  <p id="e24" data-points="p0039 p0040">长写法课件标为 ~35 tokens（slides.md 第 187–191 行，第 9 页右栏）。下面逐行看多出来的 token 花在哪：</p>
+  <p id="e24" data-points="p0053 p0054">长写法课件标为 ~35 tokens（slides.md 第 187–191 行，第 9 页右栏）。下面逐行看多出来的 token 花在哪：</p>
   <div class="pair codewalk" data-asset="snippet-35" data-file="snippet-35tokens.py"><div class="pair-source" tabindex="0" aria-label="~35 tokens 写法"><span class="source-anchor">原代码：snippet-35tokens.py（slides.md 第 187–191 行）· L1–5 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.pdf">课件</a></span><pre data-lines="1"><code data-language="python">def calculate_double_of_input_value(
     input_value: int
 ) -&gt; int:
     """Return value times two."""
     return input_value * 2</code></pre></div><div class="pair-notes">
-    <div class="step" tabindex="0" data-hl="1-3"><h3>函数签名：长名字、参数名、类型标注</h3><p id="e25" data-points="p0040">calculate_double_of_input_value 会被切成很多常见碎片，每块都是一个 token；input_value 和两处 int 标注再各加 token。短写法里只有 f 和 x。</p></div>
-    <div class="step" tabindex="0" data-hl="4"><h3>docstring</h3><p id="e26" data-points="p0040">一整句说明，内容和函数名重复。</p></div>
-    <div class="step" tabindex="0" data-hl="5"><h3>做的事完全一样</h3><p id="e27" data-points="p0040">返回值仍是输入乘 2，行为没有任何变化。</p></div>
+    <div class="step" tabindex="0" data-hl="1-3"><h3>函数签名：长名字、参数名、类型标注</h3><p id="e25" data-points="p0054">calculate_double_of_input_value 会被切成很多常见碎片，每块都是一个 token；input_value 和两处 int 标注再各加 token。短写法里只有 f 和 x。</p></div>
+    <div class="step" tabindex="0" data-hl="4"><h3>docstring</h3><p id="e26" data-points="p0054">一整句说明，内容和函数名重复。</p></div>
+    <div class="step" tabindex="0" data-hl="5"><h3>做的事完全一样</h3><p id="e27" data-points="p0054">返回值仍是输入乘 2，行为没有任何变化。</p></div>
   </div></div>
-  <figure class="figure orig" data-asset="b0041" id="e28" data-points="p0041 p0042"><img src="L02-img/p09.png" alt="幻灯片第 9 页：9 tokens 与 ~35 tokens"><figcaption><b>原图 4 · 同一个函数的两种写法</b> <span class="source-anchor">出处：Marcus Darden · EECS 498 L02 slides · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.pdf">第 9 页</a></span><span class="how">怎么看：讲者备注说啰嗦写法贵 4×；它不是「信息更多」，而是更贵、更分散注意力。</span></figcaption></figure>
+  <figure class="figure orig" data-asset="b0055" id="e28" data-points="p0055 p0056"><img src="L02-img/p09.png" alt="幻灯片第 9 页：9 tokens 与 ~35 tokens"><figcaption><b>原图 4 · 同一个函数的两种写法</b> <span class="source-anchor">出处：Marcus Darden · EECS 498 L02 slides · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.pdf">第 9 页</a></span><span class="how">怎么看：讲者备注说啰嗦写法贵 4×；它不是「信息更多」，而是更贵、更分散注意力。</span></figcaption></figure>
   <p class="callout extra">补充：上面按行拆 token 的说法是推断，课件只给了两个总数（9 和约 35），没有给逐行数字。</p>
   <p class="src official">课件页： <span class="source-anchor" data-source-section="s9"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.md">出处：What tokenization costs you</a></span> <span class="source-anchor" data-source-section="s10"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.md">出处：9 tokens</a></span> <span class="source-anchor" data-source-section="s11"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.md">出处：~35 tokens</a></span></p>
 </section>
@@ -181,10 +181,10 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
   <h2>窗口外的东西，模型一律看不到</h2>
   <p class="callout extra">补充：上下文窗口指模型一次能看到的全部 token。</p>
   <ul>
-    <li id="e29" data-points="p0043 p0044 p0045 p0046 p0047"><b>窗口里</b>：文件、对话历史、repo map、系统提示词。</li>
-    <li id="e30" data-points="p0047"><b>窗口外</b>：<b>什么都没有</b>。没有数据库，不会去网上取，也不做检索。</li>
+    <li id="e29" data-points="p0057 p0058 p0059 p0060 p0061 p0062 p0063"><b>窗口里</b>：文件、对话历史、repo map、系统提示词。</li>
+    <li id="e30" data-points="p0061 p0062 p0063"><b>窗口外（Outside the window）</b>：<b>什么都没有</b>。没有数据库，不会去网上取，也不做检索（No DB. No web fetch. No retrieval）。</li>
   </ul>
-  <p class="callout key" id="e31" data-points="p0048">课件：这是工程师需要知道的、关于 LLM 最重要的一个事实。</p>
+  <p class="callout key" id="e31" data-points="p0064">课件：这是工程师需要知道的、关于 LLM 最重要的一个事实。</p>
   <p class="src official">课件页： <span class="source-anchor" data-source-section="s12"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.md">出处：Context Window</a></span> <span class="source-anchor" data-source-section="s13"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.md">出处：The only resource that matters</a></span> <span class="source-anchor" data-source-section="s14"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.md">出处：What the model sees</a></span></p>
 </section>
 
@@ -192,20 +192,20 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
   <span class="kicker">为什么更大不等于更好</span>
   <h2>大上下文有三种代价：花费、延迟、质量</h2>
   <ul>
-    <li id="e32" data-points="p0049 p0050 p0051"><b>花费</b>：按 token 计费，或花你自己机器的内存和秒数。注意力是平方级的：上下文 2×，工作量约 4×。</li>
-    <li id="e33" data-points="p0052"><b>延迟</b>：在笔记本上，要等几十秒才出第一个 token；而一个紧凑的提示词马上就开始。</li>
-    <li id="e34" data-points="p0053"><b>质量</b>：大海捞针，更大可能<b>更差</b>。</li>
+    <li id="e32" data-points="p0065 p0066 p0067"><b>花费</b>：按 token 计费，或花你自己机器的内存和秒数。注意力是平方级的：上下文 2×，工作量约 4×。</li>
+    <li id="e33" data-points="p0068"><b>延迟</b>：在笔记本上，要等几十秒才出第一个 token；而一个紧凑的提示词马上就开始。</li>
+    <li id="e34" data-points="p0069"><b>质量</b>：大海捞针，更大可能<b>更差</b>。</li>
   </ul>
-  <figure class="figure orig" data-asset="b0054" id="e35" data-points="p0054 p0055"><img src="L02-img/p12.png" alt="幻灯片第 12 页：Three costs of large context"><figcaption><b>原图 5 · 大上下文的三种代价</b> <span class="source-anchor">出处：Marcus Darden · EECS 498 L02 slides · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.pdf">第 12 页</a></span><span class="how">怎么看：讲者备注说，玫红色标的是最出人意料的一项：质量下降。</span></figcaption></figure>
+  <figure class="figure orig" data-asset="b0070" id="e35" data-points="p0070 p0071"><img src="L02-img/p12.png" alt="幻灯片第 12 页：Three costs of large context"><figcaption><b>原图 5 · 大上下文的三种代价</b> <span class="source-anchor">出处：Marcus Darden · EECS 498 L02 slides · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.pdf">第 12 页</a></span><span class="how">怎么看：讲者备注说，玫红色标的是最出人意料的一项：质量下降。</span></figcaption></figure>
   <p class="src official">课件页： <span class="source-anchor" data-source-section="s15"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.md">出处：Three costs of large context</a></span></p>
 </section>
 
 <section class="sec" id="s7" data-source-section="s17" data-toc="每个 token 都看全窗口">
   <span class="kicker">生成一个 token 的一步</span>
   <h2>上下文翻倍，工作量翻四倍</h2>
-  <p id="e36" data-points="p0056 p0057 p0058">生成下一个 token 时，模型给窗口里每个已有 token 都打分，不只看附近的。课件的图里，模型要决定 <code>httpx.</code> 后面写什么：它最倚重 <code>httpx</code> 和点号，但为了知道这一点，它给<b>每个</b> token 都打了分。线越粗，权重越大。</p>
-  <figure class="figure orig" data-asset="b0059" id="e37" data-points="p0059 p0060"><img src="L02-img/p13.png" alt="幻灯片第 13 页：Weighing the whole window"><figcaption><b>原图 6 · 给整个窗口打分</b> <span class="source-anchor">出处：Marcus Darden · EECS 498 L02 slides · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.pdf">第 13 页</a></span><span class="how">怎么看：顶上是正在生成的 get，连线粗细是注意力权重。讲者备注：生成 get 之后的下一个 token，整张图又重来一遍，之后每个 token 都是。</span></figcaption></figure>
-  <div class="table"><table class="data orig" data-asset="b0063" id="e38" data-points="p0061 p0062 p0063"><caption>原表 1 · Every token attends to every other <span class="source-anchor">出处：Marcus Darden · EECS 498 L02 slides · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.pdf">第 14 页</a></span></caption>
+  <p id="e36" data-points="p0072 p0073 p0074">生成下一个 token 时，模型给窗口里每个已有 token 都打分，不只看附近的。课件的图里，模型要决定 <code>httpx.</code> 后面写什么：它最倚重 <code>httpx</code> 和点号，但为了知道这一点，它给<b>每个</b> token 都打了分。线越粗，权重越大。</p>
+  <figure class="figure orig" data-asset="b0075" id="e37" data-points="p0075 p0076"><img src="L02-img/p13.png" alt="幻灯片第 13 页：Weighing the whole window"><figcaption><b>原图 6 · 给整个窗口打分</b> <span class="source-anchor">出处：Marcus Darden · EECS 498 L02 slides · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.pdf">第 13 页</a></span><span class="how">怎么看：顶上是正在生成的 get，连线粗细是注意力权重。讲者备注：生成 get 之后的下一个 token，整张图又重来一遍，之后每个 token 都是。</span></figcaption></figure>
+  <div class="table"><table class="data orig" data-asset="b0079" id="e38" data-points="p0077 p0078 p0079"><caption>原表 1 · Every token attends to every other <span class="source-anchor">出处：Marcus Darden · EECS 498 L02 slides · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.pdf">第 14 页</a></span></caption>
     <thead><tr><th>Tokens in the window</th><th>Pairs scored</th><th>Relative work</th></tr></thead>
     <tbody>
       <tr><td data-label="Tokens in the window">1K</td><td data-label="Pairs scored">1,000,000</td><td data-label="Relative work">1×</td></tr>
@@ -213,25 +213,25 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
       <tr><td data-label="Tokens in the window">8K</td><td data-label="Pairs scored">64,000,000</td><td data-label="Relative work">64×</td></tr>
       <tr><td data-label="Tokens in the window">32K</td><td data-label="Pairs scored">1,024,000,000</td><td data-label="Relative work"><i>1024×</i></td></tr>
     </tbody></table><p class="table-note">Pairs scored 是被打分的 token 对数；Relative work 以 1K 为 1×。</p></div>
-  <p id="e39" data-points="p0063">读法：窗口从 1K 到 2K、8K、32K，打分的对数分别是 1,000,000、4,000,000、64,000,000 和 1,024,000,000，相对工作量是 1×、4×、64×、1024×。</p>
-  <p class="callout key" id="e40" data-points="p0064 p0065">课件：上下文翻倍，工作量翻四倍；窗口是预算，不是容器。讲者备注要讲透的数字：文本多 32 倍，花费不是 32 倍，而是约 1000 倍。这就是在笔记本上「把整个仓库贴进去」行不通的原因。</p>
+  <p id="e39" data-points="p0079">读法：窗口从 1K 到 2K、8K、32K，打分的对数分别是 1,000,000、4,000,000、64,000,000 和 1,024,000,000，相对工作量是 1×、4×、64×、1024×。</p>
+  <p class="callout key" id="e40" data-points="p0080 p0081">课件：上下文翻倍，工作量翻四倍；窗口是预算，不是容器。讲者备注要讲透的数字：文本多 32 倍，花费不是 32 倍，而是约 1000 倍。这就是在笔记本上「把整个仓库贴进去」行不通的原因。</p>
   <p class="src official">课件页： <span class="source-anchor" data-source-section="s16"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.md">出处：Weighing the whole window</a></span> <span class="source-anchor" data-source-section="s17"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.md">出处：Every token attends to every other</a></span></p>
 </section>
 
 <section class="sec" id="s8" data-source-section="s19" data-toc="长会话为什么变差">
   <span class="kicker">Aider 的 /add · 长会话</span>
   <h2>对话越积越多，窗口里大半是死重</h2>
-  <p id="e41" data-points="p0066 p0067 p0068">Aider 要你手动管理窗口，课件说这种麻烦本身就是一课：</p>
+  <p id="e41" data-points="p0082 p0083 p0084">Aider 要你手动管理窗口，课件说这种麻烦本身就是一课：</p>
   <ul>
-    <li id="e42" data-points="p0068"><code>/add main.py</code>：文件进入上下文。</li>
-    <li id="e43" data-points="p0068"><code>/drop main.py</code>：文件离开上下文。</li>
-    <li id="e44" data-points="p0068"><code>/tokens</code>：看清窗口里到底有什么。</li>
-    <li id="e45" data-points="p0068"><code>/clear</code>：清空对话历史，保留文件。</li>
+    <li id="e42" data-points="p0084"><code>/add main.py</code>：文件进入上下文。</li>
+    <li id="e43" data-points="p0084"><code>/drop main.py</code>：文件离开上下文。</li>
+    <li id="e44" data-points="p0084"><code>/tokens</code>：看清窗口里到底有什么。</li>
+    <li id="e45" data-points="p0084"><code>/clear</code>：清空对话历史，保留文件。</li>
   </ul>
-  <p id="e46" data-points="p0069">课件：这不是限制，而是你本来就该有的纪律。</p>
-  <p id="e47" data-points="p0070 p0071 p0072">长会话里，历史不断累积：你发的每一轮、它回的每一轮都留着。五十条消息之后，窗口里大半是<b>死重</b>。模型分不清哪些现在为真、哪些只在第 3 条消息时为真。</p>
-  <p class="callout key" id="e48" data-points="p0073">做法：换任务就 <code>/clear</code>。Claude Code（L05）会替你压缩上下文，而压缩会丢信息。</p>
-  <p id="e49" data-points="p0074 p0075 p0076 p0077 p0078">课间讨论（Chat break，5 分钟）：长对话<b>变差</b>时，窗口里在发生什么？讲者备注写明这是固定在 0:35 的休息；请学生回想一次越聊越差的对话，自己当时是新开对话还是重新解释，再用今天的词汇说出当时实际发生了什么。不纠正用词，听两三个回答就继续。</p>
+  <p id="e46" data-points="p0085">课件：这不是限制，而是你本来就该有的纪律。</p>
+  <p id="e47" data-points="p0086 p0087 p0088 p0089 p0090">长会话里，历史不断累积（History accumulates）：你发的每一轮、它回的每一轮都留着。五十条消息之后（Fifty messages in），窗口里大半是<b>死重</b>（dead weight）。模型分不清哪些现在为真、哪些只在第 3 条消息时为真（what was true at message 3）。</p>
+  <p class="callout key" id="e48" data-points="p0091">做法：换任务就 <code>/clear</code>。Claude Code（L05）会替你压缩上下文，而压缩会丢信息。</p>
+  <p id="e49" data-points="p0092 p0093 p0094 p0095 p0096">课间讨论（Chat break，5 分钟）：长对话<b>变差</b>时，窗口里在发生什么？讲者备注写明这是固定在 0:35 的休息；请学生回想一次越聊越差的对话，自己当时是新开对话还是重新解释，再用今天的词汇说出当时实际发生了什么。不纠正用词，听两三个回答就继续。</p>
   <p class="src official">课件页： <span class="source-anchor" data-source-section="s18"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.md">出处：Aider's friction is the lesson</a></span> <span class="source-anchor" data-source-section="s19"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.md">出处：Context drift</a></span></p>
 </section>
 
@@ -239,12 +239,12 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
   <span class="kicker">幻觉 · 误导人的词</span>
   <h2>幻觉不是故障，是没有查证步骤的补全</h2>
   <ul>
-    <li id="e50" data-points="p0079 p0080 p0081 p0082 p0083">模型做的正是训练它做的事：自回归采样，从分布里挑最可能的下一个 token。</li>
-    <li id="e51" data-points="p0083">没有核对事实这一步，没有查数据库，也没有「等等，这个存在吗？」。</li>
+    <li id="e50" data-points="p0097 p0098 p0099 p0100 p0101 p0102 p0103 p0104 p0105">模型做的正是训练它做的事：自回归采样（Autoregressive sampling），从分布里挑最可能的下一个 token。</li>
+    <li id="e51" data-points="p0101 p0102 p0103 p0104 p0105">没有核对事实这一步（No fact-check step），没有查数据库（No DB lookup），也没有「等等，这个存在吗？」（"wait, does this exist?"）。</li>
   </ul>
-  <p id="e52" data-points="p0084">讲者备注：「幻觉」听起来像一个错误。它不是错误，是设计本身。</p>
-  <p id="e53" data-points="p0085 p0086 p0087">上下文沉默时，统计先验胜出。训练数据里 <code>import requests</code> 比 <code>import httpx</code> 多 100×；你的项目用 httpx，提示词没提，模型就写出 <code>requests</code>：看着合理，对<b>你的</b>上下文却是错的。</p>
-  <p class="callout key" id="e54" data-points="p0088">讲者备注：这不是「编出来」的，而是给错误的真实项目用了错误的真实库。</p>
+  <p id="e52" data-points="p0106">讲者备注：「幻觉」听起来像一个错误。它不是错误，是设计本身。</p>
+  <p id="e53" data-points="p0107 p0108 p0109 p0110 p0111 p0112">上下文沉默时，统计先验胜出。训练数据里 <code>import requests</code> 比 <code>import httpx</code> 多 100×；你的项目用 httpx，提示词没提（Prompt doesn't mention it），模型就写出 <code>requests</code>：看着合理，对<b>你的</b>上下文却是错的。</p>
+  <p class="callout key" id="e54" data-points="p0113">讲者备注：这不是「编出来」的，而是给错误的真实项目用了错误的真实库。</p>
   <p class="src official">课件页： <span class="source-anchor" data-source-section="s20"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.md">出处：Hallucination</a></span> <span class="source-anchor" data-source-section="s21"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.md">出处：The misleading word</a></span> <span class="source-anchor" data-source-section="s22"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.md">出处：The model is doing what it was trained to do</a></span> <span class="source-anchor" data-source-section="s23"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.md">出处：Statistical priors win when context is silent</a></span></p>
 </section>
 
@@ -252,36 +252,36 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
   <span class="kicker">代码里的三种幻觉</span>
   <h2>模型需要事实时，就把事实给它看</h2>
   <ul>
-    <li id="e55" data-points="p0089 p0090 p0091"><b>编造 API</b>：<code>user.get_profile()</code>，看着合理，并不存在。</li>
-    <li id="e56" data-points="p0092"><b>过时知识</b>：在 pandas 2.0 的代码库里写 1.x 的 API。</li>
-    <li id="e57" data-points="p0093"><b>签名写错</b>：关键字参数错、dtype 错，很隐蔽。</li>
+    <li id="e55" data-points="p0114 p0115 p0116"><b>编造 API</b>：<code>user.get_profile()</code>，看着合理，并不存在。</li>
+    <li id="e56" data-points="p0117"><b>过时知识</b>：在 pandas 2.0 的代码库里写 1.x 的 API。</li>
+    <li id="e57" data-points="p0118"><b>签名写错</b>：关键字参数错、dtype 错，很隐蔽。</li>
   </ul>
-  <figure class="figure orig" data-asset="b0094" id="e58" data-points="p0094"><img src="L02-img/p21.png" alt="幻灯片第 21 页：Common hallucinations"><figcaption><b>原图 7 · 常见的三种幻觉</b> <span class="source-anchor">出处：Marcus Darden · EECS 498 L02 slides · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.pdf">第 21 页</a></span><span class="how">怎么看：三张卡都用玫红色，表示都是要防的失败。</span></figcaption></figure>
+  <figure class="figure orig" data-asset="b0119" id="e58" data-points="p0119"><img src="L02-img/p21.png" alt="幻灯片第 21 页：Common hallucinations"><figcaption><b>原图 7 · 常见的三种幻觉</b> <span class="source-anchor">出处：Marcus Darden · EECS 498 L02 slides · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.pdf">第 21 页</a></span><span class="how">怎么看：三张卡都用玫红色，表示都是要防的失败。</span></figcaption></figure>
   <p class="callout extra">补充（学习搭子归纳，课件未逐条给修法）：编造 API，把真实接口放进上下文；过时知识，把版本和文档放进上下文；签名写错，把签名给它看。</p>
-  <p class="callout key" id="e59" data-points="p0095 p0096">课件：模型需要一个事实时，<b>就把这个事实给它看</b>。讲者备注：管理上下文最深的理由是准确，不是花费，也不是速度。</p>
-  <p id="e60" data-points="p0097 p0098 p0099">上下文也有修不了的情况。比如问「我们内部库的最新版本是几？」：仓库里也没有答案，所以没有哪次 <code>/add</code> 能产出它。模型会<b>合理地</b>猜一个，你从输出上看不出来。</p>
-  <p id="e61" data-points="p0100">课件给的做法：把事实交给它，或者造一个去查事实的工具。课程第 5 周（week 5）会造这种工具。</p>
+  <p class="callout key" id="e59" data-points="p0120 p0121">课件：模型需要一个事实时，<b>就把这个事实给它看</b>。讲者备注：管理上下文最深的理由是准确，不是花费，也不是速度。</p>
+  <p id="e60" data-points="p0122 p0123 p0124 p0125 p0126">上下文也有修不了的情况。比如问「我们内部库的最新版本是几？」（latest version of our internal library）：仓库里也没有答案，所以没有哪次 <code>/add</code> 能产出它。模型会<b>合理地</b>猜一个（guesses, plausibly），你从输出上看不出来。</p>
+  <p id="e61" data-points="p0127">课件给的做法：把事实交给它，或者造一个去查事实的工具。课程第 5 周（week 5）会造这种工具。</p>
   <p class="src official">课件页： <span class="source-anchor" data-source-section="s24"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.md">出处：Common hallucinations</a></span> <span class="source-anchor" data-source-section="s25"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.md">出处：What context cannot fix</a></span></p>
 </section>
 
 <section class="sec" id="s11" data-source-section="s30" data-toc="能力与知识">
   <span class="kicker">能力 vs 知识 · 两个轴</span>
   <h2>能力和知识是两个轴，搞混就会选错模型</h2>
-  <div class="table"><table class="data" id="e62" data-points="p0101 p0102 p0103 p0104 p0105 p0106"><caption>两个轴（据原文整理，原文 L281–291）</caption>
+  <div class="table"><table class="data" id="e62" data-points="p0128 p0129 p0130 p0131 p0132 p0133"><caption>两个轴（据原文整理，原文 L281–291）</caption>
     <thead><tr><th></th><th>能力（Capability）</th><th>知识（Knowledge）</th></tr></thead>
     <tbody>
       <tr><td data-label="项目">是什么</td><td data-label="能力">推理本领：多步、跨文件、守住约束</td><td data-label="知识">模型读过什么：新近程度、冷门领域的深度</td></tr>
       <tr><td data-label="项目">随什么增长</td><td data-label="能力">模型规模：qwen3.5:4b → 9b → 前沿模型</td><td data-label="知识">训练数据的规模和新鲜度；小而新的模型可以胜过大而旧的</td></tr>
     </tbody></table></div>
-  <p id="e63" data-points="p0107">讲者备注：两个轴搞混，就会做出糟糕的模型选择。</p>
-  <p id="e64" data-points="p0108 p0109">梯子：你只待在最下面两级。为什么不用最上面一级？</p>
+  <p id="e63" data-points="p0134">讲者备注：两个轴搞混，就会做出糟糕的模型选择。</p>
+  <p id="e64" data-points="p0135 p0136">梯子：你只待在最下面两级。为什么不用最上面一级？</p>
   <ul>
-    <li id="e65" data-points="p0110"><b>qwen3.5:4b</b>：约 2.5 GB。失败得快，失败得明显。你从这里开始。</li>
-    <li id="e66" data-points="p0111"><b>qwen3.5:9b</b>：Q4 量化下约 6 GB。课程默认，<code>aider-practice</code> 的 Part 2 需要它。</li>
-    <li id="e67" data-points="p0112"><b>前沿模型</b>：在别人的数据中心，两个轴都强。这门课里你不会运行它。</li>
+    <li id="e65" data-points="p0137"><b>qwen3.5:4b</b>：约 2.5 GB。失败得快，失败得明显。你从这里开始。</li>
+    <li id="e66" data-points="p0138"><b>qwen3.5:9b</b>：Q4 量化下约 6 GB。课程默认，<code>aider-practice</code> 的 Part 2 需要它。</li>
+    <li id="e67" data-points="p0139"><b>前沿模型</b>：在别人的数据中心，两个轴都强。这门课里你不会运行它。</li>
   </ul>
-  <figure class="figure orig" data-asset="b0114" id="e68" data-points="p0113 p0114"><img src="L02-img/p26.png" alt="幻灯片第 26 页：Why not the top rung?"><figcaption><b>原图 8 · 模型梯子</b> <span class="source-anchor">出处：Marcus Darden · EECS 498 L02 slides · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.pdf">第 26 页</a></span><span class="how">怎么看：图下小字说，前沿模型会替你兜底，4B 不会；两周后你会在 4b 和 9b 上都跑过，亲自感受差距。</span></figcaption></figure>
-  <p id="e69" data-points="p0115">讲者备注：不要直接断言，而是承诺这个实验：接下来两周每个人都在 4b、然后 9b 上跑同一个仓库，这比任何基准测试都有说服力。要讲清前沿模型是他们<b>不在</b>的那一级，放在这里是为了说明放弃了什么、为什么放弃，而不是让他们去用。</p>
+  <figure class="figure orig" data-asset="b0141" id="e68" data-points="p0140 p0141"><img src="L02-img/p26.png" alt="幻灯片第 26 页：Why not the top rung?"><figcaption><b>原图 8 · 模型梯子</b> <span class="source-anchor">出处：Marcus Darden · EECS 498 L02 slides · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.pdf">第 26 页</a></span><span class="how">怎么看：图下小字说，前沿模型会替你兜底，4B 不会；两周后你会在 4b 和 9b 上都跑过，亲自感受差距。</span></figcaption></figure>
+  <p id="e69" data-points="p0142">讲者备注：不要直接断言，而是承诺这个实验：接下来两周每个人都在 4b、然后 9b 上跑同一个仓库，这比任何基准测试都有说服力。要讲清前沿模型是他们<b>不在</b>的那一级，放在这里是为了说明放弃了什么、为什么放弃，而不是让他们去用。</p>
   <p class="src official">课件页： <span class="source-anchor" data-source-section="s26"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.md">出处：Capability vs Knowledge</a></span> <span class="source-anchor" data-source-section="s27"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.md">出处：Two axes</a></span> <span class="source-anchor" data-source-section="s28"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.md">出处：Capability</a></span> <span class="source-anchor" data-source-section="s29"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.md">出处：Knowledge</a></span> <span class="source-anchor" data-source-section="s30"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.md">出处：Why not the top rung?</a></span></p>
 </section>
 
@@ -289,12 +289,12 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
   <span class="kicker">怎么选</span>
   <h2>选模型要看你在哪个房间</h2>
   <ul>
-    <li id="e70" data-points="p0116 p0117 p0118"><b>对成本敏感的批处理</b>（重复 1000×）：用过关的最小模型。</li>
-    <li id="e71" data-points="p0118"><b>重推理的单个任务</b>：用你手上能力最强的模型。</li>
-    <li id="e72" data-points="p0118"><b>冷门库或框架</b>：能力救不了你，这是<b>上下文</b>问题。</li>
-    <li id="e73" data-points="p0118"><b>任何你在学的东西</b>：用会在你出错处失败的那一级。</li>
+    <li id="e70" data-points="p0143 p0144 p0145 p0146 p0147 p0148"><b>对成本敏感的批处理</b>（重复 1000×）：用过关的最小模型。</li>
+    <li id="e71" data-points="p0145 p0146 p0147 p0148"><b>重推理的单个任务（Reasoning-heavy single task）</b>：用你手上能力最强的模型。</li>
+    <li id="e72" data-points="p0145 p0146 p0147 p0148"><b>冷门库或框架（Niche library or framework）</b>：能力救不了你，这是<b>上下文</b>问题。</li>
+    <li id="e73" data-points="p0145 p0146 p0147 p0148"><b>任何你在学的东西（Anything you're learning on）</b>：用会在你出错处失败的那一级。</li>
   </ul>
-  <p class="callout limit" id="e74" data-points="p0119">课件：这些在生产环境通常对，在课堂上通常错。本事在于分清你在哪个房间。</p>
+  <p class="callout limit" id="e74" data-points="p0149">课件：这些在生产环境通常对，在课堂上通常错。本事在于分清你在哪个房间。</p>
   <p class="src official">课件页： <span class="source-anchor" data-source-section="s31"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.md">出处：Match model to task</a></span></p>
 </section>
 
@@ -302,12 +302,12 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
   <span class="kicker">诊断 · 输出错了</span>
   <h2>按顺序问三个问题</h2>
   <ol class="steps">
-    <li id="e75" data-points="p0120 p0121 p0122 p0123 p0124">第 1 问，<b>上下文</b>：模型有它需要的东西吗？</li>
-    <li id="e76" data-points="p0124">第 2 问，<b>幻觉</b>：它编造了 API 吗？</li>
-    <li id="e77" data-points="p0124">第 3 问，<b>能力或知识</b>：任务太难？还是太新？</li>
+    <li id="e75" data-points="p0150 p0151 p0152 p0153 p0154 p0155 p0156">第 1 问，<b>上下文（Context）</b>：模型有它需要的东西吗？</li>
+    <li id="e76" data-points="p0154 p0155 p0156">第 2 问，<b>幻觉</b>：它编造了 API 吗？</li>
+    <li id="e77" data-points="p0154 p0155 p0156">第 3 问，<b>能力或知识（Capability or knowledge）</b>：任务太难？还是太新？</li>
   </ol>
-  <p class="callout limit" id="e78" data-points="p0125">token 化不在清单上。它在三者底下，几乎从来不是你能动手改的地方。</p>
-  <p id="e79" data-points="p0126 p0127">下一页一句话：工具包在模型外面，<b>核心推理调用</b>里没有查询。讲者备注：模型为什么不自己去查？因为核心推理不查；是工具包住了它。第 5 周你会造这些工具。</p>
+  <p class="callout limit" id="e78" data-points="p0157">token 化不在清单上。它在三者底下，几乎从来不是你能动手改的地方。</p>
+  <p id="e79" data-points="p0158 p0159">下一页一句话：工具包在模型外面，<b>核心推理调用</b>里没有查询。讲者备注：模型为什么不自己去查？因为核心推理不查；是工具包住了它。第 5 周你会造这些工具。</p>
   <p class="callout extra">补充：工具负责查文件、查网页，把事实放进窗口；模型本身不查。</p>
   <div class="sim"><script type="application/json">{"label":"正常路径：项目用 httpx，模型写了 requests","note":"串起来的示例：三个问题和顺序照课件「Three questions」；具体情境取自课件的 httpx 例子和「What context cannot fix」，串法是教学示例。","flow":{"nodes":[{"id":"out","x":90,"y":120,"t":"输出错了","c":"red"},{"id":"q1","x":300,"y":120,"t":"1 上下文","s":"它有需要的吗？","c":"blue"},{"id":"q2","x":510,"y":120,"t":"2 幻觉","s":"编了 API 吗？"},{"id":"q3","x":720,"y":120,"t":"3 能力或知识","s":"太难？太新？","c":"amber"}],"edges":[{"f":"out","t":"q1"},{"f":"q1","t":"q2"},{"f":"q2","t":"q3"}]},"steps":[{"act":"out","msg":{"r":"asst","t":"import requests\nresp = requests.get(url)"},"say":"教学示例：你的项目用 httpx，模型却写了 requests。"},{"act":"q1","edge":"out>q1","msg":{"r":"user","t":"/tokens"},"say":"问题 1：模型有没有它需要的东西？看窗口里有什么。"},{"act":"q1","msg":{"r":"err","t":"窗口里没有任何 httpx 的代码"},"say":"上下文沉默，统计先验胜出（训练数据里 requests 多 100 倍）。"},{"act":"q1","msg":{"r":"user","t":"/add client.py（里面 import httpx）"},"say":"把事实给它看。"},{"act":"q1","msg":{"r":"asst","t":"resp = httpx.get(url)"},"say":"问题出在第 1 问，不用再往下查。"}],"alts":[{"label":"分支 A：内部库版本（上下文修不了）","steps":[{"act":"out","msg":{"r":"asst","t":"pin mylib==3.2"},"say":"教学示例：你问内部库最新版本，模型给了一个数字。"},{"act":"q1","edge":"out>q1","msg":{"r":"err","t":"仓库里也没有这个答案"},"say":"没有哪次 /add 能产出它。"},{"act":"q2","edge":"q1>q2","msg":{"r":"err","t":"数字是猜的，看着很合理"},"say":"这是幻觉：你从输出上看不出来。"},{"act":"q2","msg":{"r":"user","t":"把版本号告诉它，或造一个查版本的工具"},"say":"课件：第 5 周你会造这种工具。"}]},{"label":"分支 B：冷门框架（知识问题）","steps":[{"act":"out","msg":{"r":"asst","t":"（冷门框架的调用全写错）"},"say":"教学示例：你换了更大的模型，还是错。"},{"act":"q1","edge":"out>q1","say":"问题 1：窗口里有没有这个框架的文档？没有。"},{"act":"q3","edge":"q2>q3","say":"问题 3：这是知识轴，不是能力轴。"},{"act":"q1","msg":{"r":"user","t":"把框架文档放进上下文"},"say":"课件：冷门库，能力救不了你，这是上下文问题。"}]}],"predict":"项目用 httpx，模型写了 requests。先怀疑模型太小，还是先看窗口里有什么？"}</script></div>
   <p class="src extra">模拟器是教学示例：三个问题和顺序照课件「Three questions」；情境取自课件的 httpx 例子和「What context cannot fix」。</p>
@@ -318,12 +318,12 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
   <span class="kicker">四个机制 · 要带走的</span>
   <h2>每次失败都是四个机制之一换了身衣服</h2>
   <ul>
-    <li id="e80" data-points="p0128 p0129 p0130"><b>token</b> 是花费的单位，也是注意力的单位。</li>
-    <li id="e81" data-points="p0130"><b>上下文窗口</b>是唯一要紧的资源，要有意识地花。</li>
-    <li id="e82" data-points="p0130"><b>幻觉</b>是没有查询的模式补全，用上下文来修。</li>
-    <li id="e83" data-points="p0130"><b>能力和知识</b>是不同的轴：大，对上新。</li>
+    <li id="e80" data-points="p0160 p0161 p0162 p0163 p0164 p0165"><b>token</b> 是花费的单位，也是注意力的单位。</li>
+    <li id="e81" data-points="p0162 p0163 p0164 p0165"><b>上下文窗口（The context window）</b>是唯一要紧的资源，要有意识地花。</li>
+    <li id="e82" data-points="p0162 p0163 p0164 p0165"><b>幻觉（Hallucination）</b>是没有查询的模式补全，用上下文来修。</li>
+    <li id="e83" data-points="p0162 p0163 p0164 p0165"><b>能力和知识（Capability and knowledge）</b>是不同的轴：大，对上新。</li>
   </ul>
-  <p class="callout key" id="e84" data-points="p0131">课件：这学期你遇到的每个失败，都是这四个机制之一换了身衣服。</p>
+  <p class="callout key" id="e84" data-points="p0166">课件：这学期你遇到的每个失败，都是这四个机制之一换了身衣服。</p>
   <p class="src official">课件页： <span class="source-anchor" data-source-section="s35"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.md">出处：What to take away</a></span></p>
 </section>
 
@@ -331,12 +331,12 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
   <span class="kicker">本周</span>
   <h2>用今天的词汇重读你自己的 Aider 记录</h2>
   <ul>
-    <li id="e85" data-points="p0132 p0133 p0134"><code>aider-practice</code> Part 1：setup gate 和全部十六课在 <b>9 月 11 日周五</b>（Fri Sep 11）截止。</li>
-    <li id="e86" data-points="p0134">用今天的词汇重读你自己的 Aider 聊天记录：本讲的每个机制都<b>已经在里面</b>了。</li>
+    <li id="e85" data-points="p0167 p0168 p0169 p0170 p0171"><code>aider-practice</code> Part 1：setup gate 和全部十六课在 <b>9 月 11 日周五</b>（Fri Sep 11）截止。</li>
+    <li id="e86" data-points="p0169 p0170 p0171">用今天的词汇重读你自己的 Aider 聊天记录：本讲的每个机制都<b>已经在里面</b>了（already in them）。</li>
   </ul>
-  <p id="e87" data-points="p0135">下一讲：L03，Big Three，周二。</p>
-  <p id="e88" data-points="p0136 p0137 p0138 p0139">延伸（可选）：两段 YouTube 视频。Token 化看 Andrej Karpathy 的 <a href="https://www.youtube.com/watch?v=zduSFxRajkE">Let's build the GPT Tokenizer</a>；注意力看 <a href="https://www.youtube.com/watch?v=eMlx5fFNoYc">Attention in transformers, step-by-step</a>。</p>
-  <p id="e89" data-points="p0140 p0141">课件说两段都不是必需的，都比今天讲得深一层。讲者备注：下课时让这页留在屏幕上；tokenizer 那段很长，告诉学生前 30 分钟最值得看。</p>
+  <p id="e87" data-points="p0172">下一讲：L03，Big Three，周二。</p>
+  <p id="e88" data-points="p0173 p0174 p0175 p0176">延伸（可选）：两段 YouTube 视频。Token 化看 Andrej Karpathy 的 <a href="https://www.youtube.com/watch?v=zduSFxRajkE">Let's build the GPT Tokenizer</a>；注意力看 <a href="https://www.youtube.com/watch?v=eMlx5fFNoYc">Attention in transformers, step-by-step</a>。</p>
+  <p id="e89" data-points="p0177 p0178">课件说两段都不是必需的，都比今天讲得深一层。讲者备注：下课时让这页留在屏幕上；tokenizer 那段很长，告诉学生前 30 分钟最值得看。</p>
   <p class="src official">课件页： <span class="source-anchor" data-source-section="s36"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.md">出处：aider-practice Part 1</a></span> <span class="source-anchor" data-source-section="s37"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L02/slides.md">出处：YouTube Deep Dives</a></span></p>
 </section>
 
