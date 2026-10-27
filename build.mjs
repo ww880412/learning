@@ -227,6 +227,13 @@ const bjStamp = raw => {
 // 「关于这页数据」：页头的说明文字收进可展开的一栏
 const about = html => `<details class="panel about"><summary>${ic('file-text', 15)} 关于这页数据</summary><div class="pb">${html}</div></details>`;
 
+// 海报页的卡片：旧版 <section class="… pc">（图在标题前）和 2026-10-27 起的 <section class="… pc2">（标题在图前）都认
+function posterCards(h) {
+  const secs = [...h.matchAll(/<section class="[^"]*\bpc2?" id="([^"]+)"/g)];
+  return secs.map((m, k) => { const c = h.slice(m.index, k + 1 < secs.length ? secs[k + 1].index : h.length);
+    const img = c.match(/<img src="([^"]+)" alt="([^"]*)"/), t = c.match(/<h3[^>]*>([\s\S]*?)<\/h3>/);
+    return img ? { id: m[1], src: img[1], alt: img[2], h3: t ? t[1] : '' } : null; }).filter(Boolean);
+}
 // ---- 每日汇总（北京时间 9:00 推送用）：从 x-brief / x-posters / data/ph-inspo.json 汇成 data/digest/YYYY-MM-DD.json 和 digest/YYYY-MM-DD.html ----
 // 汇总日 D 是北京时间。简报用北京日期（见 briefBeijingDate），海报目录已是北京日期，产品灵感取榜单日 ≤ D−2 的最新一份。
 // 简报或海报只要有一边到了 D，就生成 digest/D（另一边 null，不把这一天藏起来，也不拿别天硬凑）。最新一天缺的来源写「今天的还没出」，更早的日期写「这天还没有…」。海报晚到后再构建，仍写回同一天。
@@ -247,7 +254,7 @@ const DG = (() => {
   }
   for (const d of ls('x-posters').filter(x => /^\d{4}-\d\d-\d\d$/.test(x))) {
     const h = rd(`x-posters/${d}/index.html`); if (!h) continue;
-    const items = [...h.matchAll(/<section class="[^"]*\bpc" id="([^"]+)"[\s\S]*?<img src="([^"]+)" alt="([^"]*)"[\s\S]*?<h3[^>]*>([\s\S]*?)<\/h3>/g)].map(m => ({ title: T(m[4]) || T(m[3]), href: `x-posters/${d}/index.html#${m[1]}`, img: `x-posters/${d}/${m[2]}` }));
+    const items = posterCards(h).map(m => ({ title: T(m.h3) || T(m.alt), href: `x-posters/${d}/index.html#${m.id}`, img: `x-posters/${d}/${m.src}` }));
     if (items.length) poster[d] = { title: T((h.match(/<h1>([\s\S]*?)<\/h1>/) || [])[1]) || `${items.length} 张技术海报`, href: `x-posters/${d}/index.html`, n: items.length, items };
   }
   const phDays = (PHI.days || []).filter(day => day.date && (day.items || []).length).sort((a, b) => b.date.localeCompare(a.date));
@@ -380,7 +387,7 @@ ${nx ? `<a class="nx" href="${esc(nx.href)}"${ext(nx.href)}><b>${['已学完', '
       return { id, t, p: T(p), tip: T(tip).replace(/^\s*(💡)?\s*(一句话：)?/u, ''), h3 }; }).filter(s => s.t && (s.p || s.h3.length));
     const s0 = secs[0] || { id: '', t: '', p: '', tip: '', h3: [] }; return { d: latestBrief.d, t: latestBrief.t, href: `x-brief/${latestBrief.d}.html`, lead: s0.h3[0] || s0.t, sum: s0.p, tip: s0.tip, s0, secs }; })();
   const PIMG = posters.flatMap(p => { try { const h = fs.readFileSync(path.join(ROOT, 'x-posters', p.d, 'index.html'), 'utf8');
-    return [...h.matchAll(/<section class="[^"]*\bpc" id="([^"]+)"[\s\S]*?<img src="([^"]+)" alt="([^"]*)"[\s\S]*?<h3[^>]*>([\s\S]*?)<\/h3>/g)].map(m => ({ d: p.d, href: `x-posters/${p.d}/index.html#${m[1]}`, src: `x-posters/${p.d}/${m[2]}`, t: T(m[4]) || m[3] })); } catch { return []; } }).slice(0, 6);
+    return posterCards(h).map(m => ({ d: p.d, href: `x-posters/${p.d}/index.html#${m.id}`, src: `x-posters/${p.d}/${m.src}`, t: T(m.h3) || m.alt })); } catch { return []; } }).slice(0, 6);
   if (!PIMG.length && latestPoster) latestPoster.imgs.forEach(m => PIMG.push({ d: latestPoster.d, href: `x-posters/${latestPoster.d}/index.html`, src: m.src, t: m.alt }));
   // 正在学：只列至少有一讲已上线学习页（进行中/已学完/已掌握）的课；未开始的课只在「公开课」栏目里出现
   const localPage = i => isPage(i) && !/^https?:/.test(i.href || '');
