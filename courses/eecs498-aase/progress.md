@@ -6,3 +6,4 @@
 - L05 Modern agentic CLIs：进行中，2026-10-28 开始。图文长读，原图 3 张、原表 4 张，3 道小测。待小测和复述。
 - L06 From pair-coding to agent orchestration：进行中，2026-10-28 开始。图文长读，原表 7 张，3 道小测。待小测和复述。
 - L07 Inside the Call：进行中，2026-10-28 开始。图文长读，原表 15 张，3 道小测。待小测和复述。
+- L08 Hackathon 1 briefing：进行中，2026-10-28 开始。图文长读，原表 3 张，3 道小测。待小测和复述。

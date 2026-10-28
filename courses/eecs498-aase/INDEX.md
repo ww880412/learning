@@ -10,3 +10,4 @@
 | L05 | Modern agentic CLIs：六步请求、自主梯度、四个原语、harness 仍决定什么 | L05-agentic-clis.html | materials/lectures/L05/slides.md（含讲者备注）、slides.pdf 第 3、8、26 页渲染图 |
 | L06 | From pair-coding to agent orchestration：项目包、参照点、从编辑块到工具调用 | L06-agent-orchestration.html | materials/lectures/L06/slides.md（含讲者备注） |
 | L07 | Inside the Call：请求对象、finish_reason、流式事件、工具调用与线上的循环 | L07-inside-the-call.html | materials/lectures/L07/slides.md（含讲者备注与实测抓包数字） |
+| L08 | Hackathon 1 简报：更强的模型、$25 额度、32K 预算、到场准备与证据记录 | L08-hackathon1-briefing.html | materials/lectures/L08/slides.md（含讲者备注） |
