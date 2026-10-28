@@ -24,6 +24,181 @@
   ],
   "days": [
     {
+      "date": "2026-10-27",
+      "source": "https://www.producthunt.com/leaderboard/daily/2026/10/27",
+      "fetched": "2026-10-28 20:05 北京",
+      "note": "周二榜单共 17 个产品，coding agent 相关较多；分数为抓取时综合分，第 11–15 名分数相近、名次与分数不完全对应。今日未与《P-Hunt内容速览》交叉核对。",
+      "picks": [
+        {
+          "id": "2026-10-27-paddock",
+          "why": "每个 agent 一台带快照、网络白名单的自托管 Linux 机器，正是工作台执行环境要的样子。",
+          "limit": "仓库 10 天前才建、5 星，回滚后凭据还不会自动补回。"
+        },
+        {
+          "id": "2026-10-27-pulsedev",
+          "why": "点页面元素、带上 selector 交给 agent、批准 diff 才落盘，可直接参考做预览面板。",
+          "limit": "只有 macOS、不开源，只管本地网页。"
+        },
+        {
+          "id": "2026-10-27-overmind",
+          "why": "从仓库扫出 agent 能力图、把 trace 和 eval 挂上去，优化结果以 git diff 交付。",
+          "limit": "重心是微调小模型，平台是 AGPL，要先接好 trace。"
+        }
+      ],
+      "items": [
+        {
+          "id": "2026-10-27-paddock",
+          "name": "Paddock",
+          "tagline": "Computers and sandboxes for your agents",
+          "ph": "https://www.producthunt.com/products/paddock-2",
+          "site": "https://tony1908.github.io/paddock/",
+          "repo": "https://github.com/tony1908/paddock",
+          "rank": 11,
+          "score": 106,
+          "comments": 9,
+          "what": "开源（MIT，Go）的自托管工具：在你自己的一台 VPS 上，给每个 AI agent 开一台独立的 Linux 电脑，或一个锁死的沙箱。",
+          "problem": "agent 要装依赖、跑 Docker、开 GUI 自测，放在本机不安全，用云沙箱又贵、数据不在自己手里。",
+          "highlight": "每个 box 是完整 Ubuntu：XFCE 桌面、sudo、box 内 Docker（Sysbox）、SSH，预装 Claude Code、Codex、OpenCode、Pi、Kimi 等，用 paddock prompt 派任务，可插话、中断、看事件流。网络可设全放行、全禁止或域名/CIDR 白名单，运行中可改，云元数据地址始终屏蔽。文件系统快照每分钟一次（很忙时 5 分钟），可 resume、fork、回滚；回滚前先自动拍一张，所以能撤销回滚。作者在 PH 评论里说：密钥放在不进快照的运行时路径，回滚不会泄露 key，但目前回滚后不会自动重新注入凭据。有 CLI、Web 面板、HTTP API 和 TS/Python SDK。仓库 10/17 创建，抓取时 5 星，很新。",
+          "inspo": "两点可抄进工作台的执行环境：一是按任务给 box 打标签、设 TTL 和网络策略（如 run-tests 只放行白名单、scrape-docs 全禁），把「这个 agent 能连哪儿」做成任务级配置；二是「回滚前先快照」让回滚本身可撤销，适合给 agent 改坏环境时兜底。前提是工作台的 agent 跑在可快照的 Linux 容器/VM 里，而不是直接在开发者本机。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "开源"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-27-pulsedev",
+          "name": "PulseDev",
+          "tagline": "Click any UI bug on localhost and your AI agent fixes it",
+          "ph": "https://www.producthunt.com/products/pulsedev",
+          "site": "https://pulsedev.app",
+          "repo": null,
+          "rank": 8,
+          "score": 116,
+          "comments": 15,
+          "what": "macOS 应用：在本地运行的网页上点中出问题的元素、用一句话说要改成什么，交给 Claude Code、Codex、Gemini CLI 或 OpenCode 去改源码，在页面上审 diff 后才写入。",
+          "problem": "给 AI 描述 UI 问题要截图、写「那个按钮不对」，agent 常找错文件。",
+          "highlight": "点选元素时把选择器、页面和视口一起带给 agent；可 Shift 多选；改动在页面上实时显示，页内小窗里看 diff，Approve 才写文件，Reject 回滚，也可回复继续改。还能管理多个本地项目、自动挑端口起 dev server，有任务看板。官网称在本机运行、不经 PulseDev 云，用你已付费的 agent 订阅；免费起步，Pro 首发价 12 美元/月（原 18）。不开源，支持 Vue、React、纯 HTML。",
+          "inspo": "「反馈落在元素上」可以直接用在工作台的预览面板：用户点 DOM 元素，自动附上 selector、路由和视口发给 agent，比贴截图准。「先在页面上看效果、批准后才落盘」的 diff 审批也可借鉴。前提是工作台能托管或注入到被预览的本地页面里（它是在页面里插一个小部件）。",
+          "tags": [
+            "coding agent",
+            "开发者工具"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-27-overmind",
+          "name": "Overmind",
+          "tagline": "Open-source platform for continuous learning",
+          "ph": "https://www.producthunt.com/products/overmind-2",
+          "site": "https://overmindlab.ai",
+          "repo": "https://github.com/overmind-core/overmind",
+          "rank": 2,
+          "score": 293,
+          "comments": 74,
+          "what": "给 AI 团队的模型训练平台：把 agent 的生产 trace 变成评测集和训练数据，微调出自己拥有权重的小模型，并和现在用的模型对比。",
+          "problem": "agent 上线后出错难定位、效果会漂移，而且每个任务都用前沿大模型太贵。",
+          "highlight": "先扫仓库，生成 agent 的能力图（能力、提示词、工具、任务），再把 OpenTelemetry trace 打分并归到对应能力上；eval 绑定在线上 trace 上，随代码更新。「优化器」在你的仓库里跑提示词、工具和控制流实验，胜出方案以 git diff 交付。SDK/CLI 是 MIT，平台 AGPL-3.0 可自托管；有给 Cursor、Claude Code、OpenCode、Codex 用的 MCP server。抓取时 714 星。",
+          "inspo": "「从仓库扫出 agent 能力图，再把每条 trace 挂到能力节点上」适合工作台做 agent 可观测：按能力看失败率，而不是翻一长串日志。「优化结果是一份 git diff」也值得抄，让改进走正常代码评审。前提是 agent 的调用已经接了 OpenTelemetry 之类的 trace。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "开源"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-27-revix-ai",
+          "name": "Revix AI",
+          "tagline": "AI code review that learns your repo's own rules",
+          "ph": "https://www.producthunt.com/products/revix-ai-2",
+          "site": "https://www.revix.ai",
+          "repo": null,
+          "rank": 13,
+          "score": 107,
+          "comments": 10,
+          "what": "AI 代码评审：先读仓库、自己总结出模式和架构规则，再按这些规则评审每个 PR，随仓库变化继续学。",
+          "problem": "通用 AI 评审意见不懂这个仓库的做法，大家就不看了；AI 写代码变快，评审跟不上。",
+          "highlight": "每条评论写明依据哪条规则，并标注意图和严重度；规则可编辑、新增、停用。支持 GitHub、GitLab、Bitbucket Cloud。公开仓库免费，私有仓库 14 天试用，Pro 年付每席位每月 40 欧元。官网称代码不用于训练、每次评审后删除源码、Enterprise 有 SOC 2 Type II 和 ISO 27001，未独立验证。创始人说它看重的指标是「被采纳的评论数」。",
+          "inspo": "「评论必须引用一条有名字的规则」可以搬到工作台的 agent 评审里：规则清单先由 agent 从仓库里提出来、人确认后入库，评论按规则统计采纳率，没人采纳的规则就降级。前提是企业愿意维护一份规则库并给每条规则编号。",
+          "tags": [
+            "coding agent",
+            "开发者工具"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-27-spacesheep",
+          "name": "Spacesheep",
+          "tagline": "Documents of the future, made by AI, read by your team",
+          "ph": "https://www.producthunt.com/products/spacesheep",
+          "site": "https://spacesheep.dev",
+          "repo": null,
+          "rank": 3,
+          "score": 246,
+          "comments": 41,
+          "what": "让 AI 把工作成果发成一个「space」：可交互文档、实时看板、设计稿或小应用，分享给指定人、团队或公开，大家一起评论和修改。",
+          "problem": "agent 产出的长篇文字没人读得完，官网称有团队一周要读 26 小时 agent 写的文字。",
+          "highlight": "官网称 Claude Code、Codex、Cursor、ChatGPT、Grok 都能发布到同一个 space，也可用它自带的 AI（面板、Slack、Telegram）；在某一行评论里 @spacesheep，AI 当场改并出新版本；每个 space 和每个版本同步到你自己的 Google Drive 或 GitHub。YC F26，不开源（官网引用了一个 spacesheep-cli 仓库，抓取时无法访问）。",
+          "inspo": "对工作台：agent 的结果默认交一页「先给结论、数字放大、趋势画成图」的可视页，而不是长文本，评论直接挂在页面某行再回给 agent 改。对王玮的学习站和自媒体也适用。前提是有统一的版本记录，否则多人边评边改会乱。",
+          "tags": [
+            "AI工具",
+            "效率",
+            "创作"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-27-theysaid-4-0",
+          "name": "TheySaid 4.0",
+          "tagline": "See how users will react, right where you build",
+          "ph": "https://www.producthunt.com/products/theysaid",
+          "site": "https://theysaid.io",
+          "repo": null,
+          "rank": 1,
+          "score": 358,
+          "comments": 97,
+          "what": "用户测试平台：在 Claude、v0、Replit、Cursor、Lovable 里，或 Jira/Linear 工单设计完成时，自动把刚做的东西拿给真人或「合成用户」试用。",
+          "problem": "团队交付的设计、工单、PR 越来越多，但找用户验证要排期招募等两周，于是被跳过，创始人称之为「验证债」。",
+          "highlight": "4.0 新增合成用户：在屏幕上实际操作、边用边说；创始人称底座模型用 10 万小时以上真实可用性测试训练，再用你的通话录音、问卷、工单、CRM 数据调到像你的用户。创始人此前做过最早的 UserTesting。合成用户的准确度为厂商说法，未见独立验证。免费起步、无需信用卡。",
+          "inspo": "可借鉴的是触发点：把「拿去给用户试」挂在工单状态流转上自动跑，而不是靠人记得。工作台里可以对应成 PR 进入 review 时自动跑一轮可用性检查。前提是有可访问的预览环境；合成用户的结论只能当参考，不能代替真人。",
+          "tags": [
+            "AI工具",
+            "开发者工具"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-27-gpt-6-1-terra",
+          "name": "GPT-6.1 Terra",
+          "tagline": "Fast, capable computer use at half the price",
+          "ph": "https://www.producthunt.com/posts/gpt-6-1-terra-2",
+          "site": "https://openai.com",
+          "repo": null,
+          "rank": 17,
+          "score": 98,
+          "comments": 5,
+          "what": "OpenAI 的快速、低价模型，主打视觉推理、电脑操作（读屏幕、跨应用点按）和写作。",
+          "problem": "让 agent 操作电脑、填表、看图纸，用大模型又慢又贵。",
+          "highlight": "PH 介绍称：OpenAI 说它在 Agents' Last Exam 上追平 GPT-6 Astra，每 token 价格是十分之一、完成任务快 3 倍以上（厂商自测）；已在 ChatGPT Work、Codex 和 API（gpt-6.1-terra）上线。PH 评论里有用户说很快，但长任务需要多推几次才会继续。",
+          "inspo": "工作台可以按任务分级选模型：填表、点界面、跑固定流程这类电脑操作交给它，复杂改代码留给大模型，再用 eval 对比。前提是工作台支持按任务配置模型；王玮在 Codex 里用默认模型的规矩不变，这里只是给工作台的设计参考。",
+          "tags": [
+            "AI工具",
+            "coding agent"
+          ],
+          "status": "新发现",
+          "followups": []
+        }
+      ]
+    },
+    {
       "date": "2026-10-26",
       "source": "https://www.producthunt.com/leaderboard/daily/2026/10/26",
       "fetched": "2026-10-27 19:53 北京",
