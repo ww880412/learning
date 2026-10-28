@@ -89,7 +89,7 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
   <header class="doc-head">
     <span class="kicker">技术博客导读 · Holon 官方博客 · 发布日期未标注</span>
     <h1>AI 交付的四道验收防线：代码写得快了，瓶颈变成谁来验收</h1>
-    <p class="lede" id="h-lede">文章拿一个用 Holon 的工程团队做例子，讲代码写完之后，怎样分四道防线把改动验到「敢上线」。贯穿全文的规矩只有一条：结论以能复核的执行证据为准。</p>
+    <p class="lede" id="h-lede">文章拿一个用 Holon 的工程团队做例子，讲代码写完之后，怎样分四道防线把改动验到「敢上线」。贯穿全文的基本原则是三条：职责分离、标准统一、结论以能复核的执行证据为准。</p>
     <p class="links"><a href="https://holon.run/zh-CN/blog/ai-delivery-quality-and-verification">中文原文 <svg class="i i-external-link" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a><a href="https://holon.run/blog/ai-delivery-quality-and-verification">英文版 <svg class="i i-external-link" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a><span>本页导读约 15 分钟</span></p>
     <ul class="points">
       <li>先读每节标题，标题就是这一节的结论。</li>
@@ -98,8 +98,8 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
     </ul>
   </header>
   <div class="doc-body">
-    <figure class="figure orig" data-asset="a0002" data-points="p0002" id="e1"><img src="img/cover.webp" alt="AI 自动交付流质量与多层验收防线架构图"><figcaption><b>原图 1 · 题图</b> 原文题图：AI 自动交付流的多层验收防线架构。 <span class="source-anchor" data-source-section="s1">出处：Holon 官方博客《AI 自动交付流如何保证质量》 · <a href="https://holon.run/zh-CN/blog/ai-delivery-quality-and-verification">原图 1 · 原文开头</a></span><span class="how">怎么看：这是文章题图，具体每道防线在后面各节展开。</span></figcaption></figure>
-    <p data-points="p0003" id="e2">原文开头的导语把问题说得很直接：现在难的不是把代码写出来，而是有没有人来验、凭什么把它推上生产。案例团队的项目同时涉及跨端应用、硬件协议和服务端协作，文章就在这个背景下讨论四层验收。</p>
+    <figure class="figure orig" data-asset="a0002" data-points="p0002" id="e1"><img src="img/cover.webp" alt="AI 自动交付流质量与多层验收防线架构图"><figcaption><b>原图 1 · 题图</b> 原文题图（原文 alt：AI 自动交付流质量与多层验收防线架构图）。画面是四道依次排开的拱门，旁边的方块一道比一道颜色深，最后一道旁是蓝绿方块。 <span class="source-anchor" data-source-section="s1">出处：Holon 官方博客《AI 自动交付流如何保证质量》 · <a href="https://holon.run/zh-CN/blog/ai-delivery-quality-and-verification">原图 1 · 原文开头</a></span><span class="how">怎么看：这是文章题图，具体每道防线在后面各节展开。</span></figcaption></figure>
+    <p data-points="p0003" id="e2">原文开头的导语把问题说得很直接：现在难的不是把代码写出来，而是由谁来验收、凭什么敢把它推上生产。案例团队的项目同时涉及跨端应用、硬件协议和服务端协作，文章就在这个背景下讨论四层验收。</p>
     <h3>全文地图</h3>
     <nav class="argmap" aria-label="章节地图"><ol><li><a href="#s2">验收赤字：问题从哪来</a></li><li><a href="#s3">单 Agent 包办为什么不行</a></li><li><a href="#s4">第一道防线（上）：需求先进 Issue</a></li><li><a href="#s5">第一道防线（中）：本地写、公共审</a></li><li><a href="#s6">第一道防线（下）：QA 按改动分流</a></li><li><a href="#s7">模拟器：改动会被哪道防线拦下</a></li><li><a href="#s8">第二道防线：客诉排查</a></li><li><a href="#s9">第三道防线：长周期巡检</a></li><li><a href="#s10">第四道防线：端到端测试</a></li><li><a href="#s11">底座：等待时休眠，事件来了唤醒</a></li><li><a href="#s12">结语与阅读提示</a></li><li><a href="#s13">小测</a></li></ol></nav>
   </div>
@@ -115,9 +115,9 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
     <p data-points="p0005" id="e3">AI 编码工具普及以后，交付的难点换了位置。卡住团队的已经不是产出速度，而是两件事：怎么证明这批改动没有破坏原有功能，以及最终由谁为质量负责。</p>
     <div class="compare">
       <div><p data-points="p0006" id="e4"><b>上游</b><span>PR 一个接一个地进流水线，产得很快。</span></p></div>
-      <div><p data-points="p0006" id="e5"><b>下游</b><span>没有人有把握把这些 PR 发到生产环境。</span></p></div>
+      <div><p data-points="p0006" id="e5"><b>下游</b><span>往往面临一种新的困境：不敢轻易把这些 PR 推向生产环境。</span></p></div>
     </div>
-    <p data-points="p0007" id="e6">如果自动化只管提交代码，环境测试、审查、端到端验证、排障仍全压在人身上，那么前面省下的研发时间，会在后面的验收与排障里被吃掉。反过来，没有可靠验证就仓促发布，隐蔽的回归问题又会把系统拖垮。</p>
+    <p data-points="p0007" id="e6">如果自动化只管提交代码，环境测试、审查、端到端验证、排障仍全压在人身上，那么前面省下的研发时间，会在后面的验收与排障里被吃掉。反过来，没有可靠验证就仓促发布，系统也容易被隐蔽的回归问题很快拖垮。</p>
     <p class="callout key" data-points="p0008" id="e7">原文给这种「产出快于证明它没问题」的状态起了个名字：验收赤字（Verification Deficit），并说很多团队正处在其中。</p>
     <p data-points="p0009" id="e8">案例团队的项目很杂：服务端用 Node.js，底层通信库是 C++，客户端有 Swift 和 Kotlin 两套，还要对接音频硬件协议。他们结合日常跑 Agent 的经验，搭了四层验收防线，判断标准是客观的执行证据。</p>
     <p data-points="p0010" id="e9">全文要回答的问题是：代码写完以后，在没人盯着的情况下，系统怎么一步步稳妥地走到交付。</p>
@@ -174,7 +174,7 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
     <ul>
       <li data-points="p0029 p0030 p0031" id="e24"><b>编码 Agent（开发者本地）</b>：在开发者自己的环境里干活，借助 Git worktree 这类本地工作目录和调试工具，拆解局部任务、写代码、在本地把单元测试跑通。</li>
       <li data-points="p0029 p0030 p0031" id="e25"><b>Reviewer Agent（团队部署）</b>：不在开发者本地，跑在 CI 或服务端。它按架构边界、代码规范、兼容性风险、测试覆盖率这几项统一标准审 PR，给出疑点和代码证据，但<b>不直接改代码</b>。</li>
-      <li data-points="p0029 p0030 p0031" id="e26"><b>QA Agent（团队部署）</b>：按团队统一标准把质量关。它不听编码 Agent 的自我介绍，直接去拉原始需求或 Issue，按预设规则验证。</li>
+      <li data-points="p0029 p0030 p0031" id="e26"><b>QA Agent（团队部署）</b>：按团队统一标准把质量关。它不依赖编码 Agent 对自己工作的自我说明，直接去拉原始需求或 Issue，按预设规则验证。</li>
     </ul>
     <p class="callout key" data-points="p0032" id="e27">这样分工的好处：开发者在本地可以随意用 Agent 快速探索；一进入评审和集成，就换成统一标准的 Agent 把关，避免同一个 Agent 既当作者又当裁判。</p>
   </div>
@@ -188,12 +188,12 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
   </header>
   <div class="doc-body">
     <p data-points="p0034" id="e28">PR 准备好或已经合并后，QA Agent 接手。它不会让每个改动都去排耗时很长的全量测试，而是先看改动属于哪一类，再分流。</p>
-    <figure class="figure orig" data-asset="a0035" data-points="p0035" id="e29"><img src="img/diagram-1.png" alt="原文字符示意图：QA Agent 按改动性质分流（纯代码核对、独立环境动态验证、挂起等待部署、人工介入兜底）"><figcaption><b>原图 2 · QA Agent 的分流</b> 原文用字符画的分流图：合并后由 QA Agent 接收，分成三路，其中两路最后汇到人工兜底。 <span class="source-anchor" data-source-section="s7">出处：Holon 官方博客（原文字符示意图，按原网页渲染截取） · <a href="https://holon.run/zh-CN/blog/ai-delivery-quality-and-verification#验收的分流机制">原图 2 · 验收的分流机制</a></span><span class="how">怎么看：从上往下读；括号里是每一路做什么。④ 人工兜底接在动态验证和等待部署两路之后。</span></figcaption></figure>
+    <figure class="figure orig" data-asset="a0035" data-points="p0035" id="e29"><img src="img/diagram-1.png" alt="原文字符示意图：QA Agent 按改动性质分流（纯代码核对、独立环境动态验证、挂起等待部署、人工介入兜底）"><figcaption><b>原图 2 · QA Agent 的分流</b> 原文用字符画的分流图：合并后由 QA Agent 接收，图上画成三路，独立环境动态验证和挂起等待部署两路再接到「④ 人工介入兜底」。正文把人工兜底按改动性质（真实音频硬件、特定物理外设、主观体验）列为并列的第四类，所以本节按正文说「四路」。 <span class="source-anchor" data-source-section="s7">出处：Holon 官方博客（原文字符示意图，按原网页渲染截取） · <a href="https://holon.run/zh-CN/blog/ai-delivery-quality-and-verification#验收的分流机制">原图 2 · 验收的分流机制</a></span><span class="how">怎么看：从上往下读；括号里是每一路做什么。④ 人工兜底接在动态验证和等待部署两路之后。</span></figcaption></figure>
     <ol class="steps">
-      <li data-points="p0036 p0037 p0038 p0039" id="e30"><b>纯代码核对</b>：拿原始需求和业务契约对照代码，查改动有没有覆盖约定好的边缘分支和错误处理，有没有悄悄破坏别处的依赖。</li>
-      <li data-points="p0036 p0037 p0038 p0039" id="e31"><b>独立环境动态验证</b>：需要真实运行时才能验的，Agent 到隔离容器、测试数据集或手机模拟器里去跑。测试工具也可以让 Agent 自己写，例子见下方。</li>
-      <li data-points="p0036 p0037 p0038 p0039" id="e32"><b>挂起等版本和部署</b>：很多服务端修复要上到 Staging 环境或灰度环境才能验，客户端修复要等打包流水线出安装包。系统不靠反复轮询干等，而是把验收任务存下来挂起，等部署系统发出就绪事件，再精准唤醒对应任务去回测。</li>
-      <li data-points="p0036 p0037 p0038 p0039" id="e33"><b>人工兜底</b>：需要真机音频硬件、某些物理外设，或者要靠人主观感受的，Agent 先把版本号、复现步骤、前置条件、预期表现和关键疑点整理好，交给工程师做最后确认。</li>
+      <li data-points="p0036 p0037 p0038 p0039" id="e30"><b>纯代码核对（Code-level Audit）</b>：拿原始需求和业务契约对照代码，查改动有没有覆盖约定好的边缘分支和错误处理，有没有悄悄破坏别处的依赖。</li>
+      <li data-points="p0036 p0037 p0038 p0039" id="e31"><b>独立环境动态验证（Dynamic Verification）</b>：需要真实运行时才能验的，Agent 到隔离容器、测试数据集或手机模拟器里去跑。测试工具也可以让 Agent 自己写，例子见下方。</li>
+      <li data-points="p0036 p0037 p0038 p0039" id="e32"><b>挂起等版本和部署（Wait for Deployment）</b>：很多服务端修复要上到 Staging 环境或灰度环境才能验，客户端修复要等打包流水线出安装包。系统不靠反复轮询干等，而是把验收任务存下来挂起，等部署系统发出就绪事件，再精准唤醒对应任务去回测。</li>
+      <li data-points="p0036 p0037 p0038 p0039" id="e33"><b>人工兜底（Human Fallback）</b>：需要真机音频硬件、某些物理外设，或者要靠人主观感受的，Agent 先把版本号、复现步骤、前置条件、预期表现和关键疑点整理好，交给工程师做最后确认。</li>
     </ol>
     <blockquote class="quote"><p>代码合并并不等于发布，发布也不等于验证通过。</p><cite>Holon 官方博客，「挂起等待真实版本与部署」一条</cite><span class="source-anchor" data-source-section="s7"><a href="https://holon.run/zh-CN/blog/ai-delivery-quality-and-verification#验收的分流机制">验收的分流机制</a></span></blockquote>
     <h3>动态验证的一次真实实践</h3>
@@ -215,7 +215,7 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
   </header>
   <div class="doc-body">
     <p class="callout extra">补充：下面是学习搭子串起来的教学示例，不是原文的真实事故；每道防线的分工来自原文各节。</p>
-    <div class="sim"><script type="application/json">{"layout":"wide","label":"正常路径：改动通过","note":"教学示例，不是原文真实事故。防线和分工来自原文。","predict":"如果编码 Agent 理解错了需求，它写的测试还能拦住问题吗？","flow":{"pad":16,"nodes":[{"id":"is","x":70,"y":60,"t":"Issue","s":"可测试需求","c":"blue","w":110},{"id":"code","x":215,"y":60,"t":"编码 Agent","s":"本地","c":"amber","w":120},{"id":"rev","x":365,"y":60,"t":"Reviewer","s":"审 PR","w":110},{"id":"qa","x":510,"y":60,"t":"QA 分流","s":"①","c":"green","w":110},{"id":"e2e","x":655,"y":60,"t":"端到端","s":"④","c":"green","w":110},{"id":"pat","x":800,"y":60,"t":"巡检","s":"③","w":110},{"id":"ship","x":945,"y":60,"t":"人工门禁","s":"上线","c":"blue","w":120}],"edges":[{"f":"is","t":"code"},{"f":"code","t":"rev"},{"f":"rev","t":"qa"},{"f":"qa","t":"e2e"},{"f":"e2e","t":"pat"},{"f":"pat","t":"ship"}]},"steps":[{"act":"is","msg":{"r":"user","n":"需求","t":"写进 Issue：修复登录超时"},"say":"先有可测试的需求。"},{"act":"code","edge":"is>code","msg":{"r":"asst","n":"编码 Agent","t":"改代码，本地单元测试通过"},"say":"本地负责写和跑单测。"},{"act":"rev","edge":"code>rev","msg":{"r":"asst","n":"Reviewer","t":"没有疑点"},"say":"只提疑点，不改代码。"},{"act":"qa","edge":"rev>qa","msg":{"r":"tool","n":"QA","t":"对照 Issue，在模拟器里动态验证：通过"},"say":"QA 读原始需求，不读作者的说明。"},{"act":"e2e","edge":"qa>e2e","msg":{"r":"tool","n":"端到端","t":"全部通过"},"say":"上线前的最后一道测试。"},{"act":"pat","edge":"e2e>pat","msg":{"r":"tool","n":"巡检","t":"数小时内存、心跳正常"},"say":"长期运行没有异常。"},{"act":"ship","edge":"pat>ship","msg":{"r":"user","n":"工程师","t":"确认发布"},"say":"生产发布保留人工确认。"}],"alts":[{"label":"分支 A：测试迎合了错误理解","steps":[{"act":"code","msg":{"r":"asst","n":"编码 Agent","t":"代码和测试都按错的理解写，CI 绿"},"say":"盲区共享。"},{"act":"qa","edge":"rev>qa","msg":{"r":"err","n":"QA","t":"对照 Issue：缺一个约定的错误分支"},"say":"QA 用独立的需求做标准，拦下了。"}]},{"label":"分支 B：运行数小时后才出现的泄漏","steps":[{"act":"e2e","msg":{"r":"tool","n":"端到端","t":"短时运行全部通过"},"say":"短测试暴露不了。"},{"act":"pat","edge":"e2e>pat","msg":{"r":"err","n":"巡检","t":"进程内存持续上升 → 带内存快照提 Issue"},"say":"长周期巡检拦下。"}]},{"label":"分支 C：界面改了，用例过时","steps":[{"act":"e2e","msg":{"r":"err","n":"端到端","t":"用例失败"},"say":"失败不一定是 Bug。"},{"act":"e2e","msg":{"r":"asst","n":"看护 Agent","t":"比对变更和 PR 契约：是正常路径变更 → 更新用例"},"say":"判定为用例漂移，自动更新。"}]},{"label":"分支 D：要真实音频硬件才能验","steps":[{"act":"qa","msg":{"r":"sys","n":"QA","t":"模拟器无法覆盖硬件"},"say":"转人工兜底。"},{"act":"ship","msg":{"r":"user","n":"工程师","t":"按 Agent 整理的复现步骤在真机上确认"},"say":"Agent 备好版本号、步骤、预期和疑点。"}]}]}</script></div>
+    <div class="sim"><script type="application/json">{"layout":"wide","label":"正常路径：改动通过","note":"教学示例，不是原文真实事故。防线和分工来自原文。","predict":"如果编码 Agent 理解错了需求，它写的测试还能拦住问题吗？","flow":{"pad":16,"nodes":[{"id":"is","x":70,"y":60,"t":"Issue","s":"可测试需求","c":"blue","w":110},{"id":"code","x":215,"y":60,"t":"编码 Agent","s":"本地","c":"amber","w":120},{"id":"rev","x":365,"y":60,"t":"Reviewer","s":"审 PR","w":110},{"id":"qa","x":510,"y":60,"t":"QA 分流","s":"①","c":"green","w":110},{"id":"e2e","x":655,"y":60,"t":"端到端","s":"④ 上线前最后一道","c":"green","w":150},{"id":"ship","x":820,"y":60,"t":"人工门禁","s":"生产发布审批","c":"blue","w":130},{"id":"hf","x":510,"y":170,"t":"人工兜底","s":"QA 分流的一类","w":130},{"id":"pat","x":690,"y":170,"t":"巡检","s":"③ 常驻环境定期查","w":160}],"edges":[{"f":"is","t":"code"},{"f":"code","t":"rev"},{"f":"rev","t":"qa"},{"f":"qa","t":"e2e"},{"f":"e2e","t":"ship"},{"f":"qa","t":"hf"}]},"steps":[{"act":"is","msg":{"r":"user","n":"需求","t":"写进 Issue：修复登录超时"},"say":"先有可测试的需求。"},{"act":"code","edge":"is>code","msg":{"r":"asst","n":"编码 Agent","t":"改代码，本地单元测试通过"},"say":"本地负责写和跑单测。"},{"act":"rev","edge":"code>rev","msg":{"r":"asst","n":"Reviewer","t":"没有疑点"},"say":"只提疑点，不改代码。"},{"act":"qa","edge":"rev>qa","msg":{"r":"tool","n":"QA","t":"对照 Issue，在模拟器里动态验证：通过"},"say":"QA 读原始需求，不读作者的说明。"},{"act":"e2e","edge":"qa>e2e","msg":{"r":"tool","n":"端到端","t":"全部通过"},"say":"上线前的最后一道防线。"},{"act":"ship","edge":"e2e>ship","msg":{"r":"user","n":"工程师","t":"确认发布"},"say":"生产发布保留人工审批门禁（和 QA 分流里的人工兜底是两回事）。"}],"alts":[{"label":"分支 A：测试迎合了错误理解","steps":[{"act":"code","msg":{"r":"asst","n":"编码 Agent","t":"代码和测试都按错的理解写，CI 绿"},"say":"盲区共享。"},{"act":"qa","edge":"rev>qa","msg":{"r":"err","n":"QA","t":"对照 Issue：缺一个约定的错误分支"},"say":"QA 用独立的需求做标准，拦下了。"}]},{"label":"分支 B：运行数小时后才出现的泄漏","steps":[{"act":"e2e","msg":{"r":"tool","n":"端到端","t":"短时运行全部通过"},"say":"短测试暴露不了。"},{"act":"pat","msg":{"r":"err","n":"巡检","t":"常驻测试环境挂机数小时：进程内存持续上升 → 带内存快照提 Issue"},"say":"巡检不是逐个改动的关卡，而是对长期运行环境的定期检查，在上线前把隐患揪出来。"}]},{"label":"分支 C：界面改了，用例过时","steps":[{"act":"e2e","msg":{"r":"err","n":"端到端","t":"用例失败"},"say":"失败不一定是 Bug。"},{"act":"e2e","msg":{"r":"asst","n":"看护 Agent","t":"比对变更和 PR 契约：是正常路径变更 → 更新用例"},"say":"判定为用例漂移，自动更新。"}]},{"label":"分支 D：要真实音频硬件才能验","steps":[{"act":"qa","msg":{"r":"sys","n":"QA","t":"模拟器无法覆盖硬件"},"say":"转人工兜底。"},{"act":"hf","edge":"qa>hf","msg":{"r":"user","n":"工程师","t":"按 Agent 整理的复现步骤在真机上做最终确认"},"say":"Agent 备好版本号、步骤、预期和疑点。"}]}]}</script></div>
   </div>
   <div class="src extra">补充：教学示例；防线分工见原文各节</div>
 </section>
@@ -227,9 +227,9 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
   </header>
   <div class="doc-body">
     <p data-points="p0041" id="e35">iOS、Android、桌面端多端协作时，现场偶尔冒出来的故障，查起来往往很贵。</p>
-    <p data-points="p0042" id="e36">传统路线很长：用户找客服，客服转技术支持，技术支持再给研发提单排期。等研发去调现场环境和日志，常常已经过了好几天，用户早走了，现场也没了。</p>
+    <p data-points="p0042" id="e36">传统路线很长：用户找客服，客服转技术支持，技术支持再给研发提单排期。等研发去调现场环境和日志，常常已经过了好几天，用户可能早已离开，现场也没了。</p>
     <p data-points="p0043" id="e37">案例团队把这条路换成了一条自动化排查链路：</p>
-    <figure class="figure orig" data-asset="a0044" data-points="p0044" id="e38"><img src="img/diagram-2.png" alt="原文字符示意图：客诉排查链路（上报 → 排查 Agent → 两路日志 → 根因 → 结构化 Issue 与客服回传）"><figcaption><b>原图 3 · 客诉排查链路</b> 原文字符图：上报自动带上状态和 Trace ID，排查 Agent 并行调两路日志，定位根因后分别产出 Issue 和给客服的建议。 <span class="source-anchor" data-source-section="s8">出处：Holon 官方博客（原文字符示意图，按原网页渲染截取） · <a href="https://holon.run/zh-CN/blog/ai-delivery-quality-and-verification#第二道防线现场故障与客诉排查闭环">原图 3 · 第二道防线</a></span><span class="how">怎么看：中间分叉的两路是客户端日志和服务端链路日志；最下面两个产出，一个给研发，一个给客服。</span></figcaption></figure>
+    <figure class="figure orig" data-asset="a0044" data-points="p0044" id="e38"><img src="img/diagram-2.png" alt="原文字符示意图：客诉排查链路（上报 → 排查 Agent → 两路日志 → 根因 → 结构化 Issue 与客服回传）"><figcaption><b>原图 3 · 客诉排查链路</b> 原文字符图：上报自动带上状态和 Trace ID，排查 Agent 分两路调取日志（客户端日志、服务端链路日志），汇总后定位异常与根因，再分别产出结构化 Issue（环境、堆栈、影响版本）和回传给客服的分析建议（排查结论、临时应对方案）。 <span class="source-anchor" data-source-section="s8">出处：Holon 官方博客（原文字符示意图，按原网页渲染截取） · <a href="https://holon.run/zh-CN/blog/ai-delivery-quality-and-verification#第二道防线现场故障与客诉排查闭环">原图 3 · 第二道防线</a></span><span class="how">怎么看：中间分叉的两路是客户端日志和服务端链路日志；最下面两个产出，一个给研发，一个给客服。</span></figcaption></figure>
     <ol class="steps">
       <li data-points="p0045 p0046 p0047 p0048" id="e39"><b>上报即触发</b>：客户端报故障或客服建单时，事件会自动带上当时的运行状态、版本信息和会话 Trace ID，排查 Agent 随之启动。</li>
       <li data-points="p0045 p0046 p0047 p0048" id="e40"><b>跨端对时间线</b>：Agent 拉出同一时间窗口里的客户端堆栈，以及服务端（Node.js）的链路日志，排成时间线去判断原因是网络抖了、接口出错、蓝牙协议握手超时，还是本地状态对不上。</li>
@@ -246,7 +246,7 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
     <h2>有些缺陷只在环境跑了几个小时后才出现，要靠常驻环境去巡</h2>
   </header>
   <div class="doc-body">
-    <p data-points="p0050" id="e43">原文认为最难缠的缺陷，往往不是每次都会出现的崩溃，而是藏得很深、随时间才冒出来的动态问题：</p>
+    <p data-points="p0050" id="e43">原文认为最难缠的缺陷，往往不是每次都会出现的崩溃，而是藏在深水区的动态问题：</p>
     <ul>
       <li data-points="p0051 p0052 p0053 p0054" id="e44">跑了几个小时之后出现的轻微内存泄露；</li>
       <li data-points="p0051 p0052 p0053 p0054" id="e45">网络波动时，WebSocket 或跨端长连接不报错、却悄悄卡死；</li>
@@ -266,7 +266,7 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
       <li data-points="p0059 p0060 p0061 p0062" id="e55">跨端长连接的双向心跳和重连是否正常；</li>
       <li data-points="p0059 p0060 p0061 p0062" id="e56">日志里那些偶尔出现、又不让程序停下的警告和隐性错误。</li>
     </ol>
-    <p data-points="p0063" id="e57">原文把这叫「巡警机制」：隐患多半在测试环境长时间挂机时就被揪出来，巡检 Agent 会自动附上内存快照和指标曲线去提 Issue，赶在上线前处理掉。</p>
+    <p data-points="p0063" id="e57">原文把这叫「巡警机制」：深水区隐患多半在测试环境长时间挂机时就被揪出来，巡检 Agent 会自动附上内存快照和指标曲线去提 Issue，赶在上线前处理掉。</p>
   </div>
   <div class="src article">原文 <span class="source-anchor" data-source-section="s9"><a href="https://holon.run/zh-CN/blog/ai-delivery-quality-and-verification#第三道防线长周期环境与活跃实例巡检">第三道防线：长周期环境与活跃实例巡检</a></span></div>
 </section>
@@ -309,7 +309,7 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
   <div class="doc-body">
     <p data-points="p0080" id="e70">回头看前面几种把关：部署完再唤醒去验收，线上出故障时跨端去查，测试实例挂着长期巡，E2E 用例有人看护、能自己修。原文认为，这些都很难靠一个只跑一次的聊天脚本，或一个简单的命令行死循环来可靠地撑住。</p>
     <p data-points="p0081" id="e71">原文把这套防线能长期运转，归功于 Holon 在底座上的支撑，并画了三层：</p>
-    <figure class="figure orig" data-asset="a0082" data-points="p0082" id="e72"><img src="img/diagram-3.png" alt="原文字符示意图：系统底座三层（Agent 职责与身份、任务状态与证据持久化、事件驱动内核 Wait / Wake）"><figcaption><b>原图 4 · 系统底座三层</b> 原文字符图：上层是 Agent 的独立职责与身份，中层是任务状态与执行证据的持久化，底层是事件驱动内核（Wait / Wake）。 <span class="source-anchor" data-source-section="s13">出处：Holon 官方博客（原文字符示意图，按原网页渲染截取） · <a href="https://holon.run/zh-CN/blog/ai-delivery-quality-and-verification#支撑防线落地的系统底座为什么需要事件驱动机制">原图 4 · 系统底座</a></span><span class="how">怎么看：从上往下，每层括号里写的是这一层管什么；最底层列出了会唤醒模型的事件。</span></figcaption></figure>
+    <figure class="figure orig" data-asset="a0082" data-points="p0082" id="e72"><img src="img/diagram-3.png" alt="原文字符示意图：系统底座三层（Agent 职责与身份、任务状态与证据持久化、事件驱动内核 Wait / Wake）"><figcaption><b>原图 4 · 系统底座三层</b> 原文字符图：上层「Agent 独立职责与身份划分」（岗位职责明确、工具授权与边界隔离），中层「任务状态与执行证据持久化」（目标、执行进度、验证证据与等待原因），底层「事件驱动内核（Wait / Wake）」（部署完成、客诉上报、定时巡检唤醒模型）。 <span class="source-anchor" data-source-section="s13">出处：Holon 官方博客（原文字符示意图，按原网页渲染截取） · <a href="https://holon.run/zh-CN/blog/ai-delivery-quality-and-verification#支撑防线落地的系统底座为什么需要事件驱动机制">原图 4 · 系统底座</a></span><span class="how">怎么看：从上往下，每层括号里写的是这一层管什么；最底层列出了会唤醒模型的事件。</span></figcaption></figure>
     <ul>
       <li data-points="p0083 p0084 p0085 p0086" id="e73"><b>工作周期和会话分开</b>：任务要继续推进，不必让模型进程一直空转。碰到等待条件，比如等打包、等线上日志、等定时器，Agent 就挂起休眠，把资源让出来。</li>
       <li data-points="p0083 p0084 p0085 p0086" id="e74"><b>状态和证据存下来</b>：执行步骤、任务目标、中间证据和挂起原因都持久保存，不放在临时内存里。等了几个小时，或者环境重启过，唤醒后照样能接着已有记录往下做。</li>
@@ -328,7 +328,7 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
   </header>
   <div class="doc-body">
     <blockquote class="quote"><p>缺少质量验证的高速产出，往往只是在更快地累积技术债务。</p><cite>Holon 官方博客，结语</cite><span class="source-anchor" data-source-section="s14"><a href="https://holon.run/zh-CN/blog/ai-delivery-quality-and-verification#结语从代码生成走向工程闭环">结语</a></span></blockquote>
-    <p data-points="p0088" id="e77">原文的判断是：代码生成快了很多，但软件工程的基本规律没有变，没有验证的高速产出只会更快地堆技术债。</p>
+    <p data-points="p0088" id="e77">原文的判断是：代码生成快了很多，但软件工程的基本规律没有变，没有验证的高速产出，往往只是在更快地累积技术债。</p>
     <p data-points="p0089" id="e78">所以团队要的不是只会吐代码的工具，而是一套能留证据、边界清楚、能严格把验收执行下去的自动交付体系。</p>
     <p data-points="p0090" id="e79">解决验收赤字，既不是让工程师在下游疲于救火，也不是指望一个模型在封闭会话里包办一切。原文给的路是四件事合起来：角色分清楚，现场故障自动去查，长周期巡检变成日常，端到端测试能自愈也能裁决，让验收真正进到交付闭环里。</p>
     <p class="callout key" data-points="p0091" id="e80">落脚点：系统能拿出确凿的执行证据，回答「这个改动为什么敢上线」，自动交付才算有了稳的立足点。</p>

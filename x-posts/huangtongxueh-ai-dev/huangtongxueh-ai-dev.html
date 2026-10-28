@@ -107,11 +107,11 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
 <section class="sec" data-toc="背景：为什么换做法" id="s2" data-source-section="s2">
   <header class="doc-head"><span class="kicker">缘起</span><h2>模型变强以后，套得很死的流程反倒干扰它</h2></header>
   <div class="doc-body">
-    <p data-points="p0004" id="e2">写这篇的契机，是作者和直属老板聊过几次 one-on-one。老板好奇他平时怎么用 AI、个人 Harness 怎么搭、写代码的流程是什么样，因为他现在交付快、质量也好，已经在几个项目里当主 O。他的日常工作一半是 Agent 开发，一半是维护原有的后端服务。</p>
+    <p data-points="p0004" id="e2">写这篇的契机，是作者和直属老板聊过几次 one-on-one。老板好奇他平时怎么用 AI、个人 Harness 怎么搭、写代码的流程是什么样，因为他现在交付快、质量也好，已经在几个项目里当主 O。他目前在组里主要做 Agent 开发，同时维护原有的后端业务。</p>
     <p data-points="p0005" id="e3">更早他在小红书讲过一版流程。那时的判断是：只要上下文准、约束合理，GPT-5.4、Opus 4.6 这一代模型就能把活干好；Harness Engineering 流行起来，也让人相信「多加约束」是驾驭强模型的办法。</p>
     <p data-points="p0006" id="e4">Superpowers 一类的 Skill 就是这种思路的代表：分量很重，以 Spec 加 TDD 为骨架，帮人把任务组织起来一步步推进。</p>
     <p class="callout limit" data-points="p0007" id="e5">代价是：Token 烧得很快。这类 Skill 里写满了规定模型「下一步做什么」的固定环节；就算整体看来某一步已经多余，例如背景信息早就够、完全可以动手写了，模型也可能照着既定环节继续往下走。</p>
-    <p data-points="p0008" id="e6">新一代模型出来后，作者看到很多开发者说自己几乎不再用这种重型 Skill。关键原因在于能力上来以后，从前帮得上忙的约束和环节，开始对模型构成干扰。他举的例子：OpenAI 推出 Astra 时专门发了一篇博客，教大家删掉多余的 Skill 和系统提示词，让模型用起来更顺。</p>
+    <p data-points="p0008" id="e6">新一代模型出来后，作者看到很多开发者说自己几乎不再用这种重型 Skill。一个主要原因是能力上来以后，一些原本被认为有用的约束和流程，开始变成模型的噪声。他举的例子：OpenAI 推出 Astra 时专门发了一篇博客，教大家删掉多余的 Skill 和系统提示词，让模型用起来更顺。</p>
     <p data-points="p0009" id="e7">于是这篇就拿他近几个月的实践说话，讲目前在他手上管用的办法：怎么把各种 Agent 用好，让每天的开发更快。</p>
   </div>
   <div class="src article">原文 <span class="source-anchor" data-source-section="s2"><a href="https://x.com/huangtongxueh/article/2108577165306687938">背景</a></span></div>
@@ -122,7 +122,7 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
   <div class="doc-body">
     <ul>
       <li data-points="p0012" id="e8"><b>写代码</b>用 Codex 跑 GPT-5.6 Sol；<b>做规划</b>用 Astra。Astra 上线之前，规划这块由 GPT-5.6 Sol 的 Max 档承担。</li>
-      <li data-points="p0013" id="e9"><b>小需求</b>交给 DeepSeek V4 Flash（跑在 pi 里）；<b>给方案挑刺、审代码</b>主要靠 Claude 5 Fable；<b>自己的项目</b>里，大的方案设计会放到网页版 GPT-6 Pro 上做。</li>
+      <li data-points="p0013" id="e9"><b>小需求</b>交给 DeepSeek V4 Flash（跑在 pi 里）；<b>给方案挑刺、审代码</b>主要靠 Claude 5 Fable；<b>自己的项目</b>里，主要的方案设计会放到网页版 GPT-6 Pro 上做。</li>
     </ul>
   </div>
   <div class="src article">原文 <span class="source-anchor" data-source-section="s3"><a href="https://x.com/huangtongxueh/article/2108577165306687938">第一节标题</a></span> · <span class="source-anchor" data-source-section="s4"><a href="https://x.com/huangtongxueh/article/2108577165306687938">工具分工</a></span></div>
@@ -195,18 +195,18 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
 </section>
 
 <section class="sec" data-toc="日常开发工作流" id="s7" data-source-section="s7">
-  <header class="doc-head"><span class="kicker">第二节 · 工作流</span><h2>问到不再改变方向就动手；每个小增量都过审查、端到端测试和小 MR</h2></header>
+  <header class="doc-head"><span class="kicker">第二节 · 工作流</span><h2>问到不再显著改变方向就动手；每个小增量都过审查、端到端测试和小 MR</h2></header>
   <div class="doc-body">
 <figure class="figure orig" data-asset="a0072" data-points="p0072" id="e46"><img src="img/HUMmtMAaIAE2_SS.jpg" alt="图像"><figcaption><b>原图 3 · 我的日常 AI 开发工作流（第二节配图）</b> 和题图是同一张流程，这一版更接近方形、字也更大：上半是对齐需求与方案，下半是每个能单独验收的小增量反复走的循环，图底写着「小 MR + 逐步端到端测试」。 <span class="source-anchor" data-source-section="s7"><a href="https://x.com/huangtongxueh/article/2108577165306687938">出处：黄同学h 的 X 长文 · 原图 3 · 第二节开头</a></span><span class="how">怎么看：按编号读：①只走一次，②对每个增量重复。</span></figcaption></figure>
     <h3>对齐需求</h3>
     <p data-points="p0073" id="e47">需求到手，作者先把手上的背景材料（PRD、会议纪要、聊天记录、用户反馈）一股脑交给 Agent，再借 grill 和它一起把需求对清楚。</p>
     <p data-points="p0074" id="e48">这些材料往往不是一份完整、一致的需求，常常彼此打架：PRD 没跟上，会上又加了限制，聊天里优先级还改过；连他自己的理解里都可能夹着没讲出口的前提。</p>
     <p data-points="p0075" id="e49">他让 Agent 参照团队 Wiki 和现有代码去读懂材料，然后一轮轮追问，把会左右实现的目标、边界和取舍问清楚。能当场答的他就答，答不了的回头去问产品或相关同事。</p>
-    <p class="callout key" data-points="p0076" id="e50">何时停：剩下的疑问已经改变不了实现方向，也影响不了验收结果，就开工。</p>
+    <p class="callout key" data-points="p0076" id="e50">何时停：剩下的疑问已经不会显著改变实现方向和验收结果，就开工。</p>
     <p data-points="p0077" id="e51">他不要求 Agent 事先把实现细节全部想好，不然「对齐」本身又成了一套笨重的流程。</p>
     <p data-points="p0078" id="e52">对齐的结论写进 Spec 或 CONTEXT.md：记下要解决什么、范围多大、做了哪些关键决定、怎么验收。后面写代码和审代码的 Agent 都读这一份，不必再翻完之前所有对话。</p>
     <h3>实现、审查、交付</h3>
-    <p data-points="p0079" id="e53">方案敲定后，交给主 Agent 按复杂度安排：小需求直接写；大需求切成边界清晰、各自能验收的 Issue。只有真能独立推进的部分，才分给 subagent 在各自的 worktree 里并行做，最后由主 Agent 合起来。</p>
+    <p data-points="p0079" id="e53">方案敲定后，交给主 Agent 按复杂度安排：简单需求直接写；复杂需求切成边界清晰、各自能独立验收的 Issue。只有真能独立推进的部分，才分给 subagent 在各自的 worktree 里并行做，最后由主 Agent 合起来。</p>
     <p data-points="p0080" id="e54">写代码的 Agent 自己先把测试跑完；等它觉得能交了，作者再视复杂度请别的 Agent 来交叉挑刺。挑出来的问题一律回给主力 Codex，由它改完再验。</p>
     <p data-points="p0081" id="e55">在作者本人动手审之前，还要先过一遍端到端测试。</p>
     <p data-points="p0082" id="e56">生成的代码他现在并不逐行读，重点看测试结果和核心业务逻辑。能这么做有个关键前提：每个 MR 都切得够小，而且开发过程中一步步把完整业务路径验过。</p>
@@ -256,7 +256,7 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
   <header class="doc-head"><span class="kicker">第四节 · 审查</span><h2>先对验收标准和测试结果，再顺着业务路径盯高风险的地方</h2></header>
   <div class="doc-body">
     <p data-points="p0103" id="e75">前面讲的是怎么让 AI 产出好代码；可归根结底，对业务需求负第一责任的还是开发者本人。</p>
-    <p data-points="p0104 p0105" id="e76">不审，大系统里迟早出事。作者打了个比方：谁也不想深夜被 On-call 叫醒，查到最后发现是 AI 的代码惹的祸。</p>
+    <p data-points="p0104 p0105" id="e76">不审，大系统里很容易出问题。作者说：谁也不想半夜被叫起来 On-call，查到最后发现是 AI 的代码惹的祸。</p>
     <p data-points="p0106" id="e77">他现在审代码有四条做法：</p>
     <ol>
       <li data-points="p0107 p0108 p0109 p0110" id="e78"><b>先对验收标准，再看测试结果</b>：先检查 Agent 列出的验收标准，再拿端到端测试结果去对，看是否达标、有无遗漏。光数通过了几条不够，要看这些测试有没有测到需求真正在意的东西。</li>
@@ -278,7 +278,7 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
     <p data-points="p0116" id="e86">Review Bot 能在这上面帮忙，但衡量它要看是否少漏了真问题、是否减轻了人的负担，而不是看它留了多少条评论。</p>
     <p data-points="p0117" id="e87">这些经历也让作者把 Harness 想得更具体：除了喂给 Agent 对的上下文，还得给它一个能真正执行任务的环境，以及评判结果对错的依据。</p>
     <p data-points="p0118" id="e88">他把自测中反复做的操作沉淀成 CLI、脚本和 Skill，让 Agent 可以自己运行系统、检查结果、找到失败证据；以后碰到同类任务可以接着用，也能慢慢交给组里其他人。</p>
-    <p data-points="p0119 p0120" id="e89">与此同时，这套流程也得隔段时间瘦一次身。有的环节只是在补某一代模型的短板，模型换代后就要重新评估它还值不值：小事直接做，大事再加规划、拆分和交叉审。比如 Astra 更新后，他就从 AGENTS.md 里删掉了几条过严的约束。模型在变，流程也得跟着变。</p>
+    <p data-points="p0119 p0120" id="e89">与此同时，这套流程也得隔段时间瘦一次身。有的环节只是在补某一代模型的短板，模型换代后就要重新评估它还值不值：简单任务直接做，复杂任务再加规划、拆分和交叉审查。比如 Astra 更新后，他就从 AGENTS.md 里删掉了几条过严的约束。模型在变，流程也得跟着变。</p>
     <p class="callout limit" data-points="p0121" id="e90">作者也说了局限：测试和审查能压低不确定性，但验收标准仍得由人来给对。代码和测试彼此吻合，也可能是两者一起理解错了需求；端到端测试只管得到选定的环境和场景，线上的流量、并发、数据分布仍可能冒出新问题。</p>
     <p data-points="p0122 p0123" id="e91">作为工作没多久的新人，他很想在岗位上多积累专业知识；可 AI 也拿走了一部分亲身踩坑的机会。有些原本需要经历问题、排查原因才能换来的宝贵经验，现在可能只剩 AI 一句「我错了，现在修改一下」。</p>
     <p data-points="p0124 p0125" id="e92">因此他每天会从开发时间里抽一块出来学习和复盘，也在想：AI 时代，做研发的人到底需要什么能力。</p>

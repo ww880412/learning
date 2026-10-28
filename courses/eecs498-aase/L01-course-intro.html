@@ -97,7 +97,7 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
   <span class="kicker">开场</span>
   <h2>先原则，最后才是工具</h2>
   <p id="e2" data-points="p0004 p0005 p0006 p0007">开场两页只有一句话：先是「Smile.」，再补上「You belong here.」。讲者备注说，第一页要真的等学生笑出来，依据是具身认知：姿态和表情会影响认知表现。第二页让学生转向邻座说这句话，然后马上往下讲。</p>
-  <p id="e3" data-points="p0008 p0009 p0010 p0011 p0012 p0013 p0014 p0015 p0016">路线图写着 80 分钟，共 7 段：一个对象三个动词（One object, three verbs）、课程怎么运行（How this course runs）、AI 编程的发展（到 2026 年走到了哪里）、Code Curator 理念、两个讨论题（Discussion）、工具 Aider、本周任务（<code>aider-practice</code>、setup gate、你要做的项目）。</p>
+  <p id="e3" data-points="p0008 p0009 p0010 p0011 p0012 p0013 p0014 p0015 p0016">路线图写着 80 分钟，共 7 段：一个对象三个动词（One object, three verbs）、课程怎么运行（How this course runs）、AI 编程的发展（到 2026 年走到了哪里）、Code Curator 理念、两个讨论题（Discussion）、工具 Aider 以及用起来是什么感觉、本周任务（<code>aider-practice</code>、setup gate、你要做的项目）。</p>
   <p class="callout key" id="e4" data-points="p0017">讲者备注特意强调：工具放在最后。先讲原则，再拿到工具。</p>
   <p class="src official">课件页： <span class="source-anchor" data-source-section="s1"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：Course intro + the AI coding landscape</a></span> <span class="source-anchor" data-source-section="s2"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：Lecture 01 · Sep 1, 2026</a></span> <span class="source-anchor" data-source-section="s3"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：Where we're headed today</a></span></p>
 </section>
@@ -108,7 +108,7 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
   <p id="e5" data-points="p0018 p0019 p0020 p0021 p0022">课程分 Apply、Analyze、Create 三段，共 15 周。三段对着同一个对象：一个编码智能体。</p>
   <ul>
     <li id="e6" data-points="p0023"><b>Apply（第 1–3 周）用它：</b>用 Aider 连你自己部署的模型端点，做出一个结对程序员（pair programmer）。</li>
-    <li id="e7" data-points="p0024"><b>Analyze（第 4–7 周）拆它：</b>把你自己移出循环，研究工具和停止条件，然后测量哪里坏了。</li>
+    <li id="e7" data-points="p0024"><b>Analyze（第 4–7 周）分析它：</b>把你自己移出循环，给它加上工具和停止条件，然后测量哪里坏了。</li>
     <li id="e8" data-points="p0025"><b>Create（第 8–15 周）造它：</b>把它长成助手，加上记忆、方法，以及一个不是终端的使用渠道。</li>
   </ul>
   <figure class="figure orig" data-asset="b0026" id="e9" data-points="p0026"><img src="L01-img/p06.png" alt="幻灯片第 6 页：One object. Three verbs."><figcaption><b>原图 1 · 一个对象，三个动词</b> <span class="source-anchor">出处：Marcus Darden · EECS 498 L01 slides · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.pdf">第 6 页</a></span><span class="how">怎么看：Create 一栏用了琥珀色，讲者备注说它是终点，是这一页的重点。</span></figcaption></figure>
@@ -231,13 +231,13 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
 <section class="sec" id="s11" data-source-section="s25" data-toc="Bad 与 Good 提示词">
   <span class="kicker">KISS 的例子</span>
   <h2>好提示词写出测试名、输入和期望行为</h2>
-  <p id="e46" data-points="p0102 p0103">KISS 之后，讲者切到浏览器做了一次 PollEv 投票。备注说要把问题和四个选项都念出来，给大约 60 秒（~60s），再回到课件；课件没有给出题目内容。</p>
+  <p id="e46" data-points="p0102 p0103">KISS 之后，讲者切到浏览器做了一次 PollEv 投票。备注说要把问题和四个选项都念出来，给大约 60 秒（~60s），展示投票结果，再回到课件；课件没有给出题目内容。</p>
   <p id="e47" data-points="p0104 p0105 p0106">Bad 一栏有两个例子。写新东西时，提示词绕了一大圈：先客气地请求，再把实现步骤一条条说出来，最后自己又犹豫要不要用列表推导式。</p>
   <p id="e48" data-points="p0107 p0108">追一个失败时，Bad 的写法是猜：是日期的问题？还是时区？然后让模型「just make it work」。</p>
   <p id="e49" data-points="p0109 p0110 p0111">Good 一栏写新东西只用一句：提取列表里的偶数。</p>
   <p id="e50" data-points="p0112 p0113">Good 一栏追失败时，先写明 <code>test_parse_date</code> 在输入 2026-02-30 上失败，再要求 <code>parse_date</code> 遇到无效日期时抛 <code>ValueError</code>，而不是返回 <code>None</code>。这一句写出了 4 样东西：哪个测试、哪个输入（2026-02-30）、期望行为、现在的错误行为。</p>
   <figure class="figure orig" data-asset="b0114" id="e51" data-points="p0114"><img src="L01-img/p23.png" alt="幻灯片第 23 页：Bad 与 Good 提示词"><figcaption><b>原图 5 · Bad 与 Good 提示词全文</b> <span class="source-anchor">出处：Marcus Darden · EECS 498 L01 slides · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.pdf">第 23 页</a></span><span class="how">怎么看：左右各两个框，上面是写新东西，下面是追一个失败。四段提示词原文都在图里。</span></figcaption></figure>
-  <p class="callout key" id="e52" data-points="p0115">讲者备注：B 一栏几乎总是得到更好的结果，模型会推断剩下的部分。多加附带说明只会叠加歧义，不会消除歧义。</p>
+  <p class="callout key" id="e52" data-points="p0115">讲者备注：「B 几乎总是得到更好的结果，模型会推断剩下的部分。」原文只写了 B，没说指哪一项（可能是 PollEv 四个选项里的 B），这里不替它下结论。多加附带说明只会叠加歧义，不会消除歧义。</p>
   <p class="src official">课件页： <span class="source-anchor" data-source-section="s24"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：PollEv</a></span> <span class="source-anchor" data-source-section="s25"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：Bad</a></span> <span class="source-anchor" data-source-section="s26"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L01/slides.md">出处：Good</a></span></p>
 </section>
 
@@ -269,7 +269,7 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
 
 <section class="sec" id="s14" data-source-section="s33" data-toc="为什么用 Aider">
   <span class="kicker">工具 · 教学上的选择</span>
-  <h2>选 Aider，是因为决定都摆在明面上</h2>
+  <h2>暂时选 Aider（for now），是因为决定都摆在明面上</h2>
   <ol class="steps">
     <li id="e59" data-points="p0131 p0132 p0133 p0134 p0135 p0136 p0137 p0138"><b>Big Three 是显式的。</b>没有图形界面替你藏起上下文、模型或提示词的决定。</li>
     <li id="e60" data-points="p0136 p0137 p0138"><b>讲 OpenAI 兼容 API。</b>所以它能连你自己部署的模型。</li>
@@ -299,7 +299,7 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
 <section class="sec" id="s16" data-source-section="s43" data-toc="演示代码 notes.py">
   <span class="kicker">演示仓库 · demos/L01-notes-cli</span>
   <h2>四个测试全绿，代码仍有两处缺陷</h2>
-  <p id="e72" data-points="p0170 p0171 p0172">L01 现场演示用的代码是 <code>notes.py</code>，约六十行的笔记命令行，故意留了两处缺陷；演示用三个提示词修好两处，没人敲一行代码。README 说给你代码是为了让你自己跑：看别人驾驶 Aider 和自己驾驶是两种技能。</p>
+  <p id="e72" data-points="p0170 p0171 p0172">L01 现场演示用的代码是 <code>notes.py</code>，约六十行的笔记命令行，故意留了两处缺陷；演示用三个提示词修好两处，没人敲一行代码。README 说给你代码是为了让你自己跑：看别人驾驶 Aider 和自己驾驶是两种技能，而只有其中一种会考（only one of them is on the exam）。课件评分页写的是「no exams」，原文没交代两句怎么对上。</p>
   <div class="pair codewalk" id="codewalk" data-asset="notes-py"><div class="pair-source" tabindex="0" aria-label="notes.py 原代码"><span class="source-anchor">原代码：notes.py · L1–67 · <a href="https://github.com/eecs498-aase/materials/blob/main/demos/L01-notes-cli/src/notes.py">官方仓库</a></span><pre data-lines="1"><code data-language="python">"""notes - a very small note CLI.
 
 Deliberately imperfect in two places, both of which the L01 demo fixes live:
@@ -368,7 +368,7 @@ def main(argv=None):
 if __name__ == "__main__":
     sys.exit(main())
 </code></pre></div><div class="pair-notes">
-    <div class="step" tabindex="0" data-hl="1-6"><h3>文件头就写明了两处缺陷</h3><p id="e73" data-points="p0180">docstring 直说：<code>parse_args()</code> 撑不过无参数调用，<code>dispatch()</code> 是一串 if；还要求文件保持短小，因为要上投影。</p></div>
+    <div class="step" tabindex="0" data-hl="1-6"><h3>文件头就写明了两处缺陷</h3><p id="e73" data-points="p0180">README 要你开始前先打开 <code>notes.py</code>，它故意写得很短。docstring 直说：<code>parse_args()</code> 撑不过无参数调用，<code>dispatch()</code> 是一串 if；还要求文件保持短小，因为要上投影。</p></div>
     <div class="step" tabindex="0" data-hl="13-15"><h3>缺陷 1：没有参数就崩溃</h3><p id="e74" data-points="p0181 p0182">第 15 行直接取 <code>argv[0]</code>。列表为空时这里抛 <code>IndexError</code>；不带参数运行这个文件就能看到它崩溃。</p></div>
     <div class="step" tabindex="0" data-hl="18-21"><h3>笔记存在 notes.txt</h3><p>文件不存在时返回空列表；存在时按行读出，跳过空行。</p></div>
     <div class="step" tabindex="0" data-hl="24-45"><h3>三个命令：add、list、count</h3><p>add 没给内容时打印提示并返回 1；list 给每条笔记编号；count 打印笔记条数。</p></div>
@@ -397,7 +397,7 @@ aider notes.py test_notes.py</code></pre>
 <section class="sec" id="s18" data-source-section="s48" data-toc="提示词 1 的坑">
   <span class="kicker">演示仓库 · 要警惕的地方</span>
   <h2>提示词 1 之后测试全绿，什么也说明不了</h2>
-  <p id="e83" data-points="p0202 p0203">README 说，提示词 1 在 9B 模型上大约一半时候能成功；原文记录是「十次运行，三次修好」，换 Aider 的编辑格式也几乎没改善。</p>
+  <p id="e83" data-points="p0202 p0203">README 说，提示词 1 在 9B 模型上大约一半时候能成功；紧接着一句英文是「Ten runs, three fixes」，字面是「十次运行、三次修好」，但这和「大约一半」对不上，也可能另有所指，原文没解释；换 Aider 的编辑格式也几乎没改善。</p>
   <p id="e84" data-points="p0204">它每次失败的样子都不一样，所以别背失败特征。排练中见过两种：</p>
   <ul>
     <li id="e85" data-points="p0204"><b>形状 1：旧函数留在下面。</b>模型写了修好的 <code>parse_args()</code>，却把原来那个留在文件下方。Python 绑定的是后一个定义，什么也没变。</li>

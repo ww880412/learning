@@ -98,10 +98,10 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
   <h2>期末项目、额度和候补名单</h2>
   <ul>
     <li id="e2" data-points="p0004 p0005 p0006 p0007 p0008 p0009 p0010 p0011 p0012 p0013 p0081 p0082 p0083 p0084 p0086">期末项目说明已发布，学季里约有四个里程碑（含提案）。课件：团队可以额外加 1 名成员，再加一群编码智能体；讲者说独自做也可以，现在甚至很合适。</li>
-    <li id="e3" data-points="p0005 p0006 p0007 p0008 p0009 p0010 p0011 p0012 p0013 p0087 p0088 p0089 p0090">课程拿到了几家编码智能体厂商的额度（Credits）：Claude（Claude Code）、Factory、X.AI、Devin（讲者说 Windsurf 和 Devin 同属 Cognition）。预计下周发放，可能收集邮箱或用二维码。</li>
-    <li id="e4" data-points="p0005 p0006 p0007 p0008 p0009 p0010 p0011 p0012 p0013 p0091 p0093">开源合作伙伴（OSS）的具体形式下周讲。有一两位合作方会来课前讲五到十分钟，也可能开线上或线下答疑。</li>
+    <li id="e3" data-points="p0005 p0006 p0007 p0008 p0009 p0010 p0011 p0012 p0013 p0087 p0088 p0089 p0090">除了开源合作项目和嘉宾讲座这些课程福利，课程还拿到了几家编码智能体厂商的额度（Credits）（讲者顺口说：有的严格说还是私有公司，但百亿美元的公司很难再叫初创）：Claude（Claude Code）、Factory、X.AI、Devin（讲者说 Windsurf 和 Devin 同属 Cognition）。预计下周发放，可能收集邮箱或用二维码。</li>
+    <li id="e4" data-points="p0005 p0006 p0007 p0008 p0009 p0010 p0011 p0012 p0013 p0091 p0093">开源合作伙伴（OSS）的具体形式下周讲，每个 OSS 合作方下周都会介绍。讲者相信至少有一两位合作方会来课前讲五到十分钟，也可能开线上或线下答疑。</li>
     <li id="e5" data-points="p0005 p0006 p0007 p0008 p0009 p0010 p0011 p0012 p0013 p0094 p0095">候补名单申请的截止日：课件写 9/27，讲者说是 27 号、大概是周日；申请在 Google 表单里排队，未来几天处理。先修要求不算高，在别校修过同等课程可以申请例外。</li>
-    <li id="e6" data-points="p0081 p0097 p0101">学生问课件：周二的已在课程网站上，今天的还没有，讲者答应以后课前上传；进不了 Ed 讨论区的注册学生可以私信助教。开场时讲者说已经晚了 35 秒。</li>
+    <li id="e6" data-points="p0081 p0097 p0101">学生问课件：周二的已在课程网站上，今天的还没有，讲者说会尽量在课前上传；还没进 Ed 讨论区的人可以给课程方发消息。开场时讲者说已经晚了 35 秒。</li>
   </ul>
   <p class="callout extra">补充（据 <a href="https://docs.google.com/document/d/1W11sWBigWIsi9wVIhhFx3wajIEnP0Qfb-ei8Ecf5VKU/edit">FA26 课程日历</a>，2026-10-26 读取）：本讲日历标题是「How state-of-the-art coding agents are designed (system prompts deep dive)」；第 1 个作业「Claude Code dissection」在 9 月 27 日周日截止。</p>
   <p class="src official">讲义： <span class="source-anchor" data-source-section="s2"><a href="https://themodernsoftware.dev">出处：The Modern Software Developer</a></span> <span class="source-anchor" data-source-section="s3"><a href="https://themodernsoftware.dev">出处：Logistics</a></span></p>
@@ -142,7 +142,7 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
   <p id="e26" data-points="p0036 p0037 p0038 p0039 p0126 p0127">Claude Code 约有 40 个内置工具，是 Anthropic 团队决定它该有的能力。讲者进一步认为，模型经过后训练，专门优化过使用这些工具。</p>
   <p id="e27" data-points="p0036 p0037 p0038 p0039 p0129 p0130 p0131">另外还有 MCP 工具（把外部工具和资源接进 Harness 的方式）。工具可以看作函数：描述、注释、名字和完整签名（full signature）都会注入上下文。所以写工具时，docstring 和参数类型要清楚一致，模型靠它们判断做什么、何时用。</p>
   <h3>真实请求里的 tools 块</h3>
-  <p id="e28" data-points="p0132 p0133 p0135 p0136">第 1 个作业今天发布、周日截止，内容和下面的演示类似：截下 Claude Code 的请求和响应，拆开看。讲者用一个代理工具截请求，比作 Wireshark 抓包（问在座有没有上过 144），也比作浏览器的调试控制台。</p>
+  <p id="e28" data-points="p0132 p0133 p0135 p0136">第 1 个作业今天发布、周日截止，内容和下面的演示类似：截下 Claude Code 的请求和响应，拆开看。讲者用一个代理工具截请求（所有学生都能用到这个工具），比作 Wireshark 抓包（问在座有没有上过 144），也比作浏览器的调试控制台。</p>
   <p id="e29" data-points="p0137 p0138 p0139 p0141">演示项目是讲者用 Claude Code 写出来的命令行待办工具，能加任务、列任务、标完成、加子任务。他凌晨 4 点和 Claude Code 聊了一轮，把请求记到文件里；完整记录是一个 JSON 文件。</p>
   <p id="e30" data-points="p0142 p0143 p0144 p0145 p0146">请求里有模型名和 messages。messages 就是第 1 讲那个不断追加的对话列表，同样有角色：user（通常是你说的话，也可能是工具调用的结果）、system（Harness 在幕后注入的内容）、assistant（Claude 的动作，比如发起工具调用）。有些消息被 Harness 加了你平时看不到的内容，这就是要截请求的原因。</p>
   <blockquote class="quote"><p id="e31" data-points="p0232">What are the core components of this to-do app?</p><cite>讲者在演示里输入的第一句话（讲课实录 20:40 段）</cite><span class="source-anchor">实录 20:40 · <a href="https://themodernsoftware.dev">课程网站</a></span></blockquote>
@@ -175,10 +175,10 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
   <p id="e44" data-points="p0192 p0194 p0195">请求里工具占了大量篇幅，对话正文大约到第 600 行就结束。往上有一块就叫 system，其中两块和我们有关。第一块告诉模型它是什么：</p>
   <blockquote class="quote"><p id="e45" data-points="p0195">You are Claude Code, Anthropic's official CLI for Claude.</p><cite>Claude Code 请求里 system 的第一块（讲课实录 35:32 段）</cite><span class="source-anchor">实录 35:32 · <a href="https://themodernsoftware.dev">课程网站</a></span></blockquote>
   <p id="e46" data-points="p0196 p0197 p0198">第二块是正式说明，这是 Opus 5.5 版的系统提示词，讲者先说约 80 行，又改口说接近 50 行，比以前短得多。内容包括：你是帮用户做软件工程任务的交互式智能体；要小心的事（含安全相关说明）；Harness 是什么、怎样和它交互；会话信息；还有一大块关于记忆。</p>
-  <p id="e47" data-points="p0200 p0201 p0202">记忆是 Anthropic 较新的加入：一个从你的行为中学习的隐式记忆机制。提示词规定记忆存放在文件系统的哪个位置，模型决定写记忆时用什么格式。另外还有环境信息（例如有哪些 Claude 模型可用）和少量上下文管理说明。</p>
+  <p id="e47" data-points="p0200 p0201 p0202">记忆是 Anthropic 较新的加入：一个从你的行为中学习的隐式记忆机制。讲者说这类东西本该有，但各家公司早先做得不太好，现在重新做了。提示词规定记忆存放在文件系统的哪个位置，模型决定写记忆时用什么格式；打开那个位置能看到 Claude 提取出的记忆元数据块，提示词里还有大量关于怎样写记忆、怎样和记忆交互的说明。另外还有环境信息（例如有哪些 Claude 模型可用）和少量上下文管理说明。</p>
   <p id="e48" data-points="p0203 p0204 p0205">讲者说：直到最近一两个月，系统提示词还有 200 到 250 行，很多是教模型怎样用 Git、怎样发任务。他推测这些知识已经通过训练进入模型参数；大约一个月前他们把系统提示词缩减了约 8%，和减少 MCP 工具一样，都是为了减少上下文膨胀。</p>
   <p class="callout key" id="e49" data-points="p0207 p0208">讲者说：这些内容不是他写的，他也看不到，但每次请求都在他的上下文窗口里；第一个请求发出时，可能已经有上万 token 被他控制不了的内容占用（实录里那句数字比较没听清）。然后效果不好时用户会困惑，他认为厂商想减少这种意外。</p>
-  <p id="e50" data-points="p0211 p0213 p0214 p0215">学生问到能否篡改或防护。讲者说肯定改不了，提示词注入早有人试，最简单的攻击应该已被处理。他认为看到系统提示词不算大的攻击面：截请求不难，有开源工具；而且他们约六个月前整个系统泄露过。讲者没用泄露的代码，在泄露前就用 Wireshark 式的检查做到了；Codex 的 Harness 本身就在 GitHub 上。</p>
+  <p id="e50" data-points="p0211 p0213 p0214 p0215">学生问到能否篡改或防护。讲者说肯定改不了，提示词注入早有人试，最简单的攻击应该已被处理；他认为系统提示词不是对方的秘方（secret sauce），对方也肯定有专门团队防这类情况。他认为整个 Harness 被看到不算大的攻击面：截请求不难，有开源工具；而且他们约六个月前整个系统泄露过。讲者没用泄露的代码，在泄露前就用 Wireshark 式的检查做到了；Codex 的 Harness 本身就在 GitHub 上。</p>
   <p class="src official">讲义： <span class="source-anchor" data-source-section="s10"><a href="https://themodernsoftware.dev">出处：System Prompt</a></span></p>
   <p class="src official">实录： <span class="source-anchor" data-source-section="s43"><a href="https://themodernsoftware.dev">出处：Mihail Eric (34:30.87)</a></span> <span class="source-anchor" data-source-section="s44"><a href="https://themodernsoftware.dev">出处：Mihail Eric (35:32.942)</a></span> <span class="source-anchor" data-source-section="s45"><a href="https://themodernsoftware.dev">出处：Mihail Eric (37:08.974)</a></span> <span class="source-anchor" data-source-section="s46"><a href="https://themodernsoftware.dev">出处：Mihail Eric (39:11.008)</a></span> <span class="source-anchor" data-source-section="s47"><a href="https://themodernsoftware.dev">出处：Mihail Eric (39:55.074)</a></span> <span class="source-anchor" data-source-section="s48"><a href="https://themodernsoftware.dev">出处：Mihail Eric (40:19.137)</a></span></p>
 </section>
@@ -272,7 +272,7 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
     <li id="e76" data-points="p0071 p0072 p0073 p0074 p0075 p0282">留意上下文窗口：避开 dumb zone，小心工具膨胀。讲者说 dumb zone 只是非正式叫法，指模型开始变得不那么有效的区域；怎样避开，后面的上下文工程（context engineering）会讲。</li>
     <li id="e77" data-points="p0071 p0072 p0073 p0074 p0075 p0283">提示词的内容和长度会变（evolve），要让它们容易调整。讲者说现在倾向更短的提示词，既避免膨胀，也更容易按任务调整。</li>
   </ul>
-  <p class="callout extra">补充（学习搭子归纳）：本讲提到的三种失败都来自塞进上下文的东西太多：工具列表膨胀（只加真正用到的 MCP 服务器）；CLAUDE.md 写太多（只写一两条关键命令）；自动压缩丢细节（需要时改写自己的压缩方式）。</p>
+  <p class="callout extra">补充（学习搭子归纳）：本讲提到的三种失败，各自的对策：工具列表膨胀（只加真正用到的 MCP 服务器）；CLAUDE.md 写太多，讲者说会过度约束模型、几乎让它对你的指令过拟合（只写一两条关键命令）；自动压缩丢细节（需要时改写自己的压缩方式）。</p>
   <p id="e78" data-points="p0279 p0280 p0281">讲者说：投入模型还是投入 Harness，是智能体设计的大问题，业界一直来回摇摆：有时说价值和护城河在 Harness，有时又指着训练模型花掉的数十亿美元说该投模型。眼下大家希望 Harness 尽量简单，可以在里面做有趣的事，但要小心别撑爆上下文。</p>
   <p id="e79" data-points="p0076 p0275 p0284">讲者说超时了一点，课后留下答疑，下周继续。</p>
   <p class="src official">讲义： <span class="source-anchor" data-source-section="s17"><a href="https://themodernsoftware.dev">出处：Principles of Effective Harnesses</a></span> <span class="source-anchor" data-source-section="s18"><a href="https://themodernsoftware.dev">出处：Questions?</a></span></p>

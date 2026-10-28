@@ -43,6 +43,7 @@ node build.mjs
 - **原文全文只进精读版**，精读版用 staticrypt 加密后再发布（`npx staticrypt <file> -p <精读密码> --short --remember 30`）。明文放 `_private/`（不发布）。**密码不写进仓库、文档、提交说明或日志。**
 - **课程类**先对照官方材料（课件、讲义、作业、课程日历）；**文章类**只讲原文说了的东西。自己的推论标「补充」，没核实的标「未确认」。
 - **学习页只用 xuexi-template 生成**（`/workspace/skills-src/xuexi-template/build.sh`，只写 `lesson.html` 和 `terms.txt`，不手写 HTML/CSS/JS）。公开页用「图文长读」；讲代码的部分和精读版用「左右对照」。旧的翻卡片版只作历史，不再新做。
+- **上线验收只看机器检查**（王玮 2026-10-27 定）：`build.sh` 的 lint 和 `content_check`（fidelity、照抄额度、专名必保、数字、引文）全过，再抽看截图。语义评审不是上线门槛，不再逐页找 Claude 评审；只在改方法（模板、检查规则、提示词）时找 Claude。
 
 ## 加一篇学习页
 1. 用 `/workspace/skills-src/xuexi-template/build.sh` 做好学习页，放到对应栏目目录（公开课放 `courses/<课程>/`，其他一篇一个目录）。
