@@ -8,3 +8,4 @@
 - L07 Inside the Call：进行中，2026-10-28 开始。图文长读，原表 15 张，3 道小测。待小测和复述。
 - L08 Hackathon 1 briefing：进行中，2026-10-28 开始。图文长读，原表 3 张，3 道小测。待小测和复述。
 - L09 Stop conditions and the approval layer：进行中，2026-10-28 开始。图文长读，原表 6 张，3 道小测。待小测和复述。
+- L10 Skills and the Elephant-Goldfish Model：进行中，2026-10-28 开始。图文长读，原表 9 张，3 道小测。待小测和复述。
