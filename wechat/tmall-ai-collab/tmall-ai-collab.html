@@ -1,0 +1,512 @@
+<!DOCTYPE html><html lang="zh-CN" class="layout-article" data-layout="article"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<script>(function(){var v;try{v=localStorage.getItem('site-theme')}catch(e){}document.documentElement.dataset.theme=/^[ABC]$/.test(v||'')?v:'C'})();
+(function(){var k='theme',s=localStorage.getItem(k);if(s?s==='dark':matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark');
+window.__tt=function(){var f=function(){var d=document.documentElement.classList.toggle('dark');localStorage.setItem(k,d?'dark':'light')};if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.startViewTransition(f);else f()}})();</script>
+<title>天猫大型 AI 项目研发协同导读</title><style>
+/* Site tokens copied verbatim, in cascade order, from ref/site-assets/site.css. */
+:root{--paper:#f6f7f9;--sheet:#fff;--card:#fff;--ink:#111827;--ink2:#4b5563;--meta:#6b7280;--hair:#e5e7eb;--hair2:#eef0f3;--blue:#2563eb;--blue-soft:#eff4ff;--red:#dc2626;--red-soft:#fef2f2;--green:#16a34a;--green-soft:#f0fdf4;--amber:#b45309;--amber-soft:#fffbeb;--purple:#7c3aed;--purple-soft:#f5f3ff;--font:system-ui,-apple-system,"PingFang SC","Noto Sans SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;--serif:var(--font);--mono:ui-monospace,SFMono-Regular,Menlo,monospace;--r-lg:12px;--r-sm:8px;--grad:none;color-scheme:light}
+html.dark{--paper:#0f1115;--sheet:#171a21;--card:#171a21;--ink:#e5e7eb;--ink2:#b6bcc6;--meta:#9ca3af;--hair:#2a2f3a;--hair2:#20242c;--blue:#7aa2ff;--blue-soft:rgba(122,162,255,.12);--red:#f87171;--red-soft:rgba(248,113,113,.12);--green:#4ade80;--green-soft:rgba(74,222,128,.12);--amber:#fbbf24;--amber-soft:rgba(251,191,36,.12);--purple:#c4b5fd;--purple-soft:rgba(196,181,253,.14);color-scheme:dark}
+[data-theme=B]{--paper:#fbfbfc;--sheet:#fff;--card:#fff;--ink:#16171a;--ink2:#4a4c55;--meta:#6e707a;--hair:#ececf0;--hair2:#f2f2f5;--blue:#5e6ad2;--blue-soft:#eef0fb;--red:#d4483b;--red-soft:#fdf0ee;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif}
+html.dark[data-theme=B]{--paper:#0e0f12;--sheet:#16171b;--card:#16171b;--ink:#e8e9ed;--ink2:#b3b5bd;--meta:#8b8d97;--hair:#26272d;--hair2:#1f2025;--blue:#8b93f0;--blue-soft:rgba(139,147,240,.14);--red:#f0776b}
+[data-theme=A]{--paper:#f7f4ee;--sheet:#fffdf9;--card:#fffdf9;--ink:#2b2722;--ink2:#5f574e;--meta:#8a8076;--hair:#e6dfd3;--hair2:#efe8dc;--blue:#b4532a;--blue-soft:#f6e1d6;--red:#a2461f;--red-soft:#f6e1d6;--green:#5f7a3a;--green-soft:#e7ecd9;--purple:#7a5a8c;--purple-soft:#eee4f1;--serif:"Noto Serif CJK SC","Noto Serif SC","Songti SC",serif;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif}
+html.dark[data-theme=A]{--paper:#1b1814;--sheet:#23201b;--card:#23201b;--ink:#ede6da;--ink2:#c7bdaf;--meta:#9b9184;--hair:#3a342c;--hair2:#2d2923;--blue:#e08a5f;--blue-soft:rgba(224,138,95,.15);--red:#e8916a;--red-soft:rgba(232,145,106,.15)}
+[data-theme=C]{--paper:#f3f5fb;--sheet:#fff;--card:#fff;--ink:#1d2340;--ink2:#5a6185;--meta:#8a90ad;--hair:#e6e9f4;--hair2:#eef0f7;--blue:#3b5bfd;--blue-soft:#e8edff;--red:#d4483b;--red-soft:#ffe6e3;--green:#1f9d5c;--green-soft:#e3f7ec;--amber:#d9771e;--amber-soft:#fff1e0;--purple:#7a4bf5;--purple-soft:#f2eaff;--r-lg:20px;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif;--sh:0 1px 2px rgba(30,40,90,.04),0 8px 24px rgba(30,40,90,.06)}
+html.dark[data-theme=C]{--paper:#0f1222;--sheet:#181c33;--card:#181c33;--ink:#e6e9fb;--ink2:#aab0d0;--meta:#7d84a8;--hair:#272c48;--hair2:#20253f;--blue:#7d93ff;--blue-soft:rgba(125,147,255,.15);--red:#ff8a7d;--red-soft:rgba(255,138,125,.15);--green-soft:rgba(31,157,92,.18);--amber-soft:rgba(217,119,30,.18);--purple-soft:rgba(122,75,245,.2);--sh:0 1px 2px rgba(0,0,0,.3)}
+:root{--acc2:#8b5cf6;--ease:cubic-bezier(.22,1,.36,1)}
+[data-theme=A]{--acc2:#c98a2b}
+html.dark[data-theme=A]{--paper:#181512;--sheet:#211d18;--card:#211d18;--meta:#a89d8f;--hair:#382f26;--acc2:#e3b15c}
+[data-theme=B]{--paper:#fafafb;--blue:#5b5bd6;--blue-soft:#efeffc;--acc2:#a855f7}
+html.dark[data-theme=B]{--paper:#0c0d10;--sheet:#14151a;--card:#14151a;--ink:#ececf1;--ink2:#babcc6;--meta:#9597a3;--hair:#262830;--hair2:#1c1d23;--blue:#9198ff;--blue-soft:rgba(145,152,255,.14);--acc2:#c084fc}
+[data-theme=C]{--acc2:#06b6d4}
+html.dark[data-theme=C]{--meta:#a3a9b8;--acc2:#22d3ee}
+html.dark{--meta:#a1a7b3}
+[data-theme=B]{--paper:#eef1f5;--hair:#dfe4ea;--hair2:#eef1f5;--green:#16a34a}
+html.dark[data-theme=B]{--paper:#0b0d12;--hair:#252a35;--hair2:#1a1e27}
+[data-theme=C]{--blue:#7b5cff;--blue-soft:#f0ecff;--acc2:#ff5e8a}
+html.dark[data-theme=C]{--paper:#0b0b0f;--sheet:#15151c;--card:#15151c;--ink:#f2f2f5;--ink2:#b8b8c6;--meta:#9a9aab;--hair:#26262f;--hair2:#1d1d25;--blue:#a08bff;--blue-soft:rgba(160,139,255,.14)}
+:root{--sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:24px;--sp-6:32px;--fs-xs:12px;--fs-sm:13.5px;--fs-md:15px;--fs-lg:18px;--fs-xl:24px;--fs-2xl:32px;--r-xs:6px;--r-sm:8px;--r-md:10px;--r-lg:12px;--r-xl:18px;--r-pill:999px;--sh-1:0 1px 2px rgba(15,23,42,.06);--sh-2:0 4px 16px -8px rgba(15,23,42,.22);--sh-3:0 14px 30px -12px rgba(15,23,42,.28);--dur-1:120ms;--dur-2:220ms;--dur-3:420ms;--ease:cubic-bezier(.22,1,.36,1);--ease-in-out:cubic-bezier(.65,0,.35,1);--spring:cubic-bezier(.34,1.3,.64,1);--icon-stroke:2}
+:root{--spring:linear(0,.0089,.0346,.0752,.1286,.1927,.2654,.3445,.4278,.5131,.5983,.6812,.7598,.8325,.8981,.9555,1.0042,1.0441,1.0753,1.0982,1.1134,1.1218,1.1243,1.1218,1.1155,1.1062,1.0949,1.0825,1.0697,1.0571,1.0451,1.034,1.0242,1.0157,1.0085,1.0027,.9982,.995,.9928,.9916,.9912,.9914,.9921,.9931,.9943,.9956,.9968,.998,.999,1)}
+html.dark{--sh-1:0 1px 2px rgba(0,0,0,.4);--sh-2:0 4px 16px -8px rgba(0,0,0,.6);--sh-3:0 14px 30px -12px rgba(0,0,0,.7)}
+/* Five reading levels: title / section / subsection / body / note. */
+:root{--reading-width:680px;--toc-width:208px;--rail-width:180px;--reading-gap:28px;--top-height:56px;--body-size:18px;--body-leading:1.8;--finish-space:104px}
+*{box-sizing:border-box}html{scroll-padding-top:72px}html,body{margin:0;background:var(--paper);color:var(--ink);font:var(--body-size)/var(--body-leading) var(--font);-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}a{color:var(--blue);text-underline-offset:3px;overflow-wrap:anywhere}a:hover{text-decoration-thickness:2px}button,input,textarea,select{font:inherit;color:inherit}button,a,summary{touch-action:manipulation}button{cursor:pointer}button:disabled{opacity:.5;cursor:default}:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+h1,h2,h3{color:var(--ink);font-family:var(--serif);line-height:1.35;letter-spacing:-.02em;overflow-wrap:anywhere}h1{font-size:var(--fs-2xl);margin:8px 0 16px}h2{font-size:var(--fs-xl);margin:8px 0 16px}h3{font-size:var(--fs-lg);margin:24px 0 8px}p{margin:0 0 12px}ul,ol{padding-left:24px}li{margin:4px 0}code{font:.88em var(--mono);background:var(--hair2);padding:1px 4px;border-radius:var(--r-xs)}pre{overflow:auto;white-space:pre;tab-size:4;font:14px/1.65 var(--mono);padding:16px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-md);margin:12px 0}pre code{font:inherit;white-space:inherit;background:none;padding:0}
+.i{display:inline-block;vertical-align:middle;flex:none;width:18px;height:18px;stroke-width:2}.btn,button.opt{min-height:44px;border:1px solid var(--hair);border-radius:var(--r-sm);background:var(--sheet);padding:8px 14px;font-size:var(--fs-md);font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:6px}.btn:hover{border-color:var(--blue);background:var(--blue-soft)}.btn.main{background:var(--blue);color:var(--sheet)}.btn.sm{font-size:var(--fs-sm)}textarea{display:block;width:100%;padding:10px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-sm);resize:vertical}
+.top{position:fixed;inset:0 0 auto;height:var(--top-height);z-index:30;display:flex;align-items:center;gap:16px;padding:0 20px;background:var(--paper);border-bottom:1px solid var(--hair)}.top .course{font-size:var(--fs-sm);font-weight:700;max-width:35vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.top .track{flex:1;height:4px;background:var(--hair);border-radius:var(--r-pill);overflow:hidden}.top .track i{display:block;width:0;height:100%;background:var(--blue);transition:width var(--dur-2) var(--ease)}.top .count{font-size:var(--fs-sm);max-width:32vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.toc-toggle{min-width:44px}.top .theme-toggle{font-size:var(--fs-sm);min-height:44px}
+.layout-article .deck,.layout-pair .deck{padding:80px 20px calc(var(--finish-space) + env(safe-area-inset-bottom));max-width:720px;margin:0 auto;min-width:0}.layout-article .sec{position:relative;margin:0 0 32px;padding-top:16px;border-top:1px solid var(--hair);scroll-margin-top:72px;min-width:0}.layout-article .hero{border:0;padding-top:0}.kicker,.meta,.src,.source-anchor,figcaption,caption,.aside{font-size:var(--fs-sm);line-height:1.65}.kicker{display:block;color:var(--blue);font-weight:700}.lede{font-size:var(--fs-lg);font-weight:600}.links{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:var(--fs-sm)}.links a{display:inline-flex;align-items:center;min-height:44px}.src{margin:16px 0 0;padding-top:8px;border-top:1px solid var(--hair);color:var(--ink2)}.source-anchor{display:block;color:var(--ink2);margin-top:6px;overflow-wrap:anywhere}.source-anchor a{min-height:44px;display:inline-flex;align-items:center}.src.extra::before{content:'补充 · ';color:var(--amber)}.src.official::before{content:'官方 · ';color:var(--blue)}.src.article::before{content:'原文 · ';color:var(--blue)}
+.toc{position:fixed;left:max(20px,calc((100vw - 1192px)/2));top:76px;width:var(--toc-width);max-height:calc(100dvh - 180px);overflow:auto;font-size:var(--fs-sm);line-height:1.5;z-index:25}.toc ol{list-style:none;margin:0;padding:0}.toc a{display:flex;gap:8px;align-items:center;min-height:44px;padding:6px 10px;color:var(--ink2);text-decoration:none;border-radius:var(--r-sm)}.toc a[aria-current=true]{background:var(--blue-soft);color:var(--blue);font-weight:700}.toc b{display:block;margin:0 10px 8px}.toc-backdrop{display:none}.tldr,.argmap{padding:16px;background:var(--blue-soft);border-radius:var(--r-lg);margin:16px 0}.tldr a,.argmap a{display:block;min-height:44px;align-content:center}.argmap ol{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 16px;margin:0}.points{padding:12px 16px 12px 36px;background:var(--hair2);border-radius:var(--r-md)}
+figure.orig,figure.redraw,.figure{margin:20px 0;min-width:0}figure img{display:block;max-width:100%;height:auto;border:1px solid var(--hair);border-radius:var(--r-md);cursor:zoom-in;background:var(--sheet)}figcaption{margin-top:8px;color:var(--ink2)}figcaption b{color:var(--ink)}.how{margin-top:6px}.table{margin:20px 0;overflow-x:auto}.table table,table.data{width:100%;border-collapse:collapse;background:var(--sheet);font-size:var(--fs-md)}th,td{border-bottom:1px solid var(--hair);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--hair2)}caption{text-align:left;font-weight:700;padding:8px 0}.table-note{font-size:var(--fs-sm);color:var(--ink2)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;margin:16px 0}.stat{padding:12px 14px;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet)}.stat b{display:block;font-size:var(--fs-xl);line-height:1.35;color:var(--blue);font-variant-numeric:tabular-nums}.stat span{display:block;font-size:var(--fs-sm);color:var(--ink2)}.stat .source-anchor{font-size:var(--fs-xs)}
+blockquote.quote{margin:16px 0;padding:12px 16px;border-left:3px solid var(--blue);background:var(--sheet)}.quote cite{display:block;font-style:normal;font-size:var(--fs-sm);color:var(--ink2)}.callout{padding:12px 16px;margin:16px 0;border-left:3px solid var(--blue);background:var(--blue-soft);border-radius:0 var(--r-sm) var(--r-sm) 0}.callout.limit{border-color:var(--amber);background:var(--amber-soft)}.callout.extra{border:1px dashed var(--meta);background:var(--sheet)}.callout.myth{border-color:var(--amber);background:var(--hair2)}.callout.limit::before{content:'作者的限定 · ';font-weight:700}.aside{padding:12px;border-left:2px solid var(--hair);color:var(--ink2);margin:12px 0}
+.stories,.compare,.roles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}.story,.compare>div,.roles>div{padding:12px;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);font-size:var(--fs-md)}.story b,.roles b{display:block}.story dt{font-weight:700;color:var(--ink2);font-size:var(--fs-sm)}.story dd{margin:0 0 8px}.story p,.story .fix{display:block;margin:8px 0}.steps,.ladder{display:grid;gap:8px;padding:0;list-style:none;counter-reset:step}.steps>li,.ladder>li{padding:10px 14px;background:var(--hair2);border-radius:var(--r-sm);counter-increment:step}.steps>li::before{content:counter(step)'. ';color:var(--blue);font-weight:700}.ladder i{font-style:normal;font-weight:700;margin-right:8px}.matrix{border:1px solid var(--hair);padding:16px;border-radius:var(--r-md)}.matrix .axes{font-size:var(--fs-sm);color:var(--ink2)}.matrix ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));list-style:none;padding:0;gap:1px;background:var(--hair)}.matrix li{margin:0;padding:16px;background:var(--sheet)}.refs{font-size:var(--fs-sm);line-height:1.7}.refs a{display:inline-block;min-height:44px;align-content:center}.thread{border-left:2px solid var(--hair);padding-left:16px}.formula{padding:16px;border:1px solid var(--hair);overflow:auto}.formula math{font-size:var(--fs-xl)}details.more{margin:12px 0;border-top:1px solid var(--hair);font-size:var(--fs-md)}summary{min-height:44px;cursor:pointer;display:flex;align-items:center;gap:8px}summary .i{transition:transform var(--dur-1)}details[open] summary .i{transform:rotate(90deg)}
+/* Shared interactive components. No fixed page/card height. */
+.flow-scroll{max-width:100%;overflow-x:auto;min-width:0;touch-action:pan-x pan-y}.flow-scroll svg.flow{display:block;width:100%;height:auto;min-height:0}.flow-tip{font-size:var(--fs-sm);color:var(--ink2)}.fl-node rect{fill:var(--sheet);stroke:var(--hair);stroke-width:2}.fl-node text{font:600 17px var(--font);fill:var(--ink)}.fl-node .sub{font-size:13px;font-weight:400;fill:var(--ink2)}.fl-node.act rect{stroke:var(--blue);fill:var(--blue-soft);stroke-width:3}.fl-node.blue rect{stroke:var(--blue)}.fl-node.amber rect,.fl-node.red rect{stroke:var(--amber)}.fl-node.green rect{stroke:var(--green)}.fl-edge{fill:none;stroke:var(--meta);stroke-width:2}.fl-edge.act{stroke:var(--blue);stroke-width:3}.fl-elab{font:13px var(--font);fill:var(--ink2)}
+.sim{margin:16px 0;padding:12px;border:1px solid var(--hair);border-radius:var(--r-lg);background:var(--sheet);display:flex;flex-direction:column;gap:12px}.sim .ctl{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.sim .ctl label{min-height:44px;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm)}.sim .ctl input[type=range]{min-width:110px}.sim .body{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}.sim .narr{order:-1;background:var(--blue-soft);padding:10px 12px;border-radius:var(--r-sm);font-size:var(--fs-md)}.sim .log{max-height:240px;overflow:auto;font:var(--fs-sm)/1.6 var(--mono)}.sim .msg{border-left:3px solid var(--hair);padding:8px;margin:6px 0;background:var(--paper);white-space:pre-wrap;overflow-wrap:anywhere}.msg b{display:block;font-family:var(--font)}.sim .msg.err{border-color:var(--amber)}.prediction{order:-2}.component-error{padding:16px;border:1px solid var(--amber);color:var(--amber)}
+.quiz{margin:16px 0;padding:16px;border:1px solid var(--hair);border-radius:var(--r-lg);background:var(--sheet)}.quiz .qn{font-size:var(--fs-sm);color:var(--ink2)}.quiz .qt{font-size:var(--fs-lg);font-weight:700;margin-bottom:12px}.quiz .opt{display:block;width:100%;text-align:left;margin:8px 0;font-weight:400}.quiz .opt.ok{border-color:var(--green);background:var(--green-soft)}.quiz .opt.no{border-color:var(--amber);background:var(--amber-soft)}.quiz .fb{margin:12px 0;font-size:var(--fs-md)}.quiz .nav{display:flex;gap:8px;margin-top:12px}.quiz label{display:block;font-size:var(--fs-sm)}.stack{display:grid;gap:6px;font-size:var(--fs-sm)}.stack .row{display:grid;grid-template-columns:28px 80px minmax(0,1fr);gap:8px;padding:8px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-sm)}.stack .t{overflow-wrap:anywhere;white-space:pre-wrap}.stack .new{background:var(--blue-soft)}.bar{display:grid;grid-template-columns:100px minmax(0,1fr) 80px;gap:8px;margin:8px 0;align-items:center;font-size:var(--fs-sm)}.bar .bt{height:20px;background:var(--hair2);border-radius:var(--r-xs);overflow:hidden}.bar .bt i{display:block;height:100%;background:var(--blue)}.bar .bn,.bar .bmiss{grid-column:2/4}.bars .bc{font-size:var(--fs-sm);color:var(--ink2)}
+/* Paired material stays inside its own container; highlighting never scrolls the page. */
+.pair.codewalk,.pair.read-pair,.pair.material-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start;margin:20px 0;position:relative;min-width:0}.pair-source{position:sticky;top:72px;max-height:calc(100dvh - 160px);overflow:auto;overscroll-behavior:contain;min-width:0;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);padding:12px;scroll-padding:16px}.pair-notes{min-width:0}.pair-notes .step{padding:16px 0 24px;border-top:1px solid var(--hair);scroll-margin-top:84px}.pair-notes .step.is-active{border-color:var(--blue)}.pair-source .source-block{padding:12px 8px;border-left:3px solid transparent}.pair-source .source-block.is-active{background:var(--blue-soft);border-color:var(--blue)}.source-text{overflow-wrap:anywhere}.pair-source pre{border:0;padding:0;margin:8px 0;overflow:visible}.code-line{display:block;min-height:1.65em;white-space:pre;padding-left:48px;position:relative}.code-line::before{content:attr(data-line);position:absolute;left:0;width:36px;text-align:right;color:var(--meta);user-select:none}.code-line.hl{background:var(--blue-soft)}.copy-code{position:static;flex:none;white-space:nowrap}.pair-source .source-anchor{font-size:var(--fs-xs)}
+/* A separate toolbar never shares the scrolling code viewport. */
+.heading-source{font-size:var(--fs-xs);margin:0 0 8px}
+.pair.codewalk{grid-template-columns:minmax(0,60%) minmax(0,1fr)}
+.code-panel{position:sticky;top:72px;display:flex;flex-direction:column;min-width:0;max-height:calc(100dvh - 160px);border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);overflow:hidden}
+.code-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;flex:none;border-bottom:1px solid var(--hair);font-size:var(--fs-xs);color:var(--ink2)}
+.code-panel .pair-source{position:static;max-height:none;min-height:0;flex:1 1 auto;border:0;border-radius:0;box-shadow:none;overflow:auto}
+.code-panel .pair-source pre{width:max-content;min-width:100%}
+dialog.image-dialog{width:calc(100vw - 24px);max-width:none;max-height:92dvh;padding:12px;border:1px solid var(--hair);background:var(--sheet);color:var(--ink);border-radius:var(--r-md);overflow:auto}dialog::backdrop{background:rgba(0,0,0,.75)}.image-dialog img{max-width:none;width:max(100%,min(1400px,180vw));height:auto}.image-dialog .dialog-close{position:sticky;top:0;left:0}.image-open{min-height:44px;border:0;background:transparent;padding:0;display:block;cursor:zoom-in;max-width:100%}.image-open img{max-width:100%}
+/* Only CSS changes the unchanged finish.js button. High specificity beats injected styles. */
+html body .fin-btn{bottom:calc(16px + env(safe-area-inset-bottom));right:16px;min-height:44px;z-index:35}html body #quiz-return{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:35;max-width:45vw}
+@media(min-width:1180px){.layout-article .deck{width:var(--reading-width);max-width:none;padding-left:0;padding-right:0;margin-left:max(260px,calc((100vw - 1192px)/2 + 236px));margin-right:0}.layout-article .sec>.doc-body>figure,.layout-article .sec>.doc-body>.table,.layout-article .sec>.codewalk{width:calc(100% + 120px);margin-left:0}.layout-article .aside{position:absolute;left:calc(100% + 28px);top:24px;width:var(--rail-width);margin:0}.layout-article .aside~figure{width:100%}html.layout-article body .fin-btn{left:max(20px,calc((100vw - 1192px)/2));right:auto;max-width:208px}.layout-pair .deck{max-width:1280px;margin-left:236px;margin-right:20px}.layout-pair .toc{width:188px;left:20px}html.layout-pair body .fin-btn{left:20px;right:auto;max-width:188px}}
+@media(max-width:1179px){.toc{display:none;visibility:hidden;left:0;top:var(--top-height);width:min(360px,90vw);max-height:calc(100dvh - 72px);background:var(--sheet);padding:16px;border-right:1px solid var(--hair);border-bottom:1px solid var(--hair)}html.toc-open .toc{display:block;visibility:visible}html.toc-open .toc-backdrop{display:block;position:fixed;inset:var(--top-height) 0 0;background:rgba(0,0,0,.3);z-index:24}}
+@media(max-width:820px){:root{--body-size:17px}.layout-article .deck,.layout-pair .deck{padding-left:18px;padding-right:18px}.top{gap:8px;padding:0 12px}.top .course{display:none}.top .count{max-width:44vw}.top .track{min-width:24px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stories,.compare,.roles{grid-template-columns:minmax(0,1fr)}.argmap ol{grid-template-columns:minmax(0,1fr)}table.data thead,.table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}table.data,table.data tbody,table.data tr,table.data td,.table table,.table tbody,.table tr,.table td{display:block;width:100%}table.data tr,.table tr{padding:8px 12px;margin-bottom:8px;border:1px solid var(--hair);background:var(--sheet);border-radius:var(--r-md)}table.data td,.table td{border:0;padding:4px 0}td[data-label]::before{content:attr(data-label)'：';font-size:var(--fs-sm);font-weight:700;color:var(--ink2)}.table caption,table.data caption{display:block;width:100%}.pair.codewalk,.pair.read-pair,.pair.material-pair{display:block}.pair-notes{margin-top:12px}.code-panel{top:var(--top-height);max-height:40dvh;z-index:15}.pair-source{top:var(--top-height);max-height:40dvh;z-index:15;box-shadow:var(--sh-1)}.pair-notes .step{scroll-margin-top:calc(40dvh + 80px)}.flow-scroll svg.flow{width:var(--flow-width);max-width:none;height:var(--flow-height)}.sim .flow-scroll svg.flow{width:100%;height:auto}.stack .row{grid-template-columns:22px 64px minmax(0,1fr)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+@media print{.top,.toc,.fin-btn,#quiz-return,.toc-backdrop,.zoom-toggle,.code-toolbar{display:none!important}.layout-article .deck,.layout-pair .deck{margin:0;padding:0;max-width:100%;width:auto}.pair-source,.code-panel{position:static;max-height:none;overflow:visible}.sec{break-inside:auto}figure,.stat{break-inside:avoid}}
+/* Applies after legacy CSS too. Zoom is an intentional local viewport; non-zoom stays unnested. */
+html body .sim .flow-scroll.zoom{overflow:auto;max-height:40dvh;min-height:0;height:auto;overscroll-behavior:contain;scroll-padding:16px;padding:16px}
+html body .sim .flow-scroll.zoom svg.flow{width:var(--flow-width);min-width:var(--flow-width);height:var(--flow-height);max-height:none;flex:none}
+html body .sim .zoom-toggle{min-height:44px;justify-self:start}.layout-deck .sim .body{position:relative}.layout-deck .card{padding-bottom:8px}.layout-deck .deck{bottom:calc(92px + env(safe-area-inset-bottom))}
+html body .fin-btn{bottom:calc(16px + env(safe-area-inset-bottom));right:16px;min-height:44px}html.layout-deck .bottom{padding-right:170px;padding-left:12px;height:76px}.layout-deck .btn,.layout-deck .sim .branches label{min-height:44px}.layout-deck details.more summary::before{content:none}.layout-deck .fl-edge.act{animation:none}
+@media(max-width:820px){html.layout-deck .bottom{padding-right:12px;gap:8px}.layout-deck .bottom .btn{padding:8px 10px;font-size:13px}html.layout-deck body .fin-btn{padding:8px 12px;font-size:13px}.layout-deck .card.full:has(.sim)>.head-full{position:sticky;top:0;z-index:4;background:var(--sheet);padding-top:12px;padding-bottom:12px}.layout-deck .sim .body{overflow:visible}.layout-deck .card .stage:has(.sim){overflow:visible}.layout-deck .sim .flow-scroll:not(.zoom){overflow:visible}}
+
+.layout-deck .card.doc.on{display:block;overflow:auto;padding:24px}.layout-deck .card.doc .doc-body{overflow:visible}.layout-deck .hero.card{height:auto}
+
+/* Legacy .stage svg also matches button icons: keep Lucide at its declared size. */
+html body svg.i{width:18px;height:18px;max-height:none;flex:none}
+
+/* Below the desktop sidebar breakpoint, finish lives in the opaque top bar.
+   Reserve its width before laying out the title; keep the deck footer for paging. */
+@media(max-width:1179px){
+ html body .top{gap:8px;padding:0 132px 0 12px;z-index:40;background:var(--paper)}
+ html body .top .course{display:none}
+ html body .top .count{flex:1;min-width:0;max-width:none;font-size:var(--fs-sm);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ html body .top .track{position:absolute;left:12px;right:12px;bottom:0;height:2px;min-width:0}
+ html body .top .toc-toggle{width:44px;flex:none;padding:0}
+ html body .top .theme-toggle{flex:none;padding:8px;font-size:var(--fs-sm)}
+ html body .fin-btn{top:6px;bottom:auto;left:auto;right:12px;width:112px;max-width:112px;height:44px;padding:8px;font-size:13px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:41;box-shadow:none}
+}
+</style></head><body>
+<header class="top"><button class="btn toc-toggle" aria-label="打开目录" aria-expanded="false"><svg class="i i-menu" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h16"/></svg></button><span class="course">天猫大型 AI 项目研发协同导读</span><span class="track" role="presentation"><i></i></span><span class="count"></span><button class="btn theme-toggle" aria-label="切换深浅色">深浅色</button></header><main class="deck"><section class="sec hero" data-toc="开篇：这篇讲什么" id="s1" data-source-section="s1">
+  <header class="doc-head">
+    <span class="kicker">公众号导读 · 大淘宝技术 · 天猫技术团队 · 2026-09-07</span>
+    <h1>一个 AI 项目怎样从「一个人很快」走到「全组都快且稳」：天猫新品 MDI 的四个阶段</h1>
+    <p class="lede" id="h-lede">天猫技术团队用自己做 MDI 项目的经历，讲 AI 研发能力怎样一层层放大：先让一个人变强，再让小队并行不打架，再防止高速迭代把质量拖垮，最后让产品、设计、测试也能安全地改代码。</p>
+    <p class="links"><a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">公众号原文 <svg class="i i-external-link" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a><a href="tmall-ai-collab-close.html">精读版（加密，需密码）</a><span>本页导读约 25 分钟</span></p>
+  </header>
+  <div class="doc-body">
+<figure class="figure orig" data-asset="a0002" id="fa0002"><img src="img/img01.gif" alt="篇首动图横幅（大淘宝技术）"><figcaption><b>原图 1 · 篇首横幅（装饰）</b> <span class="source-anchor" data-source-section="s1">出处：大淘宝技术 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">篇首横幅（装饰）</a></span></figcaption></figure>    <p data-points="p0003" id="e1">文首摘要把四段路先列了出来：一个人攻坚时，靠结构化知识库让 AI 吃透项目；加人时，按站点地图切分地盘，用 Spec 变更规则和 MCP 补上下文，避免互相踩踏、推理断链；迭代加速后，放一台独立的「技术哨兵机」还原预发的合并状态，让云端 Agent 找出隐形的业务冲突并告警；稳定之后，用云端平台 NekoCollar（沙箱、真实页面代理、Git 软硬双锁）让非研发角色也能安全参与。</p>
+<figure class="figure orig" data-asset="a0004" id="fa0004"><img src="img/img02.png" alt="章节编号图 01"><figcaption><b>原图 2 · 章节编号条 01（装饰）</b> <span class="source-anchor" data-source-section="s1">出处：大淘宝技术 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">章节编号条 01（装饰）</a></span></figcaption></figure>  </div>
+  <div class="src article">大淘宝技术《天猫技术大型 AI 项目的研发协同实践》 <span class="source-anchor" data-source-section="s1"><a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">原文链接</a></span></div>
+</section>
+<section class="sec" data-toc="写在前面：为什么值得写" id="s2" data-source-section="s2">
+  <header class="doc-head"><span class="kicker">第一章 · 背景</span><h2>效率要从「个人碰巧」变成「团队能复制」，才谈得上规模化</h2></header>
+  <div class="doc-body">
+    <p data-points="p0006" id="e2">作者的判断：AI 带来的生产力不是自上而下一次到位的革命，而是从一线长出来、再逐级向组织扩散的曲线。只有当效率能被团队复制，而不是某个人偶然做到，AI Native 的做法才可能跨团队、跨业务推广。</p>
+    <p data-points="p0007" id="e3">这几个月团队在做全新的业务项目「天猫新品 MDI」，一路演进下来，正好走过 <b>超级个体 → 超级研发小队 → 超“稳”研发小队 → 超级项目组</b> 这几步。</p>
+    <p data-points="p0008" id="e4">项目里多人同时用 SDD（规格驱动开发）做高频敏捷，雷打不动每周上线一个大版本；最夸张的一次上线，预发上同时有八个仓库、十几个分支在一起集成。文章就讲这四段里踩的坑和对应做法。</p>
+    <p data-points="p0009" id="e5">它的复杂度很高：这是个全栈平台，横跨 4 个角色端，功能模块大约 40 个；外面还挂着智能投放系统、算法内核和自动化评测体系，并依赖阿里云百炼全模态等外部服务。</p>
+    <p data-points="p0010 p0011 p0012 p0013 p0014" id="e6">作者说这个初创项目几乎踩中了「AI 时代项目」的全部典型特征，并把它分成四期：<b>单兵攻坚期</b>（一个人怎么开荒新领域、新知识）、<b>加人提速期</b>（单人效率怎么复制到多人）、<b>高速迭代期</b>（时间和规模让 AI 研发质量变差，怎么化解）、<b>稳定运作期</b>（全组怎么共享上下文，让非研发角色一起出力）。</p>
+    <p class="callout key" data-points="p0015 p0016 p0017 p0018 p0019 p0020" id="e7">四期合起来是一个朴素问题：怎样把能力放大。第一步让开发者成为「超级个体」，第二步让这些人组成「超级研发团队」，第三步让团队能持续跑下去，第四步把研发能力扩散到组里每个非研发同学。一句话：从个体到团队，再到可持续，最后到全员。</p>
+<figure class="figure orig" data-asset="a0021" data-points="p0021" id="fa0021"><img src="img/img03.png" alt="AI 项目的四阶段"><figcaption><b>原图 3 · AI 项目的四阶段</b> <span class="source-anchor" data-source-section="s2">出处：大淘宝技术 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">AI 项目的四阶段</a></span><span class="how">怎么看：四个框从左到右是单兵攻坚、加人提速、高速迭代、稳定运作；框里的人从「超级个体」变成研发团队，再加上「机制」，最后加入产品和测试；底下标着时间：前期 4–5 月约一个月，中前期 6 月不到一个月，中期 7 月约一个月，中后期 8 月持续至今。</span></figcaption></figure><figure class="figure orig" data-asset="a0023" id="fa0023"><img src="img/img04.png" alt="章节编号图 02"><figcaption><b>原图 4 · 章节编号条 02（装饰）</b> <span class="source-anchor" data-source-section="s2">出处：大淘宝技术 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">章节编号条 02（装饰）</a></span></figcaption></figure>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s2"><a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">写在前面：为什么这个项目值得写</a></span></div>
+</section>
+<section class="sec" data-toc="单兵攻坚期：超级个体" id="s3" data-source-section="s3">
+  <header class="doc-head"><span class="kicker">第二章 · 单兵攻坚期</span><h2>用结构化知识库让 AI 从第一天就懂项目</h2></header>
+  <div class="doc-body">
+<h3>问题 · 怎么让 AI 在陌生领域开荒</h3><span class="source-anchor heading-source" data-source-section="s4">原文 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">问题：如何驱动 AI 在新领域、新知识上开垦？</a></span>    <p data-points="p0026" id="e8">项目刚起步只有一两个人，领域又是全新的。一个人干活时最痛的不是不会写代码，而是 <b>AI 根本不了解这个项目</b>：业务地图、踩过的坑、为什么选这个技术方案，它都不知道；每开新会话都得把背景重新灌一遍。</p>
+    <p data-points="p0027 p0028" id="e9">解法是用<b>一个结构化知识库把整个全栈项目串起来，让 AI 随时都能读懂项目</b>，团队把这套 SDD 研发体系叫 collar（项圈）：意思是给自由的 AI Agent 套上边界和知识。名字也有来历：团队有一系列产品，名字都带 neko（日语里的「猫」），如 neko、nekoClaw 和后面会讲的 NekoCollar，而 collar 就是猫戴的项圈，也就是 harness。</p>
+<h3>手段一 · AGENTS.md 是全栈地图</h3><span class="source-anchor heading-source" data-source-section="s5">原文 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">手段一：AGENTS.md，任何时候都尤为重要的 AI 编码全栈地图</a></span>    <p data-points="p0030 p0031 p0032" id="e10">根目录放一份 AGENTS.md，它是 Agent 进项目的唯一入口。文件开头写了一条铁律：自己只是入口地图，篇幅不超过 120 行，不写细节，只指路。</p>
+    <p data-points="p0033" id="e11">MDI 的工作区由多个仓库聚合而成（即 multi-repo workspace）。里面有 Java 后端（分 DDD 四层）、前端主应用、5 个微应用/H5，还有评测的执行端（Node）和服务端；每个都是独立的 git 仓库，一起放在 workspace-mdi/ 下面。</p>
+    <p data-points="p0034 p0035" id="e12">AGENTS.md 用几个短板块把这些串起来。<b>仓库地图</b>：带注释的目录树，7 个子仓库各自的用途和端口、谁是「唯一开发入口」、谁「已废弃禁止改动」，一眼可见。</p>
+    <p data-points="p0036" id="e12b"><b>快速命令</b>：各应用怎样启动、build、lint，AI 不必去翻每个仓库的 README。</p>
+    <p data-points="p0037" id="e12c"><b>速查表（关键约定）</b>：把踩坑后才定下的强约定压成「一句话 + 详见链接」，例如时间统一按北京时间格式化、新日志必须用 BizLog、新接口用 MTOP 注解、改代码前先读 PITFALLS。</p>
+    <p data-points="p0039" id="e12d"><b>当前状态表</b>：每个应用的完成度和已有能力的快照，让 AI 知道项目推进到哪了。</p>
+<pre class="code" data-asset="a0038"><code data-language="sql">| 约定 | 一句话 | 详见 |</code></pre>
+    <p class="note">原文代码节选：第 1 行（共 6 行），即速查表的表头；完整代码见精读版。</p>    <p data-points="p0038" id="e13">速查表原文是四行：时间字段展示、日志体系、MTOP 路由、踩坑必读，每行分别指向约定文档、ADR-013 或踩坑文档。</p>
+<figure class="figure orig" data-asset="a0040" data-points="p0040" id="fa0040"><img src="img/img05.png" alt="AGENTS.md 入口地图截图"><figcaption><b>原图 5 · AGENTS.md 入口地图：每个会话都加载，所以只导航</b> <span class="source-anchor" data-source-section="s5">出处：大淘宝技术 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">AGENTS.md 入口地图：每个会话都加载，所以只导航</a></span><span class="how">怎么看：左边是编辑器里的 AGENTS.md，右边四个编号标注对应四个板块：仓库地图（有哪些仓、各是什么、端口多少）、快速命令（怎么启动/构建/lint）、关键约定速查表（一句话 + 指向 docs/ 的指针）、当前状态表（每个应用做到哪）；右下红字强调「只做地图不做百科」「≤120 行守恒」。</span></figcaption></figure>    <p data-points="p0042" id="e14">行数由 collar-runbook 这个 skill 主动把关：快到 115 行时就提醒把细节挪进 docs/，入口里只留一行摘要和链接，让地图始终短而可信。</p>
+<h3>手段二 · 六个 Skill 管六层知识</h3><span class="source-anchor heading-source" data-source-section="s6">原文 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">手段二：六个 Skill 全方位管理知识库的六个层级</a></span>    <p data-points="p0044 p0045" id="e15">只有约束不够，还得回答「知识写到哪、什么时候自动写」。团队把知识库在 docs/ 下切成六块，每块各配<b>一个专属 Skill</b>（都以 collar- 开头），模块、Skill、README 一一对应：specs 是业务地图，changelog 是做过和要做的时间线，架构模块讲系统之间怎么连，runbook 是零散过程知识，vendor 是挑选同步的外部源码，wiki 是人工维护的自由知识。</p>
+<pre class="code" data-asset="a0045"><code data-language="text">docs/</code></pre>
+    <p class="note">原文代码节选：第 1 行（共 7 行），即目录名；完整代码见精读版。</p>    <p data-points="p0046" id="e16">最要紧的设计是：这六个 Skill <b>有的主动触发、有的被动触发，自动化程度是一级级递减的</b>。</p>
+<figure class="figure orig" data-asset="a0047" data-points="p0047" id="fa0047"><img src="img/img06.png" alt="六个 Skill 的触发方式与自动化程度表"><figcaption><b>原图 6 · 六个 Skill 的触发方式（原文以表格截图给出）</b> <span class="source-anchor" data-source-section="s6">出处：大淘宝技术 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">六个 Skill 的触发方式（原文以表格截图给出）</a></span><span class="how">怎么看：表有四列：自动化梯度、Skill、触发方式、谁主导。时间线、架构、过程知识三个是全自动（被动），分别由 git 提交/推送/发版、代码触及 API/schema/prompt、对话里出现踩坑或选型触发，AI 主导；specs 半自动，人写 raw 需求、AI 出技术方案；vendor 是引导式，人说「同步 XXX」，AI 执行和摘取；wiki 是辅助式，人写，AI 只帮整理检索。</span></figcaption></figure>    <p data-points="p0048" id="e17">背后的信条：<b>Agent 看不见的知识，就当它不存在</b>。所以知识都要版本化写进仓库文件，一发生就自动落进 docs/，下个会话或下个人拉代码就拿到完整上下文。</p>
+    <p data-points="p0049 p0050 p0051 p0052" id="e18">做一个 Skill 不难，难在多个 Skill 互不冲突还能配合。团队把 <b>git commit 设成统一的触发关口</b>：每提交一次，就有三个 Skill 同时从三个互不重叠的角度往知识库里补：collar-changelog 记录这次<b>做了什么</b>，collar-runbook 提炼<b>学到了什么</b>（坑和约定），collar-specs 检查<b>代码有没有偏离意图</b>，把差异列出来交给人定。</p>
+    <p class="callout limit" data-points="p0053" id="e19">这个强制是真的强制：沉淀知识从「看自觉」变成「流程关卡」，没有「这回先算了，下次一定」的退路。作者的理由是，知识库一欠账就会很快烂掉。</p>
+<figure class="figure orig" data-asset="a0054" data-points="p0054" id="fa0054"><img src="img/img07.png" alt="docs/ 六模块设计原则"><figcaption><b>原图 7 · docs/ 六模块：三类知识，每类两个互补视角</b> <span class="source-anchor" data-source-section="s6">出处：大淘宝技术 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">docs/ 六模块：三类知识，每类两个互补视角</a></span><span class="how">怎么看：三行分别是业务版图（specs 全局视角 ↔ changelog 演进视角）、技术架构（整体设计 ↔ 过程踩坑）、外部知识（vendor 按需维护 ↔ wiki 人工维护），每对之间写着「互补」；底部表格汇总每类的全局与演进视角、目录、维护方式和关键词。</span></figcaption></figure><h3>手段三 · 人工、自动两路冷启动</h3><span class="source-anchor heading-source" data-source-section="s7">原文 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">手段三：人工与自动双方式实现知识库冷启</a></span>    <p data-points="p0057 p0058 p0059" id="e20">新领域前期调研最考验知识的冷启动。知识分两类：<b>靠人维护的</b>和<b>自动维护的</b>。设计理念、竞品分析、蓝图调研（blue-print）这类要靠个人保证质量的，放进 wiki/；另外三层（时间线、架构连接点、过程知识）由 AI 从 git、代码和对话里自动抽取。</p>
+    <p data-points="p0060 p0061" id="e21">像官方 demo 这样的外部参考代码走 vendor/，原则是<b>只做减法，只拉自己要的</b>。collar-vendor 规定了两种同步办法，外加一套挑选算法。更巧的是 vendor 也给 collar-specs 当<b>实证参考</b>：specs 写技术方案时会自动扫相关 vendor，摘出代码模板、API 用法和架构模式写进方案，并注明出处。skill 里有句点题的话，大意是用户放进来的代码未必细读过，这一步替用户「读」并提炼要点。</p>
+    <p data-points="p0062" id="e22">于是调研时随手扔到 vendor、wiki 里的粗素材，等到真正做设计，会被 AI 自动捞出来参与决策。</p>
+<h3>手段四 · 给 AI 套项圈（还在推进）</h3><span class="source-anchor heading-source" data-source-section="s8">原文 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">手段四： 给 AI 套一个「项圈」（渐进实现中）</a></span>    <p data-points="p0064 p0065 p0066 p0067 p0068" id="e23">除了 AGENTS.md，根目录还有一份 collar.yaml。作者坦言它还在随 nekoCollar 逐步落地，所以只讲思路：项圈分三层。<b>Identity</b> 是身份和知识入口，告诉 AI 自己是谁、去哪读知识；<b>Boundary</b> 是边界约束，规定能碰和不能碰的东西，核心原则是 deny-by-default，即<b>默认拒绝</b>；<b>Validation</b> 负责验证，是改完代码必须通过的门禁：lint 和 typecheck。合起来看：Identity 决定 AI 知道什么，Boundary 决定它能改什么，Validation 判断它改得对不对。虽然 collar.yaml 没写完，这三层已借助 AGENTS.md、pre-commit hook 和后面的软硬双锁在多处生效。</p>
+<figure class="figure orig" data-asset="a0069" data-points="p0069" id="fa0069"><img src="img/img08.png" alt="collar 三层项圈：Identity / Boundary / Validation"><figcaption><b>原图 8 · collar 三层项圈</b> <span class="source-anchor" data-source-section="s8">出处：大淘宝技术 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">collar 三层项圈</a></span><span class="how">怎么看：同心圆从内到外是 Identity（入口 AGENTS.md、知识 docs/）、Boundary（白名单、禁区、角色权限）、Validation（lint 检查、一致性检查），外面是一条项圈；右侧三问对应三层：我是谁→知道什么、我能动什么→能改什么、我改对了吗→改得对不对；底部流程是加载 Identity → 受 Boundary 约束 → 过 Validation 校验，右下注明 collar.yaml 渐进实现中。</span></figcaption></figure><h3>小结 · 超级个体</h3><span class="source-anchor heading-source" data-source-section="s9">原文 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">小结 - 超级个体篇</a></span>    <p class="callout key" data-points="p0071 p0072" id="e24">入口地图、collar 三层约束、六个知识模块和六个 Skill 一起，把整个全栈项目有结构地交给 AI；一条有纵深的知识生命周期让 AI 从第一天就「懂」项目，也给后面加人打好地基。</p>
+<figure class="figure orig" data-asset="a0073" id="fa0073"><img src="img/img09.png" alt="章节编号图 03"><figcaption><b>原图 9 · 章节编号条 03（装饰）</b> <span class="source-anchor" data-source-section="s9">出处：大淘宝技术 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">章节编号条 03（装饰）</a></span></figcaption></figure>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s3"><a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">单兵攻坚期：构建极具纵深的「超级个体」编码上下文</a></span></div>
+</section>
+<section class="sec" data-toc="加人提速期：超级研发小分队" id="s4" data-source-section="s10">
+  <header class="doc-head"><span class="kicker">第三章 · 加人提速期</span><h2>划清地盘防冲突，缝补上下文防断链</h2></header>
+  <div class="doc-body">
+<h3>问题 · 怎样把一个人的效率复制给小队</h3><span class="source-anchor heading-source" data-source-section="s11">原文 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">问题：如何把超级个体效率复刻到整个研发小队上</a></span>    <p data-points="p0076" id="e25">一个人攻坚一个月后项目开始加人，问题变成：<b>单人效率怎样复制到多人协同</b>。多人最怕两件事：<b>冲突</b>，几个人改到同一处；<b>上下文断裂</b>，为了工程规范把逻辑挪到外面，AI 就看不懂了。</p>
+<h3>手段一 · 照站点地图划地盘</h3><span class="source-anchor heading-source" data-source-section="s12">原文 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">手段一：借鉴 Web2.0 的站点地图，物理隔离分工</a></span>    <p data-points="p0078" id="e26">Web2.0 早期做网站，上线前要先画 sitemap，也就是站点地图：有哪些分区、每区有哪些页面，然后各人认领页面并行开发。它的价值是<b>动工前就把系统的疆域横向摊开、划分清楚</b>。</p>
+    <p data-points="p0079 p0080 p0081" id="e27">团队把这个老办法用到 AI 研发上：MDI 的站点地图就是 docs/specs/，按业务地图横向展开，00 是站点整体骨架，01–05 依次是管理端（16 个功能模块，最重）、用户端（6 个）、小二端（14 个）、专家端（1 个）、评测端（2 个）。对应关系是：一个业务地图就是一个分区，一个功能模块就是分区里的一个页面或功能区。</p>
+<pre class="code" data-asset="a0080"><code data-language="css">docs/specs/</code></pre>
+    <p class="note">原文代码节选：第 1 行（共 7 行），即根目录名；完整代码见精读版。</p>    <p data-points="p0082" id="e28">数字前缀让目录天然排好序。每位同学开工前，先确认他负责的前台路由和后台 API 领域，以及产品模块、spec 范围；超出边界的协同都要先和项目组对齐。</p>
+<h3>手段二 · 四种变更类型</h3><span class="source-anchor heading-source" data-source-section="s13">原文 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">手段二：四种变更类型满足所有需求演进行为</a></span>    <p data-points="p0084" id="e29">版图划好后，每次具体改动按四种需求迭代类型来组织。</p>
+<figure class="figure orig" data-asset="a0085" data-points="p0085" id="fa0085"><img src="img/img10.png" alt="四种变更类型表"><figcaption><b>原图 10 · 四种变更类型（原文以表格截图给出）</b> <span class="source-anchor" data-source-section="s13">出处：大淘宝技术 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">四种变更类型（原文以表格截图给出）</a></span><span class="how">怎么看：三列是类型、定义、落地形态。feature 是大的独立功能模块，落成 XX_[功能模块]名称/ 目录；patch 是绑在 feature 上的小功能，放在功能模块下 patches 里的 PATCH-NNN 目录；sunset 是旧功能下线，文件名加 .v1-sunset.md 后缀并带日落声明头；blueprint 是试验性的初步调研，放在 docs/wiki/blue-print/ 独立目录。</span></figcaption></figure>    <p data-points="p0086 p0087" id="e30">以「管理端/创建访谈」为例，一个 feature 有三级：feature 目录下放只追加的原始需求 raw提示词.md、主 spec（技术方案文档），以及 patches/ 目录，里面挂着 PATCH-001 到 PATCH-011 共 11 个补丁，如 TPP 同步代理接入、TPP 异步代理接入。</p>
+<pre class="code" data-asset="a0087"><code data-language="css">01_[业务地图]管理端/</code></pre>
+    <p class="note">原文代码节选：第 1 行（共 8 行），即业务地图目录名；完整代码见精读版。</p>    <p data-points="p0088" id="e31">这里有层次之分：<b>feature、patch、sunset 都在正式规格层 docs/specs/，blueprint 却特意放进自由探索层 docs/wiki/blue-print/</b>。蓝图是还没决定怎么写成 spec 的能力构想，文件名前缀表示成熟度，依次是调研、讨论稿、技术方案，一直到 V4-MVP；调研成熟了，才「毕业」搬进 specs 变成正式 feature。</p>
+<figure class="figure orig" data-asset="a0089" data-points="p0089" id="fa0089"><img src="img/img11.png" alt="一个功能的完整生命周期"><figcaption><b>原图 11 · 一个功能的完整生命周期：从蓝图预研到日落存档</b> <span class="source-anchor" data-source-section="s13">出处：大淘宝技术 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">一个功能的完整生命周期：从蓝图预研到日落存档</a></span><span class="how">怎么看：从左到右四个阶段 blueprint → feature → patch → sunset，blueprint 到 feature 之间标着「毕业转正」；每段下面写目录和特点：blueprint 在 docs/wiki/blue-print、探索预研，feature 在 docs/specs、正式模块，patch 是增量补丁、双向指针，sunset 是日落存档、只读留痕；底部时间轴：V4 蓝图预研、V2 正式 feature、PATCH-001~006、V1 日落。</span></figcaption></figure>    <p data-points="p0091 p0092 p0093 p0094" id="e32">为什么这样切人就自然分开了？三点：一是<b>目录就是认领单位</b>，A 领「创建项目」、B 领「项目循环」，spec 目录物理隔开，冲突降到最低；二是<b>patch 让并行互不干扰</b>，小改动走补丁，多人能在同一 feature 下同时提 patch，主 spec 等稳定了再收拢；三是<b>生命周期清楚</b>，前期大设计走蓝图，下线走日落，稳定的功能就用 feature 加 patch。</p>
+    <p data-points="p0095 p0096 p0097" id="e33"><b>第一条关键规格是双向指针。</b>它解决主文档和补丁之间说法不一的问题。patch 替换主方案某段时，若只在 patch 里写「改了 X」，看主文档的人不知道；若只在主文档里划掉 X，看 patch 的人不知道前因后果。所以强制两头都留指针：patch 开头写「覆盖范围」，用表列出被替代的段落、原方案和新方案（例子里一个 SSE 流式调 DashScope 的接口被弃用，转用通用 TPP 代理）；主文档里被替代的段落加删除线，并注明已被哪个 PATCH 替代（原文这里是一个仓库内相对链接 <a href="./patches/PATCH-001_TPP同步代理接入/">仓库内链接</a>，公开页打不开）。</p>
+<pre class="code" data-asset="a0097"><code data-language="bash">## 覆盖范围</code></pre>
+    <p class="note">原文代码节选：第 2 行（共 9 行），即「覆盖范围」小标题；完整代码见精读版。</p>    <p data-points="p0098" id="e34">还要求 <b>每个 Patch 单独读也能看懂</b>，不预设读者先看过主文档。这对 AI 很友好：从哪个文件切进去，都能拼出当前真正生效的内容，不会被过时描述带偏。</p>
+    <p data-points="p0099 p0100 p0101" id="e35"><b>第二条关键规格讲 sunset，让旧功能体面退场。</b>旧功能下线若直接 git rm，历史上下文就永远没了，以后查灰度期的线上问题会两眼一抹黑。真实案例：用户核心循环原来是 V1 自建的 LLM Agent，后来迁到算法团队的 TPP 服务，旧文档顶部加了日落声明：2026-05-26 开始迁移，文档进入凝固期，不再改内容、不再加 PATCH（V1 时期那批 PATCH-001~006 都封存了），但仍可阅读用来排查灰度问题；决策记录在 ADR-010；等 V2 全量切换并稳定 1 周后，文档和关联的 V1 文件才会被 git rm。</p>
+<pre class="code" data-asset="a0101"><code data-language="shell">&gt; 迁移决策：ADR-010</code></pre>
+    <p class="note">原文代码节选：第 7 行（共 8 行），即迁移决策那一行；完整代码见精读版。</p>    <p class="callout key" data-points="p0102" id="e36">作者说这个模块是全项目最好的主线案例，<b>四种类型都经历过</b>：V4 全双工方案处于 blueprint 预研，V2 是正式 feature，V1 时期的 patch 有 PATCH-001~006，V1 整体进入 sunset 日落。核心观点：<b>sunset 不是删文件，而是一份可执行的迁移脚本，带着状态机</b>。</p>
+<h3>手段三 · 提交时提醒代码偏离 spec</h3><span class="source-anchor heading-source" data-source-section="s14">原文 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">手段三：提交时，代码到 spec 的反向提醒</a></span>    <p data-points="p0104 p0105" id="e37">版图划好了，代码写着写着仍可能偏离 spec。所以<b>提交时会有一个 skill 把代码和原始 spec 对一遍</b>。设计哲学是：Spec 是意图的源头，比代码出现得早；代码和它不一致未必是错，也许是写代码时找到了更好的办法。</p>
+    <p data-points="p0106 p0107" id="e38">因此提交时<b>不会自动去改 Spec</b>，只列出差异清单，让人拿主意。例子里差异点是字段类型：Spec 写 status 是 String，代码实现成 Integer 枚举，建议反向更新 Spec；用户对每条差异三选一：以代码为准更新 Spec、Spec 不动（代码以后改回来并记 TODO）、先搁置。</p>
+<pre class="code" data-asset="a0107"><code data-language="bash">用户逐条决策：</code></pre>
+    <p class="note">原文代码节选：第 5 行（共 8 行），即「用户逐条决策」那一行；完整代码见精读版。</p>    <p data-points="p0108" id="e39">这样「文档该不该变」不再被悄悄忽略，而成了必须明确做的决定。再加上工程上的 lint 门禁和 collar-changelog 的强制要求，于是有了两道保险：Agent 管语义检查，git hook 管质量检查。</p>
+<h3>手段四 · 上下文缝补</h3><span class="source-anchor heading-source" data-source-section="s15">原文 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">手段四：上下文缝补</a></span>    <p data-points="p0110 p0111 p0112" id="e40">作者觉得这一段最值钱。多人一起干久了，为了发布效率，大家会照工程惯例，把写死在代码里的东西（如 prompt 逻辑）挪到 Diamond、DB 等持久化介质里，配置和代码分离，传统研发里这是标准做法。但在 AI 研发里，这是个不易察觉的陷阱。</p>
+    <p data-points="p0113 p0114 p0115" id="e41">以前提示词就在代码里，codeAgent 一看代码就明白那个 Agent 的做法；挪到 DB 后，代码里只剩 promptService.load(agentCode) 这样的调用壳子，codeAgent 就看不出它的实际行为，关键决策上会判断错，或者回一句「我不清楚这个 Agent 具体怎么做，请到对应平台改提示词」。这就是<b>推理链断裂</b>：以为做了工程优化，其实在 AI 的上下文上捅了个洞，研发效率断崖式下降。</p>
+    <p class="callout limit" data-points="p0116 p0117" id="e42">项目组于是定下原则：<b>凡是让上下文出问题的研发架构改动，都必须用合适的办法把缺掉的上下文补回来</b>。</p>
+    <p data-points="p0118 p0119 p0120" id="e43">更深一层的认识是：<b>AI 时代人介入越少效率越高，所以 AI 的上下文始终决定效率</b>（作者特意提醒：说的是效率而非质量）。DB 类 MCP 之所以好用，是因为有了它，业务链路又连上了，codeAgent 的上下文也全了；查询类研发 MCP 的价值，就是把挪到 DB 的逻辑重新放回 AI 眼前。作者接着给了三个真实缝补案例。</p>
+    <p data-points="p0121 p0122 p0123 p0124" id="e44"><b>案例一：用只读的 MCP 查询，把挪到外面的动态 prompt 与 skill 找回来。</b>MDI 有一条多 Agent 生成报告的管线，它的 prompt 内容不写死，而是放在 Prompt 工作台里动态维护、单独发布，代码只剩调用框架和数据流，是典型的上下文缺口。团队专门给 MDI 做了个 MCP Server，这个 Server 的工具都是只读查询，共 20 个；分组里第 7 组叫「Prompt 工程」，专门凭原有锚点去查此刻生效的提示词或 skill：查某场景下每个 Agent 正在用的 prompt 版本、按 promptId 取 Mustache 模板全文、查版本历史、查每个 Agent 实际的输入输出和耗时。</p>
+<pre class="code" data-asset="a0124"><code data-language="bash"># mdi-query MCP —— Prompt 工程组（缝补核心）</code></pre>
+    <p class="note">原文代码节选：第 1 行（共 5 行），即这组工具的标题注释；完整代码见精读版。</p>    <p data-points="p0125" id="e45">这样 codeAgent 随时能拿到当前真正生效的 prompt，「请你去平台自己改」那种断链就不会再出现。</p>
+    <p data-points="p0126 p0127 p0128 p0129" id="e46">但<b>工具能查，不等于 AI 知道该去查</b>。所以另配了一个 skill，相当于 MCP 的<b>说明书</b>，教 codeAgent 主动补齐上下文，回答三个问题：<b>何时查</b>（skill 里写了触发条件，碰到相关上下文就主动调用，不等人提醒）、<b>怎么查</b>（固定四步调用链，锚点是场景码加 Agent 码）、<b>查到怎么用</b>（补充 MCP 数据的含义，帮 codeAgent 用好）。</p>
+    <p class="callout key" data-points="p0130" id="e47"><b>两样凑齐，缝补才算闭环</b>：MCP 属能力层，给出只读可达的通道；skill 是认知层，规定何时、如何取用。这样 codeAgent 会<b>主动按对的锚点</b>把外置的上下文拉回来，而不是能力摆在那却想不起用。</p>
+<figure class="figure orig" data-asset="a0131" data-points="p0131" id="fa0131"><img src="img/img12.png" alt="上下文缝补：把外置到 DB 的提示词拉回 AI 视野"><figcaption><b>原图 12 · 上下文缝补：用 SKILL/MCP 按锚点拉回外置的提示词</b> <span class="source-anchor" data-source-section="s15">出处：大淘宝技术 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">上下文缝补：用 SKILL/MCP 按锚点拉回外置的提示词</a></span><span class="how">怎么看：左半边 BEFORE（断裂）：机器人看着只剩 promptService.load(agentCode) 的 agent.ts，问「这个 Agent 到底会怎么做」，链条断开，真正的提示词在 DB / Prompt 工作台；中间锚点是 sceneCode + agentCode；右半边 AFTER（修复）：通过只读的 query MCP 先查清单、再取内容，拿回实际生效的提示词，机器人说「我知道它会怎么做了」；底部写同一思路也用于环境差异声明和 Transform 声明式注释。</span></figcaption></figure>    <p data-points="p0133 p0134 p0135" id="e48"><b>案例二：在 AGENTS.md 里写明预发和线上的环境差异。</b>这些差异对 AI 是看不见的地形，排查预发问题时会碰到代码明明对却不生效的怪事。补法是在 AGENTS.md 的关键约定速查里<b>明确告诉</b> codeAgent 环境有差异、遇到解释不通的问题先怀疑环境，细节记进 ADR。</p>
+    <p data-points="p0136 p0137" id="e49"><b>案例三：Transform 脚本靠注释留锚点。</b>部分运营逻辑放在 Transform 平台的 Groovy 脚本里，但用一套 //! 开头的声明式注释把锚点留在代码中：Groovy 当它是普通注释，平台把它当元数据，<b>代码本身就是锚点</b>。AI 读脚本源码，就能拿到名字、风险等级、参数、可运行的环境这些信息。同样是「逻辑外置，但保留可解释性」。</p>
+<h3>小结 · 超级研发分队</h3><span class="source-anchor heading-source" data-source-section="s16">原文 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">小结 - 超级研发分队篇</a></span>    <p class="callout key" data-points="p0139 p0140" id="e50">一套站点地图加四种变更模式，让多人一开工就各干各的，冲突面压到最小；上下文缝补保证工程优化不拿 AI 上下文做代价，任何让上下文出问题的架构改动都要补回来。</p>
+<figure class="figure orig" data-asset="a0141" id="fa0141"><img src="img/img13.png" alt="章节编号图 04"><figcaption><b>原图 13 · 章节编号条 04（装饰）</b> <span class="source-anchor" data-source-section="s16">出处：大淘宝技术 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">章节编号条 04（装饰）</a></span></figcaption></figure>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s10"><a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">加人提速期：基于能力分发，横向复刻出「超级研发小分队」</a></span></div>
+</section>
+<section class="sec" data-toc="高速迭代期：技术哨兵机" id="s5" data-source-section="s17">
+  <header class="doc-head"><span class="kicker">第四章 · 高速迭代期</span><h2>冲突只在合并处露面，就派一台机器专盯合并处</h2></header>
+  <div class="doc-body">
+<h3>问题 · 高速迭代时质量怎么不滑坡</h3><span class="source-anchor heading-source" data-source-section="s18">原文 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">问题：高速迭代期如何确保研发小分队质量不劣化？</a></span>    <p data-points="p0144" id="e51">第三阶段大家效率都上去了，节奏提到每周发一个大版本，预发上十几个分支并行。新瓶颈是：<b>人和人之间交换新上下文的速度跟不上</b>。比如有人上午动了后端接口的签名，另一个人下午改前端的调用，<b>两边本地都没问题，合到预发就在业务逻辑上打架，有时过很久才爆，甚至变成线上故障</b>。</p>
+    <p class="callout limit" data-points="p0145" id="e52">这类「隐形冲突」会随人数和速度成倍增长，作者称它是 <b>AI 研发质量变差的头号元凶</b>，得有一套新的上下文交换办法。</p>
+<h3>手段一（失败） · 盯编码过程</h3><span class="source-anchor heading-source" data-source-section="s19">原文 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">手段一（一次失败的尝试）：Agent Manage（编码态监控）</a></span>    <p data-points="p0147 p0148 p0149" id="e53">最初的想法很直接：既然要同步上下文，就<b>把每个人本地写代码时给 Agent 的输入、Agent 的回答都收上来</b>，在写代码阶段就掐掉冲突。于是做了 nekocollar-app（即 Agent Manage 方式）：相当于全局采集 codeAgent 信息的工具，能监听 claude code、cursor、qoder 这些 agent 进程，把 AI Coding 的信息全量收集管理（作者说这类做法在开源和公司内部都很常见）。设想是每位同学装一个本地 app，监听所有按 collar 模式跑的项目，从中提取协同信息、提前判断冲突。</p>
+    <p data-points="p0150 p0151 p0152" id="e54">跑下来遇到两个致命问题，作者直说<b>这部分失败了</b>：一是<b>噪音太大、信噪比很低</b>，代码 release 之前的本地编码充满不成熟的尝试，写了删、改了又改、和 AI 来回对话，这些过程信息大多没用；二是<b>成本太高</b>，监控每个人本地的输入输出要耗费惊人的 token，而且每人工具和习惯不同，Agent 行为很难统一监控。</p>
+    <p class="callout key" data-points="p0153" id="e55">事后复盘的根因很清楚：<b>介入的时机选错了</b>。编码阶段意图还没定型，信息最乱、最不确定，拿它做冲突检测代价太大。</p>
+<figure class="figure orig" data-asset="a0154" data-points="p0154" id="fa0154"><img src="img/img14.png" alt="介入时机：从编码态后移到预发集成态"><figcaption><b>原图 14 · 介入时机后移：从编码态到预发集成态</b> <span class="source-anchor" data-source-section="s19">出处：大淘宝技术 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">介入时机后移：从编码态到预发集成态</a></span><span class="how">怎么看：左上红叉是 Agent Manage 的失败原因：噪音多（半成品误报）、token 贵（全程监控）、编码态监控难；右上绿勾是 collar-daemon 的成功点：意图已定型、只看真实合并冲突、成本可控；下方时间线从①编码态·本地探索、②提交·release 到③预发集成，多个功能分支汇入预发，左边波形是信噪比低、想法频繁反复，右边是信噪比高、清晰稳定。</span></figcaption></figure><h3>手段二（成功） · 在预发集成态检测</h3><span class="source-anchor heading-source" data-source-section="s20">原文 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">手段二（这次有戏）：把触发节点放在预发检测上，还原一个“谁的开发机都没有的”最终运行环境</a></span>    <p data-points="p0157" id="e56">复盘后，触发点从编码阶段挪到预发集成阶段，collar-daemon 上场。它是<b>跑在一台独立机器上（目标是一台 Mac mini）的常驻守护进程</b>，定位就是团队研发质量的哨兵。技术栈极简：<b>原生 Node.js，零外部依赖</b>，只用 Node 自带的模块（如 https、net、fs），放到 Mac mini 上部署时连依赖都不用装。作者给的理由：一是想尽快做出来，二是功能稳定后还要考虑搬到云端。</p>
+    <p data-points="p0158 p0159 p0160 p0161" id="e57">它做三件事，首尾相连：<b>还原代码环境</b>，线上、预发两套工作区里的每个子仓库都持续同步到最新；<b>检测业务逻辑冲突</b>，预发一有新提交，就把谁改了什么交给云端 AI Agent 找隐形冲突；<b>告警闭环</b>，发现冲突就用钉钉机器人加 AI 表格在群里通报。</p>
+    <p data-points="p0162" id="e58">各人本地只有<b>自己改的那部分</b>，分支也各不相同。所以多人协作时，除去集成环境，<b>任何一台开发机都没有「所有人最新提交合起来」的完整代码</b>，而冲突恰恰只在这个合起来的环境里露面。</p>
+    <p data-points="p0163 p0164" id="e59">collar-daemon 在独立机器上持续把两套工作区拉到最新：配置里有线上和预发两个 workspace，各自轮询，线上 600 秒一次、全部 master，预发 300 秒一次、各仓最新 release，预发更勤。</p>
+<pre class="code" data-asset="a0164"><code data-language="css">workspaces: [</code></pre>
+    <p class="note">原文代码节选：第 2 行（共 5 行），即 workspaces 配置的开头；完整代码见精读版。</p>    <p data-points="p0165 p0166" id="e60">关键在预发：<b>每个子仓库单独去找 release 分支里最新的那条</b>，而不是全体切到同一个分支。办法是把远程分支按提交时间从新到旧排好，按前端仓、后端仓各自的 release 命名规则去匹配，取第一个命中的；一个都没有就退回 master。</p>
+<pre class="code" data-asset="a0166"><code data-language="javascript">  ]);</code></pre>
+    <p class="note">原文代码节选：第 6 行（共 11 行），即这个发现函数的声明；完整代码见精读版。</p>    <p data-points="p0167 p0168" id="e61">结果是前端、后端各仓都停在各自最新那条 release 上，<b>本次要上预发的各服务代码，实打实都落在一台机器上的一个工作区里</b>。这里没用 git merge 合出临时分支，而是让工作区本身<b>摆成「预发合并态」</b>：一个能运行、AI 能通读的完整快照。预发每 300 秒轮询一次，这份镜像跟着团队提交实时更新；也不用人告诉它本周预发分支叫什么，它会<b>自己切到最新的预发状态</b>。</p>
+    <p data-points="p0169 p0170 p0171 p0172" id="e62">为什么<b>要一直保有 release 集成态</b>？例子：A 改了接口签名，B 正好调用它，两人分支都编译、自测通过，只有合起来才暴露签名不符；又比如一人改了共享 Prompt 里槽位的 key，另一人仍按旧 key 读，各自都对，合并后线上静默读不到、悄悄失效；DB 字段变更、并发时序、共享配置等也一样：<b>放在单个开发分支上永远看不出，只有集成后才暴露</b>。</p>
+    <p class="callout key" data-points="p0174" id="e63">所以<b>只有在「所有人最新提交合在一起」的代码上查，才能抓到藏在合并处的真问题</b>。冲突只会在 release 集成分支上露面，哨兵机就是 24 小时守在那里的人。</p>
+    <p data-points="p0175" id="e64">作者强调这不是纸上谈兵：下面是哨兵机在集成态上真实报出来、而<b>在各人自己的分支里根本查不到</b>的例子，报错类型不止一种。</p>
+<figure class="figure orig" data-asset="a0176" data-points="p0176" id="fa0176"><img src="img/img15.png" alt="哨兵机一天内播报的问题截图"><figcaption><b>原图 15 · 哨兵机（数字人）24 小时内报出的问题</b> <span class="source-anchor" data-source-section="s20">出处：大淘宝技术 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">哨兵机（数字人）24 小时内报出的问题</a></span><span class="how">怎么看：多张钉钉群聊截图拼在一起，内容大多打了马赛克；能看出是机器人按条播报冲突，带红叉标记和 @ 到人的提醒，用来说明一天之内报了很多条。</span></figcaption></figure>    <p data-points="p0178" id="e65">哨兵机不是逢提交就报，只有真有合并风险时才 @ 到具体负责人，作者说这正是它信噪比能保持在八成以上的原因。</p>
+<figure class="figure orig" data-asset="a0179" data-points="p0179" id="fa0179"><img src="img/img16.png" alt="一台哨兵机还原全团队预发合并态"><figcaption><b>原图 16 · 一台哨兵机还原全团队的预发合并态</b> <span class="source-anchor" data-source-section="s20">出处：大淘宝技术 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">一台哨兵机还原全团队的预发合并态</a></span><span class="how">怎么看：左边开发者 A–D 各自在 feat/login、feat/profile、fix/payment、fix/order 分支，本地只看见自己那块；中间 git fetch 汇入「Mac mini 哨兵机」上的 collar-daemon，拼成「全貌」，下面写着由前端、后端各自 release 分支拼成的预发合并态镜像；右边送给 QoderWake Agent 做 AI 冲突检测；底部对比：本地人人只见自己那块，哨兵机是唯一能看见全貌的地方。</span></figcaption></figure>    <p data-points="p0181" id="e66">采集信息时<b>从不阻塞、也不破坏本地工作区</b>。它精确取出每次新提交的作者、提交说明（message）和改动文件，按仓库分组交给 AI，每条都突出提交人名字，因为多人排查冲突时，「谁改的」是第一条线索。</p>
+<h3>手段三 · 发现、处理到钉钉留痕</h3><span class="source-anchor heading-source" data-source-section="s21">原文 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">手段三（深挖）：从 daemon 发现，到 QoderWake 处理，再到 钉钉 留痕</a></span>    <p data-points="p0183 p0184" id="e67"><b>daemon 本身不做规则判断，也不内嵌 prompt</b>，只负责把整理好的结构化上下文 POST 到云端，交给 QoderWake Automation Agent 判断冲突。prompt 编排这类常变的智能交给云端，本地进程就不必依赖任何东西，也能长期不改、保持稳定。</p>
+    <p data-points="p0185" id="e68">QoderWake Agent 拿到提交上下文和完整代码后综合分析，确认冲突就<b>发群告警并写入 AI 表格</b>，在钉钉里，相关的人能直接看到谁的哪次提交和谁撞了。日常的跨人代码排查、trace 检查，以及版本更新日志里的业务逻辑冲突，都是同一条 Agent 分析链路在不同维度上的产出，形成闭环。</p>
+    <p data-points="p0186 p0187" id="e69">一个工程小技巧：QoderWake 管理界面只绑在 127.0.0.1 上且改不了，团队在别的机器上访问不到。collar-daemon 用 net.Server 加 pipe() 做了<b>端口相同、IP 不同的 TCP 透明转发</b>：让本机回环地址上的 19820 端口在内网 IP 上也能访问，改不了绑定也照样能用，全队都能远程看哨兵机界面。具体是每来一个连接就连到上游、两头互相 pipe；监听开在内网 IP 上，和回环地址各用各的。</p>
+<pre class="code" data-asset="a0187"><code data-language="javascript">});</code></pre>
+    <p class="note">原文代码节选：第 6 行（共 7 行），即双向转发中的一行；完整代码见精读版。</p><figure class="figure orig" data-asset="a0188" data-points="p0188" id="fa0188"><img src="img/img17.png" alt="QoderWake 管理界面截图"><figcaption><b>原图 17 · QoderWake 管理界面</b> <span class="source-anchor" data-source-section="s21">出处：大淘宝技术 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">QoderWake 管理界面</a></span><span class="how">怎么看：深色界面标题「我的Wakers」，列出多张卡片，每张是一个数字员工（头像、名字、角色、状态），右上有新建按钮；这就是通过上面的端口转发让全队远程看到的界面。</span></figcaption></figure>    <p data-points="p0189 p0190 p0191" id="e70">如果检测完只在群里发一条消息就算了，作用很有限：消息会被刷走、没人跟、也没法度量。所以每轮产出的冲突都<b>写进一张钉钉 AI 表格</b>并做<b>状态流转</b>，把「发现问题」推进到「闭环问题 + 质量可度量」：每条冲突是一条记录，相关同学看后把待回复改成<b>「问题存在」「误报」「已修复」</b>之一，既关掉问题，也反过来校准 Agent 的准确率；北极星指标定为<b>周冲突有效发现率</b>，即报出的冲突里被人工确认为真问题的比例。</p>
+<figure class="figure orig" data-asset="a0192" data-points="p0192" id="fa0192"><img src="img/img18.png" alt="冲突沉淀为 AI 表格的看板截图"><figcaption><b>原图 18 · 冲突写进 AI 表格、按周流转（有效发现率稳定 &gt;70%）</b> <span class="source-anchor" data-source-section="s21">出处：大淘宝技术 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">冲突写进 AI 表格、按周流转（有效发现率稳定 &gt;70%）</a></span><span class="how">怎么看：左边是看板，顶部几个大数字（如 70% 有效发现、7、20、6、8 等统计），下面有饼图、柱状图和趋势图；中间和右边是两条冲突记录的详情，标题标着「有冲突」，正文多处打码。</span></figcaption></figure>    <p data-points="p0194 p0195 p0196 p0197" id="e71">运营一段时间后的效果：<b>业务冲突的有效发现率一直超过 70%</b>，报出来的七成多是真问题，和之前本地检测比，信噪比从「没法用」变成「八成命中」；<b>每周能抓出 40+ 个</b>真的多人协作隐患，这些散在各人机器上、单看自己根本看不到；团队心态也变了，<b>哪天「禾小荞机器人」没发冲突检测，大家反而心里发慌</b>，怕哪里埋了雷没发现。作者认为，大家对一个 AI 工具产生「没它不踏实」的依赖，说明它真嵌进了研发流程。</p>
+<h3>小结 · 高维哨兵机器人</h3><span class="source-anchor heading-source" data-source-section="s22">原文 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">小结 - 高维哨兵机器人篇</a></span>    <p class="callout key" data-points="p0199 p0200" id="e72">用一台零依赖的哨兵机，拼出任何人的开发机上都没有的预发合并态，再请云端 Agent 检查每批新提交有没有隐形冲突；发现率保持 &gt;70%，每周都有 40+ 个真隐患被揪出来，项目组已离不开它。</p>
+<figure class="figure orig" data-asset="a0201" id="fa0201"><img src="img/img19.png" alt="章节编号图 05"><figcaption><b>原图 19 · 章节编号条 05（装饰）</b> <span class="source-anchor" data-source-section="s22">出处：大淘宝技术 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">章节编号条 05（装饰）</a></span></figcaption></figure>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s17"><a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">高速迭代期：引入「技术哨兵机」从更高维维稳</a></span></div>
+</section>
+<section class="sec" data-toc="稳定运作期：超级项目组" id="s6" data-source-section="s23">
+  <header class="doc-head"><span class="kicker">第五章 · 稳定运作期</span><h2>约束要随参与者变硬：让非研发同学安全地改真实页面</h2></header>
+  <div class="doc-body">
+<h3>问题 · 非研发同学怎么办</h3><span class="source-anchor heading-source" data-source-section="s24">原文 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">问题：研发的效率和质量提升了，那项目组里的非研发同学呢？</a></span>    <p data-points="p0204" id="e73">项目稳定后，团队看到更大的机会：<b>这份效率和稳定性，能不能也交给组里不写代码的同学</b>？像测试、产品、设计同样要理解代码、要在现有系统上提改动，也需要一个所见即所得的编辑体验。</p>
+<figure class="figure orig" data-asset="a0205" data-points="p0205" id="fa0205"><img src="img/img20.png" alt="各角色围绕代码上下文协作"><figcaption><b>原图 20 · 各角色围绕共享的代码上下文协作</b> <span class="source-anchor" data-source-section="s24">出处：大淘宝技术 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">各角色围绕共享的代码上下文协作</a></span><span class="how">怎么看：左边研发在本地 IDE / Git 里产出可运行代码；中间「共享代码上下文」包含代码仓库、业务 Spec、API 契约、运行状态，经「AI 上下文协同层」理解代码、隐藏分支、构建、部署等复杂度；右边产品、测试、设计分别通过云端工作台、钉钉/云端产出产品文档/Demo、测试报告、设计方案。</span></figcaption></figure>    <p data-points="p0206 p0207 p0208" id="e74">为什么各角色都要围着代码协作？因为<b>代码是离用户真实体验最近的「可执行事实」</b>。产品文档说希望发生什么，设计稿说用户该看到什么，测试用例说系统该满足什么，这些都是最终系统在不同方向上的投影，传下去时会被技术限制、接口怎么实现、运行环境和历史兼容所改变，用户最终碰到的是代码和配置真正跑出来的行为。作者的说法是，互联网各工种多年来其实一直围着「代码」这个最终产物做中心化协同。</p>
+    <p class="callout key" data-points="p0209" id="e75">如果协作只在上游文档之间转，信息差会沿着交付链越积越多；得让产品、设计、测试的判断不断回到代码和运行状态上去校准，才能早点发现「产品以为做了、设计以为能还原、测试以为测全了」和真实系统的差距。在用户看到行为之前，代码上下文是最后一份可以版本化、追踪和验证、大家共用的事实。所以<b>围着代码协作的意思，并非让每个人都去用 Git，而是让各角色都以最终能执行的事实为依据</b>。</p>
+<figure class="figure orig" data-asset="a0210" data-points="p0210" id="fa0210"><img src="img/img21.png" alt="NekoCollar 云端上下文协作示意"><figcaption><b>原图 21 · 代码上下文：可执行的共同事实</b> <span class="source-anchor" data-source-section="s24">出处：大淘宝技术 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">代码上下文：可执行的共同事实</a></span><span class="how">怎么看：顶部四个角色产品（PRD/意图）、设计（设计稿/预期）、测试（用例/标准）、运营（规则/配置），各自和中间之间标着理解偏差、实现折损、版本变化、环境差异；中间大框「代码上下文：可执行的共同事实」含代码仓库、API 与数据契约、配置与 Prompt、当前运行状态，往下是运行中的系统、目标用户的真实体验；两侧引语：上游产物是不同视角的投影，代码上下文是最后一份可执行、可验证的共同事实。</span></figcaption></figure>    <p data-points="p0211 p0212 p0213" id="e76">可直接把 git 权限和 AI 写代码的能力给不写代码的角色风险太大，一次手滑就可能把代码库弄脏。所以团队在做 NekoCollar：<b>一个云端的上下文协作系统，打算让测试、产品、设计和研发一起用上同样的效率与稳定性</b>。NekoCollar 算是把 collar SDD 体系平台化，前面 collar.yaml 里那些平台扩展占位字段在这里开始生效。作者把这看作非研发人员参与「代码开发」的终局形态。</p>
+    <p class="callout limit" data-points="p0214 p0215" id="e77">前三章解决的都是研发之间的协同，参与者都懂代码、懂 git，有工程素养，约束可以偏「软」，靠文档、规范和自觉。范围扩展到测试、产品、设计后，这些人不需要懂代码，但又得能安全地在代码库上表达意图，约束就得由软变硬，因为不能指望一个不懂 git 的产品经理记得「别往主干 push」。<b>参与者工程素养越低，系统约束就要越硬</b>，这是本章和前三章最根本的不同。</p>
+    <p data-points="p0216" id="e78">NekoCollar 的设计哲学一句话：<b>效率做加法，稳定性用物理手段卡死</b>。下面分效率和稳定性两条线。</p>
+<h3>设计思想一 · 效率线</h3><span class="source-anchor heading-source" data-source-section="s25">原文 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">设计思想一：效率线，让非研发角色也能“上下文编排式协同”</a></span>    <p data-points="p0218 p0219 p0220" id="e79"><b>云端沙箱一键开工，把上下文「物化」出来。</b>非研发同学不用在本地配环境，系统在云端 Aone 沙箱里自动拉起环境，用的是一条 @Async 异步五步流水线（编排器名为 WorkspaceProvisionOrchestrator）：创建实例（同步返回 instanceId）、起沙箱、装 claude-cli、准备工作目录、恢复对话记忆、启动 Bridge 和 Claude Agent、连上 Agent 进入 RUNNING。要注意 Step3：<b>知识库先 clone 下来当外层，代码仓再 clone 到它里面</b>，这正是团队研发时真实用的上下文环境。</p>
+<pre class="code" data-asset="a0219"><code data-language="apache">Step2 CREATING_SANDBOX（Aone SDK 起沙箱）</code></pre>
+    <p class="note">原文代码节选：第 2 行（共 7 行），即流水线中的一步；完整代码见精读版。</p>    <p data-points="p0221 p0222" id="e80"><b>所见即所得的编辑体验</b>，作者说这是和其他全栈研发平台最不同的地方。市面上「让 AI 改前端」的产品大多要么只能在单独的沙盒预览页看，要么只给一段 diff 让人脑补，<b>都不是真实页面</b>，产品和设计看到的始终是仿真环境，和线上真正运行的页面隔了一层。</p>
+    <p data-points="p0223 p0224 p0225" id="e81">团队花大力气做的，是让产品、设计等同学<b>就在预发或线上的真页面里，实时看到 AI 在沙箱中改出来的效果</b>，链路分四步。第 1 步，<b>在沙箱里起一个真正的 dev server</b>：工作空间开机时，给设置过 devServerPort 的前端仓库在 Aone 沙箱里后台启动开发服务器，就是平时本地用的 npm run start（先清端口，再从 <a href="https://registry.npmmirror.com">npmmirror 镜像源</a>装依赖，然后监听 0.0.0.0）。</p>
+<pre class="code" data-asset="a0225"><code data-language="javascript">  + "cd '%s' &amp;&amp; nohup sh -c '"</code></pre>
+    <p class="note">原文代码节选：第 4 行（共 8 行），即进入仓库目录并后台启动的那一行；完整代码见精读版。</p>    <p data-points="p0226 p0227" id="e82">第 2 步，<b>对外暴露端口并在 NekoCollar 登记</b>：用 Aone Sandbox SDK 把沙箱内端口映射成外部能访问的 URL，写进工作空间实例数据完成登记，平台再提供一个专给浏览器插件用的接口，返回每个 dev server 的映射；这里不读缓存，每次实时重新取 endpoint，保证拿到最新可用地址。</p>
+<pre class="code" data-asset="a0227"><code data-language="typescript">// Service 里不是读缓存，而是实时重新 getEndpoint，保证返回最新可用端点</code></pre>
+    <p class="note">原文代码节选：第 4 行（共 4 行），即「不读缓存、实时取端点」那行注释；完整代码见精读版。</p>    <p data-points="p0228 p0229" id="e83">第 3 步是最关键的一步，<b>由浏览器插件 nekocollar-extension 自动做代理</b>：用户在浏览器里打开预发或线上的真实页面，插件先向 NekoCollar 后端要到当前空间里各 dev server 的对应关系，再动态加上重定向规则，<b>把页面原本从 CDN（g.alicdn.com、dev.g.alicdn.com）取的前端资源改由沙箱里的 dev server 提供</b>。规则仅对 NekoCollar 页面起作用，严格限定在当前标签页，不影响别的页面，并有 20 秒 TTL 缓存加轮询刷新，endpoint 变了能及时跟上。规则按仓库在 CDN 上的路径做正则匹配，覆盖脚本、样式、图片、字体和 xhr 请求。</p>
+<pre class="code" data-asset="a0229"><code data-language="php">  priority: 1,</code></pre>
+    <p class="note">原文代码节选：第 4 行（共 11 行），即规则的优先级字段；完整代码见精读版。</p>    <p data-points="p0230 p0231" id="e84">第 4 步是<b>闭环</b>：产品或设计在沙箱里和 codeAgent 对话改页面，热更新由 dev server 完成，插件让真实页面改从沙箱取资源，用户打开的就是预发或线上的真页面，结果马上可见。既非仿真、预览，也非 diff，变化就发生在真实页面上，跟研发平时本地做全栈开发的感受一样。原来只有研发用 whistle/charles 本地代理才能做的「调试真实页面」，现在<b>零门槛交给了非研发同学</b>，产品经理不用装环境、不用懂代理配置。</p>
+    <p data-points="p0232 p0233" id="e85"><b>服务端的改动怎么办？</b>前端资源能靠热更新加代理即时看到，但如果改动涉及后端接口（例如 codeAgent 顺带改了一个接口返回的结构），就不能马上生效：服务端改动真要上预发/线上，<b>受发布流程的时间和部署复杂度限制</b>，构建、审批、部署一轮常常要几分钟甚至更久，对边改边看来说太慢。规划的取舍是：服务端改动也交给浏览器插件，在浏览器里截下请求，返回修改后的结果，不等真正发布，页面上马上能看到数据变化。敢这样做，是因为非研发场景对后端逻辑的改动影响面可控。作者特别说明：<b>已做实的只有前端静态资源的代理，服务端接口 mock 还在规划</b>。</p>
+<figure class="figure orig" data-asset="a0234" data-points="p0234" id="fa0234"><img src="img/img22.png" alt="在真实页面上对话式修改"><figcaption><b>原图 22 · 非研发同学边对话边改真实页面</b> <span class="source-anchor" data-source-section="s25">出处：大淘宝技术 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">非研发同学边对话边改真实页面</a></span><span class="how">怎么看：标题是「前端资源代理 + 服务端 mock」；横向七步：①沙箱基础设计（Dockerfile）、②沙箱启动并起 dev server、③暴露沙箱端口、④NekoCollar 平台（nova-api）登记、⑤浏览器插件（核心，橙框）、⑥真实页面、⑦服务端 mock（规划中，虚线）；前几步下方标着「已落地」；底部对比左边隔离预览/代码 diff 与右边在真实页面上实时修改。</span></figcaption></figure><h3>设计思想二 · 稳定性线</h3><span class="source-anchor heading-source" data-source-section="s26">原文 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">设计思想二：稳定性线，软硬双锁把危险操作变成“物理不可能”</a></span>    <p data-points="p0237 p0238 p0239 p0240" id="e86">这部分属于 NekoCollar 的 harness 层。<b>硬约束（协议层，绕不过去）：clone 完立刻废掉推送地址。</b>代码 clone 进沙箱后第一件事，是逐个仓库改掉推送地址，指向一个并不存在的仓库名 PUSH_DISABLED；之后再执行推送，git 会直接报 fatal，说 PUSH_DISABLED 不是一个仓库。<b>沙箱里的代码只能进来，推不出去污染主干</b>。</p>
+<pre class="code" data-asset="a0239"><code data-language="swift">String cmd = "find '...' -name .git -type d -maxdepth 3"</code></pre>
+    <p class="note">原文代码节选：第 3 行（共 4 行），即查找所有 .git 目录的那一行；完整代码见精读版。</p>    <p data-points="p0241 p0242" id="e87"><b>软约束在行为层，让 AI 少做无用尝试：给 Claude Code 设权限白名单。</b>沙箱里 Claude Code 的配置文件（~/.claude 目录里的那个设置文件）用 permissions.allow 列出允许的命令，<b>git 只开放拉取和查看这一类</b>：fetch、pull、merge、rebase、checkout、add、status、log、diff 等；push、remote 都不在列表里，ACCEPT_EDITS 模式下一审批就被拒。这两道锁都已真正上线；在此之上还规划了第三道：提案审阅兜底，目前开发中。</p>
+<figure class="figure orig" data-asset="a0243" data-points="p0243" id="fa0243"><img src="img/img23.png" alt="软硬双锁：代码只进不出"><figcaption><b>原图 23 · 软硬双锁：代码只进不出</b> <span class="source-anchor" data-source-section="s26">出处：大淘宝技术 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">软硬双锁：代码只进不出</a></span><span class="how">怎么看：左边沙箱环境里的 AI 尝试 git push；第一道门（软）是 Claude 权限白名单，push 不在 allow 列表，ACCEPT_EDITS 模式下审批拒绝；第二道门（硬）是 push URL 已改为 PUSH_DISABLED，协议层直接报 fatal；右边主干代码库标着「代码只进不出」；底部对比解法三（事后监控编码态对话，发现问题）和解法四（事前 git 协议层物理阻断），中间箭头「从事后 → 事前」，最右是第三道锁（提案审阅，规划中）。</span></figcaption></figure>    <p data-points="p0245" id="e88"><b>提案机制：不直接改代码，只把验收过的净改动 cherry pick 进去。</b>前两道锁保证代码出不了沙箱，但非研发同学改满意后，改动怎样安全地进代码库？办法是「提案」（Proposal）：对话里来回改出来的东西不会直接进库，先整理成一份结构化提案（验收过的净 diff、需求、决策、验收证据），审过之后再用 cherry pick 智能合进去。另外还设计了针对不同角色的约束做法，让定制化、有约束的协作成为可能。</p>
+<figure class="figure orig" data-asset="a0246" data-points="p0246" id="fa0246"><img src="img/img24.png" alt="提案机制状态机"><figcaption><b>原图 24 · 提案机制状态机（设计中）</b> <span class="source-anchor" data-source-section="s26">出处：大淘宝技术 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">提案机制状态机（设计中）</a></span><span class="how">怎么看：主线状态 iterating（多轮对话迭代中）→ draft（草稿）→ pending_review（待审阅）→ approved（通过）→ applied（已合入）→ rolled_back（已回滚）；draft 下挂 Boundary Check、lint、typecheck、test 四项检查；审阅可能走到 rejected（驳回）或 changes_requested（要求修改，回到 iterating）；左下是冲突检测三时机：创建时、应用时、批量时；底部说明这是设计蓝图，代码尚未落地，当前真正生效的是软硬双锁。</span></figcaption></figure><h3>小结 · 超级项目组</h3><span class="source-anchor heading-source" data-source-section="s27">原文 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">小结 - 超级项目组篇：</a></span>    <p class="callout key" data-points="p0248 p0249" id="e89">稳定运作期做了 NekoCollar，一个云端、开箱就能用的研发上下文：效率靠云端沙箱、上下文物化、<b>在真实页面上所见即所得地修改</b>和 PM 规则治理；稳定性方面，已上线的是 git 协议层的软硬两道锁，提案机制和角色运行时鉴权仍在开发。这一步把 collar SDD 从本地 CLI 体系自然地推向云端多角色平台，也是团队仍在建设的终局形态。</p>
+<figure class="figure orig" data-asset="a0250" id="fa0250"><img src="img/img25.png" alt="章节编号图 06"><figcaption><b>原图 25 · 章节编号条 06（装饰）</b> <span class="source-anchor" data-source-section="s27">出处：大淘宝技术 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">章节编号条 06（装饰）</a></span></figcaption></figure>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s23"><a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">稳定运作期：为「整个项目组的成员」带来效率和稳定性的平权</a></span></div>
+</section>
+<section class="sec" data-toc="结语：四条必经之路" id="s7" data-source-section="s28">
+  <header class="doc-head"><span class="kicker">第六章 · 结语</span><h2>四个阶段，四条可复用的经验</h2></header>
+  <div class="doc-body">
+    <p data-points="p0252 p0253 p0254 p0255 p0256" id="e90">回看四个阶段，作者提炼了四条可直接复用的经验，每条都是「解法 + 原因」：</p>
+    <table class="data" data-points="p0253 p0254 p0255 p0256" id="e91"><caption>四条经验（据原文结语整理）</caption><thead><tr><th>阶段</th><th>解法</th><th>原因</th></tr></thead><tbody>
+<tr><td data-label="阶段">单人起步</td><td data-label="解法">建好核心的全栈上下文</td><td data-label="原因">知识库有多深，直接决定最小单位的研发效率</td></tr>
+<tr><td data-label="阶段">多人扩张</td><td data-label="解法">站点地图加 spec 变更规则</td><td data-label="原因">权责分得清不清，决定这份效率能不能横向扩散</td></tr>
+<tr><td data-label="阶段">敏捷迭代</td><td data-label="解法">建比传统模式更高维的 AI 监控</td><td data-label="原因">传统手段做不到质量和效率同时提升</td></tr>
+<tr><td data-label="阶段">项目稳定</td><td data-label="解法">建更多好用的协同链路，加上 harness 工程</td><td data-label="原因">新链路设计得如何，决定能否把效率和质量带给非研发人员</td></tr>
+</tbody></table>
+    <p class="callout key" data-points="p0257 p0258 p0259" id="e92">回到开头的主线：四步走完，AI 带来的研发能力就被<b>一圈圈往外扩：从个体到团队，到能持续，再到全员</b>。顺序是：一个开发者先变强，几个强者再组成会配合的团队，团队接着保持高速，最后把这份能力交到每个非研发同学手上。</p>
+    <p data-points="p0260" id="e93">最后一句：AI 能力普及之后，最宝贵的是人不故步自封、持续追求和创新的那股劲。</p>
+<figure class="figure orig" data-asset="a0261" id="fa0261"><img src="img/img26.png" alt="章节编号图 07"><figcaption><b>原图 26 · 章节编号条 07（装饰）</b> <span class="source-anchor" data-source-section="s28">出处：大淘宝技术 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">章节编号条 07（装饰）</a></span></figcaption></figure><h3>团队介绍</h3><span class="source-anchor heading-source" data-source-section="s29">原文 · <a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">团队介绍</a></span>    <p data-points="p0263" id="e94">作者卡狸，来自淘天集团天猫技术团队。团队是淘天的技术主力，覆盖国家补贴、百亿补贴、天猫国际、天猫APP、新品孵化、天猫行业等核心业务的全链路技术，靠高并发架构、智能算法与数据能力，服务上亿消费者和百万商家。</p>
+    <p class="extra" id="e95">原文最后的「拓展阅读」是公众号栏目导航（3DXR技术、终端技术等），与本文内容无关，未收录。<span class="source-anchor" data-source-section="s30"><a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">拓展阅读</a></span></p>
+
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s28"><a href="https://mp.weixin.qq.com/s/0wnFz3G6niLetSQptUi-SA">结语：AI 时代研发协同发展的四条必经之路</a></span></div>
+</section>
+<section class="sec" data-toc="小测：3 道题" id="s8" data-source-section="extra">
+  <div class="head-full"><span class="kicker">小测</span><h2>用新场景检验：每个阶段的解法对应什么问题？</h2></div>
+  <div class="stage"><div class="quiz"><script type="application/json">[{"q": "MDI 团队最早想在本地编码阶段就监控每个人的 Agent 输入输出来发现冲突，为什么失败了？", "opts": ["本地机器性能不够", "编码阶段意图未定型，噪音大、token 成本高", "开发者不愿意安装 app"], "a": 1, "why": "作者复盘的根因是介入时机放错：编码态信息最乱、确定性最差，噪音多、监控成本过高。", "back": 5}, {"q": "把提示词从代码挪到 DB 后，codeAgent 回答「请你去平台改提示词」。按原文，完整的补法是什么？", "opts": ["把提示词再写回代码", "只加一个只读查询 MCP", "MCP 提供只读通道，再配一个 skill 告诉它何时、怎么查、查到怎么用"], "a": 2, "why": "作者强调工具能查不等于 AI 知道该查：MCP 是能力层，skill 是认知层，两者合起来才是缝补闭环。", "back": 4}, {"q": "产品经理在 NekoCollar 沙箱里让 AI 改完代码，想 git push 到主干，会怎样？", "opts": ["直接推送成功", "被白名单拦下；就算绕过，push 地址已改成 PUSH_DISABLED，协议层也会失败", "推送后由哨兵机回滚"], "a": 1, "why": "软锁是 Claude Code 权限白名单不放行 push，硬锁是 clone 后把 push URL 改写成 PUSH_DISABLED，代码只进不出。", "back": 6}]</script></div></div>
+</section>
+</main><script>var __H=location.hash;window.lessonIcons={"menu": "<svg class=\"i i-menu\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/><\/svg>", "play": "<svg class=\"i i-play\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z\"/><\/svg>", "pause": "<svg class=\"i i-pause\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"14\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/><rect x=\"5\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/><\/svg>", "check": "<svg class=\"i i-check\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 6 9 17l-5-5\"/><\/svg>", "x": "<svg class=\"i i-x\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/><\/svg>", "zoom-in": "<svg class=\"i i-zoom-in\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><line x1=\"21\" x2=\"16.65\" y1=\"21\" y2=\"16.65\"/><line x1=\"11\" x2=\"11\" y1=\"8\" y2=\"14\"/><line x1=\"8\" x2=\"14\" y1=\"11\" y2=\"11\"/><\/svg>", "zoom-out": "<svg class=\"i i-zoom-out\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><line x1=\"21\" x2=\"16.65\" y1=\"21\" y2=\"16.65\"/><line x1=\"8\" x2=\"14\" y1=\"11\" y2=\"11\"/><\/svg>", "copy": "<svg class=\"i i-copy\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\"/><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"/><\/svg>", "chevron-right": "<svg class=\"i i-chevron-right\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m9 18 6-6-6-6\"/><\/svg>", "book-open": "<svg class=\"i i-book-open\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 5v16\"/><path d=\"M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z\"/><\/svg>", "external-link": "<svg class=\"i i-external-link\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M15 3h6v6\"/><path d=\"M10 14 21 3\"/><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/><\/svg>"};window.lessonIcon=n=>window.lessonIcons[n]||"";</script><script>/* Article/pair navigation only. No global swipe or arrow-key paging. */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const H=document.documentElement, sections=$$('main.deck > .sec, main.deck > .hero, .pair-notes > .sec');
+if(!sections.length)return;
+const ids=new Set($$('[id]').map(n=>n.id));
+sections.forEach((s,i)=>{if(!s.id){let n=i+1,id=s.classList.contains('hero')?'intro':'s'+n;while(ids.has(id))id='s'+(++n);s.id=id;ids.add(id)}});
+const title=s=>s.dataset.toc||$('h2,h1,h3',s)?.textContent||s.id;
+const toc=document.createElement('nav');toc.className='toc';toc.id='lesson-toc';toc.setAttribute('aria-label','目录');
+const heading=document.createElement('b');heading.textContent='目录';toc.appendChild(heading);const ol=document.createElement('ol');toc.appendChild(ol);
+sections.forEach((s,i)=>{const li=document.createElement('li'),a=document.createElement('a');a.href='#'+s.id;a.textContent=(i+1)+'. '+title(s);li.appendChild(a);ol.appendChild(li)});document.body.appendChild(toc);
+const links=$$('a',toc),toggle=$('.toc-toggle'),count=$('.count'),bar=$('.track i');
+const shade=document.createElement('div');shade.className='toc-backdrop';document.body.appendChild(shade);
+function open(value){H.classList.toggle('toc-open',value);toggle?.setAttribute('aria-expanded',String(value));if(value)links.find(a=>a.getAttribute('aria-current')==='true')?.focus();else toggle?.focus()}
+if(toggle){toggle.setAttribute('aria-controls',toc.id);toggle.onclick=()=>open(!H.classList.contains('toc-open'))}shade.onclick=()=>open(false);
+addEventListener('keydown',e=>{if(e.key==='Escape'&&H.classList.contains('toc-open'))open(false)});
+function locate(hash){let id;try{id=decodeURIComponent(hash.replace(/^#/,''))}catch(e){return null}if(/^\d+$/.test(id))return sections[+id-1];return document.getElementById(id)}
+function jump(target){if(!target)return;H.classList.remove('toc-open');toggle?.setAttribute('aria-expanded','false');target.scrollIntoView({block:'start',behavior:'instant'});history.replaceState(null,'','#'+target.id);update();dispatchEvent(new Event('lesson:navigate'))}
+window.lessonNav={layout:H.dataset.layout,go:n=>jump(document.getElementById('s'+n)||sections[n-1]),returnTo:box=>jump(box.closest('.sec')||box),jump};window.goCard=n=>window.lessonNav.go(n);
+toc.onclick=e=>{const a=e.target.closest('a');if(!a)return;e.preventDefault();jump(locate(a.hash))};
+const key='pos:'+location.pathname;let queued=false,restoring=true;
+function update(){queued=false;let current=sections[0];const line=H.dataset.layout==='pair'&&innerWidth<=820?innerHeight*.4+90:100;for(const s of sections)if(s.getBoundingClientRect().top<=line)current=s;
+ count.textContent=title(current);links.forEach(a=>a.setAttribute('aria-current',String(a.hash==='#'+current.id)));const max=H.scrollHeight-innerHeight;bar.style.width=Math.max(0,Math.min(100,max>0?scrollY/max*100:100))+'%';
+ if(!restoring)try{localStorage.setItem(key,JSON.stringify({id:current.id,offset:scrollY-(current.getBoundingClientRect().top+scrollY)}))}catch(e){}
+}
+addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(update)}},{passive:true});addEventListener('resize',update);addEventListener('hashchange',()=>jump(locate(location.hash)));
+addEventListener('load',()=>{const hash=window.__H||location.hash;let target=locate(hash),offset=0;if(!hash){try{const pos=JSON.parse(localStorage.getItem(key)||'null');if(pos){target=document.getElementById(pos.id);offset=Number(pos.offset)||0}}catch(e){}}
+ if(target){target.scrollIntoView({block:'start',behavior:'instant'});if(!hash)scrollBy(0,offset+72)}restoring=false;update();
+});update();
+})();
+</script><script>/* Reveal an offscreen simulator first, then move only its local SVG viewport. */
+(function(root){
+function delta(start,end,low,high,pad=16){if(start<low+pad)return start-low-pad;if(end>high-pad)return end-high+pad;return 0}
+function focus(svg,scroller){
+ let frame=scroller.getBoundingClientRect(),bottom=innerHeight-88;
+ const top=document.querySelector('.top')?.getBoundingClientRect().bottom||56;
+ if(frame.bottom<=top||frame.top+112>bottom){
+  scroller.closest('.sim').scrollIntoView({block:'start',behavior:'instant'});
+  frame=scroller.getBoundingClientRect();
+ }
+ for(let p=scroller.parentElement;p&&p!==document.body;p=p.parentElement){const c=getComputedStyle(p);if(/auto|scroll|hidden|clip/.test(c.overflowY)){const r=p.getBoundingClientRect();bottom=Math.min(bottom,r.top+p.clientHeight)}}
+ const space=Math.max(112,Math.min(innerHeight*.4,bottom-frame.top));scroller.style.maxHeight=space+'px';
+ frame=scroller.getBoundingClientRect();const node=svg.querySelector('.fl-node.act');if(!node)return;const r=node.getBoundingClientRect();
+ scroller.scrollTop+=delta(r.top,r.bottom,frame.top,frame.top+scroller.clientHeight);
+ scroller.scrollLeft+=delta(r.left,r.right,frame.left,frame.left+scroller.clientWidth);
+}
+root.LessonGeometry={delta,focus};if(typeof module!=='undefined')module.exports={delta,focus};
+})(typeof window==='undefined'?globalThis:window);
+</script><script>/* Shared material/explanation pairing, original-image dialog and copy actions. */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)],ic=window.lessonIcon;
+window.lessonCopy=async(text,button)=>{try{if(navigator.clipboard?.writeText)await navigator.clipboard.writeText(text);else{const t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();if(!document.execCommand('copy'))throw Error('copy');t.remove()}button.textContent='已复制'}catch(e){button.textContent='复制未成功，请选中文字复制'}};
+$$('.pair.codewalk,.pair.read-pair,.pair.material-pair').forEach(pair=>{
+ const source=$('.pair-source',pair),notes=$('.pair-notes',pair);if(!source||!notes)return;
+ const pre=$('pre[data-lines]',source),code=pre&&$('code',pre),steps=$$('.step',notes);let lines=[],raw='';
+ if(code){raw=code.textContent;const first=Number(pre.dataset.lines)||1;code.textContent='';const pieces=raw.replace(/\n$/,'').split('\n');pieces.forEach((text,i)=>{const line=document.createElement('span');line.className='code-line';line.dataset.line=String(first+i);line.textContent=text;code.appendChild(line);lines.push(line)});
+  const panel=document.createElement('div');panel.className='code-panel';source.before(panel);
+  const toolbar=document.createElement('div');toolbar.className='code-toolbar';
+  const hint=document.createElement('span');hint.className='code-scroll-hint';hint.textContent='长行可横向滚动';
+  const button=document.createElement('button');button.className='btn sm copy-code';button.innerHTML=ic('copy')+' 复制代码';button.onclick=()=>window.lessonCopy(raw,button);
+  toolbar.append(hint,button);panel.append(toolbar,source);
+ }
+ let active=null;
+ function select(step){if(!step||active===step)return;active=step;steps.forEach(s=>s.classList.toggle('is-active',s===step));let targets=[];
+  if(code){const ranges=(step.dataset.hl||'').split(',').map(v=>v.split('-').map(Number));lines.forEach(line=>{const n=Number(line.dataset.line),on=ranges.some(([a,b=a])=>n>=a&&n<=b);line.classList.toggle('hl',on);if(on)targets.push(line)})}
+  else{const ids=(step.dataset.explains||step.dataset.target||'').split(/\s+/);$$('.source-block,[data-material]',source).forEach(block=>{const on=ids.includes(block.dataset.sourceId||block.id);block.classList.toggle('is-active',on);if(on)targets.push(block)})}
+  if(targets.length){const a=targets[0].getBoundingClientRect(),b=targets[targets.length-1].getBoundingClientRect(),r=source.getBoundingClientRect();const bottom=r.top+source.clientHeight;source.scrollTop+=b.bottom-a.top>source.clientHeight-32?a.top-r.top-16:window.LessonGeometry.delta(a.top,b.bottom,r.top,bottom)}
+ }
+ const update=()=>{
+  const rect=notes.getBoundingClientRect(),material=source.closest('.code-panel')||source;
+  const top=Math.max(0,$(".top")?.getBoundingClientRect().bottom||0,innerWidth<=820?material.getBoundingClientRect().bottom:0),bottom=Math.min(innerHeight,rect.bottom);
+  if(bottom<=top)return;
+  const line=top+(bottom-top)*.4;let step=steps[0];
+  for(const s of steps)if(s.getBoundingClientRect().top<=line)step=s;
+  const last=steps.at(-1),lastRect=last?.getBoundingClientRect();
+  if(scrollY+innerHeight>=document.documentElement.scrollHeight-2&&lastRect?.top<bottom&&lastRect.bottom>top)step=last;
+  select(step);
+ };
+ let queued=false;addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(()=>{queued=false;update()})}},{passive:true});addEventListener('resize',update);
+ steps.forEach(step=>{step.addEventListener('focusin',()=>select(step));step.addEventListener('click',e=>{select(step);const a=e.target.closest('a');if(a?.hash&&source.querySelector(a.hash)){e.preventDefault();source.focus()}})});select(steps[0]);addEventListener('load',update);
+});
+$$('figure img').forEach(img=>{const button=document.createElement('button');button.className='image-open';button.type='button';button.setAttribute('aria-label','放大图片：'+img.alt);img.replaceWith(button);button.appendChild(img);button.onclick=()=>{
+ const dialog=document.createElement('dialog');dialog.className='image-dialog';dialog.setAttribute('aria-label',img.alt);const close=document.createElement('button');close.className='btn dialog-close';close.innerHTML=ic('x')+' 关闭';const large=img.cloneNode();large.removeAttribute('loading');dialog.append(close,large);document.body.appendChild(dialog);close.onclick=()=>dialog.close();dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close()});dialog.addEventListener('close',()=>{dialog.remove();button.focus()});dialog.showModal();close.focus();
+}});
+$$('details.more summary').forEach(s=>{if(!s.textContent.trim())s.textContent='展开细节';s.insertAdjacentHTML('afterbegin',ic('chevron-right'))});
+})();
+</script><script>/* 学习搭子 固定组件库 — 不要在课程里改这个文件。 */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const NS='http://www.w3.org/2000/svg';
+const data=(box,kind)=>JSON.parse(box.querySelector('script[type="application/json"]')?.textContent||box.dataset[kind]);
+const ic=window.lessonIcon;
+const el=(t,a={},p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p&&p.appendChild(e);return e};
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+function component(selector,render){
+  $$(selector).forEach(box=>{try{render(box)}catch(error){
+    const message=document.createElement('p');message.className='component-error';
+    message.textContent='这张图的数据有误';message.setAttribute('role','status');
+    box.replaceWith(message);console.error('组件数据有误',error);
+  }});
+}
+
+/* ---------- flow：用 JSON 画流程图 ----------
+ spec = {w,h,nodes:[{id,x,y,t,s?,c?,w?}],edges:[{f,t,l?,bend?}]}  节点坐标是中心点 */
+function drawFlow(svg,spec){
+  svg.innerHTML='';
+  const defs=el('defs',{},svg);
+  [['a','var(--meta)'],['b','var(--blue)'],['red','var(--amber)'],['amber','var(--amber)'],['green','var(--green)']].forEach(([id,c])=>{const m=el('marker',{id:'ar'+id+svg.dataset.uid,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:7,markerHeight:7,orient:'auto-start-reverse'},defs);el('path',{d:'M0,0L10,5L0,10z',fill:c},m)});
+  const N={};spec.nodes.forEach(n=>N[n.id]={...n,w:n.w||150,h:n.h||(n.s?70:56)});
+  const ns=Object.values(N);
+  let x0=Math.min(...ns.map(n=>n.x-n.w/2)),x1=Math.max(...ns.map(n=>n.x+n.w/2)),y0=Math.min(...ns.map(n=>n.y-n.h/2)),y1=Math.max(...ns.map(n=>n.y+n.h/2));
+  const B={x0,x1,y0,y1};
+  const eg=el('g',{},svg),ng=el('g',{},svg);svg._edges={};svg._nodes={};
+  const clip=(a,b)=>{const dx=b.x-a.x,dy=b.y-a.y;const s=Math.min(Math.abs((a.w/2+6)/(dx||1e-9)),Math.abs((a.h/2+6)/(dy||1e-9)));return[a.x+dx*s,a.y+dy*s]};
+  spec.edges.forEach(e=>{const a=N[e.f],b=N[e.t];let d,lx,ly;
+    if(e.route){ /* 沿外圈走的直角线：top|bottom|left|right，lane 控制离外框的距离 */
+      const g=30+(e.lane||0)*30,oa=e.oa||0,ob=e.ob||0;
+      if(e.route==='top'||e.route==='bottom'){const t=e.route==='top',Y=t?B.y0-g:B.y1+g,ya=a.y+(t?-1:1)*(a.h/2+2),yb=b.y+(t?-1:1)*(b.h/2+8);
+        d=`M${a.x+oa},${ya} V${Y} H${b.x+ob} V${yb}`;lx=(a.x+oa+b.x+ob)/2;ly=Y+(t?-8:18);
+        t?(y0=Math.min(y0,Y-26)):(y1=Math.max(y1,Y+26));}
+      else{const l=e.route==='left',X=l?B.x0-g:B.x1+g,xa=a.x+(l?-1:1)*(a.w/2+2),xb=b.x+(l?-1:1)*(b.w/2+8);
+        d=`M${xa},${a.y+oa} H${X} V${b.y+ob} H${xb}`;lx=X+(l?-8:8);ly=(a.y+b.y)/2;
+        l?(x0=Math.min(x0,X-90)):(x1=Math.max(x1,X+90));}
+    }else{const[p1,q1]=clip(a,b),[p2,q2]=clip(b,a);const mx=(p1+p2)/2,my=(q1+q2)/2,len=Math.hypot(p2-p1,q2-q1)||1,bd=e.bend||0;
+      const cx=mx-(q2-q1)/len*bd,cy=my+(p2-p1)/len*bd;d=`M${p1},${q1} Q${cx},${cy} ${p2},${q2}`;
+      const qx=.25*p1+.5*cx+.25*p2,qy=.25*q1+.5*cy+.25*q2,sg=bd>=0?1:-1;lx=qx-(q2-q1)/len*sg*14;ly=qy+(p2-p1)/len*sg*14+4;}
+    const mk=e.c||'a';const p=el('path',{d,class:'fl-edge '+(e.c||''),'marker-end':`url(#ar${mk}${svg.dataset.uid})`},eg);p._mk=mk;
+    let lab=null;if(e.l){const anc=e.route==='left'?'end':e.route==='right'?'start':'middle';lab=el('text',{x:lx,y:ly,'text-anchor':anc,class:'fl-elab '+(e.c||''),stroke:'var(--paper)','stroke-width':5,'paint-order':'stroke'},eg);lab.textContent=e.l}
+    svg._edges[e.f+'>'+e.t]={p,lab}});
+  ns.forEach(n=>{const g=el('g',{class:'fl-node '+(n.c||'')},ng);
+    el('rect',{x:n.x-n.w/2,y:n.y-n.h/2,width:n.w,height:n.h,rx:14},g);
+    const t=el('text',{x:n.x,y:n.y+(n.s?-4:6),'text-anchor':'middle'},g);t.textContent=n.t;
+    if(n.s){const s=el('text',{x:n.x,y:n.y+18,'text-anchor':'middle',class:'sub'},g);s.textContent=n.s}
+    svg._nodes[n.id]=g});
+  /* 自动贴合：viewBox 只包住内容，图会放大填满面板 */
+  const P=spec.pad??8,W=x1-x0+2*P,H=y1-y0+2*P+20;
+  svg.setAttribute('viewBox',`${x0-P} ${y0-P-10} ${W} ${H}`);
+  svg.style.setProperty('--flow-width',W+'px');svg.style.setProperty('--flow-height',H+'px');
+  const scroll=document.createElement('div');scroll.className='flow-scroll';
+  svg.replaceWith(scroll);scroll.appendChild(svg);
+  if(!scroll.closest('.sim')&&W>innerWidth-78){const t=document.createElement('p');t.className='flow-tip';t.textContent='← 左右滑动看全图 →';scroll.after(t)}
+  svg._set=(act,edge)=>{for(const k in svg._nodes)svg._nodes[k].classList.toggle('act',k===act);
+    for(const k in svg._edges){const on=k===edge,E=svg._edges[k];E.p.classList.toggle('act',on);E.p.setAttribute('marker-end',`url(#ar${on?'b':E.p._mk}${svg.dataset.uid})`);E.lab&&E.lab.classList.toggle('act',on)}};
+  svg._set(svg.dataset.act,svg.dataset.edge);
+  svg._center=()=>{if(!matchMedia('(max-width:820px)').matches)return;
+    const active=Object.values(svg._nodes).find(n=>n.classList.contains('act'));if(!active)return;
+    const a=active.getBoundingClientRect(),r=scroll.getBoundingClientRect();
+    scroll.scrollLeft+=a.left+a.width/2-r.left-r.width/2;
+  };
+}
+let uid=0;
+component('svg.flow',s=>{s.dataset.uid=++uid;drawFlow(s,data(s,'flow'))});
+
+/* ---------- sim：一步步走的模拟器 ----------
+ data-sim = {flow:{...}, steps:[{act,edge,msg:{r:user|asst|tool|err|sys,n?,t},say}], alt?:{label,steps:[...]}} */
+component('.sim',box=>{
+  const spec=data(box,'sim');if(spec.alt&&!spec.alts)spec.alts=[spec.alt];const AL=spec.alts||[];const gname='br'+(++uid);
+  box.innerHTML=`<div class="ctl"><button class="btn sm" data-a="step">下一步</button><button class="btn sm" data-a="play">${ic("play")} 自动</button><button class="btn sm" data-a="reset">重置</button>
+   <label>速度 <input type="range" min="300" max="2500" step="100" value="1200"></label></div>${AL.length?`<div class="ctl branches"><label><input type="radio" name="${gname}" value="-1" checked> ${esc(spec.label||'正常路径')}</label>${AL.map((a,j)=>`<label><input type="radio" name="${gname}" value="${j}"> ${esc(a.label)}</label>`).join('')}</div>`:''}
+   <div class="body"><svg class="flow"></svg><div class="log"></div></div><div class="narr"></div>`;
+  if(spec.layout==='wide')box.classList.add('wide');
+  const svg=$('.body > svg.flow',box);svg.dataset.uid=++uid;drawFlow(svg,spec.flow);
+  const fs=svg.parentElement,tip=document.createElement('p');tip.className='flow-tip';tip.textContent='点图放大看字，再点回到全图';fs.after(tip);
+  const focus=()=>{if(!fs.classList.contains('zoom'))return svg._center();window.LessonGeometry.focus(svg,fs)};
+  const zoom=document.createElement('button');zoom.className='btn sm zoom-toggle';zoom.innerHTML=ic('zoom-in')+' 放大图';zoom.setAttribute('aria-pressed','false');tip.replaceWith(zoom);const toggle=()=>{const on=fs.classList.toggle('zoom');zoom.innerHTML=ic(on?'zoom-out':'zoom-in')+(on?' 返回全图':' 放大图');zoom.setAttribute('aria-pressed',String(on));if(!on){fs.style.maxHeight='';fs.scrollTop=0}focus()};fs.onclick=toggle;zoom.onclick=toggle;window.addEventListener('resize',focus);window.addEventListener('load',()=>requestAnimationFrame(()=>{const params=new URLSearchParams(location.search);if((params.has('sim')||params.has('zoom'))&&!(window.__H??location.hash)&&box===$('.sim')){const section=box.closest('.sec,.card');if(window.lessonNav.layout==='deck')window.goCard($$('.card').indexOf(section)+1);else section.scrollIntoView({block:'start',behavior:'instant'})}focus()}));window.addEventListener('lesson:navigate',()=>requestAnimationFrame(focus));
+  const log=$('.log',box),narr=$('.narr',box),radios=$$('input[type=radio]',box),spd=$('input[type=range]',box),play=$('[data-a=play]',box);
+  let i=0,timer=null,predicted=!spec.predict;const prediction=document.createElement('div');if(spec.predict){prediction.className='prediction callout';prediction.innerHTML='<p>先预测：'+esc(spec.predict)+'</p><label>你的判断<textarea rows="2"></textarea></label><button class="btn sm" data-a="predict">提交预测，再看过程</button>';box.prepend(prediction)};const sel=()=>{const r=radios.find(r=>r.checked);return r?+r.value:-1};const steps=()=>sel()>=0?AL[sel()].steps:spec.steps;
+  const hint=spec.note?esc(spec.note)+'　点「下一步」开始。':'点「下一步」开始。';const reset=()=>{i=0;log.innerHTML='';narr.innerHTML=hint;svg._set(null,null);stop()};
+  const stop=()=>{clearTimeout(timer);timer=null;play.innerHTML=ic('play')+' 自动'};
+  const step=()=>{const S=steps();if(i>=S.length){narr.textContent='流程结束。点「重置」再走一遍。';stop();return false}
+    const s=S[i++];svg._set(s.act,s.edge);focus();if(s.msg){const d=document.createElement('div');d.className='msg '+s.msg.r;
+      d.innerHTML=`<b>${esc(s.msg.n||({user:'用户',asst:'模型',tool:'工具结果',err:'出错',sys:'系统提示词'}[s.msg.r]))}</b>${esc(s.msg.t)}`;log.appendChild(d);log.scrollTop=1e9}
+    narr.innerHTML=`<b>第 ${i}/${S.length} 步</b>　${esc(s.say)}`;return true};
+  const loop=()=>{if(step())timer=setTimeout(loop,+spd.value);else stop()};
+  box.onclick=e=>{const a=e.target.closest('button')?.dataset.a;if(a==='predict'){predicted=true;prediction.hidden=true;step()}if(a==='step'){stop();if(predicted)step();else prediction.querySelector('textarea').focus()}if(a==='reset')reset();if(a==='play'){if(!predicted){prediction.querySelector('textarea').focus();return}if(timer)stop();else{play.innerHTML=ic('pause')+' 暂停';loop()}}};
+  narr.innerHTML=hint;radios.forEach(r=>r.onchange=reset);
+  const P=new URLSearchParams(location.search);if(P.get('alt')&&radios[+P.get('alt')]){radios[+P.get('alt')].checked=true}for(let n=+P.get('sim')||0;n>0;n--)step();if(P.get('sim')){predicted=true;prediction.hidden=true}if(P.get('zoom')){fs.classList.add('zoom');zoom.setAttribute('aria-pressed','true');zoom.innerHTML=ic('zoom-out')+' 返回全图'} /* 自查用：?sim=5&alt=1&zoom=1 */
+});
+
+/* ---------- bars：横向条形图 ----------
+ data-bars = {unit, items:[{l,v,c?:blue|amber|green|red,note?}], caption?}  数字必须来自原文 */
+component('.bars',box=>{const B=data(box,'bars'),mx=Math.max(1,...B.items.filter(i=>i.v!=null).map(i=>i.v));
+  box.innerHTML=B.items.map(i=>`<div class="bar ${i.c||''}"><span class="bl">${esc(i.l)}</span>${i.v==null?`<span class="bmiss">${esc(i.miss||'原文未给数字')}</span>`:`<span class="bt"><i style="width:${(i.v/(B.axis==='independent'?Math.max(1,i.v):mx)*100).toFixed(1)}%"></i></span><span class="bv">${esc(i.v)}${esc(i.unit||B.unit||'')}</span>`}${i.note?`<span class="bn">${esc(i.note)}</span>`:''}</div>`).join('')+(B.caption?`<div class="bc">${esc(B.caption)}</div>`:'')});
+
+/* ---------- quiz：页内小测 ----------
+ data-quiz = [{q,opts:[...],a:正确下标,why,back:答错时回到第几张卡片}] */
+component('.quiz,.checkpoint',box=>{
+  const checkpoint=box.classList.contains('checkpoint');box.classList.add('quiz');const raw=data(box,checkpoint?'checkpoint':'quiz'),Q=Array.isArray(raw)?raw:[raw],P=new URLSearchParams(checkpoint?'':location.search);
+  let k=Math.max(0,Math.min(Q.length-1,(parseInt(P.get('q'))||1)-1));
+  const answers=Q.map(()=>({first:null,selected:null,retries:0}));
+  const score=()=>answers.filter((s,i)=>s.first===Q[i].a).length;
+  const complete=()=>answers.every(s=>s.selected!==null);
+  const reviewButton=i=>{
+    const target=window.lessonNav.layout==='deck'?$$('.card')[Q[i].back-1]:document.getElementById('s'+Q[i].back);
+    const title=target.dataset.toc||$('h2,h1,h3',target)?.textContent||'相关内容';
+    return `<button class="btn sm" data-review="${i}">回看：${esc(title)}</button>`;
+  };
+  function summary(){
+    const wrong=answers.map((s,i)=>s.first!==Q[i].a?i:-1).filter(i=>i>=0);
+    const recovered=wrong.filter(i=>answers[i].selected===Q[i].a).length;
+    box.innerHTML=`<div class="qt">小测总结</div><p>首次得分：${score()} / ${Q.length}。重试答对：${recovered} 题。</p>
+      <div>${wrong.length?wrong.map(i=>`<p>第 ${i+1} 题：${esc(Q[i].q)} ${reviewButton(i)} <button class="btn sm" data-question="${i}">回到此题</button></p>`).join(''):'没有首次错题。'}</div>
+      <p>用自己的话复述这页的核心机制，再举一个新场景。</p><label>你的复述<textarea class="retelling" rows="3"></textarea></label><button class="btn sm" data-copy-result="1">${ic("copy")} 复制学习结果 JSON</button><button class="btn sm" data-question="0">查看作答</button>`;
+  }
+  function render(){const q=Q[k],s=answers[k];
+    box.innerHTML=`<div class="qn">第 ${k+1} / ${Q.length} 题 ${checkpoint?'· 不计分':'· 首次答对 '+score()}</div><div class="qt">${esc(q.q)}</div>
+      ${q.opts.map((o,j)=>`<button class="opt ${s.selected===null?'':j===s.selected?(j===q.a?'ok':'no'):''}" data-j="${j}" aria-pressed="${j===s.selected}">${String.fromCharCode(65+j)}. ${esc(o)}</button>`).join('')}
+      <div class="fb" aria-live="polite">${s.selected===null?'':s.selected===q.a?ic('check')+' 对。'+esc(q.why):ic('x')+' 不对。先回去看看，或再试一次。'}
+      ${s.selected!==null&&s.selected!==q.a?reviewButton(k)+' <button class="btn sm" data-retry="1">再试一次</button>':''}</div>
+      <div class="nav"><button class="btn sm" data-n="-1" ${k?'':'disabled'}>上一题</button>
+      <button class="btn sm main" data-n="1" ${s.selected===null?'disabled':''}>${checkpoint?'完成检查':k===Q.length-1?'查看总结':'下一题'}</button></div>`;
+  }
+  box.onclick=e=>{const t=e.target.closest('button');if(!t)return;
+    if(t.dataset.review!==undefined){const i=+t.dataset.review;window.lessonNav.go(Q[i].back);
+      let ret=$('#quiz-return');if(!ret){ret=document.createElement('button');ret.id='quiz-return';ret.className='btn sm';document.body.appendChild(ret)}
+      ret.textContent='回到小测';ret.onclick=()=>{window.lessonNav.returnTo(box);ret.remove()};return;
+    }
+    if(t.dataset.copyResult!==undefined){const result={path:location.pathname,firstScore:score(),total:Q.length,answers:answers.map((s,i)=>({question:i+1,first:s.first,selected:s.selected,retries:s.retries,wrong:s.first!==Q[i].a,review:'#s'+Q[i].back})),retelling:$('.retelling',box).value};window.lessonCopy(JSON.stringify(result,null,2),t);return}
+    if(t.dataset.question!==undefined){k=+t.dataset.question;render();return}
+    if(t.dataset.retry){answers[k].selected=null;answers[k].retries++;render();return}
+    if(t.dataset.n){if(checkpoint&&+t.dataset.n===1){box.querySelector('.nav').hidden=true;return}if(k===Q.length-1&&+t.dataset.n===1){if(complete())summary();else{k=answers.findIndex(s=>s.selected===null);render()}return}k+=+t.dataset.n;render();return}
+    if(t.dataset.j===undefined||answers[k].selected!==null)return;
+    const j=+t.dataset.j;answers[k].selected=j;if(answers[k].first===null)answers[k].first=j;render();const nv=$('.nav',box);nv&&nv.scrollIntoView&&nv.scrollIntoView({block:'nearest'});
+  };
+  render();
+  const pk=P.get('pick'),pick=pk==='wrong'?Q[k].opts.findIndex((_,i)=>i!==Q[k].a):pk!==null&&/^\d+$/.test(pk)?+pk:-1;
+  if(pick>=0&&$$('.opt',box)[pick])$$('.opt',box)[pick].click();
+
+});
+
+})();
+</script><script>/* End-of-build readiness marker, used by the screenshot harness. */
+document.querySelector('.theme-toggle').onclick=window.__tt;
+window.__lessonReady=true;
+</script><script>/* ---------- 学完了：点一下记为已学完（存在本机浏览器） ---------- */
+(function(){if(window.__finish)return;window.__finish=1;
+if(!document.querySelector('.deck'))return;
+const st=document.createElement('style');st.textContent=`.fin-btn{position:fixed;right:16px;bottom:76px;z-index:50;padding:10px 16px;border-radius:999px;border:0;background:#16a34a;color:#fff;font:600 15px system-ui;box-shadow:0 4px 14px rgba(0,0,0,.18);cursor:pointer}.fin-btn.done{background:#e5e7eb;color:#166534}`;document.head.appendChild(st);
+const p=n=>String(n).padStart(2,'0');
+const doneKeys=()=>{const out=new Set();const seed=location.pathname;const vs=new Set([seed]);if(seed.endsWith('/index.html')){const d=seed.slice(0,-10);vs.add(d);vs.add(d.replace(/\/$/,'')||'/')}else if(seed.endsWith('/')){vs.add(seed+'index.html');vs.add(seed.replace(/\/$/,'')||'/')}else if(!/\.[a-z0-9]+$/i.test(seed)){vs.add(seed+'/');vs.add(seed+'/index.html')}for(const u of vs){out.add(u);const m=u.match(/^(.*)\/courses\/(.+)$/);if(m)out.add(m[1]+'/'+m[2]);const m2=u.match(/^(.*)\/(cs146s)\/(.+)$/);if(m2&&!u.includes('/courses/'))out.add(m2[1]+'/courses/'+m2[2]+'/'+m2[3])}return[...out]};
+const getDone=()=>{for(const k of doneKeys()){const d=localStorage.getItem('done:'+k);if(d)return d}return null};
+const setDone=v=>{for(const k of doneKeys())localStorage.setItem('done:'+k,v)};
+const clearDone=()=>{for(const k of doneKeys())localStorage.removeItem('done:'+k)};
+const b=document.createElement('button');b.className='fin-btn';document.body.appendChild(b);
+const show=()=>{const d=getDone();b.classList.toggle('done',!!d);b.textContent=d?'✓ 已学完 '+d:'✓ 学完了';b.title=d?'再点一下取消':''};show();
+b.onclick=()=>{if(getDone()){if(confirm('取消「已学完」记录？'))clearDone()}else{const x=new Date();setDone(x.getFullYear()+'-'+p(x.getMonth()+1)+'-'+p(x.getDate()))}show()};
+})();
+</script><script src="../../assets/gh.js" defer></script><script src="../../assets/progress.js" defer></script></body></html>
