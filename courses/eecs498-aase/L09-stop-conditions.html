@@ -1,0 +1,670 @@
+<!DOCTYPE html><html lang="zh-CN" class="layout-article" data-layout="article"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<script>(function(){var v;try{v=localStorage.getItem('site-theme')}catch(e){}document.documentElement.dataset.theme=/^[ABC]$/.test(v||'')?v:'C'})();
+(function(){var k='theme',s=localStorage.getItem(k);if(s?s==='dark':matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark');
+window.__tt=function(){var f=function(){var d=document.documentElement.classList.toggle('dark');localStorage.setItem(k,d?'dark':'light')};if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.startViewTransition(f);else f()}})();</script>
+<title>L09 · Stop conditions 与审批层</title><style>
+/* Site tokens copied verbatim, in cascade order, from ref/site-assets/site.css. */
+:root{--paper:#f6f7f9;--sheet:#fff;--card:#fff;--ink:#111827;--ink2:#4b5563;--meta:#6b7280;--hair:#e5e7eb;--hair2:#eef0f3;--blue:#2563eb;--blue-soft:#eff4ff;--red:#dc2626;--red-soft:#fef2f2;--green:#16a34a;--green-soft:#f0fdf4;--amber:#b45309;--amber-soft:#fffbeb;--purple:#7c3aed;--purple-soft:#f5f3ff;--font:system-ui,-apple-system,"PingFang SC","Noto Sans SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;--serif:var(--font);--mono:ui-monospace,SFMono-Regular,Menlo,monospace;--r-lg:12px;--r-sm:8px;--grad:none;color-scheme:light}
+html.dark{--paper:#0f1115;--sheet:#171a21;--card:#171a21;--ink:#e5e7eb;--ink2:#b6bcc6;--meta:#9ca3af;--hair:#2a2f3a;--hair2:#20242c;--blue:#7aa2ff;--blue-soft:rgba(122,162,255,.12);--red:#f87171;--red-soft:rgba(248,113,113,.12);--green:#4ade80;--green-soft:rgba(74,222,128,.12);--amber:#fbbf24;--amber-soft:rgba(251,191,36,.12);--purple:#c4b5fd;--purple-soft:rgba(196,181,253,.14);color-scheme:dark}
+[data-theme=B]{--paper:#fbfbfc;--sheet:#fff;--card:#fff;--ink:#16171a;--ink2:#4a4c55;--meta:#6e707a;--hair:#ececf0;--hair2:#f2f2f5;--blue:#5e6ad2;--blue-soft:#eef0fb;--red:#d4483b;--red-soft:#fdf0ee;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif}
+html.dark[data-theme=B]{--paper:#0e0f12;--sheet:#16171b;--card:#16171b;--ink:#e8e9ed;--ink2:#b3b5bd;--meta:#8b8d97;--hair:#26272d;--hair2:#1f2025;--blue:#8b93f0;--blue-soft:rgba(139,147,240,.14);--red:#f0776b}
+[data-theme=A]{--paper:#f7f4ee;--sheet:#fffdf9;--card:#fffdf9;--ink:#2b2722;--ink2:#5f574e;--meta:#8a8076;--hair:#e6dfd3;--hair2:#efe8dc;--blue:#b4532a;--blue-soft:#f6e1d6;--red:#a2461f;--red-soft:#f6e1d6;--green:#5f7a3a;--green-soft:#e7ecd9;--purple:#7a5a8c;--purple-soft:#eee4f1;--serif:"Noto Serif CJK SC","Noto Serif SC","Songti SC",serif;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif}
+html.dark[data-theme=A]{--paper:#1b1814;--sheet:#23201b;--card:#23201b;--ink:#ede6da;--ink2:#c7bdaf;--meta:#9b9184;--hair:#3a342c;--hair2:#2d2923;--blue:#e08a5f;--blue-soft:rgba(224,138,95,.15);--red:#e8916a;--red-soft:rgba(232,145,106,.15)}
+[data-theme=C]{--paper:#f3f5fb;--sheet:#fff;--card:#fff;--ink:#1d2340;--ink2:#5a6185;--meta:#8a90ad;--hair:#e6e9f4;--hair2:#eef0f7;--blue:#3b5bfd;--blue-soft:#e8edff;--red:#d4483b;--red-soft:#ffe6e3;--green:#1f9d5c;--green-soft:#e3f7ec;--amber:#d9771e;--amber-soft:#fff1e0;--purple:#7a4bf5;--purple-soft:#f2eaff;--r-lg:20px;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif;--sh:0 1px 2px rgba(30,40,90,.04),0 8px 24px rgba(30,40,90,.06)}
+html.dark[data-theme=C]{--paper:#0f1222;--sheet:#181c33;--card:#181c33;--ink:#e6e9fb;--ink2:#aab0d0;--meta:#7d84a8;--hair:#272c48;--hair2:#20253f;--blue:#7d93ff;--blue-soft:rgba(125,147,255,.15);--red:#ff8a7d;--red-soft:rgba(255,138,125,.15);--green-soft:rgba(31,157,92,.18);--amber-soft:rgba(217,119,30,.18);--purple-soft:rgba(122,75,245,.2);--sh:0 1px 2px rgba(0,0,0,.3)}
+:root{--acc2:#8b5cf6;--ease:cubic-bezier(.22,1,.36,1)}
+[data-theme=A]{--acc2:#c98a2b}
+html.dark[data-theme=A]{--paper:#181512;--sheet:#211d18;--card:#211d18;--meta:#a89d8f;--hair:#382f26;--acc2:#e3b15c}
+[data-theme=B]{--paper:#fafafb;--blue:#5b5bd6;--blue-soft:#efeffc;--acc2:#a855f7}
+html.dark[data-theme=B]{--paper:#0c0d10;--sheet:#14151a;--card:#14151a;--ink:#ececf1;--ink2:#babcc6;--meta:#9597a3;--hair:#262830;--hair2:#1c1d23;--blue:#9198ff;--blue-soft:rgba(145,152,255,.14);--acc2:#c084fc}
+[data-theme=C]{--acc2:#06b6d4}
+html.dark[data-theme=C]{--meta:#a3a9b8;--acc2:#22d3ee}
+html.dark{--meta:#a1a7b3}
+[data-theme=B]{--paper:#eef1f5;--hair:#dfe4ea;--hair2:#eef1f5;--green:#16a34a}
+html.dark[data-theme=B]{--paper:#0b0d12;--hair:#252a35;--hair2:#1a1e27}
+[data-theme=C]{--blue:#7b5cff;--blue-soft:#f0ecff;--acc2:#ff5e8a}
+html.dark[data-theme=C]{--paper:#0b0b0f;--sheet:#15151c;--card:#15151c;--ink:#f2f2f5;--ink2:#b8b8c6;--meta:#9a9aab;--hair:#26262f;--hair2:#1d1d25;--blue:#a08bff;--blue-soft:rgba(160,139,255,.14)}
+:root{--sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:24px;--sp-6:32px;--fs-xs:12px;--fs-sm:13.5px;--fs-md:15px;--fs-lg:18px;--fs-xl:24px;--fs-2xl:32px;--r-xs:6px;--r-sm:8px;--r-md:10px;--r-lg:12px;--r-xl:18px;--r-pill:999px;--sh-1:0 1px 2px rgba(15,23,42,.06);--sh-2:0 4px 16px -8px rgba(15,23,42,.22);--sh-3:0 14px 30px -12px rgba(15,23,42,.28);--dur-1:120ms;--dur-2:220ms;--dur-3:420ms;--ease:cubic-bezier(.22,1,.36,1);--ease-in-out:cubic-bezier(.65,0,.35,1);--spring:cubic-bezier(.34,1.3,.64,1);--icon-stroke:2}
+:root{--spring:linear(0,.0089,.0346,.0752,.1286,.1927,.2654,.3445,.4278,.5131,.5983,.6812,.7598,.8325,.8981,.9555,1.0042,1.0441,1.0753,1.0982,1.1134,1.1218,1.1243,1.1218,1.1155,1.1062,1.0949,1.0825,1.0697,1.0571,1.0451,1.034,1.0242,1.0157,1.0085,1.0027,.9982,.995,.9928,.9916,.9912,.9914,.9921,.9931,.9943,.9956,.9968,.998,.999,1)}
+html.dark{--sh-1:0 1px 2px rgba(0,0,0,.4);--sh-2:0 4px 16px -8px rgba(0,0,0,.6);--sh-3:0 14px 30px -12px rgba(0,0,0,.7)}
+/* Five reading levels: title / section / subsection / body / note. */
+:root{--reading-width:680px;--toc-width:208px;--rail-width:180px;--reading-gap:28px;--top-height:56px;--body-size:18px;--body-leading:1.8;--finish-space:104px}
+*{box-sizing:border-box}html{scroll-padding-top:72px}html,body{margin:0;background:var(--paper);color:var(--ink);font:var(--body-size)/var(--body-leading) var(--font);-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}a{color:var(--blue);text-underline-offset:3px;overflow-wrap:anywhere}a:hover{text-decoration-thickness:2px}button,input,textarea,select{font:inherit;color:inherit}button,a,summary{touch-action:manipulation}button{cursor:pointer}button:disabled{opacity:.5;cursor:default}:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+h1,h2,h3{color:var(--ink);font-family:var(--serif);line-height:1.35;letter-spacing:-.02em;overflow-wrap:anywhere}h1{font-size:var(--fs-2xl);margin:8px 0 16px}h2{font-size:var(--fs-xl);margin:8px 0 16px}h3{font-size:var(--fs-lg);margin:24px 0 8px}p{margin:0 0 12px}ul,ol{padding-left:24px}li{margin:4px 0}code{font:.88em var(--mono);background:var(--hair2);padding:1px 4px;border-radius:var(--r-xs)}pre{overflow:auto;white-space:pre;tab-size:4;font:14px/1.65 var(--mono);padding:16px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-md);margin:12px 0}pre code{font:inherit;white-space:inherit;background:none;padding:0}
+.i{display:inline-block;vertical-align:middle;flex:none;width:18px;height:18px;stroke-width:2}.btn,button.opt{min-height:44px;border:1px solid var(--hair);border-radius:var(--r-sm);background:var(--sheet);padding:8px 14px;font-size:var(--fs-md);font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:6px}.btn:hover{border-color:var(--blue);background:var(--blue-soft)}.btn.main{background:var(--blue);color:var(--sheet)}.btn.sm{font-size:var(--fs-sm)}textarea{display:block;width:100%;padding:10px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-sm);resize:vertical}
+.top{position:fixed;inset:0 0 auto;height:var(--top-height);z-index:30;display:flex;align-items:center;gap:16px;padding:0 20px;background:var(--paper);border-bottom:1px solid var(--hair)}.top .course{font-size:var(--fs-sm);font-weight:700;max-width:35vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.top .track{flex:1;height:4px;background:var(--hair);border-radius:var(--r-pill);overflow:hidden}.top .track i{display:block;width:0;height:100%;background:var(--blue);transition:width var(--dur-2) var(--ease)}.top .count{font-size:var(--fs-sm);max-width:32vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.toc-toggle{min-width:44px}.top .theme-toggle{font-size:var(--fs-sm);min-height:44px}
+.layout-article .deck,.layout-pair .deck{padding:80px 20px calc(var(--finish-space) + env(safe-area-inset-bottom));max-width:720px;margin:0 auto;min-width:0}.layout-article .sec{position:relative;margin:0 0 32px;padding-top:16px;border-top:1px solid var(--hair);scroll-margin-top:72px;min-width:0}.layout-article .hero{border:0;padding-top:0}.kicker,.meta,.src,.source-anchor,figcaption,caption,.aside{font-size:var(--fs-sm);line-height:1.65}.kicker{display:block;color:var(--blue);font-weight:700}.lede{font-size:var(--fs-lg);font-weight:600}.links{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:var(--fs-sm)}.links a{display:inline-flex;align-items:center;min-height:44px}.src{margin:16px 0 0;padding-top:8px;border-top:1px solid var(--hair);color:var(--ink2)}.source-anchor{display:block;color:var(--ink2);margin-top:6px;overflow-wrap:anywhere}.source-anchor a{min-height:44px;display:inline-flex;align-items:center}.src.extra::before{content:'补充 · ';color:var(--amber)}.src.official::before{content:'官方 · ';color:var(--blue)}.src.article::before{content:'原文 · ';color:var(--blue)}
+.toc{position:fixed;left:max(20px,calc((100vw - 1192px)/2));top:76px;width:var(--toc-width);max-height:calc(100dvh - 180px);overflow:auto;font-size:var(--fs-sm);line-height:1.5;z-index:25}.toc ol{list-style:none;margin:0;padding:0}.toc a{display:flex;gap:8px;align-items:center;min-height:44px;padding:6px 10px;color:var(--ink2);text-decoration:none;border-radius:var(--r-sm)}.toc a[aria-current=true]{background:var(--blue-soft);color:var(--blue);font-weight:700}.toc b{display:block;margin:0 10px 8px}.toc-backdrop{display:none}.tldr,.argmap{padding:16px;background:var(--blue-soft);border-radius:var(--r-lg);margin:16px 0}.tldr a,.argmap a{display:block;min-height:44px;align-content:center}.argmap ol{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 16px;margin:0}.points{padding:12px 16px 12px 36px;background:var(--hair2);border-radius:var(--r-md)}
+figure.orig,figure.redraw,.figure{margin:20px 0;min-width:0}figure img{display:block;max-width:100%;height:auto;border:1px solid var(--hair);border-radius:var(--r-md);cursor:zoom-in;background:var(--sheet)}figcaption{margin-top:8px;color:var(--ink2)}figcaption b{color:var(--ink)}.how{margin-top:6px}.table{margin:20px 0;overflow-x:auto}.table table,table.data{width:100%;border-collapse:collapse;background:var(--sheet);font-size:var(--fs-md)}th,td{border-bottom:1px solid var(--hair);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--hair2)}caption{text-align:left;font-weight:700;padding:8px 0}.table-note{font-size:var(--fs-sm);color:var(--ink2)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;margin:16px 0}.stat{padding:12px 14px;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet)}.stat b{display:block;font-size:var(--fs-xl);line-height:1.35;color:var(--blue);font-variant-numeric:tabular-nums}.stat span{display:block;font-size:var(--fs-sm);color:var(--ink2)}.stat .source-anchor{font-size:var(--fs-xs)}
+blockquote.quote{margin:16px 0;padding:12px 16px;border-left:3px solid var(--blue);background:var(--sheet)}.quote cite{display:block;font-style:normal;font-size:var(--fs-sm);color:var(--ink2)}.callout{padding:12px 16px;margin:16px 0;border-left:3px solid var(--blue);background:var(--blue-soft);border-radius:0 var(--r-sm) var(--r-sm) 0}.callout.limit{border-color:var(--amber);background:var(--amber-soft)}.callout.extra{border:1px dashed var(--meta);background:var(--sheet)}.callout.myth{border-color:var(--amber);background:var(--hair2)}.callout.limit::before{content:'作者的限定 · ';font-weight:700}.aside{padding:12px;border-left:2px solid var(--hair);color:var(--ink2);margin:12px 0}
+.stories,.compare,.roles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}.story,.compare>div,.roles>div{padding:12px;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);font-size:var(--fs-md)}.story b,.roles b{display:block}.story dt{font-weight:700;color:var(--ink2);font-size:var(--fs-sm)}.story dd{margin:0 0 8px}.story p,.story .fix{display:block;margin:8px 0}.steps,.ladder{display:grid;gap:8px;padding:0;list-style:none;counter-reset:step}.steps>li,.ladder>li{padding:10px 14px;background:var(--hair2);border-radius:var(--r-sm);counter-increment:step}.steps>li::before{content:counter(step)'. ';color:var(--blue);font-weight:700}.ladder i{font-style:normal;font-weight:700;margin-right:8px}.matrix{border:1px solid var(--hair);padding:16px;border-radius:var(--r-md)}.matrix .axes{font-size:var(--fs-sm);color:var(--ink2)}.matrix ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));list-style:none;padding:0;gap:1px;background:var(--hair)}.matrix li{margin:0;padding:16px;background:var(--sheet)}.refs{font-size:var(--fs-sm);line-height:1.7}.refs a{display:inline-block;min-height:44px;align-content:center}.thread{border-left:2px solid var(--hair);padding-left:16px}.formula{padding:16px;border:1px solid var(--hair);overflow:auto}.formula math{font-size:var(--fs-xl)}details.more{margin:12px 0;border-top:1px solid var(--hair);font-size:var(--fs-md)}summary{min-height:44px;cursor:pointer;display:flex;align-items:center;gap:8px}summary .i{transition:transform var(--dur-1)}details[open] summary .i{transform:rotate(90deg)}
+/* Shared interactive components. No fixed page/card height. */
+.flow-scroll{max-width:100%;overflow-x:auto;min-width:0;touch-action:pan-x pan-y}.flow-scroll svg.flow{display:block;width:100%;height:auto;min-height:0}.flow-tip{font-size:var(--fs-sm);color:var(--ink2)}.fl-node rect{fill:var(--sheet);stroke:var(--hair);stroke-width:2}.fl-node text{font:600 17px var(--font);fill:var(--ink)}.fl-node .sub{font-size:13px;font-weight:400;fill:var(--ink2)}.fl-node.act rect{stroke:var(--blue);fill:var(--blue-soft);stroke-width:3}.fl-node.blue rect{stroke:var(--blue)}.fl-node.amber rect,.fl-node.red rect{stroke:var(--amber)}.fl-node.green rect{stroke:var(--green)}.fl-edge{fill:none;stroke:var(--meta);stroke-width:2}.fl-edge.act{stroke:var(--blue);stroke-width:3}.fl-elab{font:13px var(--font);fill:var(--ink2)}
+.sim{margin:16px 0;padding:12px;border:1px solid var(--hair);border-radius:var(--r-lg);background:var(--sheet);display:flex;flex-direction:column;gap:12px}.sim .ctl{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.sim .ctl label{min-height:44px;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm)}.sim .ctl input[type=range]{min-width:110px}.sim .body{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}.sim .narr{order:-1;background:var(--blue-soft);padding:10px 12px;border-radius:var(--r-sm);font-size:var(--fs-md)}.sim .log{max-height:240px;overflow:auto;font:var(--fs-sm)/1.6 var(--mono)}.sim .msg{border-left:3px solid var(--hair);padding:8px;margin:6px 0;background:var(--paper);white-space:pre-wrap;overflow-wrap:anywhere}.msg b{display:block;font-family:var(--font)}.sim .msg.err{border-color:var(--amber)}.prediction{order:-2}.component-error{padding:16px;border:1px solid var(--amber);color:var(--amber)}
+.quiz{margin:16px 0;padding:16px;border:1px solid var(--hair);border-radius:var(--r-lg);background:var(--sheet)}.quiz .qn{font-size:var(--fs-sm);color:var(--ink2)}.quiz .qt{font-size:var(--fs-lg);font-weight:700;margin-bottom:12px}.quiz .opt{display:block;width:100%;text-align:left;margin:8px 0;font-weight:400}.quiz .opt.ok{border-color:var(--green);background:var(--green-soft)}.quiz .opt.no{border-color:var(--amber);background:var(--amber-soft)}.quiz .fb{margin:12px 0;font-size:var(--fs-md)}.quiz .nav{display:flex;gap:8px;margin-top:12px}.quiz label{display:block;font-size:var(--fs-sm)}.stack{display:grid;gap:6px;font-size:var(--fs-sm)}.stack .row{display:grid;grid-template-columns:28px 80px minmax(0,1fr);gap:8px;padding:8px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-sm)}.stack .t{overflow-wrap:anywhere;white-space:pre-wrap}.stack .new{background:var(--blue-soft)}.bar{display:grid;grid-template-columns:100px minmax(0,1fr) 80px;gap:8px;margin:8px 0;align-items:center;font-size:var(--fs-sm)}.bar .bt{height:20px;background:var(--hair2);border-radius:var(--r-xs);overflow:hidden}.bar .bt i{display:block;height:100%;background:var(--blue)}.bar .bn,.bar .bmiss{grid-column:2/4}.bars .bc{font-size:var(--fs-sm);color:var(--ink2)}
+/* Paired material stays inside its own container; highlighting never scrolls the page. */
+.pair.codewalk,.pair.read-pair,.pair.material-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start;margin:20px 0;position:relative;min-width:0}.pair-source{position:sticky;top:72px;max-height:calc(100dvh - 160px);overflow:auto;overscroll-behavior:contain;min-width:0;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);padding:12px;scroll-padding:16px}.pair-notes{min-width:0}.pair-notes .step{padding:16px 0 24px;border-top:1px solid var(--hair);scroll-margin-top:84px}.pair-notes .step.is-active{border-color:var(--blue)}.pair-source .source-block{padding:12px 8px;border-left:3px solid transparent}.pair-source .source-block.is-active{background:var(--blue-soft);border-color:var(--blue)}.source-text{overflow-wrap:anywhere}.pair-source pre{border:0;padding:0;margin:8px 0;overflow:visible}.code-line{display:block;min-height:1.65em;white-space:pre;padding-left:48px;position:relative}.code-line::before{content:attr(data-line);position:absolute;left:0;width:36px;text-align:right;color:var(--meta);user-select:none}.code-line.hl{background:var(--blue-soft)}.copy-code{position:static;flex:none;white-space:nowrap}.pair-source .source-anchor{font-size:var(--fs-xs)}
+/* A separate toolbar never shares the scrolling code viewport. */
+.heading-source{font-size:var(--fs-xs);margin:0 0 8px}
+.pair.codewalk{grid-template-columns:minmax(0,60%) minmax(0,1fr)}
+.code-panel{position:sticky;top:72px;display:flex;flex-direction:column;min-width:0;max-height:calc(100dvh - 160px);border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);overflow:hidden}
+.code-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;flex:none;border-bottom:1px solid var(--hair);font-size:var(--fs-xs);color:var(--ink2)}
+.code-panel .pair-source{position:static;max-height:none;min-height:0;flex:1 1 auto;border:0;border-radius:0;box-shadow:none;overflow:auto}
+.code-panel .pair-source pre{width:max-content;min-width:100%}
+dialog.image-dialog{width:calc(100vw - 24px);max-width:none;max-height:92dvh;padding:12px;border:1px solid var(--hair);background:var(--sheet);color:var(--ink);border-radius:var(--r-md);overflow:auto}dialog::backdrop{background:rgba(0,0,0,.75)}.image-dialog img{max-width:none;width:max(100%,min(1400px,180vw));height:auto}.image-dialog .dialog-close{position:sticky;top:0;left:0}.image-open{min-height:44px;border:0;background:transparent;padding:0;display:block;cursor:zoom-in;max-width:100%}.image-open img{max-width:100%}
+/* Only CSS changes the unchanged finish.js button. High specificity beats injected styles. */
+html body .fin-btn{bottom:calc(16px + env(safe-area-inset-bottom));right:16px;min-height:44px;z-index:35}html body #quiz-return{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:35;max-width:45vw}
+@media(min-width:1180px){.layout-article .deck{width:var(--reading-width);max-width:none;padding-left:0;padding-right:0;margin-left:max(260px,calc((100vw - 1192px)/2 + 236px));margin-right:0}.layout-article .sec>.doc-body>figure,.layout-article .sec>.doc-body>.table,.layout-article .sec>.codewalk{width:calc(100% + 120px);margin-left:0}.layout-article .aside{position:absolute;left:calc(100% + 28px);top:24px;width:var(--rail-width);margin:0}.layout-article .aside~figure{width:100%}html.layout-article body .fin-btn{left:max(20px,calc((100vw - 1192px)/2));right:auto;max-width:208px}.layout-pair .deck{max-width:1280px;margin-left:236px;margin-right:20px}.layout-pair .toc{width:188px;left:20px}html.layout-pair body .fin-btn{left:20px;right:auto;max-width:188px}}
+@media(max-width:1179px){.toc{display:none;visibility:hidden;left:0;top:var(--top-height);width:min(360px,90vw);max-height:calc(100dvh - 72px);background:var(--sheet);padding:16px;border-right:1px solid var(--hair);border-bottom:1px solid var(--hair)}html.toc-open .toc{display:block;visibility:visible}html.toc-open .toc-backdrop{display:block;position:fixed;inset:var(--top-height) 0 0;background:rgba(0,0,0,.3);z-index:24}}
+@media(max-width:820px){:root{--body-size:17px}.layout-article .deck,.layout-pair .deck{padding-left:18px;padding-right:18px}.top{gap:8px;padding:0 12px}.top .course{display:none}.top .count{max-width:44vw}.top .track{min-width:24px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stories,.compare,.roles{grid-template-columns:minmax(0,1fr)}.argmap ol{grid-template-columns:minmax(0,1fr)}table.data thead,.table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}table.data,table.data tbody,table.data tr,table.data td,.table table,.table tbody,.table tr,.table td{display:block;width:100%}table.data tr,.table tr{padding:8px 12px;margin-bottom:8px;border:1px solid var(--hair);background:var(--sheet);border-radius:var(--r-md)}table.data td,.table td{border:0;padding:4px 0}td[data-label]::before{content:attr(data-label)'：';font-size:var(--fs-sm);font-weight:700;color:var(--ink2)}.table caption,table.data caption{display:block;width:100%}.pair.codewalk,.pair.read-pair,.pair.material-pair{display:block}.pair-notes{margin-top:12px}.code-panel{top:var(--top-height);max-height:40dvh;z-index:15}.pair-source{top:var(--top-height);max-height:40dvh;z-index:15;box-shadow:var(--sh-1)}.pair-notes .step{scroll-margin-top:calc(40dvh + 80px)}.flow-scroll svg.flow{width:var(--flow-width);max-width:none;height:var(--flow-height)}.sim .flow-scroll svg.flow{width:100%;height:auto}.stack .row{grid-template-columns:22px 64px minmax(0,1fr)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+@media print{.top,.toc,.fin-btn,#quiz-return,.toc-backdrop,.zoom-toggle,.code-toolbar{display:none!important}.layout-article .deck,.layout-pair .deck{margin:0;padding:0;max-width:100%;width:auto}.pair-source,.code-panel{position:static;max-height:none;overflow:visible}.sec{break-inside:auto}figure,.stat{break-inside:avoid}}
+/* Applies after legacy CSS too. Zoom is an intentional local viewport; non-zoom stays unnested. */
+html body .sim .flow-scroll.zoom{overflow:auto;max-height:40dvh;min-height:0;height:auto;overscroll-behavior:contain;scroll-padding:16px;padding:16px}
+html body .sim .flow-scroll.zoom svg.flow{width:var(--flow-width);min-width:var(--flow-width);height:var(--flow-height);max-height:none;flex:none}
+html body .sim .zoom-toggle{min-height:44px;justify-self:start}.layout-deck .sim .body{position:relative}.layout-deck .card{padding-bottom:8px}.layout-deck .deck{bottom:calc(92px + env(safe-area-inset-bottom))}
+html body .fin-btn{bottom:calc(16px + env(safe-area-inset-bottom));right:16px;min-height:44px}html.layout-deck .bottom{padding-right:170px;padding-left:12px;height:76px}.layout-deck .btn,.layout-deck .sim .branches label{min-height:44px}.layout-deck details.more summary::before{content:none}.layout-deck .fl-edge.act{animation:none}
+@media(max-width:820px){html.layout-deck .bottom{padding-right:12px;gap:8px}.layout-deck .bottom .btn{padding:8px 10px;font-size:13px}html.layout-deck body .fin-btn{padding:8px 12px;font-size:13px}.layout-deck .card.full:has(.sim)>.head-full{position:sticky;top:0;z-index:4;background:var(--sheet);padding-top:12px;padding-bottom:12px}.layout-deck .sim .body{overflow:visible}.layout-deck .card .stage:has(.sim){overflow:visible}.layout-deck .sim .flow-scroll:not(.zoom){overflow:visible}}
+
+.layout-deck .card.doc.on{display:block;overflow:auto;padding:24px}.layout-deck .card.doc .doc-body{overflow:visible}.layout-deck .hero.card{height:auto}
+
+/* Legacy .stage svg also matches button icons: keep Lucide at its declared size. */
+html body svg.i{width:18px;height:18px;max-height:none;flex:none}
+
+/* Below the desktop sidebar breakpoint, finish lives in the opaque top bar.
+   Reserve its width before laying out the title; keep the deck footer for paging. */
+@media(max-width:1179px){
+ html body .top{gap:8px;padding:0 132px 0 12px;z-index:40;background:var(--paper)}
+ html body .top .course{display:none}
+ html body .top .count{flex:1;min-width:0;max-width:none;font-size:var(--fs-sm);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ html body .top .track{position:absolute;left:12px;right:12px;bottom:0;height:2px;min-width:0}
+ html body .top .toc-toggle{width:44px;flex:none;padding:0}
+ html body .top .theme-toggle{flex:none;padding:8px;font-size:var(--fs-sm)}
+ html body .fin-btn{top:6px;bottom:auto;left:auto;right:12px;width:112px;max-width:112px;height:44px;padding:8px;font-size:13px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:41;box-shadow:none}
+}
+</style></head><body>
+<header class="top"><button class="btn toc-toggle" aria-label="打开目录" aria-expanded="false"><svg class="i i-menu" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h16"/></svg></button><span class="course">L09 · Stop conditions 与审批层</span><span class="track" role="presentation"><i></i></span><span class="count"></span><button class="btn theme-toggle" aria-label="切换深浅色">深浅色</button></header><main class="deck"><section class="sec hero" data-toc="开篇：两部分" id="s1" data-source-section="s2">
+  <header class="doc-head"><span class="kicker">公开课 · EECS 498 AASE · Lecture 09 · 2026-09-29 · Marcus Darden</span><h1>L09 · Stop conditions 与审批层：一次运行为什么结束，动作之前站着什么</h1>
+  <p class="lede" id="h-lede">上半场讲一次运行结束的理由：「没有工具调用就算完成」不够，规格 2.4 要六个停止条件——一个「完成」加五个上限，每个在日志里有自己的名字。下半场讲动作之前的那道检查：停止条件只结束运行、不评判动作；下周工具变成 run_command，唯一的参数是一段 shell 字符串，审批要看完整命令、看 diff、批准的是「某个状态下的命令」，而不是模型给出的解释。</p>
+  <p class="links"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">课件 slides.md <svg class="i i-external-link" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.pdf">slides.pdf <svg class="i i-external-link" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a><span>本页导读约 35 分钟</span></p></header>
+  <div class="doc-body">
+<p data-points="p0003 p0004" id="e1">讲者问好。给讲者的提示：今天下半场有一次现场演示，按 <code>assets/demo-runbook.md</code> 走；人进场前先运行 <code>assets/live/reset</code> 并预热 <code>qwen3.5:9b</code>。每次排练的结果也都在幻灯片上，所以模型挂了只损失现场效果，不损失内容。</p>
+<p data-points="p0007" id="e2">第一部分：一次运行结束的理由（ends）。</p>
+<p data-points="p0008" id="e3">第二部分：动作之前的那道检查（check）。</p>
+<p data-points="p0009" id="e4">对应 Analyze 规格的 2.2 到 2.5 节，10 月 6 日发布，在 Lab03 里实现。</p>
+<p data-points="p0010 p0011" id="e5">讲者备注：两部分合起来是 Analyze 构建中第 5 周的部分，规格里叫 2.2 到 2.5；10 月 6 日发下，在 Lab03 里动手——所以今天是先听、后拿到。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s2"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">Lecture 09 · Sep 29, 2026</a></span> · <span class="source-anchor" data-source-section="s1"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">Two parts</a></span> · <span class="source-anchor" data-source-section="s3"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">Two parts</a></span></div>
+</section>
+<section class="sec" data-toc="一、回顾 L07 的九步运行" id="s2" data-source-section="s4">
+  <header class="doc-head"><span class="kicker">第 3 页</span><h2>它从没说「完成」，是循环用完了轮数才结束</h2></header>
+  <div class="doc-body">
+<div class="table"><table class="data" data-asset="a0014" data-points="p0014" id="ta0014"><caption>原表 1 · L07 那次九步运行每一步要的是什么</caption><thead><tr><th>Steps</th><th>What it asked for</th></tr></thead><tbody><tr><td data-label="Steps">1-3</td><td data-label="What it asked for">Read cli.py, task.py, store.py</td></tr><tr><td data-label="Steps">4-6</td><td data-label="What it asked for">Write all three, in dependency order</td></tr><tr><td data-label="Steps">7</td><td data-label="What it asked for">A test command</td></tr><tr><td data-label="Steps">8-9</td><td data-label="What it asked for">rm -f ~/.taskr.json, twice</td></tr></tbody></table><span class="source-anchor" data-source-section="s4">出处：EECS 498 AASE L09 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">幻灯片第 3 页 · The nine-step run</a></span></div>
+<p class="callout key" data-points="p0015" id="e6"><b>从没说过完成；结束是因为循环用完了轮数。</b></p>
+<p data-points="p0016" id="e7">讲者备注：上周就停在这次运行上。一个 9B 模型被要求给 <code>taskr add</code> 加一个 priority 参数。它读了正确的三个文件，按依赖顺序写了它们；然后在第 8 步要求删除 <code>~/.taskr.json</code>——那是 <code>store.py</code> 里的 <code>DEFAULT_PATH</code>，也就是用户的任务列表；第 9 步又要了一次。</p>
+<p data-points="p0017 p0018" id="e8">两个问题。它为什么结束？不是任何人选定的理由，是计数器用完了。模型和那条 rm 之间站着什么？什么都没有。应答这些调用的脚本什么都没执行、直接返回 exit 0——这页幻灯片能存在，全靠这一点。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s4"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">The nine-step run</a></span></div>
+</section>
+<section class="sec" data-toc="二、Hackathon 1 已经回答过这两个问题" id="s3" data-source-section="s5">
+  <header class="doc-head"><span class="kicker">第 4 页</span><h2>A5：有限的上限；A4：代码里的一道检查</h2></header>
+  <div class="doc-body">
+<p data-points="p0020" id="e9"><b>A5：有限的上限</b>——停下来，并说明还有什么没解决。</p>
+<p data-points="p0022" id="e10"><b>A4：代码里的一道检查</b>——一个「不」是一个答案，不是一个错误。</p>
+<p data-points="p0023" id="e11">Hackathon 1（周四）围绕带类型的动作（typed actions）搭建；下周换成一段 shell 字符串。</p>
+<p data-points="p0024 p0025" id="e12">讲者备注：周四晚上每个人都为一个更小的问题回答过这两个问题。A5 是第一个问题：运行为什么结束。它要求在有限上限后停下，并告诉用户还有什么没解决；还有两句可能被你略过：不要盲目重复先前成功过的改动；模型调用可能失败（Toolkit 偶尔的 502），要处理它且不丢对话。一个上限、一个「重复调用」的近亲、一个端点失败——那一段里已经藏着今天三种退出。</p>
+<p data-points="p0026 p0027 p0028" id="e13">A4 是第二个问题：动作之前站着什么。每次写入都要过代码里的一道检查，绝不只靠提示词；在 ask 模式下用户看到改动、批准了才发生；一个「不」让 Taskr 保持不变，并作为该动作的结果交回模型。大家都用过它：<code>SCENARIO.md</code> 第 4 步要求第一次被要求改动时说不。讲者会问：你的模型拿到「不」之后做了什么？收两个回答。</p>
+<p data-points="p0029" id="e14">周四有三件事原样带进下周：检查住在代码里，提示词说服不了它；「不」是答案不是错误，模型把它当结果拿到、运行继续；每个调用恰好对应一条 tool 消息，不管被拒与否，否则 API 会拒收这段对话。</p>
+<p data-points="p0030 p0031" id="e15">有三件事不带过去：周四读操作从不询问，下周要问（下半场讲原因）；bypass 模式会不问就批准所有写入，下周没有 bypass，第 6 周的规则文件才是介于「什么都问」和「什么都不问」之间的东西。第三件就是今天的主题：周四的改动是带类型的（把这块移到三号、把那个任务标为完成），名字就告诉你效果；下周的动作是 <code>run_command</code>，唯一的参数是一段 shell 字符串——<b>字符串本身就是动作</b>。</p>
+<p data-points="p0032" id="e16">给讲者的提示：这里不要问各自的上限是多少，那是课间题。好的回答包括：它问了为什么、它提出了别的办法、它说这活儿放不下。有人说模型又要了同一个改动，就说「先记着，十分钟后它有个名字」——那是重复调用；有人说程序在「不」上崩了，那是 A4 没达标，下周代价更高。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s5"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">A5: finite limits</a></span> · <span class="source-anchor" data-source-section="s6"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">A4: one check in code</a></span></div>
+</section>
+<section class="sec" data-toc="三、Stopping：完成的判定" id="s4" data-source-section="s7">
+  <header class="doc-head"><span class="kicker">第 5–7 页</span><h2>L06 的六行循环里，「没有工具调用」就是一个停止条件</h2></header>
+  <div class="doc-body">
+<p data-points="p0035" id="e17">讲者备注：上半场，一次运行结束的理由。</p>
+<h3>六行里的完成判定</h3><span class="source-anchor heading-source" data-source-section="s9">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">The done test in six lines</a></span>
+<pre class="code" data-asset="a0038"><code data-language="python">while True:</code></pre>
+<p data-points="p0038" id="e18">上面摘的是循环的第一行。后面几行：调用模型（带上 TOOLS）；如果回复里没有 tool_calls，就返回回复文本；否则逐个执行调用、把结果追加进 messages。</p>
+<p data-points="p0039" id="e19">规格 2.4 的要求：「Decide what the signal is.」——决定信号是什么。</p>
+<p data-points="p0040 p0041" id="e20">讲者备注：这六行大家见过三次。看第三、四行，那就是一个停止条件：回复里没有工具调用，运行就算完成。这是默认做法，也是 L07 的系统提示要求的（任务完成时，回一段简短总结、不带工具调用）。规格要的比默认更多：模型以你定义的方式发出完成信号，由你决定这个信号是什么。</p>
+<h3>三种完成信号</h3><span class="source-anchor heading-source" data-source-section="s10">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">Three done signals</a></span>
+<p data-points="p0044" id="e21"><b>No tool call</b>：免费，但沉默不等于完成（Silent is not finished）。</p>
+<p data-points="p0045" id="e22"><b>A finish tool</b>：有意说出的完成，每次请求约多 ~100 个 token。</p>
+<p data-points="p0046" id="e23"><b>Verification</b>：模型声称完成，再由 harness 检查（checked）。</p>
+<p data-points="p0047 p0048" id="e24">讲者备注：三种设计值得比较。没有工具调用——免费，每个模型都会；弱点是「没有调用」不等于「做出了完成的声明」。</p>
+<p data-points="p0049" id="e25">finish 工具：给模型一个带 summary 参数的 finish，只把调用它当作完成，于是完成成了模型有意说出的事。代价是多一个工具定义，每次请求约一百个 token（L07 实测三个工具是四百）；小模型有时会过早调用它。</p>
+<p data-points="p0050 p0051" id="e26">验证：模型声称完成，harness 去检查——接受声明前先跑测试。这是 L07 的第二个修正，把声明变成观察。提示讲者别停，下一页就是第一张卡片失效的地方。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s7"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">Stopping</a></span> · <span class="source-anchor" data-source-section="s8"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">The reasons a run ends</a></span> · <span class="source-anchor" data-source-section="s9"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">The done test in six lines</a></span></div>
+</section>
+<section class="sec" data-toc="四、没有工具调用，却不是完成" id="s5" data-source-section="s11">
+  <header class="doc-head"><span class="kicker">第 8 页</span><h2>length 被截断；反问一句却没人回答</h2></header>
+  <div class="doc-body">
+<p data-points="p0053" id="e27"><b>finish_reason: "length"</b>：被截断了，不是完成了（Cut off）。</p>
+<p data-points="p0055" id="e28"><b>反问一句</b>：没有人在那里回答（Nobody there）。</p>
+<p class="callout key" data-points="p0056" id="e29">两种都是「没有工具调用，也不是完成」，日志需要给两者都起个名字。</p>
+<p data-points="p0057 p0058" id="e30">讲者备注：左边是 finish_reason 为 length。L07 给每种结束原因都配了一项义务，length 表示回复被截断；当作完成，就等于把半句话当成了答案。</p>
+<p class="callout limit" data-points="p0059" id="e31">右边是一个反问的回复：「要不要顺便也改一下 web 前端？」周四有用户在场，问题是对话在正常进行；第 7 周的关卡是在键盘前没有人的情况下跑的。所以你的设计必须说清楚一个问题意味着什么：完成、一个单独的 needs-input 退出、还是失败。三种都说得过去；<b>不做决定是不行的，因为那样你的日志会把它记成完成。</b></p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s11"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">finish_reason: "length"</a></span> · <span class="source-anchor" data-source-section="s12"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">A question back</a></span></div>
+</section>
+<section class="sec" data-toc="五、四次运行，四个「完成」" id="s6" data-source-section="s13">
+  <header class="doc-head"><span class="kicker">第 9–10 页</span><h2>同一任务、真实工具，四次都自称完成，只有一次功能真的能用</h2></header>
+  <div class="doc-body">
+<p data-points="p0063" id="e32">讲者备注：今天早上，同一任务在一个带真实工具和全部六个停止条件的循环里跑了四遍，同一模型、同一棵代码树。每次都以它自己的信号结束，没有一个上限触发过。</p>
+<div class="table"><table class="data" data-asset="a0062" data-points="p0062" id="ta0062"><caption>原表 2 · 四次运行的步数、退出原因与功能实测结果</caption><thead><tr><th>Run</th><th>Steps</th><th>Exit</th><th>taskr add x --priority high</th></tr></thead><tbody><tr><td data-label="Run">1</td><td data-label="Steps">10</td><td data-label="Exit">done</td><td data-label="taskr add x --priority high">TypeError</td></tr><tr><td data-label="Run">2</td><td data-label="Steps">10</td><td data-label="Exit">done</td><td data-label="taskr add x --priority high">Rejected: priority is an int</td></tr><tr><td data-label="Run">3</td><td data-label="Steps">15</td><td data-label="Exit">done</td><td data-label="taskr add x --priority high">Works</td></tr><tr><td data-label="Run">4</td><td data-label="Steps">6</td><td data-label="Exit">done</td><td data-label="taskr add x --priority high">TypeError</td></tr></tbody></table><span class="source-anchor" data-source-section="s13">出处：EECS 498 AASE L09 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">幻灯片第 9 页 · Four runs, four dones</a></span></div>
+<p data-points="p0064 p0065" id="e33">然后去跑这个功能：四次里一次能用。第 1、4 次读了 <code>store.py</code> 却没改它，于是 add 命令调用 <code>store.add</code> 时传了它不接受的参数，连普通的 <code>taskr add</code> 也坏了；第 2 次把 priority 做成了整数，于是 high 被拒。四个完成，一个能用的功能——按那六行代码算，是四次成功。</p>
+<p data-points="p0066" id="e34">给讲者的提示：抓包和 README 在 <code>assets/live/captures</code>。被问到时说明：检查方式是在每次运行的 diff 上，用一个临时的 <code>--file</code> 任务文件执行带 <code>--priority high</code> 的 add。</p>
+<h3>什么都没跑的测试</h3><span class="source-anchor heading-source" data-source-section="s14">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">The test that ran nothing</a></span>
+<p data-points="p0069" id="e35">第 1 次运行第 6–8 步：用 <code>python -m taskr.cli</code> 跑 add 返回 exit 0；而用户会敲的 <code>python -m taskr</code> 加同样参数报 TypeError——<code>Store.add()</code> 只接受 2 到 3 个位置参数，却给了 4 个。</p>
+<p class="callout key" data-points="p0070" id="e36"><b>模型自己选的检查，不算检查。</b></p>
+<p data-points="p0071 p0072 p0073" id="e37">讲者备注：第 1 次确实测了，看它的测试：<code>python -m taskr.cli</code> 只导入 <code>cli.py</code>、什么都不运行，因为 <code>cli.py</code> 没有 main 守卫。一个什么都没做的程序返回 0；模型跑了三次、看到三个 0，就说完成了。第二条命令才是用户会敲的，结果是 TypeError。</p>
+<p class="callout limit" data-points="p0074 p0075" id="e38">这是支持「验证」的论据，也是它的局限：harness 只能用它信任的检查来确认完成，而模型选的检查不在其列。运行之前你写好的 pytest 测试套件算；模型决定当测试来跑的东西，只证明它相信什么，不证明什么能用。（讲者在此停顿。）</p>
+<p class="callout key" data-points="p0076" id="e39"><b>以上限结束的运行，没有完成。</b></p>
+<p data-points="p0077 p0078 p0079" id="e40">讲者备注：这是规则的另一半。L07 那次运行不是完成，是耗尽。如果日志写「stopped」，就藏起了这次运行最重要的事实。以上限结束的运行，是因为某个数字到了，工作停在第 N 步留下的样子——那和完成是不同的结局，需要不同的名字。这样的名字有五个。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s13"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">Four runs, four dones</a></span> · <span class="source-anchor" data-source-section="s14"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">The test that ran nothing</a></span></div>
+</section>
+<section class="sec" data-toc="六、六个停止条件" id="s7" data-source-section="s15">
+  <header class="doc-head"><span class="kicker">第 12 页</span><h2>一个「完成」加五个上限，每个在日志里有独立的退出原因</h2></header>
+  <div class="doc-body">
+<div class="table"><table class="data" data-asset="a0082" data-points="p0082" id="ta0082"><caption>原表 3 · 规格 2.4 的六个停止条件及各自拦住的情况</caption><thead><tr><th>Condition</th><th>Catches</th></tr></thead><tbody><tr><td data-label="Condition">Task complete</td><td data-label="Catches">The model signals done</td></tr><tr><td data-label="Condition">Step limit</td><td data-label="Catches">The obvious runaway</td></tr><tr><td data-label="Condition">Token budget</td><td data-label="Catches">A growing context</td></tr><tr><td data-label="Condition">Wall clock</td><td data-label="Catches">A hung command</td></tr><tr><td data-label="Condition">Repeated call</td><td data-label="Catches">The same call forever</td></tr><tr><td data-label="Condition">Consecutive errors</td><td data-label="Catches">A run that has lost the plot</td></tr></tbody></table><span class="source-anchor" data-source-section="s15">出处：EECS 498 AASE L09 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">幻灯片第 12 页 · Six stop conditions</a></span></div>
+<p data-points="p0083 p0084" id="e41">讲者备注：这是规格 2.4 节的清单，也是 Lab03 的检查表：六个都要有，每个在运行日志里都要有独立的退出原因。读成「一加五」：第一行「任务完成」是你想要的退出；其余五个是上限，每个都因为某个数字到了而结束运行——以上限结束的运行没有完成。</p>
+<p data-points="p0085" id="e42">右栏要当一条链来读：步数上限拦明显的失控；token 预算存在，是因为步数上限拦不住上下文在增长的循环；墙钟存在，是因为前两者都拦不住卡住的命令；最后两个看的是模型的行为而非运行的规模——永远重复同一个调用（小模型最常见的卡法），以及一串它恢复不过来的错误。</p>
+<p data-points="p0086 p0087" id="e43">五个上限都有两点：日志里各有自己的名字，因为下周读日志时「stopped」什么也不告诉你；每个都有一个由你选定的数字，规格不替你选。接下来五页逐个讲：别的条件放过去的那种运行，以及其中你必须写下来的那个决定。</p>
+<p data-points="p0088" id="e44">给讲者的提示：这页不展开各行，只讲「一加五」和右栏的链。被问数字该定多少：没有正确答案；四次排练用的是 20 步、16000 token、600 秒、3 次重复、3 次错误，一个都没触发。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s15"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">Six stop conditions</a></span></div>
+</section>
+<section class="sec" data-toc="七、条件 2：步数上限" id="s8" data-source-section="s16">
+  <header class="doc-head"><span class="kicker">第 13 页</span><h2>最便宜、也最粗的兜底</h2></header>
+  <div class="doc-body">
+<p data-points="p0091" id="e45">其余五个的兜底（backstop）。</p>
+<p data-points="p0092" id="e46">最粗的一个（bluntest）：L07 的那个 9。</p>
+<p data-points="p0093" id="e47">你的决定：数请求，还是数工具调用（tool calls）？</p>
+<p data-points="p0094 p0095" id="e48">讲者备注：步数上限拦的是明显的失控——模型一直在要、没有别的东西结束它；它是最便宜的检查，也是其他所有检查的兜底。它也是最粗的：L07 的运行就以它结束，在损害之后、工作之前，而且没人选过 9。</p>
+<p data-points="p0096" id="e49">其中一个决定：什么算一步？一次模型请求，还是一次工具调用？一条回复可能带三个并行调用，两种计数会越差越远。哪种都行，但要写下来，因为同一个阈值在两种算法下意义不同。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s16"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">Step limit</a></span></div>
+</section>
+<section class="sec" data-toc="八、条件 3：token 预算" id="s9" data-source-section="s17">
+  <header class="doc-head"><span class="kicker">第 14 页</span><h2>步数上限拦不住上下文在增长的循环</h2></header>
+  <div class="doc-body">
+<p data-points="p0099" id="e50">L07：九步里从 471 涨到 3252 个 token。</p>
+<p data-points="p0100" id="e51">一次大文件读取：一步就 +10,000。</p>
+<p data-points="p0101" id="e52">在请求发出之前检查（before the request）。</p>
+<p data-points="p0102" id="e53">你的决定：算下一个请求，还是整次运行的总量（run total）？</p>
+<p data-points="p0103" id="e54">讲者备注：步数上限拦不住上下文在增长的循环。L07 的提示从 471 个 token 涨到 3252，九步里涨了七倍；九步这样还无害，但一次读大文件的 read_file，或者一次输出是整份测试日志的 run_command，一步就加一万，步数上限不会察觉。</p>
+<p data-points="p0104" id="e55">在请求发出前检查：上一条回复的 prompt tokens 加 completion tokens，再加上之后追加内容的估算。usage 是 L07 讲过的真值，所以第一次之后的每次检查都锚定在一个真实数字上。</p>
+<p data-points="p0105 p0106" id="e56">这个名字下有两个数，选一个：下一个请求的大小保护上下文窗口（2.4 指的是这个）；整次运行的总量保护你的钱包——周四的 Toolkit 密钥上那是真钱，hackathon README 说花光 25 美元的方式就是一个没有步数上限的模型循环；本地模型上，它是时间。v0 没有压缩（compaction）：大小检查一触发，运行就结束，不会总结后继续。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s17"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">Token budget</a></span></div>
+</section>
+<section class="sec" data-toc="九、条件 4：墙钟" id="s10" data-source-section="s18">
+  <header class="doc-head"><span class="kicker">第 15 页</span><h2>卡住的命令不发请求，所以不算步数、不花 token</h2></header>
+  <div class="doc-body">
+<p data-points="p0109" id="e57">常见的卡法：flask run、一个 watcher、git commit 打开的编辑器（editor）。</p>
+<p data-points="p0110" id="e58">没有请求，所以没有步数，也没有 token（No request）。</p>
+<p data-points="p0111" id="e59">每条命令一个超时，外加整次运行的预算（timeout）。</p>
+<p data-points="p0112" id="e60">关闭标准输入（Standard input）。</p>
+<p data-points="p0113 p0114" id="e61">讲者备注：前两者都拦不住卡住的命令：模型运行了一个永不退出的东西，没有新请求，所以不算步、不花 token。候选都很普通：watch 模式的测试运行器；git commit 打开编辑器；一条等标准输入的命令；在带 Flask 前端的仓库里（aider-practice 第 11 到 16 课就有），模型为了测试 web 改动会启动 flask run，而它永远不返回。</p>
+<p data-points="p0115" id="e62">在步与步之间检查的运行级时钟打断不了这些，因为循环正卡在 execute 里。所以墙钟是两个机制：每条命令和每次模型请求都有超时，再加整次运行的预算。每条命令都关闭标准输入，等 stdin 的情况就变成立即报错而不是挂起。</p>
+<p class="callout limit" data-points="p0116" id="e63">一个注意点：关闭标准输入只修好读标准输入的程序，修不了编辑器。不带 message 的 git commit 会打开编辑器，而编辑器可以直接和终端交互，仍然可能一直等着。这种情况靠每条命令的超时来结束，或者在命令环境里设 <code>GIT_EDITOR=true</code>，让 git 根本不开编辑器。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s18"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">Wall clock</a></span></div>
+</section>
+<section class="sec" data-toc="十、条件 5：重复的相同调用" id="s11" data-source-section="s19">
+  <header class="doc-head"><span class="kicker">第 16 页</span><h2>小模型最常见的失败：永远重复同一个调用</h2></header>
+  <div class="doc-body">
+<p data-points="p0119" id="e64">「相同」的定义：工具名加解析后的参数（parsed arguments）。</p>
+<p data-points="p0120" id="e65">写入之后的重复是进展（progress）。</p>
+<p data-points="p0121" id="e66">精确匹配会漏掉 L07 的第 8、9 步（Exact match）。</p>
+<p data-points="p0122 p0123" id="e67">讲者备注：小模型最常见的失败就是永远重复同一个调用——读一个文件、不据此行动、再读一遍。「相同」需要定义：比较工具名和按键排序后的解析参数，而不是原始的 arguments 字符串（空白可能不同）。</p>
+<p data-points="p0124 p0125" id="e68">再决定重复是否总是循环：修完后再跑 pytest 是工作顺利；中间什么都没写又跑一遍才是循环。以「调用加结果」为键，或者任何写入都重置计数，就能区分。还要注意精确匹配漏掉什么：L07 的第 8、9 步都删了任务列表，但并不相同——一个以 <code>python -c</code> 结尾，另一个以 <code>python cli.py add</code> 结尾。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s19"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">Repeated identical call</a></span></div>
+</section>
+<section class="sec" data-toc="十一、条件 6：连续的工具错误" id="s12" data-source-section="s20">
+  <header class="doc-head"><span class="kicker">第 17 页</span><h2>连续计数，任何一次成功都清零</h2></header>
+  <div class="doc-body">
+<p data-points="p0128" id="e69">连续计数：任何一次成功都会重置（resets）。</p>
+<p data-points="p0129" id="e70">没能运行：算一个错误（Could not run）。</p>
+<p data-points="p0130" id="e71">运行了但以 1 退出：由你决定（exited 1）。</p>
+<p data-points="p0131" id="e72">讲者备注：模型已经迷失、恢复不过来。错误就是结果（规格 2.1），所以每次都会告诉模型；连着几个可能是模型在自我纠正，连着很多就不是了。计数是连续的，任何成功都会清零。</p>
+<p data-points="p0132 p0133 p0134" id="e73">什么算错误才是要做的决定：工具没能做到要求的事算——文件不存在、命令被超时杀掉、参数不是合法 JSON。运行了但以非零退出的命令就不那么清楚：pytest 以 1 退出是信息，把它算作错误，你就会在修测试修到一半时终止运行。下半场还会加一种情况：拒绝算不算错误。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s20"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">Consecutive tool errors</a></span></div>
+</section>
+<section class="sec" data-toc="十二、拿六个条件对照 L07 的运行" id="s13" data-source-section="s21">
+  <header class="doc-head"><span class="kicker">第 18 页</span><h2>能在第 8 步之前停下它的两个，都是碰巧</h2></header>
+  <div class="doc-body">
+<div class="table"><table class="data" data-asset="a0137" data-points="p0137" id="ta0137"><caption>原表 4 · 六个停止条件放到 L07 那次运行上的结果</caption><thead><tr><th>Condition</th><th>On L07's run</th></tr></thead><tbody><tr><td data-label="Condition">Done</td><td data-label="On L07&#x27;s run">Never</td></tr><tr><td data-label="Condition">Step limit</td><td data-label="On L07&#x27;s run">Fired, at nine</td></tr><tr><td data-label="Condition">Token budget</td><td data-label="On L07&#x27;s run">Only if under 3168</td></tr><tr><td data-label="Condition">Wall clock</td><td data-label="On L07&#x27;s run">Nothing ran</td></tr><tr><td data-label="Condition">Repeated call</td><td data-label="On L07&#x27;s run">Never: 8 and 9 differ</td></tr><tr><td data-label="Condition">Consecutive errors</td><td data-label="On L07&#x27;s run">Never: all "succeeded"</td></tr></tbody></table><span class="source-anchor" data-source-section="s21">出处：EECS 498 AASE L09 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">幻灯片第 18 页 · The six against L07's run</a></span></div>
+<p data-points="p0138 p0139" id="e74">讲者备注：完成从没触发，没有一条回复是普通回答；步数上限触发了，数字没人选过；token 预算只有设在 3168 以下才能在 rm 之前停下它，而这个数是由文件大小决定的；墙钟——没有东西挂起，因为什么都没跑；重复调用——没有，第 8、9 步不同；错误——没有，每个桩都报告成功。</p>
+<p data-points="p0140" id="e75">六个里有两个根本不可能在这次运行上触发。能在第 8 步前停下它的两个也是碰巧：步数上限设 7，或 token 预算低于 3168，落在 rm 之前只是因为 rm 恰好出现在一个短任务的末尾；同样的数字会把一个更大的任务停在读文件的中途。</p>
+<p class="callout key" data-points="p0141" id="e76"><b>六个条件里，没有一个看调用做了什么。</b>下半场再回到这一点。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s21"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">The six against L07's run</a></span></div>
+</section>
+<section class="sec" data-toc="十三、检查放在哪里，以及唯一的出口" id="s14" data-source-section="s22">
+  <header class="doc-head"><span class="kicker">第 19–21 页</span><h2>按每个检查需要看到什么来决定位置；所有退出走同一个地方</h2></header>
+  <div class="doc-body">
+<pre class="code" data-asset="a0144"><code data-language="python">while True:</code></pre>
+<p data-points="p0144" id="e77">上面摘的是草图的第一行。其后：请求之前检查步数上限、token 预算、墙钟；回复之后检查完成与截断；执行每个调用之前检查重复调用；拿到结果之后检查连续错误。</p>
+<p data-points="p0145 p0146 p0147" id="e78">这是草图，不是构建。讲者备注：检查放在三个地方，位置取决于每个检查需要看到什么。前三个是拒绝再花一次请求，所以放在调用之前；完成需要一条回复来判断；重复调用必须在调用执行之前触发，否则第三次相同的写入照样发生；错误需要结果。</p>
+<p data-points="p0148" id="e79">Lab03 里你写的还要带上审批提示、运行日志，以及 L07 说过人人都会忘的那次追加。</p>
+<h3>唯一的出口</h3><span class="source-anchor heading-source" data-source-section="s23">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">One way out</a></span>
+<p data-points="p0151" id="e80">一个异常、一个处理器、一行日志（one log line）。</p>
+<p data-points="p0152" id="e81">六个是下限（minimum）。</p>
+<p data-points="p0153" id="e82">另外两个：<code>truncated</code>、<code>endpoint_error</code>。</p>
+<p data-points="p0154" id="e83">崩溃没有退出行（A crash）。</p>
+<p data-points="p0155" id="e84">讲者备注：所有退出走同一个地方。演示用的 agent 抛出一种携带原因的异常，由一个处理器写退出行并打印总结。另一种做法是五处 break 加一处 return，迟早有一处忘了记日志——而日志结尾没有退出行的那次运行，恰恰是你最想弄明白的。</p>
+<p data-points="p0156 p0157" id="e85">六个是下限而不是全部清单：演示 agent 还有两个，因为总会发生规格没点名的事，日志仍需要一个词。<code>truncated</code> 是 length 的情况；<code>endpoint_error</code> 是 POST 本身失败——服务器挂了、流在中途断了（即 F1），或者周四 Toolkit 偶尔的 502。<b>崩溃不是退出原因，它是一次没有退出行的运行。</b></p>
+<h3>退出行</h3><span class="source-anchor heading-source" data-source-section="s24">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">The exit line</a></span>
+<pre class="code" data-asset="a0160"><code data-language="json">{"event": "exit", "reason": "done", "steps": 10,</code></pre>
+<p data-points="p0160" id="e86">上面是退出行的第一行；第二行记的是 <code>working_seconds</code> 为 59、<code>waiting_seconds</code> 为 0。</p>
+<p data-points="p0161" id="e87">第 7 周复盘第 4 题：「哪一个触发得最多，这说明了什么？」</p>
+<p data-points="p0162 p0163" id="e88">讲者备注：这是第 1 次运行的最后一行。规格列出一次运行要记录的内容：任务、每一步、每个调用及其审批决定、进出的 token、时间，以及退出原因。第 7 周复盘统计的正是退出行，第 4 题只有用你记下的名字才答得出来。</p>
+<p data-points="p0164 p0165" id="e89">退出也是写给人的一条消息：A5 说要告诉用户还有什么没解决；无人值守时，人是事后读它，所以退出应说明运行停下时在做什么，而不只是为什么停。这些名字也是 L06 意义上的参照点：<code>token_budget</code> 在代码、设计文档和复盘里是同一个词，任何人，包括你把日志交给的模型，都能指着它说话。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s22"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">Where each check sits</a></span> · <span class="source-anchor" data-source-section="s23"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">One way out</a></span> · <span class="source-anchor" data-source-section="s24"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">The exit line</a></span></div>
+</section>
+<section class="sec" data-toc="十四、课间：你在 Hackathon 1 里的上限" id="s15" data-source-section="s25">
+  <header class="doc-head"><span class="kicker">第 22 页</span><h2>计的是什么、数字多少、触发过没有</h2></header>
+  <div class="doc-body">
+<p data-points="p0168" id="e90">周四的 A5：你的循环必须在有限上限后停下。</p>
+<p data-points="p0169" id="e91">在纸上写一行：计的是什么、上限数字、是否触发过（是 / 否 / 不知道）。</p>
+<p data-points="p0170" id="e92">然后：它是六个里的哪一个？举一次它拦不住的运行。</p>
+<p data-points="p0171 p0172 p0173" id="e93">讲者备注：和邻座讨论五分钟。想想你自己代码里的上限，按上面的格式写一行；然后准备说出它是今天六个中的哪个，以及一次它不会停下的运行。</p>
+<p data-points="p0174 p0175 p0176" id="e94">宣布 Zoom 进入休息；讲者在教室里走动五分钟；宣布休息结束。</p>
+<p data-points="p0177 p0178" id="e95">在黑板上举手统计：第一栏，计的是什么——模型调用、工具调用、循环轮数、token、时间、别的、什么都没计；第二栏，多少人说「不知道」。给讲者的提示：预计模型调用或循环轮数占多数；不要给答案打分，下一页把统计结果读回来。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s25"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">The Hackathon 1 limit</a></span></div>
+</section>
+<section class="sec" data-toc="十五、Approval：动作之前的检查" id="s16" data-source-section="s26">
+  <header class="doc-head"><span class="kicker">第 23–24 页</span><h2>停止条件结束运行，不评判动作</h2></header>
+  <div class="doc-body">
+<p data-points="p0181" id="e96">讲者备注：下半场，动作之前的那道检查。</p>
+<h3>黑板上的统计，对照六个条件</h3><span class="source-anchor heading-source" data-source-section="s28">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">The tally, against the six</a></span>
+<p data-points="p0184" id="e97">多数人只计了一样东西：就是步数上限（step limit）。</p>
+<p data-points="p0185" id="e98">每一个「不知道」：都是没有退出行（no exit line）。</p>
+<p data-points="p0186" id="e99">六个里没有一个评判动作（judges an action）。</p>
+<p data-points="p0187 p0188" id="e100">讲者备注：读黑板。多数人计了一样东西，模型调用或循环轮数，那就是步数上限，六个之一。对周四来说它是对的：有用户在看、运行很短、步数上限是兜底；对没人看着的运行就不够了。</p>
+<p data-points="p0189 p0190" id="e101">每一个「不知道」都是课间之前那个论点：如果你的循环停了而你说不出上限有没有触发，你的循环就没记录它为什么结束。更难的一点：上半场所有条件都关于运行本身——多长、多大、多重复，没有一个看调用做了什么。</p>
+<p class="callout key" data-points="p0191 p0192" id="e102"><b>停止条件结束运行，它们不评判动作。</b></p>
+<p data-points="p0193" id="e103">讲者备注：L07 的第 8 步不会被其中任何一个有意地拦下；为此你需要周四搭的第二样东西。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s26"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">Approval</a></span> · <span class="source-anchor" data-source-section="s27"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">The check in front of an action</a></span> · <span class="source-anchor" data-source-section="s28"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">The tally, against the six</a></span></div>
+</section>
+<section class="sec" data-toc="十六、/undo 能撤回什么" id="s17" data-source-section="s29">
+  <header class="doc-head"><span class="kicker">第 26 页</span><h2>git 只管你仓库里被跟踪的文件，管不了 bash</h2></header>
+  <div class="doc-body">
+<div class="table"><table class="data" data-asset="a0196" data-points="p0196" id="ta0196"><caption>原表 5 · 各类调用与 /undo 能否撤回</caption><thead><tr><th>The call</th><th>/undo</th></tr></thead><tbody><tr><td data-label="The call">write_file taskr/cli.py</td><td data-label="/undo">Walks it back</td></tr><tr><td data-label="The call">rm -f ~/.taskr.json</td><td data-label="/undo">Nothing: never tracked</td></tr><tr><td data-label="The call">git reset --hard</td><td data-label="/undo">Nothing: git was the net</td></tr><tr><td data-label="The call">pip install ...</td><td data-label="/undo">Nothing: not your repo</td></tr><tr><td data-label="The call">curl ... | sh</td><td data-label="/undo">Nothing: someone else's program</td></tr></tbody></table><span class="source-anchor" data-source-section="s29">出处：EECS 498 AASE L09 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">幻灯片第 26 页 · What /undo walks back</a></span></div>
+<p data-points="p0197 p0198" id="e104">讲者备注：Apply 阶段的安全网是每次编辑一个提交加 <code>/undo</code>。那就够了，因为 Aider 改的只有你仓库里的文件，而 git 跟踪它们。第一行，写一个被跟踪的文件，undo 能撤回，这正是它的用途。</p>
+<p data-points="p0199" id="e105">其他全都不行：rm 掉家目录里的文件——git 从不知道它；<code>git reset --hard</code> 或 <code>git clean</code>——毁掉的正是 git 在保护的未提交工作；pip install——改的是你的 Python，不是你的仓库；curl 管道给 sh——以你的身份运行了别人的程序。</p>
+<p class="callout key" data-points="p0200" id="e106">设计文档的规则只有一句：<b>审批和工具在同一周一起交付，因为 git 覆盖不了 bash。</b>Stage 1 的文件保护仍保留，它们把 write_file 限制在仓库内，但对一段 shell 字符串毫无作用。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s29"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">What /undo walks back</a></span></div>
+</section>
+<section class="sec" data-toc="十七、同样的检查，不同的参数" id="s18" data-source-section="s30">
+  <header class="doc-head"><span class="kicker">第 27 页</span><h2>周四名字就是效果；下周参数是一个程序</h2></header>
+  <div class="doc-body">
+<p data-points="p0202 p0203" id="e107"><b>周四</b>：<code>add_task(title, due)</code>——名字就是效果。</p>
+<p data-points="p0205 p0206" id="e108"><b>下周</b>：<code>run_command(command)</code>——参数是一个程序。</p>
+<p class="callout key" data-points="p0207" id="e109">同样的检查，不同的参数。</p>
+<p data-points="p0208 p0209" id="e110">讲者备注：周四权限检查站在带类型的动作前面：模型要的是 add_task 加标题和日期之类，名字告诉你效果，参数是数据；给用户看改动很容易，因为改动就是参数。run_command 只有一个参数，而且是一个程序，名字对效果什么都没说。同样的检查、在循环里同样的位置，现在必须给人看一个他能判断的东西，而且人必须能凭所见做出判断。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s30"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">Thursday</a></span> · <span class="source-anchor" data-source-section="s31"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">Next week</a></span></div>
+</section>
+<section class="sec" data-toc="十八、harness 里的审批步骤" id="s19" data-source-section="s32">
+  <header class="doc-head"><span class="kicker">第 28–29 页</span><h2>审批插在参数契约与派发之间；十行代码里的四个决定</h2></header>
+  <div class="doc-body">
+<p data-points="p0212" id="e111">解析参数（Parse）。</p>
+<p data-points="p0213" id="e112">在代码里做边界检查（Boundary checks）。</p>
+<p data-points="p0214" id="e113">交给人：允许或拒绝（allow or deny）。</p>
+<p data-points="p0215" id="e114">派发，或把拒绝作为结果（Dispatch）。</p>
+<p class="callout key" data-points="p0216" id="e115"><b>没人该被问到的东西，由代码直接拒绝。</b></p>
+<p data-points="p0217 p0218" id="e116">讲者备注：L07 把一个动作拆成四部分：描述（写给模型）、参数契约（检查它要了什么的代码）、派发（执行的代码）、观察（下一条消息）。审批提示放在契约和派发之间。顺序是：解析参数，非法 JSON 是错误结果，不问任何人；代码里做边界检查，仓库外的路径不问就拒；然后是人；然后派发，或把拒绝作为该调用的结果。</p>
+<p data-points="p0219" id="e117">规格说这部分是十行代码，确实如此；十行里的决定才是这堂课。</p>
+<h3>四个审批决定</h3><span class="source-anchor heading-source" data-source-section="s33">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">Four approval decisions</a></span>
+<p data-points="p0222" id="e118"><b>展示什么</b>：完整的调用；给 diff，不给字节数。</p>
+<p data-points="p0223" id="e119"><b>拒绝返回什么</b>：一条带原因的 tool 消息。</p>
+<p data-points="p0224" id="e120"><b>读操作要不要问</b>：这周要问。</p>
+<p data-points="p0225" id="e121"><b>等待与时钟</b>：记下来，不计入。</p>
+<p data-points="p0226 p0227" id="e122">讲者备注：展示什么——完整调用：完整命令，绝不截断、绝不转述；对 write_file，给和磁盘上文件比较的 diff，而不是字节数。L07 的桩回的就是字节数，没人能批准一个字节数。也绝不给模型自己对调用的总结，十分钟后你会看到原因。</p>
+<p data-points="p0228" id="e123">拒绝返回什么——给该调用 id 的一条 tool 消息，带上人的理由；不是异常，也不是跳过消息。每个工具调用恰好一条 tool 消息，被拒的也一样，这是周四的 <code>REFERENCE.md</code>。然后由模型决定接下来做什么，它知道自己被拒了。</p>
+<p class="callout limit" data-points="p0229" id="e124">读操作要不要问——周四从不问。规格说每个调用都要停下来，读也包括，原因不只是谨慎：read_file 会把文件放进下一个请求；在托管端点上，文件就离开了你的机器，而仓库里的 <code>.env</code> 能通过边界检查。下周的规则会自动批准大多数读，这周都要问。</p>
+<p data-points="p0230 p0231" id="e125">等待与时钟——花十分钟才回答的人不该触发 wall_clock：把模型和工具时间计入上限，等待时间另记；运行里有多少是你，正是下周要缩减的。上半场还有一个：拒绝算不算工具错误？算的话三次拒绝就结束运行，那也许正是你要的，但无论如何要写下来。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s32"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">The approval step in the harness</a></span> · <span class="source-anchor" data-source-section="s33"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">Four approval decisions</a></span></div>
+</section>
+<section class="sec" data-toc="十九、现场演示：审批提示" id="s20" data-source-section="s34">
+  <header class="doc-head"><span class="kicker">第 30 页</span><h2>同一任务、同一模型，这次工具是真的</h2></header>
+  <div class="doc-body">
+<p data-points="p0234" id="e126">三次读：y、y、y（Three reads）。</p>
+<p data-points="p0235" id="e127">一次写：读 diff（read the diff）。</p>
+<p data-points="p0236" id="e128">离开仓库的，或碰任务列表的：拒绝（the task list）。</p>
+<p data-points="p0237" id="e129">看退出行，然后真跑一次 add（one real add）。</p>
+<p data-points="p0238" id="e130">环境：taskr 的临时副本，假的家目录，<code>~/.taskr.json</code> 里有三个任务。</p>
+<p data-points="p0239 p0240" id="e131">讲者备注：与 L07 同一任务、同一模型，这次工具是真的。每个调用都停在一个提示上，由讲者回答。看四件事：前三个提示是读，都答 y——疲劳就从这里开始；写会显示 diff，讲者会读其中一行；任何离开仓库、或对默认路径运行 taskr add 的，答「不」并给出理由，看模型怎么处理这个「不」；最后看退出行，再真跑一次 taskr add，看完成是不是真的完成。</p>
+<p data-points="p0241" id="e132">给讲者的提示：按 runbook 第 2 节运行 <code>assets/live/</code> 下的 agent 脚本，大声读出一行 diff；拒绝任何不带 <code>--file</code> 运行 taskr add、离开仓库或使用 rm 的 run_command，并打字说明理由。如果模型没做出什么值得一提的事，就照实说，并回到「Four runs, four dones」那页——四次排练就是那样。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s34"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">The approval prompt, live</a></span></div>
+</section>
+<section class="sec" data-toc="二十、批准命令，不批准解释" id="s21" data-source-section="s35">
+  <header class="doc-head"><span class="kicker">第 31–33 页</span><h2>读起来无害、跑起来有害；你批准的是某个状态下的命令</h2></header>
+  <div class="doc-body">
+<p data-points="p0244" id="e133">「清理一下测试状态」（Clean up）。</p>
+<p data-points="p0245" id="e134">「验证一下改动」（Verify）。</p>
+<p data-points="p0246" id="e135">v0 信任这些说法，第 10 周专门攻击这一点（Week 10）。</p>
+<p class="callout key" data-points="p0247" id="e136"><b>批准命令，绝不批准解释。</b></p>
+<p data-points="p0248 p0249 p0250" id="e137">讲者备注：模型会告诉你它为什么要运行一条命令，写在回复文本里，或写在你给它留了空间的参数里。v0 的审批层相信模型说的命令用途；课程设计把这点点名为第 10 周要攻击的具体弱点。</p>
+<h3>带副作用的测试</h3><span class="source-anchor heading-source" data-source-section="s36">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">A test with a side effect</a></span>
+<p data-points="p0253" id="e138">第 2、3 次运行（都被批准了）的测试命令：用 <code>python -c</code> 从 <code>taskr.cli</code> 导入 main，并以 add、test task、--priority high 为参数调用它。</p>
+<p data-points="p0254" id="e139">它运行的是真正的 add（real add）。</p>
+<p data-points="p0255" id="e140">保存到 <code>DEFAULT_PATH</code>：<code>~/.taskr.json</code>。</p>
+<p data-points="p0256" id="e141">每次运行留下两个垃圾任务，<code>/undo</code> 撤不回（junk tasks）。</p>
+<p data-points="p0257 p0258" id="e142">讲者备注：有些命令读起来不危险，跑起来危险。第 2、3 次就是这样测试改动的：看起来像测试，也确实是测试；但它也执行了真正的 add，存到 DEFAULT_PATH，也就是用户的任务列表。两次运行各在里面留下两个垃圾任务。</p>
+<p data-points="p0259" id="e143">排练时这些命令每条都被批准了，因为文本里没有提到家目录。在一次运行的第 13 步，你会发现吗？</p>
+<h3>指向文件的命令</h3><span class="source-anchor heading-source" data-source-section="s37">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">Commands that point at files</a></span>
+<p data-points="p0262" id="e144">第 11 步 write_file 写了 <code>tests/conftest.py</code>，第 12 步 run_command 运行 pytest。</p>
+<p data-points="p0263" id="e145">pytest 会运行每一个 conftest.py（every conftest.py）。</p>
+<p data-points="p0264" id="e146">make、npm test 也一样（npm test）。</p>
+<p class="callout key" data-points="p0265" id="e147"><b>你批准的是「某个状态下的命令」。</b></p>
+<p data-points="p0266 p0267" id="e148">讲者备注：pytest 会运行仓库里每个 conftest.py 和测试文件。如果第 11 步写了 conftest.py，第 12 步批准 pytest 就是批准那个文件里写的一切。make 和 npm test 一样：命令是指向文件的指针，而模型可能刚写了那个文件。所以批准的单位不是命令，而是命令加上自你上次读仓库以来写入的一切；提示显示的是前者，只有你掌握后者。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s35"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">The model's stated reason</a></span> · <span class="source-anchor" data-source-section="s36"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">A test with a side effect</a></span> · <span class="source-anchor" data-source-section="s37"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">Commands that point at files</a></span></div>
+</section>
+<section class="sec" data-toc="二十一、v0 不做的事与第 6 周的规则" id="s22" data-source-section="s38">
+  <header class="doc-head"><span class="kicker">第 34–35 页</span><h2>审批疲劳没有防护；规则文件要先观察一周再写</h2></header>
+  <div class="doc-body">
+<p data-points="p0270" id="e149">到第 30 步：一次按键，不是一个决定（keypress）。</p>
+<p data-points="p0271" id="e150">v0 里没有防护，这是设计如此（by design）。</p>
+<p data-points="p0272" id="e151">同样缺的：沙箱（sandbox）。</p>
+<p data-points="p0273 p0274" id="e152">讲者备注：数一数演示里的 y。真实会话到第 30 步，提示就是一次按键而不是一个决定。v0 对此没有防护，设计文档也这么写：它和缺失的沙箱、对一个任务安全对下一个不安全的规则，并列在 v0 不做的事里——那份清单就是 Create 阶段的教学大纲。</p>
+<h3>观察一周之后再写规则</h3><span class="source-anchor heading-source" data-source-section="s39">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">Rules, after a week of watching</a></span>
+<p data-points="p0277" id="e153">规则匹配的是被请求的调用（requested call）。</p>
+<p data-points="p0278" id="e154">拒绝优先于允许（Deny wins）。</p>
+<p data-points="p0279" id="e155">没匹配上的：由人决定（Unmatched）。</p>
+<p data-points="p0280" id="e156">这周：记下你批准了什么（note what you approve）。</p>
+<p data-points="p0281 p0282" id="e157">讲者备注：下周规则文件放到提示前面：规则匹配被请求的调用，拒绝优先于允许，没匹配上的交给人。为什么要等一周？先做手动路径并和它相处一阵，再写第一条规则；回答了一周自己 agent 的请求，你就知道它会要什么。所以这周记下批准和拒绝了什么，那份清单就是你的第一个规则文件。</p>
+<p data-points="p0283" id="e158">第 7 周的关卡在没人的情况下运行，从两个方向检验这种张力：规则太紧，运行会停下等一个不会来的人；太松，你会从另一个方向发现问题。复盘第 5 题问你的 agent 曾要求做过的最吓人的事——开始收集吧。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s38"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">Approval fatigue</a></span> · <span class="source-anchor" data-source-section="s39"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">Rules, after a week of watching</a></span></div>
+</section>
+<section class="sec" data-toc="二十二、日程、三个问题与下一讲" id="s23" data-source-section="s40">
+  <header class="doc-head"><span class="kicker">第 36–38 页</span><h2>Lab03 搭 agent；10 月 6 日 Apply 构建截止、Analyze 规格发布</h2></header>
+  <div class="doc-body">
+<div class="table"><table class="data" data-asset="a0286" data-points="p0286" id="ta0286"><caption>原表 6 · 本周与下周的安排</caption><thead><tr><th>When</th><th>What</th></tr></thead><tbody><tr><td data-label="When">This week</td><td data-label="What">Lab02, Hackathon 1.5 · L10 Thursday</td></tr><tr><td data-label="When">Mon Oct 5 / Tue Oct 6</td><td data-label="What">Lab03: build the agent</td></tr><tr><td data-label="When">Tue Oct 6, 11:59 PM</td><td data-label="What">Apply build due</td></tr><tr><td data-label="When">Tue Oct 6</td><td data-label="What">Analyze spec handed out</td></tr></tbody></table><span class="source-anchor" data-source-section="s40">出处：EECS 498 AASE L09 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">幻灯片第 36 页 · This week and next</a></span></div>
+<p data-points="p0287 p0288 p0289" id="e159">讲者备注：本周 Lab02 是 Hackathon 1 复盘并开始 Hackathon 1.5，周四是 L10。Lab03（10 月 5 日和 6 日）搭 agent：工具、循环、停止条件、手动提示，离开时你会拒绝过一次自己 agent 的请求。10 月 6 日周二 11:59 PM Apply 构建截止，Analyze 规格同日发下，今天讲的就是它的 2.2 到 2.5 节。</p>
+<h3>带走三个问题</h3><span class="source-anchor heading-source" data-source-section="s41">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">Three questions</a></span>
+<p data-points="p0292" id="e160">pytest 连续三次以 1 退出，哪个退出会触发（Which exit）？</p>
+<p data-points="p0293" id="e161">第 12 步接了一个十分钟的电话，日志（The log）里会写什么？</p>
+<p data-points="p0294" id="e162">你批准了 pytest，你批准的到底是什么（What did you approve）？</p>
+<p data-points="p0295 p0296" id="e163">讲者备注：带走三个问题。模型修测试时 pytest 连续三次以 1 退出，你的哪个退出会触发，它该不该触发？</p>
+<p data-points="p0297 p0298 p0299" id="e164">你的墙钟是 300 秒，第 12 步你接了个十分钟的电话，日志会怎么写？你在第 12 步批准了 pytest，你批准了什么？给讲者的提示：不要回答这些问题。</p>
+<h3>下一讲：时钟背后的端点</h3><span class="source-anchor heading-source" data-source-section="s42">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">The endpoint behind the clock</a></span>
+<p data-points="p0302" id="e165">四次排练：31 到 60 秒（rehearsals）。</p>
+<p data-points="p0303" id="e166">几乎全花在模型上（Nearly all）。</p>
+<p data-points="p0304" id="e167">周四：在本地部署模型（serving）。</p>
+<p data-points="p0305" id="e168">讲者备注：四次排练用了 31 到 60 秒的模型和工具时间，几乎全是模型。墙钟上限是一个秒数，但花掉这些秒的是端点：你的机器每秒产出多少 token，模型在回答之前又花多少 token 去推理。</p>
+<p data-points="p0306 p0307 p0308" id="e169">周四讲的就是这个端点，也就是配置里 base_url 那一行背后的东西。结束页，答疑；没人提问的话，三个问题在前几页，并提示可以上 Ed 讨论。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s40"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">This week and next</a></span> · <span class="source-anchor" data-source-section="s41"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">Three questions</a></span> · <span class="source-anchor" data-source-section="s42"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L09/slides.md">The endpoint behind the clock</a></span></div>
+</section>
+<section class="sec" data-toc="小测：3 道题" id="s24" data-source-section="extra">
+  <div class="head-full"><span class="kicker">小测</span><h2>用三道题检查理解</h2></div>
+  <div class="stage"><div class="quiz"><script type="application/json">[{"q": "规格 2.4 的六个停止条件应该怎么读？", "opts": ["六个都是上限", "一个「任务完成」加五个上限，以上限结束的运行没有完成", "五个完成信号加一个上限"], "a": 1, "why": "讲者要求读成「一加五」：任务完成是想要的退出，其余五个是上限，每个都要有独立的退出原因。", "back": 5}, {"q": "第 1 次运行用 python -m taskr.cli 测试、三次 exit 0 就说完成，问题在哪？", "opts": ["exit 0 表示功能可用", "cli.py 没有 main 守卫，这条命令什么都没运行；模型自己选的检查不算检查", "应该多跑几次"], "a": 1, "why": "只有运行前你写好的测试套件这类可信检查才能确认完成；模型选的测试只证明它相信什么。", "back": 4}, {"q": "第 11 步写了 tests/conftest.py，第 12 步你批准了 pytest。你批准的是什么？", "opts": ["只是 pytest 这一条命令", "pytest 加上之前写入的一切——你批准的是某个状态下的命令", "模型给出的理由"], "a": 1, "why": "pytest 会运行每个 conftest.py；命令是指向文件的指针，而模型可能刚写了那个文件。", "back": 19}]</script></div></div>
+</section>
+</main><script>var __H=location.hash;window.lessonIcons={"menu": "<svg class=\"i i-menu\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/><\/svg>", "play": "<svg class=\"i i-play\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z\"/><\/svg>", "pause": "<svg class=\"i i-pause\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"14\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/><rect x=\"5\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/><\/svg>", "check": "<svg class=\"i i-check\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 6 9 17l-5-5\"/><\/svg>", "x": "<svg class=\"i i-x\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/><\/svg>", "zoom-in": "<svg class=\"i i-zoom-in\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><line x1=\"21\" x2=\"16.65\" y1=\"21\" y2=\"16.65\"/><line x1=\"11\" x2=\"11\" y1=\"8\" y2=\"14\"/><line x1=\"8\" x2=\"14\" y1=\"11\" y2=\"11\"/><\/svg>", "zoom-out": "<svg class=\"i i-zoom-out\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><line x1=\"21\" x2=\"16.65\" y1=\"21\" y2=\"16.65\"/><line x1=\"8\" x2=\"14\" y1=\"11\" y2=\"11\"/><\/svg>", "copy": "<svg class=\"i i-copy\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\"/><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"/><\/svg>", "chevron-right": "<svg class=\"i i-chevron-right\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m9 18 6-6-6-6\"/><\/svg>", "book-open": "<svg class=\"i i-book-open\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 5v16\"/><path d=\"M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z\"/><\/svg>", "external-link": "<svg class=\"i i-external-link\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M15 3h6v6\"/><path d=\"M10 14 21 3\"/><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/><\/svg>"};window.lessonIcon=n=>window.lessonIcons[n]||"";</script><script>/* Article/pair navigation only. No global swipe or arrow-key paging. */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const H=document.documentElement, sections=$$('main.deck > .sec, main.deck > .hero, .pair-notes > .sec');
+if(!sections.length)return;
+const ids=new Set($$('[id]').map(n=>n.id));
+sections.forEach((s,i)=>{if(!s.id){let n=i+1,id=s.classList.contains('hero')?'intro':'s'+n;while(ids.has(id))id='s'+(++n);s.id=id;ids.add(id)}});
+const title=s=>s.dataset.toc||$('h2,h1,h3',s)?.textContent||s.id;
+const toc=document.createElement('nav');toc.className='toc';toc.id='lesson-toc';toc.setAttribute('aria-label','目录');
+const heading=document.createElement('b');heading.textContent='目录';toc.appendChild(heading);const ol=document.createElement('ol');toc.appendChild(ol);
+sections.forEach((s,i)=>{const li=document.createElement('li'),a=document.createElement('a');a.href='#'+s.id;a.textContent=(i+1)+'. '+title(s);li.appendChild(a);ol.appendChild(li)});document.body.appendChild(toc);
+const links=$$('a',toc),toggle=$('.toc-toggle'),count=$('.count'),bar=$('.track i');
+const shade=document.createElement('div');shade.className='toc-backdrop';document.body.appendChild(shade);
+function open(value){H.classList.toggle('toc-open',value);toggle?.setAttribute('aria-expanded',String(value));if(value)links.find(a=>a.getAttribute('aria-current')==='true')?.focus();else toggle?.focus()}
+if(toggle){toggle.setAttribute('aria-controls',toc.id);toggle.onclick=()=>open(!H.classList.contains('toc-open'))}shade.onclick=()=>open(false);
+addEventListener('keydown',e=>{if(e.key==='Escape'&&H.classList.contains('toc-open'))open(false)});
+function locate(hash){let id;try{id=decodeURIComponent(hash.replace(/^#/,''))}catch(e){return null}if(/^\d+$/.test(id))return sections[+id-1];return document.getElementById(id)}
+function jump(target){if(!target)return;H.classList.remove('toc-open');toggle?.setAttribute('aria-expanded','false');target.scrollIntoView({block:'start',behavior:'instant'});history.replaceState(null,'','#'+target.id);update();dispatchEvent(new Event('lesson:navigate'))}
+window.lessonNav={layout:H.dataset.layout,go:n=>jump(document.getElementById('s'+n)||sections[n-1]),returnTo:box=>jump(box.closest('.sec')||box),jump};window.goCard=n=>window.lessonNav.go(n);
+toc.onclick=e=>{const a=e.target.closest('a');if(!a)return;e.preventDefault();jump(locate(a.hash))};
+const key='pos:'+location.pathname;let queued=false,restoring=true;
+function update(){queued=false;let current=sections[0];const line=H.dataset.layout==='pair'&&innerWidth<=820?innerHeight*.4+90:100;for(const s of sections)if(s.getBoundingClientRect().top<=line)current=s;
+ count.textContent=title(current);links.forEach(a=>a.setAttribute('aria-current',String(a.hash==='#'+current.id)));const max=H.scrollHeight-innerHeight;bar.style.width=Math.max(0,Math.min(100,max>0?scrollY/max*100:100))+'%';
+ if(!restoring)try{localStorage.setItem(key,JSON.stringify({id:current.id,offset:scrollY-(current.getBoundingClientRect().top+scrollY)}))}catch(e){}
+}
+addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(update)}},{passive:true});addEventListener('resize',update);addEventListener('hashchange',()=>jump(locate(location.hash)));
+addEventListener('load',()=>{const hash=window.__H||location.hash;let target=locate(hash),offset=0;if(!hash){try{const pos=JSON.parse(localStorage.getItem(key)||'null');if(pos){target=document.getElementById(pos.id);offset=Number(pos.offset)||0}}catch(e){}}
+ if(target){target.scrollIntoView({block:'start',behavior:'instant'});if(!hash)scrollBy(0,offset+72)}restoring=false;update();
+});update();
+})();
+</script><script>/* Reveal an offscreen simulator first, then move only its local SVG viewport. */
+(function(root){
+function delta(start,end,low,high,pad=16){if(start<low+pad)return start-low-pad;if(end>high-pad)return end-high+pad;return 0}
+function focus(svg,scroller){
+ let frame=scroller.getBoundingClientRect(),bottom=innerHeight-88;
+ const top=document.querySelector('.top')?.getBoundingClientRect().bottom||56;
+ if(frame.bottom<=top||frame.top+112>bottom){
+  scroller.closest('.sim').scrollIntoView({block:'start',behavior:'instant'});
+  frame=scroller.getBoundingClientRect();
+ }
+ for(let p=scroller.parentElement;p&&p!==document.body;p=p.parentElement){const c=getComputedStyle(p);if(/auto|scroll|hidden|clip/.test(c.overflowY)){const r=p.getBoundingClientRect();bottom=Math.min(bottom,r.top+p.clientHeight)}}
+ const space=Math.max(112,Math.min(innerHeight*.4,bottom-frame.top));scroller.style.maxHeight=space+'px';
+ frame=scroller.getBoundingClientRect();const node=svg.querySelector('.fl-node.act');if(!node)return;const r=node.getBoundingClientRect();
+ scroller.scrollTop+=delta(r.top,r.bottom,frame.top,frame.top+scroller.clientHeight);
+ scroller.scrollLeft+=delta(r.left,r.right,frame.left,frame.left+scroller.clientWidth);
+}
+root.LessonGeometry={delta,focus};if(typeof module!=='undefined')module.exports={delta,focus};
+})(typeof window==='undefined'?globalThis:window);
+</script><script>/* Shared material/explanation pairing, original-image dialog and copy actions. */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)],ic=window.lessonIcon;
+window.lessonCopy=async(text,button)=>{try{if(navigator.clipboard?.writeText)await navigator.clipboard.writeText(text);else{const t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();if(!document.execCommand('copy'))throw Error('copy');t.remove()}button.textContent='已复制'}catch(e){button.textContent='复制未成功，请选中文字复制'}};
+$$('.pair.codewalk,.pair.read-pair,.pair.material-pair').forEach(pair=>{
+ const source=$('.pair-source',pair),notes=$('.pair-notes',pair);if(!source||!notes)return;
+ const pre=$('pre[data-lines]',source),code=pre&&$('code',pre),steps=$$('.step',notes);let lines=[],raw='';
+ if(code){raw=code.textContent;const first=Number(pre.dataset.lines)||1;code.textContent='';const pieces=raw.replace(/\n$/,'').split('\n');pieces.forEach((text,i)=>{const line=document.createElement('span');line.className='code-line';line.dataset.line=String(first+i);line.textContent=text;code.appendChild(line);lines.push(line)});
+  const panel=document.createElement('div');panel.className='code-panel';source.before(panel);
+  const toolbar=document.createElement('div');toolbar.className='code-toolbar';
+  const hint=document.createElement('span');hint.className='code-scroll-hint';hint.textContent='长行可横向滚动';
+  const button=document.createElement('button');button.className='btn sm copy-code';button.innerHTML=ic('copy')+' 复制代码';button.onclick=()=>window.lessonCopy(raw,button);
+  toolbar.append(hint,button);panel.append(toolbar,source);
+ }
+ let active=null;
+ function select(step){if(!step||active===step)return;active=step;steps.forEach(s=>s.classList.toggle('is-active',s===step));let targets=[];
+  if(code){const ranges=(step.dataset.hl||'').split(',').map(v=>v.split('-').map(Number));lines.forEach(line=>{const n=Number(line.dataset.line),on=ranges.some(([a,b=a])=>n>=a&&n<=b);line.classList.toggle('hl',on);if(on)targets.push(line)})}
+  else{const ids=(step.dataset.explains||step.dataset.target||'').split(/\s+/);$$('.source-block,[data-material]',source).forEach(block=>{const on=ids.includes(block.dataset.sourceId||block.id);block.classList.toggle('is-active',on);if(on)targets.push(block)})}
+  if(targets.length){const a=targets[0].getBoundingClientRect(),b=targets[targets.length-1].getBoundingClientRect(),r=source.getBoundingClientRect();const bottom=r.top+source.clientHeight;source.scrollTop+=b.bottom-a.top>source.clientHeight-32?a.top-r.top-16:window.LessonGeometry.delta(a.top,b.bottom,r.top,bottom)}
+ }
+ const update=()=>{
+  const rect=notes.getBoundingClientRect(),material=source.closest('.code-panel')||source;
+  const top=Math.max(0,$(".top")?.getBoundingClientRect().bottom||0,innerWidth<=820?material.getBoundingClientRect().bottom:0),bottom=Math.min(innerHeight,rect.bottom);
+  if(bottom<=top)return;
+  const line=top+(bottom-top)*.4;let step=steps[0];
+  for(const s of steps)if(s.getBoundingClientRect().top<=line)step=s;
+  const last=steps.at(-1),lastRect=last?.getBoundingClientRect();
+  if(scrollY+innerHeight>=document.documentElement.scrollHeight-2&&lastRect?.top<bottom&&lastRect.bottom>top)step=last;
+  select(step);
+ };
+ let queued=false;addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(()=>{queued=false;update()})}},{passive:true});addEventListener('resize',update);
+ steps.forEach(step=>{step.addEventListener('focusin',()=>select(step));step.addEventListener('click',e=>{select(step);const a=e.target.closest('a');if(a?.hash&&source.querySelector(a.hash)){e.preventDefault();source.focus()}})});select(steps[0]);addEventListener('load',update);
+});
+$$('figure img').forEach(img=>{const button=document.createElement('button');button.className='image-open';button.type='button';button.setAttribute('aria-label','放大图片：'+img.alt);img.replaceWith(button);button.appendChild(img);button.onclick=()=>{
+ const dialog=document.createElement('dialog');dialog.className='image-dialog';dialog.setAttribute('aria-label',img.alt);const close=document.createElement('button');close.className='btn dialog-close';close.innerHTML=ic('x')+' 关闭';const large=img.cloneNode();large.removeAttribute('loading');dialog.append(close,large);document.body.appendChild(dialog);close.onclick=()=>dialog.close();dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close()});dialog.addEventListener('close',()=>{dialog.remove();button.focus()});dialog.showModal();close.focus();
+}});
+$$('details.more summary').forEach(s=>{if(!s.textContent.trim())s.textContent='展开细节';s.insertAdjacentHTML('afterbegin',ic('chevron-right'))});
+})();
+</script><script>/* 学习搭子 固定组件库 — 不要在课程里改这个文件。 */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const NS='http://www.w3.org/2000/svg';
+const data=(box,kind)=>JSON.parse(box.querySelector('script[type="application/json"]')?.textContent||box.dataset[kind]);
+const ic=window.lessonIcon;
+const el=(t,a={},p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p&&p.appendChild(e);return e};
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+function component(selector,render){
+  $$(selector).forEach(box=>{try{render(box)}catch(error){
+    const message=document.createElement('p');message.className='component-error';
+    message.textContent='这张图的数据有误';message.setAttribute('role','status');
+    box.replaceWith(message);console.error('组件数据有误',error);
+  }});
+}
+
+/* ---------- flow：用 JSON 画流程图 ----------
+ spec = {w,h,nodes:[{id,x,y,t,s?,c?,w?}],edges:[{f,t,l?,bend?}]}  节点坐标是中心点 */
+function drawFlow(svg,spec){
+  svg.innerHTML='';
+  const defs=el('defs',{},svg);
+  [['a','var(--meta)'],['b','var(--blue)'],['red','var(--amber)'],['amber','var(--amber)'],['green','var(--green)']].forEach(([id,c])=>{const m=el('marker',{id:'ar'+id+svg.dataset.uid,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:7,markerHeight:7,orient:'auto-start-reverse'},defs);el('path',{d:'M0,0L10,5L0,10z',fill:c},m)});
+  const N={};spec.nodes.forEach(n=>N[n.id]={...n,w:n.w||150,h:n.h||(n.s?70:56)});
+  const ns=Object.values(N);
+  let x0=Math.min(...ns.map(n=>n.x-n.w/2)),x1=Math.max(...ns.map(n=>n.x+n.w/2)),y0=Math.min(...ns.map(n=>n.y-n.h/2)),y1=Math.max(...ns.map(n=>n.y+n.h/2));
+  const B={x0,x1,y0,y1};
+  const eg=el('g',{},svg),ng=el('g',{},svg);svg._edges={};svg._nodes={};
+  const clip=(a,b)=>{const dx=b.x-a.x,dy=b.y-a.y;const s=Math.min(Math.abs((a.w/2+6)/(dx||1e-9)),Math.abs((a.h/2+6)/(dy||1e-9)));return[a.x+dx*s,a.y+dy*s]};
+  spec.edges.forEach(e=>{const a=N[e.f],b=N[e.t];let d,lx,ly;
+    if(e.route){ /* 沿外圈走的直角线：top|bottom|left|right，lane 控制离外框的距离 */
+      const g=30+(e.lane||0)*30,oa=e.oa||0,ob=e.ob||0;
+      if(e.route==='top'||e.route==='bottom'){const t=e.route==='top',Y=t?B.y0-g:B.y1+g,ya=a.y+(t?-1:1)*(a.h/2+2),yb=b.y+(t?-1:1)*(b.h/2+8);
+        d=`M${a.x+oa},${ya} V${Y} H${b.x+ob} V${yb}`;lx=(a.x+oa+b.x+ob)/2;ly=Y+(t?-8:18);
+        t?(y0=Math.min(y0,Y-26)):(y1=Math.max(y1,Y+26));}
+      else{const l=e.route==='left',X=l?B.x0-g:B.x1+g,xa=a.x+(l?-1:1)*(a.w/2+2),xb=b.x+(l?-1:1)*(b.w/2+8);
+        d=`M${xa},${a.y+oa} H${X} V${b.y+ob} H${xb}`;lx=X+(l?-8:8);ly=(a.y+b.y)/2;
+        l?(x0=Math.min(x0,X-90)):(x1=Math.max(x1,X+90));}
+    }else{const[p1,q1]=clip(a,b),[p2,q2]=clip(b,a);const mx=(p1+p2)/2,my=(q1+q2)/2,len=Math.hypot(p2-p1,q2-q1)||1,bd=e.bend||0;
+      const cx=mx-(q2-q1)/len*bd,cy=my+(p2-p1)/len*bd;d=`M${p1},${q1} Q${cx},${cy} ${p2},${q2}`;
+      const qx=.25*p1+.5*cx+.25*p2,qy=.25*q1+.5*cy+.25*q2,sg=bd>=0?1:-1;lx=qx-(q2-q1)/len*sg*14;ly=qy+(p2-p1)/len*sg*14+4;}
+    const mk=e.c||'a';const p=el('path',{d,class:'fl-edge '+(e.c||''),'marker-end':`url(#ar${mk}${svg.dataset.uid})`},eg);p._mk=mk;
+    let lab=null;if(e.l){const anc=e.route==='left'?'end':e.route==='right'?'start':'middle';lab=el('text',{x:lx,y:ly,'text-anchor':anc,class:'fl-elab '+(e.c||''),stroke:'var(--paper)','stroke-width':5,'paint-order':'stroke'},eg);lab.textContent=e.l}
+    svg._edges[e.f+'>'+e.t]={p,lab}});
+  ns.forEach(n=>{const g=el('g',{class:'fl-node '+(n.c||'')},ng);
+    el('rect',{x:n.x-n.w/2,y:n.y-n.h/2,width:n.w,height:n.h,rx:14},g);
+    const t=el('text',{x:n.x,y:n.y+(n.s?-4:6),'text-anchor':'middle'},g);t.textContent=n.t;
+    if(n.s){const s=el('text',{x:n.x,y:n.y+18,'text-anchor':'middle',class:'sub'},g);s.textContent=n.s}
+    svg._nodes[n.id]=g});
+  /* 自动贴合：viewBox 只包住内容，图会放大填满面板 */
+  const P=spec.pad??8,W=x1-x0+2*P,H=y1-y0+2*P+20;
+  svg.setAttribute('viewBox',`${x0-P} ${y0-P-10} ${W} ${H}`);
+  svg.style.setProperty('--flow-width',W+'px');svg.style.setProperty('--flow-height',H+'px');
+  const scroll=document.createElement('div');scroll.className='flow-scroll';
+  svg.replaceWith(scroll);scroll.appendChild(svg);
+  if(!scroll.closest('.sim')&&W>innerWidth-78){const t=document.createElement('p');t.className='flow-tip';t.textContent='← 左右滑动看全图 →';scroll.after(t)}
+  svg._set=(act,edge)=>{for(const k in svg._nodes)svg._nodes[k].classList.toggle('act',k===act);
+    for(const k in svg._edges){const on=k===edge,E=svg._edges[k];E.p.classList.toggle('act',on);E.p.setAttribute('marker-end',`url(#ar${on?'b':E.p._mk}${svg.dataset.uid})`);E.lab&&E.lab.classList.toggle('act',on)}};
+  svg._set(svg.dataset.act,svg.dataset.edge);
+  svg._center=()=>{if(!matchMedia('(max-width:820px)').matches)return;
+    const active=Object.values(svg._nodes).find(n=>n.classList.contains('act'));if(!active)return;
+    const a=active.getBoundingClientRect(),r=scroll.getBoundingClientRect();
+    scroll.scrollLeft+=a.left+a.width/2-r.left-r.width/2;
+  };
+}
+let uid=0;
+component('svg.flow',s=>{s.dataset.uid=++uid;drawFlow(s,data(s,'flow'))});
+
+/* ---------- sim：一步步走的模拟器 ----------
+ data-sim = {flow:{...}, steps:[{act,edge,msg:{r:user|asst|tool|err|sys,n?,t},say}], alt?:{label,steps:[...]}} */
+component('.sim',box=>{
+  const spec=data(box,'sim');if(spec.alt&&!spec.alts)spec.alts=[spec.alt];const AL=spec.alts||[];const gname='br'+(++uid);
+  box.innerHTML=`<div class="ctl"><button class="btn sm" data-a="step">下一步</button><button class="btn sm" data-a="play">${ic("play")} 自动</button><button class="btn sm" data-a="reset">重置</button>
+   <label>速度 <input type="range" min="300" max="2500" step="100" value="1200"></label></div>${AL.length?`<div class="ctl branches"><label><input type="radio" name="${gname}" value="-1" checked> ${esc(spec.label||'正常路径')}</label>${AL.map((a,j)=>`<label><input type="radio" name="${gname}" value="${j}"> ${esc(a.label)}</label>`).join('')}</div>`:''}
+   <div class="body"><svg class="flow"></svg><div class="log"></div></div><div class="narr"></div>`;
+  if(spec.layout==='wide')box.classList.add('wide');
+  const svg=$('.body > svg.flow',box);svg.dataset.uid=++uid;drawFlow(svg,spec.flow);
+  const fs=svg.parentElement,tip=document.createElement('p');tip.className='flow-tip';tip.textContent='点图放大看字，再点回到全图';fs.after(tip);
+  const focus=()=>{if(!fs.classList.contains('zoom'))return svg._center();window.LessonGeometry.focus(svg,fs)};
+  const zoom=document.createElement('button');zoom.className='btn sm zoom-toggle';zoom.innerHTML=ic('zoom-in')+' 放大图';zoom.setAttribute('aria-pressed','false');tip.replaceWith(zoom);const toggle=()=>{const on=fs.classList.toggle('zoom');zoom.innerHTML=ic(on?'zoom-out':'zoom-in')+(on?' 返回全图':' 放大图');zoom.setAttribute('aria-pressed',String(on));if(!on){fs.style.maxHeight='';fs.scrollTop=0}focus()};fs.onclick=toggle;zoom.onclick=toggle;window.addEventListener('resize',focus);window.addEventListener('load',()=>requestAnimationFrame(()=>{const params=new URLSearchParams(location.search);if((params.has('sim')||params.has('zoom'))&&!(window.__H??location.hash)&&box===$('.sim')){const section=box.closest('.sec,.card');if(window.lessonNav.layout==='deck')window.goCard($$('.card').indexOf(section)+1);else section.scrollIntoView({block:'start',behavior:'instant'})}focus()}));window.addEventListener('lesson:navigate',()=>requestAnimationFrame(focus));
+  const log=$('.log',box),narr=$('.narr',box),radios=$$('input[type=radio]',box),spd=$('input[type=range]',box),play=$('[data-a=play]',box);
+  let i=0,timer=null,predicted=!spec.predict;const prediction=document.createElement('div');if(spec.predict){prediction.className='prediction callout';prediction.innerHTML='<p>先预测：'+esc(spec.predict)+'</p><label>你的判断<textarea rows="2"></textarea></label><button class="btn sm" data-a="predict">提交预测，再看过程</button>';box.prepend(prediction)};const sel=()=>{const r=radios.find(r=>r.checked);return r?+r.value:-1};const steps=()=>sel()>=0?AL[sel()].steps:spec.steps;
+  const hint=spec.note?esc(spec.note)+'　点「下一步」开始。':'点「下一步」开始。';const reset=()=>{i=0;log.innerHTML='';narr.innerHTML=hint;svg._set(null,null);stop()};
+  const stop=()=>{clearTimeout(timer);timer=null;play.innerHTML=ic('play')+' 自动'};
+  const step=()=>{const S=steps();if(i>=S.length){narr.textContent='流程结束。点「重置」再走一遍。';stop();return false}
+    const s=S[i++];svg._set(s.act,s.edge);focus();if(s.msg){const d=document.createElement('div');d.className='msg '+s.msg.r;
+      d.innerHTML=`<b>${esc(s.msg.n||({user:'用户',asst:'模型',tool:'工具结果',err:'出错',sys:'系统提示词'}[s.msg.r]))}</b>${esc(s.msg.t)}`;log.appendChild(d);log.scrollTop=1e9}
+    narr.innerHTML=`<b>第 ${i}/${S.length} 步</b>　${esc(s.say)}`;return true};
+  const loop=()=>{if(step())timer=setTimeout(loop,+spd.value);else stop()};
+  box.onclick=e=>{const a=e.target.closest('button')?.dataset.a;if(a==='predict'){predicted=true;prediction.hidden=true;step()}if(a==='step'){stop();if(predicted)step();else prediction.querySelector('textarea').focus()}if(a==='reset')reset();if(a==='play'){if(!predicted){prediction.querySelector('textarea').focus();return}if(timer)stop();else{play.innerHTML=ic('pause')+' 暂停';loop()}}};
+  narr.innerHTML=hint;radios.forEach(r=>r.onchange=reset);
+  const P=new URLSearchParams(location.search);if(P.get('alt')&&radios[+P.get('alt')]){radios[+P.get('alt')].checked=true}for(let n=+P.get('sim')||0;n>0;n--)step();if(P.get('sim')){predicted=true;prediction.hidden=true}if(P.get('zoom')){fs.classList.add('zoom');zoom.setAttribute('aria-pressed','true');zoom.innerHTML=ic('zoom-out')+' 返回全图'} /* 自查用：?sim=5&alt=1&zoom=1 */
+});
+
+/* ---------- bars：横向条形图 ----------
+ data-bars = {unit, items:[{l,v,c?:blue|amber|green|red,note?}], caption?}  数字必须来自原文 */
+component('.bars',box=>{const B=data(box,'bars'),mx=Math.max(1,...B.items.filter(i=>i.v!=null).map(i=>i.v));
+  box.innerHTML=B.items.map(i=>`<div class="bar ${i.c||''}"><span class="bl">${esc(i.l)}</span>${i.v==null?`<span class="bmiss">${esc(i.miss||'原文未给数字')}</span>`:`<span class="bt"><i style="width:${(i.v/(B.axis==='independent'?Math.max(1,i.v):mx)*100).toFixed(1)}%"></i></span><span class="bv">${esc(i.v)}${esc(i.unit||B.unit||'')}</span>`}${i.note?`<span class="bn">${esc(i.note)}</span>`:''}</div>`).join('')+(B.caption?`<div class="bc">${esc(B.caption)}</div>`:'')});
+
+/* ---------- quiz：页内小测 ----------
+ data-quiz = [{q,opts:[...],a:正确下标,why,back:答错时回到第几张卡片}] */
+component('.quiz,.checkpoint',box=>{
+  const checkpoint=box.classList.contains('checkpoint');box.classList.add('quiz');const raw=data(box,checkpoint?'checkpoint':'quiz'),Q=Array.isArray(raw)?raw:[raw],P=new URLSearchParams(checkpoint?'':location.search);
+  let k=Math.max(0,Math.min(Q.length-1,(parseInt(P.get('q'))||1)-1));
+  const answers=Q.map(()=>({first:null,selected:null,retries:0}));
+  const score=()=>answers.filter((s,i)=>s.first===Q[i].a).length;
+  const complete=()=>answers.every(s=>s.selected!==null);
+  const reviewButton=i=>{
+    const target=window.lessonNav.layout==='deck'?$$('.card')[Q[i].back-1]:document.getElementById('s'+Q[i].back);
+    const title=target.dataset.toc||$('h2,h1,h3',target)?.textContent||'相关内容';
+    return `<button class="btn sm" data-review="${i}">回看：${esc(title)}</button>`;
+  };
+  function summary(){
+    const wrong=answers.map((s,i)=>s.first!==Q[i].a?i:-1).filter(i=>i>=0);
+    const recovered=wrong.filter(i=>answers[i].selected===Q[i].a).length;
+    box.innerHTML=`<div class="qt">小测总结</div><p>首次得分：${score()} / ${Q.length}。重试答对：${recovered} 题。</p>
+      <div>${wrong.length?wrong.map(i=>`<p>第 ${i+1} 题：${esc(Q[i].q)} ${reviewButton(i)} <button class="btn sm" data-question="${i}">回到此题</button></p>`).join(''):'没有首次错题。'}</div>
+      <p>用自己的话复述这页的核心机制，再举一个新场景。</p><label>你的复述<textarea class="retelling" rows="3"></textarea></label><button class="btn sm" data-copy-result="1">${ic("copy")} 复制学习结果 JSON</button><button class="btn sm" data-question="0">查看作答</button>`;
+  }
+  function render(){const q=Q[k],s=answers[k];
+    box.innerHTML=`<div class="qn">第 ${k+1} / ${Q.length} 题 ${checkpoint?'· 不计分':'· 首次答对 '+score()}</div><div class="qt">${esc(q.q)}</div>
+      ${q.opts.map((o,j)=>`<button class="opt ${s.selected===null?'':j===s.selected?(j===q.a?'ok':'no'):''}" data-j="${j}" aria-pressed="${j===s.selected}">${String.fromCharCode(65+j)}. ${esc(o)}</button>`).join('')}
+      <div class="fb" aria-live="polite">${s.selected===null?'':s.selected===q.a?ic('check')+' 对。'+esc(q.why):ic('x')+' 不对。先回去看看，或再试一次。'}
+      ${s.selected!==null&&s.selected!==q.a?reviewButton(k)+' <button class="btn sm" data-retry="1">再试一次</button>':''}</div>
+      <div class="nav"><button class="btn sm" data-n="-1" ${k?'':'disabled'}>上一题</button>
+      <button class="btn sm main" data-n="1" ${s.selected===null?'disabled':''}>${checkpoint?'完成检查':k===Q.length-1?'查看总结':'下一题'}</button></div>`;
+  }
+  box.onclick=e=>{const t=e.target.closest('button');if(!t)return;
+    if(t.dataset.review!==undefined){const i=+t.dataset.review;window.lessonNav.go(Q[i].back);
+      let ret=$('#quiz-return');if(!ret){ret=document.createElement('button');ret.id='quiz-return';ret.className='btn sm';document.body.appendChild(ret)}
+      ret.textContent='回到小测';ret.onclick=()=>{window.lessonNav.returnTo(box);ret.remove()};return;
+    }
+    if(t.dataset.copyResult!==undefined){const result={path:location.pathname,firstScore:score(),total:Q.length,answers:answers.map((s,i)=>({question:i+1,first:s.first,selected:s.selected,retries:s.retries,wrong:s.first!==Q[i].a,review:'#s'+Q[i].back})),retelling:$('.retelling',box).value};window.lessonCopy(JSON.stringify(result,null,2),t);return}
+    if(t.dataset.question!==undefined){k=+t.dataset.question;render();return}
+    if(t.dataset.retry){answers[k].selected=null;answers[k].retries++;render();return}
+    if(t.dataset.n){if(checkpoint&&+t.dataset.n===1){box.querySelector('.nav').hidden=true;return}if(k===Q.length-1&&+t.dataset.n===1){if(complete())summary();else{k=answers.findIndex(s=>s.selected===null);render()}return}k+=+t.dataset.n;render();return}
+    if(t.dataset.j===undefined||answers[k].selected!==null)return;
+    const j=+t.dataset.j;answers[k].selected=j;if(answers[k].first===null)answers[k].first=j;render();const nv=$('.nav',box);nv&&nv.scrollIntoView&&nv.scrollIntoView({block:'nearest'});
+  };
+  render();
+  const pk=P.get('pick'),pick=pk==='wrong'?Q[k].opts.findIndex((_,i)=>i!==Q[k].a):pk!==null&&/^\d+$/.test(pk)?+pk:-1;
+  if(pick>=0&&$$('.opt',box)[pick])$$('.opt',box)[pick].click();
+
+});
+
+})();
+</script><script>/* End-of-build readiness marker, used by the screenshot harness. */
+document.querySelector('.theme-toggle').onclick=window.__tt;
+window.__lessonReady=true;
+</script><script>/* ---------- 学完了：点一下记为已学完（存在本机浏览器） ---------- */
+(function(){if(window.__finish)return;window.__finish=1;
+if(!document.querySelector('.deck'))return;
+const st=document.createElement('style');st.textContent=`.fin-btn{position:fixed;right:16px;bottom:76px;z-index:50;padding:10px 16px;border-radius:999px;border:0;background:#16a34a;color:#fff;font:600 15px system-ui;box-shadow:0 4px 14px rgba(0,0,0,.18);cursor:pointer}.fin-btn.done{background:#e5e7eb;color:#166534}`;document.head.appendChild(st);
+const p=n=>String(n).padStart(2,'0');
+const doneKeys=()=>{const out=new Set();const seed=location.pathname;const vs=new Set([seed]);if(seed.endsWith('/index.html')){const d=seed.slice(0,-10);vs.add(d);vs.add(d.replace(/\/$/,'')||'/')}else if(seed.endsWith('/')){vs.add(seed+'index.html');vs.add(seed.replace(/\/$/,'')||'/')}else if(!/\.[a-z0-9]+$/i.test(seed)){vs.add(seed+'/');vs.add(seed+'/index.html')}for(const u of vs){out.add(u);const m=u.match(/^(.*)\/courses\/(.+)$/);if(m)out.add(m[1]+'/'+m[2]);const m2=u.match(/^(.*)\/(cs146s)\/(.+)$/);if(m2&&!u.includes('/courses/'))out.add(m2[1]+'/courses/'+m2[2]+'/'+m2[3])}return[...out]};
+const getDone=()=>{for(const k of doneKeys()){const d=localStorage.getItem('done:'+k);if(d)return d}return null};
+const setDone=v=>{for(const k of doneKeys())localStorage.setItem('done:'+k,v)};
+const clearDone=()=>{for(const k of doneKeys())localStorage.removeItem('done:'+k)};
+const b=document.createElement('button');b.className='fin-btn';document.body.appendChild(b);
+const show=()=>{const d=getDone();b.classList.toggle('done',!!d);b.textContent=d?'✓ 已学完 '+d:'✓ 学完了';b.title=d?'再点一下取消':''};show();
+b.onclick=()=>{if(getDone()){if(confirm('取消「已学完」记录？'))clearDone()}else{const x=new Date();setDone(x.getFullYear()+'-'+p(x.getMonth()+1)+'-'+p(x.getDate()))}show()};
+})();
+</script><script src="../../assets/gh.js" defer></script><script src="../../assets/progress.js" defer></script></body></html>

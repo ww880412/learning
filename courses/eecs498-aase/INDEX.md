@@ -11,3 +11,4 @@
 | L06 | From pair-coding to agent orchestration：项目包、参照点、从编辑块到工具调用 | L06-agent-orchestration.html | materials/lectures/L06/slides.md（含讲者备注） |
 | L07 | Inside the Call：请求对象、finish_reason、流式事件、工具调用与线上的循环 | L07-inside-the-call.html | materials/lectures/L07/slides.md（含讲者备注与实测抓包数字） |
 | L08 | Hackathon 1 简报：更强的模型、$25 额度、32K 预算、到场准备与证据记录 | L08-hackathon1-briefing.html | materials/lectures/L08/slides.md（含讲者备注） |
+| L09 | Stop conditions 与审批层：六个停止条件、退出行、审批的四个决定 | L09-stop-conditions.html | materials/lectures/L09/slides.md（含讲者备注与排练抓包） |
