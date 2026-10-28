@@ -1,0 +1,523 @@
+<!DOCTYPE html><html lang="zh-CN" class="layout-article" data-layout="article"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<script>(function(){var v;try{v=localStorage.getItem('site-theme')}catch(e){}document.documentElement.dataset.theme=/^[ABC]$/.test(v||'')?v:'C'})();
+(function(){var k='theme',s=localStorage.getItem(k);if(s?s==='dark':matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark');
+window.__tt=function(){var f=function(){var d=document.documentElement.classList.toggle('dark');localStorage.setItem(k,d?'dark':'light')};if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.startViewTransition(f);else f()}})();</script>
+<title>L06 From pair-coding to agent orchestration</title><style>
+/* Site tokens copied verbatim, in cascade order, from ref/site-assets/site.css. */
+:root{--paper:#f6f7f9;--sheet:#fff;--card:#fff;--ink:#111827;--ink2:#4b5563;--meta:#6b7280;--hair:#e5e7eb;--hair2:#eef0f3;--blue:#2563eb;--blue-soft:#eff4ff;--red:#dc2626;--red-soft:#fef2f2;--green:#16a34a;--green-soft:#f0fdf4;--amber:#b45309;--amber-soft:#fffbeb;--purple:#7c3aed;--purple-soft:#f5f3ff;--font:system-ui,-apple-system,"PingFang SC","Noto Sans SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;--serif:var(--font);--mono:ui-monospace,SFMono-Regular,Menlo,monospace;--r-lg:12px;--r-sm:8px;--grad:none;color-scheme:light}
+html.dark{--paper:#0f1115;--sheet:#171a21;--card:#171a21;--ink:#e5e7eb;--ink2:#b6bcc6;--meta:#9ca3af;--hair:#2a2f3a;--hair2:#20242c;--blue:#7aa2ff;--blue-soft:rgba(122,162,255,.12);--red:#f87171;--red-soft:rgba(248,113,113,.12);--green:#4ade80;--green-soft:rgba(74,222,128,.12);--amber:#fbbf24;--amber-soft:rgba(251,191,36,.12);--purple:#c4b5fd;--purple-soft:rgba(196,181,253,.14);color-scheme:dark}
+[data-theme=B]{--paper:#fbfbfc;--sheet:#fff;--card:#fff;--ink:#16171a;--ink2:#4a4c55;--meta:#6e707a;--hair:#ececf0;--hair2:#f2f2f5;--blue:#5e6ad2;--blue-soft:#eef0fb;--red:#d4483b;--red-soft:#fdf0ee;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif}
+html.dark[data-theme=B]{--paper:#0e0f12;--sheet:#16171b;--card:#16171b;--ink:#e8e9ed;--ink2:#b3b5bd;--meta:#8b8d97;--hair:#26272d;--hair2:#1f2025;--blue:#8b93f0;--blue-soft:rgba(139,147,240,.14);--red:#f0776b}
+[data-theme=A]{--paper:#f7f4ee;--sheet:#fffdf9;--card:#fffdf9;--ink:#2b2722;--ink2:#5f574e;--meta:#8a8076;--hair:#e6dfd3;--hair2:#efe8dc;--blue:#b4532a;--blue-soft:#f6e1d6;--red:#a2461f;--red-soft:#f6e1d6;--green:#5f7a3a;--green-soft:#e7ecd9;--purple:#7a5a8c;--purple-soft:#eee4f1;--serif:"Noto Serif CJK SC","Noto Serif SC","Songti SC",serif;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif}
+html.dark[data-theme=A]{--paper:#1b1814;--sheet:#23201b;--card:#23201b;--ink:#ede6da;--ink2:#c7bdaf;--meta:#9b9184;--hair:#3a342c;--hair2:#2d2923;--blue:#e08a5f;--blue-soft:rgba(224,138,95,.15);--red:#e8916a;--red-soft:rgba(232,145,106,.15)}
+[data-theme=C]{--paper:#f3f5fb;--sheet:#fff;--card:#fff;--ink:#1d2340;--ink2:#5a6185;--meta:#8a90ad;--hair:#e6e9f4;--hair2:#eef0f7;--blue:#3b5bfd;--blue-soft:#e8edff;--red:#d4483b;--red-soft:#ffe6e3;--green:#1f9d5c;--green-soft:#e3f7ec;--amber:#d9771e;--amber-soft:#fff1e0;--purple:#7a4bf5;--purple-soft:#f2eaff;--r-lg:20px;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif;--sh:0 1px 2px rgba(30,40,90,.04),0 8px 24px rgba(30,40,90,.06)}
+html.dark[data-theme=C]{--paper:#0f1222;--sheet:#181c33;--card:#181c33;--ink:#e6e9fb;--ink2:#aab0d0;--meta:#7d84a8;--hair:#272c48;--hair2:#20253f;--blue:#7d93ff;--blue-soft:rgba(125,147,255,.15);--red:#ff8a7d;--red-soft:rgba(255,138,125,.15);--green-soft:rgba(31,157,92,.18);--amber-soft:rgba(217,119,30,.18);--purple-soft:rgba(122,75,245,.2);--sh:0 1px 2px rgba(0,0,0,.3)}
+:root{--acc2:#8b5cf6;--ease:cubic-bezier(.22,1,.36,1)}
+[data-theme=A]{--acc2:#c98a2b}
+html.dark[data-theme=A]{--paper:#181512;--sheet:#211d18;--card:#211d18;--meta:#a89d8f;--hair:#382f26;--acc2:#e3b15c}
+[data-theme=B]{--paper:#fafafb;--blue:#5b5bd6;--blue-soft:#efeffc;--acc2:#a855f7}
+html.dark[data-theme=B]{--paper:#0c0d10;--sheet:#14151a;--card:#14151a;--ink:#ececf1;--ink2:#babcc6;--meta:#9597a3;--hair:#262830;--hair2:#1c1d23;--blue:#9198ff;--blue-soft:rgba(145,152,255,.14);--acc2:#c084fc}
+[data-theme=C]{--acc2:#06b6d4}
+html.dark[data-theme=C]{--meta:#a3a9b8;--acc2:#22d3ee}
+html.dark{--meta:#a1a7b3}
+[data-theme=B]{--paper:#eef1f5;--hair:#dfe4ea;--hair2:#eef1f5;--green:#16a34a}
+html.dark[data-theme=B]{--paper:#0b0d12;--hair:#252a35;--hair2:#1a1e27}
+[data-theme=C]{--blue:#7b5cff;--blue-soft:#f0ecff;--acc2:#ff5e8a}
+html.dark[data-theme=C]{--paper:#0b0b0f;--sheet:#15151c;--card:#15151c;--ink:#f2f2f5;--ink2:#b8b8c6;--meta:#9a9aab;--hair:#26262f;--hair2:#1d1d25;--blue:#a08bff;--blue-soft:rgba(160,139,255,.14)}
+:root{--sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:24px;--sp-6:32px;--fs-xs:12px;--fs-sm:13.5px;--fs-md:15px;--fs-lg:18px;--fs-xl:24px;--fs-2xl:32px;--r-xs:6px;--r-sm:8px;--r-md:10px;--r-lg:12px;--r-xl:18px;--r-pill:999px;--sh-1:0 1px 2px rgba(15,23,42,.06);--sh-2:0 4px 16px -8px rgba(15,23,42,.22);--sh-3:0 14px 30px -12px rgba(15,23,42,.28);--dur-1:120ms;--dur-2:220ms;--dur-3:420ms;--ease:cubic-bezier(.22,1,.36,1);--ease-in-out:cubic-bezier(.65,0,.35,1);--spring:cubic-bezier(.34,1.3,.64,1);--icon-stroke:2}
+:root{--spring:linear(0,.0089,.0346,.0752,.1286,.1927,.2654,.3445,.4278,.5131,.5983,.6812,.7598,.8325,.8981,.9555,1.0042,1.0441,1.0753,1.0982,1.1134,1.1218,1.1243,1.1218,1.1155,1.1062,1.0949,1.0825,1.0697,1.0571,1.0451,1.034,1.0242,1.0157,1.0085,1.0027,.9982,.995,.9928,.9916,.9912,.9914,.9921,.9931,.9943,.9956,.9968,.998,.999,1)}
+html.dark{--sh-1:0 1px 2px rgba(0,0,0,.4);--sh-2:0 4px 16px -8px rgba(0,0,0,.6);--sh-3:0 14px 30px -12px rgba(0,0,0,.7)}
+/* Five reading levels: title / section / subsection / body / note. */
+:root{--reading-width:680px;--toc-width:208px;--rail-width:180px;--reading-gap:28px;--top-height:56px;--body-size:18px;--body-leading:1.8;--finish-space:104px}
+*{box-sizing:border-box}html{scroll-padding-top:72px}html,body{margin:0;background:var(--paper);color:var(--ink);font:var(--body-size)/var(--body-leading) var(--font);-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}a{color:var(--blue);text-underline-offset:3px;overflow-wrap:anywhere}a:hover{text-decoration-thickness:2px}button,input,textarea,select{font:inherit;color:inherit}button,a,summary{touch-action:manipulation}button{cursor:pointer}button:disabled{opacity:.5;cursor:default}:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+h1,h2,h3{color:var(--ink);font-family:var(--serif);line-height:1.35;letter-spacing:-.02em;overflow-wrap:anywhere}h1{font-size:var(--fs-2xl);margin:8px 0 16px}h2{font-size:var(--fs-xl);margin:8px 0 16px}h3{font-size:var(--fs-lg);margin:24px 0 8px}p{margin:0 0 12px}ul,ol{padding-left:24px}li{margin:4px 0}code{font:.88em var(--mono);background:var(--hair2);padding:1px 4px;border-radius:var(--r-xs)}pre{overflow:auto;white-space:pre;tab-size:4;font:14px/1.65 var(--mono);padding:16px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-md);margin:12px 0}pre code{font:inherit;white-space:inherit;background:none;padding:0}
+.i{display:inline-block;vertical-align:middle;flex:none;width:18px;height:18px;stroke-width:2}.btn,button.opt{min-height:44px;border:1px solid var(--hair);border-radius:var(--r-sm);background:var(--sheet);padding:8px 14px;font-size:var(--fs-md);font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:6px}.btn:hover{border-color:var(--blue);background:var(--blue-soft)}.btn.main{background:var(--blue);color:var(--sheet)}.btn.sm{font-size:var(--fs-sm)}textarea{display:block;width:100%;padding:10px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-sm);resize:vertical}
+.top{position:fixed;inset:0 0 auto;height:var(--top-height);z-index:30;display:flex;align-items:center;gap:16px;padding:0 20px;background:var(--paper);border-bottom:1px solid var(--hair)}.top .course{font-size:var(--fs-sm);font-weight:700;max-width:35vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.top .track{flex:1;height:4px;background:var(--hair);border-radius:var(--r-pill);overflow:hidden}.top .track i{display:block;width:0;height:100%;background:var(--blue);transition:width var(--dur-2) var(--ease)}.top .count{font-size:var(--fs-sm);max-width:32vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.toc-toggle{min-width:44px}.top .theme-toggle{font-size:var(--fs-sm);min-height:44px}
+.layout-article .deck,.layout-pair .deck{padding:80px 20px calc(var(--finish-space) + env(safe-area-inset-bottom));max-width:720px;margin:0 auto;min-width:0}.layout-article .sec{position:relative;margin:0 0 32px;padding-top:16px;border-top:1px solid var(--hair);scroll-margin-top:72px;min-width:0}.layout-article .hero{border:0;padding-top:0}.kicker,.meta,.src,.source-anchor,figcaption,caption,.aside{font-size:var(--fs-sm);line-height:1.65}.kicker{display:block;color:var(--blue);font-weight:700}.lede{font-size:var(--fs-lg);font-weight:600}.links{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:var(--fs-sm)}.links a{display:inline-flex;align-items:center;min-height:44px}.src{margin:16px 0 0;padding-top:8px;border-top:1px solid var(--hair);color:var(--ink2)}.source-anchor{display:block;color:var(--ink2);margin-top:6px;overflow-wrap:anywhere}.source-anchor a{min-height:44px;display:inline-flex;align-items:center}.src.extra::before{content:'补充 · ';color:var(--amber)}.src.official::before{content:'官方 · ';color:var(--blue)}.src.article::before{content:'原文 · ';color:var(--blue)}
+.toc{position:fixed;left:max(20px,calc((100vw - 1192px)/2));top:76px;width:var(--toc-width);max-height:calc(100dvh - 180px);overflow:auto;font-size:var(--fs-sm);line-height:1.5;z-index:25}.toc ol{list-style:none;margin:0;padding:0}.toc a{display:flex;gap:8px;align-items:center;min-height:44px;padding:6px 10px;color:var(--ink2);text-decoration:none;border-radius:var(--r-sm)}.toc a[aria-current=true]{background:var(--blue-soft);color:var(--blue);font-weight:700}.toc b{display:block;margin:0 10px 8px}.toc-backdrop{display:none}.tldr,.argmap{padding:16px;background:var(--blue-soft);border-radius:var(--r-lg);margin:16px 0}.tldr a,.argmap a{display:block;min-height:44px;align-content:center}.argmap ol{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 16px;margin:0}.points{padding:12px 16px 12px 36px;background:var(--hair2);border-radius:var(--r-md)}
+figure.orig,figure.redraw,.figure{margin:20px 0;min-width:0}figure img{display:block;max-width:100%;height:auto;border:1px solid var(--hair);border-radius:var(--r-md);cursor:zoom-in;background:var(--sheet)}figcaption{margin-top:8px;color:var(--ink2)}figcaption b{color:var(--ink)}.how{margin-top:6px}.table{margin:20px 0;overflow-x:auto}.table table,table.data{width:100%;border-collapse:collapse;background:var(--sheet);font-size:var(--fs-md)}th,td{border-bottom:1px solid var(--hair);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--hair2)}caption{text-align:left;font-weight:700;padding:8px 0}.table-note{font-size:var(--fs-sm);color:var(--ink2)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;margin:16px 0}.stat{padding:12px 14px;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet)}.stat b{display:block;font-size:var(--fs-xl);line-height:1.35;color:var(--blue);font-variant-numeric:tabular-nums}.stat span{display:block;font-size:var(--fs-sm);color:var(--ink2)}.stat .source-anchor{font-size:var(--fs-xs)}
+blockquote.quote{margin:16px 0;padding:12px 16px;border-left:3px solid var(--blue);background:var(--sheet)}.quote cite{display:block;font-style:normal;font-size:var(--fs-sm);color:var(--ink2)}.callout{padding:12px 16px;margin:16px 0;border-left:3px solid var(--blue);background:var(--blue-soft);border-radius:0 var(--r-sm) var(--r-sm) 0}.callout.limit{border-color:var(--amber);background:var(--amber-soft)}.callout.extra{border:1px dashed var(--meta);background:var(--sheet)}.callout.myth{border-color:var(--amber);background:var(--hair2)}.callout.limit::before{content:'作者的限定 · ';font-weight:700}.aside{padding:12px;border-left:2px solid var(--hair);color:var(--ink2);margin:12px 0}
+.stories,.compare,.roles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}.story,.compare>div,.roles>div{padding:12px;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);font-size:var(--fs-md)}.story b,.roles b{display:block}.story dt{font-weight:700;color:var(--ink2);font-size:var(--fs-sm)}.story dd{margin:0 0 8px}.story p,.story .fix{display:block;margin:8px 0}.steps,.ladder{display:grid;gap:8px;padding:0;list-style:none;counter-reset:step}.steps>li,.ladder>li{padding:10px 14px;background:var(--hair2);border-radius:var(--r-sm);counter-increment:step}.steps>li::before{content:counter(step)'. ';color:var(--blue);font-weight:700}.ladder i{font-style:normal;font-weight:700;margin-right:8px}.matrix{border:1px solid var(--hair);padding:16px;border-radius:var(--r-md)}.matrix .axes{font-size:var(--fs-sm);color:var(--ink2)}.matrix ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));list-style:none;padding:0;gap:1px;background:var(--hair)}.matrix li{margin:0;padding:16px;background:var(--sheet)}.refs{font-size:var(--fs-sm);line-height:1.7}.refs a{display:inline-block;min-height:44px;align-content:center}.thread{border-left:2px solid var(--hair);padding-left:16px}.formula{padding:16px;border:1px solid var(--hair);overflow:auto}.formula math{font-size:var(--fs-xl)}details.more{margin:12px 0;border-top:1px solid var(--hair);font-size:var(--fs-md)}summary{min-height:44px;cursor:pointer;display:flex;align-items:center;gap:8px}summary .i{transition:transform var(--dur-1)}details[open] summary .i{transform:rotate(90deg)}
+/* Shared interactive components. No fixed page/card height. */
+.flow-scroll{max-width:100%;overflow-x:auto;min-width:0;touch-action:pan-x pan-y}.flow-scroll svg.flow{display:block;width:100%;height:auto;min-height:0}.flow-tip{font-size:var(--fs-sm);color:var(--ink2)}.fl-node rect{fill:var(--sheet);stroke:var(--hair);stroke-width:2}.fl-node text{font:600 17px var(--font);fill:var(--ink)}.fl-node .sub{font-size:13px;font-weight:400;fill:var(--ink2)}.fl-node.act rect{stroke:var(--blue);fill:var(--blue-soft);stroke-width:3}.fl-node.blue rect{stroke:var(--blue)}.fl-node.amber rect,.fl-node.red rect{stroke:var(--amber)}.fl-node.green rect{stroke:var(--green)}.fl-edge{fill:none;stroke:var(--meta);stroke-width:2}.fl-edge.act{stroke:var(--blue);stroke-width:3}.fl-elab{font:13px var(--font);fill:var(--ink2)}
+.sim{margin:16px 0;padding:12px;border:1px solid var(--hair);border-radius:var(--r-lg);background:var(--sheet);display:flex;flex-direction:column;gap:12px}.sim .ctl{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.sim .ctl label{min-height:44px;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm)}.sim .ctl input[type=range]{min-width:110px}.sim .body{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}.sim .narr{order:-1;background:var(--blue-soft);padding:10px 12px;border-radius:var(--r-sm);font-size:var(--fs-md)}.sim .log{max-height:240px;overflow:auto;font:var(--fs-sm)/1.6 var(--mono)}.sim .msg{border-left:3px solid var(--hair);padding:8px;margin:6px 0;background:var(--paper);white-space:pre-wrap;overflow-wrap:anywhere}.msg b{display:block;font-family:var(--font)}.sim .msg.err{border-color:var(--amber)}.prediction{order:-2}.component-error{padding:16px;border:1px solid var(--amber);color:var(--amber)}
+.quiz{margin:16px 0;padding:16px;border:1px solid var(--hair);border-radius:var(--r-lg);background:var(--sheet)}.quiz .qn{font-size:var(--fs-sm);color:var(--ink2)}.quiz .qt{font-size:var(--fs-lg);font-weight:700;margin-bottom:12px}.quiz .opt{display:block;width:100%;text-align:left;margin:8px 0;font-weight:400}.quiz .opt.ok{border-color:var(--green);background:var(--green-soft)}.quiz .opt.no{border-color:var(--amber);background:var(--amber-soft)}.quiz .fb{margin:12px 0;font-size:var(--fs-md)}.quiz .nav{display:flex;gap:8px;margin-top:12px}.quiz label{display:block;font-size:var(--fs-sm)}.stack{display:grid;gap:6px;font-size:var(--fs-sm)}.stack .row{display:grid;grid-template-columns:28px 80px minmax(0,1fr);gap:8px;padding:8px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-sm)}.stack .t{overflow-wrap:anywhere;white-space:pre-wrap}.stack .new{background:var(--blue-soft)}.bar{display:grid;grid-template-columns:100px minmax(0,1fr) 80px;gap:8px;margin:8px 0;align-items:center;font-size:var(--fs-sm)}.bar .bt{height:20px;background:var(--hair2);border-radius:var(--r-xs);overflow:hidden}.bar .bt i{display:block;height:100%;background:var(--blue)}.bar .bn,.bar .bmiss{grid-column:2/4}.bars .bc{font-size:var(--fs-sm);color:var(--ink2)}
+/* Paired material stays inside its own container; highlighting never scrolls the page. */
+.pair.codewalk,.pair.read-pair,.pair.material-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start;margin:20px 0;position:relative;min-width:0}.pair-source{position:sticky;top:72px;max-height:calc(100dvh - 160px);overflow:auto;overscroll-behavior:contain;min-width:0;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);padding:12px;scroll-padding:16px}.pair-notes{min-width:0}.pair-notes .step{padding:16px 0 24px;border-top:1px solid var(--hair);scroll-margin-top:84px}.pair-notes .step.is-active{border-color:var(--blue)}.pair-source .source-block{padding:12px 8px;border-left:3px solid transparent}.pair-source .source-block.is-active{background:var(--blue-soft);border-color:var(--blue)}.source-text{overflow-wrap:anywhere}.pair-source pre{border:0;padding:0;margin:8px 0;overflow:visible}.code-line{display:block;min-height:1.65em;white-space:pre;padding-left:48px;position:relative}.code-line::before{content:attr(data-line);position:absolute;left:0;width:36px;text-align:right;color:var(--meta);user-select:none}.code-line.hl{background:var(--blue-soft)}.copy-code{position:static;flex:none;white-space:nowrap}.pair-source .source-anchor{font-size:var(--fs-xs)}
+/* A separate toolbar never shares the scrolling code viewport. */
+.heading-source{font-size:var(--fs-xs);margin:0 0 8px}
+.pair.codewalk{grid-template-columns:minmax(0,60%) minmax(0,1fr)}
+.code-panel{position:sticky;top:72px;display:flex;flex-direction:column;min-width:0;max-height:calc(100dvh - 160px);border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);overflow:hidden}
+.code-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;flex:none;border-bottom:1px solid var(--hair);font-size:var(--fs-xs);color:var(--ink2)}
+.code-panel .pair-source{position:static;max-height:none;min-height:0;flex:1 1 auto;border:0;border-radius:0;box-shadow:none;overflow:auto}
+.code-panel .pair-source pre{width:max-content;min-width:100%}
+dialog.image-dialog{width:calc(100vw - 24px);max-width:none;max-height:92dvh;padding:12px;border:1px solid var(--hair);background:var(--sheet);color:var(--ink);border-radius:var(--r-md);overflow:auto}dialog::backdrop{background:rgba(0,0,0,.75)}.image-dialog img{max-width:none;width:max(100%,min(1400px,180vw));height:auto}.image-dialog .dialog-close{position:sticky;top:0;left:0}.image-open{min-height:44px;border:0;background:transparent;padding:0;display:block;cursor:zoom-in;max-width:100%}.image-open img{max-width:100%}
+/* Only CSS changes the unchanged finish.js button. High specificity beats injected styles. */
+html body .fin-btn{bottom:calc(16px + env(safe-area-inset-bottom));right:16px;min-height:44px;z-index:35}html body #quiz-return{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:35;max-width:45vw}
+@media(min-width:1180px){.layout-article .deck{width:var(--reading-width);max-width:none;padding-left:0;padding-right:0;margin-left:max(260px,calc((100vw - 1192px)/2 + 236px));margin-right:0}.layout-article .sec>.doc-body>figure,.layout-article .sec>.doc-body>.table,.layout-article .sec>.codewalk{width:calc(100% + 120px);margin-left:0}.layout-article .aside{position:absolute;left:calc(100% + 28px);top:24px;width:var(--rail-width);margin:0}.layout-article .aside~figure{width:100%}html.layout-article body .fin-btn{left:max(20px,calc((100vw - 1192px)/2));right:auto;max-width:208px}.layout-pair .deck{max-width:1280px;margin-left:236px;margin-right:20px}.layout-pair .toc{width:188px;left:20px}html.layout-pair body .fin-btn{left:20px;right:auto;max-width:188px}}
+@media(max-width:1179px){.toc{display:none;visibility:hidden;left:0;top:var(--top-height);width:min(360px,90vw);max-height:calc(100dvh - 72px);background:var(--sheet);padding:16px;border-right:1px solid var(--hair);border-bottom:1px solid var(--hair)}html.toc-open .toc{display:block;visibility:visible}html.toc-open .toc-backdrop{display:block;position:fixed;inset:var(--top-height) 0 0;background:rgba(0,0,0,.3);z-index:24}}
+@media(max-width:820px){:root{--body-size:17px}.layout-article .deck,.layout-pair .deck{padding-left:18px;padding-right:18px}.top{gap:8px;padding:0 12px}.top .course{display:none}.top .count{max-width:44vw}.top .track{min-width:24px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stories,.compare,.roles{grid-template-columns:minmax(0,1fr)}.argmap ol{grid-template-columns:minmax(0,1fr)}table.data thead,.table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}table.data,table.data tbody,table.data tr,table.data td,.table table,.table tbody,.table tr,.table td{display:block;width:100%}table.data tr,.table tr{padding:8px 12px;margin-bottom:8px;border:1px solid var(--hair);background:var(--sheet);border-radius:var(--r-md)}table.data td,.table td{border:0;padding:4px 0}td[data-label]::before{content:attr(data-label)'：';font-size:var(--fs-sm);font-weight:700;color:var(--ink2)}.table caption,table.data caption{display:block;width:100%}.pair.codewalk,.pair.read-pair,.pair.material-pair{display:block}.pair-notes{margin-top:12px}.code-panel{top:var(--top-height);max-height:40dvh;z-index:15}.pair-source{top:var(--top-height);max-height:40dvh;z-index:15;box-shadow:var(--sh-1)}.pair-notes .step{scroll-margin-top:calc(40dvh + 80px)}.flow-scroll svg.flow{width:var(--flow-width);max-width:none;height:var(--flow-height)}.sim .flow-scroll svg.flow{width:100%;height:auto}.stack .row{grid-template-columns:22px 64px minmax(0,1fr)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+@media print{.top,.toc,.fin-btn,#quiz-return,.toc-backdrop,.zoom-toggle,.code-toolbar{display:none!important}.layout-article .deck,.layout-pair .deck{margin:0;padding:0;max-width:100%;width:auto}.pair-source,.code-panel{position:static;max-height:none;overflow:visible}.sec{break-inside:auto}figure,.stat{break-inside:avoid}}
+/* Applies after legacy CSS too. Zoom is an intentional local viewport; non-zoom stays unnested. */
+html body .sim .flow-scroll.zoom{overflow:auto;max-height:40dvh;min-height:0;height:auto;overscroll-behavior:contain;scroll-padding:16px;padding:16px}
+html body .sim .flow-scroll.zoom svg.flow{width:var(--flow-width);min-width:var(--flow-width);height:var(--flow-height);max-height:none;flex:none}
+html body .sim .zoom-toggle{min-height:44px;justify-self:start}.layout-deck .sim .body{position:relative}.layout-deck .card{padding-bottom:8px}.layout-deck .deck{bottom:calc(92px + env(safe-area-inset-bottom))}
+html body .fin-btn{bottom:calc(16px + env(safe-area-inset-bottom));right:16px;min-height:44px}html.layout-deck .bottom{padding-right:170px;padding-left:12px;height:76px}.layout-deck .btn,.layout-deck .sim .branches label{min-height:44px}.layout-deck details.more summary::before{content:none}.layout-deck .fl-edge.act{animation:none}
+@media(max-width:820px){html.layout-deck .bottom{padding-right:12px;gap:8px}.layout-deck .bottom .btn{padding:8px 10px;font-size:13px}html.layout-deck body .fin-btn{padding:8px 12px;font-size:13px}.layout-deck .card.full:has(.sim)>.head-full{position:sticky;top:0;z-index:4;background:var(--sheet);padding-top:12px;padding-bottom:12px}.layout-deck .sim .body{overflow:visible}.layout-deck .card .stage:has(.sim){overflow:visible}.layout-deck .sim .flow-scroll:not(.zoom){overflow:visible}}
+
+.layout-deck .card.doc.on{display:block;overflow:auto;padding:24px}.layout-deck .card.doc .doc-body{overflow:visible}.layout-deck .hero.card{height:auto}
+
+/* Legacy .stage svg also matches button icons: keep Lucide at its declared size. */
+html body svg.i{width:18px;height:18px;max-height:none;flex:none}
+
+/* Below the desktop sidebar breakpoint, finish lives in the opaque top bar.
+   Reserve its width before laying out the title; keep the deck footer for paging. */
+@media(max-width:1179px){
+ html body .top{gap:8px;padding:0 132px 0 12px;z-index:40;background:var(--paper)}
+ html body .top .course{display:none}
+ html body .top .count{flex:1;min-width:0;max-width:none;font-size:var(--fs-sm);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ html body .top .track{position:absolute;left:12px;right:12px;bottom:0;height:2px;min-width:0}
+ html body .top .toc-toggle{width:44px;flex:none;padding:0}
+ html body .top .theme-toggle{flex:none;padding:8px;font-size:var(--fs-sm)}
+ html body .fin-btn{top:6px;bottom:auto;left:auto;right:12px;width:112px;max-width:112px;height:44px;padding:8px;font-size:13px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:41;box-shadow:none}
+}
+</style></head><body>
+<header class="top"><button class="btn toc-toggle" aria-label="打开目录" aria-expanded="false"><svg class="i i-menu" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h16"/></svg></button><span class="course">L06 From pair-coding to agent orchestration</span><span class="track" role="presentation"><i></i></span><span class="count"></span><button class="btn theme-toggle" aria-label="切换深浅色">深浅色</button></header><main class="deck"><section class="sec hero" data-toc="开篇：三部分" id="s1" data-source-section="s2">
+  <header class="doc-head"><span class="kicker">公开课 · EECS 498 AASE · Lecture 06 · 2026-09-17 · Marcus Darden</span><h1>L06 · 从结对编程到 agent 编排：用名字和模型对话，再把唯一的命令长成工具调用</h1>
+  <p class="lede" id="h-lede">三部分：先交代 10 月 6 日截止的 ai-assistant 项目包；再讲和一个「替你写大部分代码」的模型合作时，人该在什么距离上理解它——办法是给决定起短而稳定的名字（reference points）；最后从程序已有的唯一命令（SEARCH/REPLACE 编辑块）出发，加上 READ、RUN，归纳出工具调用，再用一个 while 循环替掉「继续」的人，得到一个 agent。</p>
+  <p class="links"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">课件 slides.md <svg class="i i-external-link" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.pdf">slides.pdf <svg class="i i-external-link" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a><span>本页导读约 30 分钟</span></p></header>
+  <div class="doc-body">
+<p data-points="p0003" id="e1">讲者备注：今天三部分——这节课后发下来的项目包；怎样和一个你必须理解其代码的模型合作；以及学生程序已有的那一条命令，怎样长成工具调用和 agent 循环。</p>
+<p data-points="p0006 p0007 p0008" id="e2">三部分：项目 <code>ai-assistant</code>；和模型合作（Working with the model）；从编辑块到工具调用（tool calls）。</p>
+<p data-points="p0009" id="e3">备注：点名三部分就走。第一部分是事务性的，要快；第二部分最值得花时间；第三部分结束在 Analyze 开始的地方。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s2"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">Lecture 06 开场</a></span> · <span class="source-anchor" data-source-section="s1"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">From pair-coding to agent orchestration</a></span> · <span class="source-anchor" data-source-section="s3"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">Three parts</a></span></div>
+</section>
+<section class="sec" data-toc="一、项目：ai-assistant" id="s2" data-source-section="s4">
+  <header class="doc-head"><span class="kicker">第 3–8 页 · The project</span><h2>10 月 6 日截止：自己写一个小号的 Aider</h2></header>
+  <div class="doc-body">
+<p data-points="p0014 p0015 p0016" id="e4">要做的是你自己的结对编程助手：在终端里围绕你选的文件聊天（terminal chat）；模型提议编辑，你批准（you approve）；每个被批准的改动成为一次提交（commit）。</p>
+<p data-points="p0017" id="e5">也就是你用了三周的 Aider——现在你写一个。</p>
+<p data-points="p0018 p0019" id="e6">讲者备注：讲得概括些。学生用了三周 Aider，已经知道结对编程助手做什么：你挑文件、提要求、读 diff，改动进 git。现在他们要用 Python、对着一个模型端点写一个小的。它在另一个目标仓库上工作，从不改它自己所在的仓库。</p>
+<p data-points="p0020 p0021" id="e7">它故意不做的事：自己找文件、跑命令、选下一步——记住这一点，今天最后一部分加的正是这些。他们用 Aider 来构建它，但它从不调用 Aider；先读 <code>EXAMPLES.md</code>，那里按会话展示了完成后的程序。</p>
+<h3>课程组提供什么，你决定什么</h3><span class="source-anchor heading-source" data-source-section="s7">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">What staff supply and what you decide</a></span>
+<div class="table"><table class="data" data-asset="a0024" data-points="p0024" id="ta0024"><caption>原表 1 · 课程组提供的与学生自己决定的（SPEC.md 第 3 节）</caption><thead><tr><th>Staff supply</th><th>You decide</th></tr></thead><tbody><tr><td data-label="Staff supply">The contract: 7 features</td><td data-label="You decide">Modules, interfaces and state</td></tr><tr><td data-label="Staff supply">A starter loop, bin/assistant, bin/test</td><td data-label="You decide">Estimator, trimming, file delimiter</td></tr><tr><td data-label="Staff supply">ENDPOINT.md, and the checks in SPEC.md §5</td><td data-label="You decide">Error messages and commit ownership</td></tr><tr><td data-label="Staff supply"></td><td data-label="You decide">Your tests</td></tr></tbody></table><span class="source-anchor" data-source-section="s7">出处：EECS 498 AASE L06 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">第 5 页 · What staff supply and what you decide</a></span></div>
+<p data-points="p0025 p0026 p0027" id="e8">讲者备注：起始代码是 <code>assistant/cli.py</code> 里一个接好了 <code>/quit</code> 的回声循环，是起点，不是必须保留的设计。项目包比学生预想的更不具体，这是故意的：<code>SPEC.md</code> 只从外部说程序做什么，右列全归学生，评分表的 requirements 一行奖励的是把这些决定定下来，而不是复述 spec；没有规定的架构，也没有隐藏测试。这对今天中段很重要：spec 没点名的决定，学生必须自己点名，而名字正是让他们和模型能谈论它的东西。</p>
+<h3>工作顺序</h3><span class="source-anchor heading-source" data-source-section="s8">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">The order of work</a></span>
+<p data-points="p0030" id="e9">① 读项目包，先读 <code>EXAMPLES.md</code>。</p>
+<p data-points="p0031" id="e10">② 设计和图，用「冷」会话评审（reviewed cold）。</p>
+<p data-points="p0032" id="e11">③ 分增量（Increments）实现，每个增量先写 spec。</p>
+<p data-points="p0033" id="e12">④ 现场证据（evidence）、用法说明、反思。</p>
+<p class="callout key" data-points="p0034" id="e13">设计要在应用代码之前提交。</p>
+<p data-points="p0035" id="e14">第 2 步备注：写 <code>design/SYSTEM.md</code> 和三张图（组件与数据流、一次请求的时序、编辑的生命周期），以 <code>DESIGN-GUIDE.md</code> 为清单；然后开一个全新的 Aider 会话，在没有起草时那段对话的情况下评审文档——这是发现缺漏最快的办法。</p>
+<p data-points="p0036 p0037" id="e15">第 3 步：每个增量前在 <code>specs/</code> 用五段式模板写一份增量 spec，只加载该增量需要的文件，验证后再继续；在一个用完即弃的目标仓库上试程序，绝不在本仓库上试。第 4 步：按 <code>SPEC.md</code> 第 5 节的现场编辑提示词协议，记录每次尝试，写 <code>USAGE.md</code>、<code>REFLECTION.md</code>，并把图更新到与实际实现一致。</p>
+<h3>怎么评分</h3><span class="source-anchor heading-source" data-source-section="s9">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">How the build is graded</a></span>
+<div class="table"><table class="data" data-asset="a0040" data-points="p0040" id="ta0040"><caption>原表 2 · build 评分的两半（RUBRIC.md）</caption><thead><tr><th>Half</th><th>Points</th></tr></thead><tbody><tr><td data-label="Half">Specification and design</td><td data-label="Points">50</td></tr><tr><td data-label="Half">Implementation and tests</td><td data-label="Points">50</td></tr></tbody></table><span class="source-anchor" data-source-section="s9">出处：EECS 498 AASE L06 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">第 7 页 · How the build is graded</a></span></div>
+<p data-points="p0041" id="e16">spec 先于代码（Specs before code），从提交顺序里读出来。</p>
+<p data-points="p0042" id="e17">没有隐藏的测试或要求（No hidden tests）。</p>
+<p data-points="p0043" id="e18">「受苦不得分」（suffering）。</p>
+<p data-points="p0044 p0045 p0046" id="e19">讲者备注：一半分数在写作上——需求、架构、增量 spec、三张图、spec 先于代码、反思。spec 先于代码按 git 历史评分，所以提交顺序本身就是证据。「受苦不得分」是评分表原话：更多提示词、更多失败、更长的日志都不加分，高效且成功的流程可以拿满分；未完成功能的测试以 strict xfail 留在测试集中，绝不删除或削弱。</p>
+<h3>日期和交付物</h3><span class="source-anchor heading-source" data-source-section="s10">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">Dates and deliverables</a></span>
+<div class="table"><table class="data" data-asset="a0049" data-points="p0049" id="ta0049"><caption>原表 3 · 日期与交付物</caption><thead><tr><th>When</th><th>What</th></tr></thead><tbody><tr><td data-label="When">After this lecture</td><td data-label="What">The packet, in your repository</td></tr><tr><td data-label="When">Before any app code</td><td data-label="What">design/SYSTEM.md and diagrams</td></tr><tr><td data-label="When">Thu Sep 24, evening</td><td data-label="What">Hackathon 1, separate</td></tr><tr><td data-label="When">Tue Oct 6, 11:59 PM</td><td data-label="What">The build is due</td></tr></tbody></table><span class="source-anchor" data-source-section="s10">出处：EECS 498 AASE L06 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">第 8 页 · Dates and deliverables</a></span></div>
+<p data-points="p0050" id="e20">一个仓库用一整学期，记得提交你的 Aider 历史。</p>
+<p data-points="p0051 p0052 p0053" id="e21">讲者备注：Hackathon 1 是另一项两小时的考核，用课程提供的应用，不需要 build 已完成。迟交每天扣 10%，最多三天；要 push，只存在笔记本上的提交不算提交。同一个仓库会一路用到 Analyze 和 Create，要保留历史；Aider 不会提交 <code>.aider.chat.history.md</code>，所以每次会话结束自己提交它，而且永远不要把它加进 Aider 的可编辑上下文。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s4"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">The project</a></span> · <span class="source-anchor" data-source-section="s5"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">ai-assistant, due October 6</a></span> · <span class="source-anchor" data-source-section="s6"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">Your own pair-programmer</a></span></div>
+</section>
+<section class="sec" data-toc="二、和模型合作：在合适的距离上理解" id="s3" data-source-section="s11">
+  <header class="doc-head"><span class="kicker">第 9–13 页 · Working with the model</span><h2>模型写大部分代码，你拥有决定和结果</h2></header>
+  <div class="doc-body">
+<p data-points="p0058" id="e22">模型写了大部分代码行（lines）。</p>
+<p data-points="p0059" id="e23">你拥有决定和结果（outcomes）。</p>
+<p data-points="p0060" id="e24">在合适的层次（level）上理解。</p>
+<p data-points="p0061 p0062" id="e25">讲者备注：这是整门课建立的转变。手写代码已经少了，逐行阅读也少了——没人能逐行跟上一个模型，这也不是目标；目标是知道代码做了哪些决定、是否做了你想要的。「是模型写的」仍然不能回答评分表的任何一行。所以工程工作转移了：转到计划、提示词，最重要的是理解返回的东西——代码，以及代码周围模型说自己做了什么的那些文字。</p>
+<h3>你脑子里装着什么</h3><span class="source-anchor heading-source" data-source-section="s14">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">What you hold in your head</a></span>
+<p data-points="p0065 p0066" id="e26">设计以及它为什么这样（design）；你在 build 里进行到哪了。</p>
+<p data-points="p0067 p0068" id="e27">什么是真正验证过的（verified）；什么只是模型声称的（claimed）。</p>
+<p class="callout key" data-points="p0069" id="e28">模型在会话之间一样都不保留。</p>
+<p data-points="p0070 p0071" id="e29">讲者备注：每次会话，模型都从你给它的文件开始。记得「裁剪策略上周二定的」「第 3 个增量做了一半」「all tests pass 是模型说的、不是 <code>bin/test</code> 说的」，是你。最后两条是危险的一对：验证过的和声称的在聊天窗口里看起来一模一样，把它们分开是你的工作——而且只在你脑子里做，除非你给它找个更好的地方存放。</p>
+<h3>在合适的距离上判断</h3><span class="source-anchor heading-source" data-source-section="s15">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">Judgment at the right distance</a></span>
+<div class="table"><table class="data" data-asset="a0074" data-points="p0074" id="ta0074"><caption>原表 4 · 判断的距离：太近、太远、正好</caption><thead><tr><th>Distance</th><th>What it looks like</th></tr></thead><tbody><tr><td data-label="Distance">Too close</td><td data-label="What it looks like">Reading every line it wrote</td></tr><tr><td data-label="Distance">Too far</td><td data-label="What it looks like">Accepting what you never checked</td></tr><tr><td data-label="Distance">About right</td><td data-label="What it looks like">Checking contracts and outcomes</td></tr></tbody></table><span class="source-anchor" data-source-section="s15">出处：EECS 498 AASE L06 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">第 12 页 · Judgment at the right distance</a></span></div>
+<p class="callout key" data-points="p0075" id="e30">不是每一行，而是每一个决定。</p>
+<p data-points="p0076 p0077 p0078" id="e31">讲者备注：这真的很难，第一周没人做对。太近，你以人的速度跟在一个以机器速度写代码的模型后面读，仍然漏掉那个要紧的决定；太远，你在橡皮图章式批准，一个过期预览（stale-preview）的 bug 就这样进了一个「能用」的 build。正好是：你知道哪些决定要紧，逐个检查它们是否被遵守，让测试和 diff 承担细节——而这需要一种指着决定说话的办法，就是下一页。</p>
+<p data-points="p0079 p0080" id="e32">一段合作关系需要共享的名字。备注：停一下。这一节剩下的部分只讲一个构造——reference points（参照点），然后问还有什么能起同样的作用。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s11"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">Working with the model</a></span> · <span class="source-anchor" data-source-section="s12"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">Understanding what it writes and what it says</a></span> · <span class="source-anchor" data-source-section="s13"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">Who understands the code</a></span></div>
+</section>
+<section class="sec" data-toc="三、参照点：给项目状态起名字" id="s4" data-source-section="s16">
+  <header class="doc-head"><span class="kicker">第 14–20 页 · Reference points</span><h2>一个短而稳定、你、模型和助教都能同样解析的名字</h2></header>
+  <div class="doc-body">
+<div class="table"><table class="data" data-asset="a0083" data-points="p0083" id="ta0083"><caption>原表 5 · 参照点示例：名字与它指向的东西</caption><thead><tr><th>Name</th><th>What it points at</th></tr></thead><tbody><tr><td data-label="Name">F6</td><td data-label="What it points at">Previewing and applying edits</td></tr><tr><td data-label="Name">design/SYSTEM.md §6</td><td data-label="What it points at">Where your safety decisions live</td></tr><tr><td data-label="Name">specs/03-preview.md</td><td data-label="What it points at">The increment that delivers it</td></tr><tr><td data-label="Name">test_stale_preview_refused</td><td data-label="What it points at">What checks it</td></tr></tbody></table><span class="source-anchor" data-source-section="s16">出处：EECS 498 AASE L06 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">第 14 页 · Reference points</a></span></div>
+<p class="callout key" data-points="p0084" id="e33">参照点是一个短而稳定的名字，你、模型和课程组都以同样的方式解析它。</p>
+<p data-points="p0085 p0086 p0087" id="e34">讲者备注：参照点是项目状态的关键词，而且很密——「F6」用两个字符承载一整个功能，说给桌对面的人或写进提示词都行，harness 也能解析它，不必把整段话贴进去。代码是你自己写的时候，东西的名字住在代码里，你可以去看；当模型根据你的计划和提示词写代码时，名字必须住在模型、评分者和你都能指到的地方，否则每一方都在解读一句话。在上下文预算之下，这种压缩不是整洁问题，而是让对话装得下。</p>
+<h3>会话里的决定编号</h3><span class="source-anchor heading-source" data-source-section="s17">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">Decision codes in a session</a></span>
+<p data-points="p0090 p0091 p0092" id="e35">示例（讲者准备这一讲时的会话）：模型在写幻灯片前列出决定——D1 现场演示用一个仓库里的 Claude Code；D2 审批层移出这一讲；D3 READ 和 RUN 用自造的标记，不用 F5 的；D4 工具调用的推导用幻灯片而不是现场写代码；D5 课间讨论改成讨论题；后面还有 D6 到 D18。</p>
+<p data-points="p0093 p0094" id="e36">讲者备注：这是照着用 Claude Code 准备这一讲的过程做的。会话事先约定：模型一旦给出三个以上的决定、选项或发现，每个都配一个短编号——D 是决定、O 是选项、Q 是问题，真实的表一直排到 D18。要指出模型本身什么都没变，只是约定文件里一行字让它给东西编号；回报在下一页。</p>
+<h3>按编号回答</h3><span class="source-anchor heading-source" data-source-section="s18">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">Answering by code</a></span>
+<p data-points="p0097" id="e37">你：「D1 yes. D3 yes. D4 no, do READ live. D5 yes.」</p>
+<p data-points="p0098" id="e38">模型：D1、D3、D5 保留；D4 改为 READ 现场做、RUN 仍放幻灯片；D2 还没回答，要不要移出？</p>
+<p data-points="p0099 p0100" id="e39">你：「D2 yes.」十八个决定里的五个，两行搞定。</p>
+<p data-points="p0101 p0102" id="e40">讲者备注：没有编号，第一句回复会是一段话——「我同意演示的想法和标记，但读文件那部分我更想现场做……」——模型得猜每个分句针对哪个提议。有了编号，每个分句只落在一个决定上，模型的回答也能用同样的方式核对；它甚至发现了 D2 没被回答。这就是小尺度上的合作关系：模型用名字呈现，你用名字回答，中间什么都不会丢。</p>
+<h3>项目包留给你起的名字</h3><span class="source-anchor heading-source" data-source-section="s19">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">Names the packet leaves to you</a></span>
+<p data-points="p0105" id="e41">SPEC 给 7 个功能（features）起了名字。</p>
+<p data-points="p0106" id="e42">你给自己的验收标准（criteria）起名字。</p>
+<p data-points="p0107" id="e43">你的每个名字都追溯（traces）到一个功能。</p>
+<p data-points="p0108" id="e44">评分表原话：「复述 SPEC.md 第 4 节不得分。」</p>
+<p data-points="p0109 p0110" id="e45">讲者备注：这就是项目包不那么具体的原因。<code>SPEC.md</code> 停在功能层面；token 估算器、裁剪策略、分隔符、自己的提交怎么标记、每条错误信息说什么——这些都是决定，<code>DESIGN-GUIDE</code> 第 1 节要求每个都写成一条有自己稳定 ID 的验收标准，并映射到它服务的功能；评分表把这种映射叫可追溯（traceable），给 10 分。格式由学生定，像用 F6-3 表示「过期预览被拒绝」就行；要紧的是它短、永不改义，并出现在设计、增量 spec、测试名和提交里。</p>
+<h3>人对模型：按名字下指令</h3><span class="source-anchor heading-source" data-source-section="s20">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">Prompting by name</a></span>
+<p data-points="p0113 p0114" id="e46"><b>By paraphrase（转述）</b>：「把审批那块弄得更安全点」。</p>
+<p data-points="p0115 p0116" id="e47"><b>By name（按名字）</b>：<code>specs/03</code>，只做 task 2；交付 F6-3；让 <code>test_stale_preview_refused</code> 通过；只改 <code>preview.py</code>。</p>
+<p data-points="p0117 p0118 p0119" id="e48">讲者备注：左边交给模型一句要解读的话，它会解读，并挑一个它自己理解的「更安全」。右边交给它一个增量、一个任务边界、一条标准、一个判定是否完成的测试、以及它可以动的文件——每一个都是模型能在上下文文件里解析的名字，也都是学生事后能检查的东西。转述需求的提示词会偏离需求，而模型察觉不到；ID 不会漂移。</p>
+<h3>模型对人：要它用你的名字回答</h3><span class="source-anchor heading-source" data-source-section="s21">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">Asking for answers in your names</a></span>
+<p data-points="p0122" id="e49">你在评审前问：这次改动交付了哪些标准？你跑了什么？哪些没验证？</p>
+<p data-points="p0123" id="e50">模型按格式报告：Delivers F6-3；Touched <code>assistant/preview.py</code>；Ran nothing；Unverified：F6-3 在真实目标仓库上的表现。</p>
+<p class="callout key" data-points="p0124 p0125 p0126" id="e51">讲者备注：名字两个方向都管用。理解模型输出的大部分工作，是把它「做了什么」和它「说自己做了什么」分开；要它用你的术语报告，这种区分就成了一张清单，而不是一次阅读理解。「Ran: nothing」就是你要找的那一行——不问的话，它会是一段说「这个改动正确处理了过期预览」的话。然后去核对：<b>名字让声称变得可检查，但不会让它们变成真的。</b></p>
+<h3>一行说清项目状态</h3><span class="source-anchor heading-source" data-source-section="s22">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">Project state in one line</a></span>
+<p data-points="p0129" id="e52">例：<code>specs/03 · F6-3 done · F6-4 red: test_write_failure_restores</code></p>
+<p data-points="p0130 p0131 p0132" id="e53">这一行可以用作：发给课程组或邻座（neighbor）的一条消息；一个新会话（session）的第一行；一条提交（commit）信息。</p>
+<p data-points="p0133 p0134" id="e54">讲者备注：这一行完整说明了项目在哪，而且没有一处是转述。office hours 的助教知道该打开什么；新的 Aider 或 Claude Code 会话知道该加载什么；提交历史读起来是一份决定记录。这也回答了「你脑子里装着什么」：用这些术语写下来，它就不再只住在你脑子里。</p>
+<h3>名字怎么失效</h3><span class="source-anchor heading-source" data-source-section="s23">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">How names fail</a></span>
+<p data-points="p0137 p0141" id="e55"><b>转述（paraphrase）替代了 ID</b>：提示词写「那条裁剪规则」，模型就自己挑一条。</p>
+<p data-points="p0138 p0142" id="e56"><b>模型编造（invents）ID</b>：模型很乐意引用根本不存在的 F6-7。只用能解析到文件里某一行的名字。</p>
+<p data-points="p0139 p0143" id="e57"><b>被点名的文件不在上下文里（not in context）</b>：名字只和它解析到的东西一样好；<code>SYSTEM.md</code> 没加载，「section 6」就是猜。检查会话能看到什么。</p>
+<p data-points="p0140 p0144" id="e58"><b>名字中途改义（meaning）</b>：做到一半给标准重新编号，会弄坏所有引用过它们的测试名和提交。加新 ID，不复用旧 ID。</p>
+<h3>现场演示：仓库里的 Claude Code</h3><span class="source-anchor heading-source" data-source-section="s24">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">Claude Code in a repository</a></span>
+<p data-points="p0147 p0148 p0149" id="e59">演示三步：按参照点（reference）点名任务；要它用这些名字（names）报告；逐条核对（Check）声称。</p>
+<p data-points="p0150 p0151 p0152" id="e60">讲者备注：切到终端操作。课件里这页的演示内容一栏写着「待写」，即演示脚本当时尚未写好，实际演示内容未确认。讲者提醒解说核对而不是打字：模型每做一个声称，就大声说它是验证过的还是只是说说。</p>
+<h3>和邻座讨论五分钟</h3><span class="source-anchor heading-source" data-source-section="s25">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">Other ways to read a model's output</a></span>
+<p data-points="p0155 p0156 p0157" id="e61">参照点只是一种构造。说出另一个能让模型输出更好懂、或者让沟通更顺的习惯或构造，每人一行，收集五个。</p>
+<p data-points="p0158 p0159 p0160 p0161" id="e62">讲者备注：对 Zoom 那头宣布休息——走动五分钟——再宣布回来；然后收五个写到黑板上；如果没人说话，可以给些种子：</p>
+<p data-points="p0162" id="e63">种子清单：任何编辑前先要计划；每次回复用固定格式；列出没验证的东西；小 diff，一次一个任务；让测试当裁判而不是模型的总结；一个模型总会加载的约定文件；要求模型保持更新的图；引用 ID 的提交信息。</p>
+<p class="callout key" data-points="p0163" id="e64">收尾时指出：这些每一个都是工程师定义的构造，不是模型的功能。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s16"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">Reference points</a></span></div>
+</section>
+<section class="sec" data-toc="四、从编辑块到工具调用" id="s5" data-source-section="s26">
+  <header class="doc-head"><span class="kicker">第 21–35 页 · From edit blocks to tool calls</span><h2>你的程序已经有一条命令，再加两条，就看出了工具调用的形状</h2></header>
+  <div class="doc-body">
+<p data-points="p0168" id="e65">程序已有的唯一命令（SPEC.md F5）：模型针对 <code>greet.py</code> 输出一个 SEARCH/REPLACE 编辑块——SEARCH 段是原文 <code>print("Hello")</code>，REPLACE 段是 <code>print("Hi")</code>。</p>
+<p data-points="p0169" id="e66">这是模型输出的文字；你的代码解析它，在你说 yes 之后执行。</p>
+<p data-points="p0170 p0171" id="e67">讲者备注：反过来看它——模型写文字，程序找到一个认得的标记，取出参数，征得同意后在现实世界里用它们做事。这就是一条命令，学生的程序恰好有一条；这一讲剩下的问题是：加第二条会怎样。</p>
+<h3>模型需要一个文件时</h3><span class="source-anchor heading-source" data-source-section="s29">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">When the model needs a file</a></span>
+<p data-points="p0174" id="e68">你问 <code>greet()</code> 为什么打印两次；模型说没有调用它的 <code>main.py</code> 看不出来；你敲 <code>/add main.py</code>，再说「再看一下」。</p>
+<p class="callout key" data-points="p0175" id="e69">模型知道自己需要什么，只有你能去拿。</p>
+<p data-points="p0176 p0177" id="e70">讲者备注：这在 Aider 里经常发生，在学生的程序里也会。模型看到一个文件、推理、说出下一步要什么；Aider 不能自己读文件，它可以提议加一个，但仍要你说 yes 并重发。学生的 Stage 1 程序更严格：只有 <code>/add</code> 能把文件放到模型面前。所以这段对话里人没有做任何思考——模型说出了文件名，人只是把它敲回去。</p>
+<h3>为什么不让它读</h3><span class="source-anchor heading-source" data-source-section="s30">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">Why not let it read</a></span>
+<p data-points="p0180 p0181 p0182" id="e71">理由三条：读不改变磁盘（disk）上的任何东西；你只是在传话（relaying）；它已经说得出要哪个文件（names the file）。</p>
+<p data-points="p0183" id="e72">所以给它一个开口要的办法。</p>
+<p data-points="p0184 p0185 p0186" id="e73">讲者备注：先认真对待反对意见——我们故意让用户选文件，是为了让上下文小、让用户掌控，这些理由是真的。但读是最安全的动作：磁盘不变，没有什么要撤销。如果模型已经能说出文件名，让人把名字抄进 <code>/add</code> 只是多一步，没有多一点判断。所以让它开口要，就像它已经在开口要一次编辑那样。</p>
+<h3>READ 命令</h3><span class="source-anchor heading-source" data-source-section="s31">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">A READ command</a></span>
+<p data-points="p0189" id="e74">模型先说一句「改之前我得看看测试」，然后输出一个 READ 块，里面是 <code>tests/test_cli.py</code>，以 END 结束。</p>
+<p data-points="p0190" id="e75">你的代码读这个文件，把内容送回去。</p>
+<p data-points="p0191 p0192 p0193" id="e76">讲者备注：同样的思路，换个标记——模型要文件，harness 读出来放进下一条消息。和 <code>/add</code> 比：<code>/add</code> 是用户在选，READ 是模型在选，因为它刚才看到了什么。这不在 Stage 1 的 spec 里，这里的标记是为这一讲自造的；要点是需要的东西少得惊人。</p>
+<h3>RUN 命令</h3><span class="source-anchor heading-source" data-source-section="s32">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">A RUN command</a></span>
+<p data-points="p0196" id="e77">模型说「先跑一下测试集」，输出一个 RUN 块，里面是 <code>bin/test</code>。</p>
+<p data-points="p0197" id="e78">你的代码运行它，把输出送回去。</p>
+<p data-points="p0198 p0199" id="e79">讲者备注：再来一次——模型要一条命令，harness 运行并返回它打印的东西。要点出：这是第一条改变机器而不只是改文件的命令，git 撤销不了它，最后会回到这一点。</p>
+<h3>三条命令的分发器</h3><span class="source-anchor heading-source" data-source-section="s33">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">A dispatcher for three commands</a></span>
+<pre class="code" data-asset="a0202"><code data-language="python">for block in parse_blocks(reply):
+    if block.kind == "EDIT":</code></pre>
+<p data-points="p0202 p0203" id="e80">上面摘的是分发器的开头两行。完整代码：对 <code>parse_blocks(reply)</code> 解析出的每个块，EDIT 走 <code>propose_edit(path, search, replace)</code>，READ 走 <code>read_file(path)</code>，RUN 走 <code>run_command(command)</code>，每个分支最后都把 <code>result</code> 作为一条 user 消息追加进 <code>messages</code>。讲者备注：逐行讲——一个解析器，每条命令一个分支，每个分支以同样方式结束：结果回到对话里。</p>
+<p data-points="p0204" id="e81">问全场第四条命令会是什么：搜索、列目录、抓取 URL——每一个都是又一个 <code>elif</code>。让他们自己注意到所有分支长得一样。</p>
+<h3>每条命令都是一个形状</h3><span class="source-anchor heading-source" data-source-section="s34">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">One shape for every command</a></span>
+<div class="table"><table class="data" data-asset="a0207" data-points="p0207" id="ta0207"><caption>原表 6 · 三种块对应的名字和参数</caption><thead><tr><th>Block</th><th>Name</th><th>Arguments</th></tr></thead><tbody><tr><td data-label="Block">SEARCH/REPLACE</td><td data-label="Name">edit_file</td><td data-label="Arguments">path, search, replace</td></tr><tr><td data-label="Block">READ</td><td data-label="Name">read_file</td><td data-label="Arguments">path</td></tr><tr><td data-label="Block">RUN</td><td data-label="Name">run_command</td><td data-label="Arguments">command</td></tr></tbody></table><span class="source-anchor" data-source-section="s34">出处：EECS 498 AASE L06 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">第 31 页 · One shape for every command</a></span></div>
+<p class="callout key" data-points="p0208" id="e82">一个名字加一组参数——这就是工具调用（tool call）。</p>
+<p data-points="p0209 p0210" id="e83">讲者备注：这一步要放慢。把标记去掉，每条命令都是同样两样东西：哪一条，用什么参数。看清这点，自造的标记就只是一种笨拙的编码：把每条命令用名字、描述和参数 schema 描述给模型，让它用结构化格式回复——这就是 function calling。我们没加新想法，只是把程序已有的那一个推广了。</p>
+<h3>工具调用长什么样</h3><span class="source-anchor heading-source" data-source-section="s35">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">The shape of a tool call</a></span>
+<pre class="code" data-asset="a0213"><code data-language="json">{"tool_calls": [</code></pre>
+<p data-points="p0213 p0214" id="e84">上面是 JSON 的第一行；后面列出同样三条调用：<code>read_file</code>（path 为 <code>tests/test_cli.py</code>）、<code>run_command</code>（command 为 <code>bin/test</code>）、<code>edit_file</code>（path、search、replace）。同样三条命令，不用自定义格式就能解析。</p>
+<p data-points="p0215 p0216" id="e85">讲者备注：同一张表写成 JSON。格式化的活由端点做，harness 拿到的是一个可以遍历的列表，而不是要扫描标记的文本。别的都没变：分发器还是那个按名字分支的 if/elif；而一旦命令只是表里的名字，加一条就是加一行，所以工具调用能扩展到函数能做的任何事。</p>
+<p class="callout key" data-points="p0217 p0218" id="e86"><b>模型从不执行任何东西，它只是请求。</b>讲者说这是这一部分要带走的句子：模型输出文字，每一次读、每一条命令、每一次写都由学生写的代码执行，而那段代码可以拒绝。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s26"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">From edit blocks to tool calls</a></span> · <span class="source-anchor" data-source-section="s27"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">Growing the one command your program has</a></span> · <span class="source-anchor" data-source-section="s28"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">The one command your program has</a></span></div>
+</section>
+<section class="sec" data-toc="五、把「继续」的人自动化" id="s6" data-source-section="s36">
+  <header class="doc-head"><span class="kicker">第 36–39 页 · Who drives</span><h2>一个 while 循环替掉人，就得到 agent</h2></header>
+  <div class="doc-body">
+<p data-points="p0221" id="e87">加了 READ 和 RUN 但别的不变时，一次会话是这样：你问 <code>bin/test</code> 为什么失败；模型要 READ 测试文件；你贴内容说「继续」；模型要 RUN <code>bin/test</code>；你贴输出说「继续」；模型给出 SEARCH/REPLACE 改 <code>greet.py</code>。</p>
+<p class="callout key" data-points="p0222" id="e88">每一句「继续」，都是你在充当循环。</p>
+<p data-points="p0223 p0224" id="e89">讲者备注：模型请求，harness 执行，然后得有个人把结果送回去、说继续。那个人没做任何思考，他是一个带键盘的循环——所以把他自动化。</p>
+<h3>自己挑下一步的循环</h3><span class="source-anchor heading-source" data-source-section="s37">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">The loop that picks its step</a></span>
+<pre class="code" data-asset="a0227"><code data-language="python">while True:
+    reply = model.call(messages, tools=TOOLS)</code></pre>
+<p data-points="p0227" id="e90">上面是循环的开头两行。之后：如果回复里没有 <code>tool_calls</code>，就返回文本（模型做完了）；否则对每个调用执行 <code>execute(call)</code>（注释写着「你的代码，你的规则」），把结果追加进 <code>messages</code>，再转一圈。</p>
+<p class="callout key" data-points="p0228 p0229" id="e91">讲者备注：六行，「继续」就没了。里面没有一处说读哪个文件、下一步是什么、何时停——三者都由模型根据用户只敲过一次的请求提供。<b>这就是一个 agent：四页前的分发器，把人换成了 while True。</b></p>
+<h3>循环前后变了什么</h3><span class="source-anchor heading-source" data-source-section="s38">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">Before and after the loop</a></span>
+<p data-points="p0232" id="e92">模型仍然只写文字（text）。</p>
+<p data-points="p0233" id="e93">每个动作（action）仍由你的代码执行。</p>
+<p data-points="p0234" id="e94">模型现在挑选下一步（picks）。</p>
+<p data-points="p0235 p0236" id="e95">只有最后一行变了。讲者备注：循环看起来像交出控制权，其实窄得多——模型仍然只产出文字，每次读、跑、改仍是学生写的代码，那段代码可以拒绝；唯一移动的是「下一步由谁决定」：在 Stage 1 程序里是人，在循环里是模型。</p>
+<h3>循环还缺什么</h3><span class="source-anchor heading-source" data-source-section="s39">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">What the loop still needs</a></span>
+<p data-points="p0239" id="e96">迭代次数和 token 的上限（cap）。</p>
+<p data-points="p0240" id="e97">重复调用的检测器（detector）。</p>
+<p data-points="p0241" id="e98">循环中途可以干净地打断（interrupt）。</p>
+<p data-points="p0242" id="e99"><code>run_command</code> 之前要有批准（Approval）。</p>
+<p class="callout key" data-points="p0243" id="e100">撤销能覆盖文件，覆盖不了 shell。</p>
+<p data-points="p0244 p0245 p0246" id="e101">讲者备注：一个跑到模型说完成为止的循环，有时永远不会完成——同样的调用、同样的参数，一直重复；或者它认为自己完成了其实没有。所以停止条件要变成代码，而不是用户按的一个键。RUN 是学生的安全网盖不住的命令：<code>/undo</code> 是 git 操作，git 撤销不了 <code>rm -rf</code>、装包、或仓库外的任何东西。Stage 1 程序在写文件前已经会问，agent 在跑命令前也必须问。这是 Analyze 的内容，今天到此为止。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s36"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">Who sends the result back</a></span></div>
+</section>
+<section class="sec" data-toc="六、接下来三周" id="s7" data-source-section="s40">
+  <header class="doc-head"><span class="kicker">第 40 页 · What to do next</span><h2>先读、再设计、评审，然后分增量</h2></header>
+  <div class="doc-body">
+<div class="table"><table class="data" data-asset="a0249" data-points="p0249" id="ta0249"><caption>原表 7 · 本周和之后两周的安排</caption><thead><tr><th>When</th><th>What</th></tr></thead><tbody><tr><td data-label="When">Tonight</td><td data-label="What">Read EXAMPLES.md, then SPEC</td></tr><tr><td data-label="When">Before any app code</td><td data-label="What">Design, diagrams, cold review</td></tr><tr><td data-label="When">Thu Sep 24, evening</td><td data-label="What">Hackathon 1</td></tr><tr><td data-label="When">Tue Oct 6, 11:59 PM</td><td data-label="What">The build is due</td></tr></tbody></table><span class="source-anchor" data-source-section="s40">出处：EECS 498 AASE L06 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">第 40 页 · This week and the next two</a></span></div>
+<p data-points="p0250 p0251" id="e102">讲者备注：把顺序大声说出来——读、设计、评审，然后才是增量。build 就是练今天中段的地方：给自己的验收标准起名字，按这些名字提示 Aider，检查返回的东西。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s40"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L06/slides.md">This week and the next two</a></span></div>
+</section>
+<section class="sec" data-toc="小测：3 道题" id="s8" data-source-section="extra">
+  <div class="head-full"><span class="kicker">小测</span><h2>用三道题检查理解</h2></div>
+  <div class="stage"><div class="quiz"><script type="application/json">[{"q": "想让模型修「过期预览」的问题，哪种提示词更符合本讲的建议？", "opts": ["把审批那块弄得更安全点", "specs/03，只做 task 2；交付 F6-3；让 test_stale_preview_refused 通过；只改 preview.py", "请仔细检查整个项目的安全性"], "a": 1, "why": "按名字下指令：增量、任务边界、一条标准、判定测试、可改文件，都是模型能解析、你事后能检查的名字；转述会漂移。", "back": 4}, {"q": "模型报告「Ran: nothing」，按讲者的说法这意味着什么？", "opts": ["改动已经验证通过", "它没有运行任何检查——这正是要找的那一行，接下来要你去核对", "模型出错了"], "a": 1, "why": "名字让声称可检查，但不会让它们变成真的；验证过的和声称的在聊天窗口里看起来一样。", "back": 4}, {"q": "把分发器改成 while True 循环之后，什么变了？", "opts": ["模型开始自己执行命令", "下一步由谁决定：从人变成模型；动作仍由你的代码执行、可以拒绝", "不再需要审批"], "a": 1, "why": "模型仍只写文字，每个动作仍是你的代码执行；唯一移动的是谁选下一步。run_command 仍需批准，因为 git 撤销不了 shell。", "back": 6}]</script></div></div>
+</section>
+</main><script>var __H=location.hash;window.lessonIcons={"menu": "<svg class=\"i i-menu\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/><\/svg>", "play": "<svg class=\"i i-play\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z\"/><\/svg>", "pause": "<svg class=\"i i-pause\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"14\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/><rect x=\"5\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/><\/svg>", "check": "<svg class=\"i i-check\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 6 9 17l-5-5\"/><\/svg>", "x": "<svg class=\"i i-x\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/><\/svg>", "zoom-in": "<svg class=\"i i-zoom-in\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><line x1=\"21\" x2=\"16.65\" y1=\"21\" y2=\"16.65\"/><line x1=\"11\" x2=\"11\" y1=\"8\" y2=\"14\"/><line x1=\"8\" x2=\"14\" y1=\"11\" y2=\"11\"/><\/svg>", "zoom-out": "<svg class=\"i i-zoom-out\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><line x1=\"21\" x2=\"16.65\" y1=\"21\" y2=\"16.65\"/><line x1=\"8\" x2=\"14\" y1=\"11\" y2=\"11\"/><\/svg>", "copy": "<svg class=\"i i-copy\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\"/><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"/><\/svg>", "chevron-right": "<svg class=\"i i-chevron-right\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m9 18 6-6-6-6\"/><\/svg>", "book-open": "<svg class=\"i i-book-open\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 5v16\"/><path d=\"M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z\"/><\/svg>", "external-link": "<svg class=\"i i-external-link\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M15 3h6v6\"/><path d=\"M10 14 21 3\"/><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/><\/svg>"};window.lessonIcon=n=>window.lessonIcons[n]||"";</script><script>/* Article/pair navigation only. No global swipe or arrow-key paging. */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const H=document.documentElement, sections=$$('main.deck > .sec, main.deck > .hero, .pair-notes > .sec');
+if(!sections.length)return;
+const ids=new Set($$('[id]').map(n=>n.id));
+sections.forEach((s,i)=>{if(!s.id){let n=i+1,id=s.classList.contains('hero')?'intro':'s'+n;while(ids.has(id))id='s'+(++n);s.id=id;ids.add(id)}});
+const title=s=>s.dataset.toc||$('h2,h1,h3',s)?.textContent||s.id;
+const toc=document.createElement('nav');toc.className='toc';toc.id='lesson-toc';toc.setAttribute('aria-label','目录');
+const heading=document.createElement('b');heading.textContent='目录';toc.appendChild(heading);const ol=document.createElement('ol');toc.appendChild(ol);
+sections.forEach((s,i)=>{const li=document.createElement('li'),a=document.createElement('a');a.href='#'+s.id;a.textContent=(i+1)+'. '+title(s);li.appendChild(a);ol.appendChild(li)});document.body.appendChild(toc);
+const links=$$('a',toc),toggle=$('.toc-toggle'),count=$('.count'),bar=$('.track i');
+const shade=document.createElement('div');shade.className='toc-backdrop';document.body.appendChild(shade);
+function open(value){H.classList.toggle('toc-open',value);toggle?.setAttribute('aria-expanded',String(value));if(value)links.find(a=>a.getAttribute('aria-current')==='true')?.focus();else toggle?.focus()}
+if(toggle){toggle.setAttribute('aria-controls',toc.id);toggle.onclick=()=>open(!H.classList.contains('toc-open'))}shade.onclick=()=>open(false);
+addEventListener('keydown',e=>{if(e.key==='Escape'&&H.classList.contains('toc-open'))open(false)});
+function locate(hash){let id;try{id=decodeURIComponent(hash.replace(/^#/,''))}catch(e){return null}if(/^\d+$/.test(id))return sections[+id-1];return document.getElementById(id)}
+function jump(target){if(!target)return;H.classList.remove('toc-open');toggle?.setAttribute('aria-expanded','false');target.scrollIntoView({block:'start',behavior:'instant'});history.replaceState(null,'','#'+target.id);update();dispatchEvent(new Event('lesson:navigate'))}
+window.lessonNav={layout:H.dataset.layout,go:n=>jump(document.getElementById('s'+n)||sections[n-1]),returnTo:box=>jump(box.closest('.sec')||box),jump};window.goCard=n=>window.lessonNav.go(n);
+toc.onclick=e=>{const a=e.target.closest('a');if(!a)return;e.preventDefault();jump(locate(a.hash))};
+const key='pos:'+location.pathname;let queued=false,restoring=true;
+function update(){queued=false;let current=sections[0];const line=H.dataset.layout==='pair'&&innerWidth<=820?innerHeight*.4+90:100;for(const s of sections)if(s.getBoundingClientRect().top<=line)current=s;
+ count.textContent=title(current);links.forEach(a=>a.setAttribute('aria-current',String(a.hash==='#'+current.id)));const max=H.scrollHeight-innerHeight;bar.style.width=Math.max(0,Math.min(100,max>0?scrollY/max*100:100))+'%';
+ if(!restoring)try{localStorage.setItem(key,JSON.stringify({id:current.id,offset:scrollY-(current.getBoundingClientRect().top+scrollY)}))}catch(e){}
+}
+addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(update)}},{passive:true});addEventListener('resize',update);addEventListener('hashchange',()=>jump(locate(location.hash)));
+addEventListener('load',()=>{const hash=window.__H||location.hash;let target=locate(hash),offset=0;if(!hash){try{const pos=JSON.parse(localStorage.getItem(key)||'null');if(pos){target=document.getElementById(pos.id);offset=Number(pos.offset)||0}}catch(e){}}
+ if(target){target.scrollIntoView({block:'start',behavior:'instant'});if(!hash)scrollBy(0,offset+72)}restoring=false;update();
+});update();
+})();
+</script><script>/* Reveal an offscreen simulator first, then move only its local SVG viewport. */
+(function(root){
+function delta(start,end,low,high,pad=16){if(start<low+pad)return start-low-pad;if(end>high-pad)return end-high+pad;return 0}
+function focus(svg,scroller){
+ let frame=scroller.getBoundingClientRect(),bottom=innerHeight-88;
+ const top=document.querySelector('.top')?.getBoundingClientRect().bottom||56;
+ if(frame.bottom<=top||frame.top+112>bottom){
+  scroller.closest('.sim').scrollIntoView({block:'start',behavior:'instant'});
+  frame=scroller.getBoundingClientRect();
+ }
+ for(let p=scroller.parentElement;p&&p!==document.body;p=p.parentElement){const c=getComputedStyle(p);if(/auto|scroll|hidden|clip/.test(c.overflowY)){const r=p.getBoundingClientRect();bottom=Math.min(bottom,r.top+p.clientHeight)}}
+ const space=Math.max(112,Math.min(innerHeight*.4,bottom-frame.top));scroller.style.maxHeight=space+'px';
+ frame=scroller.getBoundingClientRect();const node=svg.querySelector('.fl-node.act');if(!node)return;const r=node.getBoundingClientRect();
+ scroller.scrollTop+=delta(r.top,r.bottom,frame.top,frame.top+scroller.clientHeight);
+ scroller.scrollLeft+=delta(r.left,r.right,frame.left,frame.left+scroller.clientWidth);
+}
+root.LessonGeometry={delta,focus};if(typeof module!=='undefined')module.exports={delta,focus};
+})(typeof window==='undefined'?globalThis:window);
+</script><script>/* Shared material/explanation pairing, original-image dialog and copy actions. */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)],ic=window.lessonIcon;
+window.lessonCopy=async(text,button)=>{try{if(navigator.clipboard?.writeText)await navigator.clipboard.writeText(text);else{const t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();if(!document.execCommand('copy'))throw Error('copy');t.remove()}button.textContent='已复制'}catch(e){button.textContent='复制未成功，请选中文字复制'}};
+$$('.pair.codewalk,.pair.read-pair,.pair.material-pair').forEach(pair=>{
+ const source=$('.pair-source',pair),notes=$('.pair-notes',pair);if(!source||!notes)return;
+ const pre=$('pre[data-lines]',source),code=pre&&$('code',pre),steps=$$('.step',notes);let lines=[],raw='';
+ if(code){raw=code.textContent;const first=Number(pre.dataset.lines)||1;code.textContent='';const pieces=raw.replace(/\n$/,'').split('\n');pieces.forEach((text,i)=>{const line=document.createElement('span');line.className='code-line';line.dataset.line=String(first+i);line.textContent=text;code.appendChild(line);lines.push(line)});
+  const panel=document.createElement('div');panel.className='code-panel';source.before(panel);
+  const toolbar=document.createElement('div');toolbar.className='code-toolbar';
+  const hint=document.createElement('span');hint.className='code-scroll-hint';hint.textContent='长行可横向滚动';
+  const button=document.createElement('button');button.className='btn sm copy-code';button.innerHTML=ic('copy')+' 复制代码';button.onclick=()=>window.lessonCopy(raw,button);
+  toolbar.append(hint,button);panel.append(toolbar,source);
+ }
+ let active=null;
+ function select(step){if(!step||active===step)return;active=step;steps.forEach(s=>s.classList.toggle('is-active',s===step));let targets=[];
+  if(code){const ranges=(step.dataset.hl||'').split(',').map(v=>v.split('-').map(Number));lines.forEach(line=>{const n=Number(line.dataset.line),on=ranges.some(([a,b=a])=>n>=a&&n<=b);line.classList.toggle('hl',on);if(on)targets.push(line)})}
+  else{const ids=(step.dataset.explains||step.dataset.target||'').split(/\s+/);$$('.source-block,[data-material]',source).forEach(block=>{const on=ids.includes(block.dataset.sourceId||block.id);block.classList.toggle('is-active',on);if(on)targets.push(block)})}
+  if(targets.length){const a=targets[0].getBoundingClientRect(),b=targets[targets.length-1].getBoundingClientRect(),r=source.getBoundingClientRect();const bottom=r.top+source.clientHeight;source.scrollTop+=b.bottom-a.top>source.clientHeight-32?a.top-r.top-16:window.LessonGeometry.delta(a.top,b.bottom,r.top,bottom)}
+ }
+ const update=()=>{
+  const rect=notes.getBoundingClientRect(),material=source.closest('.code-panel')||source;
+  const top=Math.max(0,$(".top")?.getBoundingClientRect().bottom||0,innerWidth<=820?material.getBoundingClientRect().bottom:0),bottom=Math.min(innerHeight,rect.bottom);
+  if(bottom<=top)return;
+  const line=top+(bottom-top)*.4;let step=steps[0];
+  for(const s of steps)if(s.getBoundingClientRect().top<=line)step=s;
+  const last=steps.at(-1),lastRect=last?.getBoundingClientRect();
+  if(scrollY+innerHeight>=document.documentElement.scrollHeight-2&&lastRect?.top<bottom&&lastRect.bottom>top)step=last;
+  select(step);
+ };
+ let queued=false;addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(()=>{queued=false;update()})}},{passive:true});addEventListener('resize',update);
+ steps.forEach(step=>{step.addEventListener('focusin',()=>select(step));step.addEventListener('click',e=>{select(step);const a=e.target.closest('a');if(a?.hash&&source.querySelector(a.hash)){e.preventDefault();source.focus()}})});select(steps[0]);addEventListener('load',update);
+});
+$$('figure img').forEach(img=>{const button=document.createElement('button');button.className='image-open';button.type='button';button.setAttribute('aria-label','放大图片：'+img.alt);img.replaceWith(button);button.appendChild(img);button.onclick=()=>{
+ const dialog=document.createElement('dialog');dialog.className='image-dialog';dialog.setAttribute('aria-label',img.alt);const close=document.createElement('button');close.className='btn dialog-close';close.innerHTML=ic('x')+' 关闭';const large=img.cloneNode();large.removeAttribute('loading');dialog.append(close,large);document.body.appendChild(dialog);close.onclick=()=>dialog.close();dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close()});dialog.addEventListener('close',()=>{dialog.remove();button.focus()});dialog.showModal();close.focus();
+}});
+$$('details.more summary').forEach(s=>{if(!s.textContent.trim())s.textContent='展开细节';s.insertAdjacentHTML('afterbegin',ic('chevron-right'))});
+})();
+</script><script>/* 学习搭子 固定组件库 — 不要在课程里改这个文件。 */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const NS='http://www.w3.org/2000/svg';
+const data=(box,kind)=>JSON.parse(box.querySelector('script[type="application/json"]')?.textContent||box.dataset[kind]);
+const ic=window.lessonIcon;
+const el=(t,a={},p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p&&p.appendChild(e);return e};
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+function component(selector,render){
+  $$(selector).forEach(box=>{try{render(box)}catch(error){
+    const message=document.createElement('p');message.className='component-error';
+    message.textContent='这张图的数据有误';message.setAttribute('role','status');
+    box.replaceWith(message);console.error('组件数据有误',error);
+  }});
+}
+
+/* ---------- flow：用 JSON 画流程图 ----------
+ spec = {w,h,nodes:[{id,x,y,t,s?,c?,w?}],edges:[{f,t,l?,bend?}]}  节点坐标是中心点 */
+function drawFlow(svg,spec){
+  svg.innerHTML='';
+  const defs=el('defs',{},svg);
+  [['a','var(--meta)'],['b','var(--blue)'],['red','var(--amber)'],['amber','var(--amber)'],['green','var(--green)']].forEach(([id,c])=>{const m=el('marker',{id:'ar'+id+svg.dataset.uid,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:7,markerHeight:7,orient:'auto-start-reverse'},defs);el('path',{d:'M0,0L10,5L0,10z',fill:c},m)});
+  const N={};spec.nodes.forEach(n=>N[n.id]={...n,w:n.w||150,h:n.h||(n.s?70:56)});
+  const ns=Object.values(N);
+  let x0=Math.min(...ns.map(n=>n.x-n.w/2)),x1=Math.max(...ns.map(n=>n.x+n.w/2)),y0=Math.min(...ns.map(n=>n.y-n.h/2)),y1=Math.max(...ns.map(n=>n.y+n.h/2));
+  const B={x0,x1,y0,y1};
+  const eg=el('g',{},svg),ng=el('g',{},svg);svg._edges={};svg._nodes={};
+  const clip=(a,b)=>{const dx=b.x-a.x,dy=b.y-a.y;const s=Math.min(Math.abs((a.w/2+6)/(dx||1e-9)),Math.abs((a.h/2+6)/(dy||1e-9)));return[a.x+dx*s,a.y+dy*s]};
+  spec.edges.forEach(e=>{const a=N[e.f],b=N[e.t];let d,lx,ly;
+    if(e.route){ /* 沿外圈走的直角线：top|bottom|left|right，lane 控制离外框的距离 */
+      const g=30+(e.lane||0)*30,oa=e.oa||0,ob=e.ob||0;
+      if(e.route==='top'||e.route==='bottom'){const t=e.route==='top',Y=t?B.y0-g:B.y1+g,ya=a.y+(t?-1:1)*(a.h/2+2),yb=b.y+(t?-1:1)*(b.h/2+8);
+        d=`M${a.x+oa},${ya} V${Y} H${b.x+ob} V${yb}`;lx=(a.x+oa+b.x+ob)/2;ly=Y+(t?-8:18);
+        t?(y0=Math.min(y0,Y-26)):(y1=Math.max(y1,Y+26));}
+      else{const l=e.route==='left',X=l?B.x0-g:B.x1+g,xa=a.x+(l?-1:1)*(a.w/2+2),xb=b.x+(l?-1:1)*(b.w/2+8);
+        d=`M${xa},${a.y+oa} H${X} V${b.y+ob} H${xb}`;lx=X+(l?-8:8);ly=(a.y+b.y)/2;
+        l?(x0=Math.min(x0,X-90)):(x1=Math.max(x1,X+90));}
+    }else{const[p1,q1]=clip(a,b),[p2,q2]=clip(b,a);const mx=(p1+p2)/2,my=(q1+q2)/2,len=Math.hypot(p2-p1,q2-q1)||1,bd=e.bend||0;
+      const cx=mx-(q2-q1)/len*bd,cy=my+(p2-p1)/len*bd;d=`M${p1},${q1} Q${cx},${cy} ${p2},${q2}`;
+      const qx=.25*p1+.5*cx+.25*p2,qy=.25*q1+.5*cy+.25*q2,sg=bd>=0?1:-1;lx=qx-(q2-q1)/len*sg*14;ly=qy+(p2-p1)/len*sg*14+4;}
+    const mk=e.c||'a';const p=el('path',{d,class:'fl-edge '+(e.c||''),'marker-end':`url(#ar${mk}${svg.dataset.uid})`},eg);p._mk=mk;
+    let lab=null;if(e.l){const anc=e.route==='left'?'end':e.route==='right'?'start':'middle';lab=el('text',{x:lx,y:ly,'text-anchor':anc,class:'fl-elab '+(e.c||''),stroke:'var(--paper)','stroke-width':5,'paint-order':'stroke'},eg);lab.textContent=e.l}
+    svg._edges[e.f+'>'+e.t]={p,lab}});
+  ns.forEach(n=>{const g=el('g',{class:'fl-node '+(n.c||'')},ng);
+    el('rect',{x:n.x-n.w/2,y:n.y-n.h/2,width:n.w,height:n.h,rx:14},g);
+    const t=el('text',{x:n.x,y:n.y+(n.s?-4:6),'text-anchor':'middle'},g);t.textContent=n.t;
+    if(n.s){const s=el('text',{x:n.x,y:n.y+18,'text-anchor':'middle',class:'sub'},g);s.textContent=n.s}
+    svg._nodes[n.id]=g});
+  /* 自动贴合：viewBox 只包住内容，图会放大填满面板 */
+  const P=spec.pad??8,W=x1-x0+2*P,H=y1-y0+2*P+20;
+  svg.setAttribute('viewBox',`${x0-P} ${y0-P-10} ${W} ${H}`);
+  svg.style.setProperty('--flow-width',W+'px');svg.style.setProperty('--flow-height',H+'px');
+  const scroll=document.createElement('div');scroll.className='flow-scroll';
+  svg.replaceWith(scroll);scroll.appendChild(svg);
+  if(!scroll.closest('.sim')&&W>innerWidth-78){const t=document.createElement('p');t.className='flow-tip';t.textContent='← 左右滑动看全图 →';scroll.after(t)}
+  svg._set=(act,edge)=>{for(const k in svg._nodes)svg._nodes[k].classList.toggle('act',k===act);
+    for(const k in svg._edges){const on=k===edge,E=svg._edges[k];E.p.classList.toggle('act',on);E.p.setAttribute('marker-end',`url(#ar${on?'b':E.p._mk}${svg.dataset.uid})`);E.lab&&E.lab.classList.toggle('act',on)}};
+  svg._set(svg.dataset.act,svg.dataset.edge);
+  svg._center=()=>{if(!matchMedia('(max-width:820px)').matches)return;
+    const active=Object.values(svg._nodes).find(n=>n.classList.contains('act'));if(!active)return;
+    const a=active.getBoundingClientRect(),r=scroll.getBoundingClientRect();
+    scroll.scrollLeft+=a.left+a.width/2-r.left-r.width/2;
+  };
+}
+let uid=0;
+component('svg.flow',s=>{s.dataset.uid=++uid;drawFlow(s,data(s,'flow'))});
+
+/* ---------- sim：一步步走的模拟器 ----------
+ data-sim = {flow:{...}, steps:[{act,edge,msg:{r:user|asst|tool|err|sys,n?,t},say}], alt?:{label,steps:[...]}} */
+component('.sim',box=>{
+  const spec=data(box,'sim');if(spec.alt&&!spec.alts)spec.alts=[spec.alt];const AL=spec.alts||[];const gname='br'+(++uid);
+  box.innerHTML=`<div class="ctl"><button class="btn sm" data-a="step">下一步</button><button class="btn sm" data-a="play">${ic("play")} 自动</button><button class="btn sm" data-a="reset">重置</button>
+   <label>速度 <input type="range" min="300" max="2500" step="100" value="1200"></label></div>${AL.length?`<div class="ctl branches"><label><input type="radio" name="${gname}" value="-1" checked> ${esc(spec.label||'正常路径')}</label>${AL.map((a,j)=>`<label><input type="radio" name="${gname}" value="${j}"> ${esc(a.label)}</label>`).join('')}</div>`:''}
+   <div class="body"><svg class="flow"></svg><div class="log"></div></div><div class="narr"></div>`;
+  if(spec.layout==='wide')box.classList.add('wide');
+  const svg=$('.body > svg.flow',box);svg.dataset.uid=++uid;drawFlow(svg,spec.flow);
+  const fs=svg.parentElement,tip=document.createElement('p');tip.className='flow-tip';tip.textContent='点图放大看字，再点回到全图';fs.after(tip);
+  const focus=()=>{if(!fs.classList.contains('zoom'))return svg._center();window.LessonGeometry.focus(svg,fs)};
+  const zoom=document.createElement('button');zoom.className='btn sm zoom-toggle';zoom.innerHTML=ic('zoom-in')+' 放大图';zoom.setAttribute('aria-pressed','false');tip.replaceWith(zoom);const toggle=()=>{const on=fs.classList.toggle('zoom');zoom.innerHTML=ic(on?'zoom-out':'zoom-in')+(on?' 返回全图':' 放大图');zoom.setAttribute('aria-pressed',String(on));if(!on){fs.style.maxHeight='';fs.scrollTop=0}focus()};fs.onclick=toggle;zoom.onclick=toggle;window.addEventListener('resize',focus);window.addEventListener('load',()=>requestAnimationFrame(()=>{const params=new URLSearchParams(location.search);if((params.has('sim')||params.has('zoom'))&&!(window.__H??location.hash)&&box===$('.sim')){const section=box.closest('.sec,.card');if(window.lessonNav.layout==='deck')window.goCard($$('.card').indexOf(section)+1);else section.scrollIntoView({block:'start',behavior:'instant'})}focus()}));window.addEventListener('lesson:navigate',()=>requestAnimationFrame(focus));
+  const log=$('.log',box),narr=$('.narr',box),radios=$$('input[type=radio]',box),spd=$('input[type=range]',box),play=$('[data-a=play]',box);
+  let i=0,timer=null,predicted=!spec.predict;const prediction=document.createElement('div');if(spec.predict){prediction.className='prediction callout';prediction.innerHTML='<p>先预测：'+esc(spec.predict)+'</p><label>你的判断<textarea rows="2"></textarea></label><button class="btn sm" data-a="predict">提交预测，再看过程</button>';box.prepend(prediction)};const sel=()=>{const r=radios.find(r=>r.checked);return r?+r.value:-1};const steps=()=>sel()>=0?AL[sel()].steps:spec.steps;
+  const hint=spec.note?esc(spec.note)+'　点「下一步」开始。':'点「下一步」开始。';const reset=()=>{i=0;log.innerHTML='';narr.innerHTML=hint;svg._set(null,null);stop()};
+  const stop=()=>{clearTimeout(timer);timer=null;play.innerHTML=ic('play')+' 自动'};
+  const step=()=>{const S=steps();if(i>=S.length){narr.textContent='流程结束。点「重置」再走一遍。';stop();return false}
+    const s=S[i++];svg._set(s.act,s.edge);focus();if(s.msg){const d=document.createElement('div');d.className='msg '+s.msg.r;
+      d.innerHTML=`<b>${esc(s.msg.n||({user:'用户',asst:'模型',tool:'工具结果',err:'出错',sys:'系统提示词'}[s.msg.r]))}</b>${esc(s.msg.t)}`;log.appendChild(d);log.scrollTop=1e9}
+    narr.innerHTML=`<b>第 ${i}/${S.length} 步</b>　${esc(s.say)}`;return true};
+  const loop=()=>{if(step())timer=setTimeout(loop,+spd.value);else stop()};
+  box.onclick=e=>{const a=e.target.closest('button')?.dataset.a;if(a==='predict'){predicted=true;prediction.hidden=true;step()}if(a==='step'){stop();if(predicted)step();else prediction.querySelector('textarea').focus()}if(a==='reset')reset();if(a==='play'){if(!predicted){prediction.querySelector('textarea').focus();return}if(timer)stop();else{play.innerHTML=ic('pause')+' 暂停';loop()}}};
+  narr.innerHTML=hint;radios.forEach(r=>r.onchange=reset);
+  const P=new URLSearchParams(location.search);if(P.get('alt')&&radios[+P.get('alt')]){radios[+P.get('alt')].checked=true}for(let n=+P.get('sim')||0;n>0;n--)step();if(P.get('sim')){predicted=true;prediction.hidden=true}if(P.get('zoom')){fs.classList.add('zoom');zoom.setAttribute('aria-pressed','true');zoom.innerHTML=ic('zoom-out')+' 返回全图'} /* 自查用：?sim=5&alt=1&zoom=1 */
+});
+
+/* ---------- bars：横向条形图 ----------
+ data-bars = {unit, items:[{l,v,c?:blue|amber|green|red,note?}], caption?}  数字必须来自原文 */
+component('.bars',box=>{const B=data(box,'bars'),mx=Math.max(1,...B.items.filter(i=>i.v!=null).map(i=>i.v));
+  box.innerHTML=B.items.map(i=>`<div class="bar ${i.c||''}"><span class="bl">${esc(i.l)}</span>${i.v==null?`<span class="bmiss">${esc(i.miss||'原文未给数字')}</span>`:`<span class="bt"><i style="width:${(i.v/(B.axis==='independent'?Math.max(1,i.v):mx)*100).toFixed(1)}%"></i></span><span class="bv">${esc(i.v)}${esc(i.unit||B.unit||'')}</span>`}${i.note?`<span class="bn">${esc(i.note)}</span>`:''}</div>`).join('')+(B.caption?`<div class="bc">${esc(B.caption)}</div>`:'')});
+
+/* ---------- quiz：页内小测 ----------
+ data-quiz = [{q,opts:[...],a:正确下标,why,back:答错时回到第几张卡片}] */
+component('.quiz,.checkpoint',box=>{
+  const checkpoint=box.classList.contains('checkpoint');box.classList.add('quiz');const raw=data(box,checkpoint?'checkpoint':'quiz'),Q=Array.isArray(raw)?raw:[raw],P=new URLSearchParams(checkpoint?'':location.search);
+  let k=Math.max(0,Math.min(Q.length-1,(parseInt(P.get('q'))||1)-1));
+  const answers=Q.map(()=>({first:null,selected:null,retries:0}));
+  const score=()=>answers.filter((s,i)=>s.first===Q[i].a).length;
+  const complete=()=>answers.every(s=>s.selected!==null);
+  const reviewButton=i=>{
+    const target=window.lessonNav.layout==='deck'?$$('.card')[Q[i].back-1]:document.getElementById('s'+Q[i].back);
+    const title=target.dataset.toc||$('h2,h1,h3',target)?.textContent||'相关内容';
+    return `<button class="btn sm" data-review="${i}">回看：${esc(title)}</button>`;
+  };
+  function summary(){
+    const wrong=answers.map((s,i)=>s.first!==Q[i].a?i:-1).filter(i=>i>=0);
+    const recovered=wrong.filter(i=>answers[i].selected===Q[i].a).length;
+    box.innerHTML=`<div class="qt">小测总结</div><p>首次得分：${score()} / ${Q.length}。重试答对：${recovered} 题。</p>
+      <div>${wrong.length?wrong.map(i=>`<p>第 ${i+1} 题：${esc(Q[i].q)} ${reviewButton(i)} <button class="btn sm" data-question="${i}">回到此题</button></p>`).join(''):'没有首次错题。'}</div>
+      <p>用自己的话复述这页的核心机制，再举一个新场景。</p><label>你的复述<textarea class="retelling" rows="3"></textarea></label><button class="btn sm" data-copy-result="1">${ic("copy")} 复制学习结果 JSON</button><button class="btn sm" data-question="0">查看作答</button>`;
+  }
+  function render(){const q=Q[k],s=answers[k];
+    box.innerHTML=`<div class="qn">第 ${k+1} / ${Q.length} 题 ${checkpoint?'· 不计分':'· 首次答对 '+score()}</div><div class="qt">${esc(q.q)}</div>
+      ${q.opts.map((o,j)=>`<button class="opt ${s.selected===null?'':j===s.selected?(j===q.a?'ok':'no'):''}" data-j="${j}" aria-pressed="${j===s.selected}">${String.fromCharCode(65+j)}. ${esc(o)}</button>`).join('')}
+      <div class="fb" aria-live="polite">${s.selected===null?'':s.selected===q.a?ic('check')+' 对。'+esc(q.why):ic('x')+' 不对。先回去看看，或再试一次。'}
+      ${s.selected!==null&&s.selected!==q.a?reviewButton(k)+' <button class="btn sm" data-retry="1">再试一次</button>':''}</div>
+      <div class="nav"><button class="btn sm" data-n="-1" ${k?'':'disabled'}>上一题</button>
+      <button class="btn sm main" data-n="1" ${s.selected===null?'disabled':''}>${checkpoint?'完成检查':k===Q.length-1?'查看总结':'下一题'}</button></div>`;
+  }
+  box.onclick=e=>{const t=e.target.closest('button');if(!t)return;
+    if(t.dataset.review!==undefined){const i=+t.dataset.review;window.lessonNav.go(Q[i].back);
+      let ret=$('#quiz-return');if(!ret){ret=document.createElement('button');ret.id='quiz-return';ret.className='btn sm';document.body.appendChild(ret)}
+      ret.textContent='回到小测';ret.onclick=()=>{window.lessonNav.returnTo(box);ret.remove()};return;
+    }
+    if(t.dataset.copyResult!==undefined){const result={path:location.pathname,firstScore:score(),total:Q.length,answers:answers.map((s,i)=>({question:i+1,first:s.first,selected:s.selected,retries:s.retries,wrong:s.first!==Q[i].a,review:'#s'+Q[i].back})),retelling:$('.retelling',box).value};window.lessonCopy(JSON.stringify(result,null,2),t);return}
+    if(t.dataset.question!==undefined){k=+t.dataset.question;render();return}
+    if(t.dataset.retry){answers[k].selected=null;answers[k].retries++;render();return}
+    if(t.dataset.n){if(checkpoint&&+t.dataset.n===1){box.querySelector('.nav').hidden=true;return}if(k===Q.length-1&&+t.dataset.n===1){if(complete())summary();else{k=answers.findIndex(s=>s.selected===null);render()}return}k+=+t.dataset.n;render();return}
+    if(t.dataset.j===undefined||answers[k].selected!==null)return;
+    const j=+t.dataset.j;answers[k].selected=j;if(answers[k].first===null)answers[k].first=j;render();const nv=$('.nav',box);nv&&nv.scrollIntoView&&nv.scrollIntoView({block:'nearest'});
+  };
+  render();
+  const pk=P.get('pick'),pick=pk==='wrong'?Q[k].opts.findIndex((_,i)=>i!==Q[k].a):pk!==null&&/^\d+$/.test(pk)?+pk:-1;
+  if(pick>=0&&$$('.opt',box)[pick])$$('.opt',box)[pick].click();
+
+});
+
+})();
+</script><script>/* End-of-build readiness marker, used by the screenshot harness. */
+document.querySelector('.theme-toggle').onclick=window.__tt;
+window.__lessonReady=true;
+</script><script>/* ---------- 学完了：点一下记为已学完（存在本机浏览器） ---------- */
+(function(){if(window.__finish)return;window.__finish=1;
+if(!document.querySelector('.deck'))return;
+const st=document.createElement('style');st.textContent=`.fin-btn{position:fixed;right:16px;bottom:76px;z-index:50;padding:10px 16px;border-radius:999px;border:0;background:#16a34a;color:#fff;font:600 15px system-ui;box-shadow:0 4px 14px rgba(0,0,0,.18);cursor:pointer}.fin-btn.done{background:#e5e7eb;color:#166534}`;document.head.appendChild(st);
+const p=n=>String(n).padStart(2,'0');
+const doneKeys=()=>{const out=new Set();const seed=location.pathname;const vs=new Set([seed]);if(seed.endsWith('/index.html')){const d=seed.slice(0,-10);vs.add(d);vs.add(d.replace(/\/$/,'')||'/')}else if(seed.endsWith('/')){vs.add(seed+'index.html');vs.add(seed.replace(/\/$/,'')||'/')}else if(!/\.[a-z0-9]+$/i.test(seed)){vs.add(seed+'/');vs.add(seed+'/index.html')}for(const u of vs){out.add(u);const m=u.match(/^(.*)\/courses\/(.+)$/);if(m)out.add(m[1]+'/'+m[2]);const m2=u.match(/^(.*)\/(cs146s)\/(.+)$/);if(m2&&!u.includes('/courses/'))out.add(m2[1]+'/courses/'+m2[2]+'/'+m2[3])}return[...out]};
+const getDone=()=>{for(const k of doneKeys()){const d=localStorage.getItem('done:'+k);if(d)return d}return null};
+const setDone=v=>{for(const k of doneKeys())localStorage.setItem('done:'+k,v)};
+const clearDone=()=>{for(const k of doneKeys())localStorage.removeItem('done:'+k)};
+const b=document.createElement('button');b.className='fin-btn';document.body.appendChild(b);
+const show=()=>{const d=getDone();b.classList.toggle('done',!!d);b.textContent=d?'✓ 已学完 '+d:'✓ 学完了';b.title=d?'再点一下取消':''};show();
+b.onclick=()=>{if(getDone()){if(confirm('取消「已学完」记录？'))clearDone()}else{const x=new Date();setDone(x.getFullYear()+'-'+p(x.getMonth()+1)+'-'+p(x.getDate()))}show()};
+})();
+</script><script src="../../assets/gh.js" defer></script><script src="../../assets/progress.js" defer></script></body></html>

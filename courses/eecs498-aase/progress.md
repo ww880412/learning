@@ -1,3 +1,7 @@
 # EECS 498 AASE 学习进度
 - L01 Course intro + the AI coding landscape：进行中，2026-10-12 开始。待小测和复述。
 - L02 How LLMs Code (Under the Hood)：进行中，2026-10-17 开始。14 张卡片、诊断三问模拟器、6 道小测。待小测和复述。
+- L03 The Big Three: Context, Model, Prompt：进行中，2026-10-28 开始。图文长读，原图 2 张，3 道小测。待小测和复述。
+- L04 Spec-Driven Development：进行中，2026-10-28 开始。图文长读，原表 1 张，3 道小测。待小测和复述。
+- L05 Modern agentic CLIs：进行中，2026-10-28 开始。图文长读，原图 3 张、原表 4 张，3 道小测。待小测和复述。
+- L06 From pair-coding to agent orchestration：进行中，2026-10-28 开始。图文长读，原表 7 张，3 道小测。待小测和复述。
