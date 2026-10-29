@@ -5,3 +5,4 @@
 - L04 Positional Embedding：未开始（学习页 10-28 做好；官方 pos.pdf 64 页 + 影片 Ll-wk8x3G_g 字幕 90 分钟按分钟并入）。
 - L05 Harness Engineering：未开始（学习页 10-28 做好；官方 harness.pdf 63 页 + 影片 R6fZR_9kmIw 字幕 93 分钟按分钟并入）。
 - L06 Self-Correction：未开始（学习页 10-28 做好；Self-Correction.pdf 65 页 + 影片 m3i2mk5hs8U 字幕 88 分钟按分钟并入）。
+- L07 人工智慧能否自我成長（上）：未开始（学习页 10-28 做好；Self-Improving.pdf 62 页 + 影片 s06mSAGN4gM 字幕 64 分钟按分钟并入）。
