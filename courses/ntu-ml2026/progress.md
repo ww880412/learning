@@ -3,3 +3,4 @@
 - L02 AI Agent-2：Context Engineering / Agent 互动 / 学术研究冲击：未开始（学习页已做好）。
 - L03 Flash Attention + KV Cache：未开始（学习页已做好）。
 - L04 Positional Embedding：未开始（学习页 10-28 做好；官方 pos.pdf 64 页 + 影片 Ll-wk8x3G_g 字幕 90 分钟按分钟并入）。
+- L05 Harness Engineering：未开始（学习页 10-28 做好；官方 harness.pdf 63 页 + 影片 R6fZR_9kmIw 字幕 93 分钟按分钟并入）。
