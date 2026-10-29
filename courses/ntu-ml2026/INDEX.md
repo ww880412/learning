@@ -8,3 +8,4 @@
 | L03 | Flash Attention（online softmax）、KV Cache 及其省空间变体、跨对话 cache | L03-flash-attention-kv-cache.html | inference.pdf（55 页）、影片 vXb2QYOUzl4 / fDQaadKysSA |
 | L04 | Positional Embedding：Sinusoidal 的相对位置性质、ALiBi/T5、RoPE、Train short test long（PI、NTK-aware、YaRN、Dynamic、LongRoPE）、NoPE/DroPE | L04-positional-embedding.html | pos.pdf（64 页）、影片 youtu.be/Ll-wk8x3G_g |
 | L05 | Harness Engineering：认知框架 / 能力边界 / 工作流、过度责备、Life-long Agent、Meta-harness | L05-harness-engineering.html | harness.pdf（63 页）、影片 youtu.be/R6fZR_9kmIw |
+| L06 | Self-Correction：Contrastive Decoding 一族、反思指令、RLVR | L06-self-correction.html | Self-Correction.pdf（65 页）、影片 youtu.be/m3i2mk5hs8U |
