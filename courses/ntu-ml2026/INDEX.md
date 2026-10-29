@@ -10,3 +10,4 @@
 | L05 | Harness Engineering：认知框架 / 能力边界 / 工作流、过度责备、Life-long Agent、Meta-harness | L05-harness-engineering.html | harness.pdf（63 页）、影片 youtu.be/R6fZR_9kmIw |
 | L06 | Self-Correction：Contrastive Decoding 一族、反思指令、RLVR | L06-self-correction.html | Self-Correction.pdf（65 页）、影片 youtu.be/m3i2mk5hs8U |
 | L07 | 人工智慧能否自我成長（上）：Proxy Reward、RLAIF、Absolute Zero、PostTrainBench | L07-self-improving.html | Self-Improving.pdf（62 页）、影片 youtu.be/s06mSAGN4gM |
+| L08 | 人工智慧能否自我成長（下）：Prompt Optimization、TTT、HyperAgent、内在动机 | L08-self-evolving-agent.html | self-evolving-agent.pdf（64 页）、影片 youtu.be/cQLKVzbwN7I |
