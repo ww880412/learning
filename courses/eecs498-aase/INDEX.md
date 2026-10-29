@@ -15,3 +15,4 @@
 | L10 | Skills 与 Elephant-Goldfish Model：SKILL.md、渐进披露、Elephant 与 Goldfish | L10-skills.html | materials/lectures/L10/slides.md（含讲者备注） |
 | L11 | Guardrails：错误分类与重试、审批提示、审批关卡与评估 | L11-guardrails.html | materials/lectures/L11/slides.md（含讲者备注）+ slides.pdf 第 2/4/5/18/21 页渲染图 |
 | L13 | 浏览器扩展与能发短信使唤的助手：扩展的驱动与权限、常驻助手的五块拼图 | L13-browser-extensions.html | materials/lectures/L13/slides.md（含讲者备注）+ slides.pdf 16 页渲染图 |
+| L14 | Subagents：长会话为何变差、Agent 工具与一次委派、新开与分叉、agent team / handoff / swarm、worktree 隔离 | L14-subagents.html | materials/lectures/L14/slides.md（含讲者备注）+ slides.pdf 36 页渲染图 |
