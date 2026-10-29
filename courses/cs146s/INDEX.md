@@ -8,3 +8,4 @@
 | L03 | 9/29 高级提示与上下文工程：RePPIT 五步现场演示、何时压缩与清上下文、按任务难度选流程 | L03-reppit.html | 课件（Google Slides 导出 PDF 18 页）+ 网站讲课实录 /materials/9-29-26-transcript.txt；原始资料在 _private/cs146s/（不发布） |
 | L04 | 10/1 MCP 与工具调用：M×N→M+N、术语与流程、服务器设计做法、code mode | L04-mcp.html | 课件（Google Slides 导出 PDF 17 页）+ 网站讲课实录 /materials/10-1-26-transcript.txt；原始资料在 _private/cs146s/（不发布） |
 | L05 | 10/6 Agent Skills 最佳实践：四类 skill、七条写法 | L05-skills.html | 课件（Google Slides 导出 PDF 15 页，网站无实录）；原始资料在 _private/cs146s/（不发布） |
+| L06 | 10/8 客座 Lee Robinson：常驻 agent（服务器、云端电脑、harness、上下文工程、记忆） | L06-always-on-agents.html | 课件（Google Drive PDF 46 页，网站无实录）；原始资料在 _private/cs146s/（不发布） |
