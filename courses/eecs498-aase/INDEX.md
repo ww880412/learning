@@ -13,3 +13,4 @@
 | L08 | Hackathon 1 简报：更强的模型、$25 额度、32K 预算、到场准备与证据记录 | L08-hackathon1-briefing.html | materials/lectures/L08/slides.md（含讲者备注） |
 | L09 | Stop conditions 与审批层：六个停止条件、退出行、审批的四个决定 | L09-stop-conditions.html | materials/lectures/L09/slides.md（含讲者备注与排练抓包） |
 | L10 | Skills 与 Elephant-Goldfish Model：SKILL.md、渐进披露、Elephant 与 Goldfish | L10-skills.html | materials/lectures/L10/slides.md（含讲者备注） |
+| L11 | Guardrails：错误分类与重试、审批提示、审批关卡与评估 | L11-guardrails.html | materials/lectures/L11/slides.md（含讲者备注）+ slides.pdf 第 2/4/5/18/21 页渲染图 |
