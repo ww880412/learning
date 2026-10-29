@@ -24,6 +24,160 @@
   ],
   "days": [
     {
+      "date": "2026-10-28",
+      "source": "https://www.producthunt.com/leaderboard/daily/2026/10/28",
+      "fetched": "2026-10-29 19:54 北京",
+      "note": "本次只拿到 PH 日榜前 10 名（页面只返回前 10），收 6 个；分数为抓取时综合分。今日未与《P-Hunt内容速览》交叉核对。",
+      "picks": [
+        {
+          "id": "2026-10-28-trigger-dev-webhooks",
+          "why": "webhook 先校验去重落库、按 key 归到同一 agent 会话、挂起等审批，正是工作台「事件唤醒 agent」要的骨架。",
+          "limit": "得把运行做成可挂起可恢复；重复事件引发重复副作用怎么防，官方还没正面回答。"
+        },
+        {
+          "id": "2026-10-28-botgauge",
+          "why": "红队打穿的每个案例带 trace 变成永久回归用例，可直接参考做工作台的 agent 评测。",
+          "limit": "不开源、价格未公开，安全认证是官网自述。"
+        },
+        {
+          "id": "2026-10-28-dedica",
+          "why": "检查结果交付成「一问题一份 md、自带验证步骤」，丢给 coding agent 就能改，这个格式可以抄。",
+          "limit": "只扫线上网站，不能在发布前查代码；官网的统计数字来源未核实。"
+        }
+      ],
+      "items": [
+        {
+          "id": "2026-10-28-trigger-dev-webhooks",
+          "name": "Trigger.dev: Webhooks for your AI agents",
+          "tagline": "Run AI agents with Slack, Supabase and 50+ other services",
+          "ph": "https://www.producthunt.com/products/trigger-dev",
+          "site": "https://trigger.dev/docs/webhooks",
+          "repo": "https://github.com/triggerdotdev/trigger.dev",
+          "rank": 6,
+          "score": 145,
+          "comments": 6,
+          "what": "开源（Apache-2.0）的 TypeScript 后台任务和 agent 平台 Trigger.dev 新出的 Webhooks：一个托管 URL 接住 Stripe、Slack、GitHub、Sentry 等服务的回调，校验签名后分发给任务、agent 会话或正在等待的运行。",
+          "problem": "自己写「webhook 来了就叫 agent」常常乱成一团：重复投递、重试、超时、等人审批的运行挂着占资源。",
+          "highlight": "文档写明：每个请求先校验签名、去重、落库记一条 delivery，再按每个订阅者自己的 filter 分发，一个端点最多 25 个订阅者，没人匹配的投递不起运行、不计费。订阅者分四种：起一个新任务、投递给某个 agent 会话、作为聊天入口、唤醒在等这个事件的运行（waiter，等待期间挂起不占算力）。「会话路由」用 key 模板（如 {event.data.object.customer}）把同一客户/同一 issue 的事件送进同一个持久会话、按顺序处理；会话若绑定了 Slack 线程，事件触发的回答会发回那个线程。每个端点能生成一段给 coding agent 的配置提示词，也能用 MCP 工具读取。仓库抓取时约 1.67 万星。PH 评论里有人追问重复事件导致重复退款、审批几天没人回怎么超时，抓取时未见官方回答。",
+          "inspo": "工作台的「事件唤醒 agent」可以照这套分层抄：入口先校验、去重、落库，再按订阅者过滤分发；用「按 key 归到同一会话」解决同一个 PR、同一个工单的事件乱序，用「挂起等事件」做人工审批而不常驻进程。前提是工作台的 agent 运行本身可挂起、可恢复（有持久化的运行状态），否则 waiter 无从谈起。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "开源"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-28-botgauge",
+          "name": "BotGauge",
+          "tagline": "The trust layer for your agents",
+          "ph": "https://www.producthunt.com/products/botgauge-2",
+          "site": "https://www.botgauge.com/",
+          "repo": null,
+          "rank": 3,
+          "score": 250,
+          "comments": 42,
+          "what": "给工程团队的 agent 红队测试和评测平台：自适应地攻击你的 agent，记录完整 trace，把发现的失败变成每次发布都跑的回归评测，并监控线上行为。",
+          "problem": "agent 会调工具、动真数据，模型、提示词或工具一变就可能走出没想到的路径，而且这类失败通常不崩溃、只是悄悄做错。",
+          "highlight": "流程是红队（多轮、带工具和上下文的对抗场景，可自定义策略）、追踪（看提示词、回复、工具调用和执行路径）、评测（LLM 评判和代码检查）、策略护栏四段，一个发现可以直接沉淀成评测用例。团队在 PH 评论里举例：一个退款 agent 扛住了 117 次角色扮演攻击，第 118 次换个人设就跳过了审批；还说 agent 读到的文件、网页、工具输出都算攻击面。官网称有 SOC 2 Type II、SSO/SAML、细粒度权限，未独立验证。不开源，PH 标注有免费档，具体价格未获取。",
+          "inspo": "「每个被打穿的案例自动变成一条永久回归用例、带着原 trace 可重放」值得抄进工作台的 agent 评测：修了提示词之后拿同一份带毒文档、同一串工具调用重放，确认真修好了。前提是工作台能把一次运行的输入、工具返回完整录下来并能离线重放。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "AI工具"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-28-dedica",
+          "name": "Dedica",
+          "tagline": "Check if AI agents can use your website",
+          "ph": "https://www.producthunt.com/products/dedica",
+          "site": "https://getdedica.com",
+          "repo": null,
+          "rank": 1,
+          "score": 298,
+          "comments": 84,
+          "what": "检查你的网站 AI agent 能不能用：跑 125 项检查（发现、访问、可用性、支付四类），打分并给出修复清单，清单是写给 coding agent 的一份份 Markdown 指令文件。",
+          "problem": "很多网站对人好用、对软件不好用：人机验证挡住 agent、价格要 JS 才渲染、API 没有公开文档，agent 碰壁后不会报错，直接去别家。",
+          "highlight": "免费出分，不用注册；修复包 30 美元一次、按站点收（PH 评论里团队说是当前折扣价）。每个问题一份 md：发现了什么、改什么、怎么验证改好了，可以直接丢给 Claude Code、Codex、Cursor、Copilot。团队在评论里说除了静态检查还会派真实 agent 去操作网站；会查 MCP server、OpenAPI、llms.txt，llms.txt 里放链接就能被找到。官网称「只有 6% 的企业网站准备好了」「准备好的被推荐概率高 1.9 倍」，来源未核实。目前只能扫线上 URL，不支持发布前在代码层检查。",
+          "inspo": "「修复包=一问题一文件、每份自带验证步骤」这种交付格式可以搬到工作台：任何检查类工具的输出都写成 agent 能直接领走的任务卡，里面带「怎么确认改好了」，跑完自动复扫。前提是检查项本身能自动复验，否则验证步骤只能靠人。",
+          "tags": [
+            "开发者工具",
+            "AI工具"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-28-app-store-screenshots",
+          "name": "App Store Screenshots",
+          "tagline": "Your coding agent designs your app store screenshots",
+          "ph": "https://www.producthunt.com/products/app-store-screenshots",
+          "site": "https://www.parthjadhav.com/products/app-store-screenshots",
+          "repo": "https://github.com/ParthJadhav/app-store-screenshots",
+          "rank": 8,
+          "score": 115,
+          "comments": 8,
+          "what": "一个开源（MIT）的 agent skill：给 Claude Code、Codex、Cursor 等装上后，交给它 App 截图和一段简介，它在你项目里搭一个本地截图编辑器，生成各尺寸、多语言的商店截图。",
+          "problem": "做 App Store / Google Play 截图要按十几种尺寸和多种语言出图，通常靠设计师或付费订阅工具。",
+          "highlight": "安装是一行 npx skills add ParthJadhav/app-store-screenshots；需要 Node 18+。生成的编辑器跑在 localhost，有画布、检查器和导出；18 种风格，可在 Style Lab 里比较；导出 iPhone、iPad、Mac、Watch、Android 和 Play 头图的精确尺寸 PNG。整套设置存在项目里的 app-store-screenshots.json，跟代码一起提交、换机器能复原。仓库 2026-03 创建，抓取时约 7.7 千星。",
+          "inspo": "这是「skill 不只是提示词，而是让 agent 在项目里起一个小工具界面、状态存成一个可提交的 JSON」的好样本，工作台的 skill 市场可以支持这种形态：skill 自带本地 UI，人和 agent 改的是同一个状态文件。前提是工作台能托管或预览 skill 起的本地服务。",
+          "tags": [
+            "coding agent",
+            "创作",
+            "开源"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-28-zro",
+          "name": "Zro: Uncensored Security Models",
+          "tagline": "Abliterated open models for security work",
+          "ph": "https://www.producthunt.com/products/zro",
+          "site": "https://zro.moonmath.ai",
+          "repo": null,
+          "rank": 10,
+          "score": 108,
+          "comments": 13,
+          "what": "MoonMath.ai 的开放权重模型推理服务，面向 coding agent：提供 OpenAI 兼容和 Anthropic 兼容接口，外加一个 CLI，一条命令用它的模型启动 Claude Code、Codex、OpenCode 等；这次上线主打去掉拒答的安全研究模型。",
+          "problem": "做红队和防御测试时主流模型常拒答；团队又不希望代码和提示词被服务商留存。",
+          "highlight": "官网称不保留提示词和回复正文、不用于训练，可按 API key 限定只在欧洲或美国推理，未独立验证。llms.txt 里列的模型是 glm-5.3、glm-5.3-flash、deepseek-v4.1-flash。CLI 用法如 zro launch codex --model deepseek-v4.1-flash，只对当前会话生效。站点把 llms.txt、OpenAPI、给 agent 用的 SKILL.md 都公开挂出来，并写明哪些步骤（注册、付款、建 key）必须用户自己做。",
+          "inspo": "两点可借鉴：一是「launch 包一层」只为当前会话换模型后端，不改用户全局配置，工作台切换企业私有模型时可照做；二是它给 agent 的说明里明确划出「用户自己操作」的边界（付款、建 key），工作台接第三方服务时也可以要求这份边界说明。去拒答模型本身对企业场景的合规风险要单独评估。",
+          "tags": [
+            "coding agent",
+            "开发者工具"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-28-bytemail",
+          "name": "bytemail",
+          "tagline": "Native Mac email: every inbox, in your notch, no trackers",
+          "ph": "https://www.producthunt.com/products/bytemail",
+          "site": "https://bytemailapp.com",
+          "repo": null,
+          "rank": 2,
+          "score": 289,
+          "comments": 32,
+          "what": "Swift 写的原生 Mac 邮件客户端，Gmail、iCloud、Outlook、Yahoo、Fastmail 和任意 IMAP 一个窗口管；带一个给 Claude、Codex、Cursor 等用的邮件 MCP server。",
+          "problem": "多邮箱客户端要么是网页套壳、要么经第三方服务器中转；想让 AI 帮忙处理邮件又怕它直接发出去。",
+          "highlight": "官网称邮件直连服务商、不经它的服务器，凭据在 macOS 钥匙串，摘要和改写用 Apple 端侧模型；拦截追踪像素、标出仿冒发件人。新邮件和验证码从刘海弹出，有桌面小组件、稍后提醒、无回复提醒、规则。MCP 默认关闭，开启时按账户授权，AI 能搜索、起草、整理，但官网称发送必须在 bytemail 里由你确认。需 Apple silicon、macOS 14+，7 天试用，价格未获取；iPhone 版在 TestFlight 测试。不开源。",
+          "inspo": "「AI 能读能起草，发送必须回到原生应用里人点确认」这条边界适合工作台所有对外动作（发消息、提 PR、改线上配置）：MCP 工具只产出草稿，确认按钮放在工作台自己的界面里，而不是靠 agent 自觉。前提是被调用的系统支持「草稿」这一中间态。",
+          "tags": [
+            "效率",
+            "AI工具"
+          ],
+          "status": "新发现",
+          "followups": []
+        }
+      ]
+    },
+    {
       "date": "2026-10-27",
       "source": "https://www.producthunt.com/leaderboard/daily/2026/10/27",
       "fetched": "2026-10-28 20:05 北京",
