@@ -16,3 +16,5 @@
 | L11 | Guardrails：错误分类与重试、审批提示、审批关卡与评估 | L11-guardrails.html | materials/lectures/L11/slides.md（含讲者备注）+ slides.pdf 第 2/4/5/18/21 页渲染图 |
 | L13 | 浏览器扩展与能发短信使唤的助手：扩展的驱动与权限、常驻助手的五块拼图 | L13-browser-extensions.html | materials/lectures/L13/slides.md（含讲者备注）+ slides.pdf 16 页渲染图 |
 | L14 | Subagents：长会话为何变差、Agent 工具与一次委派、新开与分叉、agent team / handoff / swarm、worktree 隔离 | L14-subagents.html | materials/lectures/L14/slides.md（含讲者备注）+ slides.pdf 36 页渲染图 |
+| L15 | Compaction 与 Prompt Caching：满窗口的四种处理、总结留下什么；缓存前缀匹配、价格、请求顺序、重置 | L15-compaction-caching.html | materials/lectures/L15/slides.md（含讲者备注）+ slides.pdf 26 页渲染图 |
+| L16 | Agent Memory：笔记的结构与分类、写入时机、加载与检索、过时笔记 | L16-agent-memory.html | materials/lectures/L16/slides.md（含讲者备注）+ slides.pdf 26 页渲染图 |

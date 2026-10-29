@@ -1,0 +1,480 @@
+<!DOCTYPE html><html lang="zh-CN" class="layout-article" data-layout="article"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<script>(function(){var v;try{v=localStorage.getItem('site-theme')}catch(e){}document.documentElement.dataset.theme=/^[ABC]$/.test(v||'')?v:'C'})();
+(function(){var k='theme',s=localStorage.getItem(k);if(s?s==='dark':matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark');
+window.__tt=function(){var f=function(){var d=document.documentElement.classList.toggle('dark');localStorage.setItem(k,d?'dark':'light')};if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.startViewTransition(f);else f()}})();</script>
+<title>L16 · Agent Memory</title><style>
+/* Site tokens copied verbatim, in cascade order, from ref/site-assets/site.css. */
+:root{--paper:#f6f7f9;--sheet:#fff;--card:#fff;--ink:#111827;--ink2:#4b5563;--meta:#6b7280;--hair:#e5e7eb;--hair2:#eef0f3;--blue:#2563eb;--blue-soft:#eff4ff;--red:#dc2626;--red-soft:#fef2f2;--green:#16a34a;--green-soft:#f0fdf4;--amber:#b45309;--amber-soft:#fffbeb;--purple:#7c3aed;--purple-soft:#f5f3ff;--font:system-ui,-apple-system,"PingFang SC","Noto Sans SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;--serif:var(--font);--mono:ui-monospace,SFMono-Regular,Menlo,monospace;--r-lg:12px;--r-sm:8px;--grad:none;color-scheme:light}
+html.dark{--paper:#0f1115;--sheet:#171a21;--card:#171a21;--ink:#e5e7eb;--ink2:#b6bcc6;--meta:#9ca3af;--hair:#2a2f3a;--hair2:#20242c;--blue:#7aa2ff;--blue-soft:rgba(122,162,255,.12);--red:#f87171;--red-soft:rgba(248,113,113,.12);--green:#4ade80;--green-soft:rgba(74,222,128,.12);--amber:#fbbf24;--amber-soft:rgba(251,191,36,.12);--purple:#c4b5fd;--purple-soft:rgba(196,181,253,.14);color-scheme:dark}
+[data-theme=B]{--paper:#fbfbfc;--sheet:#fff;--card:#fff;--ink:#16171a;--ink2:#4a4c55;--meta:#6e707a;--hair:#ececf0;--hair2:#f2f2f5;--blue:#5e6ad2;--blue-soft:#eef0fb;--red:#d4483b;--red-soft:#fdf0ee;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif}
+html.dark[data-theme=B]{--paper:#0e0f12;--sheet:#16171b;--card:#16171b;--ink:#e8e9ed;--ink2:#b3b5bd;--meta:#8b8d97;--hair:#26272d;--hair2:#1f2025;--blue:#8b93f0;--blue-soft:rgba(139,147,240,.14);--red:#f0776b}
+[data-theme=A]{--paper:#f7f4ee;--sheet:#fffdf9;--card:#fffdf9;--ink:#2b2722;--ink2:#5f574e;--meta:#8a8076;--hair:#e6dfd3;--hair2:#efe8dc;--blue:#b4532a;--blue-soft:#f6e1d6;--red:#a2461f;--red-soft:#f6e1d6;--green:#5f7a3a;--green-soft:#e7ecd9;--purple:#7a5a8c;--purple-soft:#eee4f1;--serif:"Noto Serif CJK SC","Noto Serif SC","Songti SC",serif;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif}
+html.dark[data-theme=A]{--paper:#1b1814;--sheet:#23201b;--card:#23201b;--ink:#ede6da;--ink2:#c7bdaf;--meta:#9b9184;--hair:#3a342c;--hair2:#2d2923;--blue:#e08a5f;--blue-soft:rgba(224,138,95,.15);--red:#e8916a;--red-soft:rgba(232,145,106,.15)}
+[data-theme=C]{--paper:#f3f5fb;--sheet:#fff;--card:#fff;--ink:#1d2340;--ink2:#5a6185;--meta:#8a90ad;--hair:#e6e9f4;--hair2:#eef0f7;--blue:#3b5bfd;--blue-soft:#e8edff;--red:#d4483b;--red-soft:#ffe6e3;--green:#1f9d5c;--green-soft:#e3f7ec;--amber:#d9771e;--amber-soft:#fff1e0;--purple:#7a4bf5;--purple-soft:#f2eaff;--r-lg:20px;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif;--sh:0 1px 2px rgba(30,40,90,.04),0 8px 24px rgba(30,40,90,.06)}
+html.dark[data-theme=C]{--paper:#0f1222;--sheet:#181c33;--card:#181c33;--ink:#e6e9fb;--ink2:#aab0d0;--meta:#7d84a8;--hair:#272c48;--hair2:#20253f;--blue:#7d93ff;--blue-soft:rgba(125,147,255,.15);--red:#ff8a7d;--red-soft:rgba(255,138,125,.15);--green-soft:rgba(31,157,92,.18);--amber-soft:rgba(217,119,30,.18);--purple-soft:rgba(122,75,245,.2);--sh:0 1px 2px rgba(0,0,0,.3)}
+:root{--acc2:#8b5cf6;--ease:cubic-bezier(.22,1,.36,1)}
+[data-theme=A]{--acc2:#c98a2b}
+html.dark[data-theme=A]{--paper:#181512;--sheet:#211d18;--card:#211d18;--meta:#a89d8f;--hair:#382f26;--acc2:#e3b15c}
+[data-theme=B]{--paper:#fafafb;--blue:#5b5bd6;--blue-soft:#efeffc;--acc2:#a855f7}
+html.dark[data-theme=B]{--paper:#0c0d10;--sheet:#14151a;--card:#14151a;--ink:#ececf1;--ink2:#babcc6;--meta:#9597a3;--hair:#262830;--hair2:#1c1d23;--blue:#9198ff;--blue-soft:rgba(145,152,255,.14);--acc2:#c084fc}
+[data-theme=C]{--acc2:#06b6d4}
+html.dark[data-theme=C]{--meta:#a3a9b8;--acc2:#22d3ee}
+html.dark{--meta:#a1a7b3}
+[data-theme=B]{--paper:#eef1f5;--hair:#dfe4ea;--hair2:#eef1f5;--green:#16a34a}
+html.dark[data-theme=B]{--paper:#0b0d12;--hair:#252a35;--hair2:#1a1e27}
+[data-theme=C]{--blue:#7b5cff;--blue-soft:#f0ecff;--acc2:#ff5e8a}
+html.dark[data-theme=C]{--paper:#0b0b0f;--sheet:#15151c;--card:#15151c;--ink:#f2f2f5;--ink2:#b8b8c6;--meta:#9a9aab;--hair:#26262f;--hair2:#1d1d25;--blue:#a08bff;--blue-soft:rgba(160,139,255,.14)}
+:root{--sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:24px;--sp-6:32px;--fs-xs:12px;--fs-sm:13.5px;--fs-md:15px;--fs-lg:18px;--fs-xl:24px;--fs-2xl:32px;--r-xs:6px;--r-sm:8px;--r-md:10px;--r-lg:12px;--r-xl:18px;--r-pill:999px;--sh-1:0 1px 2px rgba(15,23,42,.06);--sh-2:0 4px 16px -8px rgba(15,23,42,.22);--sh-3:0 14px 30px -12px rgba(15,23,42,.28);--dur-1:120ms;--dur-2:220ms;--dur-3:420ms;--ease:cubic-bezier(.22,1,.36,1);--ease-in-out:cubic-bezier(.65,0,.35,1);--spring:cubic-bezier(.34,1.3,.64,1);--icon-stroke:2}
+:root{--spring:linear(0,.0089,.0346,.0752,.1286,.1927,.2654,.3445,.4278,.5131,.5983,.6812,.7598,.8325,.8981,.9555,1.0042,1.0441,1.0753,1.0982,1.1134,1.1218,1.1243,1.1218,1.1155,1.1062,1.0949,1.0825,1.0697,1.0571,1.0451,1.034,1.0242,1.0157,1.0085,1.0027,.9982,.995,.9928,.9916,.9912,.9914,.9921,.9931,.9943,.9956,.9968,.998,.999,1)}
+html.dark{--sh-1:0 1px 2px rgba(0,0,0,.4);--sh-2:0 4px 16px -8px rgba(0,0,0,.6);--sh-3:0 14px 30px -12px rgba(0,0,0,.7)}
+/* Five reading levels: title / section / subsection / body / note. */
+:root{--reading-width:680px;--toc-width:208px;--rail-width:180px;--reading-gap:28px;--top-height:56px;--body-size:18px;--body-leading:1.8;--finish-space:104px}
+*{box-sizing:border-box}html{scroll-padding-top:72px}html,body{margin:0;background:var(--paper);color:var(--ink);font:var(--body-size)/var(--body-leading) var(--font);-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}a{color:var(--blue);text-underline-offset:3px;overflow-wrap:anywhere}a:hover{text-decoration-thickness:2px}button,input,textarea,select{font:inherit;color:inherit}button,a,summary{touch-action:manipulation}button{cursor:pointer}button:disabled{opacity:.5;cursor:default}:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+h1,h2,h3{color:var(--ink);font-family:var(--serif);line-height:1.35;letter-spacing:-.02em;overflow-wrap:anywhere}h1{font-size:var(--fs-2xl);margin:8px 0 16px}h2{font-size:var(--fs-xl);margin:8px 0 16px}h3{font-size:var(--fs-lg);margin:24px 0 8px}p{margin:0 0 12px}ul,ol{padding-left:24px}li{margin:4px 0}code{font:.88em var(--mono);background:var(--hair2);padding:1px 4px;border-radius:var(--r-xs)}pre{overflow:auto;white-space:pre;tab-size:4;font:14px/1.65 var(--mono);padding:16px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-md);margin:12px 0}pre code{font:inherit;white-space:inherit;background:none;padding:0}
+.i{display:inline-block;vertical-align:middle;flex:none;width:18px;height:18px;stroke-width:2}.btn,button.opt{min-height:44px;border:1px solid var(--hair);border-radius:var(--r-sm);background:var(--sheet);padding:8px 14px;font-size:var(--fs-md);font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:6px}.btn:hover{border-color:var(--blue);background:var(--blue-soft)}.btn.main{background:var(--blue);color:var(--sheet)}.btn.sm{font-size:var(--fs-sm)}textarea{display:block;width:100%;padding:10px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-sm);resize:vertical}
+.top{position:fixed;inset:0 0 auto;height:var(--top-height);z-index:30;display:flex;align-items:center;gap:16px;padding:0 20px;background:var(--paper);border-bottom:1px solid var(--hair)}.top .course{font-size:var(--fs-sm);font-weight:700;max-width:35vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.top .track{flex:1;height:4px;background:var(--hair);border-radius:var(--r-pill);overflow:hidden}.top .track i{display:block;width:0;height:100%;background:var(--blue);transition:width var(--dur-2) var(--ease)}.top .count{font-size:var(--fs-sm);max-width:32vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.toc-toggle{min-width:44px}.top .theme-toggle{font-size:var(--fs-sm);min-height:44px}
+.layout-article .deck,.layout-pair .deck{padding:80px 20px calc(var(--finish-space) + env(safe-area-inset-bottom));max-width:720px;margin:0 auto;min-width:0}.layout-article .sec{position:relative;margin:0 0 32px;padding-top:16px;border-top:1px solid var(--hair);scroll-margin-top:72px;min-width:0}.layout-article .hero{border:0;padding-top:0}.kicker,.meta,.src,.source-anchor,figcaption,caption,.aside{font-size:var(--fs-sm);line-height:1.65}.kicker{display:block;color:var(--blue);font-weight:700}.lede{font-size:var(--fs-lg);font-weight:600}.links{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:var(--fs-sm)}.links a{display:inline-flex;align-items:center;min-height:44px}.src{margin:16px 0 0;padding-top:8px;border-top:1px solid var(--hair);color:var(--ink2)}.source-anchor{display:block;color:var(--ink2);margin-top:6px;overflow-wrap:anywhere}.source-anchor a{min-height:44px;display:inline-flex;align-items:center}.src.extra::before{content:'补充 · ';color:var(--amber)}.src.official::before{content:'官方 · ';color:var(--blue)}.src.article::before{content:'原文 · ';color:var(--blue)}
+.toc{position:fixed;left:max(20px,calc((100vw - 1192px)/2));top:76px;width:var(--toc-width);max-height:calc(100dvh - 180px);overflow:auto;font-size:var(--fs-sm);line-height:1.5;z-index:25}.toc ol{list-style:none;margin:0;padding:0}.toc a{display:flex;gap:8px;align-items:center;min-height:44px;padding:6px 10px;color:var(--ink2);text-decoration:none;border-radius:var(--r-sm)}.toc a[aria-current=true]{background:var(--blue-soft);color:var(--blue);font-weight:700}.toc b{display:block;margin:0 10px 8px}.toc-backdrop{display:none}.tldr,.argmap{padding:16px;background:var(--blue-soft);border-radius:var(--r-lg);margin:16px 0}.tldr a,.argmap a{display:block;min-height:44px;align-content:center}.argmap ol{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 16px;margin:0}.points{padding:12px 16px 12px 36px;background:var(--hair2);border-radius:var(--r-md)}
+figure.orig,figure.redraw,.figure{margin:20px 0;min-width:0}figure img{display:block;max-width:100%;height:auto;border:1px solid var(--hair);border-radius:var(--r-md);cursor:zoom-in;background:var(--sheet)}figcaption{margin-top:8px;color:var(--ink2)}figcaption b{color:var(--ink)}.how{margin-top:6px}.table{margin:20px 0;overflow-x:auto}.table table,table.data{width:100%;border-collapse:collapse;background:var(--sheet);font-size:var(--fs-md)}th,td{border-bottom:1px solid var(--hair);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--hair2)}caption{text-align:left;font-weight:700;padding:8px 0}.table-note{font-size:var(--fs-sm);color:var(--ink2)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;margin:16px 0}.stat{padding:12px 14px;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet)}.stat b{display:block;font-size:var(--fs-xl);line-height:1.35;color:var(--blue);font-variant-numeric:tabular-nums}.stat span{display:block;font-size:var(--fs-sm);color:var(--ink2)}.stat .source-anchor{font-size:var(--fs-xs)}
+blockquote.quote{margin:16px 0;padding:12px 16px;border-left:3px solid var(--blue);background:var(--sheet)}.quote cite{display:block;font-style:normal;font-size:var(--fs-sm);color:var(--ink2)}.callout{padding:12px 16px;margin:16px 0;border-left:3px solid var(--blue);background:var(--blue-soft);border-radius:0 var(--r-sm) var(--r-sm) 0}.callout.limit{border-color:var(--amber);background:var(--amber-soft)}.callout.extra{border:1px dashed var(--meta);background:var(--sheet)}.callout.myth{border-color:var(--amber);background:var(--hair2)}.callout.limit::before{content:'作者的限定 · ';font-weight:700}.aside{padding:12px;border-left:2px solid var(--hair);color:var(--ink2);margin:12px 0}
+.stories,.compare,.roles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}.story,.compare>div,.roles>div{padding:12px;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);font-size:var(--fs-md)}.story b,.roles b{display:block}.story dt{font-weight:700;color:var(--ink2);font-size:var(--fs-sm)}.story dd{margin:0 0 8px}.story p,.story .fix{display:block;margin:8px 0}.steps,.ladder{display:grid;gap:8px;padding:0;list-style:none;counter-reset:step}.steps>li,.ladder>li{padding:10px 14px;background:var(--hair2);border-radius:var(--r-sm);counter-increment:step}.steps>li::before{content:counter(step)'. ';color:var(--blue);font-weight:700}.ladder i{font-style:normal;font-weight:700;margin-right:8px}.matrix{border:1px solid var(--hair);padding:16px;border-radius:var(--r-md)}.matrix .axes{font-size:var(--fs-sm);color:var(--ink2)}.matrix ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));list-style:none;padding:0;gap:1px;background:var(--hair)}.matrix li{margin:0;padding:16px;background:var(--sheet)}.refs{font-size:var(--fs-sm);line-height:1.7}.refs a{display:inline-block;min-height:44px;align-content:center}.thread{border-left:2px solid var(--hair);padding-left:16px}.formula{padding:16px;border:1px solid var(--hair);overflow:auto}.formula math{font-size:var(--fs-xl)}details.more{margin:12px 0;border-top:1px solid var(--hair);font-size:var(--fs-md)}summary{min-height:44px;cursor:pointer;display:flex;align-items:center;gap:8px}summary .i{transition:transform var(--dur-1)}details[open] summary .i{transform:rotate(90deg)}
+/* Shared interactive components. No fixed page/card height. */
+.flow-scroll{max-width:100%;overflow-x:auto;min-width:0;touch-action:pan-x pan-y}.flow-scroll svg.flow{display:block;width:100%;height:auto;min-height:0}.flow-tip{font-size:var(--fs-sm);color:var(--ink2)}.fl-node rect{fill:var(--sheet);stroke:var(--hair);stroke-width:2}.fl-node text{font:600 17px var(--font);fill:var(--ink)}.fl-node .sub{font-size:13px;font-weight:400;fill:var(--ink2)}.fl-node.act rect{stroke:var(--blue);fill:var(--blue-soft);stroke-width:3}.fl-node.blue rect{stroke:var(--blue)}.fl-node.amber rect,.fl-node.red rect{stroke:var(--amber)}.fl-node.green rect{stroke:var(--green)}.fl-edge{fill:none;stroke:var(--meta);stroke-width:2}.fl-edge.act{stroke:var(--blue);stroke-width:3}.fl-elab{font:13px var(--font);fill:var(--ink2)}
+.sim{margin:16px 0;padding:12px;border:1px solid var(--hair);border-radius:var(--r-lg);background:var(--sheet);display:flex;flex-direction:column;gap:12px}.sim .ctl{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.sim .ctl label{min-height:44px;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm)}.sim .ctl input[type=range]{min-width:110px}.sim .body{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}.sim .narr{order:-1;background:var(--blue-soft);padding:10px 12px;border-radius:var(--r-sm);font-size:var(--fs-md)}.sim .log{max-height:240px;overflow:auto;font:var(--fs-sm)/1.6 var(--mono)}.sim .msg{border-left:3px solid var(--hair);padding:8px;margin:6px 0;background:var(--paper);white-space:pre-wrap;overflow-wrap:anywhere}.msg b{display:block;font-family:var(--font)}.sim .msg.err{border-color:var(--amber)}.prediction{order:-2}.component-error{padding:16px;border:1px solid var(--amber);color:var(--amber)}
+.quiz{margin:16px 0;padding:16px;border:1px solid var(--hair);border-radius:var(--r-lg);background:var(--sheet)}.quiz .qn{font-size:var(--fs-sm);color:var(--ink2)}.quiz .qt{font-size:var(--fs-lg);font-weight:700;margin-bottom:12px}.quiz .opt{display:block;width:100%;text-align:left;margin:8px 0;font-weight:400}.quiz .opt.ok{border-color:var(--green);background:var(--green-soft)}.quiz .opt.no{border-color:var(--amber);background:var(--amber-soft)}.quiz .fb{margin:12px 0;font-size:var(--fs-md)}.quiz .nav{display:flex;gap:8px;margin-top:12px}.quiz label{display:block;font-size:var(--fs-sm)}.stack{display:grid;gap:6px;font-size:var(--fs-sm)}.stack .row{display:grid;grid-template-columns:28px 80px minmax(0,1fr);gap:8px;padding:8px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-sm)}.stack .t{overflow-wrap:anywhere;white-space:pre-wrap}.stack .new{background:var(--blue-soft)}.bar{display:grid;grid-template-columns:100px minmax(0,1fr) 80px;gap:8px;margin:8px 0;align-items:center;font-size:var(--fs-sm)}.bar .bt{height:20px;background:var(--hair2);border-radius:var(--r-xs);overflow:hidden}.bar .bt i{display:block;height:100%;background:var(--blue)}.bar .bn,.bar .bmiss{grid-column:2/4}.bars .bc{font-size:var(--fs-sm);color:var(--ink2)}
+/* Paired material stays inside its own container; highlighting never scrolls the page. */
+.pair.codewalk,.pair.read-pair,.pair.material-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start;margin:20px 0;position:relative;min-width:0}.pair-source{position:sticky;top:72px;max-height:calc(100dvh - 160px);overflow:auto;overscroll-behavior:contain;min-width:0;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);padding:12px;scroll-padding:16px}.pair-notes{min-width:0}.pair-notes .step{padding:16px 0 24px;border-top:1px solid var(--hair);scroll-margin-top:84px}.pair-notes .step.is-active{border-color:var(--blue)}.pair-source .source-block{padding:12px 8px;border-left:3px solid transparent}.pair-source .source-block.is-active{background:var(--blue-soft);border-color:var(--blue)}.source-text{overflow-wrap:anywhere}.pair-source pre{border:0;padding:0;margin:8px 0;overflow:visible}.code-line{display:block;min-height:1.65em;white-space:pre;padding-left:48px;position:relative}.code-line::before{content:attr(data-line);position:absolute;left:0;width:36px;text-align:right;color:var(--meta);user-select:none}.code-line.hl{background:var(--blue-soft)}.copy-code{position:static;flex:none;white-space:nowrap}.pair-source .source-anchor{font-size:var(--fs-xs)}
+/* A separate toolbar never shares the scrolling code viewport. */
+.heading-source{font-size:var(--fs-xs);margin:0 0 8px}
+.pair.codewalk{grid-template-columns:minmax(0,60%) minmax(0,1fr)}
+.code-panel{position:sticky;top:72px;display:flex;flex-direction:column;min-width:0;max-height:calc(100dvh - 160px);border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);overflow:hidden}
+.code-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;flex:none;border-bottom:1px solid var(--hair);font-size:var(--fs-xs);color:var(--ink2)}
+.code-panel .pair-source{position:static;max-height:none;min-height:0;flex:1 1 auto;border:0;border-radius:0;box-shadow:none;overflow:auto}
+.code-panel .pair-source pre{width:max-content;min-width:100%}
+dialog.image-dialog{width:calc(100vw - 24px);max-width:none;max-height:92dvh;padding:12px;border:1px solid var(--hair);background:var(--sheet);color:var(--ink);border-radius:var(--r-md);overflow:auto}dialog::backdrop{background:rgba(0,0,0,.75)}.image-dialog img{max-width:none;width:max(100%,min(1400px,180vw));height:auto}.image-dialog .dialog-close{position:sticky;top:0;left:0}.image-open{min-height:44px;border:0;background:transparent;padding:0;display:block;cursor:zoom-in;max-width:100%}.image-open img{max-width:100%}
+/* Only CSS changes the unchanged finish.js button. High specificity beats injected styles. */
+html body .fin-btn{bottom:calc(16px + env(safe-area-inset-bottom));right:16px;min-height:44px;z-index:35}html body #quiz-return{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:35;max-width:45vw}
+@media(min-width:1180px){.layout-article .deck{width:var(--reading-width);max-width:none;padding-left:0;padding-right:0;margin-left:max(260px,calc((100vw - 1192px)/2 + 236px));margin-right:0}.layout-article .sec>.doc-body>figure,.layout-article .sec>.doc-body>.table,.layout-article .sec>.codewalk{width:calc(100% + 120px);margin-left:0}.layout-article .aside{position:absolute;left:calc(100% + 28px);top:24px;width:var(--rail-width);margin:0}.layout-article .aside~figure{width:100%}html.layout-article body .fin-btn{left:max(20px,calc((100vw - 1192px)/2));right:auto;max-width:208px}.layout-pair .deck{max-width:1280px;margin-left:236px;margin-right:20px}.layout-pair .toc{width:188px;left:20px}html.layout-pair body .fin-btn{left:20px;right:auto;max-width:188px}}
+@media(max-width:1179px){.toc{display:none;visibility:hidden;left:0;top:var(--top-height);width:min(360px,90vw);max-height:calc(100dvh - 72px);background:var(--sheet);padding:16px;border-right:1px solid var(--hair);border-bottom:1px solid var(--hair)}html.toc-open .toc{display:block;visibility:visible}html.toc-open .toc-backdrop{display:block;position:fixed;inset:var(--top-height) 0 0;background:rgba(0,0,0,.3);z-index:24}}
+@media(max-width:820px){:root{--body-size:17px}.layout-article .deck,.layout-pair .deck{padding-left:18px;padding-right:18px}.top{gap:8px;padding:0 12px}.top .course{display:none}.top .count{max-width:44vw}.top .track{min-width:24px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stories,.compare,.roles{grid-template-columns:minmax(0,1fr)}.argmap ol{grid-template-columns:minmax(0,1fr)}table.data thead,.table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}table.data,table.data tbody,table.data tr,table.data td,.table table,.table tbody,.table tr,.table td{display:block;width:100%}table.data tr,.table tr{padding:8px 12px;margin-bottom:8px;border:1px solid var(--hair);background:var(--sheet);border-radius:var(--r-md)}table.data td,.table td{border:0;padding:4px 0}td[data-label]::before{content:attr(data-label)'：';font-size:var(--fs-sm);font-weight:700;color:var(--ink2)}.table caption,table.data caption{display:block;width:100%}.pair.codewalk,.pair.read-pair,.pair.material-pair{display:block}.pair-notes{margin-top:12px}.code-panel{top:var(--top-height);max-height:40dvh;z-index:15}.pair-source{top:var(--top-height);max-height:40dvh;z-index:15;box-shadow:var(--sh-1)}.pair-notes .step{scroll-margin-top:calc(40dvh + 80px)}.flow-scroll svg.flow{width:var(--flow-width);max-width:none;height:var(--flow-height)}.sim .flow-scroll svg.flow{width:100%;height:auto}.stack .row{grid-template-columns:22px 64px minmax(0,1fr)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+@media print{.top,.toc,.fin-btn,#quiz-return,.toc-backdrop,.zoom-toggle,.code-toolbar{display:none!important}.layout-article .deck,.layout-pair .deck{margin:0;padding:0;max-width:100%;width:auto}.pair-source,.code-panel{position:static;max-height:none;overflow:visible}.sec{break-inside:auto}figure,.stat{break-inside:avoid}}
+/* Applies after legacy CSS too. Zoom is an intentional local viewport; non-zoom stays unnested. */
+html body .sim .flow-scroll.zoom{overflow:auto;max-height:40dvh;min-height:0;height:auto;overscroll-behavior:contain;scroll-padding:16px;padding:16px}
+html body .sim .flow-scroll.zoom svg.flow{width:var(--flow-width);min-width:var(--flow-width);height:var(--flow-height);max-height:none;flex:none}
+html body .sim .zoom-toggle{min-height:44px;justify-self:start}.layout-deck .sim .body{position:relative}.layout-deck .card{padding-bottom:8px}.layout-deck .deck{bottom:calc(92px + env(safe-area-inset-bottom))}
+html body .fin-btn{bottom:calc(16px + env(safe-area-inset-bottom));right:16px;min-height:44px}html.layout-deck .bottom{padding-right:170px;padding-left:12px;height:76px}.layout-deck .btn,.layout-deck .sim .branches label{min-height:44px}.layout-deck details.more summary::before{content:none}.layout-deck .fl-edge.act{animation:none}
+@media(max-width:820px){html.layout-deck .bottom{padding-right:12px;gap:8px}.layout-deck .bottom .btn{padding:8px 10px;font-size:13px}html.layout-deck body .fin-btn{padding:8px 12px;font-size:13px}.layout-deck .card.full:has(.sim)>.head-full{position:sticky;top:0;z-index:4;background:var(--sheet);padding-top:12px;padding-bottom:12px}.layout-deck .sim .body{overflow:visible}.layout-deck .card .stage:has(.sim){overflow:visible}.layout-deck .sim .flow-scroll:not(.zoom){overflow:visible}}
+
+.layout-deck .card.doc.on{display:block;overflow:auto;padding:24px}.layout-deck .card.doc .doc-body{overflow:visible}.layout-deck .hero.card{height:auto}
+
+/* Legacy .stage svg also matches button icons: keep Lucide at its declared size. */
+html body svg.i{width:18px;height:18px;max-height:none;flex:none}
+
+/* Below the desktop sidebar breakpoint, finish lives in the opaque top bar.
+   Reserve its width before laying out the title; keep the deck footer for paging. */
+@media(max-width:1179px){
+ html body .top{gap:8px;padding:0 132px 0 12px;z-index:40;background:var(--paper)}
+ html body .top .course{display:none}
+ html body .top .count{flex:1;min-width:0;max-width:none;font-size:var(--fs-sm);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ html body .top .track{position:absolute;left:12px;right:12px;bottom:0;height:2px;min-width:0}
+ html body .top .toc-toggle{width:44px;flex:none;padding:0}
+ html body .top .theme-toggle{flex:none;padding:8px;font-size:var(--fs-sm)}
+ html body .fin-btn{top:6px;bottom:auto;left:auto;right:12px;width:112px;max-width:112px;height:44px;padding:8px;font-size:13px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:41;box-shadow:none}
+}
+</style></head><body>
+<header class="top"><button class="btn toc-toggle" aria-label="打开目录" aria-expanded="false"><svg class="i i-menu" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h16"/></svg></button><span class="course">L16 · Agent Memory</span><span class="track" role="presentation"><i></i></span><span class="count"></span><button class="btn theme-toggle" aria-label="切换深浅色">深浅色</button></header><main class="deck"><section class="sec hero" data-toc="开篇：模型忘掉的纠正" id="s1" data-source-section="s1">
+  <header class="doc-head"><span class="kicker">公开课 · EECS 498 AASE · Lecture 16 · 2026-10-27（据课程大纲第 9 周周二）</span><h1>L16 · Agent Memory：让模型把你教过的东西带进下一次会话</h1>
+  <p class="lede" id="h-lede">L15 讲的是一次长会话内部；本讲讲从一次会话带到下一次的东西。周一你纠正过模型「只跑快速测试」，周二新会话它又犯同样的错——因为新会话是一段全新的对话。答案是笔记：模型写、harness 存、下一次会话读回来。第 1 部分讲创建和存储：留什么、笔记长什么样、怎么改、谁在什么时候写、放在哪；第 2 部分讲加载和检索：一次性加载、按行索引、三层加载、按需读一条、搜索旧笔记，以及笔记过时之后怎么办。</p>
+  <p class="links"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">课件 slides.md <svg class="i i-external-link" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.pdf">slides.pdf <svg class="i i-external-link" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a><span>本页导读约 30 分钟</span></p></header>
+  <div class="doc-body">
+<figure class="figure orig" data-asset="a0002" data-points="p0002" id="fa0002"><img src="L16-img/p01.png" alt="幻灯片第 1 页：Agent Memory"><figcaption><b>原图 1 · 标题页</b> <span class="source-anchor" data-source-section="s1">出处：EECS 498 AASE L16 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">幻灯片第 1 页</a></span><span class="how">怎么看：只有本讲标题 Agent Memory。</span></figcaption></figure>
+<p data-points="p0004" id="e1">讲者备注：这是第 16 讲，Agent Memory。第 15 讲讲的是一次长会话内部发生什么，今天讲从一次会话带到下一次的东西。</p>
+<figure class="figure orig" data-asset="a0007" data-points="p0007" id="fa0007"><img src="L16-img/p02.png" alt="幻灯片第 2 页：A correction the model forgets"><figcaption><b>原图 2 · 模型忘掉的纠正</b> <span class="source-anchor" data-source-section="s2">出处：EECS 498 AASE L16 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">幻灯片第 2 页</a></span><span class="how">怎么看：三行。周一：系统提示、「run the tests」、模型跑了全套测试、「no, only the quick tests」、模型改跑快速测试；周二的新会话：同样的五块，标注「同样的错误、同样的纠正」；周二的第一个请求：系统提示、一块虚线「nothing from Monday」、你的新消息。底部问题：模型怎么记住你教过它的东西？</span></figcaption></figure>
+<p data-points="p0009 p0010" id="e2">讲者备注：周一，请求从系统提示开始。你说：跑测试。模型跑了全套，要好几分钟。你说：不，只跑快速测试。从那以后它就只跑快速测试。周二的新会话带来同样的错误和同样的纠正——周一教它的东西一点都没到周二。</p>
+<p data-points="p0011 p0012" id="e3">原因在这里：周二的第一个请求装着系统提示和你的新消息，周一的什么都没有。第 15 讲说过模型在请求之间什么都不保留；新会话更进一步，harness 开启一段全新的对话，周一的那段根本不会被发送。所以今天的问题是：模型怎么留住你教它的东西？<b>答案是笔记：模型写，harness 存，下一次会话读回来。</b></p>
+<figure class="figure orig" data-asset="a0014" data-points="p0014" id="fa0014"><img src="L16-img/p03.png" alt="幻灯片第 3 页：Today&#x27;s schedule"><figcaption><b>原图 3 · 今天的安排</b> <span class="source-anchor" data-source-section="s3">出处：EECS 498 AASE L16 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">幻灯片第 3 页</a></span><span class="how">怎么看：四项——创建和存储记忆、课间、加载和检索记忆、答疑。</span></figcaption></figure>
+<p data-points="p0016" id="e4">讲者备注：两部分。第一部分是创建和存储记忆：模型该从一次会话里留下什么，harness 把它放在哪；课间之后，第二部分是在之后的会话里加载和检索这些记忆；最后答疑。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s1"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">Agent Memory</a></span> · <span class="source-anchor" data-source-section="s2"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">A correction the model forgets</a></span> · <span class="source-anchor" data-source-section="s3"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">Today's schedule</a></span></div>
+</section>
+<section class="sec" data-toc="第 1 部分：创建和存储记忆——从会话里留下什么" id="s2" data-source-section="s4">
+  <header class="doc-head"><span class="kicker">第 4–5 页</span><h2>记忆只留一句以后用得上的话</h2></header>
+  <div class="doc-body">
+<figure class="figure orig" data-asset="a0018" data-points="p0018" id="fa0018"><img src="L16-img/p04.png" alt="幻灯片第 4 页：Part 1: Creating and storing memories"><figcaption><b>原图 4 · 第 1 部分分隔页</b> <span class="source-anchor" data-source-section="s4">出处：EECS 498 AASE L16 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">幻灯片第 4 页</a></span><span class="how">怎么看：只有标题「Part 1: Creating and storing memories」。</span></figcaption></figure>
+<p data-points="p0019" id="e5">讲者备注：第一部分，创建和存储记忆。</p>
+<figure class="figure orig" data-asset="a0022" data-points="p0022" id="fa0022"><img src="L16-img/p05.png" alt="幻灯片第 5 页：What to keep from a session"><figcaption><b>原图 5 · 从一次会话里留下什么</b> <span class="source-anchor" data-source-section="s5">出处：EECS 498 AASE L16 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">幻灯片第 5 页</a></span><span class="how">怎么看：三行。每次会话都重发：系统提示后一长串 U（你的消息）、R（模型回复）、F（读过的文件），标注「每次会话都增长，大部分是文件和失败的尝试」；每次会话一份总结：系统提示后四块 summary，标注「更小，但仍随会话增长」；一条以后有用的笔记：系统提示后只有一句「only the quick tests」。</span></figcaption></figure>
+<p data-points="p0024" id="e6">讲者备注：什么能把周一带进周二？每一行都从黄色的系统提示开始，然后是红色的你的消息（U）、蓝色的模型回复（R）、绿色的读过的文件（F）。最简单的答案是每次会话都重发：它每次都增长，而且大部分是文件和失败的尝试——文件内容其实还在磁盘上，尝试也没成功。</p>
+<p data-points="p0025" id="e7">其次是系统提示加每次会话的一份总结，就像第 15 讲 compaction 做的总结。它更小，但仍一份一份地随会话增长；而且总结留下的是当天要紧的东西，而不是下周要紧的。</p>
+<p class="callout key" data-points="p0026" id="e8">或者：系统提示加一条以后要紧的笔记。周一学到的东西是一句话，笔记里只装这句：只跑快速测试。<b>这就是记忆要留的东西。</b></p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s4"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">Part 1: Creating and storing memories</a></span> · <span class="source-anchor" data-source-section="s5"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">What to keep from a session</a></span></div>
+</section>
+<section class="sec" data-toc="一、模型写的笔记，以及一条笔记装什么" id="s3" data-source-section="s6">
+  <header class="doc-head"><span class="kicker">第 6–7 页</span><h2>模型是写的人，在会话中、在它学到东西的那一刻</h2></header>
+  <div class="doc-body">
+<figure class="figure orig" data-asset="a0029" data-points="p0029" id="fa0029"><img src="L16-img/p06.png" alt="幻灯片第 6 页：A note the model writes"><figcaption><b>原图 6 · 模型写的一条笔记</b> <span class="source-anchor" data-source-section="s6">出处：EECS 498 AASE L16 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">幻灯片第 6 页</a></span><span class="how">怎么看：顶部是「带记忆规则的系统提示」；「no, only the quick tests」或「or you ask it to remember」进入模型，模型「write a note」，笔记落进绿色的 memory folder：run only the quick tests。</span></figcaption></figure>
+<p data-points="p0031 p0032" id="e9">讲者备注：模型能记住之前，harness 需要两样东西：带记忆规则的系统提示，说明笔记放哪、什么值得存；以及磁盘上一个记忆文件夹。现在你说：不，只跑快速测试。模型注意到自己被纠正了，它的回答里包含一次写笔记的工具调用，笔记落进文件夹：只跑快速测试。这个工具常常就是模型用来改代码的那个文件工具；有些 harness 给它一个专门的记忆工具。</p>
+<p data-points="p0033" id="e10">或者你直接让它记住。无论哪种，模型都是写的人，就在会话里、在它学到东西的那一刻。</p>
+<figure class="figure orig" data-asset="a0036" data-points="p0036" id="fa0036"><img src="L16-img/p07.png" alt="幻灯片第 7 页：What a note holds"><figcaption><b>原图 7 · 一条笔记装什么</b> <span class="source-anchor" data-source-section="s7">出处：EECS 498 AASE L16 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">幻灯片第 7 页</a></span><span class="how">怎么看：一张卡片，四部分各有箭头标注。第一行「run only the quick tests」：日后找到它的一行；「Run the quick tests, not the full suite.」：事实；「The full suite takes minutes.」：为什么；「Apply it after every edit.」：怎么用。</span></figcaption></figure>
+<p data-points="p0038 p0039" id="e11">讲者备注：笔记顶部是日后找到它的一行：只跑快速测试。之后的会话在打开笔记之前先看到这一行，所以这一行得说清笔记讲的是什么。然后是事实：跑快速测试，不跑全套。</p>
+<p data-points="p0040 p0041" id="e12">然后是为什么：全套要好几分钟。有了「为什么」，之后的会话能处理规则没覆盖的情况——如果你是故意要跑全套，模型能分辨这不是笔记说的那种错误。最后是怎么用：每次编辑之后。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s6"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">A note the model writes</a></span> · <span class="source-anchor" data-source-section="s7"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">What a note holds</a></span></div>
+</section>
+<section class="sec" data-toc="二、什么值得记，以及四类笔记" id="s4" data-source-section="s8">
+  <header class="doc-head"><span class="kicker">第 8–9 页</span><h2>留下下周仍然成立、且代码里没有的东西</h2></header>
+  <div class="doc-body">
+<figure class="figure orig" data-asset="a0044" data-points="p0044" id="fa0044"><img src="L16-img/p08.png" alt="幻灯片第 8 页：What is worth a note"><figcaption><b>原图 8 · 什么值得一条笔记</b> <span class="source-anchor" data-source-section="s8">出处：EECS 498 AASE L16 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">幻灯片第 8 页</a></span><span class="how">怎么看：周一会话里的五样东西。读过的文件 → 丢掉，它还在磁盘上；修掉的 bug → 丢掉，git 里有；只跑快速测试 → 留下；demo 周不合并 → 留下，代码里没有它；今天的计划 → 丢掉，只在今天有用。底部：留下下周仍然成立、且不在代码里的。</span></figcaption></figure>
+<p data-points="p0046 p0047" id="e13">讲者备注：周一的会话远不止一次纠正：读过的文件、修掉的一个 bug、只跑快速测试、demo 周不合并、今天的计划。哪些值得笔记？三样丢掉：读过的文件，因为还在磁盘上；修掉的 bug，因为 git 里有；今天的计划，因为只在今天有用。</p>
+<p class="callout key" data-points="p0048" id="e14">两样留下：只跑快速测试；demo 周不合并，因为代码里没有它。规则是：<b>留下下周仍然成立、并且不在代码里的东西。</b></p>
+<figure class="figure orig" data-asset="a0051" data-points="p0051" id="fa0051"><img src="L16-img/p09.png" alt="幻灯片第 9 页：Four kinds of note"><figcaption><b>原图 9 · 四类笔记</b> <span class="source-anchor" data-source-section="s9">出处：EECS 498 AASE L16 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">幻灯片第 9 页</a></span><span class="how">怎么看：四个格子——你是谁（例：喜欢简短回复）；怎么干活（例：只跑快速测试）；项目（例：demo 周不合并）；去哪里找（例：跟踪 bug 的面板）。</span></figcaption></figure>
+<p data-points="p0053 p0054 p0055" id="e15">讲者备注：留下的东西分四类。第一类是你是谁：比如你喜欢简短的回复。第二类是怎么干活，「只跑快速测试」就是这一类。第三类是项目，「demo 周不合并」是关于项目的事实，不是关于你的。</p>
+<p data-points="p0056" id="e16">第四类是去哪里找：跟踪 bug 的面板、发布公告的频道。笔记写的是东西在哪，而不是里面有什么。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s8"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">What is worth a note</a></span> · <span class="source-anchor" data-source-section="s9"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">Four kinds of note</a></span></div>
+</section>
+<section class="sec" data-toc="三、修改笔记，以及笔记在什么时候被写" id="s5" data-source-section="s10">
+  <header class="doc-head"><span class="kicker">第 10–11 页</span><h2>一事一笔记；没人看着时权限更小</h2></header>
+  <div class="doc-body">
+<figure class="figure orig" data-asset="a0059" data-points="p0059" id="fa0059"><img src="L16-img/p10.png" alt="幻灯片第 10 页：Modifying notes"><figcaption><b>原图 10 · 修改笔记</b> <span class="source-anchor" data-source-section="s10">出处：EECS 498 AASE L16 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">幻灯片第 10 页</a></span><span class="how">怎么看：「and run them before every commit」进入模型，改写了原笔记，变成「run only the quick tests before every commit」（标注原笔记被修改）；「releases moved to Tuesdays」让模型把错误的笔记删掉并换成「releases on Tuesdays」（标注错误笔记被删除替换）；文件夹里还有「no merges during demo week」。底部：一事一笔记，所以两条笔记从不矛盾。</span></figcaption></figure>
+<p data-points="p0061 p0062" id="e17">讲者备注：几周后，记忆文件夹里有三条笔记：只跑快速测试；demo 周不合并；周五发布。然后你说：并且每次提交前都跑。模型有了一条新事实要存。它不会再加第二条测试笔记，而是改它已有的那条，现在写着：每次提交前只跑快速测试——修改原笔记，而不是在旁边新加一条。</p>
+<p data-points="p0063 p0064" id="e18">后来你说：发布改到周二了。周五那条笔记现在是错的，于是被删掉、换成一条新笔记：周二发布。错误的笔记被删除替换，错的那天就消失了。一事一笔记，所以两条笔记从不矛盾：每次写之前，模型先检查有没有已经覆盖它的笔记，这条规则同样写在系统提示里。</p>
+<figure class="figure orig" data-asset="a0067" data-points="p0067" id="fa0067"><img src="L16-img/p11.png" alt="幻灯片第 11 页：When notes get written"><figcaption><b>原图 11 · 笔记在什么时候被写</b> <span class="source-anchor" data-source-section="s11">出处：EECS 498 AASE L16 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">幻灯片第 11 页</a></span><span class="how">怎么看：一条会话时间轴，上方是「模型注意到并写下」，可以发生在任何一轮；下方三个 harness 时机：每隔几轮（只能新增笔记）、compaction 之前（只能往今天的笔记里加）、会话之后（只能动记忆文件夹）。底部：没人看着时，权限更小。</span></figcaption></figure>
+<p data-points="p0069 p0070" id="e19">讲者备注：到目前为止是模型注意到并写下，在一次会话的时间轴上可以发生在任何一轮；但这也不可靠，深陷任务的模型常常不会停下来存。所以 harness 加上自己的时机，下面三个各来自一个不同的 harness。每隔几轮，harness 给对话的一份副本一个问题：这里有什么值得存吗？这份副本只能新增笔记，绝不能删除，因为没人读它写了什么。</p>
+<p data-points="p0071 p0072" id="e20">compaction 之前，每当上下文填满，harness 多跑一轮，把总结即将丢掉的东西存下来；这个 harness 在常规笔记旁为每天保留一份日志，这一轮只能往日志里今天的那条加内容，碰不到常规笔记。会话之后，第二个模型读完整段会话，存下值得留的东西；它可以改写笔记，但只限记忆文件夹，没有网络，也没人审批。</p>
+<p class="callout key" data-points="p0073" id="e21">规律是：<b>没人看着时，权限更小</b>。不是对笔记的权限更小——会话之后的写手能改写笔记——而是对记忆以外的触及更少。一条坏笔记会在之后每次会话里回来，所以一个没人看着的写手只能碰记忆，别的什么都碰不到。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s10"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">Modifying notes</a></span> · <span class="source-anchor" data-source-section="s11"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">When notes get written</a></span></div>
+</section>
+<section class="sec" data-toc="四、关于你和关于项目的笔记" id="s6" data-source-section="s12">
+  <header class="doc-head"><span class="kicker">第 12–13 页</span><h2>都是你能打开、读、改的普通文件</h2></header>
+  <div class="doc-body">
+<figure class="figure orig" data-asset="a0076" data-points="p0076" id="fa0076"><img src="L16-img/p12.png" alt="幻灯片第 12 页：Notes about you and the project"><figcaption><b>原图 12 · 关于你和关于项目的笔记</b> <span class="source-anchor" data-source-section="s12">出处：EECS 498 AASE L16 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">幻灯片第 12 页</a></span><span class="how">怎么看：左框「about you」：喜欢简短回答、编辑前先解释，标注「每个项目都加载」；右框「about this project」：只跑快速测试、demo 周不合并，标注「只在这里加载」。底部：都是你能打开、读、改的普通文件。</span></figcaption></figure>
+<p data-points="p0078 p0079" id="e22">讲者备注：笔记住在哪？有些关于你：喜欢简短回答、编辑前先解释，这些在每个项目都加载。另一些关于这个项目：只跑快速测试、demo 周不合并，只在这里加载，所以一个仓库的事实永远不会漏进另一个。</p>
+<p class="callout key" data-points="p0080" id="e23">两种都是你能打开、阅读、修改的普通文件。<b>不应该只有模型才能纠正一条记忆。</b></p>
+<figure class="figure orig" data-asset="a0082" data-points="p0082" id="fa0082"><img src="L16-img/p13.png" alt="幻灯片第 13 页：Chat break"><figcaption><b>原图 13 · 课间页</b> <span class="source-anchor" data-source-section="s13">出处：EECS 498 AASE L16 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">幻灯片第 13 页</a></span><span class="how">怎么看：Chat break，5 分钟后回来。</span></figcaption></figure>
+<p data-points="p0084" id="e24">讲者备注：课间，5 分钟后回来。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s12"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">Notes about you and the project</a></span> · <span class="source-anchor" data-source-section="s13"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">Chat break</a></span></div>
+</section>
+<section class="sec" data-toc="第 2 部分：加载和检索记忆" id="s7" data-source-section="s14">
+  <header class="doc-head"><span class="kicker">第 14–16 页</span><h2>记忆只在会话开始加载一次，所以一直留在缓存里</h2></header>
+  <div class="doc-body">
+<figure class="figure orig" data-asset="a0086" data-points="p0086" id="fa0086"><img src="L16-img/p14.png" alt="幻灯片第 14 页：Part 2: Loading and retrieving memories"><figcaption><b>原图 14 · 第 2 部分分隔页</b> <span class="source-anchor" data-source-section="s14">出处：EECS 498 AASE L16 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">幻灯片第 14 页</a></span><span class="how">怎么看：只有标题「Part 2: Loading and retrieving memories」。</span></figcaption></figure>
+<p data-points="p0087" id="e25">讲者备注：第二部分，加载和检索记忆。</p>
+<figure class="figure orig" data-asset="a0090" data-points="p0090" id="fa0090"><img src="L16-img/p15.png" alt="幻灯片第 15 页：Loading notes back"><figcaption><b>原图 15 · 把笔记加载回来</b> <span class="source-anchor" data-source-section="s15">出处：EECS 498 AASE L16 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">幻灯片第 15 页</a></span><span class="how">怎么看：周二的第一个请求：系统提示、指令文件、memory（虚线框住，标注「从不改变，所以一直在缓存里」），然后是「run the tests」，模型回「the quick tests」；memory 来自下方的记忆文件夹，「在会话开始时读取」；底部：今天存的笔记明天才加载。</span></figcaption></figure>
+<p data-points="p0092 p0093 p0094" id="e26">讲者备注：有记忆的周二第一个请求：系统提示、你的指令文件、记忆，然后是「跑测试」。记忆和你写的指令放在一起，在你的消息之前。它来自记忆文件夹，harness 在会话开始时读取笔记，这里就是「只跑快速测试」。于是模型第一次就跑快速测试，没人需要再纠正一遍。</p>
+<p class="callout limit" data-points="p0095" id="e27">记忆只加载一次，所以会话中从不改变，所以一直留在缓存里——第 15 讲说过，这正是重发变便宜的原因。代价是：<b>今天存的笔记，明天或下一次 compaction 之后才会加载。</b></p>
+<figure class="figure orig" data-asset="a0098" data-points="p0098" id="fa0098"><img src="L16-img/p16.png" alt="幻灯片第 16 页：Too many notes to load"><figcaption><b>原图 16 · 笔记太多装不下</b> <span class="source-anchor" data-source-section="s16">出处：EECS 498 AASE L16 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">幻灯片第 16 页</a></span><span class="how">怎么看：几个月后的一个请求：系统提示、「an index with one line per note」、你的消息；中间绿框：笔记在记忆文件夹里等着被需要；下方虚线框：更旧的笔记和过去的会话，靠搜索找到。</span></figcaption></figure>
+<p data-points="p0100 p0101" id="e28">讲者备注：几个月后的一个请求：系统提示，然后是每一条笔记，在每个请求里，在你的消息之前——每个请求都为关于别的工作的笔记付钱。所以 harness 加载一个索引，每条笔记一行，你的消息跟在后面；笔记在记忆文件夹里等到需要时再读。索引行就是每条笔记的第一行，就是那行为了日后找到它而写的。</p>
+<p data-points="p0102" id="e29">再往后，更旧的笔记和过去的会话多到连索引都装不下，它们靠搜索找到。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s14"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">Part 2: Loading and retrieving memories</a></span> · <span class="source-anchor" data-source-section="s15"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">Loading notes back</a></span> · <span class="source-anchor" data-source-section="s16"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">Too many notes to load</a></span></div>
+</section>
+<section class="sec" data-toc="五、三层加载，以及按需读一条笔记" id="s8" data-source-section="s17">
+  <header class="doc-head"><span class="kicker">第 17–18 页</span><h2>索引行要像 skill 描述那样写：它决定其余部分会不会被读</h2></header>
+  <div class="doc-body">
+<figure class="figure orig" data-asset="a0105" data-points="p0105" id="fa0105"><img src="L16-img/p17.png" alt="幻灯片第 17 页：Loading in three levels"><figcaption><b>原图 17 · 三层加载</b> <span class="source-anchor" data-source-section="s17">出处：EECS 498 AASE L16 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">幻灯片第 17 页</a></span><span class="how">怎么看：左列是第 10 讲的 skill，右列是记忆。每个请求：名字和描述／每条笔记一行的索引；任务需要时：SKILL.md 正文／那条笔记；只在找的时候：references 和脚本／搜索更旧的笔记。底部：索引行要像 skill 描述那样写。</span></figcaption></figure>
+<p data-points="p0107 p0108" id="e30">讲者备注：这是第 10 讲的 skill：名字和描述进每个请求，SKILL.md 正文在任务需要时才来，references 和脚本只在去找时才来。记忆有同样的第一层：每条笔记一行的索引。</p>
+<p data-points="p0109 p0110" id="e31">然后是那条笔记，当它那一行与任务匹配时被读取；然后是搜索更旧的笔记，第三层。</p>
+<p class="callout key" data-points="p0111" id="e32">所以<b>索引行要像 skill 描述那样写</b>。它决定其余部分会不会被读，一行含糊的索引意味着那条笔记永远不会回来。</p>
+<figure class="figure orig" data-asset="a0114" data-points="p0114" id="fa0114"><img src="L16-img/p18.png" alt="幻灯片第 18 页：Reading one note on demand"><figcaption><b>原图 18 · 按需读一条笔记</b> <span class="source-anchor" data-source-section="s18">出处：EECS 498 AASE L16 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">幻灯片第 18 页</a></span><span class="how">怎么看：请求 1：系统提示、指令文件、索引、「why only the quick tests?」，模型回「read the test's note」；请求 2：之前全部（虚线，从缓存读）加上末尾的测试笔记，模型答出「the full suite takes minutes」。</span></figcaption></figure>
+<p data-points="p0116 p0117" id="e33">讲者备注：新会话的请求 1：系统提示、指令文件、索引和你的问题：为什么只跑快速测试？索引行说了做什么，没说为什么。所以模型的回答是一次工具调用：读测试那条笔记。</p>
+<p data-points="p0118 p0119" id="e34">请求 2 重发所有内容，从缓存读，在末尾加上测试笔记。现在模型能回答了：全套要好几分钟。多一次请求，和第 10 讲加载一个 skill 的代价一样。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s17"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">Loading in three levels</a></span> · <span class="source-anchor" data-source-section="s18"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">Reading one note on demand</a></span></div>
+</section>
+<section class="sec" data-toc="六、搜索旧笔记，以及一条出了错的笔记" id="s9" data-source-section="s19">
+  <header class="doc-head"><span class="kicker">第 19–20 页</span><h2>按意思搜；先核对再照做</h2></header>
+  <div class="doc-body">
+<figure class="figure orig" data-asset="a0122" data-points="p0122" id="fa0122"><img src="L16-img/p19.png" alt="幻灯片第 19 页：Searching older notes"><figcaption><b>原图 19 · 搜索更旧的笔记</b> <span class="source-anchor" data-source-section="s19">出处：EECS 498 AASE L16 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">幻灯片第 19 页</a></span><span class="how">怎么看：「how do we ship a release?」进入模型，模型「search for release」，结果按好坏排：release steps（同一个词）、deploy checklist（换了说法的同一个意思）、release notes from last year（更旧的排得更低）。底部：模型读最好的一两条。</span></figcaption></figure>
+<p data-points="p0124 p0125 p0126" id="e35">讲者备注：你问：我们怎么发布一个版本？索引里没有匹配的，于是模型调用搜索工具搜 release，最好的结果排在前面。release steps：同一个词。deploy checklist：同一个意思换了说法，按意思搜索能找到它，虽然它从没说过 release。</p>
+<p data-points="p0127 p0128" id="e36">去年的 release notes：更旧的笔记排得更低，因为更可能已经过时。模型读最好的一两条，方式和读索引里的笔记一样。</p>
+<figure class="figure orig" data-asset="a0131" data-points="p0131" id="fa0131"><img src="L16-img/p20.png" alt="幻灯片第 20 页：A note that goes wrong"><figcaption><b>原图 20 · 一条出了错的笔记</b> <span class="source-anchor" data-source-section="s20">出处：EECS 498 AASE L16 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">幻灯片第 20 页</a></span><span class="how">怎么看：时间线：9 月存下笔记 → 10 月命令变了 → 今天笔记是错的。下方三个修法：照做之前先核对；修正或删掉这条笔记；丢掉没人用的笔记（黄色，表示由 harness 做）。</span></figcaption></figure>
+<p data-points="p0133 p0134 p0135" id="e37">讲者备注：9 月存下了这条笔记，里面有跑测试的命令。10 月命令变了，没有任何东西告诉这条笔记。今天这条笔记是错的，而且在每次会话里都加载。</p>
+<p data-points="p0136 p0137 p0138" id="e38">三个修法。照做之前先核对：一条提到文件或命令的笔记，先拿代码对一遍。发现错了就修正或删掉这条笔记。harness 还可以丢掉没人用的笔记：模型几周没用过的笔记会过期淘汰。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s19"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">Searching older notes</a></span> · <span class="source-anchor" data-source-section="s20"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">A note that goes wrong</a></span></div>
+</section>
+<section class="sec" data-toc="七、事实与方法，要带走的，以及这周" id="s10" data-source-section="s21">
+  <header class="doc-head"><span class="kicker">第 21–23 页</span><h2>谁写的、是什么——四种都先读索引</h2></header>
+  <div class="doc-body">
+<figure class="figure orig" data-asset="a0141" data-points="p0141" id="fa0141"><img src="L16-img/p21.png" alt="幻灯片第 21 页：Facts and methods"><figcaption><b>原图 21 · 事实与方法</b> <span class="source-anchor" data-source-section="s21">出处：EECS 498 AASE L16 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">幻灯片第 21 页</a></span><span class="how">怎么看：两行两列。行：每次会话都成立的事实／某类任务的方法；列：你写的／模型写的。你写的事实＝指令文件，你写的方法＝skills；模型写的事实＝memory，模型写的方法＝模型自己写的 skills。底部：四种都先读索引。</span></figcaption></figure>
+<p data-points="p0143 p0144" id="e39">讲者备注：两个问题能给模型知道的东西分类：谁写的，以及它是哪一类东西。你写的、每次会话都成立的事实放进指令文件；你写的某类任务的方法放进 skills。模型写的事实就是记忆。</p>
+<p data-points="p0145 p0146" id="e40">模型学到的方法变成模型自己写的 skills：做完一个难任务后，有些 harness 把步骤存成一个 skill，之后只在那类任务出现时加载。四种都先读索引，所以不管谁写的，一行短短的描述决定其余部分会不会被读。第 17 讲会加上从文档构建的知识。</p>
+<figure class="figure orig" data-asset="a0149" data-points="p0149" id="fa0149"><img src="L16-img/p22.png" alt="幻灯片第 22 页：What to take away"><figcaption><b>原图 22 · 要带走的四点</b> <span class="source-anchor" data-source-section="s22">出处：EECS 498 AASE L16 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">幻灯片第 22 页</a></span><span class="how">怎么看：记忆是模型为以后写的笔记；harness 也决定模型什么时候写；每条笔记加载一行，其余按需读；信一条笔记之前先核对。</span></figcaption></figure>
+<p data-points="p0151 p0152" id="e41">讲者备注：记忆是模型为以后写下的笔记。harness 也决定模型什么时候写。</p>
+<p data-points="p0153 p0154" id="e42">每条笔记只加载一行，其余按需读取。信一条笔记之前先核对。</p>
+<figure class="figure orig" data-asset="a0157" data-points="p0157" id="fa0157"><img src="L16-img/p23.png" alt="幻灯片第 23 页：This week"><figcaption><b>原图 23 · 这周</b> <span class="source-anchor" data-source-section="s23">出处：EECS 498 AASE L16 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">幻灯片第 23 页</a></span><span class="how">怎么看：两条——Aider 自己不写记忆；长期规则放进一个 --read 文件。</span></figcaption></figure>
+<p data-points="p0159 p0160" id="e43">讲者备注：Aider 自己不写记忆：它的聊天历史文件是一份逐字记录，只有你让 Aider 恢复聊天历史时才会回来。长期规则放进一个 <code>--read</code> 文件，也就是你在命令行传进去的一份约定文件——那是你写的指令，不是记忆。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s21"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">Facts and methods</a></span> · <span class="source-anchor" data-source-section="s22"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">What to take away</a></span> · <span class="source-anchor" data-source-section="s23"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">This week</a></span></div>
+</section>
+<section class="sec" data-toc="八、出处与答疑" id="s11" data-source-section="s24">
+  <header class="doc-head"><span class="kicker">第 24–26 页</span><h2>文档、论文与源码</h2></header>
+  <div class="doc-body">
+<figure class="figure orig" data-asset="a0162" data-points="p0162" id="fa0162"><img src="L16-img/p24.png" alt="幻灯片第 24 页：Sources"><figcaption><b>原图 24 · 出处页</b> <span class="source-anchor" data-source-section="s24">出处：EECS 498 AASE L16 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">幻灯片第 24 页</a></span><span class="how">怎么看：Claude Code 的记忆文档、Claude API 的 memory tool 文档、Anthropic 关于有效上下文工程的文章、MemGPT 论文（2023）。</span></figcaption></figure>
+<p data-points="p0164" id="e44">讲者备注：Claude Code 关于记忆的文档、Claude API 的记忆工具、Anthropic 关于有效上下文工程的文章，以及 2023 年的 MemGPT 论文。</p>
+<figure class="figure orig" data-asset="a0166" data-points="p0166" id="fa0166"><img src="L16-img/p25.png" alt="幻灯片第 25 页：More sources"><figcaption><b>原图 25 · 更多出处</b> <span class="source-anchor" data-source-section="s25">出处：EECS 498 AASE L16 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">幻灯片第 25 页</a></span><span class="how">怎么看：Hermes Agent 源码（NousResearch/hermes-agent）、OpenClaw 源码、Codex 关于 memories 的源码。</span></figcaption></figure>
+<p data-points="p0167" id="e45">讲者备注：Hermes Agent 的源码、OpenClaw 的源码，以及 Codex 里关于记忆的源码。第 11 页三个写入时机各对应哪个 harness，讲者没有逐一点名，未确认。</p>
+<figure class="figure orig" data-asset="a0169" data-points="p0169" id="fa0169"><img src="L16-img/p26.png" alt="幻灯片第 26 页：Questions"><figcaption><b>原图 26 · 答疑页</b> <span class="source-anchor" data-source-section="s26">出处：EECS 498 AASE L16 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">幻灯片第 26 页</a></span><span class="how">怎么看：只有标题 Questions。</span></figcaption></figure>
+<p data-points="p0170" id="e46">最后一页是答疑：讲者只说了一个词「Questions」，剩下的时间留给提问；课上的问答没有收录在材料里，未确认。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s24"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">Sources</a></span> · <span class="source-anchor" data-source-section="s25"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">More sources</a></span> · <span class="source-anchor" data-source-section="s26"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L16/slides.md">Questions</a></span></div>
+</section>
+<section class="sec" data-toc="小测：3 道题" id="s12" data-source-section="extra">
+  <div class="head-full"><span class="kicker">小测</span><h2>用三道题检查理解</h2></div>
+  <div class="stage"><div class="quiz"><script type="application/json">[{"q": "按讲者的规则，下面哪样值得写成一条记忆？", "opts": ["这次会话读过的文件", "刚修掉的一个 bug", "「demo 周不合并」这条代码里没有的约定"], "a": 2, "why": "留下下周仍成立、且不在代码里的：读过的文件还在磁盘上，修掉的 bug 在 git 里，今天的计划只在今天有用。", "back": 4}, {"q": "今天会话中途新存的一条笔记，什么时候会出现在请求里？", "opts": ["下一个请求立刻出现", "明天（新会话）或下一次 compaction 之后", "永远不会，除非手动加载"], "a": 1, "why": "记忆只在会话开始时加载一次、会话中不变，所以能一直留在缓存里；代价就是新笔记要等下一次加载。", "back": 7}, {"q": "会话结束后由第二个模型整理记忆时，它被允许做什么？", "opts": ["可以改写笔记，但只限记忆文件夹，没有网络", "可以改代码并推送", "只能新增，不能修改任何笔记"], "a": 0, "why": "没人看着时权限更小：不是对笔记的权限更小，而是对记忆以外的触及更少。每隔几轮的副本只能新增，compaction 前那一轮只能往今天的日志里加。", "back": 6}]</script></div></div>
+</section>
+</main><script>var __H=location.hash;window.lessonIcons={"menu": "<svg class=\"i i-menu\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/><\/svg>", "play": "<svg class=\"i i-play\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z\"/><\/svg>", "pause": "<svg class=\"i i-pause\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"14\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/><rect x=\"5\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/><\/svg>", "check": "<svg class=\"i i-check\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 6 9 17l-5-5\"/><\/svg>", "x": "<svg class=\"i i-x\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/><\/svg>", "zoom-in": "<svg class=\"i i-zoom-in\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><line x1=\"21\" x2=\"16.65\" y1=\"21\" y2=\"16.65\"/><line x1=\"11\" x2=\"11\" y1=\"8\" y2=\"14\"/><line x1=\"8\" x2=\"14\" y1=\"11\" y2=\"11\"/><\/svg>", "zoom-out": "<svg class=\"i i-zoom-out\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><line x1=\"21\" x2=\"16.65\" y1=\"21\" y2=\"16.65\"/><line x1=\"8\" x2=\"14\" y1=\"11\" y2=\"11\"/><\/svg>", "copy": "<svg class=\"i i-copy\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\"/><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"/><\/svg>", "chevron-right": "<svg class=\"i i-chevron-right\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m9 18 6-6-6-6\"/><\/svg>", "book-open": "<svg class=\"i i-book-open\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 5v16\"/><path d=\"M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z\"/><\/svg>", "external-link": "<svg class=\"i i-external-link\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M15 3h6v6\"/><path d=\"M10 14 21 3\"/><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/><\/svg>"};window.lessonIcon=n=>window.lessonIcons[n]||"";</script><script>/* Article/pair navigation only. No global swipe or arrow-key paging. */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const H=document.documentElement, sections=$$('main.deck > .sec, main.deck > .hero, .pair-notes > .sec');
+if(!sections.length)return;
+const ids=new Set($$('[id]').map(n=>n.id));
+sections.forEach((s,i)=>{if(!s.id){let n=i+1,id=s.classList.contains('hero')?'intro':'s'+n;while(ids.has(id))id='s'+(++n);s.id=id;ids.add(id)}});
+const title=s=>s.dataset.toc||$('h2,h1,h3',s)?.textContent||s.id;
+const toc=document.createElement('nav');toc.className='toc';toc.id='lesson-toc';toc.setAttribute('aria-label','目录');
+const heading=document.createElement('b');heading.textContent='目录';toc.appendChild(heading);const ol=document.createElement('ol');toc.appendChild(ol);
+sections.forEach((s,i)=>{const li=document.createElement('li'),a=document.createElement('a');a.href='#'+s.id;a.textContent=(i+1)+'. '+title(s);li.appendChild(a);ol.appendChild(li)});document.body.appendChild(toc);
+const links=$$('a',toc),toggle=$('.toc-toggle'),count=$('.count'),bar=$('.track i');
+const shade=document.createElement('div');shade.className='toc-backdrop';document.body.appendChild(shade);
+function open(value){H.classList.toggle('toc-open',value);toggle?.setAttribute('aria-expanded',String(value));if(value)links.find(a=>a.getAttribute('aria-current')==='true')?.focus();else toggle?.focus()}
+if(toggle){toggle.setAttribute('aria-controls',toc.id);toggle.onclick=()=>open(!H.classList.contains('toc-open'))}shade.onclick=()=>open(false);
+addEventListener('keydown',e=>{if(e.key==='Escape'&&H.classList.contains('toc-open'))open(false)});
+function locate(hash){let id;try{id=decodeURIComponent(hash.replace(/^#/,''))}catch(e){return null}if(/^\d+$/.test(id))return sections[+id-1];return document.getElementById(id)}
+function jump(target){if(!target)return;H.classList.remove('toc-open');toggle?.setAttribute('aria-expanded','false');target.scrollIntoView({block:'start',behavior:'instant'});history.replaceState(null,'','#'+target.id);update();dispatchEvent(new Event('lesson:navigate'))}
+window.lessonNav={layout:H.dataset.layout,go:n=>jump(document.getElementById('s'+n)||sections[n-1]),returnTo:box=>jump(box.closest('.sec')||box),jump};window.goCard=n=>window.lessonNav.go(n);
+toc.onclick=e=>{const a=e.target.closest('a');if(!a)return;e.preventDefault();jump(locate(a.hash))};
+const key='pos:'+location.pathname;let queued=false,restoring=true;
+function update(){queued=false;let current=sections[0];const line=H.dataset.layout==='pair'&&innerWidth<=820?innerHeight*.4+90:100;for(const s of sections)if(s.getBoundingClientRect().top<=line)current=s;
+ count.textContent=title(current);links.forEach(a=>a.setAttribute('aria-current',String(a.hash==='#'+current.id)));const max=H.scrollHeight-innerHeight;bar.style.width=Math.max(0,Math.min(100,max>0?scrollY/max*100:100))+'%';
+ if(!restoring)try{localStorage.setItem(key,JSON.stringify({id:current.id,offset:scrollY-(current.getBoundingClientRect().top+scrollY)}))}catch(e){}
+}
+addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(update)}},{passive:true});addEventListener('resize',update);addEventListener('hashchange',()=>jump(locate(location.hash)));
+addEventListener('load',()=>{const hash=window.__H||location.hash;let target=locate(hash),offset=0;if(!hash){try{const pos=JSON.parse(localStorage.getItem(key)||'null');if(pos){target=document.getElementById(pos.id);offset=Number(pos.offset)||0}}catch(e){}}
+ if(target){target.scrollIntoView({block:'start',behavior:'instant'});if(!hash)scrollBy(0,offset+72)}restoring=false;update();
+});update();
+})();
+</script><script>/* Reveal an offscreen simulator first, then move only its local SVG viewport. */
+(function(root){
+function delta(start,end,low,high,pad=16){if(start<low+pad)return start-low-pad;if(end>high-pad)return end-high+pad;return 0}
+function focus(svg,scroller){
+ let frame=scroller.getBoundingClientRect(),bottom=innerHeight-88;
+ const top=document.querySelector('.top')?.getBoundingClientRect().bottom||56;
+ if(frame.bottom<=top||frame.top+112>bottom){
+  scroller.closest('.sim').scrollIntoView({block:'start',behavior:'instant'});
+  frame=scroller.getBoundingClientRect();
+ }
+ for(let p=scroller.parentElement;p&&p!==document.body;p=p.parentElement){const c=getComputedStyle(p);if(/auto|scroll|hidden|clip/.test(c.overflowY)){const r=p.getBoundingClientRect();bottom=Math.min(bottom,r.top+p.clientHeight)}}
+ const space=Math.max(112,Math.min(innerHeight*.4,bottom-frame.top));scroller.style.maxHeight=space+'px';
+ frame=scroller.getBoundingClientRect();const node=svg.querySelector('.fl-node.act');if(!node)return;const r=node.getBoundingClientRect();
+ scroller.scrollTop+=delta(r.top,r.bottom,frame.top,frame.top+scroller.clientHeight);
+ scroller.scrollLeft+=delta(r.left,r.right,frame.left,frame.left+scroller.clientWidth);
+}
+root.LessonGeometry={delta,focus};if(typeof module!=='undefined')module.exports={delta,focus};
+})(typeof window==='undefined'?globalThis:window);
+</script><script>/* Shared material/explanation pairing, original-image dialog and copy actions. */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)],ic=window.lessonIcon;
+window.lessonCopy=async(text,button)=>{try{if(navigator.clipboard?.writeText)await navigator.clipboard.writeText(text);else{const t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();if(!document.execCommand('copy'))throw Error('copy');t.remove()}button.textContent='已复制'}catch(e){button.textContent='复制未成功，请选中文字复制'}};
+$$('.pair.codewalk,.pair.read-pair,.pair.material-pair').forEach(pair=>{
+ const source=$('.pair-source',pair),notes=$('.pair-notes',pair);if(!source||!notes)return;
+ const pre=$('pre[data-lines]',source),code=pre&&$('code',pre),steps=$$('.step',notes);let lines=[],raw='';
+ if(code){raw=code.textContent;const first=Number(pre.dataset.lines)||1;code.textContent='';const pieces=raw.replace(/\n$/,'').split('\n');pieces.forEach((text,i)=>{const line=document.createElement('span');line.className='code-line';line.dataset.line=String(first+i);line.textContent=text;code.appendChild(line);lines.push(line)});
+  const panel=document.createElement('div');panel.className='code-panel';source.before(panel);
+  const toolbar=document.createElement('div');toolbar.className='code-toolbar';
+  const hint=document.createElement('span');hint.className='code-scroll-hint';hint.textContent='长行可横向滚动';
+  const button=document.createElement('button');button.className='btn sm copy-code';button.innerHTML=ic('copy')+' 复制代码';button.onclick=()=>window.lessonCopy(raw,button);
+  toolbar.append(hint,button);panel.append(toolbar,source);
+ }
+ let active=null;
+ function select(step){if(!step||active===step)return;active=step;steps.forEach(s=>s.classList.toggle('is-active',s===step));let targets=[];
+  if(code){const ranges=(step.dataset.hl||'').split(',').map(v=>v.split('-').map(Number));lines.forEach(line=>{const n=Number(line.dataset.line),on=ranges.some(([a,b=a])=>n>=a&&n<=b);line.classList.toggle('hl',on);if(on)targets.push(line)})}
+  else{const ids=(step.dataset.explains||step.dataset.target||'').split(/\s+/);$$('.source-block,[data-material]',source).forEach(block=>{const on=ids.includes(block.dataset.sourceId||block.id);block.classList.toggle('is-active',on);if(on)targets.push(block)})}
+  if(targets.length){const a=targets[0].getBoundingClientRect(),b=targets[targets.length-1].getBoundingClientRect(),r=source.getBoundingClientRect();const bottom=r.top+source.clientHeight;source.scrollTop+=b.bottom-a.top>source.clientHeight-32?a.top-r.top-16:window.LessonGeometry.delta(a.top,b.bottom,r.top,bottom)}
+ }
+ const update=()=>{
+  const rect=notes.getBoundingClientRect(),material=source.closest('.code-panel')||source;
+  const top=Math.max(0,$(".top")?.getBoundingClientRect().bottom||0,innerWidth<=820?material.getBoundingClientRect().bottom:0),bottom=Math.min(innerHeight,rect.bottom);
+  if(bottom<=top)return;
+  const line=top+(bottom-top)*.4;let step=steps[0];
+  for(const s of steps)if(s.getBoundingClientRect().top<=line)step=s;
+  const last=steps.at(-1),lastRect=last?.getBoundingClientRect();
+  if(scrollY+innerHeight>=document.documentElement.scrollHeight-2&&lastRect?.top<bottom&&lastRect.bottom>top)step=last;
+  select(step);
+ };
+ let queued=false;addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(()=>{queued=false;update()})}},{passive:true});addEventListener('resize',update);
+ steps.forEach(step=>{step.addEventListener('focusin',()=>select(step));step.addEventListener('click',e=>{select(step);const a=e.target.closest('a');if(a?.hash&&source.querySelector(a.hash)){e.preventDefault();source.focus()}})});select(steps[0]);addEventListener('load',update);
+});
+$$('figure img').forEach(img=>{const button=document.createElement('button');button.className='image-open';button.type='button';button.setAttribute('aria-label','放大图片：'+img.alt);img.replaceWith(button);button.appendChild(img);button.onclick=()=>{
+ const dialog=document.createElement('dialog');dialog.className='image-dialog';dialog.setAttribute('aria-label',img.alt);const close=document.createElement('button');close.className='btn dialog-close';close.innerHTML=ic('x')+' 关闭';const large=img.cloneNode();large.removeAttribute('loading');dialog.append(close,large);document.body.appendChild(dialog);close.onclick=()=>dialog.close();dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close()});dialog.addEventListener('close',()=>{dialog.remove();button.focus()});dialog.showModal();close.focus();
+}});
+$$('details.more summary').forEach(s=>{if(!s.textContent.trim())s.textContent='展开细节';s.insertAdjacentHTML('afterbegin',ic('chevron-right'))});
+})();
+</script><script>/* 学习搭子 固定组件库 — 不要在课程里改这个文件。 */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const NS='http://www.w3.org/2000/svg';
+const data=(box,kind)=>JSON.parse(box.querySelector('script[type="application/json"]')?.textContent||box.dataset[kind]);
+const ic=window.lessonIcon;
+const el=(t,a={},p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p&&p.appendChild(e);return e};
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+function component(selector,render){
+  $$(selector).forEach(box=>{try{render(box)}catch(error){
+    const message=document.createElement('p');message.className='component-error';
+    message.textContent='这张图的数据有误';message.setAttribute('role','status');
+    box.replaceWith(message);console.error('组件数据有误',error);
+  }});
+}
+
+/* ---------- flow：用 JSON 画流程图 ----------
+ spec = {w,h,nodes:[{id,x,y,t,s?,c?,w?}],edges:[{f,t,l?,bend?}]}  节点坐标是中心点 */
+function drawFlow(svg,spec){
+  svg.innerHTML='';
+  const defs=el('defs',{},svg);
+  [['a','var(--meta)'],['b','var(--blue)'],['red','var(--amber)'],['amber','var(--amber)'],['green','var(--green)']].forEach(([id,c])=>{const m=el('marker',{id:'ar'+id+svg.dataset.uid,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:7,markerHeight:7,orient:'auto-start-reverse'},defs);el('path',{d:'M0,0L10,5L0,10z',fill:c},m)});
+  const N={};spec.nodes.forEach(n=>N[n.id]={...n,w:n.w||150,h:n.h||(n.s?70:56)});
+  const ns=Object.values(N);
+  let x0=Math.min(...ns.map(n=>n.x-n.w/2)),x1=Math.max(...ns.map(n=>n.x+n.w/2)),y0=Math.min(...ns.map(n=>n.y-n.h/2)),y1=Math.max(...ns.map(n=>n.y+n.h/2));
+  const B={x0,x1,y0,y1};
+  const eg=el('g',{},svg),ng=el('g',{},svg);svg._edges={};svg._nodes={};
+  const clip=(a,b)=>{const dx=b.x-a.x,dy=b.y-a.y;const s=Math.min(Math.abs((a.w/2+6)/(dx||1e-9)),Math.abs((a.h/2+6)/(dy||1e-9)));return[a.x+dx*s,a.y+dy*s]};
+  spec.edges.forEach(e=>{const a=N[e.f],b=N[e.t];let d,lx,ly;
+    if(e.route){ /* 沿外圈走的直角线：top|bottom|left|right，lane 控制离外框的距离 */
+      const g=30+(e.lane||0)*30,oa=e.oa||0,ob=e.ob||0;
+      if(e.route==='top'||e.route==='bottom'){const t=e.route==='top',Y=t?B.y0-g:B.y1+g,ya=a.y+(t?-1:1)*(a.h/2+2),yb=b.y+(t?-1:1)*(b.h/2+8);
+        d=`M${a.x+oa},${ya} V${Y} H${b.x+ob} V${yb}`;lx=(a.x+oa+b.x+ob)/2;ly=Y+(t?-8:18);
+        t?(y0=Math.min(y0,Y-26)):(y1=Math.max(y1,Y+26));}
+      else{const l=e.route==='left',X=l?B.x0-g:B.x1+g,xa=a.x+(l?-1:1)*(a.w/2+2),xb=b.x+(l?-1:1)*(b.w/2+8);
+        d=`M${xa},${a.y+oa} H${X} V${b.y+ob} H${xb}`;lx=X+(l?-8:8);ly=(a.y+b.y)/2;
+        l?(x0=Math.min(x0,X-90)):(x1=Math.max(x1,X+90));}
+    }else{const[p1,q1]=clip(a,b),[p2,q2]=clip(b,a);const mx=(p1+p2)/2,my=(q1+q2)/2,len=Math.hypot(p2-p1,q2-q1)||1,bd=e.bend||0;
+      const cx=mx-(q2-q1)/len*bd,cy=my+(p2-p1)/len*bd;d=`M${p1},${q1} Q${cx},${cy} ${p2},${q2}`;
+      const qx=.25*p1+.5*cx+.25*p2,qy=.25*q1+.5*cy+.25*q2,sg=bd>=0?1:-1;lx=qx-(q2-q1)/len*sg*14;ly=qy+(p2-p1)/len*sg*14+4;}
+    const mk=e.c||'a';const p=el('path',{d,class:'fl-edge '+(e.c||''),'marker-end':`url(#ar${mk}${svg.dataset.uid})`},eg);p._mk=mk;
+    let lab=null;if(e.l){const anc=e.route==='left'?'end':e.route==='right'?'start':'middle';lab=el('text',{x:lx,y:ly,'text-anchor':anc,class:'fl-elab '+(e.c||''),stroke:'var(--paper)','stroke-width':5,'paint-order':'stroke'},eg);lab.textContent=e.l}
+    svg._edges[e.f+'>'+e.t]={p,lab}});
+  ns.forEach(n=>{const g=el('g',{class:'fl-node '+(n.c||'')},ng);
+    el('rect',{x:n.x-n.w/2,y:n.y-n.h/2,width:n.w,height:n.h,rx:14},g);
+    const t=el('text',{x:n.x,y:n.y+(n.s?-4:6),'text-anchor':'middle'},g);t.textContent=n.t;
+    if(n.s){const s=el('text',{x:n.x,y:n.y+18,'text-anchor':'middle',class:'sub'},g);s.textContent=n.s}
+    svg._nodes[n.id]=g});
+  /* 自动贴合：viewBox 只包住内容，图会放大填满面板 */
+  const P=spec.pad??8,W=x1-x0+2*P,H=y1-y0+2*P+20;
+  svg.setAttribute('viewBox',`${x0-P} ${y0-P-10} ${W} ${H}`);
+  svg.style.setProperty('--flow-width',W+'px');svg.style.setProperty('--flow-height',H+'px');
+  const scroll=document.createElement('div');scroll.className='flow-scroll';
+  svg.replaceWith(scroll);scroll.appendChild(svg);
+  if(!scroll.closest('.sim')&&W>innerWidth-78){const t=document.createElement('p');t.className='flow-tip';t.textContent='← 左右滑动看全图 →';scroll.after(t)}
+  svg._set=(act,edge)=>{for(const k in svg._nodes)svg._nodes[k].classList.toggle('act',k===act);
+    for(const k in svg._edges){const on=k===edge,E=svg._edges[k];E.p.classList.toggle('act',on);E.p.setAttribute('marker-end',`url(#ar${on?'b':E.p._mk}${svg.dataset.uid})`);E.lab&&E.lab.classList.toggle('act',on)}};
+  svg._set(svg.dataset.act,svg.dataset.edge);
+  svg._center=()=>{if(!matchMedia('(max-width:820px)').matches)return;
+    const active=Object.values(svg._nodes).find(n=>n.classList.contains('act'));if(!active)return;
+    const a=active.getBoundingClientRect(),r=scroll.getBoundingClientRect();
+    scroll.scrollLeft+=a.left+a.width/2-r.left-r.width/2;
+  };
+}
+let uid=0;
+component('svg.flow',s=>{s.dataset.uid=++uid;drawFlow(s,data(s,'flow'))});
+
+/* ---------- sim：一步步走的模拟器 ----------
+ data-sim = {flow:{...}, steps:[{act,edge,msg:{r:user|asst|tool|err|sys,n?,t},say}], alt?:{label,steps:[...]}} */
+component('.sim',box=>{
+  const spec=data(box,'sim');if(spec.alt&&!spec.alts)spec.alts=[spec.alt];const AL=spec.alts||[];const gname='br'+(++uid);
+  box.innerHTML=`<div class="ctl"><button class="btn sm" data-a="step">下一步</button><button class="btn sm" data-a="play">${ic("play")} 自动</button><button class="btn sm" data-a="reset">重置</button>
+   <label>速度 <input type="range" min="300" max="2500" step="100" value="1200"></label></div>${AL.length?`<div class="ctl branches"><label><input type="radio" name="${gname}" value="-1" checked> ${esc(spec.label||'正常路径')}</label>${AL.map((a,j)=>`<label><input type="radio" name="${gname}" value="${j}"> ${esc(a.label)}</label>`).join('')}</div>`:''}
+   <div class="body"><svg class="flow"></svg><div class="log"></div></div><div class="narr"></div>`;
+  if(spec.layout==='wide')box.classList.add('wide');
+  const svg=$('.body > svg.flow',box);svg.dataset.uid=++uid;drawFlow(svg,spec.flow);
+  const fs=svg.parentElement,tip=document.createElement('p');tip.className='flow-tip';tip.textContent='点图放大看字，再点回到全图';fs.after(tip);
+  const focus=()=>{if(!fs.classList.contains('zoom'))return svg._center();window.LessonGeometry.focus(svg,fs)};
+  const zoom=document.createElement('button');zoom.className='btn sm zoom-toggle';zoom.innerHTML=ic('zoom-in')+' 放大图';zoom.setAttribute('aria-pressed','false');tip.replaceWith(zoom);const toggle=()=>{const on=fs.classList.toggle('zoom');zoom.innerHTML=ic(on?'zoom-out':'zoom-in')+(on?' 返回全图':' 放大图');zoom.setAttribute('aria-pressed',String(on));if(!on){fs.style.maxHeight='';fs.scrollTop=0}focus()};fs.onclick=toggle;zoom.onclick=toggle;window.addEventListener('resize',focus);window.addEventListener('load',()=>requestAnimationFrame(()=>{const params=new URLSearchParams(location.search);if((params.has('sim')||params.has('zoom'))&&!(window.__H??location.hash)&&box===$('.sim')){const section=box.closest('.sec,.card');if(window.lessonNav.layout==='deck')window.goCard($$('.card').indexOf(section)+1);else section.scrollIntoView({block:'start',behavior:'instant'})}focus()}));window.addEventListener('lesson:navigate',()=>requestAnimationFrame(focus));
+  const log=$('.log',box),narr=$('.narr',box),radios=$$('input[type=radio]',box),spd=$('input[type=range]',box),play=$('[data-a=play]',box);
+  let i=0,timer=null,predicted=!spec.predict;const prediction=document.createElement('div');if(spec.predict){prediction.className='prediction callout';prediction.innerHTML='<p>先预测：'+esc(spec.predict)+'</p><label>你的判断<textarea rows="2"></textarea></label><button class="btn sm" data-a="predict">提交预测，再看过程</button>';box.prepend(prediction)};const sel=()=>{const r=radios.find(r=>r.checked);return r?+r.value:-1};const steps=()=>sel()>=0?AL[sel()].steps:spec.steps;
+  const hint=spec.note?esc(spec.note)+'　点「下一步」开始。':'点「下一步」开始。';const reset=()=>{i=0;log.innerHTML='';narr.innerHTML=hint;svg._set(null,null);stop()};
+  const stop=()=>{clearTimeout(timer);timer=null;play.innerHTML=ic('play')+' 自动'};
+  const step=()=>{const S=steps();if(i>=S.length){narr.textContent='流程结束。点「重置」再走一遍。';stop();return false}
+    const s=S[i++];svg._set(s.act,s.edge);focus();if(s.msg){const d=document.createElement('div');d.className='msg '+s.msg.r;
+      d.innerHTML=`<b>${esc(s.msg.n||({user:'用户',asst:'模型',tool:'工具结果',err:'出错',sys:'系统提示词'}[s.msg.r]))}</b>${esc(s.msg.t)}`;log.appendChild(d);log.scrollTop=1e9}
+    narr.innerHTML=`<b>第 ${i}/${S.length} 步</b>　${esc(s.say)}`;return true};
+  const loop=()=>{if(step())timer=setTimeout(loop,+spd.value);else stop()};
+  box.onclick=e=>{const a=e.target.closest('button')?.dataset.a;if(a==='predict'){predicted=true;prediction.hidden=true;step()}if(a==='step'){stop();if(predicted)step();else prediction.querySelector('textarea').focus()}if(a==='reset')reset();if(a==='play'){if(!predicted){prediction.querySelector('textarea').focus();return}if(timer)stop();else{play.innerHTML=ic('pause')+' 暂停';loop()}}};
+  narr.innerHTML=hint;radios.forEach(r=>r.onchange=reset);
+  const P=new URLSearchParams(location.search);if(P.get('alt')&&radios[+P.get('alt')]){radios[+P.get('alt')].checked=true}for(let n=+P.get('sim')||0;n>0;n--)step();if(P.get('sim')){predicted=true;prediction.hidden=true}if(P.get('zoom')){fs.classList.add('zoom');zoom.setAttribute('aria-pressed','true');zoom.innerHTML=ic('zoom-out')+' 返回全图'} /* 自查用：?sim=5&alt=1&zoom=1 */
+});
+
+/* ---------- bars：横向条形图 ----------
+ data-bars = {unit, items:[{l,v,c?:blue|amber|green|red,note?}], caption?}  数字必须来自原文 */
+component('.bars',box=>{const B=data(box,'bars'),mx=Math.max(1,...B.items.filter(i=>i.v!=null).map(i=>i.v));
+  box.innerHTML=B.items.map(i=>`<div class="bar ${i.c||''}"><span class="bl">${esc(i.l)}</span>${i.v==null?`<span class="bmiss">${esc(i.miss||'原文未给数字')}</span>`:`<span class="bt"><i style="width:${(i.v/(B.axis==='independent'?Math.max(1,i.v):mx)*100).toFixed(1)}%"></i></span><span class="bv">${esc(i.v)}${esc(i.unit||B.unit||'')}</span>`}${i.note?`<span class="bn">${esc(i.note)}</span>`:''}</div>`).join('')+(B.caption?`<div class="bc">${esc(B.caption)}</div>`:'')});
+
+/* ---------- quiz：页内小测 ----------
+ data-quiz = [{q,opts:[...],a:正确下标,why,back:答错时回到第几张卡片}] */
+component('.quiz,.checkpoint',box=>{
+  const checkpoint=box.classList.contains('checkpoint');box.classList.add('quiz');const raw=data(box,checkpoint?'checkpoint':'quiz'),Q=Array.isArray(raw)?raw:[raw],P=new URLSearchParams(checkpoint?'':location.search);
+  let k=Math.max(0,Math.min(Q.length-1,(parseInt(P.get('q'))||1)-1));
+  const answers=Q.map(()=>({first:null,selected:null,retries:0}));
+  const score=()=>answers.filter((s,i)=>s.first===Q[i].a).length;
+  const complete=()=>answers.every(s=>s.selected!==null);
+  const reviewButton=i=>{
+    const target=window.lessonNav.layout==='deck'?$$('.card')[Q[i].back-1]:document.getElementById('s'+Q[i].back);
+    const title=target.dataset.toc||$('h2,h1,h3',target)?.textContent||'相关内容';
+    return `<button class="btn sm" data-review="${i}">回看：${esc(title)}</button>`;
+  };
+  function summary(){
+    const wrong=answers.map((s,i)=>s.first!==Q[i].a?i:-1).filter(i=>i>=0);
+    const recovered=wrong.filter(i=>answers[i].selected===Q[i].a).length;
+    box.innerHTML=`<div class="qt">小测总结</div><p>首次得分：${score()} / ${Q.length}。重试答对：${recovered} 题。</p>
+      <div>${wrong.length?wrong.map(i=>`<p>第 ${i+1} 题：${esc(Q[i].q)} ${reviewButton(i)} <button class="btn sm" data-question="${i}">回到此题</button></p>`).join(''):'没有首次错题。'}</div>
+      <p>用自己的话复述这页的核心机制，再举一个新场景。</p><label>你的复述<textarea class="retelling" rows="3"></textarea></label><button class="btn sm" data-copy-result="1">${ic("copy")} 复制学习结果 JSON</button><button class="btn sm" data-question="0">查看作答</button>`;
+  }
+  function render(){const q=Q[k],s=answers[k];
+    box.innerHTML=`<div class="qn">第 ${k+1} / ${Q.length} 题 ${checkpoint?'· 不计分':'· 首次答对 '+score()}</div><div class="qt">${esc(q.q)}</div>
+      ${q.opts.map((o,j)=>`<button class="opt ${s.selected===null?'':j===s.selected?(j===q.a?'ok':'no'):''}" data-j="${j}" aria-pressed="${j===s.selected}">${String.fromCharCode(65+j)}. ${esc(o)}</button>`).join('')}
+      <div class="fb" aria-live="polite">${s.selected===null?'':s.selected===q.a?ic('check')+' 对。'+esc(q.why):ic('x')+' 不对。先回去看看，或再试一次。'}
+      ${s.selected!==null&&s.selected!==q.a?reviewButton(k)+' <button class="btn sm" data-retry="1">再试一次</button>':''}</div>
+      <div class="nav"><button class="btn sm" data-n="-1" ${k?'':'disabled'}>上一题</button>
+      <button class="btn sm main" data-n="1" ${s.selected===null?'disabled':''}>${checkpoint?'完成检查':k===Q.length-1?'查看总结':'下一题'}</button></div>`;
+  }
+  box.onclick=e=>{const t=e.target.closest('button');if(!t)return;
+    if(t.dataset.review!==undefined){const i=+t.dataset.review;window.lessonNav.go(Q[i].back);
+      let ret=$('#quiz-return');if(!ret){ret=document.createElement('button');ret.id='quiz-return';ret.className='btn sm';document.body.appendChild(ret)}
+      ret.textContent='回到小测';ret.onclick=()=>{window.lessonNav.returnTo(box);ret.remove()};return;
+    }
+    if(t.dataset.copyResult!==undefined){const result={path:location.pathname,firstScore:score(),total:Q.length,answers:answers.map((s,i)=>({question:i+1,first:s.first,selected:s.selected,retries:s.retries,wrong:s.first!==Q[i].a,review:'#s'+Q[i].back})),retelling:$('.retelling',box).value};window.lessonCopy(JSON.stringify(result,null,2),t);return}
+    if(t.dataset.question!==undefined){k=+t.dataset.question;render();return}
+    if(t.dataset.retry){answers[k].selected=null;answers[k].retries++;render();return}
+    if(t.dataset.n){if(checkpoint&&+t.dataset.n===1){box.querySelector('.nav').hidden=true;return}if(k===Q.length-1&&+t.dataset.n===1){if(complete())summary();else{k=answers.findIndex(s=>s.selected===null);render()}return}k+=+t.dataset.n;render();return}
+    if(t.dataset.j===undefined||answers[k].selected!==null)return;
+    const j=+t.dataset.j;answers[k].selected=j;if(answers[k].first===null)answers[k].first=j;render();const nv=$('.nav',box);nv&&nv.scrollIntoView&&nv.scrollIntoView({block:'nearest'});
+  };
+  render();
+  const pk=P.get('pick'),pick=pk==='wrong'?Q[k].opts.findIndex((_,i)=>i!==Q[k].a):pk!==null&&/^\d+$/.test(pk)?+pk:-1;
+  if(pick>=0&&$$('.opt',box)[pick])$$('.opt',box)[pick].click();
+
+});
+
+})();
+</script><script>/* End-of-build readiness marker, used by the screenshot harness. */
+document.querySelector('.theme-toggle').onclick=window.__tt;
+window.__lessonReady=true;
+</script><script>/* ---------- 学完了：点一下记为已学完（存在本机浏览器） ---------- */
+(function(){if(window.__finish)return;window.__finish=1;
+if(!document.querySelector('.deck'))return;
+const st=document.createElement('style');st.textContent=`.fin-btn{position:fixed;right:16px;bottom:76px;z-index:50;padding:10px 16px;border-radius:999px;border:0;background:#16a34a;color:#fff;font:600 15px system-ui;box-shadow:0 4px 14px rgba(0,0,0,.18);cursor:pointer}.fin-btn.done{background:#e5e7eb;color:#166534}`;document.head.appendChild(st);
+const p=n=>String(n).padStart(2,'0');
+const doneKeys=()=>{const out=new Set();const seed=location.pathname;const vs=new Set([seed]);if(seed.endsWith('/index.html')){const d=seed.slice(0,-10);vs.add(d);vs.add(d.replace(/\/$/,'')||'/')}else if(seed.endsWith('/')){vs.add(seed+'index.html');vs.add(seed.replace(/\/$/,'')||'/')}else if(!/\.[a-z0-9]+$/i.test(seed)){vs.add(seed+'/');vs.add(seed+'/index.html')}for(const u of vs){out.add(u);const m=u.match(/^(.*)\/courses\/(.+)$/);if(m)out.add(m[1]+'/'+m[2]);const m2=u.match(/^(.*)\/(cs146s)\/(.+)$/);if(m2&&!u.includes('/courses/'))out.add(m2[1]+'/courses/'+m2[2]+'/'+m2[3])}return[...out]};
+const getDone=()=>{for(const k of doneKeys()){const d=localStorage.getItem('done:'+k);if(d)return d}return null};
+const setDone=v=>{for(const k of doneKeys())localStorage.setItem('done:'+k,v)};
+const clearDone=()=>{for(const k of doneKeys())localStorage.removeItem('done:'+k)};
+const b=document.createElement('button');b.className='fin-btn';document.body.appendChild(b);
+const show=()=>{const d=getDone();b.classList.toggle('done',!!d);b.textContent=d?'✓ 已学完 '+d:'✓ 学完了';b.title=d?'再点一下取消':''};show();
+b.onclick=()=>{if(getDone()){if(confirm('取消「已学完」记录？'))clearDone()}else{const x=new Date();setDone(x.getFullYear()+'-'+p(x.getMonth()+1)+'-'+p(x.getDate()))}show()};
+})();
+</script><script src="../../assets/gh.js" defer></script><script src="../../assets/progress.js" defer></script></body></html>
