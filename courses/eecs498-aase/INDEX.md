@@ -14,3 +14,4 @@
 | L09 | Stop conditions 与审批层：六个停止条件、退出行、审批的四个决定 | L09-stop-conditions.html | materials/lectures/L09/slides.md（含讲者备注与排练抓包） |
 | L10 | Skills 与 Elephant-Goldfish Model：SKILL.md、渐进披露、Elephant 与 Goldfish | L10-skills.html | materials/lectures/L10/slides.md（含讲者备注） |
 | L11 | Guardrails：错误分类与重试、审批提示、审批关卡与评估 | L11-guardrails.html | materials/lectures/L11/slides.md（含讲者备注）+ slides.pdf 第 2/4/5/18/21 页渲染图 |
+| L13 | 浏览器扩展与能发短信使唤的助手：扩展的驱动与权限、常驻助手的五块拼图 | L13-browser-extensions.html | materials/lectures/L13/slides.md（含讲者备注）+ slides.pdf 16 页渲染图 |

@@ -99,7 +99,7 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
   <div class="src article">原文 <span class="source-anchor" data-source-section="s2"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L11/slides.md">Lecture 11 · Oct 6, 2026</a></span> · <span class="source-anchor" data-source-section="s1"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L11/slides.md">Where guardrails go</a></span> · <span class="source-anchor" data-source-section="s3"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L11/slides.md">Where guardrails go</a></span></div>
 </section>
 <section class="sec" data-toc="第 1 部分：出错的时候" id="s2" data-source-section="s4">
-  <header class="doc-head"><span class="kicker">第 3 页</span><h2>处理之前先分类：三种失败各有各的答案</h2></header>
+  <header class="doc-head"><span class="kicker">第 3–4 页</span><h2>处理之前先分类：三种失败各有各的答案</h2></header>
   <div class="doc-body">
 <p data-points="p0017" id="e5">讲者备注：第 1 部分。先给失败分类，再看 Codex 面对一个挂掉的端点会怎么做（今早实测），然后写一个你能放进自己 agent 的重试循环。</p>
 <figure class="figure orig" data-asset="a0020" data-points="p0020" id="fa0020"><img src="L11-img/p04.png" alt="幻灯片第 4 页：Three kinds of failure"><figcaption><b>原图 2 · 三种失败与各自的处理</b> <span class="source-anchor" data-source-section="s6">出处：EECS 498 AASE L11 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L11/slides.md">幻灯片第 4 页</a></span><span class="how">怎么看：顶部「Something failed」分出三支。蓝：模型调用（429 · 502 · 超时）→ 等一等再重发，什么都没发生，重发安全。粉：你的请求（400 · 401 · 太长）→ 停下并说明，同样的请求会同样失败。绿：工具（exit 1 · 文件不存在）→ 交给模型，工具可能已经运行了，只有模型知道。</span></figcaption></figure>
@@ -111,7 +111,7 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
   <div class="src article">原文 <span class="source-anchor" data-source-section="s4"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L11/slides.md">Part 1: When something fails</a></span> · <span class="source-anchor" data-source-section="s5"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L11/slides.md">Errors and retries</a></span> · <span class="source-anchor" data-source-section="s6"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L11/slides.md">Three kinds of failure</a></span></div>
 </section>
 <section class="sec" data-toc="一、一个挂掉的端点，30 个请求" id="s3" data-source-section="s7">
-  <header class="doc-head"><span class="kicker">第 3–6 页</span><h2>Codex 0.160.0：两层重试相乘，6 次尝试 × 5 次发送</h2></header>
+  <header class="doc-head"><span class="kicker">第 5–6 页</span><h2>Codex 0.160.0：两层重试相乘，6 次尝试 × 5 次发送</h2></header>
   <div class="doc-body">
 <p data-points="p0030" id="e10">Codex 0.160.0 · <b>6 次尝试 × 5 次发送 = 30</b> · 然后 exit 1。</p>
 <figure class="figure orig" data-asset="a0031" data-points="p0031" id="fa0031"><img src="L11-img/p05.png" alt="幻灯片第 5 页：One dead endpoint, 30 requests"><figcaption><b>原图 3 · 一个对每个请求都回 502 的端点收到的请求时间线（10 月 6 日实测）</b> <span class="source-anchor" data-source-section="s7">出处：EECS 498 AASE L11 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L11/slides.md">幻灯片第 5 页</a></span><span class="how">怎么看：横轴 0–25 秒，每条竖线是一次请求，蓝橙交替的六簇分别标 1–6，每簇 5 次发送，对应 Codex 打印的「Reconnecting... 1/5」到「5/5」；簇内间隔越来越长，第 6 簇后标着 exit 1。</span></figcaption></figure>
@@ -236,7 +236,7 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
   <div class="src article">原文 <span class="source-anchor" data-source-section="s21"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L11/slides.md">Three kinds of approval gate</a></span></div>
 </section>
 <section class="sec" data-toc="八、两个已发布的审查模型" id="s12" data-source-section="s22">
-  <header class="doc-head"><span class="kicker">第 17 页</span><h2>Claude Code auto mode 与 Codex auto-review；审查者看不到 agent 自己的话</h2></header>
+  <header class="doc-head"><span class="kicker">第 17–18 页</span><h2>Claude Code auto mode 与 Codex auto-review；审查者看不到 agent 自己的话</h2></header>
   <div class="doc-body">
 <div class="table"><table class="data" data-asset="a0148" data-points="p0148" id="ta0148"><caption>原表 3 · Claude Code auto mode 与 Codex auto-review 的对比</caption><thead><tr><th></th><th>Claude Code auto mode</th><th>Codex auto-review</th></tr></thead><tbody><tr><td data-label="编号">What reaches it</td><td data-label="Claude Code auto mode">Past the allowlist and in-repo edits</td><td data-label="Codex auto-review">Only what leaves the sandbox</td></tr><tr><td data-label="编号">Reviewer</td><td data-label="Claude Code auto mode">Sonnet 4.6, two stages</td><td data-label="Codex auto-review">GPT-5.4 Thinking, low effort</td></tr><tr><td data-label="编号">A denial</td><td data-label="Claude Code auto mode">A tool result, with the reason</td><td data-label="Codex auto-review">A tool result, with the reason</td></tr><tr><td data-label="编号">Stops the run</td><td data-label="Claude Code auto mode">3 denials in a row</td><td data-label="Codex auto-review">3 denials in a row</td></tr></tbody></table><span class="source-anchor" data-source-section="s22">出处：EECS 498 AASE L11 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L11/slides.md">幻灯片第 17 页 · Auto mode and auto-review</a></span></div>
 <p data-points="p0149" id="e76">给讲者的提示：出处是 Anthropic 工程博客「How we built Claude Code auto mode」（2026 年 3 月 25 日）、OpenAI 对齐博客「Auto-review of agent actions」（2026 年 4 月 30 日）和 Codex auto-review 文档。</p>
@@ -273,7 +273,7 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
   <div class="src article">原文 <span class="source-anchor" data-source-section="s24"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L11/slides.md">Jev, a typed decision model</a></span> · <span class="source-anchor" data-source-section="s25"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L11/slides.md">Safety categories, as questions</a></span></div>
 </section>
 <section class="sec" data-toc="十、代码加 Jev 的审批关卡" id="s14" data-source-section="s26">
-  <header class="doc-head"><span class="kicker">第 20–22 页</span><h2>规则拿确定的，Jev 拿需要判断的，人拿谁都没把握的</h2></header>
+  <header class="doc-head"><span class="kicker">第 21–22 页</span><h2>规则拿确定的，Jev 拿需要判断的，人拿谁都没把握的</h2></header>
   <div class="doc-body">
 <figure class="figure orig" data-asset="a0182" data-points="p0182" id="fa0182"><img src="L11-img/p21.png" alt="幻灯片第 21 页：An approval gate in code and Jev"><figcaption><b>原图 5 · 先代码、再 Jev、最后是人</b> <span class="source-anchor" data-source-section="s26">出处：EECS 498 AASE L11 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L11/slides.md">幻灯片第 21 页</a></span><span class="how">怎么看：工具调用先进黄色的「Rules in code」：离开仓库的 → deny，仓库内的读 → allow；其余进紫色的 Jev，问三个问题（哪种动作？用户要求了吗？能撤销吗？），再由你的阈值三选一：allow、ask a person、deny。</span></figcaption></figure>
 <p data-points="p0184 p0185" id="e95">讲者备注：组合起来是这张图。代码先上，处理凡是能从文本决定、而且绝不能错的：仓库外的路径直接拒，仓库内的读直接放，人和模型都不被问。</p>

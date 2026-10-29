@@ -1,0 +1,608 @@
+<!DOCTYPE html><html lang="zh-CN" class="layout-article" data-layout="article"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<script>(function(){var v;try{v=localStorage.getItem('site-theme')}catch(e){}document.documentElement.dataset.theme=/^[ABC]$/.test(v||'')?v:'C'})();
+(function(){var k='theme',s=localStorage.getItem(k);if(s?s==='dark':matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark');
+window.__tt=function(){var f=function(){var d=document.documentElement.classList.toggle('dark');localStorage.setItem(k,d?'dark':'light')};if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.startViewTransition(f);else f()}})();</script>
+<title>L13 · 浏览器扩展与能发短信使唤的助手</title><style>
+/* Site tokens copied verbatim, in cascade order, from ref/site-assets/site.css. */
+:root{--paper:#f6f7f9;--sheet:#fff;--card:#fff;--ink:#111827;--ink2:#4b5563;--meta:#6b7280;--hair:#e5e7eb;--hair2:#eef0f3;--blue:#2563eb;--blue-soft:#eff4ff;--red:#dc2626;--red-soft:#fef2f2;--green:#16a34a;--green-soft:#f0fdf4;--amber:#b45309;--amber-soft:#fffbeb;--purple:#7c3aed;--purple-soft:#f5f3ff;--font:system-ui,-apple-system,"PingFang SC","Noto Sans SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;--serif:var(--font);--mono:ui-monospace,SFMono-Regular,Menlo,monospace;--r-lg:12px;--r-sm:8px;--grad:none;color-scheme:light}
+html.dark{--paper:#0f1115;--sheet:#171a21;--card:#171a21;--ink:#e5e7eb;--ink2:#b6bcc6;--meta:#9ca3af;--hair:#2a2f3a;--hair2:#20242c;--blue:#7aa2ff;--blue-soft:rgba(122,162,255,.12);--red:#f87171;--red-soft:rgba(248,113,113,.12);--green:#4ade80;--green-soft:rgba(74,222,128,.12);--amber:#fbbf24;--amber-soft:rgba(251,191,36,.12);--purple:#c4b5fd;--purple-soft:rgba(196,181,253,.14);color-scheme:dark}
+[data-theme=B]{--paper:#fbfbfc;--sheet:#fff;--card:#fff;--ink:#16171a;--ink2:#4a4c55;--meta:#6e707a;--hair:#ececf0;--hair2:#f2f2f5;--blue:#5e6ad2;--blue-soft:#eef0fb;--red:#d4483b;--red-soft:#fdf0ee;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif}
+html.dark[data-theme=B]{--paper:#0e0f12;--sheet:#16171b;--card:#16171b;--ink:#e8e9ed;--ink2:#b3b5bd;--meta:#8b8d97;--hair:#26272d;--hair2:#1f2025;--blue:#8b93f0;--blue-soft:rgba(139,147,240,.14);--red:#f0776b}
+[data-theme=A]{--paper:#f7f4ee;--sheet:#fffdf9;--card:#fffdf9;--ink:#2b2722;--ink2:#5f574e;--meta:#8a8076;--hair:#e6dfd3;--hair2:#efe8dc;--blue:#b4532a;--blue-soft:#f6e1d6;--red:#a2461f;--red-soft:#f6e1d6;--green:#5f7a3a;--green-soft:#e7ecd9;--purple:#7a5a8c;--purple-soft:#eee4f1;--serif:"Noto Serif CJK SC","Noto Serif SC","Songti SC",serif;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif}
+html.dark[data-theme=A]{--paper:#1b1814;--sheet:#23201b;--card:#23201b;--ink:#ede6da;--ink2:#c7bdaf;--meta:#9b9184;--hair:#3a342c;--hair2:#2d2923;--blue:#e08a5f;--blue-soft:rgba(224,138,95,.15);--red:#e8916a;--red-soft:rgba(232,145,106,.15)}
+[data-theme=C]{--paper:#f3f5fb;--sheet:#fff;--card:#fff;--ink:#1d2340;--ink2:#5a6185;--meta:#8a90ad;--hair:#e6e9f4;--hair2:#eef0f7;--blue:#3b5bfd;--blue-soft:#e8edff;--red:#d4483b;--red-soft:#ffe6e3;--green:#1f9d5c;--green-soft:#e3f7ec;--amber:#d9771e;--amber-soft:#fff1e0;--purple:#7a4bf5;--purple-soft:#f2eaff;--r-lg:20px;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif;--sh:0 1px 2px rgba(30,40,90,.04),0 8px 24px rgba(30,40,90,.06)}
+html.dark[data-theme=C]{--paper:#0f1222;--sheet:#181c33;--card:#181c33;--ink:#e6e9fb;--ink2:#aab0d0;--meta:#7d84a8;--hair:#272c48;--hair2:#20253f;--blue:#7d93ff;--blue-soft:rgba(125,147,255,.15);--red:#ff8a7d;--red-soft:rgba(255,138,125,.15);--green-soft:rgba(31,157,92,.18);--amber-soft:rgba(217,119,30,.18);--purple-soft:rgba(122,75,245,.2);--sh:0 1px 2px rgba(0,0,0,.3)}
+:root{--acc2:#8b5cf6;--ease:cubic-bezier(.22,1,.36,1)}
+[data-theme=A]{--acc2:#c98a2b}
+html.dark[data-theme=A]{--paper:#181512;--sheet:#211d18;--card:#211d18;--meta:#a89d8f;--hair:#382f26;--acc2:#e3b15c}
+[data-theme=B]{--paper:#fafafb;--blue:#5b5bd6;--blue-soft:#efeffc;--acc2:#a855f7}
+html.dark[data-theme=B]{--paper:#0c0d10;--sheet:#14151a;--card:#14151a;--ink:#ececf1;--ink2:#babcc6;--meta:#9597a3;--hair:#262830;--hair2:#1c1d23;--blue:#9198ff;--blue-soft:rgba(145,152,255,.14);--acc2:#c084fc}
+[data-theme=C]{--acc2:#06b6d4}
+html.dark[data-theme=C]{--meta:#a3a9b8;--acc2:#22d3ee}
+html.dark{--meta:#a1a7b3}
+[data-theme=B]{--paper:#eef1f5;--hair:#dfe4ea;--hair2:#eef1f5;--green:#16a34a}
+html.dark[data-theme=B]{--paper:#0b0d12;--hair:#252a35;--hair2:#1a1e27}
+[data-theme=C]{--blue:#7b5cff;--blue-soft:#f0ecff;--acc2:#ff5e8a}
+html.dark[data-theme=C]{--paper:#0b0b0f;--sheet:#15151c;--card:#15151c;--ink:#f2f2f5;--ink2:#b8b8c6;--meta:#9a9aab;--hair:#26262f;--hair2:#1d1d25;--blue:#a08bff;--blue-soft:rgba(160,139,255,.14)}
+:root{--sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:24px;--sp-6:32px;--fs-xs:12px;--fs-sm:13.5px;--fs-md:15px;--fs-lg:18px;--fs-xl:24px;--fs-2xl:32px;--r-xs:6px;--r-sm:8px;--r-md:10px;--r-lg:12px;--r-xl:18px;--r-pill:999px;--sh-1:0 1px 2px rgba(15,23,42,.06);--sh-2:0 4px 16px -8px rgba(15,23,42,.22);--sh-3:0 14px 30px -12px rgba(15,23,42,.28);--dur-1:120ms;--dur-2:220ms;--dur-3:420ms;--ease:cubic-bezier(.22,1,.36,1);--ease-in-out:cubic-bezier(.65,0,.35,1);--spring:cubic-bezier(.34,1.3,.64,1);--icon-stroke:2}
+:root{--spring:linear(0,.0089,.0346,.0752,.1286,.1927,.2654,.3445,.4278,.5131,.5983,.6812,.7598,.8325,.8981,.9555,1.0042,1.0441,1.0753,1.0982,1.1134,1.1218,1.1243,1.1218,1.1155,1.1062,1.0949,1.0825,1.0697,1.0571,1.0451,1.034,1.0242,1.0157,1.0085,1.0027,.9982,.995,.9928,.9916,.9912,.9914,.9921,.9931,.9943,.9956,.9968,.998,.999,1)}
+html.dark{--sh-1:0 1px 2px rgba(0,0,0,.4);--sh-2:0 4px 16px -8px rgba(0,0,0,.6);--sh-3:0 14px 30px -12px rgba(0,0,0,.7)}
+/* Five reading levels: title / section / subsection / body / note. */
+:root{--reading-width:680px;--toc-width:208px;--rail-width:180px;--reading-gap:28px;--top-height:56px;--body-size:18px;--body-leading:1.8;--finish-space:104px}
+*{box-sizing:border-box}html{scroll-padding-top:72px}html,body{margin:0;background:var(--paper);color:var(--ink);font:var(--body-size)/var(--body-leading) var(--font);-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}a{color:var(--blue);text-underline-offset:3px;overflow-wrap:anywhere}a:hover{text-decoration-thickness:2px}button,input,textarea,select{font:inherit;color:inherit}button,a,summary{touch-action:manipulation}button{cursor:pointer}button:disabled{opacity:.5;cursor:default}:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+h1,h2,h3{color:var(--ink);font-family:var(--serif);line-height:1.35;letter-spacing:-.02em;overflow-wrap:anywhere}h1{font-size:var(--fs-2xl);margin:8px 0 16px}h2{font-size:var(--fs-xl);margin:8px 0 16px}h3{font-size:var(--fs-lg);margin:24px 0 8px}p{margin:0 0 12px}ul,ol{padding-left:24px}li{margin:4px 0}code{font:.88em var(--mono);background:var(--hair2);padding:1px 4px;border-radius:var(--r-xs)}pre{overflow:auto;white-space:pre;tab-size:4;font:14px/1.65 var(--mono);padding:16px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-md);margin:12px 0}pre code{font:inherit;white-space:inherit;background:none;padding:0}
+.i{display:inline-block;vertical-align:middle;flex:none;width:18px;height:18px;stroke-width:2}.btn,button.opt{min-height:44px;border:1px solid var(--hair);border-radius:var(--r-sm);background:var(--sheet);padding:8px 14px;font-size:var(--fs-md);font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:6px}.btn:hover{border-color:var(--blue);background:var(--blue-soft)}.btn.main{background:var(--blue);color:var(--sheet)}.btn.sm{font-size:var(--fs-sm)}textarea{display:block;width:100%;padding:10px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-sm);resize:vertical}
+.top{position:fixed;inset:0 0 auto;height:var(--top-height);z-index:30;display:flex;align-items:center;gap:16px;padding:0 20px;background:var(--paper);border-bottom:1px solid var(--hair)}.top .course{font-size:var(--fs-sm);font-weight:700;max-width:35vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.top .track{flex:1;height:4px;background:var(--hair);border-radius:var(--r-pill);overflow:hidden}.top .track i{display:block;width:0;height:100%;background:var(--blue);transition:width var(--dur-2) var(--ease)}.top .count{font-size:var(--fs-sm);max-width:32vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.toc-toggle{min-width:44px}.top .theme-toggle{font-size:var(--fs-sm);min-height:44px}
+.layout-article .deck,.layout-pair .deck{padding:80px 20px calc(var(--finish-space) + env(safe-area-inset-bottom));max-width:720px;margin:0 auto;min-width:0}.layout-article .sec{position:relative;margin:0 0 32px;padding-top:16px;border-top:1px solid var(--hair);scroll-margin-top:72px;min-width:0}.layout-article .hero{border:0;padding-top:0}.kicker,.meta,.src,.source-anchor,figcaption,caption,.aside{font-size:var(--fs-sm);line-height:1.65}.kicker{display:block;color:var(--blue);font-weight:700}.lede{font-size:var(--fs-lg);font-weight:600}.links{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:var(--fs-sm)}.links a{display:inline-flex;align-items:center;min-height:44px}.src{margin:16px 0 0;padding-top:8px;border-top:1px solid var(--hair);color:var(--ink2)}.source-anchor{display:block;color:var(--ink2);margin-top:6px;overflow-wrap:anywhere}.source-anchor a{min-height:44px;display:inline-flex;align-items:center}.src.extra::before{content:'补充 · ';color:var(--amber)}.src.official::before{content:'官方 · ';color:var(--blue)}.src.article::before{content:'原文 · ';color:var(--blue)}
+.toc{position:fixed;left:max(20px,calc((100vw - 1192px)/2));top:76px;width:var(--toc-width);max-height:calc(100dvh - 180px);overflow:auto;font-size:var(--fs-sm);line-height:1.5;z-index:25}.toc ol{list-style:none;margin:0;padding:0}.toc a{display:flex;gap:8px;align-items:center;min-height:44px;padding:6px 10px;color:var(--ink2);text-decoration:none;border-radius:var(--r-sm)}.toc a[aria-current=true]{background:var(--blue-soft);color:var(--blue);font-weight:700}.toc b{display:block;margin:0 10px 8px}.toc-backdrop{display:none}.tldr,.argmap{padding:16px;background:var(--blue-soft);border-radius:var(--r-lg);margin:16px 0}.tldr a,.argmap a{display:block;min-height:44px;align-content:center}.argmap ol{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 16px;margin:0}.points{padding:12px 16px 12px 36px;background:var(--hair2);border-radius:var(--r-md)}
+figure.orig,figure.redraw,.figure{margin:20px 0;min-width:0}figure img{display:block;max-width:100%;height:auto;border:1px solid var(--hair);border-radius:var(--r-md);cursor:zoom-in;background:var(--sheet)}figcaption{margin-top:8px;color:var(--ink2)}figcaption b{color:var(--ink)}.how{margin-top:6px}.table{margin:20px 0;overflow-x:auto}.table table,table.data{width:100%;border-collapse:collapse;background:var(--sheet);font-size:var(--fs-md)}th,td{border-bottom:1px solid var(--hair);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--hair2)}caption{text-align:left;font-weight:700;padding:8px 0}.table-note{font-size:var(--fs-sm);color:var(--ink2)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;margin:16px 0}.stat{padding:12px 14px;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet)}.stat b{display:block;font-size:var(--fs-xl);line-height:1.35;color:var(--blue);font-variant-numeric:tabular-nums}.stat span{display:block;font-size:var(--fs-sm);color:var(--ink2)}.stat .source-anchor{font-size:var(--fs-xs)}
+blockquote.quote{margin:16px 0;padding:12px 16px;border-left:3px solid var(--blue);background:var(--sheet)}.quote cite{display:block;font-style:normal;font-size:var(--fs-sm);color:var(--ink2)}.callout{padding:12px 16px;margin:16px 0;border-left:3px solid var(--blue);background:var(--blue-soft);border-radius:0 var(--r-sm) var(--r-sm) 0}.callout.limit{border-color:var(--amber);background:var(--amber-soft)}.callout.extra{border:1px dashed var(--meta);background:var(--sheet)}.callout.myth{border-color:var(--amber);background:var(--hair2)}.callout.limit::before{content:'作者的限定 · ';font-weight:700}.aside{padding:12px;border-left:2px solid var(--hair);color:var(--ink2);margin:12px 0}
+.stories,.compare,.roles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}.story,.compare>div,.roles>div{padding:12px;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);font-size:var(--fs-md)}.story b,.roles b{display:block}.story dt{font-weight:700;color:var(--ink2);font-size:var(--fs-sm)}.story dd{margin:0 0 8px}.story p,.story .fix{display:block;margin:8px 0}.steps,.ladder{display:grid;gap:8px;padding:0;list-style:none;counter-reset:step}.steps>li,.ladder>li{padding:10px 14px;background:var(--hair2);border-radius:var(--r-sm);counter-increment:step}.steps>li::before{content:counter(step)'. ';color:var(--blue);font-weight:700}.ladder i{font-style:normal;font-weight:700;margin-right:8px}.matrix{border:1px solid var(--hair);padding:16px;border-radius:var(--r-md)}.matrix .axes{font-size:var(--fs-sm);color:var(--ink2)}.matrix ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));list-style:none;padding:0;gap:1px;background:var(--hair)}.matrix li{margin:0;padding:16px;background:var(--sheet)}.refs{font-size:var(--fs-sm);line-height:1.7}.refs a{display:inline-block;min-height:44px;align-content:center}.thread{border-left:2px solid var(--hair);padding-left:16px}.formula{padding:16px;border:1px solid var(--hair);overflow:auto}.formula math{font-size:var(--fs-xl)}details.more{margin:12px 0;border-top:1px solid var(--hair);font-size:var(--fs-md)}summary{min-height:44px;cursor:pointer;display:flex;align-items:center;gap:8px}summary .i{transition:transform var(--dur-1)}details[open] summary .i{transform:rotate(90deg)}
+/* Shared interactive components. No fixed page/card height. */
+.flow-scroll{max-width:100%;overflow-x:auto;min-width:0;touch-action:pan-x pan-y}.flow-scroll svg.flow{display:block;width:100%;height:auto;min-height:0}.flow-tip{font-size:var(--fs-sm);color:var(--ink2)}.fl-node rect{fill:var(--sheet);stroke:var(--hair);stroke-width:2}.fl-node text{font:600 17px var(--font);fill:var(--ink)}.fl-node .sub{font-size:13px;font-weight:400;fill:var(--ink2)}.fl-node.act rect{stroke:var(--blue);fill:var(--blue-soft);stroke-width:3}.fl-node.blue rect{stroke:var(--blue)}.fl-node.amber rect,.fl-node.red rect{stroke:var(--amber)}.fl-node.green rect{stroke:var(--green)}.fl-edge{fill:none;stroke:var(--meta);stroke-width:2}.fl-edge.act{stroke:var(--blue);stroke-width:3}.fl-elab{font:13px var(--font);fill:var(--ink2)}
+.sim{margin:16px 0;padding:12px;border:1px solid var(--hair);border-radius:var(--r-lg);background:var(--sheet);display:flex;flex-direction:column;gap:12px}.sim .ctl{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.sim .ctl label{min-height:44px;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm)}.sim .ctl input[type=range]{min-width:110px}.sim .body{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}.sim .narr{order:-1;background:var(--blue-soft);padding:10px 12px;border-radius:var(--r-sm);font-size:var(--fs-md)}.sim .log{max-height:240px;overflow:auto;font:var(--fs-sm)/1.6 var(--mono)}.sim .msg{border-left:3px solid var(--hair);padding:8px;margin:6px 0;background:var(--paper);white-space:pre-wrap;overflow-wrap:anywhere}.msg b{display:block;font-family:var(--font)}.sim .msg.err{border-color:var(--amber)}.prediction{order:-2}.component-error{padding:16px;border:1px solid var(--amber);color:var(--amber)}
+.quiz{margin:16px 0;padding:16px;border:1px solid var(--hair);border-radius:var(--r-lg);background:var(--sheet)}.quiz .qn{font-size:var(--fs-sm);color:var(--ink2)}.quiz .qt{font-size:var(--fs-lg);font-weight:700;margin-bottom:12px}.quiz .opt{display:block;width:100%;text-align:left;margin:8px 0;font-weight:400}.quiz .opt.ok{border-color:var(--green);background:var(--green-soft)}.quiz .opt.no{border-color:var(--amber);background:var(--amber-soft)}.quiz .fb{margin:12px 0;font-size:var(--fs-md)}.quiz .nav{display:flex;gap:8px;margin-top:12px}.quiz label{display:block;font-size:var(--fs-sm)}.stack{display:grid;gap:6px;font-size:var(--fs-sm)}.stack .row{display:grid;grid-template-columns:28px 80px minmax(0,1fr);gap:8px;padding:8px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-sm)}.stack .t{overflow-wrap:anywhere;white-space:pre-wrap}.stack .new{background:var(--blue-soft)}.bar{display:grid;grid-template-columns:100px minmax(0,1fr) 80px;gap:8px;margin:8px 0;align-items:center;font-size:var(--fs-sm)}.bar .bt{height:20px;background:var(--hair2);border-radius:var(--r-xs);overflow:hidden}.bar .bt i{display:block;height:100%;background:var(--blue)}.bar .bn,.bar .bmiss{grid-column:2/4}.bars .bc{font-size:var(--fs-sm);color:var(--ink2)}
+/* Paired material stays inside its own container; highlighting never scrolls the page. */
+.pair.codewalk,.pair.read-pair,.pair.material-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start;margin:20px 0;position:relative;min-width:0}.pair-source{position:sticky;top:72px;max-height:calc(100dvh - 160px);overflow:auto;overscroll-behavior:contain;min-width:0;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);padding:12px;scroll-padding:16px}.pair-notes{min-width:0}.pair-notes .step{padding:16px 0 24px;border-top:1px solid var(--hair);scroll-margin-top:84px}.pair-notes .step.is-active{border-color:var(--blue)}.pair-source .source-block{padding:12px 8px;border-left:3px solid transparent}.pair-source .source-block.is-active{background:var(--blue-soft);border-color:var(--blue)}.source-text{overflow-wrap:anywhere}.pair-source pre{border:0;padding:0;margin:8px 0;overflow:visible}.code-line{display:block;min-height:1.65em;white-space:pre;padding-left:48px;position:relative}.code-line::before{content:attr(data-line);position:absolute;left:0;width:36px;text-align:right;color:var(--meta);user-select:none}.code-line.hl{background:var(--blue-soft)}.copy-code{position:static;flex:none;white-space:nowrap}.pair-source .source-anchor{font-size:var(--fs-xs)}
+/* A separate toolbar never shares the scrolling code viewport. */
+.heading-source{font-size:var(--fs-xs);margin:0 0 8px}
+.pair.codewalk{grid-template-columns:minmax(0,60%) minmax(0,1fr)}
+.code-panel{position:sticky;top:72px;display:flex;flex-direction:column;min-width:0;max-height:calc(100dvh - 160px);border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);overflow:hidden}
+.code-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;flex:none;border-bottom:1px solid var(--hair);font-size:var(--fs-xs);color:var(--ink2)}
+.code-panel .pair-source{position:static;max-height:none;min-height:0;flex:1 1 auto;border:0;border-radius:0;box-shadow:none;overflow:auto}
+.code-panel .pair-source pre{width:max-content;min-width:100%}
+dialog.image-dialog{width:calc(100vw - 24px);max-width:none;max-height:92dvh;padding:12px;border:1px solid var(--hair);background:var(--sheet);color:var(--ink);border-radius:var(--r-md);overflow:auto}dialog::backdrop{background:rgba(0,0,0,.75)}.image-dialog img{max-width:none;width:max(100%,min(1400px,180vw));height:auto}.image-dialog .dialog-close{position:sticky;top:0;left:0}.image-open{min-height:44px;border:0;background:transparent;padding:0;display:block;cursor:zoom-in;max-width:100%}.image-open img{max-width:100%}
+/* Only CSS changes the unchanged finish.js button. High specificity beats injected styles. */
+html body .fin-btn{bottom:calc(16px + env(safe-area-inset-bottom));right:16px;min-height:44px;z-index:35}html body #quiz-return{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:35;max-width:45vw}
+@media(min-width:1180px){.layout-article .deck{width:var(--reading-width);max-width:none;padding-left:0;padding-right:0;margin-left:max(260px,calc((100vw - 1192px)/2 + 236px));margin-right:0}.layout-article .sec>.doc-body>figure,.layout-article .sec>.doc-body>.table,.layout-article .sec>.codewalk{width:calc(100% + 120px);margin-left:0}.layout-article .aside{position:absolute;left:calc(100% + 28px);top:24px;width:var(--rail-width);margin:0}.layout-article .aside~figure{width:100%}html.layout-article body .fin-btn{left:max(20px,calc((100vw - 1192px)/2));right:auto;max-width:208px}.layout-pair .deck{max-width:1280px;margin-left:236px;margin-right:20px}.layout-pair .toc{width:188px;left:20px}html.layout-pair body .fin-btn{left:20px;right:auto;max-width:188px}}
+@media(max-width:1179px){.toc{display:none;visibility:hidden;left:0;top:var(--top-height);width:min(360px,90vw);max-height:calc(100dvh - 72px);background:var(--sheet);padding:16px;border-right:1px solid var(--hair);border-bottom:1px solid var(--hair)}html.toc-open .toc{display:block;visibility:visible}html.toc-open .toc-backdrop{display:block;position:fixed;inset:var(--top-height) 0 0;background:rgba(0,0,0,.3);z-index:24}}
+@media(max-width:820px){:root{--body-size:17px}.layout-article .deck,.layout-pair .deck{padding-left:18px;padding-right:18px}.top{gap:8px;padding:0 12px}.top .course{display:none}.top .count{max-width:44vw}.top .track{min-width:24px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stories,.compare,.roles{grid-template-columns:minmax(0,1fr)}.argmap ol{grid-template-columns:minmax(0,1fr)}table.data thead,.table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}table.data,table.data tbody,table.data tr,table.data td,.table table,.table tbody,.table tr,.table td{display:block;width:100%}table.data tr,.table tr{padding:8px 12px;margin-bottom:8px;border:1px solid var(--hair);background:var(--sheet);border-radius:var(--r-md)}table.data td,.table td{border:0;padding:4px 0}td[data-label]::before{content:attr(data-label)'：';font-size:var(--fs-sm);font-weight:700;color:var(--ink2)}.table caption,table.data caption{display:block;width:100%}.pair.codewalk,.pair.read-pair,.pair.material-pair{display:block}.pair-notes{margin-top:12px}.code-panel{top:var(--top-height);max-height:40dvh;z-index:15}.pair-source{top:var(--top-height);max-height:40dvh;z-index:15;box-shadow:var(--sh-1)}.pair-notes .step{scroll-margin-top:calc(40dvh + 80px)}.flow-scroll svg.flow{width:var(--flow-width);max-width:none;height:var(--flow-height)}.sim .flow-scroll svg.flow{width:100%;height:auto}.stack .row{grid-template-columns:22px 64px minmax(0,1fr)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+@media print{.top,.toc,.fin-btn,#quiz-return,.toc-backdrop,.zoom-toggle,.code-toolbar{display:none!important}.layout-article .deck,.layout-pair .deck{margin:0;padding:0;max-width:100%;width:auto}.pair-source,.code-panel{position:static;max-height:none;overflow:visible}.sec{break-inside:auto}figure,.stat{break-inside:avoid}}
+/* Applies after legacy CSS too. Zoom is an intentional local viewport; non-zoom stays unnested. */
+html body .sim .flow-scroll.zoom{overflow:auto;max-height:40dvh;min-height:0;height:auto;overscroll-behavior:contain;scroll-padding:16px;padding:16px}
+html body .sim .flow-scroll.zoom svg.flow{width:var(--flow-width);min-width:var(--flow-width);height:var(--flow-height);max-height:none;flex:none}
+html body .sim .zoom-toggle{min-height:44px;justify-self:start}.layout-deck .sim .body{position:relative}.layout-deck .card{padding-bottom:8px}.layout-deck .deck{bottom:calc(92px + env(safe-area-inset-bottom))}
+html body .fin-btn{bottom:calc(16px + env(safe-area-inset-bottom));right:16px;min-height:44px}html.layout-deck .bottom{padding-right:170px;padding-left:12px;height:76px}.layout-deck .btn,.layout-deck .sim .branches label{min-height:44px}.layout-deck details.more summary::before{content:none}.layout-deck .fl-edge.act{animation:none}
+@media(max-width:820px){html.layout-deck .bottom{padding-right:12px;gap:8px}.layout-deck .bottom .btn{padding:8px 10px;font-size:13px}html.layout-deck body .fin-btn{padding:8px 12px;font-size:13px}.layout-deck .card.full:has(.sim)>.head-full{position:sticky;top:0;z-index:4;background:var(--sheet);padding-top:12px;padding-bottom:12px}.layout-deck .sim .body{overflow:visible}.layout-deck .card .stage:has(.sim){overflow:visible}.layout-deck .sim .flow-scroll:not(.zoom){overflow:visible}}
+
+.layout-deck .card.doc.on{display:block;overflow:auto;padding:24px}.layout-deck .card.doc .doc-body{overflow:visible}.layout-deck .hero.card{height:auto}
+
+/* Legacy .stage svg also matches button icons: keep Lucide at its declared size. */
+html body svg.i{width:18px;height:18px;max-height:none;flex:none}
+
+/* Below the desktop sidebar breakpoint, finish lives in the opaque top bar.
+   Reserve its width before laying out the title; keep the deck footer for paging. */
+@media(max-width:1179px){
+ html body .top{gap:8px;padding:0 132px 0 12px;z-index:40;background:var(--paper)}
+ html body .top .course{display:none}
+ html body .top .count{flex:1;min-width:0;max-width:none;font-size:var(--fs-sm);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ html body .top .track{position:absolute;left:12px;right:12px;bottom:0;height:2px;min-width:0}
+ html body .top .toc-toggle{width:44px;flex:none;padding:0}
+ html body .top .theme-toggle{flex:none;padding:8px;font-size:var(--fs-sm)}
+ html body .fin-btn{top:6px;bottom:auto;left:auto;right:12px;width:112px;max-width:112px;height:44px;padding:8px;font-size:13px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:41;box-shadow:none}
+}
+</style></head><body>
+<header class="top"><button class="btn toc-toggle" aria-label="打开目录" aria-expanded="false"><svg class="i i-menu" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h16"/></svg></button><span class="course">L13 · 浏览器扩展与能发短信使唤的助手</span><span class="track" role="presentation"><i></i></span><span class="count"></span><button class="btn theme-toggle" aria-label="切换深浅色">深浅色</button></header><main class="deck"><section class="sec hero" data-toc="开篇：从浏览器到手机" id="s1" data-source-section="s2">
+  <header class="doc-head"><span class="kicker">公开课 · EECS 498 AASE · Lecture 13 · 2026-10-13 · Marcus Darden</span><h1>L13 · 浏览器扩展，与能发短信使唤的助手</h1>
+  <p class="lede" id="h-lede">两部分，harness 本身一直没变，变的是它能伸到多远。第 1 部分：你已登录的 Chrome 里那个扩展——谁能驱动它、调用怎样送达（本机助手程序或 Anthropic 中继）、manifest 允许它做什么、它带着你的登录状态时靠什么拦住；再对比 Codex 的扩展并现场演示。第 2 部分：把 harness 变成能从手机发短信使唤的常驻助手——程序驱动、常开的机器、channel、触发器与心跳、记忆、发信人白名单、手机审批，以及三种打包方式。</p>
+  <p class="links"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">课件 slides.md <svg class="i i-external-link" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.pdf">slides.pdf <svg class="i i-external-link" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a><span>本页导读约 35 分钟</span></p></header>
+  <div class="doc-body">
+<p data-points="p0004 p0005" id="e1">讲者问好：Lab04 里看过模型怎样看网页、怎样点击；今天打开在你自己的 Chrome 里做这件事的工具，再把一个 harness 变成能用手机发短信使唤的东西。幻灯片上关于扩展的一切，都是讲者这周在自己机器上从它们的 manifest 和代码里读出来的。</p>
+<p data-points="p0007" id="e2">第 1 部分：一个扩展，多个 harness（many harnesses）。</p>
+<p data-points="p0008" id="e3">现场演示（Demo）：Claude Code 加浏览器扩展，在讲者自己的浏览器里实际跑一遍。</p>
+<p data-points="p0009" id="e4">课间（Break）：五分钟和邻座讨论浏览器自动化能拿来做什么。</p>
+<p data-points="p0010" id="e5">第 2 部分：可以发短信使唤的助手（assistants you can text）。</p>
+<p data-points="p0011" id="e6">答疑（Questions）。</p>
+<p data-points="p0012" id="e7">背景是 Lab04 的浏览器部分：网页的三种视图，以及按引用点击。</p>
+<p data-points="p0014 p0015 p0016" id="e8">讲者备注：第 1 部分是你已经在用的那个 Chrome 里的浏览器扩展：哪些程序能驱动它、怎样够到它、允许它做什么，然后演示。课间之后第 2 部分：为什么想要一个常开的 harness，再一块块搭一个，直到能从手机给它发短信——OpenClaw 和 Hermes Agent 就是这样的东西。两部分都留意一点：harness 从不改变，还是那个循环；变的是它伸到多远，先是你的浏览器，再是你的手机。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s2"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">Lecture 13 · Oct 13, 2026</a></span> · <span class="source-anchor" data-source-section="s1"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">Today's schedule</a></span> · <span class="source-anchor" data-source-section="s3"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">Today's schedule</a></span></div>
+</section>
+<section class="sec" data-toc="第 1 部分：一个扩展，多个 harness" id="s2" data-source-section="s4">
+  <header class="doc-head"><span class="kicker">第 3–4 页</span><h2>浏览器工具调用经 harness 转给你 Chrome 里的扩展</h2></header>
+  <div class="doc-body">
+<p data-points="p0020" id="e9">讲者备注：Lab04 看的是模型怎样看、怎样点一个网页；今天问的不同：扩展住在你已登录的 Chrome 里，好几个不同的程序都能驱动它——是哪些，又怎么进来？</p>
+<p data-points="p0023" id="e10">harness 把每个浏览器工具调用转给你 Chrome 里的一个扩展；扩展在标签页上动作，再沿原路把结果送回。</p>
+<figure class="figure orig" data-asset="a0026" data-points="p0026" id="fa0026"><img src="L13-img/p04.png" alt="幻灯片第 4 页：One tool call, from the model to your tab"><figcaption><b>原图 1 · 一次工具调用，从模型到你的标签页</b> <span class="source-anchor" data-source-section="s6">出处：EECS 498 AASE L13 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">幻灯片第 4 页</a></span><span class="how">怎么看：模型 → harness（a tool call）→ 扩展（passes it on）→ 你的标签页（clicks, types, reads）；结果反向回来：截图、页面文字 → passes it back → the tool result。虚线框标着「your Chrome, signed in as you」。</span></figcaption></figure>
+<p data-points="p0025" id="e11">据 Claude Code 2.1.296 与 Claude in Chrome 扩展 1.0.100 简化，10 月 13 日读取，见 Claude Code 关于 Chrome 集成的官方文档。</p>
+<p data-points="p0028 p0029" id="e12">讲者备注：模型要浏览器动作，和要任何东西一样，是一次工具调用——点这个、读那页；harness 像接任何工具调用一样接下它。harness 自己碰不到 Chrome，所以把调用交给住在你 Chrome 里的扩展。这就是和 Lab04 的区别：Playwright 启动的是它自己的新浏览器，这里是你已经在用、以你身份登录的 Chrome。</p>
+<p data-points="p0030 p0031" id="e13">扩展在标签页上干活：点击、输入、读页面。结果沿着调用出去的路回来：扩展截图或读页面文字，交回 harness，harness 把它作为工具结果交给模型。<b>模型从不直接和扩展说话，两个方向都经过 harness。</b></p>
+<p data-points="p0032" id="e14">到这里只有一个 harness，但扩展并不在乎是哪个程序发来的调用。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s4"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">Part 1: One extension, many harnesses</a></span> · <span class="source-anchor" data-source-section="s5"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">Who can drive your Chrome, and how they reach it</a></span> · <span class="source-anchor" data-source-section="s6"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">One tool call, from the model to your tab</a></span></div>
+</section>
+<section class="sec" data-toc="一、谁能驱动这个扩展" id="s3" data-source-section="s7">
+  <header class="doc-head"><span class="kicker">第 5 页</span><h2>侧边栏、桌面应用、Claude Code，甚至云端会话</h2></header>
+  <div class="doc-body">
+<p data-points="p0035" id="e15">你 Chrome 里的一个扩展，接收来自它自己的侧边栏、桌面应用、Claude Code，甚至云端会话的工具调用。</p>
+<figure class="figure orig" data-asset="a0038" data-points="p0038" id="fa0038"><img src="L13-img/p05.png" alt="幻灯片第 5 页：Who can drive the extension"><figcaption><b>原图 2 · 谁能驱动这个扩展</b> <span class="source-anchor" data-source-section="s7">出处：EECS 498 AASE L13 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">幻灯片第 5 页</a></span><span class="how">怎么看：「your Mac」框里有 Claude 桌面应用、终端或 VS Code 里的 Claude Code；Chrome 框里有扩展自己的侧边栏；四者都连向扩展，扩展再作用于你的标签页。框外还有一个虚线的「a session in the cloud」，也连到扩展。</span></figcaption></figure>
+<p data-points="p0037" id="e16">出处：Claude Code 的 Chrome 文档，以及讲者 Mac 上桌面应用和 Claude Code 的 native messaging 文件（10 月 13 日）。</p>
+<p data-points="p0040 p0041 p0042" id="e17">讲者备注：一个扩展待在你的 Chrome 里，以你身份登录，作用于你的标签页。问题是：谁能给它发工具调用？扩展自己——它在 Chrome 侧边栏里有自己的聊天，你在页面旁边和 Claude 打字，这时扩展就是整个 harness。Claude 桌面应用——同一个扩展，从应用里驱动。</p>
+<p data-points="p0043 p0044" id="e18">Claude Code，在终端或 VS Code 里：<code>claude --chrome</code>，或会话里用 <code>/chrome</code>。这是写代码时会用的：改前端，再让它去检查页面。还有一个根本不在你 Mac 上、跑在云端的会话，它也能驱动你桌上的 Chrome。</p>
+<p data-points="p0045" id="e19">四个不同的程序，一个扩展，一套登录。连了两个浏览器时用 <code>/chrome</code> 选一个。那调用怎么到那里？两种方式。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s7"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">Who can drive the extension</a></span></div>
+</section>
+<section class="sec" data-toc="二、两种够到扩展的方式" id="s4" data-source-section="s8">
+  <header class="doc-head"><span class="kicker">第 6 页</span><h2>本机的助手程序，或互联网上的 Anthropic 中继</h2></header>
+  <div class="doc-body">
+<p data-points="p0048" id="e20">Chrome 在你 Mac 上启动的一个助手程序，或经互联网的 Anthropic 中继（relay）；云端会话只能走中继。</p>
+<figure class="figure orig" data-asset="a0051" data-points="p0051" id="fa0051"><img src="L13-img/p06.png" alt="幻灯片第 6 页：Two ways to reach the extension"><figcaption><b>原图 3 · 两种够到扩展的方式</b> <span class="source-anchor" data-source-section="s8">出处：EECS 498 AASE L13 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">幻灯片第 6 页</a></span><span class="how">怎么看：Claude Code 或桌面应用「on your Mac」经 Chrome 启动的助手程序到扩展；它和云端会话也都可以经红框「Anthropic's relay, over the internet」到扩展。底部注：两边都用你的 claude.ai 账号登录。</span></figcaption></figure>
+<p data-points="p0050" id="e21">据讲者 Mac 10 月 13 日所见（Claude Code 2.1.296、扩展 1.0.100）及 Chrome 文档简化。</p>
+<p data-points="p0053 p0054" id="e22">讲者备注：左边是要发工具调用的程序：你 Mac 上的 Claude Code 或桌面应用，以及云端会话；右边是你 Chrome 里的扩展。第一种方式留在你的 Mac 上：打开集成时，Claude Code 留下一个小文件，告诉 Chrome 有个助手程序；扩展要它时 Chrome 启动它，harness 经它够到扩展。什么都不离开你的机器。</p>
+<p data-points="p0055" id="e23">第二种经互联网上的 Anthropic 中继：harness 和扩展都向外连到它，由它在两者之间传消息。云端会话没有别的路，因为它不在你的 Mac 上。在讲者的 Mac 上，即便装了助手程序，Claude Code 也走中继。</p>
+<p data-points="p0056 p0057" id="e24">两边都用你的 claude.ai 账号登录，中继就是这样知道哪个 Chrome 是你的，这也是文档要求扩展和 Claude Code 登录同一账号的原因。等会儿要看的 Codex 扩展只有第一种方式。先看：调用到了之后，扩展能做什么？</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s8"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">Two ways to reach the extension</a></span></div>
+</section>
+<section class="sec" data-toc="三、扩展被允许做什么" id="s5" data-source-section="s9">
+  <header class="doc-head"><span class="kicker">第 7 页</span><h2>它的 manifest 要了所有网站上的 DevTools Protocol</h2></header>
+  <div class="doc-body">
+<p data-points="p0060" id="e25">它的 manifest 要求在每个网站上使用 DevTools Protocol。</p>
+<div class="table"><table class="data" data-asset="a0061" data-points="p0061" id="ta0061"><caption>原表 1 · Claude in Chrome manifest 中的关键权限</caption><thead><tr><th>Permission</th><th>What it allows</th></tr></thead><tbody><tr><td data-label="Permission">debugger</td><td data-label="What it allows">The DevTools Protocol on any tab: click, type, screenshot, run JavaScript</td></tr><tr><td data-label="Permission">&lt;all_urls&gt;</td><td data-label="What it allows">Every site, including the ones you are signed into</td></tr><tr><td data-label="Permission">scripting</td><td data-label="What it allows">Its own scripts inside pages</td></tr><tr><td data-label="Permission">tabs, tabGroups</td><td data-label="What it allows">Open tabs and keep them in one group</td></tr></tbody></table><span class="source-anchor" data-source-section="s9">出处：EECS 498 AASE L13 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">幻灯片第 7 页 · What the extension may do</a></span></div>
+<p data-points="p0062" id="e26">出处：Claude in Chrome 1.0.100 的 <code>manifest.json</code>，10 月 13 日读取，共 16 项权限。附着期间 Chrome 会显示自己的横幅，提示该扩展正在调试这个浏览器。</p>
+<p data-points="p0064 p0065" id="e27">讲者备注：每个 Chrome 扩展都有一份 manifest.json 列出它被允许做什么，由 Chrome 强制执行。这个要了十六项，其中六项说明了它怎么工作。debugger 是最大的一项：它给扩展 Chrome DevTools Protocol，就是 DevTools 面板用的那套协议，作用于任何标签页；Chrome 文档称之为远程调试协议的另一种传输。有了它就能点击、输入、截图、在页面里跑任意 JavaScript。因为权力太大，附着期间 Chrome 会在窗口顶部横一条提示，说 Claude 正在调试这个浏览器，用过这个扩展的都见过。</p>
+<p data-points="p0066 p0067 p0068" id="e28">all_urls 意味着它能在每个网站上这样做，而不是一份清单——包括你的银行、邮箱、Canvas。scripting 让它把自己的脚本放进页面；tabs 和 tabGroups 让它开标签页并把它们放在一起。没写在页上的：和你电脑上的程序通信的权限，以及保存下载（比如 GIF 录屏）的权限。那么，这是谁的浏览器？</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s9"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">What the extension may do</a></span></div>
+</section>
+<section class="sec" data-toc="四、带着你登录状态的扩展" id="s6" data-source-section="s10">
+  <header class="doc-head"><span class="kicker">第 8 页</span><h2>它能到达你登录过的每个网站，有四样东西拦着它</h2></header>
+  <div class="doc-body">
+<p data-points="p0071" id="e29">它能到达你登录过的每个网站，有四样东西拦着它。</p>
+<p data-points="p0072" id="e30"><b>你的登录</b>（Your logins）：它共享浏览器的登录状态——邮箱、Canvas、你的银行。</p>
+<p data-points="p0073" id="e31"><b>自己的标签页</b>（Its own tabs）：它打开的标签页归入本次会话的一个分组。</p>
+<p data-points="p0074" id="e32"><b>逐站许可</b>（Site by site）：每个新网站都先问，某些类别直接屏蔽。</p>
+<p data-points="p0075" id="e33"><b>它会停下等你</b>（It stops for you）：遇到登录页或 CAPTCHA，它等你来处理。</p>
+<p data-points="p0076" id="e34">出处：Chrome 文档与 Claude 帮助中心文章 12902428——成人和盗版网站屏蔽，金融网站先问。</p>
+<p data-points="p0078 p0079 p0080" id="e35">讲者备注：Lab04 的 Playwright 启动的是一个没人登录的新浏览器，扩展则在你的浏览器里工作。文档说得很直白：它共享浏览器的登录状态，所以能到达你已登录的任何网站。围绕这一点做了三样东西。自己的标签页：它不接管你正在读的标签页，打开的标签页归入一个与会话绑定的 Chrome 分组，在那里工作。</p>
+<p data-points="p0081 p0082" id="e36">逐站许可：第一次想在某个网站上动作时它会问你，你可以在本次会话里允许该站；某些类别直接屏蔽（成人、盗版），金融网站总是先问；判断类别时，扩展会拿地址去问一个返回类别的 Anthropic 服务。它会停下等你：遇到登录页或 CAPTCHA，它暂停并请你亲自处理。</p>
+<p class="callout key" data-points="p0083 p0084" id="e37">记得 Lab04 的「致命三件套」：私密数据、不可信内容、把数据送出去的途径。<b>一个在你已登录浏览器里的扩展，一个标签页里三样全有</b>，这四样东西就是挡在它和你账户之间的全部。Codex 也有扩展，同样的活儿做法很不一样。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s10"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">An extension with your logins</a></span></div>
+</section>
+<section class="sec" data-toc="五、Codex 里的同一个想法" id="s7" data-source-section="s11">
+  <header class="doc-head"><span class="kicker">第 9 页</span><h2>只走本机助手程序；模型写的是一段 JavaScript 程序</h2></header>
+  <div class="doc-body">
+<p data-points="p0087" id="e38">Codex 有自己的 Chrome 扩展，走第一种方式：你 Mac 上的助手程序。</p>
+<div class="table"><table class="data" data-asset="a0088" data-points="p0088" id="ta0088"><caption>原表 2 · Claude in Chrome 与 Codex Chrome 扩展的对比</caption><thead><tr><th>项目</th><th>Claude in Chrome</th><th>Codex's Chrome extension</th></tr></thead><tbody><tr><td data-label="项目">Driven by</td><td data-label="Claude in Chrome">Its side panel, the desktop app, Claude Code, cloud sessions</td><td data-label="Codex&#x27;s Chrome extension">Its side panel, the Codex app and CLI</td></tr><tr><td data-label="项目">Reached through</td><td data-label="Claude in Chrome">A helper on your Mac, or Anthropic's relay</td><td data-label="Codex&#x27;s Chrome extension">A helper on your Mac</td></tr><tr><td data-label="项目">The model writes</td><td data-label="Claude in Chrome">One tool call per action</td><td data-label="Codex&#x27;s Chrome extension">A short JavaScript program</td></tr><tr><td data-label="项目">Also asks for</td><td data-label="Claude in Chrome">None of these</td><td data-label="Codex&#x27;s Chrome extension">Your history, bookmarks and sessions</td></tr></tbody></table><span class="source-anchor" data-source-section="s11">出处：EECS 498 AASE L13 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">幻灯片第 9 页 · The same idea in Codex</a></span></div>
+<p data-points="p0089" id="e39">10 月 13 日在讲者 Mac 上读取：Claude in Chrome 1.0.100 与 OpenAI 的 ChatGPT 扩展 1.26.901.11451，另见 OpenAI 的 Chrome 扩展文档。</p>
+<p data-points="p0091 p0092" id="e40">讲者备注：Codex 的扩展装在讲者机器上同一个 Chrome 里，想法相同：一个在你已登录浏览器里的扩展，由不止一个程序驱动——它自己的侧边栏，以及 Codex 应用和命令行。它只走第一种方式，经 Chrome 在你 Mac 上启动的助手程序；没有中继，所以云端的东西驱动不了它。</p>
+<p data-points="p0093" id="e41">最大的不同是模型写什么。Claude 的模型每个动作一次工具调用：点、再读、再输入；Codex 的模型只拿到一个工具，针对浏览器 API 写一小段 JavaScript 程序：找到按钮、点它、读结果。这就是 Lab04 的 code mode，用在浏览器上。</p>
+<p data-points="p0094 p0095" id="e42">它还要得更多：你的历史、书签和最近会话。它的文档说每个新网站前会问，而历史没有「始终允许」选项。接下来看一个实际运行。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s11"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">The same idea in Codex</a></span></div>
+</section>
+<section class="sec" data-toc="六、现场演示" id="s8" data-source-section="s12">
+  <header class="doc-head"><span class="kicker">第 10 页</span><h2>改前端再检查页面、在已登录的网站上读数据、把路径写成测试</h2></header>
+  <div class="doc-body">
+<p data-points="p0097" id="e43">给讲者的提示：约 17 分钟、四步。左边终端里的 Claude Code，右边以你身份登录、装了 Claude 扩展的 Brave。课前：在 aider-practice 的 main 上执行 <code>bin/taskrweb start</code>（地址 <a href="http://127.0.0.1:5001">http://127.0.0.1:5001</a>），确认 <code>bin/taskr list</code> 显示两个任务；在 aider-practice 里启动 <code>claude --chrome</code>，确认能连上，在 <code>/chrome</code> 里选这台笔记本上的浏览器（<code>assets/demo-runbook.md</code> 说明怎么分辨）。未经排练：课前把四步跑一遍，再 <code>git checkout taskrweb/app.py</code> 恢复 main。</p>
+<p data-points="p0098" id="e44">讲者备注：左边终端里的 Claude Code，右边是讲者以自己身份登录的浏览器。讲者用 Brave，它基于 Chromium，和 Chrome 是同一套代码，所以 Chrome 扩展能在里面跑。</p>
+<p data-points="p0099 p0100" id="e45">第 1 步（约 2 分钟）：运行 <code>claude --chrome</code>，再 <code>/chrome</code>。<code>/chrome</code> 显示连到讲者账号的每个浏览器，它们只按编号排，讲者挑这台笔记本上的那个——这就是「谁能驱动扩展」那页的选择。</p>
+<p data-points="p0101" id="e46">第 2 步（约 6 分钟）：先自己打开本地地址，让全场看到占位页。提示词的意思是：在 / 加一个列出 taskr 任务的页面，然后在浏览器里打开这个地址，检查它能渲染且控制台没有错误。它要改 <code>taskrweb/app.py</code> 时批准。</p>
+<p data-points="p0102" id="e47">讲者备注：这是最常见的用法——改前端，再检查你做出来的东西。这是 aider-practice 里的 taskr web 应用，跑在讲者的笔记本上，现在还没有页面；学生在第 11 课做第一个。</p>
+<p data-points="p0103 p0104" id="e48">给讲者的提示：每样出现时指给大家看；如果 localhost 没出现首站提示，就说明一下，到第 3 步再指。讲者备注：看三样东西。顶部那条「Claude 正在调试此浏览器」的横幅，那是 debugger 权限，横幅是浏览器放的，不是 Claude；然后是一个新的标签页分组，它没碰讲者正在读的标签页；第一次在某个网站上动作时，它会问。</p>
+<p data-points="p0105 p0106" id="e49">给讲者的提示：它回答后，在第二个终端运行 <code>bin/taskr list</code> 对照；如果构建出错或拖太久，就停掉，在 aider-practice 里 <code>git switch l13-demo-fallback</code>，服务器会重载出一个做好的列表页，改让 Claude 检查那一页。讲者备注：它改了代码，再读页面和控制台看改动是否生效——和跑测试是同一个循环，只是代码的输出是一个页面。</p>
+<p data-points="p0107 p0108" id="e50">第 3 步（约 5 分钟）：让它打开 github.com/eecs498-aase/aider，说出有多少个开着的 pull request；窗口保持在仓库页，远离通知和私有仓库。讲者备注：现在是一个讲者登录着的网站。实验课里 Playwright 启动的浏览器没人登录；这个是讲者的，所以 GitHub 知道他是谁，模型通过页面也知道——这就是几分钟前那页「带着你登录状态的扩展」。</p>
+<p data-points="p0109 p0110" id="e51">第 4 步（约 5 分钟）：让它把刚才在 taskr 页面上做的检查写成一个新文件里的 Playwright 测试；打开文件，不要运行。讲者备注：刚才看到的每一步都是一次模型调用。它一旦在你的页面里找到一条路径，就能把这条路径写成测试，而测试在每次推送时运行、根本不需要模型。课间后再回到这一点。</p>
+<p data-points="p0111" id="e52">给讲者的提示：如果扩展连不上，就说明，直接跳到课间，课间后改为讲解 <code>assets/captures</code> 下 Claude in Chrome 的抓包。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s12"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">Demo</a></span></div>
+</section>
+<section class="sec" data-toc="七、课间与浏览器自动化的用处" id="s9" data-source-section="s13">
+  <header class="doc-head"><span class="kicker">第 11–12 页</span><h2>检查你做的东西、够到没有 API 的地方、去掉模型后重复它</h2></header>
+  <div class="doc-body">
+<p data-points="p0113" id="e53">课间题：你会拿浏览器自动化做什么？</p>
+<p data-points="p0114" id="e54">你的 harness 有了浏览器，能做哪些以前做不到的事？</p>
+<p data-points="p0115 p0116" id="e55">讲者备注：宣布 Zoom 进入休息。约 5 分钟，和邻座讨论；收两三个匿名答案课后读回。留意浏览器带来、而 shell 没有的东西：看到它刚做出来的页面、够到没有 API 的网站、在你已登录的地方动作。</p>
+<p data-points="p0119" id="e56">三类活儿：检查你做的东西、够到没有 API 的地方、不用模型重复它。</p>
+<p data-points="p0120" id="e57"><b>检查你做的东西</b>（Check what you built）：打开刚改过的页面、读控制台、试一下表单。</p>
+<p data-points="p0121" id="e58"><b>够到没有 API 的地方</b>（Reach what has no API）：任何你登录着的网站——把数据拉出来，把表单填进去。</p>
+<p data-points="p0122" id="e59"><b>不用模型重复它</b>（Repeat it without the model）：把一次运行变成每次推送都跑的测试。</p>
+<p data-points="p0123" id="e60">Chrome 文档列出的用途：实时调试、设计检查、web 应用测试、已登录的应用、数据提取、任务自动化；另见 Playwright 关于 test agents 的文档。</p>
+<p data-points="p0124 p0125" id="e61">讲者备注：宣布休息结束。用约 3 分钟先读回两三个匿名的课间答案，边读边归入这三类。</p>
+<p data-points="p0126 p0127" id="e62">检查你做的东西：编码 harness 最常见的用法。它改了你的前端，于是打开页面、读控制台错误、填表单看结果——和跑测试同一个循环，只是代码的输出是页面。够到没有 API 的地方：你的课程网站、某个管理后台、公司里的一张表单；只要你登录着它就能到，这也是它危险的原因。</p>
+<p data-points="p0128" id="e63">不用模型重复它：每次都让模型在循环里，慢、而且每一步都花 token。它一旦找到穿过你应用的路径，就让它把路径写成测试（一个 Playwright 脚本），每次推送都跑、不用模型。Playwright 现在就提供做这件事的 agent：一个规划测试、一个写测试、一个在页面改变时修测试。</p>
+<p data-points="p0129" id="e64">现在是下半场。到目前为止你一直在键盘前看着——如果你不在呢？</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s13"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">Chat break</a></span> · <span class="source-anchor" data-source-section="s14"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">What browser automation is for</a></span></div>
+</section>
+<section class="sec" data-toc="第 2 部分：可以发短信使唤的助手" id="s10" data-source-section="s15">
+  <header class="doc-head"><span class="kicker">第 13–14 页</span><h2>harness 只在会话开着时存在，而大多数你想要帮忙的事发生在会话关着的时候</h2></header>
+  <div class="doc-body">
+<p data-points="p0133" id="e65">讲者备注：大家大概见过有人给一台在家里 Mac mini 上跑的助手发短信：OpenClaw、Hermes Agent。先讲为什么，再讲怎么做：它们解决什么问题？</p>
+<p data-points="p0136" id="e66">harness 只在你的会话开着时存在，而你想要帮忙的事大多发生在它关着的时候。</p>
+<figure class="figure orig" data-asset="a0139" data-points="p0139" id="fa0139"><img src="L13-img/p14.png" alt="幻灯片第 14 页：Where a session ends"><figcaption><b>原图 4 · 会话在哪里结束</b> <span class="source-anchor" data-source-section="s17">出处：EECS 498 AASE L13 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">幻灯片第 14 页</a></span><span class="how">怎么看：一条从午夜到午夜的时间线，中间黄色条「your session」大约覆盖白天几小时；红点分布在条外——凌晨 CI 在 main 上失败、早上公交上有了个想法、傍晚审阅人要求修改、夜里想起明天的截止日期；虚线框注明：这些全都发生在会话关闭时。</span></figcaption></figure>
+<p data-points="p0138" id="e67">这是一张示意图，画的是虚构的一天，时间点只为说明问题。</p>
+<p data-points="p0141 p0142" id="e68">讲者备注：黄色条是你的会话，你面前开着 harness 的那几个小时，比如十点到四点。条内它是好工具，条外它不存在。再看你真正想要帮忙的事：凌晨两点 main 上 CI 失败；七点四十五在公交上想到修法；六点半审阅人要你改 pull request；晚上十点想起明天有个截止日期。</p>
+<p data-points="p0143 p0144" id="e69">每一件都发生在会话关着的时候：没人去启动它；就算它在跑也够不到你，也不会记得你上周提过的截止日期。这就是助手要解决的问题，下面把缺的东西一一点名。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s15"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">Part 2: Assistants you can text</a></span> · <span class="source-anchor" data-source-section="s16"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">Why a harness that is always on</a></span> · <span class="source-anchor" data-source-section="s17"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">Where a session ends</a></span></div>
+</section>
+<section class="sec" data-toc="八、助手需要什么" id="s11" data-source-section="s18">
+  <header class="doc-head"><span class="kicker">第 15 页</span><h2>四个缺口，四块拼图：常开的机器、channel、触发器、记忆</h2></header>
+  <div class="doc-body">
+<p data-points="p0147" id="e70">harness 现在做不到的四件事，以及补上每一件的那块拼图。</p>
+<figure class="figure orig" data-asset="a0150" data-points="p0150" id="fa0150"><img src="L13-img/p15.png" alt="幻灯片第 15 页：What an assistant needs"><figcaption><b>原图 5 · 助手需要的四块拼图</b> <span class="source-anchor" data-source-section="s18">出处：EECS 498 AASE L13 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">幻灯片第 15 页</a></span><span class="how">怎么看：左列红框是今天的 harness：只在你坐着时运行、只能从笔记本够到、只在你要求时行动、每次会话后忘了你；右列绿框一一对应：一直运行（常开的机器）、能发短信给它（channel）、能先开口（触发器）、记得你（记忆）。</span></figcaption></figure>
+<p data-points="p0149" id="e71">这四块正是 OpenClaw、Hermes Agent 和带 channels 的 Claude Code 都在搭的。</p>
+<p data-points="p0152 p0153 p0154" id="e72">讲者备注：左边四句话是你今天用的 harness，每句都是它错过上一页某件事的原因。它只在你坐着时运行，所以它得一直跑：一台常开的机器。你只能从笔记本够到它，所以得能从任何地方发短信给它：一个 channel。</p>
+<p data-points="p0155 p0156" id="e73">它只在你要求时行动，所以有事发生时它得先开口：触发器。它每次会话后都忘了你，所以它得记得：记忆。</p>
+<p class="callout key" data-points="p0157" id="e74">四个需求，四块拼图。注意清单上没有什么：<b>没有更聪明的模型，也没有另一个 harness，循环原封不动。</b>拼图会一块块加上，但先得改一件事：键盘前不会有人。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s18"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">What an assistant needs</a></span></div>
+</section>
+<section class="sec" data-toc="九、第 1 步：由程序来驱动 harness" id="s12" data-source-section="s19">
+  <header class="doc-head"><span class="kicker">第 16 页</span><h2>消息由程序输入，回答以 JSON 输出</h2></header>
+  <div class="doc-body">
+<p data-points="p0160" id="e75">harness 可以从程序而不是人那里接收消息，并把回答以 JSON 送回。</p>
+<figure class="figure orig" data-asset="a0163" data-points="p0163" id="fa0163"><img src="L13-img/p16.png" alt="幻灯片第 16 页：Driving the harness from a program"><figcaption><b>原图 6 · 由程序驱动 harness</b> <span class="source-anchor" data-source-section="s19">出处：EECS 498 AASE L13 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">幻灯片第 16 页</a></span><span class="how">怎么看：上方红框「you, at a terminal」与 harness 之间是「you type / it prints」；下方绿框「a program: the desktop app, or a bot」与 harness 之间是 <code>--input-format stream-json</code> 和 <code>--output-format stream-json</code>；harness 右边连着模型。</span></figcaption></figure>
+<p data-points="p0162" id="e76">Claude Code 的 stream-json 参数；据讲者 Mac 10 月 13 日的 ps，Claude 桌面应用启动 claude 时两个都带上。Codex 对应的是 <code>codex exec --json</code>。</p>
+<p data-points="p0165 p0166" id="e77">讲者备注：现在 harness 的输入来自你在终端打字，并把输出给你看。要做助手，得由程序来打字。两种 harness 都支持：Claude Code 有两个参数，以 JSON 接收消息、以 JSON 送出回答；Codex 有带 JSON 选项的 codex exec。</p>
+<p data-points="p0167 p0168" id="e78">你现在大概就在用：讲者做这些幻灯片时的进程列表显示，Claude 桌面应用启动的就是同一个 claude 程序，带的正是这两个参数。那个应用是一个替你往 harness 里打字的聊天窗口，连批准按钮都走同一条管道。把聊天窗口换成一个读你短信的程序，就有了机器人的雏形。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s19"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">Driving the harness from a program</a></span></div>
+</section>
+<section class="sec" data-toc="十、第 2 步：一台常开的机器" id="s13" data-source-section="s20">
+  <header class="doc-head"><span class="kicker">第 17–18 页</span><h2>机器不合盖，一天里每件事都落在它运行的时候</h2></header>
+  <div class="doc-body">
+<p data-points="p0171" id="e79">把 harness 放在一台从不合盖的机器上，一天里的每件事都落进它的运行时间里。</p>
+<figure class="figure orig" data-asset="a0174" data-points="p0174" id="fa0174"><img src="L13-img/p17.png" alt="幻灯片第 17 页：A machine that stays on"><figcaption><b>原图 7 · 一台常开的机器</b> <span class="source-anchor" data-source-section="s20">出处：EECS 498 AASE L13 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">幻灯片第 17 页</a></span><span class="how">怎么看：同样的一天，「your laptop」条只占白天几小时；下面一条横跨整天的黄色条，写着常开的机器：Mac mini、服务器或容器，所有红点都落在它之内。</span></figcaption></figure>
+<p data-points="p0173" id="e80">仍是上一页那张虚构的一天，只是多了一台常开的机器。</p>
+<p data-points="p0176 p0177" id="e81">讲者备注：回到这一天。你的笔记本只开几小时，合上盖子 harness 就停了，上一页那个程序也跟着停。所以助手住在一台常开的机器上：家里的 Mac mini、一台小服务器，或云上的一个容器；这样时间线上每件事都发生在它运行时。</p>
+<p data-points="p0178 p0179" id="e82">Mac mini 受欢迎有个原因，两页后就会看到：iMessage 只能在 Mac 上用。下面是讲者家里的样子。</p>
+<figure class="figure orig" data-asset="a0183" data-points="p0183" id="fa0183"><img src="L13-img/p18.png" alt="幻灯片第 18 页：Machines that stay on, at home"><figcaption><b>原图 8 · 讲者家中书桌上常开的机器（2026 年 10 月）</b> <span class="source-anchor" data-source-section="s21">出处：EECS 498 AASE L13 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">幻灯片第 18 页</a></span><span class="how">怎么看：一张照片，书桌上并排放着三台 Mac mini，插着电一直开着。</span></figcaption></figure>
+<p data-points="p0182" id="e83">讲者家里的书桌，2026 年 10 月。</p>
+<p data-points="p0185 p0186" id="e84">讲者备注：这是讲者家里的书桌，三台 Mac mini 插着电、一直开着，没人会给它们合盖。但光在跑还不够：它在跑，你在公交上，你的消息怎么到它那里？</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s20"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">A machine that stays on</a></span> · <span class="source-anchor" data-source-section="s21"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">Machines that stay on, at home</a></span></div>
+</section>
+<section class="sec" data-toc="十一、第 3 步：channel" id="s14" data-source-section="s22">
+  <header class="doc-head"><span class="kicker">第 19–20 页</span><h2>channel 是一个会主动开启一轮的 MCP 服务器</h2></header>
+  <div class="doc-body">
+<p data-points="p0189" id="e85">channel 把你的消息推进会话，模型用 channel 提供的 reply 工具回答。</p>
+<figure class="figure orig" data-asset="a0192" data-points="p0192" id="fa0192"><img src="L13-img/p19.png" alt="幻灯片第 19 页：A channel is an MCP server that starts the turn"><figcaption><b>原图 9 · channel 是一个开启一轮的 MCP 服务器</b> <span class="source-anchor" data-source-section="s22">出处：EECS 498 AASE L13 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">幻灯片第 19 页</a></span><span class="how">怎么看：四条泳道——模型、harness、channel、你的手机。手机发「did the tests pass?」，channel 交给 harness 一条新消息，harness 以「iMessage: did the tests pass?」交给模型；模型调用 <code>reply("Yes, 212 passed")</code>，harness 让 channel 发出，手机收到「Yes, 212 passed」。底注：Lab04 的服务器只会应答，这个会开启一轮。</span></figcaption></figure>
+<p data-points="p0191" id="e86">Claude Code channels 自 2026 年 3 月起是研究预览版，见其官方文档。</p>
+<p data-points="p0194 p0195 p0196" id="e87">讲者备注：Claude Code 的版本叫 channels，建立在 Lab04 见过的 MCP 上：channel 就是一个 MCP 服务器，像别的一样插进 harness。你发短信问测试过了没有，channel 收到消息交给 harness；harness 把它放到模型面前，并标明来源：这条来自 iMessage。</p>
+<p data-points="p0197 p0198 p0199" id="e88">模型跑测试，然后调用 channel 提供的工具 reply 来回答；harness 把回复交给 channel，它出现在你手机上。新东西在这里：Lab04 里每个 MCP 服务器都等 harness 来调用，<b>这个会开启一轮——同样的插头，但服务器先动。</b>这对有 API 的 Telegram 很容易，iMessage 没有 API。</p>
+<h3>iMessage 怎么进来</h3><span class="source-anchor heading-source" data-source-section="s23">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">How iMessage gets in</a></span>
+<p data-points="p0202" id="e89">Apple 没有 iMessage API。Mac 上的一个桥接程序读「信息」应用的数据库，并告诉应用要发什么。</p>
+<figure class="figure orig" data-asset="a0205" data-points="p0205" id="fa0205"><img src="L13-img/p20.png" alt="幻灯片第 20 页：How iMessage gets in"><figcaption><b>原图 10 · iMessage 怎么进来</b> <span class="source-anchor" data-source-section="s23">出处：EECS 498 AASE L13 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">幻灯片第 20 页</a></span><span class="how">怎么看：手机 ↔ Apple 服务器 ↔ 你 Mac 上的 Messages.app；Messages.app 把每条消息写进它的消息数据库，桥接程序读新消息并交给 harness，回复时桥接程序「tells it to send」让 Messages.app 发出。注：没有 API，桥接程序读应用自己的数据库并驱动应用。</span></figcaption></figure>
+<p data-points="p0204" id="e90">Claude Code 的 iMessage channel 和 OpenClaw 用的桥接程序 imsg，均于 2026 年 10 月读取；两者都需要 macOS 的「完全磁盘访问权限」和「自动化」权限。</p>
+<p data-points="p0207 p0208 p0209" id="e91">讲者备注：Apple 不公布收发 iMessage 的 API，那人们怎么做 iMessage 机器人？在登录了 Apple 账号的 Mac 上，「信息」应用把收发的每条消息存进磁盘上的一个数据库文件。桥接程序读这个文件并监视新消息，文件里的一条新消息就是给 harness 的一条新消息。</p>
+<p data-points="p0210 p0211" id="e92">发送时，桥接程序让「信息」应用把文本发出去，和你亲手打的一样。没有 API：桥接程序读应用自己的数据库、驱动应用，你得手动给它两项 macOS 权限，一项读文件，一项控制「信息」。</p>
+<p data-points="p0212 p0213" id="e93">所以要纠正「它不过是云上的 Claude Code」这个说法：对 iMessage 来说，必须有一台常开的 Mac。Telegram、Discord、Slack 的机器人可以跑在任何地方，因为这些服务有 API。现在能给它发短信了，但它仍然只会回答。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s22"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">A channel is an MCP server that starts the turn</a></span> · <span class="source-anchor" data-source-section="s23"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">How iMessage gets in</a></span></div>
+</section>
+<section class="sec" data-toc="十二、第 4 步：触发器与心跳" id="s15" data-source-section="s24">
+  <header class="doc-head"><span class="kicker">第 21–22 页</span><h2>有事发生时由触发器开启一轮；心跳按时检查一张短清单</h2></header>
+  <div class="doc-body">
+<p data-points="p0216" id="e94">触发器在有事发生时开启一轮，所以助手能在你开口之前给你发短信。</p>
+<figure class="figure orig" data-asset="a0219" data-points="p0219" id="fa0219"><img src="L13-img/p21.png" alt="幻灯片第 21 页：Triggers: letting it go first"><figcaption><b>原图 11 · 触发器：让它先开口</b> <span class="source-anchor" data-source-section="s24">出处：EECS 498 AASE L13 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">幻灯片第 21 页</a></span><span class="how">怎么看：泳道为模型、harness、触发器、手机。触发器送来「CI failed on main」，harness 交给模型「CI: main failed. Find out why.」；模型调用 <code>shell("pytest -x")</code>，得到「1 failed: test_dates」；再调用 reply，手机收到「main is red: test_dates」。注：没人问过；定时任务也一样，比如每天早上 8 点。</span></figcaption></figure>
+<p data-points="p0218" id="e95">示意。OpenClaw 的心跳默认每 30 分钟一次（docs.openclaw.ai）；Hermes Agent 的 gateway 负责运行它的 cron 任务。</p>
+<p data-points="p0221 p0222" id="e96">讲者备注：channel 只在你写信时开启一轮，触发器在有事发生时开启一轮。这里的触发器是 CI 发来的 webhook：main 刚失败了。harness 把它变成给模型的一条消息，附带一条常设指令：查明原因。模型做的和你开口问时一样：跑测试、读失败信息。</p>
+<p data-points="p0223 p0224" id="e97">然后它通过 channel 给你发短信：main is red，test_dates。没人问过——<b>这就是聊天机器人和助手的区别。</b>定时任务也一样：每天早上八点，查我的日历和邮件，把要紧的发给我。</p>
+<p data-points="p0225" id="e98">有一种定时任务值得记住名字，因为每个常开的助手都有：心跳（heartbeat）。</p>
+<h3>心跳</h3><span class="source-anchor heading-source" data-source-section="s25">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">The heartbeat</a></span>
+<p data-points="p0228" id="e99">心跳按时唤醒助手去检查一张短清单，大多数时候什么都没发现，保持安静。</p>
+<figure class="figure orig" data-asset="a0231" data-points="p0231" id="fa0231"><img src="L13-img/p22.png" alt="幻灯片第 22 页：The heartbeat"><figcaption><b>原图 12 · 心跳</b> <span class="source-anchor" data-source-section="s25">出处：EECS 498 AASE L13 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">幻灯片第 22 页</a></span><span class="how">怎么看：左边绿框是它的清单——main 上 CI 绿了吗、有没有新的评审意见、明天有没有要交的；右边时间线 9:00 到 12:00 每半小时一个点，模型每次读清单，没事就回 NO_REPLY、什么都不发；11:00 的红点触发一条发到手机的消息：审阅人要求修改 #42。底注：每次心跳都是一次模型调用，30 分钟一次就是一天 48 次；清单要短，睡觉的时段跳过。</span></figcaption></figure>
+<p data-points="p0230" id="e100">出处：OpenClaw 文档的心跳一页——默认每 30 分钟（用 Anthropic 订阅时是一小时），一张短清单，没什么需要注意时回 NO_REPLY。</p>
+<p data-points="p0233 p0234" id="e101">讲者备注：webhook 需要外面有东西打进来，而你在乎的很多事不会通知任何人：一条评审意见、日历里的一个截止日期。所以助手自己去查。左边是它的清单，你来写，要短：main 上 CI 绿了吗、有没有新评审意见、明天有没有要交的。</p>
+<p data-points="p0235 p0236" id="e102">每 30 分钟一次心跳开启一轮，模型读清单、逐项检查。大多数时候没什么可说，它回一个特殊词 NO_REPLY，助手什么都不发，你永远看不到这些轮次。十一点它发现了东西：审阅人要求修改 pull request 42。这次模型写出真正的回答，发到你手机上。</p>
+<p class="callout limit" data-points="p0237" id="e103">代价：每次心跳都是一次模型调用，不管有没有发现什么。每 30 分钟就是一天 48 次。所以清单要短，并设定活跃时段；OpenClaw 允许跳过你睡觉的时段，并让每次心跳在新会话里跑，免得每次都把整段对话重发一遍。</p>
+<p class="callout key" data-points="p0238 p0239" id="e104"><b>让它显得「活着」的，就是一个 cron 任务加一张清单，外加保持安静的许可。</b>还剩一个需求：明天早上，它还记得这些吗？</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s24"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">Triggers: letting it go first</a></span> · <span class="source-anchor" data-source-section="s25"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">The heartbeat</a></span></div>
+</section>
+<section class="sec" data-toc="十三、第 5 步：持久的记忆" id="s16" data-source-section="s26">
+  <header class="doc-head"><span class="kicker">第 23 页</span><h2>会话结束前写下学到的，下一个会话先读它</h2></header>
+  <div class="doc-body">
+<p data-points="p0242" id="e105">会话结束前，助手把学到的写下来；下一个会话先读它。</p>
+<figure class="figure orig" data-asset="a0245" data-points="p0245" id="fa0245"><img src="L13-img/p23.png" alt="幻灯片第 23 页：Memory that lasts"><figcaption><b>原图 13 · 持久的记忆</b> <span class="source-anchor" data-source-section="s26">出处：EECS 498 AASE L13 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">幻灯片第 23 页</a></span><span class="how">怎么看：周一的会话里你说「我的考试在周四，短信写短点」→ 写进绿框 MEMORY.md（exam on Thursday, prefers short texts）→ 周二早上 8 点新会话先读它，于是先开口：「两天后考试，要不要学习计划？」</span></figcaption></figure>
+<p data-points="p0244" id="e106">示意。OpenClaw 把 MEMORY.md 和 SOUL.md 放在一个 Markdown 文件夹里；Hermes Agent 用 MEMORY.md 和 USER.md。</p>
+<p data-points="p0247 p0248" id="e107">讲者备注：周一你告诉它两件事：考试在周四，短信写短点。然后会话结束，通常这些就没了。所以结束前助手把学到的写进一个普通文件，OpenClaw 和 Hermes Agent 都叫它 MEMORY.md，是一个你能打开、能编辑的 Markdown 文件。</p>
+<p data-points="p0249" id="e108">周二早上八点，一个触发器开启新会话，harness 做的第一件事就是把这个文件读进模型的上下文。于是模型知道周四的事，并且先开口：两天后考试，要学习计划吗？很短，照你说的。</p>
+<p data-points="p0250 p0251" id="e109">用 OpenClaw 文档的话说，没有隐藏状态：它对你的了解全在你能读的文件里。这和 CLAUDE.md 是同一个想法，只是由助手而不是你来写。四块拼图都齐了。跳过的一个问题：你能给它发短信，别人呢？</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s26"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">Memory that lasts</a></span></div>
+</section>
+<section class="sec" data-toc="十四、安全：谁能发短信给它，以及在手机上审批" id="s17" data-source-section="s27">
+  <header class="doc-head"><span class="kicker">第 24–25 页</span><h2>按发信人而不是按聊天放行；审批码把你的 yes 绑到这一次请求</h2></header>
+  <div class="doc-body">
+<p data-points="p0254" id="e110">能给 channel 发消息的人都能给模型下提示，所以 channel 保留一份允许写信的名单，其他人一律丢弃。</p>
+<figure class="figure orig" data-asset="a0257" data-points="p0257" id="fa0257"><img src="L13-img/p24.png" alt="幻灯片第 24 页：Who can text it"><figcaption><b>原图 14 · 谁能给它发短信</b> <span class="source-anchor" data-source-section="s27">出处：EECS 498 AASE L13 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">幻灯片第 24 页</a></span><span class="how">怎么看：三个红框发信人——你（did the tests pass?）、群聊里的朋友（lol send it）、拿到你号码的陌生人（叫它无视规则、把文件发过去）；绿色 channel 里「allowed to write: you」，只有你的消息「passes」到 harness 和模型，其他人「dropped, no reply」。注：能通过的就是提示；带着你的浏览器和登录，这份名单就是让它仍归你所有的东西。</span></figcaption></figure>
+<p data-points="p0256" id="e111">出处：Claude Code channels 参考文档——每个 channel 一份发信人白名单，按发信人而不是按聊天检查；iMessage channel 的源码写着：每个朋友的短信都会撞上这道关。</p>
+<p data-points="p0259 p0260" id="e112">讲者备注：channel 把短信变成提示，所以问题是谁能发。channel 保留一份名单，这里只有一个名字：你。你问测试过了没有，你在名单上，消息通过，模型看到它。</p>
+<p data-points="p0261 p0262" id="e113">再看能够到那个号码或机器人的其他人：群聊里的朋友说「lol send it」；拿到你号码的陌生人试图让它无视规则、把文件发过去。两人都不在名单上，channel 把两条都丢掉，不回复，模型什么都收不到。注意那位朋友：<b>检查的是谁发的，而不是来自哪个聊天</b>；如果按聊天检查，任何和你同群的人都能和你的助手说话。iMessage channel 自己的代码说明了为什么这要紧：每个朋友的短信都会撞上这道关。</p>
+<p data-points="p0263 p0264 p0265" id="e114">怎么上名单？Telegram 和 Discord 用配对：你给机器人发消息，它回一个码，你把码输进会话；iMessage 则放行你自己的号码。凡是通过的都是提示：把它和第 1 部分合起来，一个你能发短信、带着你浏览器和登录的助手，致命三件套的三条腿全有，那份名单就是让它仍归你所有的东西。还有一种情况：模型要做有风险的事，而你不在屏幕前。</p>
+<h3>在手机上审批</h3><span class="source-anchor heading-source" data-source-section="s28">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">Approving from your phone</a></span>
+<p data-points="p0268" id="e115">模型需要审批而屏幕前没人时，channel 把问题发短信给你，你的回复就是答案。</p>
+<figure class="figure orig" data-asset="a0271" data-points="p0271" id="fa0271"><img src="L13-img/p25.png" alt="幻灯片第 25 页：Approving from your phone"><figcaption><b>原图 15 · 在手机上审批</b> <span class="source-anchor" data-source-section="s28">出处：EECS 498 AASE L13 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">幻灯片第 25 页</a></span><span class="how">怎么看：模型调用 <code>shell("git push")</code>，harness 进入等待（黄条）并请 channel 求批准；手机收到「Run git push? reply yes kqpzt」，回复「yes kqpzt」后 channel 告诉 harness 已批准，模型收到「pushed」。注：这个码把你的 yes 绑到这一次请求上。</span></figcaption></figure>
+<p data-points="p0270" id="e116">出处：Claude Code channels 参考文档的 permission relay，每个请求带一个五个字母的码。</p>
+<p data-points="p0273 p0274" id="e117">讲者备注：模型要推送。在桌前时屏幕上会弹出权限提示；这里屏幕前没人，所以 harness 等着（黄条）。harness 请 channel 去要批准，channel 发短信给你：要运行 git push 吗？回复 yes 加一个短码，这里是 kqpzt。</p>
+<p data-points="p0275 p0276 p0277" id="e118">你回复 yes kqpzt，channel 告诉 harness 批准了，推送执行，模型听到「pushed」。你的 yes 从不作为消息到达模型，它只回答那个提示。为什么要码？它把你的 yes 绑到这一个请求上：旧的 yes、或者本来给别的事的 yes，批准不了一条新命令。下面看全貌。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s27"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">Who can text it</a></span> · <span class="source-anchor" data-source-section="s28"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">Approving from your phone</a></span></div>
+</section>
+<section class="sec" data-toc="十五、整个助手，以及三种打包方式" id="s18" data-source-section="s29">
+  <header class="doc-head"><span class="kicker">第 26–27 页</span><h2>同一个 harness，外面套上常开的机器、channel、触发器和记忆；区别只在谁来运行那台机器</h2></header>
+  <div class="doc-body">
+<p data-points="p0280" id="e119">同一个 harness，在一台常开的机器上，外面围着 channel、触发器和记忆。</p>
+<figure class="figure orig" data-asset="a0283" data-points="p0283" id="fa0283"><img src="L13-img/p26.png" alt="幻灯片第 26 页：The whole assistant"><figcaption><b>原图 16 · 整个助手</b> <span class="source-anchor" data-source-section="s29">出处：EECS 498 AASE L13 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">幻灯片第 26 页</a></span><span class="how">怎么看：虚线框「a machine that stays on」里，中间是由程序驱动的 harness，左边 channel（iMessage、Telegram）连到你的手机，下方是记忆（每轮都读的文件）和触发器（定时、webhook），右边连着模型。</span></figcaption></figure>
+<p data-points="p0282" id="e120">这一部分的拼图，合成一张图。</p>
+<p data-points="p0285 p0286 p0287 p0288" id="e121">讲者备注：把拼图合起来。中间是同一个 harness，由程序驱动，在一台常开的机器上；加上 channel，你能给它发短信；加上触发器，它能先开口；加上记忆，它明天还认得你。</p>
+<p data-points="p0289" id="e122">这就是全部。你听说过的每个常开助手都是这张图，区别在于谁来运行它。</p>
+<h3>三种打包方式</h3><span class="source-anchor heading-source" data-source-section="s30">原文 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">Three ways to package it</a></span>
+<p data-points="p0292" id="e123">同样的拼图，三种托管方式。</p>
+<div class="table"><table class="data" data-asset="a0293" data-points="p0293" id="ta0293"><caption>原表 3 · 三种常开助手的打包方式对比</caption><thead><tr><th>项目</th><th>OpenClaw/Hermes Agent</th><th>Claude Remote Control</th><th>OpenAI Dots</th></tr></thead><tbody><tr><td data-label="项目">Runs on</td><td data-label="OpenClaw/Hermes Agent">A machine you run</td><td data-label="Claude Remote Control">Your computer, kept on</td><td data-label="OpenAI Dots">OpenAI's cloud</td></tr><tr><td data-label="项目">The loop</td><td data-label="OpenClaw/Hermes Agent">Their own, or another harness</td><td data-label="Claude Remote Control">Claude Code</td><td data-label="OpenAI Dots">OpenAI's, on GPT-6 Astra</td></tr><tr><td data-label="项目">You reach it by</td><td data-label="OpenClaw/Hermes Agent">iMessage, Telegram, Slack</td><td data-label="Claude Remote Control">The Claude app</td><td data-label="OpenAI Dots">ChatGPT, Slack, Teams</td></tr><tr><td data-label="项目">It goes first</td><td data-label="OpenClaw/Hermes Agent">A heartbeat, cron</td><td data-label="Claude Remote Control">Tasks the session schedules</td><td data-label="OpenAI Dots">Works on goals in the background</td></tr></tbody></table><span class="source-anchor" data-source-section="s30">出处：EECS 498 AASE L13 课件 · <a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">幻灯片第 27 页 · Three ways to package it</a></span></div>
+<p data-points="p0294" id="e124">出处：OpenClaw 与 Hermes Agent 的官方文档、Claude Code 的 Remote Control 文档；OpenAI Dots 于 2026 年 9 月 29 日发布（据 TechCrunch、Al Jazeera）。均于 2026 年 10 月 13 日读取。</p>
+<p data-points="p0296 p0297" id="e125">讲者备注：每个常开助手都是上一页那张图，不同的是谁来托管。第一栏你自己托管：OpenClaw 和 Hermes Agent 是开源的，跑在你常开的机器上。OpenClaw 起初叫 Clawdbot，后来叫 Moltbot，从一月起叫 OpenClaw；它的核心是一个叫 Gateway 的长驻进程，同时掌管所有聊天应用，约 35 个，iMessage 经 imsg；它有自己的 agent 循环，也可以把轮次交给 Codex 或 Claude Code；记忆是纯 Markdown 文件，心跳就是刚才那个。Nous Research 的 Hermes Agent 二月发布，形状相同：一个兼跑 cron 任务的 gateway 进程，记忆是两个小文件加搜索。一切归你，安全也归你。</p>
+<p data-points="p0298" id="e126">第二栏由你自己的电脑托管：Claude Remote Control 是最轻的版本，没有 gateway 也没有 channel。你在笔记本上开一个打开了 remote control 的普通 Claude Code 会话，手机上的 Claude 应用就成了这个会话的窗口；Claude 仍在你的机器上、用你的文件运行，甚至能保持 Chrome 开着，于是你能从手机让它用你桌上的浏览器——第 1、2 部分合在一起。代价在上面那一行：电脑必须一直开着，而且只有会话自己安排了什么，它才会先开口。</p>
+<p data-points="p0299 p0300" id="e127">第三栏由 OpenAI 托管：OpenAI 两周前在 DevDay 发布了 Dots。一个 dot 是住在 ChatGPT 里的常开 agent，跑在 GPT-6 Astra 上、在 OpenAI 自己的云上工作；你给它一个目标、连上它能用的应用，它就在你们的对话之间持续推进这个目标。通过 ChatGPT 或 Slack、Teams 联系它，短信即将支持。不用自己运行任何东西，也看不到里面。往下读每一栏都是同样四样：一个循环、一台常开的机器、一个联系它的途径、一个先开口的方式。选择只在于谁来运行那台机器。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s29"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">The whole assistant</a></span> · <span class="source-anchor" data-source-section="s30"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">Three ways to package it</a></span></div>
+</section>
+<section class="sec" data-toc="十六、同一个 harness，新的进出口" id="s19" data-source-section="s31">
+  <header class="doc-head"><span class="kicker">第 28 页</span><h2>扩展和 channel 只是新的进出口</h2></header>
+  <div class="doc-body">
+<p class="callout key" data-points="p0302" id="e128"><b>今天 harness 从没变过，扩展和 channel 是新的进出口。</b></p>
+<p data-points="p0304 p0305" id="e129">讲者备注：最后一次回到开头那条线。循环还是 L06 以来那个：模型要工具，harness 执行。扩展给了它你的浏览器，channel 给了它你的手机，一台常开的机器和几个触发器把它变成了助手——这些都没改变 harness。答疑。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s31"><a href="https://github.com/eecs498-aase/materials/blob/main/lectures/L13/slides.md">Same harness, new ways in</a></span></div>
+</section>
+<section class="sec" data-toc="小测：3 道题" id="s20" data-source-section="extra">
+  <div class="head-full"><span class="kicker">小测</span><h2>用三道题检查理解</h2></div>
+  <div class="stage"><div class="quiz"><script type="application/json">[{"q": "Claude in Chrome 扩展和 Lab04 里的 Playwright 最大的不同是什么？", "opts": ["它更快", "它在你已经登录的 Chrome 里工作，共享你的登录状态", "它不需要工具调用"], "a": 1, "why": "Playwright 启动的是没人登录的新浏览器；扩展住在你以自己身份登录的 Chrome 里，所以能到达你登录过的每个网站，也因此需要分组标签页、逐站许可和遇登录页停下这些约束。", "back": 1}, {"q": "按讲者的说法，channel 和 Lab04 里的 MCP 服务器有什么不同？", "opts": ["它不是 MCP 服务器", "它会主动开启一轮，而不是等 harness 来调用", "它只能用 Telegram"], "a": 1, "why": "channel 是插进 harness 的 MCP 服务器，但它把你的消息推进会话、先开口；模型再用它提供的 reply 工具回答。", "back": 11}, {"q": "channel 的发信人白名单为什么按发信人而不是按聊天来检查？", "opts": ["这样更省钱", "按聊天检查的话，和你同一个群聊的任何人都能给你的助手下提示", "iMessage 不支持按聊天检查"], "a": 1, "why": "凡是通过的都是提示；带着你的浏览器和登录的助手具备致命三件套，名单是让它仍归你所有的东西。", "back": 14}]</script></div></div>
+</section>
+</main><script>var __H=location.hash;window.lessonIcons={"menu": "<svg class=\"i i-menu\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/><\/svg>", "play": "<svg class=\"i i-play\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z\"/><\/svg>", "pause": "<svg class=\"i i-pause\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"14\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/><rect x=\"5\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/><\/svg>", "check": "<svg class=\"i i-check\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 6 9 17l-5-5\"/><\/svg>", "x": "<svg class=\"i i-x\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/><\/svg>", "zoom-in": "<svg class=\"i i-zoom-in\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><line x1=\"21\" x2=\"16.65\" y1=\"21\" y2=\"16.65\"/><line x1=\"11\" x2=\"11\" y1=\"8\" y2=\"14\"/><line x1=\"8\" x2=\"14\" y1=\"11\" y2=\"11\"/><\/svg>", "zoom-out": "<svg class=\"i i-zoom-out\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><line x1=\"21\" x2=\"16.65\" y1=\"21\" y2=\"16.65\"/><line x1=\"8\" x2=\"14\" y1=\"11\" y2=\"11\"/><\/svg>", "copy": "<svg class=\"i i-copy\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\"/><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"/><\/svg>", "chevron-right": "<svg class=\"i i-chevron-right\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m9 18 6-6-6-6\"/><\/svg>", "book-open": "<svg class=\"i i-book-open\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 5v16\"/><path d=\"M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z\"/><\/svg>", "external-link": "<svg class=\"i i-external-link\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M15 3h6v6\"/><path d=\"M10 14 21 3\"/><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/><\/svg>"};window.lessonIcon=n=>window.lessonIcons[n]||"";</script><script>/* Article/pair navigation only. No global swipe or arrow-key paging. */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const H=document.documentElement, sections=$$('main.deck > .sec, main.deck > .hero, .pair-notes > .sec');
+if(!sections.length)return;
+const ids=new Set($$('[id]').map(n=>n.id));
+sections.forEach((s,i)=>{if(!s.id){let n=i+1,id=s.classList.contains('hero')?'intro':'s'+n;while(ids.has(id))id='s'+(++n);s.id=id;ids.add(id)}});
+const title=s=>s.dataset.toc||$('h2,h1,h3',s)?.textContent||s.id;
+const toc=document.createElement('nav');toc.className='toc';toc.id='lesson-toc';toc.setAttribute('aria-label','目录');
+const heading=document.createElement('b');heading.textContent='目录';toc.appendChild(heading);const ol=document.createElement('ol');toc.appendChild(ol);
+sections.forEach((s,i)=>{const li=document.createElement('li'),a=document.createElement('a');a.href='#'+s.id;a.textContent=(i+1)+'. '+title(s);li.appendChild(a);ol.appendChild(li)});document.body.appendChild(toc);
+const links=$$('a',toc),toggle=$('.toc-toggle'),count=$('.count'),bar=$('.track i');
+const shade=document.createElement('div');shade.className='toc-backdrop';document.body.appendChild(shade);
+function open(value){H.classList.toggle('toc-open',value);toggle?.setAttribute('aria-expanded',String(value));if(value)links.find(a=>a.getAttribute('aria-current')==='true')?.focus();else toggle?.focus()}
+if(toggle){toggle.setAttribute('aria-controls',toc.id);toggle.onclick=()=>open(!H.classList.contains('toc-open'))}shade.onclick=()=>open(false);
+addEventListener('keydown',e=>{if(e.key==='Escape'&&H.classList.contains('toc-open'))open(false)});
+function locate(hash){let id;try{id=decodeURIComponent(hash.replace(/^#/,''))}catch(e){return null}if(/^\d+$/.test(id))return sections[+id-1];return document.getElementById(id)}
+function jump(target){if(!target)return;H.classList.remove('toc-open');toggle?.setAttribute('aria-expanded','false');target.scrollIntoView({block:'start',behavior:'instant'});history.replaceState(null,'','#'+target.id);update();dispatchEvent(new Event('lesson:navigate'))}
+window.lessonNav={layout:H.dataset.layout,go:n=>jump(document.getElementById('s'+n)||sections[n-1]),returnTo:box=>jump(box.closest('.sec')||box),jump};window.goCard=n=>window.lessonNav.go(n);
+toc.onclick=e=>{const a=e.target.closest('a');if(!a)return;e.preventDefault();jump(locate(a.hash))};
+const key='pos:'+location.pathname;let queued=false,restoring=true;
+function update(){queued=false;let current=sections[0];const line=H.dataset.layout==='pair'&&innerWidth<=820?innerHeight*.4+90:100;for(const s of sections)if(s.getBoundingClientRect().top<=line)current=s;
+ count.textContent=title(current);links.forEach(a=>a.setAttribute('aria-current',String(a.hash==='#'+current.id)));const max=H.scrollHeight-innerHeight;bar.style.width=Math.max(0,Math.min(100,max>0?scrollY/max*100:100))+'%';
+ if(!restoring)try{localStorage.setItem(key,JSON.stringify({id:current.id,offset:scrollY-(current.getBoundingClientRect().top+scrollY)}))}catch(e){}
+}
+addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(update)}},{passive:true});addEventListener('resize',update);addEventListener('hashchange',()=>jump(locate(location.hash)));
+addEventListener('load',()=>{const hash=window.__H||location.hash;let target=locate(hash),offset=0;if(!hash){try{const pos=JSON.parse(localStorage.getItem(key)||'null');if(pos){target=document.getElementById(pos.id);offset=Number(pos.offset)||0}}catch(e){}}
+ if(target){target.scrollIntoView({block:'start',behavior:'instant'});if(!hash)scrollBy(0,offset+72)}restoring=false;update();
+});update();
+})();
+</script><script>/* Reveal an offscreen simulator first, then move only its local SVG viewport. */
+(function(root){
+function delta(start,end,low,high,pad=16){if(start<low+pad)return start-low-pad;if(end>high-pad)return end-high+pad;return 0}
+function focus(svg,scroller){
+ let frame=scroller.getBoundingClientRect(),bottom=innerHeight-88;
+ const top=document.querySelector('.top')?.getBoundingClientRect().bottom||56;
+ if(frame.bottom<=top||frame.top+112>bottom){
+  scroller.closest('.sim').scrollIntoView({block:'start',behavior:'instant'});
+  frame=scroller.getBoundingClientRect();
+ }
+ for(let p=scroller.parentElement;p&&p!==document.body;p=p.parentElement){const c=getComputedStyle(p);if(/auto|scroll|hidden|clip/.test(c.overflowY)){const r=p.getBoundingClientRect();bottom=Math.min(bottom,r.top+p.clientHeight)}}
+ const space=Math.max(112,Math.min(innerHeight*.4,bottom-frame.top));scroller.style.maxHeight=space+'px';
+ frame=scroller.getBoundingClientRect();const node=svg.querySelector('.fl-node.act');if(!node)return;const r=node.getBoundingClientRect();
+ scroller.scrollTop+=delta(r.top,r.bottom,frame.top,frame.top+scroller.clientHeight);
+ scroller.scrollLeft+=delta(r.left,r.right,frame.left,frame.left+scroller.clientWidth);
+}
+root.LessonGeometry={delta,focus};if(typeof module!=='undefined')module.exports={delta,focus};
+})(typeof window==='undefined'?globalThis:window);
+</script><script>/* Shared material/explanation pairing, original-image dialog and copy actions. */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)],ic=window.lessonIcon;
+window.lessonCopy=async(text,button)=>{try{if(navigator.clipboard?.writeText)await navigator.clipboard.writeText(text);else{const t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();if(!document.execCommand('copy'))throw Error('copy');t.remove()}button.textContent='已复制'}catch(e){button.textContent='复制未成功，请选中文字复制'}};
+$$('.pair.codewalk,.pair.read-pair,.pair.material-pair').forEach(pair=>{
+ const source=$('.pair-source',pair),notes=$('.pair-notes',pair);if(!source||!notes)return;
+ const pre=$('pre[data-lines]',source),code=pre&&$('code',pre),steps=$$('.step',notes);let lines=[],raw='';
+ if(code){raw=code.textContent;const first=Number(pre.dataset.lines)||1;code.textContent='';const pieces=raw.replace(/\n$/,'').split('\n');pieces.forEach((text,i)=>{const line=document.createElement('span');line.className='code-line';line.dataset.line=String(first+i);line.textContent=text;code.appendChild(line);lines.push(line)});
+  const panel=document.createElement('div');panel.className='code-panel';source.before(panel);
+  const toolbar=document.createElement('div');toolbar.className='code-toolbar';
+  const hint=document.createElement('span');hint.className='code-scroll-hint';hint.textContent='长行可横向滚动';
+  const button=document.createElement('button');button.className='btn sm copy-code';button.innerHTML=ic('copy')+' 复制代码';button.onclick=()=>window.lessonCopy(raw,button);
+  toolbar.append(hint,button);panel.append(toolbar,source);
+ }
+ let active=null;
+ function select(step){if(!step||active===step)return;active=step;steps.forEach(s=>s.classList.toggle('is-active',s===step));let targets=[];
+  if(code){const ranges=(step.dataset.hl||'').split(',').map(v=>v.split('-').map(Number));lines.forEach(line=>{const n=Number(line.dataset.line),on=ranges.some(([a,b=a])=>n>=a&&n<=b);line.classList.toggle('hl',on);if(on)targets.push(line)})}
+  else{const ids=(step.dataset.explains||step.dataset.target||'').split(/\s+/);$$('.source-block,[data-material]',source).forEach(block=>{const on=ids.includes(block.dataset.sourceId||block.id);block.classList.toggle('is-active',on);if(on)targets.push(block)})}
+  if(targets.length){const a=targets[0].getBoundingClientRect(),b=targets[targets.length-1].getBoundingClientRect(),r=source.getBoundingClientRect();const bottom=r.top+source.clientHeight;source.scrollTop+=b.bottom-a.top>source.clientHeight-32?a.top-r.top-16:window.LessonGeometry.delta(a.top,b.bottom,r.top,bottom)}
+ }
+ const update=()=>{
+  const rect=notes.getBoundingClientRect(),material=source.closest('.code-panel')||source;
+  const top=Math.max(0,$(".top")?.getBoundingClientRect().bottom||0,innerWidth<=820?material.getBoundingClientRect().bottom:0),bottom=Math.min(innerHeight,rect.bottom);
+  if(bottom<=top)return;
+  const line=top+(bottom-top)*.4;let step=steps[0];
+  for(const s of steps)if(s.getBoundingClientRect().top<=line)step=s;
+  const last=steps.at(-1),lastRect=last?.getBoundingClientRect();
+  if(scrollY+innerHeight>=document.documentElement.scrollHeight-2&&lastRect?.top<bottom&&lastRect.bottom>top)step=last;
+  select(step);
+ };
+ let queued=false;addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(()=>{queued=false;update()})}},{passive:true});addEventListener('resize',update);
+ steps.forEach(step=>{step.addEventListener('focusin',()=>select(step));step.addEventListener('click',e=>{select(step);const a=e.target.closest('a');if(a?.hash&&source.querySelector(a.hash)){e.preventDefault();source.focus()}})});select(steps[0]);addEventListener('load',update);
+});
+$$('figure img').forEach(img=>{const button=document.createElement('button');button.className='image-open';button.type='button';button.setAttribute('aria-label','放大图片：'+img.alt);img.replaceWith(button);button.appendChild(img);button.onclick=()=>{
+ const dialog=document.createElement('dialog');dialog.className='image-dialog';dialog.setAttribute('aria-label',img.alt);const close=document.createElement('button');close.className='btn dialog-close';close.innerHTML=ic('x')+' 关闭';const large=img.cloneNode();large.removeAttribute('loading');dialog.append(close,large);document.body.appendChild(dialog);close.onclick=()=>dialog.close();dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close()});dialog.addEventListener('close',()=>{dialog.remove();button.focus()});dialog.showModal();close.focus();
+}});
+$$('details.more summary').forEach(s=>{if(!s.textContent.trim())s.textContent='展开细节';s.insertAdjacentHTML('afterbegin',ic('chevron-right'))});
+})();
+</script><script>/* 学习搭子 固定组件库 — 不要在课程里改这个文件。 */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const NS='http://www.w3.org/2000/svg';
+const data=(box,kind)=>JSON.parse(box.querySelector('script[type="application/json"]')?.textContent||box.dataset[kind]);
+const ic=window.lessonIcon;
+const el=(t,a={},p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p&&p.appendChild(e);return e};
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+function component(selector,render){
+  $$(selector).forEach(box=>{try{render(box)}catch(error){
+    const message=document.createElement('p');message.className='component-error';
+    message.textContent='这张图的数据有误';message.setAttribute('role','status');
+    box.replaceWith(message);console.error('组件数据有误',error);
+  }});
+}
+
+/* ---------- flow：用 JSON 画流程图 ----------
+ spec = {w,h,nodes:[{id,x,y,t,s?,c?,w?}],edges:[{f,t,l?,bend?}]}  节点坐标是中心点 */
+function drawFlow(svg,spec){
+  svg.innerHTML='';
+  const defs=el('defs',{},svg);
+  [['a','var(--meta)'],['b','var(--blue)'],['red','var(--amber)'],['amber','var(--amber)'],['green','var(--green)']].forEach(([id,c])=>{const m=el('marker',{id:'ar'+id+svg.dataset.uid,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:7,markerHeight:7,orient:'auto-start-reverse'},defs);el('path',{d:'M0,0L10,5L0,10z',fill:c},m)});
+  const N={};spec.nodes.forEach(n=>N[n.id]={...n,w:n.w||150,h:n.h||(n.s?70:56)});
+  const ns=Object.values(N);
+  let x0=Math.min(...ns.map(n=>n.x-n.w/2)),x1=Math.max(...ns.map(n=>n.x+n.w/2)),y0=Math.min(...ns.map(n=>n.y-n.h/2)),y1=Math.max(...ns.map(n=>n.y+n.h/2));
+  const B={x0,x1,y0,y1};
+  const eg=el('g',{},svg),ng=el('g',{},svg);svg._edges={};svg._nodes={};
+  const clip=(a,b)=>{const dx=b.x-a.x,dy=b.y-a.y;const s=Math.min(Math.abs((a.w/2+6)/(dx||1e-9)),Math.abs((a.h/2+6)/(dy||1e-9)));return[a.x+dx*s,a.y+dy*s]};
+  spec.edges.forEach(e=>{const a=N[e.f],b=N[e.t];let d,lx,ly;
+    if(e.route){ /* 沿外圈走的直角线：top|bottom|left|right，lane 控制离外框的距离 */
+      const g=30+(e.lane||0)*30,oa=e.oa||0,ob=e.ob||0;
+      if(e.route==='top'||e.route==='bottom'){const t=e.route==='top',Y=t?B.y0-g:B.y1+g,ya=a.y+(t?-1:1)*(a.h/2+2),yb=b.y+(t?-1:1)*(b.h/2+8);
+        d=`M${a.x+oa},${ya} V${Y} H${b.x+ob} V${yb}`;lx=(a.x+oa+b.x+ob)/2;ly=Y+(t?-8:18);
+        t?(y0=Math.min(y0,Y-26)):(y1=Math.max(y1,Y+26));}
+      else{const l=e.route==='left',X=l?B.x0-g:B.x1+g,xa=a.x+(l?-1:1)*(a.w/2+2),xb=b.x+(l?-1:1)*(b.w/2+8);
+        d=`M${xa},${a.y+oa} H${X} V${b.y+ob} H${xb}`;lx=X+(l?-8:8);ly=(a.y+b.y)/2;
+        l?(x0=Math.min(x0,X-90)):(x1=Math.max(x1,X+90));}
+    }else{const[p1,q1]=clip(a,b),[p2,q2]=clip(b,a);const mx=(p1+p2)/2,my=(q1+q2)/2,len=Math.hypot(p2-p1,q2-q1)||1,bd=e.bend||0;
+      const cx=mx-(q2-q1)/len*bd,cy=my+(p2-p1)/len*bd;d=`M${p1},${q1} Q${cx},${cy} ${p2},${q2}`;
+      const qx=.25*p1+.5*cx+.25*p2,qy=.25*q1+.5*cy+.25*q2,sg=bd>=0?1:-1;lx=qx-(q2-q1)/len*sg*14;ly=qy+(p2-p1)/len*sg*14+4;}
+    const mk=e.c||'a';const p=el('path',{d,class:'fl-edge '+(e.c||''),'marker-end':`url(#ar${mk}${svg.dataset.uid})`},eg);p._mk=mk;
+    let lab=null;if(e.l){const anc=e.route==='left'?'end':e.route==='right'?'start':'middle';lab=el('text',{x:lx,y:ly,'text-anchor':anc,class:'fl-elab '+(e.c||''),stroke:'var(--paper)','stroke-width':5,'paint-order':'stroke'},eg);lab.textContent=e.l}
+    svg._edges[e.f+'>'+e.t]={p,lab}});
+  ns.forEach(n=>{const g=el('g',{class:'fl-node '+(n.c||'')},ng);
+    el('rect',{x:n.x-n.w/2,y:n.y-n.h/2,width:n.w,height:n.h,rx:14},g);
+    const t=el('text',{x:n.x,y:n.y+(n.s?-4:6),'text-anchor':'middle'},g);t.textContent=n.t;
+    if(n.s){const s=el('text',{x:n.x,y:n.y+18,'text-anchor':'middle',class:'sub'},g);s.textContent=n.s}
+    svg._nodes[n.id]=g});
+  /* 自动贴合：viewBox 只包住内容，图会放大填满面板 */
+  const P=spec.pad??8,W=x1-x0+2*P,H=y1-y0+2*P+20;
+  svg.setAttribute('viewBox',`${x0-P} ${y0-P-10} ${W} ${H}`);
+  svg.style.setProperty('--flow-width',W+'px');svg.style.setProperty('--flow-height',H+'px');
+  const scroll=document.createElement('div');scroll.className='flow-scroll';
+  svg.replaceWith(scroll);scroll.appendChild(svg);
+  if(!scroll.closest('.sim')&&W>innerWidth-78){const t=document.createElement('p');t.className='flow-tip';t.textContent='← 左右滑动看全图 →';scroll.after(t)}
+  svg._set=(act,edge)=>{for(const k in svg._nodes)svg._nodes[k].classList.toggle('act',k===act);
+    for(const k in svg._edges){const on=k===edge,E=svg._edges[k];E.p.classList.toggle('act',on);E.p.setAttribute('marker-end',`url(#ar${on?'b':E.p._mk}${svg.dataset.uid})`);E.lab&&E.lab.classList.toggle('act',on)}};
+  svg._set(svg.dataset.act,svg.dataset.edge);
+  svg._center=()=>{if(!matchMedia('(max-width:820px)').matches)return;
+    const active=Object.values(svg._nodes).find(n=>n.classList.contains('act'));if(!active)return;
+    const a=active.getBoundingClientRect(),r=scroll.getBoundingClientRect();
+    scroll.scrollLeft+=a.left+a.width/2-r.left-r.width/2;
+  };
+}
+let uid=0;
+component('svg.flow',s=>{s.dataset.uid=++uid;drawFlow(s,data(s,'flow'))});
+
+/* ---------- sim：一步步走的模拟器 ----------
+ data-sim = {flow:{...}, steps:[{act,edge,msg:{r:user|asst|tool|err|sys,n?,t},say}], alt?:{label,steps:[...]}} */
+component('.sim',box=>{
+  const spec=data(box,'sim');if(spec.alt&&!spec.alts)spec.alts=[spec.alt];const AL=spec.alts||[];const gname='br'+(++uid);
+  box.innerHTML=`<div class="ctl"><button class="btn sm" data-a="step">下一步</button><button class="btn sm" data-a="play">${ic("play")} 自动</button><button class="btn sm" data-a="reset">重置</button>
+   <label>速度 <input type="range" min="300" max="2500" step="100" value="1200"></label></div>${AL.length?`<div class="ctl branches"><label><input type="radio" name="${gname}" value="-1" checked> ${esc(spec.label||'正常路径')}</label>${AL.map((a,j)=>`<label><input type="radio" name="${gname}" value="${j}"> ${esc(a.label)}</label>`).join('')}</div>`:''}
+   <div class="body"><svg class="flow"></svg><div class="log"></div></div><div class="narr"></div>`;
+  if(spec.layout==='wide')box.classList.add('wide');
+  const svg=$('.body > svg.flow',box);svg.dataset.uid=++uid;drawFlow(svg,spec.flow);
+  const fs=svg.parentElement,tip=document.createElement('p');tip.className='flow-tip';tip.textContent='点图放大看字，再点回到全图';fs.after(tip);
+  const focus=()=>{if(!fs.classList.contains('zoom'))return svg._center();window.LessonGeometry.focus(svg,fs)};
+  const zoom=document.createElement('button');zoom.className='btn sm zoom-toggle';zoom.innerHTML=ic('zoom-in')+' 放大图';zoom.setAttribute('aria-pressed','false');tip.replaceWith(zoom);const toggle=()=>{const on=fs.classList.toggle('zoom');zoom.innerHTML=ic(on?'zoom-out':'zoom-in')+(on?' 返回全图':' 放大图');zoom.setAttribute('aria-pressed',String(on));if(!on){fs.style.maxHeight='';fs.scrollTop=0}focus()};fs.onclick=toggle;zoom.onclick=toggle;window.addEventListener('resize',focus);window.addEventListener('load',()=>requestAnimationFrame(()=>{const params=new URLSearchParams(location.search);if((params.has('sim')||params.has('zoom'))&&!(window.__H??location.hash)&&box===$('.sim')){const section=box.closest('.sec,.card');if(window.lessonNav.layout==='deck')window.goCard($$('.card').indexOf(section)+1);else section.scrollIntoView({block:'start',behavior:'instant'})}focus()}));window.addEventListener('lesson:navigate',()=>requestAnimationFrame(focus));
+  const log=$('.log',box),narr=$('.narr',box),radios=$$('input[type=radio]',box),spd=$('input[type=range]',box),play=$('[data-a=play]',box);
+  let i=0,timer=null,predicted=!spec.predict;const prediction=document.createElement('div');if(spec.predict){prediction.className='prediction callout';prediction.innerHTML='<p>先预测：'+esc(spec.predict)+'</p><label>你的判断<textarea rows="2"></textarea></label><button class="btn sm" data-a="predict">提交预测，再看过程</button>';box.prepend(prediction)};const sel=()=>{const r=radios.find(r=>r.checked);return r?+r.value:-1};const steps=()=>sel()>=0?AL[sel()].steps:spec.steps;
+  const hint=spec.note?esc(spec.note)+'　点「下一步」开始。':'点「下一步」开始。';const reset=()=>{i=0;log.innerHTML='';narr.innerHTML=hint;svg._set(null,null);stop()};
+  const stop=()=>{clearTimeout(timer);timer=null;play.innerHTML=ic('play')+' 自动'};
+  const step=()=>{const S=steps();if(i>=S.length){narr.textContent='流程结束。点「重置」再走一遍。';stop();return false}
+    const s=S[i++];svg._set(s.act,s.edge);focus();if(s.msg){const d=document.createElement('div');d.className='msg '+s.msg.r;
+      d.innerHTML=`<b>${esc(s.msg.n||({user:'用户',asst:'模型',tool:'工具结果',err:'出错',sys:'系统提示词'}[s.msg.r]))}</b>${esc(s.msg.t)}`;log.appendChild(d);log.scrollTop=1e9}
+    narr.innerHTML=`<b>第 ${i}/${S.length} 步</b>　${esc(s.say)}`;return true};
+  const loop=()=>{if(step())timer=setTimeout(loop,+spd.value);else stop()};
+  box.onclick=e=>{const a=e.target.closest('button')?.dataset.a;if(a==='predict'){predicted=true;prediction.hidden=true;step()}if(a==='step'){stop();if(predicted)step();else prediction.querySelector('textarea').focus()}if(a==='reset')reset();if(a==='play'){if(!predicted){prediction.querySelector('textarea').focus();return}if(timer)stop();else{play.innerHTML=ic('pause')+' 暂停';loop()}}};
+  narr.innerHTML=hint;radios.forEach(r=>r.onchange=reset);
+  const P=new URLSearchParams(location.search);if(P.get('alt')&&radios[+P.get('alt')]){radios[+P.get('alt')].checked=true}for(let n=+P.get('sim')||0;n>0;n--)step();if(P.get('sim')){predicted=true;prediction.hidden=true}if(P.get('zoom')){fs.classList.add('zoom');zoom.setAttribute('aria-pressed','true');zoom.innerHTML=ic('zoom-out')+' 返回全图'} /* 自查用：?sim=5&alt=1&zoom=1 */
+});
+
+/* ---------- bars：横向条形图 ----------
+ data-bars = {unit, items:[{l,v,c?:blue|amber|green|red,note?}], caption?}  数字必须来自原文 */
+component('.bars',box=>{const B=data(box,'bars'),mx=Math.max(1,...B.items.filter(i=>i.v!=null).map(i=>i.v));
+  box.innerHTML=B.items.map(i=>`<div class="bar ${i.c||''}"><span class="bl">${esc(i.l)}</span>${i.v==null?`<span class="bmiss">${esc(i.miss||'原文未给数字')}</span>`:`<span class="bt"><i style="width:${(i.v/(B.axis==='independent'?Math.max(1,i.v):mx)*100).toFixed(1)}%"></i></span><span class="bv">${esc(i.v)}${esc(i.unit||B.unit||'')}</span>`}${i.note?`<span class="bn">${esc(i.note)}</span>`:''}</div>`).join('')+(B.caption?`<div class="bc">${esc(B.caption)}</div>`:'')});
+
+/* ---------- quiz：页内小测 ----------
+ data-quiz = [{q,opts:[...],a:正确下标,why,back:答错时回到第几张卡片}] */
+component('.quiz,.checkpoint',box=>{
+  const checkpoint=box.classList.contains('checkpoint');box.classList.add('quiz');const raw=data(box,checkpoint?'checkpoint':'quiz'),Q=Array.isArray(raw)?raw:[raw],P=new URLSearchParams(checkpoint?'':location.search);
+  let k=Math.max(0,Math.min(Q.length-1,(parseInt(P.get('q'))||1)-1));
+  const answers=Q.map(()=>({first:null,selected:null,retries:0}));
+  const score=()=>answers.filter((s,i)=>s.first===Q[i].a).length;
+  const complete=()=>answers.every(s=>s.selected!==null);
+  const reviewButton=i=>{
+    const target=window.lessonNav.layout==='deck'?$$('.card')[Q[i].back-1]:document.getElementById('s'+Q[i].back);
+    const title=target.dataset.toc||$('h2,h1,h3',target)?.textContent||'相关内容';
+    return `<button class="btn sm" data-review="${i}">回看：${esc(title)}</button>`;
+  };
+  function summary(){
+    const wrong=answers.map((s,i)=>s.first!==Q[i].a?i:-1).filter(i=>i>=0);
+    const recovered=wrong.filter(i=>answers[i].selected===Q[i].a).length;
+    box.innerHTML=`<div class="qt">小测总结</div><p>首次得分：${score()} / ${Q.length}。重试答对：${recovered} 题。</p>
+      <div>${wrong.length?wrong.map(i=>`<p>第 ${i+1} 题：${esc(Q[i].q)} ${reviewButton(i)} <button class="btn sm" data-question="${i}">回到此题</button></p>`).join(''):'没有首次错题。'}</div>
+      <p>用自己的话复述这页的核心机制，再举一个新场景。</p><label>你的复述<textarea class="retelling" rows="3"></textarea></label><button class="btn sm" data-copy-result="1">${ic("copy")} 复制学习结果 JSON</button><button class="btn sm" data-question="0">查看作答</button>`;
+  }
+  function render(){const q=Q[k],s=answers[k];
+    box.innerHTML=`<div class="qn">第 ${k+1} / ${Q.length} 题 ${checkpoint?'· 不计分':'· 首次答对 '+score()}</div><div class="qt">${esc(q.q)}</div>
+      ${q.opts.map((o,j)=>`<button class="opt ${s.selected===null?'':j===s.selected?(j===q.a?'ok':'no'):''}" data-j="${j}" aria-pressed="${j===s.selected}">${String.fromCharCode(65+j)}. ${esc(o)}</button>`).join('')}
+      <div class="fb" aria-live="polite">${s.selected===null?'':s.selected===q.a?ic('check')+' 对。'+esc(q.why):ic('x')+' 不对。先回去看看，或再试一次。'}
+      ${s.selected!==null&&s.selected!==q.a?reviewButton(k)+' <button class="btn sm" data-retry="1">再试一次</button>':''}</div>
+      <div class="nav"><button class="btn sm" data-n="-1" ${k?'':'disabled'}>上一题</button>
+      <button class="btn sm main" data-n="1" ${s.selected===null?'disabled':''}>${checkpoint?'完成检查':k===Q.length-1?'查看总结':'下一题'}</button></div>`;
+  }
+  box.onclick=e=>{const t=e.target.closest('button');if(!t)return;
+    if(t.dataset.review!==undefined){const i=+t.dataset.review;window.lessonNav.go(Q[i].back);
+      let ret=$('#quiz-return');if(!ret){ret=document.createElement('button');ret.id='quiz-return';ret.className='btn sm';document.body.appendChild(ret)}
+      ret.textContent='回到小测';ret.onclick=()=>{window.lessonNav.returnTo(box);ret.remove()};return;
+    }
+    if(t.dataset.copyResult!==undefined){const result={path:location.pathname,firstScore:score(),total:Q.length,answers:answers.map((s,i)=>({question:i+1,first:s.first,selected:s.selected,retries:s.retries,wrong:s.first!==Q[i].a,review:'#s'+Q[i].back})),retelling:$('.retelling',box).value};window.lessonCopy(JSON.stringify(result,null,2),t);return}
+    if(t.dataset.question!==undefined){k=+t.dataset.question;render();return}
+    if(t.dataset.retry){answers[k].selected=null;answers[k].retries++;render();return}
+    if(t.dataset.n){if(checkpoint&&+t.dataset.n===1){box.querySelector('.nav').hidden=true;return}if(k===Q.length-1&&+t.dataset.n===1){if(complete())summary();else{k=answers.findIndex(s=>s.selected===null);render()}return}k+=+t.dataset.n;render();return}
+    if(t.dataset.j===undefined||answers[k].selected!==null)return;
+    const j=+t.dataset.j;answers[k].selected=j;if(answers[k].first===null)answers[k].first=j;render();const nv=$('.nav',box);nv&&nv.scrollIntoView&&nv.scrollIntoView({block:'nearest'});
+  };
+  render();
+  const pk=P.get('pick'),pick=pk==='wrong'?Q[k].opts.findIndex((_,i)=>i!==Q[k].a):pk!==null&&/^\d+$/.test(pk)?+pk:-1;
+  if(pick>=0&&$$('.opt',box)[pick])$$('.opt',box)[pick].click();
+
+});
+
+})();
+</script><script>/* End-of-build readiness marker, used by the screenshot harness. */
+document.querySelector('.theme-toggle').onclick=window.__tt;
+window.__lessonReady=true;
+</script><script>/* ---------- 学完了：点一下记为已学完（存在本机浏览器） ---------- */
+(function(){if(window.__finish)return;window.__finish=1;
+if(!document.querySelector('.deck'))return;
+const st=document.createElement('style');st.textContent=`.fin-btn{position:fixed;right:16px;bottom:76px;z-index:50;padding:10px 16px;border-radius:999px;border:0;background:#16a34a;color:#fff;font:600 15px system-ui;box-shadow:0 4px 14px rgba(0,0,0,.18);cursor:pointer}.fin-btn.done{background:#e5e7eb;color:#166534}`;document.head.appendChild(st);
+const p=n=>String(n).padStart(2,'0');
+const doneKeys=()=>{const out=new Set();const seed=location.pathname;const vs=new Set([seed]);if(seed.endsWith('/index.html')){const d=seed.slice(0,-10);vs.add(d);vs.add(d.replace(/\/$/,'')||'/')}else if(seed.endsWith('/')){vs.add(seed+'index.html');vs.add(seed.replace(/\/$/,'')||'/')}else if(!/\.[a-z0-9]+$/i.test(seed)){vs.add(seed+'/');vs.add(seed+'/index.html')}for(const u of vs){out.add(u);const m=u.match(/^(.*)\/courses\/(.+)$/);if(m)out.add(m[1]+'/'+m[2]);const m2=u.match(/^(.*)\/(cs146s)\/(.+)$/);if(m2&&!u.includes('/courses/'))out.add(m2[1]+'/courses/'+m2[2]+'/'+m2[3])}return[...out]};
+const getDone=()=>{for(const k of doneKeys()){const d=localStorage.getItem('done:'+k);if(d)return d}return null};
+const setDone=v=>{for(const k of doneKeys())localStorage.setItem('done:'+k,v)};
+const clearDone=()=>{for(const k of doneKeys())localStorage.removeItem('done:'+k)};
+const b=document.createElement('button');b.className='fin-btn';document.body.appendChild(b);
+const show=()=>{const d=getDone();b.classList.toggle('done',!!d);b.textContent=d?'✓ 已学完 '+d:'✓ 学完了';b.title=d?'再点一下取消':''};show();
+b.onclick=()=>{if(getDone()){if(confirm('取消「已学完」记录？'))clearDone()}else{const x=new Date();setDone(x.getFullYear()+'-'+p(x.getMonth()+1)+'-'+p(x.getDate()))}show()};
+})();
+</script><script src="../../assets/gh.js" defer></script><script src="../../assets/progress.js" defer></script></body></html>

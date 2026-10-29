@@ -10,3 +10,4 @@
 - L09 Stop conditions and the approval layer：进行中，2026-10-28 开始。图文长读，原表 6 张，3 道小测。待小测和复述。
 - L10 Skills and the Elephant-Goldfish Model：进行中，2026-10-28 开始。图文长读，原表 9 张，3 道小测。待小测和复述。
 - L11 Guardrails: Errors, Retries and Approval Gates：进行中，2026-10-28 开始。图文长读，原图 5 张、原表 6 张，3 道小测。待小测和复述。
+- L13 Browser Extensions and Assistants You Can Text：进行中，2026-10-28 开始。图文长读，原图 16 张、原表 3 张，3 道小测。待小测和复述。（L12 为反馈课，无材料，未做）
