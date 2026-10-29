@@ -6,13 +6,13 @@
 
 | 讲次 | 日期 · 周 | 主题 | 官方材料 |
 |---|---|---|---|
-| L01 | 9/9 · 第 1 周 | Course introduction：Basics of LLMs and foundation models · AI agents and self-evolution | lec1 - intro.pdf |
-| L02 | 9/16 · 第 2 周 | Context evolution 1：Prompt optimization · Memory, tools, knowledge | lec2 - context.pdf、Colab、7 篇阅读 |
-| L03 | 9/23 · 第 3 周 | Context evolution 2：LLMs as optimizers · LLMs for discovery | lec3 - llm optimizers.pdf、3 篇阅读 |
+| L01 | 9/9 导论 | L01-introduction.html | lec1 - intro.pdf（86 页，无录像） |
+| L02 | 9/16 Context evolution 1 | L02-context-evolution-1.html | lec2 - context.pdf（47 页，无录像） |
+| L03 | 9/23 Context evolution 2 | L03-context-evolution-2.html | lec3 - llm optimizers.pdf（49 页，无录像） |
 | — | 9/30 · 第 4 周 | Project proposal presentations | — |
-| L04 | 10/7 · 第 5 周 | Harness evolution 1：Harness components · Agent memory · Tool and skill evolution | lec4 - harness.pdf、10 篇阅读 |
-| L05 | 10/14 · 第 6 周 | Harness evolution 2：Multi-agent systems · Multi-agent evolution · Harness engineering tutorial | lec5 - multi agent.pdf、harness engineering tutorial.pdf、3 篇阅读 |
-| L06 | 10/21 · 第 7 周 | Model evolution 1：Continual learning · Distillation · Test-time training | 未发布 |
+| L04 | 10/7 Harness evolution 1 | L04-harness-evolution-1.html | lec4 - harness.pdf（53 页，无录像） |
+| L05 | 10/14 Harness evolution 2 | L05-harness-evolution-2.html | lec5 - multi agent.pdf（40 页，无录像） |
+| L06 | 10/21 Model evolution 1 | （本轮未做） | lec6 training / rl in practice / model_guest 已发布 |
 | — | 10/28 · 第 8 周 | Project midterm presentations | — |
 | L07 | 11/4 · 第 9 周 | Model evolution 2：Self-play approaches | 未发布 |
 | L08 | 11/11 · 第 10 周 | Environment evolution 1：Synthetic data and tasks · Environment generation | 未发布 |
