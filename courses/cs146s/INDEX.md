@@ -11,3 +11,4 @@
 | L06 | 10/8 客座 Lee Robinson：常驻 agent（服务器、云端电脑、harness、上下文工程、记忆） | L06-always-on-agents.html | 课件（Google Drive PDF 46 页，网站无实录）；原始资料在 _private/cs146s/（不发布） |
 | L07 | 10/13 定制 agent 配置：AGENTS.md、hooks、skills、subagents、MCP 服务器 | L07-agent-setup.html | 课件（Google Slides 导出 PDF 14 页，网站无实录）；原始资料在 _private/cs146s/（不发布） |
 | L09 | 10/20 agent-ready 仓库与后台编码 agent 工作流 | L09-agent-ready-repos.html | 课件（Google Slides 导出 PDF 15 页，网站无实录）；原始资料在 _private/cs146s/（不发布） |
+| L11 | 10/27 Agentic 代码审查：成熟度阶梯、多层检查、按风险路由、审查器设计 | L11-agentic-code-review.html | 课件（Google Slides 导出 PDF 16 页，网站无实录）；原始资料在 _private/cs146s/（不发布） |
