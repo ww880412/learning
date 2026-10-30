@@ -1,0 +1,69 @@
+{
+ "date": "2026-10-30",
+ "label": "10 月 30 日 · 星期五",
+ "href": "digest/2026-10-30.html",
+ "json": "data/digest/2026-10-30.json",
+ "brief": {
+  "title": "X 简报 · 10/30（周五）",
+  "href": "x-brief/2026-10-29.html",
+  "lines": [
+   "Codex 派子 Agent 默认整段继承父对话：Matt Pocock 发现 Codex 派出的子 Agent 多数是「fork」父会话、带着全部上下文启动，code-review、implement-spec 这类靠干净上下文的 skill 因此失效；他没改 harness，只给 8 个会派子 Agent 的 skill 各加一句「每个子 Agent 用全新上下文启动」（Matt Pocock 原帖、一笔 原帖、skills PR #1341、Codex issue #20077）",
+   "OpenAI：Pro 各档和 Business Premium 用量翻倍，12 月起可能 ChatGPT 与 Codex 共用额度：Codex 负责人 Tibo 宣布 Pro 100/200/500 和 Business Premium 所有用量上限即日翻倍，原定的 Pro 200 降额取消、Codex 和 Work 用量不降；dot 的加长额度「暂时」继续、仍单独计算。同一天 Tibor Blaho 在 ChatGPT 网页结账页翻到隐藏文案「从 12 月起，套餐用量将在 ChatGPT 和 Codex 之间共用上限」（Tibo 原帖、宝玉 原帖、TestingCatalog 原帖、Tibor 原帖、原帖、Codex 用量说明）",
+   "Spawn：一群 Fable Agent 每小时往生产发版，一小时没发算 SEV-0：Simon Willison 推荐 Jacob Sansbury 写 Spawn（多人游戏，玩家用提示词改世界）的开发方式：Agent 直接改线上代码、每小时上线；约 60% 工作从生产报错、游戏内 AI「Savi」自己提的 bug、日志异常开始；坏改动 30 秒内定点回滚；告警会唤醒负责该事故的 Agent；他们称每月 token 花费超 300 万美元、是工资的 30 倍（Simon Willison 原帖、原帖、Simon 博客）"
+  ]
+ },
+ "posters": null,
+ "ph": {
+  "listDate": "2026-10-28",
+  "href": "ph-inspo/index.html",
+  "n": 6,
+  "source": "https://www.producthunt.com/leaderboard/daily/2026/10/28",
+  "picks": true,
+  "items": [
+   {
+    "rank": 6,
+    "pick": true,
+    "name": "Trigger.dev: Webhooks for your AI agents",
+    "what": "开源（Apache-2.0）的 TypeScript 后台任务和 agent 平台 Trigger.dev 新出的 Webhooks：一个托管 URL 接住 Stripe、Slack、GitHub、Sentry 等服务的回调，校验签名后分发给任务、agent 会话或正在等待的运行。",
+    "href": "ph-inspo/index.html#2026-10-28-trigger-dev-webhooks"
+   },
+   {
+    "rank": 3,
+    "pick": true,
+    "name": "BotGauge",
+    "what": "给工程团队的 agent 红队测试和评测平台：自适应地攻击你的 agent，记录完整 trace，把发现的失败变成每次发布都跑的回归评测，并监控线上行为。",
+    "href": "ph-inspo/index.html#2026-10-28-botgauge"
+   },
+   {
+    "rank": 1,
+    "pick": true,
+    "name": "Dedica",
+    "what": "检查你的网站 AI agent 能不能用：跑 125 项检查（发现、访问、可用性、支付四类），打分并给出修复清单，清单是写给 coding agent 的一份份 Markdown 指令文件。",
+    "href": "ph-inspo/index.html#2026-10-28-dedica"
+   },
+   {
+    "rank": 8,
+    "pick": false,
+    "name": "App Store Screenshots",
+    "what": "一个开源（MIT）的 agent skill：给 Claude Code、Codex、Cursor 等装上后，交给它 App 截图和一段简介，它在你项目里搭一个本地截图编辑器，生成各尺寸、多语言的商店截图。",
+    "href": "ph-inspo/index.html#2026-10-28-app-store-screenshots"
+   },
+   {
+    "rank": 10,
+    "pick": false,
+    "name": "Zro: Uncensored Security Models",
+    "what": "MoonMath.ai 的开放权重模型推理服务，面向 coding agent：提供 OpenAI 兼容和 Anthropic 兼容接口，外加一个 CLI，一条命令用它的模型启动 Claude Code、Codex、OpenCode 等；这次上线主打去掉拒答的安全研究模型。",
+    "href": "ph-inspo/index.html#2026-10-28-zro"
+   },
+   {
+    "rank": 2,
+    "pick": false,
+    "name": "bytemail",
+    "what": "Swift 写的原生 Mac 邮件客户端，Gmail、iCloud、Outlook、Yahoo、Fastmail 和任意 IMAP 一个窗口管；带一个给 Claude、Codex、Cursor 等用的邮件 MCP server。",
+    "href": "ph-inspo/index.html#2026-10-28-bytemail"
+   }
+  ]
+ },
+ "url": "https://ww880412.github.io/learning/digest/2026-10-30.html",
+ "rule": "汇总日 D 是北京时间。简报文件名是美东日期，北京时间 D 日 09:00 发布，那时美东还是 D−1 日，所以 D 一般对应 x-brief/(D−1).html（页面若有带时区的发布时间，则改用该时间换算到 Asia/Shanghai；链接仍是原文件）。海报是 x-posters/D/。产品灵感是最新一份榜单日 ≤ D−2 的那组（太平洋时间的 Product Hunt 日榜，北京时间 D 日 09:00 前能入库的最新一份），并标出实际榜单日。某一来源没有就是 null。"
+}
