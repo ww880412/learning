@@ -24,6 +24,155 @@
   ],
   "days": [
     {
+      "date": "2026-10-29",
+      "source": "https://www.producthunt.com/leaderboard/daily/2026/10/29",
+      "fetched": "2026-10-30 19:54 北京",
+      "note": "只拿到 PH 日榜前 10 名，收 6 个；Gemini 4 Carbon 目前只对部分安全团队开放；分数为抓取时综合分，今日未与《P-Hunt内容速览》交叉核对。",
+      "picks": [
+        {
+          "id": "2026-10-29-radar",
+          "why": "只读和可写分成两个 MCP 端点、调用户本机已登录的 agent CLI 去排查，正是工作台接外部系统要的权限做法。",
+          "limit": "只管 Kubernetes；「快 3 倍」是厂商自测，脱敏规则 README 自己说抓不全。"
+        },
+        {
+          "id": "2026-10-29-floot-in-chatgpt",
+          "why": "模型用用户自己的订阅、Floot 只管构建和发布，示范了把工作台能力做成别家 agent 连接器的分工。",
+          "limit": "推荐用户「全部放行」才不卡；未发布项目接口能否被公开访问，官方还没回答。"
+        },
+        {
+          "id": "2026-10-29-gologin-cloud-browser",
+          "why": "持久 profile 保住登录态、Live View 让人接手 2FA，可以直接参考做 agent 浏览器的会话和人工接管。",
+          "limit": "主打多账号反检测，用在哪些网站要自己确认合规；价格对比是厂商自制。"
+        }
+      ],
+      "items": [
+        {
+          "id": "2026-10-29-radar",
+          "name": "Radar",
+          "tagline": "You don't need an AI SRE. Give your agent Radar.",
+          "ph": "https://www.producthunt.com/products/radar-7",
+          "site": "https://radarhq.io",
+          "repo": "https://github.com/skyhook-io/radar",
+          "rank": 8,
+          "score": 123,
+          "comments": 22,
+          "what": "Skyhook 开源（Apache-2.0，Go 单文件）的 Kubernetes 界面，同时内置一个给 AI agent 用的 MCP 服务器：人看拓扑、事件时间线、Helm、GitOps、流量，agent 通过 MCP 读同一份集群数据。",
+          "problem": "agent 直接用 kubectl 排障时，上下文被大段 YAML 占满、来回调用多；团队又不想为此单独买一个「AI SRE」。",
+          "highlight": "README 写明：同端口提供两个 MCP 端点，`/mcp-readonly` 没有任何写工具，`/mcp` 额外带重启、扩缩容、apply、回滚、节点驱逐等写工具并标记为 destructive，让客户端执行前先问人；读 Secret 时不返回值，环境变量、Helm values、日志按已知密钥模式脱敏（README 自己说抓不全）。界面上点 Investigate，Radar 调用本机已登录的 Claude Code、Codex、Cursor 或 OpenCode 去查，自己不需要 API key；Claude Code 和 Codex 下有「safeguards」模式会关掉 agent 的其他 MCP 服务器；结论统一落到 Findings 页并附证据，改动只在人批准后执行。厂商自测（SREGym 50 个故障）：同一 agent 走 Radar MCP 平均 64 秒出诊断、kubectl 要 191 秒，未见独立验证。抓取时约 4k 星，v1.19.0 于 10/29 发布。",
+          "inspo": "工作台接外部系统时可以照抄「同一份数据两个端点」：默认只给 agent 只读端点，写工具单独一个端点并打 destructive 标记，交给客户端去确认；排查类任务直接调用户本机已登录的 agent CLI，不自己管模型 key，结论落成带证据的固定页面。前提是工作台能按任务切换 agent 可用的 MCP 集合（像它的 safeguards 那样关掉别的服务器），否则只读端点挡不住 agent 用其他工具写。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "开源"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-29-floot-in-chatgpt",
+          "name": "Floot in ChatGPT",
+          "tagline": "Build and publish real apps without leaving ChatGPT",
+          "ph": "https://www.producthunt.com/products/floot",
+          "site": "https://floot.com",
+          "rank": 3,
+          "score": 200,
+          "comments": 59,
+          "what": "YC S25 的 AI 建站/建应用平台 Floot，以连接器（MCP）接进 Claude、ChatGPT、Cursor，这次在 ChatGPT 侧栏做成原生应用：聊天里描述需求，带数据库、登录、托管的应用在聊天内实时预览，再发布到网页链接、App Store 和 Google Play。",
+          "problem": "想法散在 ChatGPT 历史里，要做成能用的应用还得换工具、重新解释一遍、再付一份 AI 费用。",
+          "highlight": "分工是「推理用用户自己的 Claude/ChatGPT 订阅，Floot 只管构建、托管和发布」，官网称不按 token 收费（额度只用于它自己的可选 agent 和图片生成），创始人在 PH 称每天 100 次免费构建动作。项目状态存在 Floot 里，换着从 Claude 或 ChatGPT 打开都是同一个项目。团队提示要在 ChatGPT 里把 Floot 设为「Allow all actions」，否则每步都会停下等确认。PH 评论里有开发者问未发布项目的服务端接口是否仍可公开访问、能否限制为仅所有者，抓取时未见官方回答；PH 评测里也有人提到 AI 随意改代码、回滚不好用、额度消耗快。",
+          "inspo": "工作台可以把自己的一部分能力做成别家 agent 里的连接器：模型和对话留在用户已有的订阅里，工作台只提供构建、运行、发布这类有状态的后端，项目状态存在自己这边，从哪个 agent 进来都接着同一个项目。前提是这些能力能拆成粒度合适的 MCP 工具，并且想清楚「全部放行」和「每步确认」之间的权限设计，Floot 现在是让用户一键全放行。",
+          "tags": [
+            "coding agent",
+            "AI工具",
+            "开发者工具"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-29-gologin-cloud-browser",
+          "name": "Gologin Cloud Browser",
+          "tagline": "Cloud browser for AI agents and tough sites",
+          "ph": "https://www.producthunt.com/products/gologin",
+          "site": "https://gologin.com/cloud-browser/",
+          "rank": 5,
+          "score": 155,
+          "comments": 29,
+          "what": "做反检测多账号浏览器 7 年的 Gologin 推出的云端浏览器：云上的真 Chromium，每个 profile 固定一套 cookie、设备指纹和住宅/移动 IP，脚本或 AI agent 通过 CDP 连上去用。",
+          "problem": "自动化和 agent 一碰登录就断：每次都是全新浏览器，网站把它当陌生设备，要求重新登录或验证。",
+          "highlight": "官网称：把 Playwright/Puppeteer 的 launch() 换成一行 connectOverCDP 就能迁移，其余代码不动；profile 在两次运行之间保留 cookie、设备指纹和同一个 IP，跑到一半失败，下次从已登录状态接着跑；每个会话有 Live View 链接，人可以接手完成 2FA 或难填的表单再交还给脚本；另有 MCP 服务器（npx gologin-mcp）让 Claude 直接建 profile、配代理、写脚本。按浏览器小时计费，官网列的价格是每小时 0.07–0.09 美元、超额流量 1 美元/GB，与 Browserbase、Browser Use、Steel 的对比表为厂商自制。产品本身主打多账号和反检测，用于目标网站时要自己确认合规。",
+          "inspo": "工作台给 agent 配浏览器时，「会话 = cookie + 设备 + 网络」这个模型值得抄：每个任务或账号绑定一个持久 profile，失败重跑不丢登录；再加一个人能随时打开的 Live View 链接做接管，正好补上 agent 卡在验证码、2FA 时的人工环节。前提是 profile 要按账号严格隔离并能审计谁用过，否则企业里多人共用一个登录态会变成安全问题。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "AI工具"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-29-gemini-4-carbon",
+          "name": "Gemini 4 Carbon",
+          "tagline": "Google's next frontier model",
+          "ph": "https://www.producthunt.com/products/gemini-4-carbon",
+          "site": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/introducing-gemini-4-carbon/",
+          "rank": 6,
+          "score": 155,
+          "comments": 6,
+          "what": "Google DeepMind 10/28 发布的前沿模型，主打长时程编码 agent 和网络安全能力，在两周前的 Gemini 4 Argon 之上迭代。",
+          "problem": "长任务 agent 跑久了会走捷径、编造结果、越界操作；安全团队需要能找漏洞、验证、修补的一体化模型。",
+          "highlight": "官方博客称：Artificial Analysis 智能指数 v5.0 排第 1（59 分），SEC-bench Pro 88.2%、ExploitGym 54.8%、CWE-bench 71.0%；内部团队见过它连续跑几天处理大代码库里的疑难 bug；Terminal-Bench 4.0 上作弊成功率降到 0%，无依据断言比 Argon 少约一半，越界减少 26%、该做没做减少 29%，Gray Swan 间接提示注入攻击成功率 0%。以上均为 Google 自报，未见独立验证。目前只开放给部分网络安全防御方，开发者和普通用户「尽快」开放，没有日期；价格官方称首发期每百万 token 输入 2 美元、输出 10 美元，之后 4/20 美元。",
+          "inspo": "现在还用不上，值得记的是它衡量 agent 可靠性的几个指标：作弊尝试率、无依据断言、越界和「该做没做」分开统计。工作台做 agent 评测时可以照这四类给每次运行打标，而不只看任务成功率。前提是有可复现的任务集和能判断「越界」的项目约束定义。",
+          "tags": [
+            "AI工具",
+            "coding agent"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-29-notch-metrics",
+          "name": "Notch Metrics",
+          "tagline": "Use claude code to build analytics widgets for your notch",
+          "ph": "https://www.producthunt.com/products/notch-metrics",
+          "site": "https://notchmetrics.com",
+          "rank": 4,
+          "score": 185,
+          "comments": 7,
+          "what": "Swift 写的 macOS 小工具，把 Stripe、Polar、Paddle、GitHub、Plausible 等 16 个来源的收入、订阅、星数等数字放进 MacBook 刘海区域，鼠标悬停展开。",
+          "problem": "独立开发者每天要开好几个后台看数，常常是忘了看而不是看不到。",
+          "highlight": "官网称：自定义指标可以由你自己的 coding agent 通过 MCP 写出来，和内置来源并排显示；新数据源不用发新版应用就能上线；第三方 API key 粘贴即在服务端加密，Mac 上的应用只拿到最终数字，断开集成就删除密钥。无免费版，7 天试用后每月 9 美元或每年 49 美元，需 Apple silicon、macOS 14+。PH 评论里有人问自定义指标在不悬停时会不会刷新，抓取时未见回答。",
+          "inspo": "两个做法可借鉴：一是「让用户自己的 coding agent 通过 MCP 给产品加组件」，产品只定义组件格式和数据接口；二是密钥只留在服务端、客户端只收结果。工作台的状态面板可以开放成 MCP 接口，让团队的 agent 自己加看板项。前提是先定好组件的数据格式和刷新、权限规则，不然 agent 写出来的东西没法统一维护。",
+          "tags": [
+            "效率",
+            "开发者工具"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-29-scape",
+          "name": "Scape",
+          "tagline": "An intelligent email inbox that works for you",
+          "ph": "https://www.producthunt.com/products/scape-4",
+          "site": "https://scape.app/",
+          "rank": 2,
+          "score": 318,
+          "comments": 67,
+          "what": "桌面端 AI 邮件客户端：自动排优先级、按你的工作方式打标签，结合邮件、会议记录、日历和附件预先写好回复草稿，由你审阅后发送。",
+          "problem": "邮箱里重要的事被淹没，回复要翻上下文，会上说过的事回邮件时又要重新回忆。",
+          "highlight": "官网称：检测到即将开始的会议后一键录制，在 Mac 本地录音、不派机器人进会，支持 Google Meet、Teams、FaceTime 和线下会议，转写支持 99 种语言；录下的会议内容会作为之后写草稿和跟进的上下文；还能把客户往来、服务请求和下一步整理成轻量 CRM。官网列了 YC 合伙人等用户评价，具体效果未见独立评测，价格未在首页说明。",
+          "inspo": "对个人效率有参考价值的是「会议本地录、录完直接成为后续草稿的上下文」这条链路，草稿永远停在人审阅这一步。王玮自己的 bot 写回复草稿时也可以把相关会议纪要一起喂进去。前提是录音要征得与会者同意，公司会议能不能录得按公司规定来。",
+          "tags": [
+            "效率",
+            "AI工具"
+          ],
+          "status": "新发现",
+          "followups": []
+        }
+      ]
+    },
+    {
       "date": "2026-10-28",
       "source": "https://www.producthunt.com/leaderboard/daily/2026/10/28",
       "fetched": "2026-10-29 19:54 北京",
