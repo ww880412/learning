@@ -24,6 +24,160 @@
   ],
   "days": [
     {
+      "date": "2026-10-30",
+      "source": "https://www.producthunt.com/leaderboard/daily/2026/10/30",
+      "fetched": "2026-10-31 19:57 北京",
+      "note": "日榜前十里 coding agent / MCP / 本机 agent 周边偏密；未收 Knocket、Canva Brush、Teable Mobile。",
+      "picks": [
+        {
+          "id": "2026-10-30-faylee",
+          "why": "把录屏+控制台+网络请求捆成一条 MCP 可读的 bug 链路，工作台可照抄「报告对象→agent 工具」闭环。",
+          "limit": "闭源 SaaS；免费档 3 人/月 30 条；agent 靠按需拉片段，长录屏不会一次塞满上下文。"
+        },
+        {
+          "id": "2026-10-30-fastbrowse",
+          "why": "开源浏览器 agent：控件列表选动作、答案必须带页面原文引用、密钥不进 prompt、不可逆操作要授权。",
+          "limit": "不可逆分类器官网称可能漏判；托管浏览器与模型费用另计；抓取时 GitHub 星数显示异常偏低，以官网/仓库为准再核。"
+        },
+        {
+          "id": "2026-10-30-xwiki-mcp",
+          "why": "企业 wiki 用 MCP 把搜索/读写交给 agent，且权限跟登录账号走——知识库接入工作台可直接对标。",
+          "limit": "MCP 是 LLM Application 的独立扩展，要管理员另装；写权限完全取决于 wiki 账号与管理员策略。"
+        }
+      ],
+      "items": [
+        {
+          "id": "2026-10-30-faylee",
+          "name": "Faylee",
+          "tagline": "Bug reports your coding agent can fix from one link",
+          "ph": "https://www.producthunt.com/products/faylee",
+          "site": "https://faylee.app/",
+          "rank": 10,
+          "score": 101,
+          "comments": 5,
+          "what": "Chrome 扩展 + 网页：把屏幕、控制台、网络请求、点击步骤录在同一时间轴，生成一个分享链接；另有 MCP 服务器，把整份报告交给 Claude Code / Codex / Cursor / OpenCode 等 coding agent。",
+          "problem": "非技术同事或客户常只说「坏了」，开发还得反复追问浏览器、控制台、复现步骤，再手工粘给 coding agent。",
+          "highlight": "官网称：Instant Replay 在本机保留最近几分钟，分享前才上传；上传前在浏览器里把 token/cookie/密码/卡号打成 [redacted]，可点选模糊或 data-faylee-mask；MCP 用 open_recording / get_moment / add_comment 等工具按需取摘要、某一帧与周边日志，避免一次塞满上下文（PH 评论里创始人确认）。连接示例：`claude mcp add --transport http faylee https://app.faylee.app/mcp`。免费档官网称最多 3 成员、每月 30 条录制。有公开示例报告可免注册打开。",
+          "inspo": "工作台可把「外部证据包」做成 MCP 资源：先给摘要+关键失败请求，再让 agent 按需 get_moment，修完用 add_comment 写回同一对象。前提是报告有稳定 URL/id，且工作台能给 agent 挂上该 MCP 而不把整段 HAR 塞进首轮 prompt。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "MCP"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-30-fastbrowse",
+          "name": "fastbrowse",
+          "tagline": "Fastest open source browser agent",
+          "ph": "https://www.producthunt.com/products/fastbrowse",
+          "site": "https://fastbrowse.ai",
+          "repo": "https://github.com/agent-labs-dev/fastbrowse",
+          "rank": 6,
+          "score": 137,
+          "comments": 13,
+          "what": "MIT 开源的浏览器 agent：先枚举页上控件，用 System One 模型（官网举例 Jev）从列表里选下一步；吃不准再回退到常规模型。支持本地 Chrome、托管浏览器池、Browser Use Cloud、或 CDP 挂到已开浏览器；另有 MCP（fastbrowse-mcp）和给 Codex/Claude Code 的 skill。",
+          "problem": "常见浏览器 agent 直接生成动作、答案难核验，密钥容易进模型上下文，提交/下单等不可逆操作缺少闸门。",
+          "highlight": "官网称：事实性答案必须引用页面原文 quote，完成前校验引用与任务条件；`--secret name=ENV` 只在允许的 origin 解析，值不进 prompt，可接 Bitwarden CLI；不可逆动作默认暂停等人批准（`--authorize` 可预先放行），并写明分类器可能漏判。CLI/Python/JS SDK 与托管 API（console.fastbrowse.ai）并存。skill 安装：`npx skills add agent-labs-dev/fastbrowse --skill fastbrowse`。雷达 data/radar.json 按仓库地址未查到既有条目。",
+          "inspo": "工作台接浏览器工具时可抄三件套：动作从「当前页控件索引」里选、对外回答必须带可点开的原文引用、密钥用命名引用+域名范围。前提是工作台能区分只读浏览与 irreversible 写操作，并把批准 UI 接到同一闸门；分类器漏判时仍要人审关键路径。",
+          "tags": [
+            "coding agent",
+            "开源",
+            "开发者工具",
+            "MCP"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-30-xwiki-mcp",
+          "name": "MCP Server by XWiki",
+          "tagline": "Give your AI your wiki's knowledge while keeping the control",
+          "ph": "https://www.producthunt.com/products/xwiki",
+          "site": "https://xwiki.com/en",
+          "repo": "https://github.com/xwiki-contrib/ai-llm",
+          "rank": 5,
+          "score": 174,
+          "comments": 38,
+          "what": "XWiki（开源知识库/文档平台）LLM Application 的 MCP 服务器扩展：让 AI 助手在 wiki 上搜索、阅读，并在管理员允许时按当前用户权限改页。文档写明：未登录且管理员开放访客时，只提供只读工具，身份等同匿名访客。",
+          "problem": "企业知识在 Confluence/wiki 里长大后，直接把全文丢给模型既越权又难维护；团队需要「用自己的账号、自己的权限」让 agent 查内部文档。",
+          "highlight": "官方文档（xwiki.org，2026-10-23 更新）：MCP 是独立扩展，不随 LLM Application 默认安装，需管理员安装并给出 endpoint；工具覆盖搜索、阅读、浏览、历史、反向链接、附件、结构化数据、编辑/删除等；Agent Authentication 强调助手不会超出其充当账号的权限。开发文档称工具以 XWiki component 扩展点注册，无编译期写死工具列表。PH 标签含 Open Source。雷达未收过该仓库。",
+          "inspo": "企业知识接入工作台时，优先「MCP + 用户身份透传」：读默认、写需管理员显式放开，访客只读。前提是工作台能把终端用户的 SSO/会话交给 MCP，而不是共用一个万能服务账号；否则权限模型抄了也等于没抄。",
+          "tags": [
+            "MCP",
+            "开源",
+            "企业知识",
+            "开发者工具"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-30-chopstick",
+          "name": "Chopstick",
+          "tagline": "Mac activity and action widgets that write themselves",
+          "ph": "https://www.producthunt.com/products/chopstick",
+          "site": "https://chopstick.sh",
+          "rank": 7,
+          "score": 127,
+          "comments": 15,
+          "what": "macOS 15+ 刘海/菜单区小组件应用：本地记录活动模式，用你已有的 coding agent（Claude Code、Codex、Gemini CLI、Cursor、Copilot、OpenCode）生成或修改 notch 小组件；也可自己描述需求让 agent 写。",
+          "problem": "刘海区小组件往往固定功能；真正重复的个人操作（推代码、盯指标）要自己写脚本，门槛高。",
+          "highlight": "FAQ 称：活动日志只在本机，不上传；不记录击键字符、不存屏幕图像；屏幕文字/剪贴板/完整网址等细节 30 天后删除；agent 读活动日志时内容会像其他对话一样发给该 agent。官网称一次性 $14.99（至 11/17 用码 LAUNCH 为 $7.99），3 天全功能试用无需账号。PH/HN：脚本启用前可见；建议需用户确认；可按情境触发（如 Spotify 播放、或 VS Code 有未提交改动时显示推送控件）。",
+          "inspo": "「本机行为日志 → 建议自动化 → 用人已有的 coding agent 生成、脚本先展示再启用」可借鉴到工作台的个人效率插件。前提是日志默认本地、发给 agent 前要明示，且生成脚本有可读 diff/预览，不能静默常驻。",
+          "tags": [
+            "个人效率",
+            "coding agent",
+            "Mac"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-30-speakon-agent",
+          "name": "SpeakON Agent",
+          "tagline": "Turn natural speech into real work for an agent to complete",
+          "ph": "https://www.producthunt.com/products/speakon",
+          "site": "https://www.speakon.app/pages/ai-agent",
+          "rank": 3,
+          "score": 313,
+          "comments": 38,
+          "what": "搭配 SpeakON（iPhone MagSafe 语音硬件）的语音 agent：把一句自然语言拆成多步任务（日程、Slack、邮件、提醒等），拉齐日历/联系人/Notes 等上下文，先给你审再执行。",
+          "problem": "语音输入多停留在转写；跨 App 办事仍要自己切应用、复制上下文，且怕 agent 直接误发。",
+          "highlight": "官网称：一次请求可含多动作；连接 Gmail、Drive、Calendar、Slack、Reminders、Contacts、Notion、Evernote、Obsidian 等；邮件/消息在确认前不发送；可用 Voice edit 改细节。硬件页称设备 $129、SOC 2 Type II & HIPAA（厂商说法），语音可本机录、后同步。",
+          "inspo": "语音/多步 agent 的产品形状可抄「拆任务 → 备草稿 → 人批后才副作用」。前提是工作台有统一的待确认动作队列，且每个连接器能区分 prepare 与 commit。",
+          "tags": [
+            "AI 工具",
+            "个人效率"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-30-isurge",
+          "name": "iSurge",
+          "tagline": "Activity monitor, per-app volume, disk cleanup at your notch",
+          "ph": "https://www.producthunt.com/products/isurge",
+          "site": "https://isurgemac.com/",
+          "rank": 9,
+          "score": 105,
+          "comments": 9,
+          "what": "Apple silicon + macOS 15 的 Mac 工具：刘海/菜单栏看进程与资源、分 App 音量与麦克风占用、磁盘清理与卸载、以及端口/项目/Homebrew/容器等开发者视图，另有专注计时与 Keep Awake。",
+          "problem": "Activity Monitor 进程碎、刘海闲置；开发时常要查端口占用、Homebrew 残留，工具分散。",
+          "highlight": "官网称数据默认留在本机，上网仅更新/许可证及少数附加（封面、天气）；无账号、无分析 SDK；Lifetime买断启动价 $14.99（另有年付档）。Dev 区：按项目看 CPU/内存/电池、一键暂停、看端口占用并释放、按项目列容器、管理 Homebrew。",
+          "inspo": "若工作台做本机 agent 运行时面板，可参考「按项目聚合资源 + 端口占用一键释放」的信息架构；与 agent 进程/沙箱监控同类。前提是只做观测与用户触发的释放，不在后台静默杀进程。",
+          "tags": [
+            "个人效率",
+            "开发者工具",
+            "Mac"
+          ],
+          "status": "新发现",
+          "followups": []
+        }
+      ]
+    },
+    {
       "date": "2026-10-29",
       "source": "https://www.producthunt.com/leaderboard/daily/2026/10/29",
       "fetched": "2026-10-30 19:54 北京",
