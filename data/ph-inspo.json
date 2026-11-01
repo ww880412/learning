@@ -24,6 +24,186 @@
   ],
   "days": [
     {
+      "date": "2026-10-31",
+      "source": "https://www.producthunt.com/leaderboard/daily/2026/10/31",
+      "fetched": "2026-11-01 20:02 北京",
+      "note": "前十里 coding agent 周边占 5 个，另从第 11、13 名补收 Coding Wrapped 和 Godwit；未收 WinnerAdSpy、LumaFold、Secret Key、Knucklebop、BaseTab AI。",
+      "picks": [
+        {
+          "id": "2026-10-31-backenly",
+          "why": "agent 通过 MCP 建后端，但所有结构改动走一个带 dry-run/审计/回滚的动作内核，删表等高危操作 agent 的 key 只能申请不能批准——工作台「agent 动手、人批高危」可直接对标。",
+          "limit": "很早期（主仓库约百星）；审批规则目前整个项目一个开关、不能按表设；自托管一套只服务一个项目；自愈只覆盖缺索引、缺 RLS、缺 realtime 触发器等少数规则。"
+        },
+        {
+          "id": "2026-10-31-godwit",
+          "why": "开源邮件客户端把内置 AI 功能也做成扩展：放一个 SKILL.md 就多一个按钮，插件声明权限、MCP 写操作每次都问——客户端插件生态的权限分层可以照抄。",
+          "limit": "README 写 0.0.x 早期预览、官网写 v1.23.0，成熟度以实测为准；Gmail 只能用应用专用密码，企业 Outlook/365 暂不支持；工作和个人账号之间还没有硬隔离。"
+        },
+        {
+          "id": "2026-10-31-copilot-fusion",
+          "why": "GitHub 官方把「按任务自动选模型 + 起草/复核/升级」做成正式功能，管理员能限定可用模型并设为默认——企业工作台的模型路由与管控有了现成参照。",
+          "limit": "闭源，只在 GitHub Copilot 客户端里用；按实际调用的每个模型计费，成本难事先估；性能对比是 GitHub 自己公布的，未独立验证。"
+        }
+      ],
+      "items": [
+        {
+          "id": "2026-10-31-backenly",
+          "name": "Backenly",
+          "tagline": "The autonomous backend for AI coding agents",
+          "ph": "https://www.producthunt.com/products/backenly-2",
+          "site": "https://backenly.com",
+          "repo": "https://github.com/backenly/backenly",
+          "rank": 4,
+          "score": 147,
+          "comments": 21,
+          "what": "给 coding agent 用的开源后端平台：Claude Code、Cursor、Codex 等通过 MCP 建 Postgres 表、登录、存储、函数和 realtime；上线后它每分钟跑一轮检查，自己修能验证、能撤销的小问题，高风险改动挂起等人批。平台 Apache-2.0，SDK/CLI/MCP 服务器 MIT；可自托管，也有 Backenly Cloud。",
+          "problem": "agent 写后端很快，但直接给它原始 SQL 没有安全网；上线后缺索引、表没开 RLS、触发器失效这类问题没人盯，删表这类操作又不该让 agent 自己说了算。",
+          "highlight": "仓库 README：所有改动（来自 agent、控制台或自动修复）都走同一个带类型的动作内核，有 dry-run、审计和回滚，「故意不提供改结构的原始 SQL 通道」；读仍是标准 SQL，可直连 Postgres、pg_dump 导出；MCP 服务器提供 20 个工具，只读 key 只拿到精简工具集。官网称：删表、清表、删列、删文件、吊销 key 不会直接执行，而是挂到「Waiting on you」并列出影响（多少行、能否恢复），agent 的 key 只能申请和轮询、不能批准。拆表重构会先在真实数据副本上演练（事务里跑完必回滚），人批准后才动，旧列永不自动删除（PH 评论里创始人说明）。官网称自愈修复是规则驱动，不耗 AI 额度。Cloud 免费档可用，Pro $25/月。审批目前是整个项目一个设置，按表「总是要问」还在做（创始人 PH 回复）。另一个仓库 backenly-js 的 README 仍写「平台本体是托管服务」，与主仓库开源说法不一致，以主仓库为准。雷达 data/radar.json 按仓库地址未查到。",
+          "inspo": "工作台给 agent 开放有副作用的工具时，可抄三点：①所有写操作走一个统一的动作层（先 dry-run 出影响摘要，再执行、记账、可回滚），不留绕过它的原始通道；②agent 的凭证只有「申请」权限，「批准」只属于人，审批卡片上写明影响范围；③执行后必须从真实系统读回验证才算完成。前提是工具的写操作能结构化成有限动作（而不是任意命令），且每个动作能定义影响面和回滚方式；做不到的部分只能退回人审。",
+          "tags": [
+            "coding agent",
+            "开源",
+            "MCP",
+            "开发者工具"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-31-godwit",
+          "name": "Godwit",
+          "tagline": "An open-source, AI-native email client",
+          "ph": "https://www.producthunt.com/products/godwit",
+          "site": "https://godwit.email",
+          "repo": "https://github.com/godwit-email/godwit",
+          "rank": 13,
+          "score": 82,
+          "comments": 13,
+          "what": "Apache-2.0 开源桌面邮件客户端（macOS/Windows/Linux，Go 写的），支持任意 IMAP/SMTP，能自动识别 Gmail、Outlook、QQ 邮箱、163/126、腾讯企业邮、飞书、钉钉邮箱等；内置助手 Wit 用你自选的模型（OpenAI/Anthropic 兼容接口，含 Ollama、LM Studio 本地模型）读信、总结、翻译、起草，发送前必须你批准。",
+          "problem": "AI 邮件助手大多是封闭的、走厂商服务器；想自己加功能或让外部 agent 读邮件，要么没接口，要么权限一把梭（能读也能发）。",
+          "highlight": "README：内置 AI 功能和你写的扩展走同一套扩展点。四层扩展：①skills 目录里放一个 SKILL.md（Agent Skills 格式）就成为 Wit 技能，带 godwit-action-* 元数据就变成按钮；②TypeScript 插件先声明权限，可加钩子、动作、卡片和 Wit 工具，能读信和写草稿，但没有插件能发信；③原生插件（C ABI）拥有全部权限，所以要你按具体文件授权，文件变了要重新授权；④MCP 服务器给 Wit 接外部工具，每个服务器批准一次，每次写调用都要问。反过来 `godwit mcp` 把自己作为 MCP 服务器给 Claude、Cursor 等用，只能读信和建草稿，不能发。官网称：无 Godwit 账号、无遥测、邮件不经过它的服务器，API key 存系统钥匙串，并列出了全部网络连接。README 标注 0.0.x 早期预览，官网下载区写 v1.23.0（2026-11-01 发布），两处不一致。Gmail 目前只能用应用专用密码，企业 Outlook/365 暂不支持（PH 评论里作者说明）。雷达 data/radar.json 按仓库地址未查到。",
+          "inspo": "工作台的客户端插件生态可抄 Godwit 的权限分层：纯提示词扩展（SKILL.md）零权限、零代码即可上；沙箱插件声明权限且硬性禁止最危险的动作（这里是「发信」）；原生插件按文件哈希授权、变了重新问；外部 MCP 读写分开批。再加一条「内置功能也只能用公开扩展点」，逼着扩展接口够用。前提是工作台能把「最危险的副作用」明确划出来并在宿主层拦住，而不是靠插件自觉。",
+          "tags": [
+            "开源",
+            "MCP",
+            "AI工具",
+            "效率"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-31-copilot-fusion",
+          "name": "GitHub Copilot Fusion",
+          "tagline": "GitHub's AI coding agent that picks and combines models",
+          "ph": "https://www.producthunt.com/products/github-copilot-fusion",
+          "site": "https://github.blog/changelog/2026-10-28-route-and-orchestrate-models-with-github-copilot-fusion/",
+          "rank": 9,
+          "score": 98,
+          "comments": 3,
+          "what": "GitHub Copilot 模型选择器里的一个选项（2026-10-28 正式可用）：不选具体模型，而是选 Fusion 和档位（Standard / High / Max），由它按每个任务决定用哪些模型、怎么组合。合并了此前的 Project HydraFusion 多模型编排和 Copilot auto 模型选择。",
+          "problem": "开发者为难题切到贵模型后常忘了切回来，日常任务也在用最贵的模型；企业又需要控制员工能用哪些模型。",
+          "highlight": "官方 changelog：三种编排方式——Single（一个模型直接做）、Cascade（便宜模型先起草，质量检查决定接受还是升级到更强模型）、Critique（一个模型起草、另一个复核、原模型再改）。只用企业和组织策略里已启用的模型；企业管理员能看到 Fusion 从哪些模型里挑，可以只对 Fusion 禁用某模型而不影响其他人，并可通过 Enterprise managed settings 把 Fusion（任一档位）设为默认。按实际用到的每个模型的标准价计费，限时付费用户打 7 折。GitHub 称在 Artificial Analysis Coding Agent Index 上 Fusion Max 得 60 分，与 Claude Code + Opus 5.5 Max 差 2 分以内，平均每任务 API 成本约一半、token 约一半、耗时少约 40%（官方公布，未独立验证）。支持 VS Code、Copilot app、Copilot CLI、JetBrains。",
+          "inspo": "工作台做模型路由时可直接借用 Cascade / Critique 两种模式的命名和语义，让用户只选「档位」不选模型；管理侧照抄「路由器可用模型 = 组织策略白名单，且可单独对路由器禁用某模型」以及「管理员设默认档位」。前提是工作台接了多个模型供应商、有可用的质量检查信号来决定升级，并能按每次实际调用的模型计费和展示，否则用户和管理员都看不懂账单。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "AI工具"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-31-ski",
+          "name": "SKI",
+          "tagline": "Voice-first coding harness",
+          "ph": "https://www.producthunt.com/products/ski",
+          "site": "https://justski.it",
+          "rank": 2,
+          "score": 286,
+          "comments": 56,
+          "what": "Mac 上的语音优先 coding agent 外壳：把 Claude Code、Codex、Cursor、OpenCode、Antigravity、pi 并排跑在一个界面里，你用语音（官网称 85+ 种语言）下指令，agent 有问题会读出来，你口头回答；也能打字。用你已有的各家订阅（PH 上作者称 Claude Max 计划直接可用，不需要 API key），SKI 只对语音收费，每月有免费额度。",
+          "problem": "同时开好几个 agent 时，瓶颈变成人的注意力：读一个的输出时，其他几个都在等你；语音直接转写又容易听错，误执行破坏性指令。",
+          "highlight": "官网称：每个对话自动开独立分支和 git worktree，实时看 diff，口头说「open the PR」开 PR；一句话串起多 agent 链（例：Claude 先规划、交给 Codex 实现），链结束时语音通知；先根据项目上下文重建意图、给你看解释后再发给 agent（可选审批），常规操作直接跑、破坏性操作先问；快层约 200ms 应答、慢层跑 agent 回合（约 45s），两者分开。代码和对话留在本机，语音上云识别、官网称不存储。一键语音模式下同时有两个 agent 提问时，先读你当前在看的那个，并先报项目和分支名（PH 作者回复）。目前只有 macOS，Windows/Linux、手机端在做。闭源。",
+          "inspo": "多 agent 工作台可抄两点：①每个会话一个 worktree + 统一的「谁在等我」队列，提醒时带上项目和分支名；②语音/自然语言入口先产出「我理解成这样」的规范化指令给人确认，再下发给 agent，破坏性操作单独加闸。前提是工作台已能管理多个 agent 进程和 worktree；语音本身对王玮的价值要看他是否真在离开键盘时盯 agent，可以先只抄「意图重建 + 确认」这一层，不做语音。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "AI工具",
+            "Mac"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-31-telemetry-dev",
+          "name": "telemetry.dev",
+          "tagline": "LLM observability for AI agents",
+          "ph": "https://www.producthunt.com/products/telemetry-dev",
+          "site": "https://telemetry.dev",
+          "repo": "https://github.com/telemetry-dev/telemetry",
+          "rank": 3,
+          "score": 234,
+          "comments": 22,
+          "what": "基于 OpenTelemetry 的 LLM/agent 可观测服务：一次 agent 运行是一条 trace，每次模型调用、工具调用是一个 span，带耗时、token、成本和错误；同一批 trace 还能做提示词版本管理和数据集评测；告警覆盖错误、成本飙升和 agent 死循环。官方 TypeScript/Python SDK 和集成是 MIT 开源，接收服务和控制台是托管的、不开源，也不能自托管（PH 上作者确认）。",
+          "problem": "agent 一次运行里串了很多模型和工具调用，出错或变贵时很难定位是哪一步；MCP 服务端只看到零散的工具调用，拼不成一次对话。",
+          "highlight": "官网称：支持 OpenAI、Anthropic、Bedrock、Google GenAI、OpenRouter、LiteLLM 等，以及 Vercel AI SDK、LangChain/LangGraph、CrewAI、Pydantic AI、MCP；还能记录本机 Claude Code、Cursor、opencode 等 coding agent；其他语言用标准 OTLP/HTTP 直接发。成本在接收时按 token 和价格表算，缓存读写分开计价。提示词/回复存储可按环境关闭，但官网写明「不阻止传输到接收端」，正则脱敏抓不全，真要不外发得在 SDK 里先删。有只读 MCP 服务器和 CLI，让 coding agent 查 trace；作者称默认 agent 看不到提示词和工具入参，只看步骤、耗时、token、成本、错误，要看全文需单独授权。MCP 服务端要把同一对话的调用归成一条 trace，必须客户端传 trace ID：Claude API 的 MCP connector 会传，claude.ai 和 Claude Desktop 目前不传（作者 PH 回复）。免费档每月 3 万单位、保留 14 天；作者称 Team 档 $50/月 200 万事件。同组织另有 MIT 的 telemetry-dev/stats（本机看多 coding agent token 用量的网页面板）。雷达 data/radar.json 按仓库地址未查到。",
+          "inspo": "工作台给 agent 运行做追踪时可抄：用 OTel GenAI 语义（agent→模型调用/工具调用 span）作为内部日志格式，导出就是标准 OTLP，不锁死后端；给 agent 读 trace 的 MCP 默认只给结构化元数据（步骤、耗时、成本、错误），载荷要单独授权；MCP 调用里透传 trace ID 以便服务端归并。前提是工作台控制 agent 进程或 SDK 层，能在发出前脱敏；企业内网场景要能接自建 OTel collector，因为 telemetry.dev 本身不支持自托管。",
+          "tags": [
+            "开发者工具",
+            "coding agent",
+            "开源",
+            "MCP"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-31-coding-wrapped",
+          "name": "Coding Wrapped",
+          "tagline": "See how you really vibe code with Claude Code & Codex",
+          "ph": "https://www.producthunt.com/products/coding-wrapped",
+          "site": "https://codingwrapped.com",
+          "repo": "https://github.com/senlindesign/coding-wrapped",
+          "rank": 11,
+          "score": 85,
+          "comments": 6,
+          "what": "MIT 开源的 Agent Skill：读本机 Claude Code 和 Codex 的会话记录，在 127.0.0.1:4173 生成一个像素风「年度报告」式面板——活跃天数、会话、项目、模型组合、工具使用、提问节奏、最长专注时段，加上「你做了什么 / agent 做了什么 / 你的风格」几张洞察卡，每个习惯配一条建议。",
+          "problem": "天天和 agent 协作，却很少回头看自己是怎么下指令、什么时候纠正、什么时候一路「继续」的。",
+          "highlight": "README：安装一条命令 `npx skills add senlindesign/coding-wrapped --skill coding-wrapped --agent claude-code --agent codex --global`（也可走 Claude Code 插件市场），两个平台用同一份 Skill；有中文 README，用中文提问就出中文面板。只存安全的聚合指标；PH 上作者称不存原始提示词、代码、项目名和密钥。建议来自一份 40 条、每条注明出处的实践库。明确说明不是对话查看器、不是生产力评分、不是员工监控。仓库很小（抓取时 7 星）。雷达 data/radar.json 按仓库地址未查到。",
+          "inspo": "王玮自己就重度用 Claude Code + Codex，可以直接装来看自己的协作习惯（前提：本机记录还在——Claude Code 默认清理 30 天前的会话）。对工作台：「从本地会话日志只取聚合指标 → 配一条有出处的建议」这个模式适合做个人复盘页；企业版若要做，必须保持只给本人看、不做排名，否则就成了监控。",
+          "tags": [
+            "coding agent",
+            "开源",
+            "效率"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-10-31-specsight",
+          "name": "Specsight",
+          "tagline": "Product observability for teams shipping fast with AI",
+          "ph": "https://www.producthunt.com/products/specsight",
+          "site": "https://specsight.app",
+          "rank": 1,
+          "score": 302,
+          "comments": 43,
+          "what": "连接 GitHub/GitLab 的仓库和分支，从源码生成一份「产品地图」：有哪些功能、怎么表现、怎么互相关联，之后跟着每次发布更新，并自动出每周内部摘要、起草对外发布说明。面向销售、客服、产品等非技术团队。",
+          "problem": "AI 让代码改得太快，销售在演示已不存在的功能，客服靠猜，资深工程师成了全公司的「人肉产品百科」。",
+          "highlight": "官网称：两分钟设置、只读权限，多数项目一小时内出第一版产品地图。PH 上创始人说明：它不是总结 diff，而是把每个功能建模成「情境、动作、结果」，每次发布检查哪些行为真的变了；不改变行为的重构标为已审查、不进更新；内部摘要自动发，对外发布说明不会自动发出，要人挑条目、改稿再发布。还不支持功能开关/灰度状态（在做）。Standard 档 €150/月（3 个项目、50 人、每月 200 次同步），可申请 7 天试用。闭源 SaaS。",
+          "inspo": "企业知识库/工作台可抄「从代码派生、按行为建模、按发布增量更新」的产品知识：每个功能存成「情境→动作→结果」，每次合并只更新受影响的行为条目，并标出「行为未变」的提交，作为 agent 和非技术同事共用的产品事实源。前提是仓库是单一真相、功能边界能从代码看出来；有大量功能开关或配置驱动行为的项目，单看代码会不准。",
+          "tags": [
+            "企业知识",
+            "AI工具",
+            "开发者工具"
+          ],
+          "status": "新发现",
+          "followups": []
+        }
+      ]
+    },
+    {
       "date": "2026-10-30",
       "source": "https://www.producthunt.com/leaderboard/daily/2026/10/30",
       "fetched": "2026-10-31 19:57 北京",
