@@ -44,7 +44,7 @@
   var list = []; try { list = JSON.parse(localStorage.getItem(CK) || '[]'); } catch (e) {}
   var has = function (u) { return list.some(function (x) { return x.url === u; }); };
   var css = '.fav-b{background:none;border:none;cursor:pointer;font-size:17px;line-height:1;padding:2px 4px;color:var(--ink2);opacity:.55;vertical-align:middle}.fav-b:hover{opacity:1}.fav-b.on{color:#e0a100;opacity:1}.fav-b svg{display:block}.fav-b .fill{fill:currentColor}' +
-    '.fav-b.busy{opacity:.3;pointer-events:none}.card .fav-b{position:absolute;right:12px;bottom:10px;z-index:2}.pc .fav-b{float:right}' +
+    '.fav-b.busy{opacity:.3;pointer-events:none}.card .fav-b{position:absolute;right:12px;bottom:10px;z-index:2}.pc .fav-b,.pc2 .fav-b{float:right}' +
     '.fav-toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:8px 16px;border-radius:8px;font-size:14px;z-index:99;max-width:90vw}' +
     '.fav-toast a{color:inherit;text-decoration:underline}';
   var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
@@ -99,9 +99,10 @@
       var h2 = li.closest('section') && Array.prototype.filter.call(li.closest('section').querySelectorAll('h2'), function (x) { return x.compareDocumentPosition(li) & 4; }).pop();
       star({ url: a.href, title: t, type: 'x-brief', tags: [who, h2 ? clean(h2.textContent).replace(/^\d+\.\s*/, '') : ''].filter(Boolean), note: '' , page: absUrl(location.href.split('#')[0] + (h2 && h2.id ? '#' + h2.id : '')) }, li);
     });
-    // 海报卡
-    document.querySelectorAll('section.pc').forEach(function (s) {
-      var h3 = s.querySelector('h3'), xa = s.querySelector('.xi a[href*="x.com/"]'), img = s.querySelector('img'), who = s.querySelector('.xi .h');
+    // 海报卡（老版 .pc、新版 .pc2）
+    document.querySelectorAll('section.pc, section.pc2').forEach(function (s) { // pc2：10/26 起的新版卡片，原帖链接和 @作者 在 .srcl
+      var h3 = s.querySelector('h3'), xa = s.querySelector('.xi a[href*="x.com/"], .srcl a[href*="x.com/"]'), img = s.querySelector('img'), who = s.querySelector('.xi .h');
+      if (!who && s.querySelector('.srcl')) { var m = s.querySelector('.srcl').textContent.match(/@\w+/); who = m ? { textContent: m[0] } : null; }
       var it = { url: absUrl(location.pathname + '#' + s.id), title: clean(h3 && h3.textContent), type: 'poster', tags: [who ? clean(who.textContent) : ''].filter(Boolean), x: xa ? xa.href : '', img: img ? absUrl(img.getAttribute('src')) : '' };
       if (h3) star(it, h3.parentNode, h3);
     });
