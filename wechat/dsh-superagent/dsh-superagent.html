@@ -1,0 +1,511 @@
+<!DOCTYPE html><html lang="zh-CN" class="layout-article" data-layout="article"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<script>(function(){var v;try{v=localStorage.getItem('site-theme')}catch(e){}document.documentElement.dataset.theme=/^[ABC]$/.test(v||'')?v:'C'})();
+(function(){var k='theme',s=localStorage.getItem(k);if(s?s==='dark':matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark');
+window.__tt=function(){var f=function(){var d=document.documentElement.classList.toggle('dark');localStorage.setItem(k,d?'dark':'light')};if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.startViewTransition(f);else f()}})();</script>
+<title>Super-agent 设计探索：让人只做决策和验收</title><style>
+/* Site tokens copied verbatim, in cascade order, from ref/site-assets/site.css. */
+:root{--paper:#f6f7f9;--sheet:#fff;--card:#fff;--ink:#111827;--ink2:#4b5563;--meta:#6b7280;--hair:#e5e7eb;--hair2:#eef0f3;--blue:#2563eb;--blue-soft:#eff4ff;--red:#dc2626;--red-soft:#fef2f2;--green:#16a34a;--green-soft:#f0fdf4;--amber:#b45309;--amber-soft:#fffbeb;--purple:#7c3aed;--purple-soft:#f5f3ff;--font:system-ui,-apple-system,"PingFang SC","Noto Sans SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;--serif:var(--font);--mono:ui-monospace,SFMono-Regular,Menlo,monospace;--r-lg:12px;--r-sm:8px;--grad:none;color-scheme:light}
+html.dark{--paper:#0f1115;--sheet:#171a21;--card:#171a21;--ink:#e5e7eb;--ink2:#b6bcc6;--meta:#9ca3af;--hair:#2a2f3a;--hair2:#20242c;--blue:#7aa2ff;--blue-soft:rgba(122,162,255,.12);--red:#f87171;--red-soft:rgba(248,113,113,.12);--green:#4ade80;--green-soft:rgba(74,222,128,.12);--amber:#fbbf24;--amber-soft:rgba(251,191,36,.12);--purple:#c4b5fd;--purple-soft:rgba(196,181,253,.14);color-scheme:dark}
+[data-theme=B]{--paper:#fbfbfc;--sheet:#fff;--card:#fff;--ink:#16171a;--ink2:#4a4c55;--meta:#6e707a;--hair:#ececf0;--hair2:#f2f2f5;--blue:#5e6ad2;--blue-soft:#eef0fb;--red:#d4483b;--red-soft:#fdf0ee;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif}
+html.dark[data-theme=B]{--paper:#0e0f12;--sheet:#16171b;--card:#16171b;--ink:#e8e9ed;--ink2:#b3b5bd;--meta:#8b8d97;--hair:#26272d;--hair2:#1f2025;--blue:#8b93f0;--blue-soft:rgba(139,147,240,.14);--red:#f0776b}
+[data-theme=A]{--paper:#f7f4ee;--sheet:#fffdf9;--card:#fffdf9;--ink:#2b2722;--ink2:#5f574e;--meta:#8a8076;--hair:#e6dfd3;--hair2:#efe8dc;--blue:#b4532a;--blue-soft:#f6e1d6;--red:#a2461f;--red-soft:#f6e1d6;--green:#5f7a3a;--green-soft:#e7ecd9;--purple:#7a5a8c;--purple-soft:#eee4f1;--serif:"Noto Serif CJK SC","Noto Serif SC","Songti SC",serif;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif}
+html.dark[data-theme=A]{--paper:#1b1814;--sheet:#23201b;--card:#23201b;--ink:#ede6da;--ink2:#c7bdaf;--meta:#9b9184;--hair:#3a342c;--hair2:#2d2923;--blue:#e08a5f;--blue-soft:rgba(224,138,95,.15);--red:#e8916a;--red-soft:rgba(232,145,106,.15)}
+[data-theme=C]{--paper:#f3f5fb;--sheet:#fff;--card:#fff;--ink:#1d2340;--ink2:#5a6185;--meta:#8a90ad;--hair:#e6e9f4;--hair2:#eef0f7;--blue:#3b5bfd;--blue-soft:#e8edff;--red:#d4483b;--red-soft:#ffe6e3;--green:#1f9d5c;--green-soft:#e3f7ec;--amber:#d9771e;--amber-soft:#fff1e0;--purple:#7a4bf5;--purple-soft:#f2eaff;--r-lg:20px;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif;--sh:0 1px 2px rgba(30,40,90,.04),0 8px 24px rgba(30,40,90,.06)}
+html.dark[data-theme=C]{--paper:#0f1222;--sheet:#181c33;--card:#181c33;--ink:#e6e9fb;--ink2:#aab0d0;--meta:#7d84a8;--hair:#272c48;--hair2:#20253f;--blue:#7d93ff;--blue-soft:rgba(125,147,255,.15);--red:#ff8a7d;--red-soft:rgba(255,138,125,.15);--green-soft:rgba(31,157,92,.18);--amber-soft:rgba(217,119,30,.18);--purple-soft:rgba(122,75,245,.2);--sh:0 1px 2px rgba(0,0,0,.3)}
+:root{--acc2:#8b5cf6;--ease:cubic-bezier(.22,1,.36,1)}
+[data-theme=A]{--acc2:#c98a2b}
+html.dark[data-theme=A]{--paper:#181512;--sheet:#211d18;--card:#211d18;--meta:#a89d8f;--hair:#382f26;--acc2:#e3b15c}
+[data-theme=B]{--paper:#fafafb;--blue:#5b5bd6;--blue-soft:#efeffc;--acc2:#a855f7}
+html.dark[data-theme=B]{--paper:#0c0d10;--sheet:#14151a;--card:#14151a;--ink:#ececf1;--ink2:#babcc6;--meta:#9597a3;--hair:#262830;--hair2:#1c1d23;--blue:#9198ff;--blue-soft:rgba(145,152,255,.14);--acc2:#c084fc}
+[data-theme=C]{--acc2:#06b6d4}
+html.dark[data-theme=C]{--meta:#a3a9b8;--acc2:#22d3ee}
+html.dark{--meta:#a1a7b3}
+[data-theme=B]{--paper:#eef1f5;--hair:#dfe4ea;--hair2:#eef1f5;--green:#16a34a}
+html.dark[data-theme=B]{--paper:#0b0d12;--hair:#252a35;--hair2:#1a1e27}
+[data-theme=C]{--blue:#7b5cff;--blue-soft:#f0ecff;--acc2:#ff5e8a}
+html.dark[data-theme=C]{--paper:#0b0b0f;--sheet:#15151c;--card:#15151c;--ink:#f2f2f5;--ink2:#b8b8c6;--meta:#9a9aab;--hair:#26262f;--hair2:#1d1d25;--blue:#a08bff;--blue-soft:rgba(160,139,255,.14)}
+:root{--sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:24px;--sp-6:32px;--fs-xs:12px;--fs-sm:13.5px;--fs-md:15px;--fs-lg:18px;--fs-xl:24px;--fs-2xl:32px;--r-xs:6px;--r-sm:8px;--r-md:10px;--r-lg:12px;--r-xl:18px;--r-pill:999px;--sh-1:0 1px 2px rgba(15,23,42,.06);--sh-2:0 4px 16px -8px rgba(15,23,42,.22);--sh-3:0 14px 30px -12px rgba(15,23,42,.28);--dur-1:120ms;--dur-2:220ms;--dur-3:420ms;--ease:cubic-bezier(.22,1,.36,1);--ease-in-out:cubic-bezier(.65,0,.35,1);--spring:cubic-bezier(.34,1.3,.64,1);--icon-stroke:2}
+:root{--spring:linear(0,.0089,.0346,.0752,.1286,.1927,.2654,.3445,.4278,.5131,.5983,.6812,.7598,.8325,.8981,.9555,1.0042,1.0441,1.0753,1.0982,1.1134,1.1218,1.1243,1.1218,1.1155,1.1062,1.0949,1.0825,1.0697,1.0571,1.0451,1.034,1.0242,1.0157,1.0085,1.0027,.9982,.995,.9928,.9916,.9912,.9914,.9921,.9931,.9943,.9956,.9968,.998,.999,1)}
+html.dark{--sh-1:0 1px 2px rgba(0,0,0,.4);--sh-2:0 4px 16px -8px rgba(0,0,0,.6);--sh-3:0 14px 30px -12px rgba(0,0,0,.7)}
+/* Five reading levels: title / section / subsection / body / note. */
+:root{--reading-width:680px;--toc-width:208px;--rail-width:180px;--reading-gap:28px;--top-height:56px;--body-size:18px;--body-leading:1.8;--finish-space:104px}
+*{box-sizing:border-box}html{scroll-padding-top:72px}html,body{margin:0;background:var(--paper);color:var(--ink);font:var(--body-size)/var(--body-leading) var(--font);-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}a{color:var(--blue);text-underline-offset:3px;overflow-wrap:anywhere}a:hover{text-decoration-thickness:2px}button,input,textarea,select{font:inherit;color:inherit}button,a,summary{touch-action:manipulation}button{cursor:pointer}button:disabled{opacity:.5;cursor:default}:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+h1,h2,h3{color:var(--ink);font-family:var(--serif);line-height:1.35;letter-spacing:-.02em;overflow-wrap:anywhere}h1{font-size:var(--fs-2xl);margin:8px 0 16px}h2{font-size:var(--fs-xl);margin:8px 0 16px}h3{font-size:var(--fs-lg);margin:24px 0 8px}p{margin:0 0 12px}ul,ol{padding-left:24px}li{margin:4px 0}code{font:.88em var(--mono);background:var(--hair2);padding:1px 4px;border-radius:var(--r-xs)}pre{overflow:auto;white-space:pre;tab-size:4;font:14px/1.65 var(--mono);padding:16px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-md);margin:12px 0}pre code{font:inherit;white-space:inherit;background:none;padding:0}
+.i{display:inline-block;vertical-align:middle;flex:none;width:18px;height:18px;stroke-width:2}.btn,button.opt{min-height:44px;border:1px solid var(--hair);border-radius:var(--r-sm);background:var(--sheet);padding:8px 14px;font-size:var(--fs-md);font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:6px}.btn:hover{border-color:var(--blue);background:var(--blue-soft)}.btn.main{background:var(--blue);color:var(--sheet)}.btn.sm{font-size:var(--fs-sm)}textarea{display:block;width:100%;padding:10px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-sm);resize:vertical}
+.top{position:fixed;inset:0 0 auto;height:var(--top-height);z-index:30;display:flex;align-items:center;gap:16px;padding:0 20px;background:var(--paper);border-bottom:1px solid var(--hair)}.top .course{font-size:var(--fs-sm);font-weight:700;max-width:35vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.top .track{flex:1;height:4px;background:var(--hair);border-radius:var(--r-pill);overflow:hidden}.top .track i{display:block;width:0;height:100%;background:var(--blue);transition:width var(--dur-2) var(--ease)}.top .count{font-size:var(--fs-sm);max-width:32vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.toc-toggle{min-width:44px}.top .theme-toggle{font-size:var(--fs-sm);min-height:44px}
+.layout-article .deck,.layout-pair .deck{padding:80px 20px calc(var(--finish-space) + env(safe-area-inset-bottom));max-width:720px;margin:0 auto;min-width:0}.layout-article .sec{position:relative;margin:0 0 32px;padding-top:16px;border-top:1px solid var(--hair);scroll-margin-top:72px;min-width:0}.layout-article .hero{border:0;padding-top:0}.kicker,.meta,.src,.source-anchor,figcaption,caption,.aside{font-size:var(--fs-sm);line-height:1.65}.kicker{display:block;color:var(--blue);font-weight:700}.lede{font-size:var(--fs-lg);font-weight:600}.links{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:var(--fs-sm)}.links a{display:inline-flex;align-items:center;min-height:44px}.src{margin:16px 0 0;padding-top:8px;border-top:1px solid var(--hair);color:var(--ink2)}.source-anchor{display:block;color:var(--ink2);margin-top:6px;overflow-wrap:anywhere}.source-anchor a{min-height:44px;display:inline-flex;align-items:center}.src.extra::before{content:'补充 · ';color:var(--amber)}.src.official::before{content:'官方 · ';color:var(--blue)}.src.article::before{content:'原文 · ';color:var(--blue)}
+.toc{position:fixed;left:max(20px,calc((100vw - 1192px)/2));top:76px;width:var(--toc-width);max-height:calc(100dvh - 180px);overflow:auto;font-size:var(--fs-sm);line-height:1.5;z-index:25}.toc ol{list-style:none;margin:0;padding:0}.toc a{display:flex;gap:8px;align-items:center;min-height:44px;padding:6px 10px;color:var(--ink2);text-decoration:none;border-radius:var(--r-sm)}.toc a[aria-current=true]{background:var(--blue-soft);color:var(--blue);font-weight:700}.toc b{display:block;margin:0 10px 8px}.toc-backdrop{display:none}.tldr,.argmap{padding:16px;background:var(--blue-soft);border-radius:var(--r-lg);margin:16px 0}.tldr a,.argmap a{display:block;min-height:44px;align-content:center}.argmap ol{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 16px;margin:0}.points{padding:12px 16px 12px 36px;background:var(--hair2);border-radius:var(--r-md)}
+figure.orig,figure.redraw,.figure{margin:20px 0;min-width:0}figure img{display:block;max-width:100%;height:auto;border:1px solid var(--hair);border-radius:var(--r-md);cursor:zoom-in;background:var(--sheet)}figcaption{margin-top:8px;color:var(--ink2)}figcaption b{color:var(--ink)}.how{margin-top:6px}.table{margin:20px 0;overflow-x:auto}.table table,table.data{width:100%;border-collapse:collapse;background:var(--sheet);font-size:var(--fs-md)}th,td{border-bottom:1px solid var(--hair);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--hair2)}caption{text-align:left;font-weight:700;padding:8px 0}.table-note{font-size:var(--fs-sm);color:var(--ink2)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;margin:16px 0}.stat{padding:12px 14px;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet)}.stat b{display:block;font-size:var(--fs-xl);line-height:1.35;color:var(--blue);font-variant-numeric:tabular-nums}.stat span{display:block;font-size:var(--fs-sm);color:var(--ink2)}.stat .source-anchor{font-size:var(--fs-xs)}
+blockquote.quote{margin:16px 0;padding:12px 16px;border-left:3px solid var(--blue);background:var(--sheet)}.quote cite{display:block;font-style:normal;font-size:var(--fs-sm);color:var(--ink2)}.callout{padding:12px 16px;margin:16px 0;border-left:3px solid var(--blue);background:var(--blue-soft);border-radius:0 var(--r-sm) var(--r-sm) 0}.callout.limit{border-color:var(--amber);background:var(--amber-soft)}.callout.extra{border:1px dashed var(--meta);background:var(--sheet)}.callout.myth{border-color:var(--amber);background:var(--hair2)}.callout.limit::before{content:'作者的限定 · ';font-weight:700}.aside{padding:12px;border-left:2px solid var(--hair);color:var(--ink2);margin:12px 0}
+.stories,.compare,.roles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}.story,.compare>div,.roles>div{padding:12px;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);font-size:var(--fs-md)}.story b,.roles b{display:block}.story dt{font-weight:700;color:var(--ink2);font-size:var(--fs-sm)}.story dd{margin:0 0 8px}.story p,.story .fix{display:block;margin:8px 0}.steps,.ladder{display:grid;gap:8px;padding:0;list-style:none;counter-reset:step}.steps>li,.ladder>li{padding:10px 14px;background:var(--hair2);border-radius:var(--r-sm);counter-increment:step}.steps>li::before{content:counter(step)'. ';color:var(--blue);font-weight:700}.ladder i{font-style:normal;font-weight:700;margin-right:8px}.matrix{border:1px solid var(--hair);padding:16px;border-radius:var(--r-md)}.matrix .axes{font-size:var(--fs-sm);color:var(--ink2)}.matrix ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));list-style:none;padding:0;gap:1px;background:var(--hair)}.matrix li{margin:0;padding:16px;background:var(--sheet)}.refs{font-size:var(--fs-sm);line-height:1.7}.refs a{display:inline-block;min-height:44px;align-content:center}.thread{border-left:2px solid var(--hair);padding-left:16px}.formula{padding:16px;border:1px solid var(--hair);overflow:auto}.formula math{font-size:var(--fs-xl)}details.more{margin:12px 0;border-top:1px solid var(--hair);font-size:var(--fs-md)}summary{min-height:44px;cursor:pointer;display:flex;align-items:center;gap:8px}summary .i{transition:transform var(--dur-1)}details[open] summary .i{transform:rotate(90deg)}
+/* Shared interactive components. No fixed page/card height. */
+.flow-scroll{max-width:100%;overflow-x:auto;min-width:0;touch-action:pan-x pan-y}.flow-scroll svg.flow{display:block;width:100%;height:auto;min-height:0}.flow-tip{font-size:var(--fs-sm);color:var(--ink2)}.fl-node rect{fill:var(--sheet);stroke:var(--hair);stroke-width:2}.fl-node text{font:600 17px var(--font);fill:var(--ink)}.fl-node .sub{font-size:13px;font-weight:400;fill:var(--ink2)}.fl-node.act rect{stroke:var(--blue);fill:var(--blue-soft);stroke-width:3}.fl-node.blue rect{stroke:var(--blue)}.fl-node.amber rect,.fl-node.red rect{stroke:var(--amber)}.fl-node.green rect{stroke:var(--green)}.fl-edge{fill:none;stroke:var(--meta);stroke-width:2}.fl-edge.act{stroke:var(--blue);stroke-width:3}.fl-elab{font:13px var(--font);fill:var(--ink2)}
+.sim{margin:16px 0;padding:12px;border:1px solid var(--hair);border-radius:var(--r-lg);background:var(--sheet);display:flex;flex-direction:column;gap:12px}.sim .ctl{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.sim .ctl label{min-height:44px;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm)}.sim .ctl input[type=range]{min-width:110px}.sim .body{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}.sim .narr{order:-1;background:var(--blue-soft);padding:10px 12px;border-radius:var(--r-sm);font-size:var(--fs-md)}.sim .log{max-height:240px;overflow:auto;font:var(--fs-sm)/1.6 var(--mono)}.sim .msg{border-left:3px solid var(--hair);padding:8px;margin:6px 0;background:var(--paper);white-space:pre-wrap;overflow-wrap:anywhere}.msg b{display:block;font-family:var(--font)}.sim .msg.err{border-color:var(--amber)}.prediction{order:-2}.component-error{padding:16px;border:1px solid var(--amber);color:var(--amber)}
+.quiz{margin:16px 0;padding:16px;border:1px solid var(--hair);border-radius:var(--r-lg);background:var(--sheet)}.quiz .qn{font-size:var(--fs-sm);color:var(--ink2)}.quiz .qt{font-size:var(--fs-lg);font-weight:700;margin-bottom:12px}.quiz .opt{display:block;width:100%;text-align:left;margin:8px 0;font-weight:400}.quiz .opt.ok{border-color:var(--green);background:var(--green-soft)}.quiz .opt.no{border-color:var(--amber);background:var(--amber-soft)}.quiz .fb{margin:12px 0;font-size:var(--fs-md)}.quiz .nav{display:flex;gap:8px;margin-top:12px}.quiz label{display:block;font-size:var(--fs-sm)}.stack{display:grid;gap:6px;font-size:var(--fs-sm)}.stack .row{display:grid;grid-template-columns:28px 80px minmax(0,1fr);gap:8px;padding:8px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-sm)}.stack .t{overflow-wrap:anywhere;white-space:pre-wrap}.stack .new{background:var(--blue-soft)}.bar{display:grid;grid-template-columns:100px minmax(0,1fr) 80px;gap:8px;margin:8px 0;align-items:center;font-size:var(--fs-sm)}.bar .bt{height:20px;background:var(--hair2);border-radius:var(--r-xs);overflow:hidden}.bar .bt i{display:block;height:100%;background:var(--blue)}.bar .bn,.bar .bmiss{grid-column:2/4}.bars .bc{font-size:var(--fs-sm);color:var(--ink2)}
+/* Paired material stays inside its own container; highlighting never scrolls the page. */
+.pair.codewalk,.pair.read-pair,.pair.material-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start;margin:20px 0;position:relative;min-width:0}.pair-source{position:sticky;top:72px;max-height:calc(100dvh - 160px);overflow:auto;overscroll-behavior:contain;min-width:0;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);padding:12px;scroll-padding:16px}.pair-notes{min-width:0}.pair-notes .step{padding:16px 0 24px;border-top:1px solid var(--hair);scroll-margin-top:84px}.pair-notes .step.is-active{border-color:var(--blue)}.pair-source .source-block{padding:12px 8px;border-left:3px solid transparent}.pair-source .source-block.is-active{background:var(--blue-soft);border-color:var(--blue)}.source-text{overflow-wrap:anywhere}.pair-source pre{border:0;padding:0;margin:8px 0;overflow:visible}.code-line{display:block;min-height:1.65em;white-space:pre;padding-left:48px;position:relative}.code-line::before{content:attr(data-line);position:absolute;left:0;width:36px;text-align:right;color:var(--meta);user-select:none}.code-line.hl{background:var(--blue-soft)}.copy-code{position:static;flex:none;white-space:nowrap}.pair-source .source-anchor{font-size:var(--fs-xs)}
+/* A separate toolbar never shares the scrolling code viewport. */
+.heading-source{font-size:var(--fs-xs);margin:0 0 8px}
+.pair.codewalk{grid-template-columns:minmax(0,60%) minmax(0,1fr)}
+.code-panel{position:sticky;top:72px;display:flex;flex-direction:column;min-width:0;max-height:calc(100dvh - 160px);border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);overflow:hidden}
+.code-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;flex:none;border-bottom:1px solid var(--hair);font-size:var(--fs-xs);color:var(--ink2)}
+.code-panel .pair-source{position:static;max-height:none;min-height:0;flex:1 1 auto;border:0;border-radius:0;box-shadow:none;overflow:auto}
+.code-panel .pair-source pre{width:max-content;min-width:100%}
+dialog.image-dialog{width:calc(100vw - 24px);max-width:none;max-height:92dvh;padding:12px;border:1px solid var(--hair);background:var(--sheet);color:var(--ink);border-radius:var(--r-md);overflow:auto}dialog::backdrop{background:rgba(0,0,0,.75)}.image-dialog img{max-width:none;width:max(100%,min(1400px,180vw));height:auto}.image-dialog .dialog-close{position:sticky;top:0;left:0}.image-open{min-height:44px;border:0;background:transparent;padding:0;display:block;cursor:zoom-in;max-width:100%}.image-open img{max-width:100%}
+/* Only CSS changes the unchanged finish.js button. High specificity beats injected styles. */
+html body .fin-btn{bottom:calc(16px + env(safe-area-inset-bottom));right:16px;min-height:44px;z-index:35}html body #quiz-return{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:35;max-width:45vw}
+@media(min-width:1180px){.layout-article .deck{width:var(--reading-width);max-width:none;padding-left:0;padding-right:0;margin-left:max(260px,calc((100vw - 1192px)/2 + 236px));margin-right:0}.layout-article .sec>.doc-body>figure,.layout-article .sec>.doc-body>.table,.layout-article .sec>.codewalk{width:calc(100% + 120px);margin-left:0}.layout-article .aside{position:absolute;left:calc(100% + 28px);top:24px;width:var(--rail-width);margin:0}.layout-article .aside~figure{width:100%}html.layout-article body .fin-btn{left:max(20px,calc((100vw - 1192px)/2));right:auto;max-width:208px}.layout-pair .deck{max-width:1280px;margin-left:236px;margin-right:20px}.layout-pair .toc{width:188px;left:20px}html.layout-pair body .fin-btn{left:20px;right:auto;max-width:188px}}
+@media(max-width:1179px){.toc{display:none;visibility:hidden;left:0;top:var(--top-height);width:min(360px,90vw);max-height:calc(100dvh - 72px);background:var(--sheet);padding:16px;border-right:1px solid var(--hair);border-bottom:1px solid var(--hair)}html.toc-open .toc{display:block;visibility:visible}html.toc-open .toc-backdrop{display:block;position:fixed;inset:var(--top-height) 0 0;background:rgba(0,0,0,.3);z-index:24}}
+@media(max-width:820px){:root{--body-size:17px}.layout-article .deck,.layout-pair .deck{padding-left:18px;padding-right:18px}.top{gap:8px;padding:0 12px}.top .course{display:none}.top .count{max-width:44vw}.top .track{min-width:24px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stories,.compare,.roles{grid-template-columns:minmax(0,1fr)}.argmap ol{grid-template-columns:minmax(0,1fr)}table.data thead,.table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}table.data,table.data tbody,table.data tr,table.data td,.table table,.table tbody,.table tr,.table td{display:block;width:100%}table.data tr,.table tr{padding:8px 12px;margin-bottom:8px;border:1px solid var(--hair);background:var(--sheet);border-radius:var(--r-md)}table.data td,.table td{border:0;padding:4px 0}td[data-label]::before{content:attr(data-label)'：';font-size:var(--fs-sm);font-weight:700;color:var(--ink2)}.table caption,table.data caption{display:block;width:100%}.pair.codewalk,.pair.read-pair,.pair.material-pair{display:block}.pair-notes{margin-top:12px}.code-panel{top:var(--top-height);max-height:40dvh;z-index:15}.pair-source{top:var(--top-height);max-height:40dvh;z-index:15;box-shadow:var(--sh-1)}.pair-notes .step{scroll-margin-top:calc(40dvh + 80px)}.flow-scroll svg.flow{width:var(--flow-width);max-width:none;height:var(--flow-height)}.sim .flow-scroll svg.flow{width:100%;height:auto}.stack .row{grid-template-columns:22px 64px minmax(0,1fr)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+@media print{.top,.toc,.fin-btn,#quiz-return,.toc-backdrop,.zoom-toggle,.code-toolbar{display:none!important}.layout-article .deck,.layout-pair .deck{margin:0;padding:0;max-width:100%;width:auto}.pair-source,.code-panel{position:static;max-height:none;overflow:visible}.sec{break-inside:auto}figure,.stat{break-inside:avoid}}
+/* Applies after legacy CSS too. Zoom is an intentional local viewport; non-zoom stays unnested. */
+html body .sim .flow-scroll.zoom{overflow:auto;max-height:40dvh;min-height:0;height:auto;overscroll-behavior:contain;scroll-padding:16px;padding:16px}
+html body .sim .flow-scroll.zoom svg.flow{width:var(--flow-width);min-width:var(--flow-width);height:var(--flow-height);max-height:none;flex:none}
+html body .sim .zoom-toggle{min-height:44px;justify-self:start}.layout-deck .sim .body{position:relative}.layout-deck .card{padding-bottom:8px}.layout-deck .deck{bottom:calc(92px + env(safe-area-inset-bottom))}
+html body .fin-btn{bottom:calc(16px + env(safe-area-inset-bottom));right:16px;min-height:44px}html.layout-deck .bottom{padding-right:170px;padding-left:12px;height:76px}.layout-deck .btn,.layout-deck .sim .branches label{min-height:44px}.layout-deck details.more summary::before{content:none}.layout-deck .fl-edge.act{animation:none}
+@media(max-width:820px){html.layout-deck .bottom{padding-right:12px;gap:8px}.layout-deck .bottom .btn{padding:8px 10px;font-size:13px}html.layout-deck body .fin-btn{padding:8px 12px;font-size:13px}.layout-deck .card.full:has(.sim)>.head-full{position:sticky;top:0;z-index:4;background:var(--sheet);padding-top:12px;padding-bottom:12px}.layout-deck .sim .body{overflow:visible}.layout-deck .card .stage:has(.sim){overflow:visible}.layout-deck .sim .flow-scroll:not(.zoom){overflow:visible}}
+
+.layout-deck .card.doc.on{display:block;overflow:auto;padding:24px}.layout-deck .card.doc .doc-body{overflow:visible}.layout-deck .hero.card{height:auto}
+
+/* Legacy .stage svg also matches button icons: keep Lucide at its declared size. */
+html body svg.i{width:18px;height:18px;max-height:none;flex:none}
+
+/* Below the desktop sidebar breakpoint, finish lives in the opaque top bar.
+   Reserve its width before laying out the title; keep the deck footer for paging. */
+@media(max-width:1179px){
+ html body .top{gap:8px;padding:0 132px 0 12px;z-index:40;background:var(--paper)}
+ html body .top .course{display:none}
+ html body .top .count{flex:1;min-width:0;max-width:none;font-size:var(--fs-sm);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ html body .top .track{position:absolute;left:12px;right:12px;bottom:0;height:2px;min-width:0}
+ html body .top .toc-toggle{width:44px;flex:none;padding:0}
+ html body .top .theme-toggle{flex:none;padding:8px;font-size:var(--fs-sm)}
+ html body .fin-btn{top:6px;bottom:auto;left:auto;right:12px;width:112px;max-width:112px;height:44px;padding:8px;font-size:13px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:41;box-shadow:none}
+}
+</style></head><body>
+<header class="top"><button class="btn toc-toggle" aria-label="打开目录" aria-expanded="false"><svg class="i i-menu" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h16"/></svg></button><span class="course">Super-agent 设计探索：让人只做决策和验收</span><span class="track" role="presentation"><i></i></span><span class="count"></span><button class="btn theme-toggle" aria-label="切换深浅色">深浅色</button></header><main class="deck"><section class="sec hero" data-toc="导读：瓶颈从模型移到人的注意力" id="s1" data-source-section="s1">
+  <header class="doc-head"><span class="kicker">公众号长文 · DeepSeek Harness 团队 · 2026-10-31（附 @shao__meng 中文摘要与评论）</span><h1>Super-agent 设计探索：让人只做决策和验收</h1>
+  <p class="lede" id="h-lede">DeepSeek Harness 团队这篇长文的判断是：做单件事的 Agent 已经足够强，现在卡住的是人一次只盯得住 3 到 5 个会话。文章提出 Super-agent：常驻的 Router 只管分派和对外说话，隔离的 Worker 并发干活；输入从人打字改成群聊、PR、CI 等事件；再加异步工具、存算分离和外部 Watchdog，把会话变成系统内部细节。文首自称是架构思路探讨，不是在介绍现有产品功能，配套仓库也写明是研究原型。本页按原文 9 节走一遍，后面附 @shao__meng 的 X 摘要、评论区、对我们工作台的借鉴（指挥家分析）和来源核对。</p>
+  <p class="links"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">公众号原文 <svg class="i i-external-link" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a><a href="https://x.com/shao__meng/status/2116541149443698968">X 摘要 @shao__meng <svg class="i i-external-link" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a><a href="https://github.com/deepseek-ai/dsh-superagent-prototype">仓库 dsh-superagent-prototype <svg class="i i-external-link" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a><a href="https://x.com/DeepTibowow/status/2116530987400401193">英文 Article @DeepTibowow <svg class="i i-external-link" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a><a href="dsh-superagent-close.html">精读版（加密，全文对照） <svg class="i i-external-link" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a><span>本页导读约 25 分钟</span></p></header>
+  <div class="doc-body">
+<p data-points="p0002" id="e1">文章开头先声明：这篇讲的是面向工程落地的架构思路，<b>不是</b>在介绍 DeepSeek Harness 现有的产品功能。</p>
+<p data-points="p0004 p0005" id="e2">背景有两条。一是 Coding Agent 这类单任务 Agent 越来越不需要人一步步看着，人往上退到拍板和验收。二是个人助手（Personal Agent）大批出现，直接接入每天的日程、邮件、消息与工作平台，持续在线、按事件行动；作者认为这种持续在线、由事件驱动的方式，并不局限于个人场景，在软件开发这类商业场景里同样有用。</p>
+<p data-points="p0006 p0007" id="e3">可现在的主流做法还是一个会话管一件事，会话之间互不相通。要同时推几件事，人得自己来回切、自己记住每边说到哪；作者的观察是，一般人同时跟得住的活跃 Session 也就 3 到 5 个。所以单件事能做多好看模型，同时能做几件事看人的注意力。仅在本地单会话 Agent 上加挂 CLI、MCP 或连接器也不够：单会话里一调用就同步阻塞，几件事的上下文混乱成一团，本地设备一离线即停止。</p>
+<p data-points="p0008 p0009" id="e4">他们的方向：不再让 Agent 依附于某一次手动打开的会话，而是变成一个能跨会话记住上下文、同时推好几件复杂事又互不打架的连续实体，取名 Super-agent。在内部实例里，一个开发任务可以前半段在 IM 里谈、后半段在 GitHub 上接着做；它还盯着公共群，没人 @ 它时也会自己找到根因并提交修复 Pull Request。</p>
+<figure class="figure orig" data-asset="a0010" data-points="p0010" id="fa0010"><img src="img/img01.jpg" alt="原图 1：同一个任务在 IM 群聊与 GitHub Pull Request 评审之间连续推进"><figcaption><b>原图 1 · IM 与 PR 评审之间连续推进</b> <span class="source-anchor" data-source-section="s2">出处：X · <a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">原图 1：同一个任务在 IM 群聊与 GitHub Pull Request 评审之间连续推进</a></span><span class="how">怎么看：同一个任务一半在 IM 群聊里讨论，一半在 GitHub Pull Request 评审里推进，Agent 两边都接得上。</span></figcaption></figure>
+<figure class="figure orig" data-asset="a0011" data-points="p0011" id="fa0011"><img src="img/img02.jpg" alt="原图 2：持续关注公共群聊，在无人 @ 的情况下主动识别缺陷并提交修复 Pull Request"><figcaption><b>原图 2 · 无人 @ 时主动提修复 PR</b> <span class="source-anchor" data-source-section="s2">出处：X · <a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">原图 2：持续关注公共群聊，在无人 @ 的情况下主动识别缺陷并提交修复 Pull Request</a></span><span class="how">怎么看：公共群里有人反馈问题，没人点名 Agent，它自己识别缺陷并提交修复。</span></figcaption></figure>
+<p data-points="p0012 p0013 p0014 p0015 p0016" id="e5"><b>四个基础特征</b>（作者认为 Super-agent 应当具备）：<b>连续</b>——在 IM 聊天、GitHub 评论里交互都像同一个 Agent，比如先在 IM 提方案 A、后在 PR 评论改成 B，它能跟上；<b>高效</b>——并行、高质量地做多件事，不必等上一条完成；<b>主动</b>——持续观察环境事件，值得做才出手，不需要时保持安静；<b>持久</b>——始终在线，直接接入真实的工作环境，异常能自动恢复。</p>
+<p data-points="p0017 p0018 p0019" id="e6">一个 ReAct Loop 撑不起这四点，需要一套架构。作者认为相似约束会导出相似架构：不管是个人助手还是软件开发里的 Agent，只要想做的是持续在线、能同时响应各种环境事件的系统，底层可能会走到相近的结构；且很多问题和传统计算机系统长期讨论的问题很像。落地时会有不同变体，但作者认为下面五个模块构成基本框架：双层架构（第 2 节）、事件驱动（第 3 节）、面向人的交互（第 4 节）、计算/状态/环境分离（第 5 节）、以及第 6 节的 Watchdog。</p>
+<figure class="figure orig" data-asset="a0020" data-points="p0020" id="fa0020"><img src="img/img03.jpg" alt="原图 3：Super-agent 整体系统架构，标号 2 至 6 对应下文第 2 至第 6 节"><figcaption><b>原图 3 · 整体系统架构</b> <span class="source-anchor" data-source-section="s2">出处：X · <a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">原图 3：Super-agent 整体系统架构，标号 2 至 6 对应下文第 2 至第 6 节</a></span><span class="how">怎么看：左边环境事件经两级过滤进 Router；Router 共享上下文、负责对外多信道交互；下面多个 Worker Session 各自隔离；已有归属的事件走蓝色虚线「订阅直通」直接到 Worker；Session 状态统一进数据库；执行环境靠轻量 daemon 接入；Watchdog 在外部监控。方括号数字对应原文节号。</span></figcaption></figure>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s1"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">第 1 节</a></span> · <span class="source-anchor" data-source-section="s2"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">Super-agent</a></span></div>
+</section>
+<section class="sec" data-toc="第 2 节：双层架构，Router 分派、Worker 执行" id="s2" data-source-section="s3">
+  <header class="doc-head"><span class="kicker">原文第 2 节</span><h2>连续性和吞吐的权衡拆到两层；Session 成了实现细节</h2></header>
+  <div class="doc-body">
+<p data-points="p0022 p0023 p0024" id="e7">既要跨渠道连贯，又要多件事并行，底层会话怎么组织就绕不开一个取舍：连续性还是吞吐量。所有消息都交给一个 Session，上下文最连贯，但一个 ReAct 循环只能一步步走，任务完成耗时长、吞吐低，几件事的中间细节混在一起还会拖累效果。每条消息都另起一个 Session，吞吐最高，可任务之间一旦有关联，没有全局上下文，各会话的结果就各说各话，几个会话分别回复用户也让交流一团乱。</p>
+<p data-points="p0025" id="e8">他们的解法是把「保持全局连贯」和「大量并发干活」放到两层：上面一层常驻的 Router（2.1 节）负责和人打交道、做全局协调；下面一层 Worker（2.2 节）彼此上下文隔开，各干各的具体任务。</p>
+<figure class="figure orig" data-asset="a0026" data-points="p0026" id="fa0026"><img src="img/img04.jpg" alt="原图 4：双层架构：Router 层统一负责路由与对外交互，多个 Worker Session 隔离并发执行任务"><figcaption><b>原图 4 · 双层架构</b> <span class="source-anchor" data-source-section="s3">出处：X · <a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">原图 4：双层架构：Router 层统一负责路由与对外交互，多个 Worker Session 隔离并发执行任务</a></span><span class="how">怎么看：上面一个 Router 负责路由与对外交互，下面多个 Worker Session 隔离并发；用户只和 Router 打交道。</span></figcaption></figure>
+<p data-points="p0027 p0028 p0029" id="e9">这样系统接管了上下文管理和并发，用户打交道的一直是同一个 Super-agent。作者认为让用户手动管 Session 多半是从 LLM API 继承来的惯性，Session 应该是实现细节，不是认知负担。拆开以后，「给用户看什么样的项目管理界面」成了独立的产品问题（第 8.2 节再谈）。两层是逻辑分工，每层内部都可以有自己的结构。</p>
+<p data-points="p0031" id="e10"><b>Router 层</b>：一直在线，接住所有入口进来的人类消息，跨任务的信息和决定都汇到它这里，由它充当全局「序点」（Sequence Point）、协调点和记忆。为了不让它变成瓶颈，它自己不干具体的活，只负责跟人打交道和派活，连 Bash 工具都可以不给。</p>
+<p data-points="p0032" id="e11">它和常见 Agent Team 不同：Team 是在一个复杂任务内部拆步骤，Team Lead 得吃透细节、规划子任务，还要频繁协调各个成员，推理负担很重；Router 只管多个任务之间怎么关联、怎么分派。反过来，如果用提示词约束 Team 主会话不亲自干活、只对外交互并分派独立任务，也算这种双层架构。作者的经验是 Router 的活没想象中复杂，较轻量的模型往往就够。</p>
+<p data-points="p0033 p0034 p0035" id="e12">实现上他们选了最省事的一种：Router 就是一个一直开着的 LLM 会话。它没那么容易堵，因为上一轮推理时进来的环境事件（第 3 节说的 Trigger）会先积压着，到下一轮一起处理：消息稀疏时一条条进，回得快；消息扎堆、开始排队时，攒下的几条在下一次调用里一起塞进去。Router 每一步都是读得多、写得少，多条一起送进去，预填充（Prefill）阶段可以并行算，单次耗时涨得比批量慢得多，于是在一定范围内，排队越多，每个决定平均花的推理时间反而越少；能攒多少，受上下文长度和模型一轮能准确处理几条的限制。</p>
+<p data-points="p0036 p0037" id="e13">第 7.2 节给了实测。再配上订阅直通和链式召回（见 3.2、3.3 节），一个常驻 Router 在他们眼下的团队规模里够用。等规模进一步扩大、一个会话确实扛不住时，可以在 Router 内部加几层过滤，或者切成几个会话（Sharding）；但切得越碎，并发越高，各片之间的记忆和上下文越接不上。全局记忆没解决之前，这道取舍题一直存在。</p>
+<p data-points="p0039 p0040" id="e14"><b>Worker 层</b>：彼此上下文隔离，挂完整执行工具，专注单一任务；因为直接决定结果和代码质量，一般配最强的模型。Worker 不跟人直接对话，推理过程和工具调用不对外，状态只报给 Router，再由 Router 统一答复，避免多个会话各说各的。</p>
+<p data-points="p0041 p0042" id="e15">Worker 之间一般不需要直接对话。真正的冲突多半发生在同一个 PR 这样的共享现场；只要都订阅了那条 Thread，大家会收到同样的通知（见 3.2 节），可以自己察觉并化解，少数跨任务的协调交给 Router。和 Router 一样，单个 Worker 内部也可以不止一个会话：遇到复杂任务可以再开 Subagent，甚至本身就是一个 Agent Team，这些 Router 都不必知道。代码协作里，它能让几件问题复现、PR 评审、功能开发并行推进任务而互不阻塞；个人助手也一样：前台只有一个对话框，底层可以按话题分给不同 Worker，比如一边查资料、一边起草回复。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s3"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">第 2 节</a></span> · <span class="source-anchor" data-source-section="s4"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">2.1 Router 层</a></span> · <span class="source-anchor" data-source-section="s5"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">2.2 Worker 层</a></span></div>
+</section>
+<section class="sec" data-toc="第 3 节：事件驱动，过滤、直通、召回、提前做" id="s3" data-source-section="s6">
+  <header class="doc-head"><span class="kicker">原文第 3 节</span><h2>输入从人打字变成环境里的 Trigger；先用代码砍噪音，同一 Thread 直通 Worker</h2></header>
+  <div class="doc-body">
+<p data-points="p0044 p0045" id="e16">想让它主动，第一步是换掉驱动方式：喂给 Agent 的主要不再是人在会话里一句句敲的提示词，而是环境里冒出来的半结构化事件，比如群聊消息、邮件、日程提醒、代码审查时的评论、CI 结果，这些统称 Trigger。Agent 靠监听 Trigger 自己动起来。接下来按一条事件从进门到处理完的顺序，依次讲四件事：用程序加模型的两级策略过滤噪音（3.1 节）、用订阅和直通把事件送到 Worker（3.2 节）、靠 Inline &amp; Spill 和链式召回给模型高密度地塞上下文、需要时再召回（3.3 节），以及怎样配合推理框架让 Router 在高并发下能合并处理（3.4 节）。</p>
+<p data-points="p0047 p0048" id="e17"><b>3.1 两级过滤</b>：真实群聊和代码平台的事件流「高噪音、低触发率」，每条都调大模型判断，延迟和算力都扛不住。借 Fast Path / Slow Path：把明确稳定的高频判断写成确定性代码，就构成了低延迟、低成本的快路径，大模型推理当灵活但贵的慢路径。第一步先用确定性策略筛掉噪音，只把需要语义理解的候选交给模型。</p>
+<p data-points="p0049 p0050" id="e18">程序层（Fast Path）：拿来源、群组范围、人或机器人的白名单这类确定的条件，直接在代码里先筛一遍，比如给不同来源分别定成「仅响应明确请求」「算候选」「直接不理」，大部分无关消息在调模型之前就被挡掉。语义层（Slow Path）：过了程序层的候选事件才交给 LLM，按提示词写好的策略和上下文判断要不要动手；这一层也是给人留的自然语言开关，改一句提示词就能开关或新增策略。</p>
+<figure class="figure orig" data-asset="a0051" data-points="p0051" id="fa0051"><img src="img/img05.jpg" alt="原图 5：两级过滤：先由程序层策略筛除大部分无关消息，再交由语义层策略判断"><figcaption><b>原图 5 · 两级过滤</b> <span class="source-anchor" data-source-section="s7">出处：X · <a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">原图 5：两级过滤：先由程序层策略筛除大部分无关消息，再交由语义层策略判断</a></span><span class="how">怎么看：先由程序层策略筛掉大部分无关消息，剩下的再交给语义层策略判断。</span></figcaption></figure>
+<p data-points="p0053 p0054" id="e19"><b>3.2 订阅与直通</b>：第 2 节的 Router 管跨渠道的连续性，但如果已经派出去的任务，每来一条后续消息都要再过一遍 Router，这个全局节点照样会被压垮、响应变慢。所以派送也分快慢：Router 只处理新任务起头和任务之间的协调，归属已定的后续消息走程序直接送到。实际工作里，一个 PR、一个 IM 话题、一串来回的邮件里陆续出现的消息算一条事件流，叫 Thread。</p>
+<figure class="figure orig" data-asset="a0055" data-points="p0055" id="fa0055"><img src="img/img06.jpg" alt="原图 6：Thread 示例：同一个 IM 话题或同一个 GitHub Pull Request 下的连续 Trigger 构成一条 Thread"><figcaption><b>原图 6 · Thread 示例</b> <span class="source-anchor" data-source-section="s8">出处：X · <a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">原图 6：Thread 示例：同一个 IM 话题或同一个 GitHub Pull Request 下的连续 Trigger 构成一条 Thread</a></span><span class="how">怎么看：同一个 IM 话题、或同一个 GitHub PR 下面陆续来的 Trigger，串成一条 Thread。</span></figcaption></figure>
+<p data-points="p0056 p0057 p0058" id="e20">Router 按某条 Thread 的第一条消息建好 Worker 以后，这个 Worker 直接订阅该 Thread，派送就分成两路。已经订阅的走 Fast Path：这条 Thread 之后的消息由程序直通给它，不用 Router 再调工具转；新消息若超出这件事的范围，Worker 可以退订，或者还给 Router 重新派。没人订阅的走 Slow Path：Router 还是能看见所有消息、掌握全局，但只对还没人订阅的新消息做判断和分派。</p>
+<figure class="figure orig" data-asset="a0059" data-points="p0059" id="fa0059"><img src="img/img07.jpg" alt="原图 7：订阅与直通：初始事件经由 Router 层创建 Worker 并建立订阅，同一 Thread 的后续事件直接发往该 Worker"><figcaption><b>原图 7 · 订阅与直通</b> <span class="source-anchor" data-source-section="s8">出处：X · <a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">原图 7：订阅与直通：初始事件经由 Router 层创建 Worker 并建立订阅，同一 Thread 的后续事件直接发往该 Worker</a></span><span class="how">怎么看：第一条事件经 Router 创建 Worker 并建立订阅，后面同一 Thread 的事件直接走到这个 Worker。</span></figcaption></figure>
+<p data-points="p0060" id="e21">订阅是多对多：一个 Worker 可订阅多个相关 Thread，一个 Thread 也可被多个 Worker 订阅。几个 Worker 在同一环境或讨论里交叉时，新事件会同时直通给它们，不用点对点通信也能知道彼此在做什么、自行化解冲突；输出侧仍由 Worker 向 Router 汇报关键结论，Router 统一回复用户、同步全局记忆。</p>
+<p data-points="p0062 p0063" id="e22"><b>3.3 上下文组织</b>：事件经过过滤与路由、到了目标 Session 之后，要决定往窗口里塞多少：塞多了会挤占窗口，还会稀释模型注意力；塞少了模型又得反复调工具去读。作者一句话：浪费上下文窗口就是浪费模型的智能。做法是把窗口当 Cache 管：<b>Inline</b> 把马上可能用到的信息直接放进窗口，省一次工具往返；<b>Spill</b> 把超预算或低频的完整信息留在窗口外，只留引用或摘要按需读取。</p>
+<p data-points="p0064 p0065 p0066 p0067" id="e23">按「局部性」一步步加料：从最少信息开始，起初只给当前对象的 ID 和一句摘要；再利用局部性逐步把近期很可能用到的东西放进来，先放强相关对象的 ID，再放时间或位置上挨着的内容，比如正文开头 50 个字、IM 里这条消息的上下几条和它回复的那条、评审讨论里相邻的评论；装不下就外放，给长内容定一个不大的长度上限，超出上限则截断，并留个「接着读」的入口，模型真要全文时再调工具取。</p>
+<p data-points="p0068 p0070 p0071" id="e24">跑久了以后问题来了：后续消息大多直通 Worker，历史任务越积越多，Router 不可能把它们的全部经过都塞进自己的窗口，可用户换个渠道提起一件旧事时，它又得想得起来。把 Inline &amp; Spill 的做法同样套到系统里每类对象上，就有了一种按需一层层展开的检索，叫链式召回（Chain of Recall）：Trigger、Thread、Worker Session 各有唯一 ID，注入时顺带写上紧密相关对象的 ID，对象之间连成一张引用图；顺着图走，比如从眼前这条消息找到它所在的 Thread，再到负责的 Worker Session，再到这个 Worker 牵涉的另一条代码评审 Thread。</p>
+<figure class="figure orig" data-asset="a0069" data-points="p0069" id="fa0069"><img src="img/img08.jpg" alt="原图 8：链式召回：每次召回的对象均内联下一跳关联对象的 ID，支持沿引用关系逐跳展开上下文"><figcaption><b>原图 8 · 链式召回</b> <span class="source-anchor" data-source-section="s9">出处：X · <a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">原图 8：链式召回：每次召回的对象均内联下一跳关联对象的 ID，支持沿引用关系逐跳展开上下文</a></span><span class="how">怎么看：每次召回的对象都带着下一跳关联对象的 ID，模型沿着引用关系一跳一跳展开上下文。</span></figcaption></figure>
+<p data-points="p0073 p0074" id="e25"><b>3.4 提前行动</b>：借投机执行（Speculative Execution），在还不确定结果会不会用上时，就根据环境信号在后台先试，用额外算力换人少等、少介入；有价值就交付，没价值就丢弃。个人助手的例子：收到会议邀约，先核对日程冲突、搜背景资料、备好回复草稿，用户过目即可发出。研发的例子：他们在公司内部 DeepSeek Harness 用户群配了一条「静默复现并修复」策略，有人反馈问题时 Agent 后台先复现、找修复，只有确认问题并找到简单修法才交付，否则全程安静。</p>
+<figure class="figure orig" data-asset="a0075" data-points="p0075" id="fa0075"><img src="img/img09.jpg" alt="原图 9：投机执行示例：群内还在讨论解决方案时，Super-agent 已在后台提交了修复 Pull Request"><figcaption><b>原图 9 · 投机执行示例</b> <span class="source-anchor" data-source-section="s10">出处：X · <a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">原图 9：投机执行示例：群内还在讨论解决方案时，Super-agent 已在后台提交了修复 Pull Request</a></span><span class="how">怎么看：群里还在讨论怎么修，Super-agent 已经在后台提交了修复 Pull Request。</span></figcaption></figure>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s6"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">第 3 节</a></span> · <span class="source-anchor" data-source-section="s7"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">3.1 事件过滤</a></span> · <span class="source-anchor" data-source-section="s8"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">3.2 事件路由</a></span> · <span class="source-anchor" data-source-section="s9"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">3.3 上下文组织</a></span> · <span class="source-anchor" data-source-section="s10"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">3.4 提前行动</a></span></div>
+</section>
+<section class="sec" data-toc="第 4 节：面向人的交互，异步工具和按信道说话" id="s4" data-source-section="s11">
+  <header class="doc-head"><span class="kicker">原文第 4 节</span><h2>耗时工具改成 start()/stop()；IM 短、GitHub 和邮件写全</h2></header>
+  <div class="doc-body">
+<p data-points="p0077" id="e26">第 2 节解决了上下文层面的连续，交互体验上还有两件事：异步 ReAct Loop 让后台耗时操作不阻塞前台（4.1），以及让输出匹配不同信道的带宽和习惯（4.2）。</p>
+<p data-points="p0079 p0081 p0082" id="e27"><b>4.1 全双工</b>：经典 ReAct 循环里，模型发起一个同步的 run() 调用，就得干等工具跑完，这段时间新消息一概不理。他们把耗时的命令和子任务改成异步的一对 start() / stop()：start() 一调马上回一句「已启动（Started）」，循环接着走；后台跑完，结果作为一条新事件塞回会话；模型也能按情况调 stop() 掐掉跑太久的命令。前台聊天和后台干活就此分开，新来的话在这一步推理结束后就会被处理。</p>
+<figure class="figure orig" data-asset="a0080" data-points="p0080" id="fa0080"><img src="img/img10.jpg" alt="原图 10：经典 ReAct Loop 与异步 ReAct Loop 对比：异步调用立即返回 Started 通知，后台工具运行期间仍可响应新消息"><figcaption><b>原图 10 · 同步与异步 ReAct Loop 对比</b> <span class="source-anchor" data-source-section="s12">出处：X · <a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">原图 10：经典 ReAct Loop 与异步 ReAct Loop 对比：异步调用立即返回 Started 通知，后台工具运行期间仍可响应新消息</a></span><span class="how">怎么看：左边经典循环卡在工具调用上；右边异步调用立即返回 Started，后台运行期间仍能接新消息，结果回来时作为事件投递。</span></figcaption></figure>
+<p data-points="p0083" id="e28">原文明说：这套异步任务机制已经在 DeepSeek Harness 里实现，但尚未默认开启。</p>
+<p data-points="p0085 p0086" id="e29"><b>4.2 多信道</b>：把面向单人终端的输出搬进群聊，冗长推理和密集工具调用会让多人协作信息过载。双层架构已经把这些隔在 Worker 内部，由 Router 统一对外；在此之上，再用提示词给不同信道定交互规范。</p>
+<p data-points="p0087 p0088" id="e30">即时通讯（IM）：少打扰，像同事那样只有要拍板或要验收时才出声，问题直接问、结论短短给；他们试下来管用的一条硬规矩是每次回复不超过 100 词。邮件、GitHub、文档这类异步渠道：反过来要写得结构清楚、信息足，比如开 PR 时照项目规范把背景、改了什么、怎么验证都写上；个人助手则直接拟好成形的邮件和文档摘要。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s11"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">第 4 节</a></span> · <span class="source-anchor" data-source-section="s12"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">4.1 全双工交互</a></span> · <span class="source-anchor" data-source-section="s13"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">4.2 多信道交互</a></span></div>
+</section>
+<section class="sec" data-toc="第 5、6 节：存算分离、端侧 daemon、外部 Watchdog" id="s5" data-source-section="s14">
+  <header class="doc-head"><span class="kicker">原文第 5–6 节</span><h2>Loop 上云、状态进库、环境留在原地；另起一个会话盯进展</h2></header>
+  <div class="doc-body">
+<p data-points="p0090" id="e31">今天的本地 Agent，把三样东西都放在同一台电脑上：驱动 Agent Loop 的算力、要长期留存的会话状态、仓库和本地工具链这样的执行环境。电脑一睡眠或断网，Agent 就停了，也碰不到别的机器上的环境。想让它实现云端持久在线、能接各种真实环境，作者借了计算机系统里「存算分离」（Compute-Storage Separation）的老思路，分两步把这三样拆开（5.1、5.2 节）。</p>
+<p data-points="p0092" id="e32"><b>5.1 计算与状态分离</b>：Loop 计算可以无状态，放进云端弹性容器，能水平扩展、重启或替换；Session 等持久状态存数据库，连续性靠存储保证。这样摆脱单机生命周期，云端持久在线。</p>
+<p data-points="p0094 p0095" id="e33"><b>5.2 计算与执行环境分离</b>：模型干活所需的上下文，很多要从代码库、本机文件、依赖的服务里调工具去拿，所以执行环境本身也算上下文的一部分。常见两条路都不理想：在云端启动沙箱、拉代码，再设法重建和同步环境，可真实环境里有未提交的本地修改，有私有凭据、只在内网能访问的服务、特定的硬件和工具链，复刻起来贵还容易漏；要用户干脆放弃本地、整个迁往云端工作，对很多人来说代价太大。</p>
+<p data-points="p0096 p0097 p0098" id="e34">他们的办法：Loop 跑在云上，带状态的执行环境不搬家，端侧只放一个不记会话的小 daemon，收到命令就执行、把结果交回。作者把它对应到 Anthropic 讲的「脑手分离」思路；不同在于那篇面向托管沙箱和客户 VPC，这里首先要连的是可能间歇在线的个人电脑，上面有没提交改动和本地密钥。下图展示了计算、状态和环境三者分开后的样子。所以两种都支持：自带机器（BYOM）和云上托管的机器；某台电脑重新上线时，云端还会把该在那台机器上做的活补上。</p>
+<figure class="figure orig" data-asset="a0099" data-points="p0099" id="fa0099"><img src="img/img11.jpg" alt="原图 11：存算分离与执行环境解耦：Agent Loop 与持久化状态在云端分离，并通过端侧 daemon 按需接入各类执行环境"><figcaption><b>原图 11 · 存算分离与执行环境解耦</b> <span class="source-anchor" data-source-section="s16">出处：X · <a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">原图 11：存算分离与执行环境解耦：Agent Loop 与持久化状态在云端分离，并通过端侧 daemon 按需接入各类执行环境</a></span><span class="how">怎么看：云端是 Agent Loop 和持久化状态两块，下面通过端侧 daemon 连到个人电脑、托管机器等各种执行环境。</span></figcaption></figure>
+<p data-points="p0101 p0102" id="e35"><b>第 6 节 Watchdog</b>：光有第 5 节的存算分离还不够，想持久在线，系统还得能从异常里自行恢复；长期在线的系统光靠内部逻辑很难可靠，得在主系统之外另设一个独立的控制回路（作者叫它 Control Loop）。而且 Agent 的很多异常不是进程崩溃，而是模型陷入无效循环或偏离目标，所以除了基础设施存活，还要监控任务本身的进展。</p>
+<p data-points="p0103 p0104" id="e36">具体做法是在主系统外面另开一个 Watchdog 会话，靠定时消息唤醒它。它既管基础设施类的毛病（接口出错、状态恢复不了），也让模型去看每个 Worker 是真在推进还是原地打转、方向是否偏离整体目标；遇到外部的偶发故障就隔一阵再查，直到恢复。它本身也是有全套工具的 Agent，维护的人可以直接问它为什么出错，或者让它当场改主系统的行为，例如增删一些提示词、改一下触发规则。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s14"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">第 5–6 节</a></span> · <span class="source-anchor" data-source-section="s15"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">5.1 计算与状态分离</a></span> · <span class="source-anchor" data-source-section="s16"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">5.2 计算与执行环境分离</a></span> · <span class="source-anchor" data-source-section="s17"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">Watchdog</a></span></div>
+</section>
+<section class="sec" data-toc="第 7 节：初步实验，测的是调度" id="s6" data-source-section="s18">
+  <header class="doc-head"><span class="kicker">原文第 7 节</span><h2>合成负载、占位编码工具；双层更快更稳，代价是读缓存 token；直通主要给 Router 减负</h2></header>
+  <div class="doc-body">
+<p data-points="p0106" id="e37">初步实验分两层：先端到端比较双层架构、订阅直通和单 Session 三种做法（7.1 节），再单独给 Router 的批处理做压测（7.2 节）。作者先打预防针：负载是合成的、环境做了简化，有些设置本可以更严谨，结果仅作初步参考。</p>
+<p data-points="p0108 p0109 p0110 p0111" id="e38"><b>7.1 消融</b>：拿群聊消息和 GitHub CI 消息两路一起去喂四种方案。每轮大约 300 条消息，真正要干活的约 20 条，其余是闲聊，也有跟进、叫停和 CI 消息。写代码这一步换成了一个只会「耗时间」的假工具，所以<b>比的是调度和协作，而不是写代码的本事</b>。每种方案跑 5 次。参赛的四种：完整 Super-agent；拿掉直通的 Super-agent；单会话加 Subagent 工具、提示词中性（英文原提示，大意是合适时就用 subagent）；单会话加 Subagent 工具、提示词鼓励多委派（英文原提示，大意是每条消息都会打断你，尽量把活交给 subagent）。</p>
+<figure class="figure orig" data-asset="a0112" data-points="p0112" id="fa0112"><img src="img/img12.png" alt="原图 12：工作请求的累计到达曲线与四种方案的累计完成曲线（5 次实验运行均值；消息间隔与工作时长按 1/4 缩放，模型调用耗时为真实值）"><figcaption><b>原图 12 · 累计到达与完成曲线</b> <span class="source-anchor" data-source-section="s19">出处：X · <a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">原图 12：工作请求的累计到达曲线与四种方案的累计完成曲线（5 次实验运行均值；消息间隔与工作时长按 1/4 缩放，模型调用耗时为真实值）</a></span><span class="how">怎么看：横轴是时间，一条是工作请求的累计到达，四条是各方案的累计完成；越贴近到达曲线越好。5 次均值，消息间隔与工作时长按 1/4 缩放，模型调用耗时是真实值。</span></figcaption></figure>
+<figure class="figure orig" data-asset="a0113" data-points="p0113" id="fa0113"><img src="img/img13.png" alt="原图 13（实验结果表）：注：每种方案重复运行 5 次；任务完成时间指从工作请求到结果消息的耗时。"><figcaption><b>原图 13 · 实验结果表</b> <span class="source-anchor" data-source-section="s19">出处：X · <a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">原图 13（实验结果表）：注：每种方案重复运行 5 次；任务完成时间指从工作请求到结果消息的耗时。</a></span><span class="how">怎么看：完成时间 P50 / P95（分钟）与单次实验读缓存 Token——Super-agent 12.4 / 15.7、2323 万；去掉直通 12.6 / 15.5、3177 万；单 Session 中性提示 20.4 / 29.5、605 万；单 Session 优先委派 13.8 / 29.0、1082 万。每种方案跑 5 次，完成时间从工作请求算到结果消息。</span></figcaption></figure>
+<p data-points="p0114" id="e39">完工时间：完整 Super-agent 的 p50 为 12.4 分钟、p95 为 15.7 分钟，比单会话加 Subagent 工具好得多。单会话的毛病是太看提示词，主会话常常自己动手，导致总完成时间拉长、性能不稳定：提示词中性时，模型 5 次运行里一次 Subagent 都没调，所有活都在主会话里干、一来消息就被打断，p95 拖到 29.5 分钟；改成鼓励委派后，5 次里有 4 次分了出去，快了一些但还是比不上 Super-agent，剩下那 1 次它认定活「很小」自己干了，拖出一条长尾。双层架构让 Router 不亲自干活、Worker 只收自己订阅的 Thread，等于在系统层面把「分不分工」从模型临场决定里拿了出来。</p>
+<p data-points="p0115" id="e40">成本方面：Super-agent 同时开着好几个会话，每次实验读缓存用的 token 比单会话多，相当于花更多 token 买来更短、更稳的完工时间。拿掉直通之后，完工时间和完整版差不多，但一次实验里 Router 要拍板的次数多了约 30%，读缓存 token 合计从 2323 万涨到 3177 万，约多 37%。结论：在这组负载下，直通不让活干得更好更快，它省的是 Router 那边的 token 和推理。</p>
+<p data-points="p0117 p0119" id="e41"><b>7.2 Router 批处理压测</b>：为了验证 2.1 节那个单 Router 会话的上限，只测 Router——它用真模型，Worker 换成假模型，把需要拍板的 Trigger 从每分钟约 1 条一路加到约 40 条，观察平均每批几条、一次请求多久、摊到每个决定多少推理时间。平均每批从 1.0 条涨到 2.8 条，一次请求只从 2.5 秒变成 3.9 秒，平均到每个决定上的推理时间则从 6.4 秒降到 1.6 秒。也就是说消息扎堆时 Router 能靠合并提高实际吞吐；这也说明为什么 7.1 里拿掉直通、Router 压力变大，也还没碰到单 Router 的上限，在他们现在的团队规模下没必要急着切分。</p>
+<figure class="figure orig" data-asset="a0118" data-points="p0118" id="fa0118"><img src="img/img14.png" alt="原图 14：不同 Trigger 到达速率下 Router Session 的 batch 大小、单次请求耗时与单个决定的分摊推理时间"><figcaption><b>原图 14 · Router 批处理压测</b> <span class="source-anchor" data-source-section="s20">出处：X · <a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">原图 14：不同 Trigger 到达速率下 Router Session 的 batch 大小、单次请求耗时与单个决定的分摊推理时间</a></span><span class="how">怎么看：随 Trigger 到达速率升高，batch 变大，单次请求耗时缓慢上升，单个决定的分摊推理时间反而下降。</span></figcaption></figure>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s18"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">第 7 节</a></span> · <span class="source-anchor" data-source-section="s19"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">7.1 消融实验</a></span> · <span class="source-anchor" data-source-section="s20"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">7.2 Router 层的批处理</a></span></div>
+</section>
+<section class="sec" data-toc="第 8 节：作者自己列的未解问题" id="s7" data-source-section="s21">
+  <header class="doc-head"><span class="kicker">原文第 8 节</span><h2>怎么扩展、脱离 Session 后怎么协作、组织边界与 A2A、安全隐私</h2></header>
+  <div class="doc-body">
+<p data-points="p0121" id="e42">第 2 至第 6 节的五个模块撑起了基本架构，第 7 节验证了核心调度。作者承认它之所以复杂度低，很大程度靠当前阶段的工程和场景简化；超出范围后有四类问题没解决：双层架构往大了怎么扩展（8.1 节）；Session 藏起来后，人怎样和 Agent 协作（8.2 节）；上下文边界划在哪、A2A 怎么做（8.3 节）；安全与隐私（8.4 节）。</p>
+<p data-points="p0123 p0124" id="e43"><b>8.1 扩展</b>：单个常驻 Router、加订阅直通、加 Worker 之间不直接通信，这个简化组合，花不多的工程量就覆盖了他们眼下大多数日常任务。可规模变大、任务之间牵扯变多，一个 Router 撑不住的时候，层内结构该怎么搭还没有答案：Router 什么时候要切、粒度如何划分，同层 Worker 采用何种协作拓扑，Worker 何时需要直接通信。另外，常驻 Router 加引用图召回主要解决的是近期任务的回查；时间一拉到跨月甚至更久，长程记忆就成了扩展的主要瓶颈。作者还提到，还可以拿批量分派、上下文召回这类任务对模型做专项训练。</p>
+<p data-points="p0126 p0127 p0128" id="e44"><b>8.2 脱离 Session 后怎么协作</b>：底层会话不再对应界面上的会话后，怎么呈现任务、做项目管理是新问题。作者认为以聊天窗口为中心有路径依赖，交互可以更多发生在领域特化的界面里，比如就在 GitHub 的 Issue、Pull Request 里干活；界面上也可以保留会话，但一个会话背后未必只是一个 Session。过渡期很多任务仍需要人中途参与，怎么让人随时介入、接管或实时协同，也值得探索。最终形态可能高度定制化，作者说 DeepSeek Harness 的开放架构更容易支持这一点。</p>
+<p data-points="p0130 p0131" id="e45"><b>8.3 上下文边界与 A2A</b>：前面都假设一个实例里的信息汇成一份全局上下文。到了更大的组织，「怎么给大家配 Super-agent」实际上就是在决定哪些人共享上下文、哪些人隔开：要共享的合用一个实例，要隔开的各配一个。实例多了之后，比如每个人自己的助手和整个团队合用的那个之间，跨边界的配合就成了 Agent 与 Agent 之间的通信（A2A，并不指某个具体协议）；底层上下文互不共享、各自又代表不同权限时，如何实现安全、可靠的 A2A 协作，作者说还要再探索。</p>
+<p data-points="p0133 p0134 p0135" id="e46"><b>8.4 安全与隐私</b>：第 3 节让外界事件也能驱动 Agent，可它收到靠不住的输入的机会也随之变多；这一关过不了，Super-agent 就只能待在一个很小、彼此信得过的圈子里。第 5 节的「云上循环、端侧小 daemon」本来就默认云和设备互相信任；云端一直吃进外面的事件，设备上又放着私有代码、敏感数据和本机密钥，这条跨设备的连线就是明显的隐患。就算云端没被攻破，只要设备上的密钥会被读进模型上下文，正常干活时也可能泄露，所以<b>还得设计一种办法，让 Agent 用得了密钥却始终看不到密钥本身</b>——原文把它列为待解决，没给方案。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s21"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">第 8 节</a></span> · <span class="source-anchor" data-source-section="s22"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">8.1 如何扩展双层架构</a></span> · <span class="source-anchor" data-source-section="s23"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">8.2 脱离 Session 之后如何与 Agent 协作</a></span> · <span class="source-anchor" data-source-section="s24"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">8.3 如何划分上下文边界并进行 A2A 协作</a></span> · <span class="source-anchor" data-source-section="s25"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">8.4 如何保障安全与隐私</a></span></div>
+</section>
+<section class="sec" data-toc="第 9 节：结语、原型声明与仓库核对" id="s8" data-source-section="s26">
+  <header class="doc-head"><span class="kicker">原文第 9 节 + 仓库</span><h2>内部实例在持续运行；公开的是研究原型，和文中实现不完全一样</h2></header>
+  <div class="doc-body">
+<p data-points="p0137" id="e47">作者说他们没发明新理论，只是把计算机系统里的老办法搬到 Agent 上。按他们的说法，内部的 Super-agent 已经一直在跑，日常参与复现和修 bug、回应代码审查，也参与 DeepSeek Harness 本身的迭代。</p>
+<p data-points="p0138 p0139" id="e48">收尾回到开头：单任务越来越少需要人干预，瓶颈转向人的注意力；靠双层架构、事件驱动、异步多信道的交互、存算分离、外部 Watchdog，人从执行细节上移到决策和验收。Agent 不再是被动等指令的对话窗口，而是持续在线的协作者，对个人是跨设备的助手，对团队是融入研发流程的成员。</p>
+<p data-points="p0140 p0141 p0142" id="e49">文末声明：文中一部分设计做进了 dsh-superagent-prototype，但这个插件只是用来验证路线的原型，<b>不是</b> DeepSeek 的正式产品。致谢里说，文章来自 DeepSeek Harness 团队的日常实践，系统实现和写作由 Yujia Qiao 完成，另有十几位同事参与审阅讨论。</p>
+<p class="callout extra" id="e50"><b>补充：</b>仓库核对（GitHub API 与 README）：<a href="https://github.com/deepseek-ai/dsh-superagent-prototype">deepseek-ai/dsh-superagent-prototype</a> 在 deepseek-ai 组织名下，MIT 许可，主要语言 TypeScript，10 月 31 日建库。README 开头就写它只是供参考的研究原型、不是 DeepSeek 正式产品，并说明它与内部版本、与文章描述的实现都有出入，文中部分设计属于未来方向，原型没做。</p>
+<p class="callout extra" id="e51"><b>补充：</b>在仓库文档里能找到的对应物：Trigger、Thread、Subscription（Thread 和 Ticket 多对多，同一 Thread 的新消息直接推给订阅它的 Ticket）、Eval，以及分开的 Router、Worker 两套模型预设；还有一个 observe 模式，主动揽活时只记下「would accept」（本来会接）而不真的接。文档里搜不到 Watchdog、端侧 daemon、Spill 这些词，与 README 的说法吻合。</p>
+<p class="callout extra" id="e52"><b>补充：</b>读这篇时的分寸：文中的「已实现」只有两处明说——内部实例在跑、异步任务机制已实现但未默认开启；其余是架构思路，不能当成 DeepSeek Harness 现有功能。</p>
+<figure class="figure orig" data-asset="a0143" data-points="p0143" id="fa0143"><img src="img/img15.png" alt="原图 15：文末 DeepSeek 产品部招聘海报"><figcaption><b>原图 15 · 文末招聘海报（DeepSeek 产品部），不是正文论述</b> <span class="source-anchor" data-source-section="s26">出处：X · <a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">原图 15：文末 DeepSeek 产品部招聘海报</a></span><span class="how">怎么看：这张图只说明发文方是 DeepSeek 产品部在招人，跟架构内容无关。</span></figcaption></figure>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s26"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">结语</a></span></div>
+</section>
+<section class="sec" data-toc="X 摘要：@shao__meng 的中文转述" id="s9" data-source-section="s27">
+  <header class="doc-head"><span class="kicker">X 帖</span><h2>逐段对得上原文，数字准确；但没提「研究原型、和文中实现不同」的声明</h2></header>
+  <div class="doc-body">
+<p data-points="p0145 p0146" id="e53">meng shao（@shao__meng）在 10 月 31 日 14:41 UTC 发了一条中文长帖，开头一段把全文压成几句：单个 Agent 已经很能干，卡住的是人一次能看住几个会话；Super-agent 要跨渠道接得上、多件事并行、按事件主动干、在云上一直在；手段是五件经典系统设计——外部 Watchdog、双层 Router/Worker、异步 ReAct、事件过滤与直通、存算分离加端侧 daemon——把会话藏进系统内部，人只管大方向和验收。</p>
+<p data-points="p0147 p0149 p0158 p0164 p0167 p0171 p0173 p0175" id="e54">帖子后面的小标题依次是「问题从哪来」「四个基础特征」「双层架构」「事件驱动」「面向人的交互」「计算、状态与环境分离」「Watchdog」「实验」「未解问题（第 8 节）」，和公众号第 1–8 节一一对应。我逐段对照过：概念没有走样，3–5 个会话、12.4 / 15.7 分钟、29.5 分钟、+30% / +37%、6.4s→1.6s 等数字都和原文一致，「异步已实现但未默认开启」也照实写了；投机执行的例子（会议邀约可先对日程、备资料）同样来自原文。</p>
+<p data-points="p0177 p0178 p0179 p0180" id="e55">文末给了两个链接：<a href="https://github.com/deepseek-ai/dsh-superagent-prototype">GitHub 仓库</a>（写明主笔 Yujia Qiao）和<a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">公众号原文</a>。</p>
+<figure class="figure orig" data-asset="a0181" data-points="p0181" id="fa0181"><img src="img/HV9241iXIAAmYGf.jpg" alt="原图 16：@shao__meng 的摘要卡片"><figcaption><b>原图 16 · @shao__meng 的摘要卡片</b> <span class="source-anchor" data-source-section="s27">出处：X · <a href="https://x.com/shao__meng/status/2116541149443698968">原图 16：@shao__meng 的摘要卡片</a></span><span class="how">怎么看：一张卡把四特征、三组模块（双层架构、事件 Trigger、存算 + Watchdog）和四个关键数字（3–5、12.4′、15.7′、约 29.5′）排在一起，底部列未解问题和出处。</span></figcaption></figure>
+<p class="callout extra" id="e56"><b>补充：</b>摘要漏掉的一点：没有提文末和仓库 README 的声明——dsh-superagent-prototype 是研究原型、不是 DeepSeek 正式产品，并且和文中描述的实现不完全相同、部分设计未实现。只读摘要容易把整套架构当成已上线能力。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s27"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">X 摘要</a></span></div>
+</section>
+<section class="sec" data-toc="X 评论区：值得看的几条" id="s10" data-source-section="s28">
+  <header class="doc-head"><span class="kicker">X 评论</span><h2>注意力上限是共鸣点；有人质疑署名，有人指出端侧 daemon 的入侵面和「直通不是提速」</h2></header>
+  <div class="doc-body">
+<p data-points="p0199 p0200" id="e57"><b>@pandaxia0613 对署名打问号</b>：他顺着出处点进去，发现英文 Article 是 @DeepTibowow 发的，这个号当天刚注册、没粉丝也没认证，而 DeepSeek 官方号那周没提过 Harness，所以他对「出自 DeepSeek 团队」先打个问号。（<a href="https://x.com/pandaxia0613/status/2116550984268910821">原评论</a>）本页的核对见最后一节：公众号和 deepseek-ai 组织下的仓库都对得上，但那个 X 账号是不是官方的，仍未确认。</p>
+<p data-points="p0237 p0238 p0239" id="e58"><b>@LuckyChenxi 说最容易被读偏的地方是「直通」</b>：照实验看，拿掉它完工时间没怎么变，涨的是 Router 要拍板的次数和缓存读取，可见它是在给 Router 卸担子，而不是让活更快完成。他自己的推断：个人搭多 agent，与其多开 worker，不如先让同一件事后来的消息直接交到负责它的那位手上。（<a href="https://x.com/LuckyChenxi/status/2116729129873916017">原评论</a>）</p>
+<p data-points="p0202 p0203" id="e59"><b>@0xwolverines</b>：他觉得压测结果最出乎意料——来的消息从每分钟 1 条加到 40 条，摊到每个决定上的推理耗时却从 6.4 秒缩到 1.6 秒。他更担心第 8 节留下的那个坑：端侧 daemon 既能跑命令、身边又有本机密钥，被攻击的面比单机 Agent 大不少。（<a href="https://x.com/0xwolverines/status/2116555877104726103">原评论</a>）</p>
+<p data-points="p0223 p0224" id="e60"><b>@huahuadaren2023</b>：一旦群消息也能触发任务，最好按 Thread 收紧端侧 daemon 的权限；否则过滤规则哪天漏过一条，你的电脑就替一个陌生人执行了命令。（<a href="https://x.com/huahuadaren2023/status/2116695807667917231">原评论</a>）<b>@asuan_ai</b> 一句话附和：关键是端侧执行的安全与权限隔离。（<a href="https://x.com/asuan_ai/status/2116613433903001849">原评论</a>）</p>
+<p data-points="p0217 p0218" id="e61">注：上一条已经收了 @asuan_ai 那句话，这里不重复。</p>
+<p data-points="p0187 p0188" id="e62"><b>@DaiLin67911</b>：觉得 3 到 5 个这个数很真实；他最欣赏 Router 可以不给 Bash——调度的那层自己动不了手，就算群里混进一条注入指令，最坏也就是派错活，删不掉数据库。（<a href="https://x.com/DaiLin67911/status/2116542907146752325">原评论</a>）</p>
+<p data-points="p0196 p0197" id="e63"><b>@lvgreenzhangyug</b>（英文）：他在 Android 上同时跑构建和审查也撞到同一堵墙，瓶颈是注意力不是工具；他追问不给 Bash 的 Router 是真的更安全，还是只把风险挪了个地方。（<a href="https://x.com/lvgreenzhangyug/status/2116547461330395142">原评论</a>）</p>
+<p data-points="p0193 p0194" id="e64"><b>@LeeBuildsAI</b>：他也撞过「盯会话」的天花板，办法不是多盯，而是让它们少来烦你——只把花钱、删东西、动线上服务器这三类留给人点头，别的先做完再汇报，人从监工变成看日报的。（<a href="https://x.com/LeeBuildsAI/status/2116546784671551859">原评论</a>）</p>
+<p data-points="p0214 p0215 p0211 p0212" id="e65"><b>@evvvvince</b>：几个会话并行，最怕两个 agent 动同一个文件，调度那层得先清楚谁在改哪块。（<a href="https://x.com/evvvvince/status/2116591581062959370">原评论</a>）<b>@PlatoFighter</b>：worker 越多，他越离不开 agents.md，项目背景不写明白，派出去的活大多会跑偏。（<a href="https://x.com/PlatoFighter/status/2116573370242433365">原评论</a>）</p>
+<p data-points="p0220 p0221 p0229 p0230" id="e66"><b>@Neo19990331</b> 猜下一个难题：Router 跑顺以后，每天 Worker 交上来的一堆汇报要怎么排先后，哪些该立刻打断人，哪些攒着批量看。（<a href="https://x.com/Neo19990331/status/2116675899160674399">原评论</a>）<b>@LeoLeochen975</b> 说自己开两三个 AI 窗口就乱，觉得要是能先拆好任务、最后统一汇报，对不写代码的人也友好；他问跑偏时人怎么及时插手。（<a href="https://x.com/LeoLeochen975/status/2116703258458943684">原评论</a>）这两个问题正好是原文 8.2 节自己列的未解项。</p>
+<p data-points="p0232 p0233 p0234 p0235" id="e67"><b>@wCs123123</b> 的小结：真瓶颈在于人一次最多盯 3–5 个会话；Router 收拢群聊、GitHub、邮件里的消息，Worker 各开会话并行干，原型以 MIT 协议开源，多任务的 p95 从 29.5 分钟降到 15.7 分钟；他认为落地要看两件事：几个 Worker 同改一个仓库时冲突怎么合并，Router 判断错了人能不能迅速接手。（<a href="https://x.com/wCs123123/status/2116722079139848590">原评论</a>）注意：29.5 是「单会话、中性提示」那组的 p95，不是同一套系统改进前后的对比。</p>
+<p data-points="p0184 p0185 p0190 p0191 p0226 p0227" id="e68">其余几条是体感：@sisiliu517 建议先定人最多并行盯几个，超限就排队（<a href="https://x.com/sisiliu517/status/2116541689942643179">原评论</a>）；@HunziDaily 说管三个并发就头疼，最后都卡在人工复核（<a href="https://x.com/HunziDaily/status/2116543784209338766">原评论</a>）；@halfcoderlab 说前几天并行两个 agent，其中一个跑了 36 秒就因权限问题停住，问 Super-agent 管不管得了（<a href="https://x.com/halfcoderlab/status/2116702345392460241">原评论</a>）。</p>
+<p data-points="p0205 p0206 p0207 p0208 p0209" id="e69">@grok 应一位读者请求给了白话版：DeepSeek 想做的「超级助手」主动干活、同时干多活、一直在线；上层「路由器」用轻模型管协调，下层「工人」用强模型干活；消息、邮件和代码评论会自动触发它；大脑在云端、手在你电脑上，还有监督员盯进度；人只定大方向，验收结果就够。（<a href="https://x.com/grok/status/2116558537023197603">原回复</a>）</p>
+<p class="callout extra" id="e70"><b>补充：</b>覆盖情况：评论区两页共 26 条（含 @grok 1 条），本节收 17 条；没收的是「套娃式进化」「我的极限四个」这类一句话附和，以及 @DeepTibowow 的转发求评。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s28"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">评论区</a></span> · <span class="source-anchor" data-source-section="s29"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">@sisiliu517 · 2026-10-31 14:43 UTC</a></span> · <span class="source-anchor" data-source-section="s30"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">@DaiLin67911 · 2026-10-31 14:48 UTC</a></span> · <span class="source-anchor" data-source-section="s31"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">@HunziDaily · 2026-10-31 14:52 UTC</a></span> · <span class="source-anchor" data-source-section="s32"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">@LeeBuildsAI · 2026-10-31 15:04 UTC</a></span> · <span class="source-anchor" data-source-section="s33"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">@lvgreenzhangyug · 2026-10-31 15:06 UTC</a></span> · <span class="source-anchor" data-source-section="s34"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">@pandaxia0613 · 2026-10-31 15:20 UTC</a></span> · <span class="source-anchor" data-source-section="s35"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">@0xwolverines · 2026-10-31 15:40 UTC</a></span> · <span class="source-anchor" data-source-section="s36"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">@grok · 2026-10-31 15:50 UTC</a></span> · <span class="source-anchor" data-source-section="s37"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">@PlatoFighter · 2026-10-31 16:49 UTC</a></span> · <span class="source-anchor" data-source-section="s38"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">@evvvvince · 2026-10-31 18:02 UTC</a></span> · <span class="source-anchor" data-source-section="s39"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">@asuan_ai · 2026-10-31 19:29 UTC</a></span> · <span class="source-anchor" data-source-section="s40"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">@Neo19990331 · 2026-10-31 23:37 UTC</a></span> · <span class="source-anchor" data-source-section="s41"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">@huahuadaren2023 · 2026-11-01 00:56 UTC</a></span> · <span class="source-anchor" data-source-section="s42"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">@halfcoderlab · 2026-11-01 01:22 UTC</a></span> · <span class="source-anchor" data-source-section="s43"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">@LeoLeochen975 · 2026-11-01 01:25 UTC</a></span> · <span class="source-anchor" data-source-section="s44"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">@wCs123123 · 2026-11-01 02:40 UTC</a></span> · <span class="source-anchor" data-source-section="s45"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">@LuckyChenxi · 2026-11-01 03:08 UTC</a></span></div>
+</section>
+<section class="sec" data-toc="借鉴：对我们企业 coding agent 工作台" id="s11" data-source-section="extra">
+  <header class="doc-head"><span class="kicker">借鉴分析：指挥家</span><h2>对我们的借鉴（借鉴分析：指挥家）</h2></header>
+  <div class="doc-body">
+<p class="callout key" id="e71">本节只收录指挥家已给出的五条工作台借鉴，不另加分析；每条后面注明原文位置，我逐条回原文核对过，五条都对得上。第 ⑤ 条后半句是指挥家的推断，标为「补充」。</p>
+<p class="callout key" id="e72"><b>【技术】① 不能写成 DSH 现有能力。</b>原文文首声明这是架构思路探讨、不介绍 DeepSeek Harness 现有产品功能（文首引言）；文末说部分设计做进了原型，原型不是正式产品（第 9 节结语后的声明）；仓库 README 第一句就是「Research prototype for reference only」，并说与内部版本不同、部分设计没做（README）。核对：一致。</p>
+<p class="callout key" id="e73"><b>【技术】② 实验测的是调度，不是写代码。</b>7.1 节把编码换成只耗时间的占位工具，原文明说测的是系统的调度与协作，不是单任务执行能力（第 7.1 节第 1 段）。引用这组数字时要带上这个前提。核对：一致。</p>
+<p class="callout key" id="e74"><b>【技术】③ 核心思路：人只盯得住 3–5 个会话，所以前台派活、后台隔离执行，人只做决策和验收。</b>出处：第 1 节第 3 段（3 到 5 个活跃 Session）；第 2 节双层结构与 2.1 节 Router 不直接执行具体任务、只管交互与分派的设定；第 1 节第 1 段与第 9 节结语（人上移到决策与验收）。核对：一致。</p>
+<p class="callout extra" id="e75"><b>补充：</b>①④ 所引仓库文件：<a href="https://github.com/deepseek-ai/dsh-superagent-prototype/blob/main/README.md">README.md</a>、<a href="https://github.com/deepseek-ai/dsh-superagent-prototype/blob/main/docs/000-philosophy.md">docs/000-philosophy.md</a>、<a href="https://github.com/deepseek-ai/dsh-superagent-prototype/blob/main/docs/002-authorization.md">docs/002-authorization.md</a>、<a href="https://github.com/deepseek-ai/dsh-superagent-prototype/blob/main/prompts/admission.md">prompts/admission.md</a>（行号按 10 月 31 日抓取的版本）。</p>
+<p class="callout key" id="e76"><b>【产品】④ 四条产品原则，出自原型仓库而不是公众号正文。</b>每条消息、每个面板元素都要证明自己值得占用注意力，否则删掉（docs/000-philosophy.md 第 7 行）；面板只列等人处理的事，健康状态不占位置（同文件第 21 行）；只有允许名单里的人发的请求才算数（同文件第 11、28 行）；主动揽活一开始只记录、不执行，默认 observe 模式（docs/002-authorization.md 第 98 行；prompts/admission.md 第 68 行）。核对：一致；公众号 3.1 节的「白名单」程序层准入与此呼应。</p>
+<p class="callout key" id="e77"><b>【产品】⑤ 上下文边界与凭据。</b>8.3 节说组织怎么配 Super-agent，实际是在划分上下文边界（第 8.3 节第 1 段），可以对应到企业里资产与知识库的权限划分；8.4 节说还需要设计机制，让 Agent 在完全不接触凭据本身的情况下使用凭据，原文没给方案、属于未解问题（第 8.4 节第 3 段）。核对：两处原文表述一致。<b>补充：</b>把这点当作工作台的差异化方向，是指挥家的推断，原文没有这么说。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="extra"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">本页整理</a></span></div>
+</section>
+<section class="sec" data-toc="来源核对：谁写的、哪里能对上" id="s12" data-source-section="s46">
+  <header class="doc-head"><span class="kicker">采集核对</span><h2>公众号与官方组织仓库可对上；英文 Article 的 X 账号身份未确认</h2></header>
+  <div class="doc-body">
+<p class="callout extra" id="e78"><b>补充：</b>公众号署名「DeepSeek Harness 团队」，网页里的作者字段写的是「DeepSeek 产品部」，发布时间 10 月 31 日 12:29 UTC。文首、文末各有一句声明：一是本文讲架构思路、不介绍现有功能，二是原型不是正式产品。</p>
+<p class="callout extra" id="e79"><b>补充：</b>英文版 Article 由 @DeepTibowow 发出，正文开头署名 @deepseek_ai 与 @DeepSeekHarness，内容和公众号对得上。这个账号 10 月 30 日才注册，简介写的是 Friendly “DeepSeeker” for DeepSeek Harness，只有 1 个粉丝，没有认证。</p>
+<p class="callout extra" id="e80"><b>补充：</b>判断：仓库在 deepseek-ai 组织下，README 直接引用了这篇文章的英文标题，所以文章出自 DeepSeek Harness 团队这一点可信；@DeepTibowow 这个 X 账号是否官方，未确认。</p>
+<p data-points="p0241 p0242 p0243 p0244" id="e81">链接：<a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">公众号原文</a>、<a href="https://x.com/shao__meng/status/2116541149443698968">X 摘要帖</a>、<a href="https://x.com/DeepTibowow/status/2116530987400401193">英文 Article 帖</a>、<a href="https://github.com/deepseek-ai/dsh-superagent-prototype">仓库</a>。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s46"><a href="https://mp.weixin.qq.com/s/zoS7GlReWPhfCjENGxXCdg">来源核对</a></span></div>
+</section>
+<section class="sec" data-toc="小测：3 道题" id="s13" data-source-section="extra">
+  <div class="head-full"><span class="kicker">小测</span><h2>用三道题检查理解</h2></div>
+  <div class="stage"><div class="quiz"><script type="application/json">[{"q": "文章认为多任务场景的上限主要取决于什么？", "opts": ["底层模型参数规模和推理速度", "人的注意力", "可并行调用的 GPU 与沙箱数量"], "a": 1, "why": "原文第 1 节：单任务的上限看模型能力，多任务的上限看人的注意力。", "back": 1}, {"q": "7.1 节拿掉「订阅直通」后，主要变化是什么？", "opts": ["完成时间差不多，Router 决定和读缓存变多", "任务完成时间翻了一倍，长尾明显增加", "代码质量明显下降，需要人工返工"], "a": 0, "why": "Router 决定数约 +30%、读缓存 token 约 +37%；直通省的是 Router 开销，不是提速。实验的编码还是占位工具。", "back": 6}, {"q": "关于 dsh-superagent-prototype，哪种说法准确？", "opts": ["是 DeepSeek Harness 已上线的正式产品功能", "完整实现了文中五个模块，包括 Watchdog", "研究原型，与文中实现不同"], "a": 2, "why": "文末声明与 README 都说它是供参考的研究原型，部分设计没有实现。", "back": 8}]</script></div></div>
+</section>
+</main><script>var __H=location.hash;window.lessonIcons={"menu": "<svg class=\"i i-menu\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/><\/svg>", "play": "<svg class=\"i i-play\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z\"/><\/svg>", "pause": "<svg class=\"i i-pause\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"14\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/><rect x=\"5\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/><\/svg>", "check": "<svg class=\"i i-check\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 6 9 17l-5-5\"/><\/svg>", "x": "<svg class=\"i i-x\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/><\/svg>", "zoom-in": "<svg class=\"i i-zoom-in\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><line x1=\"21\" x2=\"16.65\" y1=\"21\" y2=\"16.65\"/><line x1=\"11\" x2=\"11\" y1=\"8\" y2=\"14\"/><line x1=\"8\" x2=\"14\" y1=\"11\" y2=\"11\"/><\/svg>", "zoom-out": "<svg class=\"i i-zoom-out\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><line x1=\"21\" x2=\"16.65\" y1=\"21\" y2=\"16.65\"/><line x1=\"8\" x2=\"14\" y1=\"11\" y2=\"11\"/><\/svg>", "copy": "<svg class=\"i i-copy\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\"/><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"/><\/svg>", "chevron-right": "<svg class=\"i i-chevron-right\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m9 18 6-6-6-6\"/><\/svg>", "book-open": "<svg class=\"i i-book-open\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 5v16\"/><path d=\"M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z\"/><\/svg>", "external-link": "<svg class=\"i i-external-link\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M15 3h6v6\"/><path d=\"M10 14 21 3\"/><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/><\/svg>"};window.lessonIcon=n=>window.lessonIcons[n]||"";</script><script>/* Article/pair navigation only. No global swipe or arrow-key paging. */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const H=document.documentElement, sections=$$('main.deck > .sec, main.deck > .hero, .pair-notes > .sec');
+if(!sections.length)return;
+const ids=new Set($$('[id]').map(n=>n.id));
+sections.forEach((s,i)=>{if(!s.id){let n=i+1,id=s.classList.contains('hero')?'intro':'s'+n;while(ids.has(id))id='s'+(++n);s.id=id;ids.add(id)}});
+const title=s=>s.dataset.toc||$('h2,h1,h3',s)?.textContent||s.id;
+const toc=document.createElement('nav');toc.className='toc';toc.id='lesson-toc';toc.setAttribute('aria-label','目录');
+const heading=document.createElement('b');heading.textContent='目录';toc.appendChild(heading);const ol=document.createElement('ol');toc.appendChild(ol);
+sections.forEach((s,i)=>{const li=document.createElement('li'),a=document.createElement('a');a.href='#'+s.id;a.textContent=(i+1)+'. '+title(s);li.appendChild(a);ol.appendChild(li)});document.body.appendChild(toc);
+const links=$$('a',toc),toggle=$('.toc-toggle'),count=$('.count'),bar=$('.track i');
+const shade=document.createElement('div');shade.className='toc-backdrop';document.body.appendChild(shade);
+function open(value){H.classList.toggle('toc-open',value);toggle?.setAttribute('aria-expanded',String(value));if(value)links.find(a=>a.getAttribute('aria-current')==='true')?.focus();else toggle?.focus()}
+if(toggle){toggle.setAttribute('aria-controls',toc.id);toggle.onclick=()=>open(!H.classList.contains('toc-open'))}shade.onclick=()=>open(false);
+addEventListener('keydown',e=>{if(e.key==='Escape'&&H.classList.contains('toc-open'))open(false)});
+function locate(hash){let id;try{id=decodeURIComponent(hash.replace(/^#/,''))}catch(e){return null}if(/^\d+$/.test(id))return sections[+id-1];return document.getElementById(id)}
+function jump(target){if(!target)return;H.classList.remove('toc-open');toggle?.setAttribute('aria-expanded','false');target.scrollIntoView({block:'start',behavior:'instant'});history.replaceState(null,'','#'+target.id);update();dispatchEvent(new Event('lesson:navigate'))}
+window.lessonNav={layout:H.dataset.layout,go:n=>jump(document.getElementById('s'+n)||sections[n-1]),returnTo:box=>jump(box.closest('.sec')||box),jump};window.goCard=n=>window.lessonNav.go(n);
+toc.onclick=e=>{const a=e.target.closest('a');if(!a)return;e.preventDefault();jump(locate(a.hash))};
+const key='pos:'+location.pathname;let queued=false,restoring=true;
+function update(){queued=false;let current=sections[0];const line=H.dataset.layout==='pair'&&innerWidth<=820?innerHeight*.4+90:100;for(const s of sections)if(s.getBoundingClientRect().top<=line)current=s;
+ count.textContent=title(current);links.forEach(a=>a.setAttribute('aria-current',String(a.hash==='#'+current.id)));const max=H.scrollHeight-innerHeight;bar.style.width=Math.max(0,Math.min(100,max>0?scrollY/max*100:100))+'%';
+ if(!restoring)try{localStorage.setItem(key,JSON.stringify({id:current.id,offset:scrollY-(current.getBoundingClientRect().top+scrollY)}))}catch(e){}
+}
+addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(update)}},{passive:true});addEventListener('resize',update);addEventListener('hashchange',()=>jump(locate(location.hash)));
+addEventListener('load',()=>{const hash=window.__H||location.hash;let target=locate(hash),offset=0;if(!hash){try{const pos=JSON.parse(localStorage.getItem(key)||'null');if(pos){target=document.getElementById(pos.id);offset=Number(pos.offset)||0}}catch(e){}}
+ if(target){target.scrollIntoView({block:'start',behavior:'instant'});if(!hash)scrollBy(0,offset+72)}restoring=false;update();
+});update();
+})();
+</script><script>/* Reveal an offscreen simulator first, then move only its local SVG viewport. */
+(function(root){
+function delta(start,end,low,high,pad=16){if(start<low+pad)return start-low-pad;if(end>high-pad)return end-high+pad;return 0}
+function focus(svg,scroller){
+ let frame=scroller.getBoundingClientRect(),bottom=innerHeight-88;
+ const top=document.querySelector('.top')?.getBoundingClientRect().bottom||56;
+ if(frame.bottom<=top||frame.top+112>bottom){
+  scroller.closest('.sim').scrollIntoView({block:'start',behavior:'instant'});
+  frame=scroller.getBoundingClientRect();
+ }
+ for(let p=scroller.parentElement;p&&p!==document.body;p=p.parentElement){const c=getComputedStyle(p);if(/auto|scroll|hidden|clip/.test(c.overflowY)){const r=p.getBoundingClientRect();bottom=Math.min(bottom,r.top+p.clientHeight)}}
+ const space=Math.max(112,Math.min(innerHeight*.4,bottom-frame.top));scroller.style.maxHeight=space+'px';
+ frame=scroller.getBoundingClientRect();const node=svg.querySelector('.fl-node.act');if(!node)return;const r=node.getBoundingClientRect();
+ scroller.scrollTop+=delta(r.top,r.bottom,frame.top,frame.top+scroller.clientHeight);
+ scroller.scrollLeft+=delta(r.left,r.right,frame.left,frame.left+scroller.clientWidth);
+}
+root.LessonGeometry={delta,focus};if(typeof module!=='undefined')module.exports={delta,focus};
+})(typeof window==='undefined'?globalThis:window);
+</script><script>/* Shared material/explanation pairing, original-image dialog and copy actions. */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)],ic=window.lessonIcon;
+window.lessonCopy=async(text,button)=>{try{if(navigator.clipboard?.writeText)await navigator.clipboard.writeText(text);else{const t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();if(!document.execCommand('copy'))throw Error('copy');t.remove()}button.textContent='已复制'}catch(e){button.textContent='复制未成功，请选中文字复制'}};
+$$('.pair.codewalk,.pair.read-pair,.pair.material-pair').forEach(pair=>{
+ const source=$('.pair-source',pair),notes=$('.pair-notes',pair);if(!source||!notes)return;
+ const pre=$('pre[data-lines]',source),code=pre&&$('code',pre),steps=$$('.step',notes);let lines=[],raw='';
+ if(code){raw=code.textContent;const first=Number(pre.dataset.lines)||1;code.textContent='';const pieces=raw.replace(/\n$/,'').split('\n');pieces.forEach((text,i)=>{const line=document.createElement('span');line.className='code-line';line.dataset.line=String(first+i);line.textContent=text;code.appendChild(line);lines.push(line)});
+  const panel=document.createElement('div');panel.className='code-panel';source.before(panel);
+  const toolbar=document.createElement('div');toolbar.className='code-toolbar';
+  const hint=document.createElement('span');hint.className='code-scroll-hint';hint.textContent='长行可横向滚动';
+  const button=document.createElement('button');button.className='btn sm copy-code';button.innerHTML=ic('copy')+' 复制代码';button.onclick=()=>window.lessonCopy(raw,button);
+  toolbar.append(hint,button);panel.append(toolbar,source);
+ }
+ let active=null;
+ function select(step){if(!step||active===step)return;active=step;steps.forEach(s=>s.classList.toggle('is-active',s===step));let targets=[];
+  if(code){const ranges=(step.dataset.hl||'').split(',').map(v=>v.split('-').map(Number));lines.forEach(line=>{const n=Number(line.dataset.line),on=ranges.some(([a,b=a])=>n>=a&&n<=b);line.classList.toggle('hl',on);if(on)targets.push(line)})}
+  else{const ids=(step.dataset.explains||step.dataset.target||'').split(/\s+/);$$('.source-block,[data-material]',source).forEach(block=>{const on=ids.includes(block.dataset.sourceId||block.id);block.classList.toggle('is-active',on);if(on)targets.push(block)})}
+  if(targets.length){const a=targets[0].getBoundingClientRect(),b=targets[targets.length-1].getBoundingClientRect(),r=source.getBoundingClientRect();const bottom=r.top+source.clientHeight;source.scrollTop+=b.bottom-a.top>source.clientHeight-32?a.top-r.top-16:window.LessonGeometry.delta(a.top,b.bottom,r.top,bottom)}
+ }
+ const update=()=>{
+  const rect=notes.getBoundingClientRect(),material=source.closest('.code-panel')||source;
+  const top=Math.max(0,$(".top")?.getBoundingClientRect().bottom||0,innerWidth<=820?material.getBoundingClientRect().bottom:0),bottom=Math.min(innerHeight,rect.bottom);
+  if(bottom<=top)return;
+  const line=top+(bottom-top)*.4;let step=steps[0];
+  for(const s of steps)if(s.getBoundingClientRect().top<=line)step=s;
+  const last=steps.at(-1),lastRect=last?.getBoundingClientRect();
+  if(scrollY+innerHeight>=document.documentElement.scrollHeight-2&&lastRect?.top<bottom&&lastRect.bottom>top)step=last;
+  select(step);
+ };
+ let queued=false;addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(()=>{queued=false;update()})}},{passive:true});addEventListener('resize',update);
+ steps.forEach(step=>{step.addEventListener('focusin',()=>select(step));step.addEventListener('click',e=>{select(step);const a=e.target.closest('a');if(a?.hash&&source.querySelector(a.hash)){e.preventDefault();source.focus()}})});select(steps[0]);addEventListener('load',update);
+});
+$$('figure img').forEach(img=>{const button=document.createElement('button');button.className='image-open';button.type='button';button.setAttribute('aria-label','放大图片：'+img.alt);img.replaceWith(button);button.appendChild(img);button.onclick=()=>{
+ const dialog=document.createElement('dialog');dialog.className='image-dialog';dialog.setAttribute('aria-label',img.alt);const close=document.createElement('button');close.className='btn dialog-close';close.innerHTML=ic('x')+' 关闭';const large=img.cloneNode();large.removeAttribute('loading');dialog.append(close,large);document.body.appendChild(dialog);close.onclick=()=>dialog.close();dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close()});dialog.addEventListener('close',()=>{dialog.remove();button.focus()});dialog.showModal();close.focus();
+}});
+$$('details.more summary').forEach(s=>{if(!s.textContent.trim())s.textContent='展开细节';s.insertAdjacentHTML('afterbegin',ic('chevron-right'))});
+})();
+</script><script>/* 学习搭子 固定组件库 — 不要在课程里改这个文件。 */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const NS='http://www.w3.org/2000/svg';
+const data=(box,kind)=>JSON.parse(box.querySelector('script[type="application/json"]')?.textContent||box.dataset[kind]);
+const ic=window.lessonIcon;
+const el=(t,a={},p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p&&p.appendChild(e);return e};
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+function component(selector,render){
+  $$(selector).forEach(box=>{try{render(box)}catch(error){
+    const message=document.createElement('p');message.className='component-error';
+    message.textContent='这张图的数据有误';message.setAttribute('role','status');
+    box.replaceWith(message);console.error('组件数据有误',error);
+  }});
+}
+
+/* ---------- flow：用 JSON 画流程图 ----------
+ spec = {w,h,nodes:[{id,x,y,t,s?,c?,w?}],edges:[{f,t,l?,bend?}]}  节点坐标是中心点 */
+function drawFlow(svg,spec){
+  svg.innerHTML='';
+  const defs=el('defs',{},svg);
+  [['a','var(--meta)'],['b','var(--blue)'],['red','var(--amber)'],['amber','var(--amber)'],['green','var(--green)']].forEach(([id,c])=>{const m=el('marker',{id:'ar'+id+svg.dataset.uid,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:7,markerHeight:7,orient:'auto-start-reverse'},defs);el('path',{d:'M0,0L10,5L0,10z',fill:c},m)});
+  const N={};spec.nodes.forEach(n=>N[n.id]={...n,w:n.w||150,h:n.h||(n.s?70:56)});
+  const ns=Object.values(N);
+  let x0=Math.min(...ns.map(n=>n.x-n.w/2)),x1=Math.max(...ns.map(n=>n.x+n.w/2)),y0=Math.min(...ns.map(n=>n.y-n.h/2)),y1=Math.max(...ns.map(n=>n.y+n.h/2));
+  const B={x0,x1,y0,y1};
+  const eg=el('g',{},svg),ng=el('g',{},svg);svg._edges={};svg._nodes={};
+  const clip=(a,b)=>{const dx=b.x-a.x,dy=b.y-a.y;const s=Math.min(Math.abs((a.w/2+6)/(dx||1e-9)),Math.abs((a.h/2+6)/(dy||1e-9)));return[a.x+dx*s,a.y+dy*s]};
+  spec.edges.forEach(e=>{const a=N[e.f],b=N[e.t];let d,lx,ly;
+    if(e.route){ /* 沿外圈走的直角线：top|bottom|left|right，lane 控制离外框的距离 */
+      const g=30+(e.lane||0)*30,oa=e.oa||0,ob=e.ob||0;
+      if(e.route==='top'||e.route==='bottom'){const t=e.route==='top',Y=t?B.y0-g:B.y1+g,ya=a.y+(t?-1:1)*(a.h/2+2),yb=b.y+(t?-1:1)*(b.h/2+8);
+        d=`M${a.x+oa},${ya} V${Y} H${b.x+ob} V${yb}`;lx=(a.x+oa+b.x+ob)/2;ly=Y+(t?-8:18);
+        t?(y0=Math.min(y0,Y-26)):(y1=Math.max(y1,Y+26));}
+      else{const l=e.route==='left',X=l?B.x0-g:B.x1+g,xa=a.x+(l?-1:1)*(a.w/2+2),xb=b.x+(l?-1:1)*(b.w/2+8);
+        d=`M${xa},${a.y+oa} H${X} V${b.y+ob} H${xb}`;lx=X+(l?-8:8);ly=(a.y+b.y)/2;
+        l?(x0=Math.min(x0,X-90)):(x1=Math.max(x1,X+90));}
+    }else{const[p1,q1]=clip(a,b),[p2,q2]=clip(b,a);const mx=(p1+p2)/2,my=(q1+q2)/2,len=Math.hypot(p2-p1,q2-q1)||1,bd=e.bend||0;
+      const cx=mx-(q2-q1)/len*bd,cy=my+(p2-p1)/len*bd;d=`M${p1},${q1} Q${cx},${cy} ${p2},${q2}`;
+      const qx=.25*p1+.5*cx+.25*p2,qy=.25*q1+.5*cy+.25*q2,sg=bd>=0?1:-1;lx=qx-(q2-q1)/len*sg*14;ly=qy+(p2-p1)/len*sg*14+4;}
+    const mk=e.c||'a';const p=el('path',{d,class:'fl-edge '+(e.c||''),'marker-end':`url(#ar${mk}${svg.dataset.uid})`},eg);p._mk=mk;
+    let lab=null;if(e.l){const anc=e.route==='left'?'end':e.route==='right'?'start':'middle';lab=el('text',{x:lx,y:ly,'text-anchor':anc,class:'fl-elab '+(e.c||''),stroke:'var(--paper)','stroke-width':5,'paint-order':'stroke'},eg);lab.textContent=e.l}
+    svg._edges[e.f+'>'+e.t]={p,lab}});
+  ns.forEach(n=>{const g=el('g',{class:'fl-node '+(n.c||'')},ng);
+    el('rect',{x:n.x-n.w/2,y:n.y-n.h/2,width:n.w,height:n.h,rx:14},g);
+    const t=el('text',{x:n.x,y:n.y+(n.s?-4:6),'text-anchor':'middle'},g);t.textContent=n.t;
+    if(n.s){const s=el('text',{x:n.x,y:n.y+18,'text-anchor':'middle',class:'sub'},g);s.textContent=n.s}
+    svg._nodes[n.id]=g});
+  /* 自动贴合：viewBox 只包住内容，图会放大填满面板 */
+  const P=spec.pad??8,W=x1-x0+2*P,H=y1-y0+2*P+20;
+  svg.setAttribute('viewBox',`${x0-P} ${y0-P-10} ${W} ${H}`);
+  svg.style.setProperty('--flow-width',W+'px');svg.style.setProperty('--flow-height',H+'px');
+  const scroll=document.createElement('div');scroll.className='flow-scroll';
+  svg.replaceWith(scroll);scroll.appendChild(svg);
+  if(!scroll.closest('.sim')&&W>innerWidth-78){const t=document.createElement('p');t.className='flow-tip';t.textContent='← 左右滑动看全图 →';scroll.after(t)}
+  svg._set=(act,edge)=>{for(const k in svg._nodes)svg._nodes[k].classList.toggle('act',k===act);
+    for(const k in svg._edges){const on=k===edge,E=svg._edges[k];E.p.classList.toggle('act',on);E.p.setAttribute('marker-end',`url(#ar${on?'b':E.p._mk}${svg.dataset.uid})`);E.lab&&E.lab.classList.toggle('act',on)}};
+  svg._set(svg.dataset.act,svg.dataset.edge);
+  svg._center=()=>{if(!matchMedia('(max-width:820px)').matches)return;
+    const active=Object.values(svg._nodes).find(n=>n.classList.contains('act'));if(!active)return;
+    const a=active.getBoundingClientRect(),r=scroll.getBoundingClientRect();
+    scroll.scrollLeft+=a.left+a.width/2-r.left-r.width/2;
+  };
+}
+let uid=0;
+component('svg.flow',s=>{s.dataset.uid=++uid;drawFlow(s,data(s,'flow'))});
+
+/* ---------- sim：一步步走的模拟器 ----------
+ data-sim = {flow:{...}, steps:[{act,edge,msg:{r:user|asst|tool|err|sys,n?,t},say}], alt?:{label,steps:[...]}} */
+component('.sim',box=>{
+  const spec=data(box,'sim');if(spec.alt&&!spec.alts)spec.alts=[spec.alt];const AL=spec.alts||[];const gname='br'+(++uid);
+  box.innerHTML=`<div class="ctl"><button class="btn sm" data-a="step">下一步</button><button class="btn sm" data-a="play">${ic("play")} 自动</button><button class="btn sm" data-a="reset">重置</button>
+   <label>速度 <input type="range" min="300" max="2500" step="100" value="1200"></label></div>${AL.length?`<div class="ctl branches"><label><input type="radio" name="${gname}" value="-1" checked> ${esc(spec.label||'正常路径')}</label>${AL.map((a,j)=>`<label><input type="radio" name="${gname}" value="${j}"> ${esc(a.label)}</label>`).join('')}</div>`:''}
+   <div class="body"><svg class="flow"></svg><div class="log"></div></div><div class="narr"></div>`;
+  if(spec.layout==='wide')box.classList.add('wide');
+  const svg=$('.body > svg.flow',box);svg.dataset.uid=++uid;drawFlow(svg,spec.flow);
+  const fs=svg.parentElement,tip=document.createElement('p');tip.className='flow-tip';tip.textContent='点图放大看字，再点回到全图';fs.after(tip);
+  const focus=()=>{if(!fs.classList.contains('zoom'))return svg._center();window.LessonGeometry.focus(svg,fs)};
+  const zoom=document.createElement('button');zoom.className='btn sm zoom-toggle';zoom.innerHTML=ic('zoom-in')+' 放大图';zoom.setAttribute('aria-pressed','false');tip.replaceWith(zoom);const toggle=()=>{const on=fs.classList.toggle('zoom');zoom.innerHTML=ic(on?'zoom-out':'zoom-in')+(on?' 返回全图':' 放大图');zoom.setAttribute('aria-pressed',String(on));if(!on){fs.style.maxHeight='';fs.scrollTop=0}focus()};fs.onclick=toggle;zoom.onclick=toggle;window.addEventListener('resize',focus);window.addEventListener('load',()=>requestAnimationFrame(()=>{const params=new URLSearchParams(location.search);if((params.has('sim')||params.has('zoom'))&&!(window.__H??location.hash)&&box===$('.sim')){const section=box.closest('.sec,.card');if(window.lessonNav.layout==='deck')window.goCard($$('.card').indexOf(section)+1);else section.scrollIntoView({block:'start',behavior:'instant'})}focus()}));window.addEventListener('lesson:navigate',()=>requestAnimationFrame(focus));
+  const log=$('.log',box),narr=$('.narr',box),radios=$$('input[type=radio]',box),spd=$('input[type=range]',box),play=$('[data-a=play]',box);
+  let i=0,timer=null,predicted=!spec.predict;const prediction=document.createElement('div');if(spec.predict){prediction.className='prediction callout';prediction.innerHTML='<p>先预测：'+esc(spec.predict)+'</p><label>你的判断<textarea rows="2"></textarea></label><button class="btn sm" data-a="predict">提交预测，再看过程</button>';box.prepend(prediction)};const sel=()=>{const r=radios.find(r=>r.checked);return r?+r.value:-1};const steps=()=>sel()>=0?AL[sel()].steps:spec.steps;
+  const hint=spec.note?esc(spec.note)+'　点「下一步」开始。':'点「下一步」开始。';const reset=()=>{i=0;log.innerHTML='';narr.innerHTML=hint;svg._set(null,null);stop()};
+  const stop=()=>{clearTimeout(timer);timer=null;play.innerHTML=ic('play')+' 自动'};
+  const step=()=>{const S=steps();if(i>=S.length){narr.textContent='流程结束。点「重置」再走一遍。';stop();return false}
+    const s=S[i++];svg._set(s.act,s.edge);focus();if(s.msg){const d=document.createElement('div');d.className='msg '+s.msg.r;
+      d.innerHTML=`<b>${esc(s.msg.n||({user:'用户',asst:'模型',tool:'工具结果',err:'出错',sys:'系统提示词'}[s.msg.r]))}</b>${esc(s.msg.t)}`;log.appendChild(d);log.scrollTop=1e9}
+    narr.innerHTML=`<b>第 ${i}/${S.length} 步</b>　${esc(s.say)}`;return true};
+  const loop=()=>{if(step())timer=setTimeout(loop,+spd.value);else stop()};
+  box.onclick=e=>{const a=e.target.closest('button')?.dataset.a;if(a==='predict'){predicted=true;prediction.hidden=true;step()}if(a==='step'){stop();if(predicted)step();else prediction.querySelector('textarea').focus()}if(a==='reset')reset();if(a==='play'){if(!predicted){prediction.querySelector('textarea').focus();return}if(timer)stop();else{play.innerHTML=ic('pause')+' 暂停';loop()}}};
+  narr.innerHTML=hint;radios.forEach(r=>r.onchange=reset);
+  const P=new URLSearchParams(location.search);if(P.get('alt')&&radios[+P.get('alt')]){radios[+P.get('alt')].checked=true}for(let n=+P.get('sim')||0;n>0;n--)step();if(P.get('sim')){predicted=true;prediction.hidden=true}if(P.get('zoom')){fs.classList.add('zoom');zoom.setAttribute('aria-pressed','true');zoom.innerHTML=ic('zoom-out')+' 返回全图'} /* 自查用：?sim=5&alt=1&zoom=1 */
+});
+
+/* ---------- bars：横向条形图 ----------
+ data-bars = {unit, items:[{l,v,c?:blue|amber|green|red,note?}], caption?}  数字必须来自原文 */
+component('.bars',box=>{const B=data(box,'bars'),mx=Math.max(1,...B.items.filter(i=>i.v!=null).map(i=>i.v));
+  box.innerHTML=B.items.map(i=>`<div class="bar ${i.c||''}"><span class="bl">${esc(i.l)}</span>${i.v==null?`<span class="bmiss">${esc(i.miss||'原文未给数字')}</span>`:`<span class="bt"><i style="width:${(i.v/(B.axis==='independent'?Math.max(1,i.v):mx)*100).toFixed(1)}%"></i></span><span class="bv">${esc(i.v)}${esc(i.unit||B.unit||'')}</span>`}${i.note?`<span class="bn">${esc(i.note)}</span>`:''}</div>`).join('')+(B.caption?`<div class="bc">${esc(B.caption)}</div>`:'')});
+
+/* ---------- quiz：页内小测 ----------
+ data-quiz = [{q,opts:[...],a:正确下标,why,back:答错时回到第几张卡片}] */
+component('.quiz,.checkpoint',box=>{
+  const checkpoint=box.classList.contains('checkpoint');box.classList.add('quiz');const raw=data(box,checkpoint?'checkpoint':'quiz'),Q=Array.isArray(raw)?raw:[raw],P=new URLSearchParams(checkpoint?'':location.search);
+  let k=Math.max(0,Math.min(Q.length-1,(parseInt(P.get('q'))||1)-1));
+  const answers=Q.map(()=>({first:null,selected:null,retries:0}));
+  const score=()=>answers.filter((s,i)=>s.first===Q[i].a).length;
+  const complete=()=>answers.every(s=>s.selected!==null);
+  const reviewButton=i=>{
+    const target=window.lessonNav.layout==='deck'?$$('.card')[Q[i].back-1]:document.getElementById('s'+Q[i].back);
+    const title=target.dataset.toc||$('h2,h1,h3',target)?.textContent||'相关内容';
+    return `<button class="btn sm" data-review="${i}">回看：${esc(title)}</button>`;
+  };
+  function summary(){
+    const wrong=answers.map((s,i)=>s.first!==Q[i].a?i:-1).filter(i=>i>=0);
+    const recovered=wrong.filter(i=>answers[i].selected===Q[i].a).length;
+    box.innerHTML=`<div class="qt">小测总结</div><p>首次得分：${score()} / ${Q.length}。重试答对：${recovered} 题。</p>
+      <div>${wrong.length?wrong.map(i=>`<p>第 ${i+1} 题：${esc(Q[i].q)} ${reviewButton(i)} <button class="btn sm" data-question="${i}">回到此题</button></p>`).join(''):'没有首次错题。'}</div>
+      <p>用自己的话复述这页的核心机制，再举一个新场景。</p><label>你的复述<textarea class="retelling" rows="3"></textarea></label><button class="btn sm" data-copy-result="1">${ic("copy")} 复制学习结果 JSON</button><button class="btn sm" data-question="0">查看作答</button>`;
+  }
+  function render(){const q=Q[k],s=answers[k];
+    box.innerHTML=`<div class="qn">第 ${k+1} / ${Q.length} 题 ${checkpoint?'· 不计分':'· 首次答对 '+score()}</div><div class="qt">${esc(q.q)}</div>
+      ${q.opts.map((o,j)=>`<button class="opt ${s.selected===null?'':j===s.selected?(j===q.a?'ok':'no'):''}" data-j="${j}" aria-pressed="${j===s.selected}">${String.fromCharCode(65+j)}. ${esc(o)}</button>`).join('')}
+      <div class="fb" aria-live="polite">${s.selected===null?'':s.selected===q.a?ic('check')+' 对。'+esc(q.why):ic('x')+' 不对。先回去看看，或再试一次。'}
+      ${s.selected!==null&&s.selected!==q.a?reviewButton(k)+' <button class="btn sm" data-retry="1">再试一次</button>':''}</div>
+      <div class="nav"><button class="btn sm" data-n="-1" ${k?'':'disabled'}>上一题</button>
+      <button class="btn sm main" data-n="1" ${s.selected===null?'disabled':''}>${checkpoint?'完成检查':k===Q.length-1?'查看总结':'下一题'}</button></div>`;
+  }
+  box.onclick=e=>{const t=e.target.closest('button');if(!t)return;
+    if(t.dataset.review!==undefined){const i=+t.dataset.review;window.lessonNav.go(Q[i].back);
+      let ret=$('#quiz-return');if(!ret){ret=document.createElement('button');ret.id='quiz-return';ret.className='btn sm';document.body.appendChild(ret)}
+      ret.textContent='回到小测';ret.onclick=()=>{window.lessonNav.returnTo(box);ret.remove()};return;
+    }
+    if(t.dataset.copyResult!==undefined){const result={path:location.pathname,firstScore:score(),total:Q.length,answers:answers.map((s,i)=>({question:i+1,first:s.first,selected:s.selected,retries:s.retries,wrong:s.first!==Q[i].a,review:'#s'+Q[i].back})),retelling:$('.retelling',box).value};window.lessonCopy(JSON.stringify(result,null,2),t);return}
+    if(t.dataset.question!==undefined){k=+t.dataset.question;render();return}
+    if(t.dataset.retry){answers[k].selected=null;answers[k].retries++;render();return}
+    if(t.dataset.n){if(checkpoint&&+t.dataset.n===1){box.querySelector('.nav').hidden=true;return}if(k===Q.length-1&&+t.dataset.n===1){if(complete())summary();else{k=answers.findIndex(s=>s.selected===null);render()}return}k+=+t.dataset.n;render();return}
+    if(t.dataset.j===undefined||answers[k].selected!==null)return;
+    const j=+t.dataset.j;answers[k].selected=j;if(answers[k].first===null)answers[k].first=j;render();const nv=$('.nav',box);nv&&nv.scrollIntoView&&nv.scrollIntoView({block:'nearest'});
+  };
+  render();
+  const pk=P.get('pick'),pick=pk==='wrong'?Q[k].opts.findIndex((_,i)=>i!==Q[k].a):pk!==null&&/^\d+$/.test(pk)?+pk:-1;
+  if(pick>=0&&$$('.opt',box)[pick])$$('.opt',box)[pick].click();
+
+});
+
+})();
+</script><script>/* End-of-build readiness marker, used by the screenshot harness. */
+document.querySelector('.theme-toggle').onclick=window.__tt;
+window.__lessonReady=true;
+</script><script>/* ---------- 学完了：点一下记为已学完（存在本机浏览器） ---------- */
+(function(){if(window.__finish)return;window.__finish=1;
+if(!document.querySelector('.deck'))return;
+const st=document.createElement('style');st.textContent=`.fin-btn{position:fixed;right:16px;bottom:76px;z-index:50;padding:10px 16px;border-radius:999px;border:0;background:#16a34a;color:#fff;font:600 15px system-ui;box-shadow:0 4px 14px rgba(0,0,0,.18);cursor:pointer}.fin-btn.done{background:#e5e7eb;color:#166534}`;document.head.appendChild(st);
+const p=n=>String(n).padStart(2,'0');
+const doneKeys=()=>{const out=new Set();const seed=location.pathname;const vs=new Set([seed]);if(seed.endsWith('/index.html')){const d=seed.slice(0,-10);vs.add(d);vs.add(d.replace(/\/$/,'')||'/')}else if(seed.endsWith('/')){vs.add(seed+'index.html');vs.add(seed.replace(/\/$/,'')||'/')}else if(!/\.[a-z0-9]+$/i.test(seed)){vs.add(seed+'/');vs.add(seed+'/index.html')}for(const u of vs){out.add(u);const m=u.match(/^(.*)\/courses\/(.+)$/);if(m)out.add(m[1]+'/'+m[2]);const m2=u.match(/^(.*)\/(cs146s)\/(.+)$/);if(m2&&!u.includes('/courses/'))out.add(m2[1]+'/courses/'+m2[2]+'/'+m2[3])}return[...out]};
+const getDone=()=>{for(const k of doneKeys()){const d=localStorage.getItem('done:'+k);if(d)return d}return null};
+const setDone=v=>{for(const k of doneKeys())localStorage.setItem('done:'+k,v)};
+const clearDone=()=>{for(const k of doneKeys())localStorage.removeItem('done:'+k)};
+const b=document.createElement('button');b.className='fin-btn';document.body.appendChild(b);
+const show=()=>{const d=getDone();b.classList.toggle('done',!!d);b.textContent=d?'✓ 已学完 '+d:'✓ 学完了';b.title=d?'再点一下取消':''};show();
+b.onclick=()=>{if(getDone()){if(confirm('取消「已学完」记录？'))clearDone()}else{const x=new Date();setDone(x.getFullYear()+'-'+p(x.getMonth()+1)+'-'+p(x.getDate()))}show()};
+})();
+</script><script src="../../assets/gh.js" defer></script><script src="../../assets/progress.js" defer></script></body></html>
