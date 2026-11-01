@@ -6,7 +6,7 @@ Codex、Cursor、Claude Code、其他 Grok Bot 改这个仓库前先读这一页
 
 - 王玮的学习站，纯静态 HTML。GitHub Pages 直接发布 `main`：https://ww880412.github.io/learning/ 。推到 `main` 大约 1 分钟后上线，没有 CI。
 - 大部分页面由 `node build.mjs` 从 `data/*.json` 生成。没有 npm 依赖，只要 node。
-- **所有日期都按北京时间（Asia/Shanghai）显示。** 唯一例外是 X 简报文件名：`x-brief/YYYY-MM-DD.html` 用美东日期，北京时间 09:00 发布时美东还是前一天，所以页面上按 +1 天显示。**定时任务一律按北京时间触发**（2026-10-26 定，cron 用 `CRON_TZ=Asia/Shanghai`），不随美东夏令时变；各 bot 的 routine 改好之前，实际仍是美东时间触发，11/1 冬令时后会晚一小时。海报目录 `x-posters/YYYY-MM-DD/` 已经是北京日期。详细规则见 README「每日汇总」。
+- **所有日期都按北京时间（Asia/Shanghai）显示。** 唯一例外是 X 简报文件名：`x-brief/YYYY-MM-DD.html` 用美东日期，北京时间 09:00 发布时美东还是前一天，所以页面上按 +1 天显示。**定时任务一律按北京时间触发**（2026-10-26 定，cron 用 `CRON_TZ=Asia/Shanghai`），不随美东夏令时变；海报目录 `x-posters/YYYY-MM-DD/` 已经是北京日期。详细规则见 README「每日汇总」。
 
 ## 2. 目录：哪些能手改
 
