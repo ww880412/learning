@@ -3,7 +3,15 @@
  "label": "11 月 1 日 · 星期日",
  "href": "digest/2026-11-01.html",
  "json": "data/digest/2026-11-01.json",
- "brief": null,
+ "brief": {
+  "title": "X 简报 · 11/1（周日）",
+  "href": "x-brief/2026-10-31.html",
+  "lines": [
+   "用 claude -p 跑 Claude Code，5 小时额度扣得比 TUI 快约 1.8 倍；Magpie 改为驱动 TUI：yetone 宣布 Magpie 的 Claude Code Provider 从调用 claude -p 改成直接驱动 Claude Code TUI（可配置切回），理由有两条：有人发现 -p 在 5 小时窗口下比 TUI 多花约两倍额度；走 TUI 和用户直接用官方客户端完全一样，几乎不会被判成第三方使用而封号。原始报告是 GitHub issue #97074：Max 订阅下同样的工作量，headless 模式（会话记录里 entrypoint 记为 sdk-cli）占用 5 小时窗口约是交互模式 cli 的 1.8 倍，token 数相同（yetone 原帖、宝玉转发 原帖、GitHub issue #97074）",
+   "Grok Bot 本地执行设成「始终允许」后，云端做不了的事会直接落到你的电脑上：小墨同学说他遇到过两次：GitHub CI 在云端失败后，Bot 直接到他本地电脑上跑，电脑发烫；网站校验页过不去时，Bot 直接用他本机的浏览器去操作。他建议本地电脑和其他连接的电脑都设成「每次询问」或「始终不允许」，没有特殊网络需求就关掉「经此电脑转发流量」，否则可能暴露本地出口 IP（小墨同学 原帖、官方文档）",
+   "Codex：手机端能切换多个账号，Tibo 最后两天发放「存好的」重置：Codex 负责人 Tibo 在 28 天连更的第 26 天宣布，手机端可以方便地在多个 ChatGPT 账号之间切换，桌面端即将支持；并说接下来两天会有重置，「已经存好了，你们看着用」。北京时间 11/1 早上他发了「Banked 1/2」（Tibo 原帖、原帖、宝玉 原帖、多账号帮助文档）"
+  ]
+ },
  "posters": {
   "title": "6 张技术海报",
   "href": "x-posters/2026-11-01/index.html",
