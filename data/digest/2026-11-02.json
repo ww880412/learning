@@ -3,7 +3,15 @@
  "label": "11 月 2 日 · 星期一",
  "href": "digest/2026-11-02.html",
  "json": "data/digest/2026-11-02.json",
- "brief": null,
+ "brief": {
+  "title": "X 简报 · 11/2（周一）",
+  "href": "x-brief/2026-11-01.html",
+  "lines": [
+   "Grok Bot 这周额度用得特别快，马斯克回应：服务成本相对收入「高得不可持续」：有用户在 X 上问能不能重置 Grok Bot 用量，说很多人这周提前用光；马斯克北京时间 11/2 凌晨回复「The cost of serving Grok Bot was unsustainably high relative to revenue」，Sawyer Merritt 转发时把它解读为这一周期部分用户更快撞到上限的原因（马斯克原帖、Sawyer 原帖、TeslaNorth 报道）",
+   "Linux 内核 TCP 漏洞 CVE-2026-98432：只要开着一个 IPv4 TCP 端口就可能被远程拿 root，Ubuntu 还没出补丁：levelsio 转引的帖子说，任何没打补丁、对公网开着一个 TCP 端口（HTTP 或 SSH 都算）、并启用了多路径 TCP（MPTCP，很多 Go 服务默认开）的 Linux 服务器都可能被完全接管；他再次建议 VPS 端口全关，SSH 只走 Tailscale，网站流量走 Cloudflare Tunnel。原始资料：内核 CNA 10/15 发布 CVE，CVSS 9.8，漏洞在 IPv4 TCP 握手里，4.4 起所有版本都受影响，上游 10/11–10/15 已修；报告人是 Anthropic 的 Xinyang Ge，Anthropic 称 Claude 写出了能在「带 MPTCP 监听的服务器」上远程拿 root 的利用代码（levelsio 原帖、alive_ 原帖、内核 CVE 公告、Atlas 报告、AWS 公告）",
+   "Claude Code 终端版恢复 ultrathink：输入这个词，本轮升到 xhigh，干到一半也能加：Addy Osmani 提醒，任务比预想难时，在 Claude 干活时打 ultrathink，这一轮剩下的部分会提高 effort，需要终端最新版；转引的 dmwlff 说这个功能之前因为「怪、容易让人困惑」关过一阵，现在回来了，他平时用 Opus 5.5 medium，个别轮次再加码。swyx 补充 Karpathy 做 HackerTube 也是默认 Opus 5.5 medium，他认为 effort 档位之争就像「tab 还是空格」，按口味调就行（Addy 原帖、dmwlff 原帖、swyx 原帖、Claude Code 更新日志）"
+  ]
+ },
  "posters": {
   "title": "6 张技术海报",
   "href": "x-posters/2026-11-02/index.html",
