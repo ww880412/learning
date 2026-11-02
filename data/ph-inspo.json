@@ -24,6 +24,155 @@
   ],
   "days": [
     {
+      "date": "2026-11-01",
+      "source": "https://www.producthunt.com/leaderboard/daily/2026/11/1",
+      "fetched": "2026-11-02 20:20 北京",
+      "note": "周日榜，前十里收 6 个；coding agent 相关的 agentmash、Click、Modelpeers 分数都在 120–140 之间；未收 Embage、Ideogram Precise Edit、magpie、Raah.dev。",
+      "picks": [
+        {
+          "id": "2026-11-01-agentmash",
+          "why": "多人各跑 coding agent 时，用编辑前后的 hook 把「谁在改哪个文件」共享给所有 agent、改前提醒而不加锁，客户端开源，工作台多 agent 协同可直接对标。",
+          "limit": "服务器不开源、要连 agentmash.dev；按函数名匹配只支持 JS/TS；客户端仓库刚建、约 12 星；效果数字是厂商自测。"
+        },
+        {
+          "id": "2026-11-01-click",
+          "why": "托管 agent API 把幂等提交、只有三种终态、工具调用记账、崩溃后只重放安全操作、不确定的标 unknown 写成了明确约定，工作台任务执行层可以照抄。",
+          "limit": "闭源托管服务，要先验证银行卡；审批和预算明确交给你自己做；Pro 价格未查到。"
+        },
+        {
+          "id": "2026-11-01-modelpeers",
+          "why": "每隔几小时比对各家定价页、状态页和 changelog，把模型/agent 的下线、额度缩减、破坏性变更按「改前/改后、该怎么做、几天后生效」推给你，工作台的依赖变更提醒可以照这个做。",
+          "limit": "刚上线，没有 API 或导出；覆盖范围和准确率是官网说法，未独立验证。"
+        }
+      ],
+      "items": [
+        {
+          "id": "2026-11-01-agentmash",
+          "name": "agentmash",
+          "tagline": "open-source multiplayer AI for teams' coding agents",
+          "ph": "https://www.producthunt.com/products/agentmash",
+          "site": "https://agentmash.dev",
+          "repo": "https://github.com/agentmash-dev/agentmash-cli",
+          "rank": 6,
+          "score": 137,
+          "comments": 18,
+          "what": "给团队里多人同时跑的 coding agent 做「协同层」：每个开发者的 Claude Code、Codex、Cursor 等装上它的 hook，改完文件就把「哪个文件、哪个分支、在做什么」报给团队的房间；下次要改同一个文件前，agent 会先收到一条提醒，自己调整写法。客户端（CLI、hook、MCP 服务器）在 GitHub 开源，MIT；服务器跑在 agentmash.dev，不开源，协议写在 PROTOCOL.md。",
+          "problem": "几个人各自让 agent 改同一个仓库，agent 互相看不见，一个在重写函数时另一个正改到一半，要到合并时才发现冲突。",
+          "highlight": "README：改前问、改后报，「不加锁」，提醒只是塞进 agent 上下文的一段话，由 agent 和人决定怎么办；服务器慢或挂了时 hook 不出声、编辑照常。JS/TS 会跟踪 import/export，改了队友刚改名的导出也会提醒；其他语言目前只按文件匹配（创始人 PH 回复）。支持 Claude Code、Codex、Cursor、Copilot、Gemini CLI 等约 20 个 agent，各自用开发者自己的登录，agentmash 不持有厂商 token；改 agent 配置前会把原文件留成 .before-agentmash 备份。默认上传：每条提示词前 500 字（已知密钥格式打码）、文件路径、分支名、提交标题、行数和改到的函数/导出名；代码正文只在房间开了 diff 时才上传，AGENTMASH_HINTS=0、AGENTMASH_DIFFS=0 可分别关掉，每个请求在 WIRE.md 里列明。还能给队友的 agent 发只读请求，对方批准后才在对方机器上跑。官网称冲突提前发现率从 55% 提到 98.6%、合并冲突少 73% 等，均为厂商自测，未独立验证。客户端仓库 10/29 才建，约 12 星；免费 2 人。雷达 data/radar.json 按仓库地址未查到。",
+          "inspo": "工作台多 agent 并行时，可抄两点：①在每个 agent 的编辑前/后挂钩子，把「谁在改哪个文件、为什么」写进一个共享房间，改前查一下、有冲突就往 agent 上下文里塞一句提醒，而不是加锁；②上传内容分级（默认只传路径、分支、函数名，代码正文要团队显式开），并把每个网络请求列成一份清单给企业审计。前提是各家 agent 都开放了编辑前后的 hook（Codex 还要用户在 /hooks 里手动批准）；按函数名匹配只覆盖 JS/TS，接口语义冲突仍得靠合并后的构建和测试兜底。",
+          "tags": [
+            "coding agent",
+            "开源",
+            "开发者工具",
+            "MCP"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-11-01-click",
+          "name": "Click",
+          "tagline": "Managed agents API that works with any model",
+          "ph": "https://www.producthunt.com/products/click-6",
+          "site": "https://useclick.ai",
+          "rank": 7,
+          "score": 127,
+          "comments": 15,
+          "what": "托管 agent 的 HTTP API：你配置好模型（自带各家 key）、指令和工具，开一个 session 发任务，Click 负责跑模型和工具循环、保存对话、出错恢复，结果通过事件流、签名 webhook 或 API 读取。自带网页搜索、浏览器、沙箱和文件产出，也能接你自己的 MCP 服务器和 HTTP 接口。YC 公司，同名第 3 次上 PH。",
+          "problem": "想在自己产品里放一个能跑很久、能用工具的 agent，就得自己搭一整套运行时：沙箱、浏览器、会话持久化、断线恢复、工具权限，每家都在重复造。",
+          "highlight": "API 文档：agent 配置每改一次就生成一个不可变版本，session 从指定版本启动，可以按版本灰度。提交任务返回 202 即已落盘，带同一个 request_id 重试会拿回原提交，不会重复执行；提交状态只有 done / cancelled / failed 三种终态，是「答完没有」的唯一依据。每次工具调用都留档；恢复时只重放可安全重复的操作，执行中被打断的调用记为 outcome=unknown，留给你的应用去源系统确认后再决定重试。工具按 session 显式授予，可用每个终端用户的短期 token 建连接，做到一人一套权限；需要人批准的操作，由你自己提供一个「问用户」的工具接回应用。模型通过写短 JavaScript（code mode）批量调用工具，单段程序最长 120 秒。免费档 2 个并发 session、每月 3600 秒托管沙箱；写操作前要在控制台验证银行卡；Pro 价格未获取。",
+          "inspo": "工作台的任务执行层可以直接抄它的几条约定：①任务提交带幂等 request_id，返回即落盘；②终态只有 done/cancelled/failed，进度靠事件流、结果以状态为准；③每个工具调用记账，崩溃后只重放幂等调用，不确定的标成 unknown 交给人或源系统核对；④agent 配置做成不可变版本，每次运行记下用的哪个版本。前提是工具能被标出「是否可安全重放」；审批、预算这些它明确不管，仍要工作台自己做。",
+          "tags": [
+            "AI工具",
+            "开发者工具",
+            "MCP"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-11-01-modelpeers",
+          "name": "Modelpeers",
+          "tagline": "Follow AI models and agents like you follow people",
+          "ph": "https://www.producthunt.com/products/modelpeers",
+          "site": "https://modelpeers.com",
+          "rank": 8,
+          "score": 126,
+          "comments": 16,
+          "what": "把 AI 模型、coding agent 和厂商做成可「关注」的主页：关注 Claude Code、Codex、Cursor、GPT-6 等两百多个对象后，在信息流里看到新版本、价格和额度变化、故障、下线日期和替代建议。免费。",
+          "problem": "团队依赖的模型或 agent 会悄悄改价、缩额度、下线，这些变化散在各家 changelog、定价页和状态页里，往往等 agent 跑不动了才发现。",
+          "highlight": "PH 上创始人说明：除了 changelog，它还每隔几小时直接抓定价页和套餐页，与上一版比对，额度悄悄变小也能以「改前/改后」显示；故障记录取自官方状态页；被宣布下线的模型如果厂商指定了后继者，会自动帮你关注后继者。信息流全天更新，邮件摘要每周一发，安静的周不发；可开「当天邮件」接收紧急变化。首页把每条变化标成新发布、套餐变化、破坏性变更、下线等类型，附「需要你做什么」和生效倒计时。另有每个模型通过自己 API 写的「自我介绍」，原样发布。数据来源官网称为厂商 changelog 和公告，准确率未独立验证。",
+          "inspo": "工作台可以抄一个「依赖变更」面板：把团队实际在用的模型、agent 和套餐列成关注清单，定时抓官方定价页、状态页和 changelog 做前后比对，只在下线、额度缩减、破坏性 API 变更时提醒，并写明「影响哪些项目、该换成什么、几天后生效」。前提是先有一份「哪个项目用了哪个模型/agent」的清单；Modelpeers 本身没提供 API 或导出，要么自建抓取，要么只把它当人工参考。",
+          "tags": [
+            "AI工具",
+            "开发者工具"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-11-01-clawsgo-science",
+          "name": "ClawsGO Science",
+          "tagline": "The AI research agent with its own cloud lab",
+          "ph": "https://www.producthunt.com/products/clawsgo-science",
+          "site": "https://clawsgo.ai",
+          "rank": 2,
+          "score": 271,
+          "comments": 57,
+          "what": "科研 agent：给它一个研究问题，它在云端工作站上查文献、取数据、跑分析，最后写成带引用的论文（LaTeX 源码和 PDF）。官网称工作站预装 500 多个工具、90 多个数据集，用 Claude 和 GPT 组成的 agent 集群连续跑好几天。",
+          "problem": "一个研究问题从查资料到出图写稿要切换很多工具，聊天式 AI 只能讲方法、不能真把分析跑完。",
+          "highlight": "PH 上团队说明：专为长时任务做的调度框架，让一个任务从问题一路走到论文；交稿前会对照来源和代码重读草稿、自查自改；运行中打开过的每个搜索和网页都留档，每个数字能追溯到产生它的命令和读过的文件，有回放时间线可以跳到那一步看代码和输出；关掉电脑也继续跑。示例里一个肠道菌群问题产出 24 页、17 张图、59 篇引用（厂商展示，未独立验证）。新用户送 1500 积分、不用绑卡。Claude 和 GPT 结论不一致时怎么裁决，PH 上有人问、未见回答。",
+          "inspo": "工作台跑长任务时可以抄「每个数字可追溯」：agent 产出的报告里每个结论都链回产生它的命令、输入文件和输出，配一条可回放的时间线，评审的人点一下就能核对。前提是 agent 的每次工具调用和读写都已结构化记录；交稿前「对照来源自查」只是同一类模型再读一遍，不能替代人验收。",
+          "tags": [
+            "AI工具",
+            "效率"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-11-01-screen-studio-4",
+          "name": "Screen Studio 4.0",
+          "tagline": "Glass Loupe, Camera Cutout, Edit by Transcript, and more",
+          "ph": "https://www.producthunt.com/products/screen-studio",
+          "site": "https://screen.studio",
+          "rank": 1,
+          "score": 408,
+          "comments": 90,
+          "what": "Mac 录屏工具，自动处理缩放、光标平滑和画面构图，录完直接是能发的演示视频。4.0 新增：删转写稿里的句子就能剪掉对应视频、自动找出口头禅和长停顿；不用绿幕的人像抠图；横竖屏分屏；自动遮挡邮箱、电话、卡号、密钥和人脸。",
+          "problem": "做产品演示和教程，录完还要花大量时间剪口误、加缩放、打码敏感信息，普通剪辑软件太重。",
+          "highlight": "创始人 PH 说明：自动打码覆盖邮箱、电话号码、卡号和 key，滚动中也能跟上，人脸（头像、视频通话里的人）可模糊；整段聊天内容不会自动遮，但可以加自定义词（产品名、客户名）全程遮盖，或手画遮罩。他们自己训练了针对 macOS 截图的模型让放大后的文字更清晰（厂商说法）；导出官网称最快 4 倍，支持 ProRes；字幕可导出 .srt 且与剪辑同步。PH 评论里老用户提到：还不能拼接多段素材、不能把音频分离出来挪动，近期版本导出偶尔卡住；团队称多段拼接在做。仅 Mac；PH 用户 11/8 前年付首年 8 折。",
+          "inspo": "王玮录 coding agent 工作台演示或自媒体教程时可以直接试：录完用转写稿删口误，开自动打码防止 API key、邮箱露出。前提是用 Mac、视频是单段录制；要多段拼接或挪动配音还得导到别的剪辑软件。",
+          "tags": [
+            "创作",
+            "效率"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-11-01-riverside-agents",
+          "name": "Riverside Agents",
+          "tagline": "A team of AI agents for video: produce, edit, clip, post",
+          "ph": "https://www.producthunt.com/products/riverside-fm",
+          "site": "https://riverside.com",
+          "rank": 3,
+          "score": 214,
+          "comments": 9,
+          "what": "播客/视频平台 Riverside 内置的一组专用 agent：Producer 录前准备嘉宾问题并协助录制，Editor 把原始录音剪成成片（去停顿和口头禅、清理音频、建议 B-roll），Clipper 挑精彩片段切成短视频，Marketer 写文案并排期发布。所有 Riverside 套餐都包含，14 天免费试用。",
+          "problem": "一期视频或播客，录制之外的准备、剪辑、切片、写文案、发布往往压在一个人身上，通用 AI 工具又不懂视频流程。",
+          "highlight": "PH 介绍：agent 直接长在 Riverside 的编辑器里而不是单独的聊天框，录完会主动提出要做的活，可以用自然语言改；你自己选自动化到哪一步，其余手工做，任何内容发布前都要你批准；手机上能审片和批准。用到增强画质等功能时照样扣 AI 积分。Clipper 会不会从你拒掉的片段里学习、Marketer 是否懂各平台发布规则，PH 上有人问，未见回答。",
+          "inspo": "自媒体流程可以借它的分工法：把「录前准备—剪辑—切片—文案排期」拆成职责单一的几个 agent，每步出建议、人一键批准，发布这一步永远要人点头。前提是素材都在同一个平台里；Riverside 主要面向对谈和真人出镜视频，录屏教程类未必合适。",
+          "tags": [
+            "创作",
+            "AI工具"
+          ],
+          "status": "新发现",
+          "followups": []
+        }
+      ]
+    },
+    {
       "date": "2026-10-31",
       "source": "https://www.producthunt.com/leaderboard/daily/2026/10/31",
       "fetched": "2026-11-01 20:02 北京",
