@@ -21,7 +21,7 @@
   "githubNote": "stars/license/pushed_at 来自 GitHub API，抓取于 2026-10-21，2026-10-26 全量刷新；pushed_at 为北京时间日期；repo_verified=false 表示无仓库或未能确认"
  },
  "generated": "2026-10-21",
- "updated": "2026-10-26",
+ "updated": "2026-11-02",
  "tz": "北京时间",
  "batches": [
   {
@@ -104,18 +104,36 @@
     253
    ],
    "n": 2
+  },
+  {
+   "date": "2026-11-02",
+   "label": "周扫补录（窗口 2026-10-26~11-02 北京时间）",
+   "ids": [
+    254,
+    265
+   ],
+   "n": 12
+  },
+  {
+   "date": "2026-11-02",
+   "label": "PH 灵感箱补录（10/27–10/31 榜）",
+   "ids": [
+    266,
+    275
+   ],
+   "n": 10
   }
  ],
  "themes": [
   {
    "key": "plugin",
    "title": "端侧插件生态",
-   "n": 59
+   "n": 63
   },
   {
    "key": "enterprise",
    "title": "企业资产与知识库",
-   "n": 28
+   "n": 30
   },
   {
    "key": "memory",
@@ -125,32 +143,32 @@
   {
    "key": "harness",
    "title": "harness 与编排",
-   "n": 45
+   "n": 49
   },
   {
    "key": "sandbox",
    "title": "沙箱与安全权限",
-   "n": 18
+   "n": 22
   },
   {
    "key": "gateway",
    "title": "身份权限与 MCP 网关",
-   "n": 18
+   "n": 21
   },
   {
    "key": "eval",
    "title": "评测与可观测",
-   "n": 25
+   "n": 28
   },
   {
    "key": "cost",
    "title": "成本与模型路由",
-   "n": 15
+   "n": 16
   },
   {
    "key": "review",
    "title": "代码审查与 CI",
-   "n": 14
+   "n": 15
   },
   {
    "key": "other",
@@ -172,7 +190,7 @@
    "verified": true,
    "what": "DeepSeek 开源的 coding agent harness，口号「Everything is a Plugin」，仓库 .agents/skills/ 自带 11 个真实工程 Skill（Code Review、Pre-push、找过度设计、Stacked PR、文档同步等）。",
    "borrow": "插件化内核的标杆：把上下文洞察、轨迹、LoopX 等都做成插件（dsh-context、loopx 插件），可直接对照它的插件 API 与 skill 目录约定设计工作台扩展点；仓库自带 skills 是「团队工程规范=Skill」的现成样本。",
-   "note": "2026-10-26 补：rc.3 是小版本：左栏、会话视图和右栏新增「更多」菜单，方便浏览和创建插件，另有草稿找回修复。生态侧：dsh-im 周下载 15,232、月下载 60,318（npm 下载 API，@xmanrui/dsh-im，周窗口 10-16~10-22）；破甲插件 dsh-purge 作者宣布 10-27 闭源（多条 X 帖，未核实），反映出插件许可和供应的不稳定。",
+   "note": "2026-10-26 补：rc.3 是小版本：左栏、会话视图和右栏新增「更多」菜单，方便浏览和创建插件，另有草稿找回修复。生态侧：dsh-im 周下载 15,232、月下载 60,318（npm 下载 API，@xmanrui/dsh-im，周窗口 10-16~10-22）；破甲插件 dsh-purge 作者宣布 10-27 闭源（多条 X 帖，未核实），反映出插件许可和供应的不稳定。；2026-11-02 补：v0.2.2-alpha.2 插件管理支持更新第三方插件包、热更新失败自动回滚旧版本；新增实验插件「subagent_oar 工具」（把独立任务交给本机 Codex / Claude CLI）、「开发者工具-统计」（按轮次和步骤看上下文、缓存、模型与工具耗时）、「变更请求与工作树」（会话跑在独立 git worktree，看关联 PR 状态和 diff）。生态侧 DSH Go（#264）一周 ★4,661。",
    "sources": [
     {
      "author": "@yaojingang",
@@ -203,6 +221,11 @@
      "author": "X @xiaomovps 万字长文 DSH 从 0 到 1（@ww880412 转发，2026-10-22）",
      "date": null,
      "url": "https://x.com/xiaomovps/status/2113082409227002170"
+    },
+    {
+     "author": "GitHub Release dsh-v0.2.2-alpha.2（2026-10-28 北京时间）",
+     "date": null,
+     "url": "https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.2.2-alpha.2"
     }
    ],
    "added": "2026-10-21"
@@ -824,7 +847,7 @@
    "verified": true,
    "what": "面向长程 Agent 的本地优先控制面与工作区：统一保存长期目标、待办、证据、预算和权限，管理多个 Codex/DSH/Claude Code 上的长程 Agent；有 PR review 队列能力。",
    "borrow": "长程任务的「账本」模型（目标/禁区/预算/完成判定/何时回来问人）和 replan 触发条件，可直接成为工作台任务内核。",
-   "note": "原帖仓库 huangruiteng/loopx 已重定向到 loopx-project/loopx",
+   "note": "原帖仓库 huangruiteng/loopx 已重定向到 loopx-project/loopx；2026-11-02 补：v2.2.0 改进研究证据跨版本追溯、完整报告和恢复请求保留原始投递上下文；移除未迁移的旧权威读取兜底（破坏性，需先按迁移契约备份）；发布说明里明确「注册、保存设置、完成待办都不算投递证明」。",
    "sources": [
     {
      "author": "@huangruiteng",
@@ -875,6 +898,11 @@
      "author": "@bojie_li",
      "date": "2026-08-10",
      "url": "https://x.com/bojie_li/status/2086608096462598347"
+    },
+    {
+     "author": "GitHub Release v2.2.0（2026-11-02 北京时间）",
+     "date": null,
+     "url": "https://github.com/loopx-project/loopx/releases/tag/v2.2.0"
     }
    ],
    "added": "2026-10-21"
@@ -3551,7 +3579,7 @@
    "verified": true,
    "what": "开源「企业上下文层」：连接 Slack、Drive、GitHub、M365、Notion 等 50+ 系统，检索带引用，按每个人的权限过滤，也可经 MCP 给 Claude Code/Cursor/Codex 用。",
    "borrow": "权限感知检索代码位置：backend/python/app/modules/retrieval/entity_permissions.py、app/models/permission.py；agent 循环里的权限中间件 app/agent_loop_lib/hooks/middleware/builtin/permission.py；有回答质量 eval 工作流 .github/workflows/answer-quality-evals.yml。",
-   "note": "",
+   "note": "2026-11-02 补：v1.0.0 新增代码图谱（仓库索引成可导航的图，带代码探索和影响分析工具，影响遍历 5 层、路径搜索 8 跳）、聚焦阅读和按时间段检索；权限执行加强：client_credentials 应用必须声明代表哪个服务账号；破坏性变更：移除 SAML 和通用 OAuth 登录，Helm 必须提供 Qdrant API key。",
    "sources": [
     {
      "author": "GitHub 搜索「permission aware rag」(2026-10-21)",
@@ -3562,6 +3590,11 @@
      "author": "GitHub 仓库核实",
      "date": null,
      "url": "https://github.com/pipeshub-ai/pipeshub-ai"
+    },
+    {
+     "author": "GitHub Release v1.0.0（2026-10-27 北京时间）",
+     "date": null,
+     "url": "https://github.com/pipeshub-ai/pipeshub-ai/releases/tag/v1.0.0"
     }
    ],
    "added": "2026-10-21"
@@ -3780,7 +3813,7 @@
    "verified": true,
    "what": "自建基础设施上的 agent 沙箱：本地 Docker 起步，Kubernetes 部署，统一沙箱 API；支持 Firecracker 快速沙箱、pause/resume。",
    "borrow": "组件拆分清晰：components/execd（沙箱内执行守护进程）、components/ingress、components/egress（每个沙箱的出站策略）、components/nodeagent；文档 docs/architecture/fast-sandbox/。",
-   "note": "README 中「Firecracker 创建 64 ms P50」等为项目自报。；2026-10-26 补：1.2.0-rc.2 的主角是 Credential Vault（OSEP-0022）端到端落地：凭据保管在出站侧，按主体持久化，暂停 / 恢复时随沙箱转移，提供经服务端路由的 vault API，按池固定 MITM CA；网络策略也改成出站侧持有，NetworkRule 支持按端口限定。",
+   "note": "README 中「Firecracker 创建 64 ms P50」等为项目自报。；2026-10-26 补：1.2.0-rc.2 的主角是 Credential Vault（OSEP-0022）端到端落地：凭据保管在出站侧，按主体持久化，暂停 / 恢复时随沙箱转移，提供经服务端路由的 vault API，按池固定 MITM CA；网络策略也改成出站侧持有，NetworkRule 支持按端口限定。；2026-11-02 补：1.2.0 正式版：Credential Vault（OSEP-0022）端到端落地，凭据值不会出现在任何公开读接口里；空闲自动暂停、访问时唤醒（OSEP-0024，默认关闭）；出站规则支持按端口限定。",
    "sources": [
     {
      "author": "GitHub 搜索「agent sandbox」(2026-10-21)",
@@ -3796,6 +3829,11 @@
      "author": "GitHub Release release-1.2.0-rc.2（2026-10-21 北京时间）",
      "date": null,
      "url": "https://github.com/opensandbox-group/OpenSandbox/releases"
+    },
+    {
+     "author": "GitHub Release release-1.2.0（2026-10-27 北京时间）",
+     "date": null,
+     "url": "https://github.com/opensandbox-group/OpenSandbox/releases/tag/release-1.2.0"
     }
    ],
    "added": "2026-10-21"
@@ -3925,7 +3963,7 @@
    "verified": true,
    "what": "面向 MCP 与 A2A 的 Rust 代理：工具联邦、stdio/HTTP/SSE/Streamable HTTP 传输、OpenAPI 集成、OAuth；JWT/API key 认证、基于 CEL 的细粒度 RBAC、限流、OpenTelemetry。",
    "borrow": "策略用 CEL 表达式（crates/celx、crates/cel-fork），比自写 DSL 省事；examples/ 下有 llm-context-compression、fault-injection 等可直接跑的配置样例。",
-   "note": "",
+   "note": "2026-11-02 补：v1.7.0 模型目录带上下文窗口和能力并通过 /v1/models 与 CEL 暴露；按实际服务档位计费、按模型 / 用户拆分 token、成本、缓存命中率和延迟；虚拟模型可调用你自己的路由服务选目标；护栏覆盖各家工具输出，MCP 流量可用 CEL 过滤；自动追踪 agent 会话。行为变更：standalone 部署 MCP 会话一律加密，prompt guard 默认检查工具输出，动态后端不能再访问回环和链路本地地址。",
    "sources": [
     {
      "author": "GitHub 搜索「mcp gateway」(2026-10-21)",
@@ -3936,6 +3974,11 @@
      "author": "GitHub 仓库核实",
      "date": null,
      "url": "https://github.com/agentgateway/agentgateway"
+    },
+    {
+     "author": "GitHub Release v1.7.0（2026-10-28 北京时间）",
+     "date": null,
+     "url": "https://github.com/agentgateway/agentgateway/releases/tag/v1.7.0"
     }
    ],
    "added": "2026-10-21"
@@ -4210,7 +4253,7 @@
    "verified": true,
    "what": "基于 OpenTelemetry 的 AI 可观测与评测：追踪、评测、playground 回放调用，提供远程 MCP 端点 /mcp 让 Claude Code、Cursor 直接查 trace。",
    "borrow": "「可观测平台暴露 MCP，让 agent 自查 trace」可抄；packages/phoenix-otel（OTel 封装）与 packages/phoenix-evals 独立发布。",
-   "note": "LICENSE 实为 Elastic License 2.0。",
+   "note": "LICENSE 实为 Elastic License 2.0。；2026-11-02 补：v21.0.0 默认开启鉴权、标注新增 DECISION 和 AGENT 两类、成本清单运行时拉取；有迁移说明 MIGRATION.md。",
    "sources": [
     {
      "author": "GitHub 搜索「llm observability」(2026-10-21)",
@@ -4221,6 +4264,11 @@
      "author": "GitHub 仓库核实",
      "date": null,
      "url": "https://github.com/Arize-ai/phoenix"
+    },
+    {
+     "author": "GitHub Release arize-phoenix-v21.0.0（2026-10-30 北京时间）",
+     "date": null,
+     "url": "https://github.com/Arize-ai/phoenix/releases/tag/arize-phoenix-v21.0.0"
     }
    ],
    "added": "2026-10-21"
@@ -4360,7 +4408,7 @@
    "verified": true,
    "what": "高性能开源 AI 网关，兼做 LLM 网关与 MCP 网关；自动 fallback、多 key/多 provider 负载均衡。",
    "borrow": "插件式拆分：plugins/governance（治理/预算）、plugins/routing、plugins/semanticcache、plugins/otel、plugins/logging；core/billingheader.go 可看计费头处理。",
-   "note": "README 称自适应负载均衡、集群、护栏、MCP 网关等属企业部署能力，开源版边界需核对。",
+   "note": "README 称自适应负载均衡、集群、护栏、MCP 网关等属企业部署能力，开源版边界需核对。；2026-11-02 补：transports v2.4.0 新增 Relays：非 LLM API（Tavily、Textract 等）也走网关，一份存储凭据、按路由计价，调用记到调用方虚拟 key、团队和客户预算上，虚拟 key 有 relay_grants；路由可从 OpenAPI 文档导入。",
    "sources": [
     {
      "author": "GitHub 搜索「mcp gateway」(2026-10-21)",
@@ -4371,6 +4419,11 @@
      "author": "GitHub 仓库核实",
      "date": null,
      "url": "https://github.com/maximhq/bifrost"
+    },
+    {
+     "author": "GitHub Release transports/v2.4.0（2026-10-30 北京时间）",
+     "date": null,
+     "url": "https://github.com/maximhq/bifrost/releases/tag/transports%2Fv2.4.0"
     }
    ],
    "added": "2026-10-21"
@@ -5955,7 +6008,7 @@
    "verified": true,
    "what": "OpenAI 的漏洞查找、调查与修复工具：在 Codex 里用安全工作流，或通过 @openai/codex-security CLI/TS SDK 与 GitHub Action 自动化。",
    "borrow": "finding 分诊结果 schema evals/triage-finding/schemas/triage-result-v0.schema.json；工作流路由评测 evals/workflow-routing/{cases,harness,run}.mts；Action 定义 action.yml；容器沙箱校验 docker/verify-container-sandbox.sh 与 compose.apparmor.yaml；Codex 插件 plugins/codex-security/.codex-plugin/plugin.json。v0.5.0 新增：provider 支持 Bedrock、OpenRouter、Fireworks，支持 GitHub Enterprise Cloud（*.ghe.com）。",
-   "note": "创建 2026-07-14（北京时间）；最近重要更新 npm-v0.5.0 / action-v0.5.0（2026-10-20）；仓库创建于 2026-07-14。 创建于基线日前 9 天，按「近 90 天有重大版本」入选。；2026-10-26 补：0.6.0 支持导入 Wiz、Snyk Open Source、Semgrep Code、Endor Labs 的报告（publish findings --to local|cloud）；可选的负责人推荐；托管修复命令；严重度改为内置评分细则 + 默认 3 次独立评审（官方提醒注意模型权限和成本变化）。",
+   "note": "创建 2026-07-14（北京时间）；最近重要更新 npm-v0.5.0 / action-v0.5.0（2026-10-20）；仓库创建于 2026-07-14。 创建于基线日前 9 天，按「近 90 天有重大版本」入选。；2026-10-26 补：0.6.0 支持导入 Wiz、Snyk Open Source、Semgrep Code、Endor Labs 的报告（publish findings --to local|cloud）；可选的负责人推荐；托管修复命令；严重度改为内置评分细则 + 默认 3 次独立评审（官方提醒注意模型权限和成本变化）。；2026-11-02 补：0.8.2 新增威胁模型浏览器（把威胁模型导出成可交互 HTML/SVG，带架构、场景、控制措施和源码证据）、Amazon Inspector 报告导入（跨导入保持发现的身份）、按严重度排序的发现评审。",
    "sources": [
     {
      "author": "Hacker News：Codex Security（598 分）",
@@ -5971,6 +6024,11 @@
      "author": "GitHub Release npm-v0.6.0 / action-v0.6.0（2026-10-22 北京时间）",
      "date": null,
      "url": "https://github.com/openai/codex-security/releases/tag/npm-v0.6.0"
+    },
+    {
+     "author": "GitHub Release npm-v0.8.2（2026-10-30 北京时间）",
+     "date": null,
+     "url": "https://github.com/openai/codex-security/releases/tag/npm-v0.8.2"
     }
    ],
    "added": "2026-10-21"
@@ -7742,6 +7800,712 @@
     }
    ],
    "added": "2026-10-26"
+  },
+  {
+   "id": 254,
+   "theme": "sandbox",
+   "name": "DevBox（RudderStack 开源的组织级 coding agent：每任务一个沙箱，沙箱里没有真凭据）",
+   "url": "https://github.com/rudderlabs/devbox",
+   "repo": "rudderlabs/devbox",
+   "stars": 268,
+   "license": "MIT",
+   "pushed": "2026-10-31",
+   "archived": false,
+   "verified": true,
+   "what": "自托管的「全公司共用」coding agent：从 Linear 工单或 GitHub PR 评论接活，按阶段走「熟悉仓库 → 计划 → 计划评审 → 实现 → 自审」，计划没过评审不写代码，最后开 draft PR；PR 评论、@提及和 CI 失败会回流到正在跑的任务。每个任务一个隔离沙箱（Docker Compose 或 Kubernetes，底层可接 OpenSandbox），用自己的模型 key，每个阶段可单独选模型和推理强度。README 自报：内部约 35% 的 PR 由它合并，合并率约 80%。",
+   "borrow": "①凭据隔离：沙箱里只放占位 token，出站流量只能走 iron-proxy，由代理按请求换成真 token，并把写操作限定在自己的仓库（control-plane/infra/local/iron-proxy.template.yaml、deploy/helm/devbox/templates/iron-proxy*.yaml、control-plane/scripts/gen-iron-proxy-ca.sh；流量规则见 docs/architecture.md「Traffic rules」）。②分阶段带闸的流水线：harness/src/harness/stages.py；任务状态机、收件箱（inbox）、事件日志在 docs/architecture.md「A task's life / The inbox / The event log / Task states」。③「记忆即提交」：学到的东西蒸馏进仓库，作为 PR 里的一个 commit 跟代码一起被审（harness/src/harness/memory.py、harness/src/harness/deepagents/middleware/memory_writing.py）。④自审循环 harness/src/harness/self_review.py；Linear / GitHub webhook 入口 control-plane/src/controllers/{linearWebhook,githubWebhook}.controller.ts。和库里 #117 OpenSandbox 的 Credential Vault、#236 Tuskira 网关的「按请求注入凭据」是同一思路的三种落点。",
+   "note": "创建 2026-10-27（北京时间）；最近推送 2026-10-31。MIT。★268。「35% PR / 80% 合并率」为 README 自报。本轮只读了 README、docs/architecture.md 和目录树，没有部署验证。",
+   "sources": [
+    {
+     "author": "GitHub 搜索「近 7~10 天新建」（2026-11-02）",
+     "date": null,
+     "url": "https://github.com/search?q=created%3A%3E%3D2026-10-24+agent&type=repositories&s=stars"
+    },
+    {
+     "author": "RudderStack 博客《Open sourcing DevBox》",
+     "date": null,
+     "url": "https://www.rudderstack.com/blog/open-sourcing-devbox/"
+    },
+    {
+     "author": "GitHub 仓库核实",
+     "date": null,
+     "url": "https://github.com/rudderlabs/devbox"
+    }
+   ],
+   "added": "2026-11-02"
+  },
+  {
+   "id": 255,
+   "theme": "harness",
+   "name": "HelixHarness（滴滴金融科技开源：团队把业务知识、工程规范、研发流程装进 Codex / Claude Code 的插件 + 可选的 harness 迭代平台）",
+   "url": "https://github.com/didi/helixharness",
+   "repo": "didi/helixharness",
+   "stars": 236,
+   "license": "Apache-2.0",
+   "pushed": "2026-10-30",
+   "archived": false,
+   "verified": true,
+   "what": "插件部分给 Codex 和 Claude Code 用，9 个命令覆盖「需求 → 实现 → 测试 → 评审 → 归档」，支持单仓库和多仓库 Workspace；归档时把验证过的经验留在项目里，下一个需求从更高起点开始。可选的 helixharness-platform 给维护者用：观察团队使用情况、对比 harness 框架版本、先评估候选改进再决定是否采纳。",
+   "borrow": "①一份插件同时出两家清单：helixharness/.claude-plugin 与 helixharness/.codex-plugin，根目录 .claude-plugin/marketplace.json；命令在 helixharness/commands/{init,propose,apply,ut,bug-fix,archive,status,update,config}.md，单仓 / 多仓两套流程在 helixharness/workflows/{single,workspace}。②「harness 自身也要评测后再升级」：helixharness-platform/evolution/{candidate,scheduler,storage}.py（候选改进的产生、调度、存储，storage.sql 是表结构）；bench/evaluation_contracts.py、bench/workload_policy.py 定义评测契约。③使用遥测与反馈：eval/schemas/feedback-schema-v1.json、eval/telemetry_quality.sql、eval/runtime_health.py，可直接参考成工作台「团队 harness 使用质量」的数据模型。和库里 #11 TeamAI CLI（资产走 Git+PR 分发）是互补关系：一个管分发，一个管演进。",
+   "note": "创建 2026-10-27（北京时间）；最近推送 2026-10-30。Apache-2.0。★236。本轮只看了 README 和目录树，没有安装试用；平台部分是否在滴滴内部规模使用，仓库里没有数字。",
+   "sources": [
+    {
+     "author": "GitHub 搜索「近 7~10 天新建」（2026-11-02）",
+     "date": null,
+     "url": "https://github.com/search?q=created%3A%3E%3D2026-10-24+agent&type=repositories&s=stars"
+    },
+    {
+     "author": "GitHub 仓库核实",
+     "date": null,
+     "url": "https://github.com/didi/helixharness"
+    }
+   ],
+   "added": "2026-11-02"
+  },
+  {
+   "id": 256,
+   "theme": "gateway",
+   "name": "cedr（多家 coding agent 的统一控制面：路由、跨厂商评审合议、Skills/MCP 锁定、一份配置编译到各家）",
+   "url": "https://github.com/Sheernox/cedr",
+   "repo": "Sheernox/cedr",
+   "stars": 65,
+   "license": "Apache-2.0",
+   "pushed": "2026-11-02",
+   "archived": false,
+   "verified": true,
+   "what": "Rust 写的 CLI（也能作为 MCP 被 agent 调用），五个子产品：Route 按 routes.toml 给每类工作选 agent、模型、推理强度，同等合适时交给额度剩得最多的套餐，接近上限的跳过；Council 每家厂商起一个评审，合并报告、把指向同一处的发现归组，任何 P0/P1 阻断，报告数不够不会默默放行；Guard 检查 agent 配置，把每个 skill 和 MCP server 锁进 .cedr/guard.lock，工具、描述或网络面变了就让 CI 失败；Sync 把一份配置编译进各家 agent 自己的文件；Monitor 统计用量、花费和套餐限额。公测中，命令和文件格式 1.0 前可能变。",
+   "borrow": "①Skills / MCP 锁文件（防「装上后悄悄变了」）：crates/cedr-core/src/{lock,surface,introspect,diff,risk,verify}.rs，surface.rs 记录 MCP server 暴露的工具面，diff.rs 比对变化。正好对应本周 Cursor 市场 Claude Code 扩展被植入后门的教训：插件版本要锁、变化要能被 CI 发现。②跨厂商评审合议：crates/cedr-route/src/council.rs（「报告不足不算通过」的规则值得照抄）。③按额度路由：crates/cedr-route/src/{pick,pool,readings}.rs；限额与价格 crates/cedr-monitor/src/{limits,pricing}.rs。④一份配置编译多家：crates/cedr-sync/src/{emit,merge,org}.rs，org.rs 处理组织级配置。",
+   "note": "创建 2026-10-30（北京时间）；最近推送 2026-11-02。Apache-2.0。★65，公测、个人 / 小团队项目。本轮只读了 README 和源码目录，没有跑过。",
+   "sources": [
+    {
+     "author": "GitHub 搜索「近 7~10 天新建」（2026-11-02）",
+     "date": null,
+     "url": "https://github.com/search?q=created%3A%3E%3D2026-10-24+agent&type=repositories&s=stars"
+    },
+    {
+     "author": "cedr 文档",
+     "date": null,
+     "url": "https://cedr.dev/docs"
+    },
+    {
+     "author": "GitHub 仓库核实",
+     "date": null,
+     "url": "https://github.com/Sheernox/cedr"
+    }
+   ],
+   "added": "2026-11-02"
+  },
+  {
+   "id": 257,
+   "theme": "gateway",
+   "name": "safeagents（Hugging Face 官方：夹在 agent 和模型服务之间的本地代理，在 harness 看到之前检查每个工具调用）",
+   "url": "https://github.com/huggingface/safeagents",
+   "repo": "huggingface/safeagents",
+   "stars": 59,
+   "license": "Apache-2.0",
+   "pushed": "2026-10-31",
+   "archived": false,
+   "verified": true,
+   "what": "一个本地代理，任何能设 base URL 的 harness（Claude Code、Pi、Hermes、OpenCode 等，docs 下有 13 家的接入说明）都能接，支持 OpenAI Chat Completions 和 Anthropic Messages，流式非流式都行。被拦下的工具调用换成一段文字提示，harness 什么都不会执行。--log-only 先只记录不拦截。",
+   "borrow": "①三段式检查（README「How it works」，代码 src/safeagents/{policy,guard}.py）：先做只看请求的检查（调用了请求里没声明的工具、参数里出现对话中从没出现过的主机名就拦，模型自己之前的输出不算数）；再把对话转成 ATIF trace 跑 atif-scan 检测器（读 /proc/1/environ、curl --noproxy、K8s service-account token 等），达到 --block-severity 就拦；可疑的交给可选的判官模型。②判官的信息隔离：只看用户原话、工具调用和检测结果，不看 agent 的推理和工具结果（防止 agent 自己「辩护」）；判官只能加拦、不能解拦，干净的调用不经过判官。工作台审批层可以直接照这个规则设计。③流式零延迟：工具调用参数完整前先扣住，再原样放行或替换，文本照常转发。和库里 #236 Tuskira（MCP 层）、#122 agentgateway（网关层）互补，它是「模型 API 层」的拦截点。",
+   "note": "创建 2026-10-28（北京时间）；最近推送 2026-10-31。Apache-2.0。★59。「atif-scan 每次约 10~20 ms」为 README 自报。本轮没实测。",
+   "sources": [
+    {
+     "author": "GitHub 搜索「近 7~10 天新建」（2026-11-02）",
+     "date": null,
+     "url": "https://github.com/search?q=created%3A%3E%3D2026-10-24+agent&type=repositories&s=stars"
+    },
+    {
+     "author": "GitHub 仓库核实",
+     "date": null,
+     "url": "https://github.com/huggingface/safeagents"
+    }
+   ],
+   "added": "2026-11-02"
+  },
+  {
+   "id": 258,
+   "theme": "plugin",
+   "name": "MCode Stack（MiniMax Code 团队开源自己每天用的工作流和 Skills；按人分 stack，一个插件同时出三家清单）",
+   "url": "https://github.com/MiniMax-AI/mcode-stack",
+   "repo": "MiniMax-AI/mcode-stack",
+   "stars": 494,
+   "license": "MIT",
+   "pushed": "2026-10-29",
+   "archived": false,
+   "verified": true,
+   "what": "不是提示词合集，而是团队成员各自真在用的 SKILL.md 和清单：何时拆子 agent、长命令等多久、长会话怎么不降级、每轮上下文塞什么。按人分 stack（stacks/ronny、stacks/jiachen），可以用 Claude Code、Codex 的插件市场命令整包安装，也能装进 MiniMax Code；配套工程笔记（notes/）。",
+   "borrow": "①一个 stack 三份清单：stacks/<人>/.claude-plugin/plugin.json、.codex-plugin/plugin.json、.minimax-plugin/plugin.json，根目录 .claude-plugin/marketplace.json 与 .agents/plugins/marketplace.json，templates/stack-template 是新增 stack 的模板。企业内部「每个资深工程师发布自己的 stack」可以照这个目录结构。②值得直接抄进工作台默认技能的几条：stacks/ronny/skills/subagent-split-check（「子 agent 是管理上下文的工具，不是分地盘」；只有实测退化、可并行可丢弃、工具指令冲突三种情况才拆；关键问题是「后面还需要原始中间输出吗」）、long-command-check、long-session-check、context-tax-audit、tool-budget-audit 与 checklists/tool-budget.md。③notes/03-compaction-memory.md 讲压缩和记忆。",
+   "note": "创建 2026-10-28（北京时间）；最近推送 2026-10-29。MIT。★494。本轮只读了 README、目录和 subagent-split-check 的 SKILL.md。",
+   "sources": [
+    {
+     "author": "X @Ronny_MiniMax 帖（@ww880412 转发，2026-10-30）",
+     "date": null,
+     "url": "https://x.com/Ronny_MiniMax/status/2115413492941652299"
+    },
+    {
+     "author": "X @shao__meng 帖（@ww880412 转发，2026-10-30）",
+     "date": null,
+     "url": "https://x.com/shao__meng/status/2115428696672866729"
+    },
+    {
+     "author": "GitHub 仓库核实",
+     "date": null,
+     "url": "https://github.com/MiniMax-AI/mcode-stack"
+    }
+   ],
+   "added": "2026-11-02"
+  },
+  {
+   "id": 259,
+   "theme": "harness",
+   "name": "ThinkRail（JetBrains 孵化的 agent IDE：围绕 pi 做的轻量 IDE，多工作区隔离 + 活的项目规格 living specs）",
+   "url": "https://github.com/JetBrains/thinkrail",
+   "repo": "JetBrains/thinkrail",
+   "stars": 6971,
+   "license": "Apache-2.0",
+   "pushed": "2026-11-02",
+   "archived": false,
+   "verified": true,
+   "what": "给 pi 编程 agent 做了一个完整界面：工作分进互相隔离的 workspace，项目知识用「活的规格」（living specs）和可复用 skill 沉淀下来；下一步要加完整扩展支持，让 IDE 按你的工作方式给自己造工具。桌面端、Web 端和 CLI 三个 app。",
+   "borrow": "①规格图谱：packages/spec-graph/core/{parse,graph,query,validate,store}.ts，每个 app 和包都有自己的 SPEC.md（apps/cli/SPEC.md、apps/desktop/SPEC.md、packages/spec-graph/SPEC.md…），规格本身也带 skill（packages/spec-graph/skills/spec-graph）。工作台「项目知识随代码走、可校验」可参考这个 SPEC.md + 图谱索引的组合。②pi 扩展拆成独立包：packages/pi-subagents/src/{definitions,builtins,mapping}.ts、pi-dag、pi-delegation、pi-background-commands、pi-todos；packages/extension-api 是对外扩展接口。③design-audit/ 是 UI 一致性审计的做法（按钮目录 + 前后截图）。",
+   "note": "创建 2026-07-08（北京时间），在 90 天窗口内；本周上 GitHub 热榜（@GitTrend0x 帖称 10-27 单日涨 1,156 星，未核实）；最近推送 2026-11-02。Apache-2.0。★6,971。本轮只看了 README 和目录树，没有安装试用。",
+   "sources": [
+    {
+     "author": "X @GitTrend0x 帖（@ww880412 转发，2026-10-27）",
+     "date": null,
+     "url": "https://x.com/GitTrend0x/status/2114877294892233190"
+    },
+    {
+     "author": "ThinkRail 官网",
+     "date": null,
+     "url": "https://thinkrail.ai/"
+    },
+    {
+     "author": "GitHub 仓库核实",
+     "date": null,
+     "url": "https://github.com/JetBrains/thinkrail"
+    }
+   ],
+   "added": "2026-11-02"
+  },
+  {
+   "id": 260,
+   "theme": "enterprise",
+   "name": "Floorplan（让 Claude / Codex 读代码库，画出一张白话交互地图：每个部件、文件、请求都有名字，连线可查）",
+   "url": "https://github.com/haydenschmitty/floorplan",
+   "repo": "haydenschmitty/floorplan",
+   "stars": 1785,
+   "license": "MIT",
+   "pushed": "2026-11-02",
+   "archived": false,
+   "verified": true,
+   "what": "一个 Claude Code / Codex 插件（也是 skill），让 agent 通读代码库，生成可交互的架构图：每个部件、文件和 Web 请求都配白话名字，显示所有连接，可以问「结账时发生了什么」「改这里会坏什么」；支持跨多个仓库（演示是 4 个仓库的咖啡订阅应用）。",
+   "borrow": "①图谱查询与本地服务：skills/floorplan/assets/{graph-query.js,query-cli.mjs,serve.mjs}，agent 和人用同一份图查询；UI 分块在 skills/floorplan/assets/ui/（glossary 术语表、health 健康度）。②多家清单：.claude-plugin、.codex-plugin、.agents/plugins，skills/floorplan/agents/openai.yaml。③tools/checksums.mjs 给生成物做校验和，便于判断图是否过期。可以和库里 #50 OpenWiki、代码图谱类条目对照：它的特点是面向「不懂架构的人」的白话层。",
+   "note": "创建 2026-10-27（北京时间）；最近推送 2026-11-02。MIT。★1,785。本轮只看了 README 和目录，没有在真实仓库上跑。",
+   "sources": [
+    {
+     "author": "GitHub 搜索「近 7~10 天新建」（2026-11-02）",
+     "date": null,
+     "url": "https://github.com/search?q=created%3A%3E%3D2026-10-24+agent&type=repositories&s=stars"
+    },
+    {
+     "author": "Floorplan 在线演示",
+     "date": null,
+     "url": "https://haydenschmitty.github.io/floorplan-demo/"
+    },
+    {
+     "author": "GitHub 仓库核实",
+     "date": null,
+     "url": "https://github.com/haydenschmitty/floorplan"
+    }
+   ],
+   "added": "2026-11-02"
+  },
+  {
+   "id": 261,
+   "theme": "cost",
+   "name": "cheap-ag（Claude Code 的 MCP：Opus 只做计划和决策，便宜模型在独立 worktree 里写代码，测试决定能不能合）",
+   "url": "https://github.com/muaaz9329/cheap-ag",
+   "repo": "muaaz9329/cheap-ag",
+   "stars": 196,
+   "license": "MIT",
+   "pushed": "2026-11-02",
+   "archived": false,
+   "verified": true,
+   "what": "一个给 Claude Code 用的 MCP server + 插件：Opus 规划，按任务花几分钱的模型（如 DeepSeek）在项目的独立副本里写代码，必须先过测试才回到用户手上。作者自报「同样任务 Opus token 少 63%」。",
+   "borrow": "①「贵模型规划、便宜模型执行、测试当裁判」的路由：src/{plan,routing,jobs,report}.ts；ADR docs/adr/0003-always-worktree-with-symlinked-deps.md（执行模型永远在 worktree 里跑，依赖用符号链接共享）。②执行前的同意与权限：src/{consent,permissions,allow,credentials}.ts，plugin/hooks 挂在 Claude Code 上。③bench/ 下有自带的任务基准。工作台的「按阶段选模型」可以和 #254 DevBox 的每阶段模型配置一起看。",
+   "note": "创建 2026-10-29（北京时间）；最近推送 2026-11-02。MIT。★196。「63%」为 README 自报，本轮没复现。",
+   "sources": [
+    {
+     "author": "GitHub 搜索「近 7~10 天新建」（2026-11-02）",
+     "date": null,
+     "url": "https://github.com/search?q=created%3A%3E%3D2026-10-24+agent&type=repositories&s=stars"
+    },
+    {
+     "author": "GitHub 仓库核实",
+     "date": null,
+     "url": "https://github.com/muaaz9329/cheap-ag"
+    }
+   ],
+   "added": "2026-11-02"
+  },
+  {
+   "id": 262,
+   "theme": "review",
+   "name": "tstack（Theo / t3.gg 每天用的 agent skills：full-send、三家模型合议评审 council、babysit-pr）",
+   "url": "https://github.com/t3dotgg/tstack",
+   "repo": "t3dotgg/tstack",
+   "stars": 2589,
+   "license": "MIT",
+   "pushed": "2026-10-28",
+   "archived": false,
+   "verified": true,
+   "what": "9 个 skill，Claude Code 和 Codex 都能用：full-send（无人值守把改动一路证明、评审、提 PR、盯 CI、合并）、full-stop（同上但停在可合并）、council（找三家不同厂商的模型评审，循环到一致）、sol-loop、file-pr（PR 描述先讲问题）、takeover（接手别人的 PR 并保留署名）、babysit-pr、modernize、leaving-pr-comments（agent 代你发评论时的格式）。",
+   "borrow": "①skills/council/：多厂商合议评审的提示词实现，和 #256 cedr 的 Council（代码实现）可以对照着抄。②skills/full-send 与 skills/full-stop：同一流程两个停止点，适合做工作台「自动到哪一步停」的开关。③skills/leaving-pr-comments：agent 代用户发评论时的格式约定（标明来源）。",
+   "note": "创建 2026-10-24（北京时间）；最近推送 2026-10-28。MIT。★2,589。",
+   "sources": [
+    {
+     "author": "GitHub 搜索「近 7~10 天新建」（2026-11-02）",
+     "date": null,
+     "url": "https://github.com/search?q=created%3A%3E%3D2026-10-24+agent&type=repositories&s=stars"
+    },
+    {
+     "author": "GitHub 仓库核实",
+     "date": null,
+     "url": "https://github.com/t3dotgg/tstack"
+    }
+   ],
+   "added": "2026-11-02"
+  },
+  {
+   "id": 263,
+   "theme": "harness",
+   "name": "uncut（无损、无界面的 coding agent harness：7 MB 静态二进制、4 个工具、不压缩不截断）",
+   "url": "https://github.com/Balanov/uncut",
+   "repo": "Balanov/uncut",
+   "stars": 222,
+   "license": "MIT",
+   "pushed": "2026-11-02",
+   "archived": false,
+   "verified": true,
+   "what": "给 shell 管道、CI、容器和 agent 实验用的极简 harness：没有 TUI、遥测、插件、后台 agent、自动重试和上下文压缩，每次调用都发完整对话；文件内容和命令输出都不截断；供应商在输出上限处截断时直接报错退出，不把半截答案当成功。最终文本走 stdout，--json 输出 NDJSON 事件。",
+   "borrow": "①「宁可失败不静默截断」的约定可以直接当工作台 CI 模式的规则；实现很小，internal/harness/{run,session,tools,provider}.go 一共几个文件就能读完。②NDJSON 事件流适合当工作台执行记录的最小格式。③bench/ 和 BENCHMARKS.md 是可复现的对照测量（作者自报）。",
+   "note": "创建 2026-11-02（北京时间）；最近推送 2026-11-02。MIT。★222，刚创建一天。",
+   "sources": [
+    {
+     "author": "GitHub 搜索「近 7~10 天新建」（2026-11-02）",
+     "date": null,
+     "url": "https://github.com/search?q=created%3A%3E%3D2026-10-24+agent&type=repositories&s=stars"
+    },
+    {
+     "author": "GitHub 仓库核实",
+     "date": null,
+     "url": "https://github.com/Balanov/uncut"
+    }
+   ],
+   "added": "2026-11-02"
+  },
+  {
+   "id": 264,
+   "theme": "plugin",
+   "name": "DSH Go（DeepSeek Harness 的 Android 客户端：手机本机跑 DSH，也能遥控电脑上的 DSH；自带插件市场目录）",
+   "url": "https://github.com/ccch1mneyyy/dsh-Go",
+   "repo": "ccch1mneyyy/dsh-Go",
+   "stars": 4661,
+   "license": "AGPL-3.0",
+   "pushed": "2026-11-02",
+   "archived": false,
+   "verified": true,
+   "what": "内置 Linux 环境（免 Root、免 Termux），手机上直接跑 DSH，也能一键切到电脑上的 DSH 接着用；回复中途可插话，过程折叠；对话可生成端到端加密的回放链接。同期还有 jackwener/DSH-Android（★697，Apache-2.0，单 APK 在安卓上跑 DSH）。",
+   "borrow": "①仓库里自带一个插件市场：market/schema/plugin.schema.json 定义插件清单格式，market/scripts/{check,build,ci-entry}.mjs 做校验和构建，market/candidates → market/plugins 是「候选 → 上架」两段式目录，可以参考成企业插件市场的上架流程。②远程控制拆成 packages/dsh_remote 与 runtime/bridge。AGPL-3.0，只能借鉴设计。",
+   "note": "创建 2026-10-25（北京时间）；最近推送 2026-11-02。AGPL-3.0。★4,661，本周 DSH 生态涨星最快的项目。本轮没有安装试用。",
+   "sources": [
+    {
+     "author": "GitHub 搜索「近 7~10 天新建」（2026-11-02）",
+     "date": null,
+     "url": "https://github.com/search?q=created%3A%3E%3D2026-10-24+agent&type=repositories&s=stars"
+    },
+    {
+     "author": "GitHub 仓库核实",
+     "date": null,
+     "url": "https://github.com/ccch1mneyyy/dsh-Go"
+    }
+   ],
+   "added": "2026-11-02"
+  },
+  {
+   "id": 265,
+   "theme": "plugin",
+   "name": "agent-purge（一份人设统一管理多个 coding agent 的系统提示词：替换或注入，带本地 Web 控制台）",
+   "url": "https://github.com/ZiChuanLan/agent-purge",
+   "repo": "ZiChuanLan/agent-purge",
+   "stars": 961,
+   "license": "MIT",
+   "pushed": "2026-11-02",
+   "archived": false,
+   "verified": true,
+   "what": "本地提示词配置工具，给 Codex、Claude Code、OpenCode、pi、grok、hermes、zcode 等提供统一的人设管理入口；CLI 和 Web 共用状态，可按执行器单独设置；有每轮回调的通道可以热切换，静态入口需要新会话。",
+   "borrow": "①「托管写入可追溯、可撤销」：记录每次写入和恢复依据，外部修改保留，恢复冲突明确报错（lib/{apply,persist,footprints,evidence,clean}.mjs）。工作台往各家 agent 配置目录里写东西时，可以照这个「留脚印 + 冲突报错」做。②lib/detect.mjs 探测各家 agent 的安装和配置位置，可作多家适配的参考。注意：项目名和定位偏向绕开默认系统提示词，企业场景要看合规。",
+   "note": "创建 2026-10-25（北京时间）；最近推送 2026-11-02。MIT。★961。",
+   "sources": [
+    {
+     "author": "GitHub 搜索「近 7~10 天新建」（2026-11-02）",
+     "date": null,
+     "url": "https://github.com/search?q=created%3A%3E%3D2026-10-24+agent&type=repositories&s=stars"
+    },
+    {
+     "author": "GitHub 仓库核实",
+     "date": null,
+     "url": "https://github.com/ZiChuanLan/agent-purge"
+    }
+   ],
+   "added": "2026-11-02"
+  },
+  {
+   "id": 266,
+   "theme": "sandbox",
+   "name": "Paddock（自托管在一台 VPS 上的「每个 agent 一台 Linux 电脑」：XFCE 桌面、box 内 Docker、每分钟文件系统快照、fork / 回滚、出站白名单）",
+   "url": "https://github.com/tony1908/paddock",
+   "repo": "tony1908/paddock",
+   "stars": 7,
+   "license": "MIT",
+   "pushed": "2026-11-02",
+   "archived": false,
+   "verified": true,
+   "what": "一条命令装在自己的 Ubuntu/Debian VPS 上（装 Docker、Sysbox、restic、Traefik），之后每个 agent 一个完整 Ubuntu box：按需启动的 Web 桌面（XFCE）、sudo、SSH、box 内跑 Docker（Sysbox），预装 coding agent 工具链。既能当长期电脑，也能当用完即删的一次性沙箱；Web UI、CLI、HTTP API（api/openapi.yaml）和 TS / Python SDK 都能管理。paddock prompt 可以直接驱动 box 里的 claude、codex、opencode、pi、prime、kimi，支持插话、打断、事件流。paddock skill install 会把自身 SKILL.md 装进 ~/.claude 与 ~/.codex。",
+   "borrow": "①快照与回滚：internal/server/snapshot_scheduler.go 每分钟对 ready/idle 的 box 拍一次（只抓 docker diff 改动的路径 + 镜像声明的卷，流进 restic backup --stdin），连续有变化后最短间隔退到 5 分钟（--snapshot-busy-interval）；停机前必拍一张、拍失败就不停机；回滚 POST /api/v1/sandboxes/{id}/restore 先停机（停机即快照），所以回滚本身可以再撤销（docs/snapshots.md「Rollback」）。密钥和环境变量不进快照，每次恢复时重新写入 /run/paddock。工作台「agent 改坏了一键回退」可以直接照这套语义。②出站网络策略：internal/agent/{network,dns}.go，allow-all / deny-all / 域名或 CIDR 白名单，运行中可改；DNS 经 agent 转发，云元数据地址（types.MetadataCIDR）对所有 box 一律 DROP（EnsureMetadataBlock）。③在 box 里驱动多家 CLI agent 的统一封装：internal/boxd/{harness,claude,codex,opencode,rpc_harness}.go，testdata 里有 kimi ACP、opencode SSE、pi RPC 的真实事件样本。④资源准入：box 只有在留出 max(15% 内存, 1 GiB) 余量时才放行（README「Requirements」）。",
+   "note": "创建 2026-10-18（北京时间）；v0.1.0@2026-10-26、v0.2.0@2026-10-26、v0.2.1@2026-10-28；最近推送 2026-11-02。MIT（已读 LICENSE 文件）。★7，个人项目、刚起步。与 PH 描述基本一致，补充三点：「每分钟」是默认值，忙的 box 会退到 5 分钟；快照只含文件系统，不含内存、进程和 box 内 /var/lib/docker；「回滚前先拍一张」只对运行中的 box 成立（停机时拍）。docs/snapshots.md 自述 Sysbox 在真实 VPS 上的运行「尚未验证」。本轮只读了 README、docs 和源码，没有部署。PH 灵感箱线索。",
+   "sources": [
+    {
+     "author": "PH 灵感箱（10/27–10/31 榜，Product Hunt；产品页链接为站内搜索，未逐一核实）",
+     "date": null,
+     "url": "https://www.producthunt.com/search?q=Paddock"
+    },
+    {
+     "author": "Paddock 官网",
+     "date": null,
+     "url": "https://tony1908.github.io/paddock/"
+    },
+    {
+     "author": "GitHub 仓库核实",
+     "date": null,
+     "url": "https://github.com/tony1908/paddock"
+    }
+   ],
+   "added": "2026-11-02"
+  },
+  {
+   "id": 267,
+   "theme": "eval",
+   "name": "Overmind（扫仓库建 agent 能力图，OTel trace 实时打分挂到能力上，优化器以 git diff 交付，可继续微调成自有模型；平台 AGPL、SDK MIT）",
+   "url": "https://github.com/overmind-core/overmind",
+   "repo": "overmind-core/overmind",
+   "stars": 742,
+   "license": "AGPL-3.0",
+   "pushed": "2026-11-02",
+   "archived": false,
+   "verified": true,
+   "what": "「用生产 trace 持续训练 / 改进专用 agent」的平台：overmind init 扫 agent 仓库，把能力、提示词、工具、任务建成一张图；SDK 用 OpenTelemetry 采 trace，进来即打分并归到产生它的能力；trace 变成带版本的评测 / 训练数据集；优化器在你的仓库里做提示词、工具和控制流实验，胜出者是一份 git diff；还能微调出可下载权重的模型，经统一 OpenAI 兼容 API 提供。带 /api/mcp/ MCP server，给 Cursor、Claude Code、OpenCode、Codex 用。托管版与自托管是同一份代码；自托管要 OpenRouter、Modal、AWS、HF 等一串 key 才能启动。",
+   "borrow": "①MCP 工具的「成本 + 破坏性」声明：overbae/services/mcp/catalog.py 的 ToolDefinition（read_only、destructive、idempotent、open_world、required_scopes、cost_class∈free/compute/llm/gpu、async_mode），annotations.py 映射成 MCP ToolAnnotations。工作台给内部 MCP 工具定元数据时可以直接抄这组字段，cost_class 是库里少见的。②优化器「客户端出 diff、服务端打分」：overmind/overmind/optimizer.py（模板 → 冒烟 → 基线 → 候选 diff → 完成；add_candidate_diff），胜出的 diff 留在候选 code_path，由本地 agent 应用，平台不直接改仓库。③能力图：overbae/services/capabilities/{graph,identity}.py，trace 归属与重绑 overbae/tasks/capability_rebind.py；仓库扫描 overmind/overmind/{init_cmd,repository_snapshot,typescript_ast}.py。④仓库自身的 agent 护栏：.agents/hooks/{bash_guard,protect_generated,guards}.py。",
+   "note": "仓库创建于 2026-03-27（北京时间），但公开历史从 2026-09-15「Open source Overmind」提交开始，首个 Release v0.0.15@2026-09-18，按「近 90 天开源」收录；最新 v0.1.23@2026-10-31，近一周连发 v0.1.20–v0.1.23；最近推送 2026-11-02。根目录 LICENSE 是 AGPL-3.0，overmind/LICENSE（SDK / CLI）是 MIT，与 PH 描述一致。★742。和 PH 描述的出入：README 现在的定位是「专用 agent 的训练平台」（微调、服务模型是主线），PH 只讲了能力图、trace 打分和 diff 优化器。本轮只读了 README 和源码，没有部署。PH 灵感箱线索。",
+   "sources": [
+    {
+     "author": "PH 灵感箱（10/27–10/31 榜，Product Hunt；产品页链接为站内搜索，未逐一核实）",
+     "date": null,
+     "url": "https://www.producthunt.com/search?q=Overmind"
+    },
+    {
+     "author": "Overmind 文档",
+     "date": null,
+     "url": "https://docs.overmindlab.ai"
+    },
+    {
+     "author": "GitHub 仓库核实",
+     "date": null,
+     "url": "https://github.com/overmind-core/overmind"
+    }
+   ],
+   "added": "2026-11-02"
+  },
+  {
+   "id": 268,
+   "theme": "harness",
+   "name": "♻️ Trigger.dev Webhooks（4.8 新增：托管 webhook 端点，先验签、去重、落库再分发；按 key 模板把同一实体的事件路由到同一个持久 agent 会话；可挂起等人审批）",
+   "url": "https://trigger.dev/docs/webhooks",
+   "repo": "triggerdotdev/trigger.dev",
+   "stars": 16682,
+   "license": "Apache-2.0",
+   "pushed": "2026-10-31",
+   "archived": false,
+   "verified": true,
+   "what": "老牌持久化任务 / agent 平台（2022 年开源）。v4.8.0 新增托管 webhook：一个端点一个 URL，请求必须先通过来源（Stripe、Slack、Linear 等，或自定义 HMAC）的校验，再按幂等键去重、记成一条 delivery，然后逐个订阅者跑过滤表达式再分发；订阅者可以是任务（每次新 run）、agent 会话（chat.event，按 key 路由到同一会话、按序处理）、聊天前端（Slack / Linear 连接器）或正在等待的 run（waiter，挂起不占算力）。Slack 连接器自带 Approve / Deny 按钮，agent 用无 execute 的工具暂停一轮，等人点了再继续。每个端点能生成给 coding agent 的「接入提示词」，MCP server 有 get_webhook_endpoint_details 工具。目前是公开测试版。",
+   "borrow": "①「验签 → 去重 → 落库 → 过滤 → 分发」的入口流水线：apps/webapp/app/v3/{webhookIngress.server.ts,webhookEngine.server.ts,webhookDeliveryTargets.ts}，验签方式抽象在 internal-packages/webhook-engine/src/engine/verification/{hmac,asymmetric,sharedSecret,urlSecret}.ts，过滤表达式解析 / 求值在 engine/filter/{parse,evaluate}.ts。工作台接 GitHub / Linear / 工单系统事件时可以整体照抄这个顺序（docs/webhooks/overview.mdx「How it works」、deliveries.mdx「Deduplication」：delivery 记录与 task run 两层去重窗口）。②按实体路由到持久会话：key 模板（{event.*} / {webhook.*} / {header.*}，{a || b} 兜底，构建期按事件类型做类型检查），实现在 engine/sessionKey.ts 与 app/v3/webhookSessionTarget.server.ts，文档 docs/webhooks/session-routing.mdx。「同一个 issue / PR 的所有事件进同一个 agent 会话、按序处理」正是工作台需要的。③挂起等待：engine/waiters/{match,store}.ts、app/v3/webhookWaitpoints.server.ts；人审批 docs/webhooks/human-in-the-loop.mdx。④给 agent 的接入提示词：app/v3/webhookSetupPrompt.ts。",
+   "note": "仓库创建 2022-11-30（北京时间），老项目；新变化：v4.8.0@2026-10-23（托管 webhook、Slack / Linear agent），changelog 正式介绍在 2026-10-26，之后 v4.8.1@10-23、v4.8.2@10-29、v4.8.3@10-30（webhook 密钥命令）；最近推送 2026-10-31。Apache-2.0（已读 LICENSE 文件）。★16,682。文档自述仍是公开测试版，API 在 GA 前可能变；自托管需另行开启。和 PH 描述的出入：PH 写「10/28 新发」，仓库与 changelog 显示 10-23 发版、10-26 公告（10/28 可能是 PH 上榜日，未核实）；其余（验签、去重、落库、按 key 路由、挂起等审批）与文档一致。本轮只读了文档和源码目录，没有跑。PH 灵感箱线索。",
+   "sources": [
+    {
+     "author": "PH 灵感箱（10/27–10/31 榜，Product Hunt；产品页链接为站内搜索，未逐一核实）",
+     "date": null,
+     "url": "https://www.producthunt.com/search?q=Trigger.dev"
+    },
+    {
+     "author": "Trigger.dev 文档 Webhooks overview",
+     "date": null,
+     "url": "https://trigger.dev/docs/webhooks"
+    },
+    {
+     "author": "Trigger.dev changelog《Webhooks for your AI agents》（2026-10-26）",
+     "date": null,
+     "url": "https://trigger.dev/changelog"
+    },
+    {
+     "author": "GitHub Release v4.8.0（2026-10-23 北京时间）",
+     "date": null,
+     "url": "https://github.com/triggerdotdev/trigger.dev/releases/tag/v4.8.0"
+    },
+    {
+     "author": "GitHub 仓库核实",
+     "date": null,
+     "url": "https://github.com/triggerdotdev/trigger.dev"
+    }
+   ],
+   "added": "2026-11-02"
+  },
+  {
+   "id": 269,
+   "theme": "gateway",
+   "name": "♻️ Radar（skyhook-io 的 Kubernetes UI + 内置 MCP：只读端点 /mcp-readonly，写工具标 destructive；AI 调查调用本机 Claude Code / Codex / Cursor / OpenCode，safeguarded 模式只留 Radar 的只读 MCP）",
+   "url": "https://github.com/skyhook-io/radar",
+   "repo": "skyhook-io/radar",
+   "stars": 4009,
+   "license": "Apache-2.0",
+   "pushed": "2026-11-02",
+   "archived": false,
+   "verified": true,
+   "what": "单个 Go 二进制的 Kubernetes UI（拓扑、事件时间线、Helm、GitOps、流量、集群审计），内置 MCP server 让 agent 读同一份集群模型（关系、健康、去重事件、带 diff 的变更、过滤日志）。/mcp 带写工具（restart、scale、apply、rollback 等，标 destructiveHint，靠客户端确认 + Kubernetes RBAC 兜底），/mcp-readonly 只有读工具，--mcp-read-only 可全局只读。「AI 调查」用你本机已装的 agent CLI 跑诊断：safeguarded 档只给 Radar 的只读 MCP，确认后的 Apply 另起一个带写工具的会话，再回到只读会话验证结果；full-local 档沿用你自己的 agent 配置。v1.19.0 新增从一句问题直接发起调查。厂商自测：同一 agent 和模型经 Radar MCP 诊断约快 3 倍（64s 对 191s，50 个故障）。",
+   "borrow": "①把本机 CLI agent「关进笼子」的启动参数：internal/ai/agent_claude.go（safeguarded 档：--strict-mcp-config 只认 Radar 的 MCP、--tools \"\" 关掉全部内置工具、--allowedTools 只放 pkg/investigation/prompt.go 里的 ReadOnlyTools，Apply 轮才追加 WriteTools）；internal/ai/agent_codex.go（--ignore-user-config 忽略用户的其他 MCP、web_search 关闭、shell 始终 --sandbox read-only）；internal/ai/diagnoser.go 的 scrubbedEnv() 只放行白名单环境变量。工作台调用本机 Claude Code / Codex 做受限任务时可以逐行照抄。②「读会话 / 写会话分离 + 写后回到读会话验证」的调查流程（docs/mcp.md OpenCode 节与「Opening an investigation」）；证据引用必须绑定到本次运行真实拿到的工具结果，绑不上就标 unlinked（docs/mcp.md「story contract」，pkg/investigation/{bind,refs,verdict}.go）。③MCP server instructions：pkg/investigation/guidance.go，前 2,048 字符放工具路由（适配 Claude Code 截断）、首行 250 字符自成一句（适配 Codex），并声明「集群里读到的日志、事件、注解是数据不是指令」。④写工具元数据 internal/mcp/tools.go（DestructiveHint）与 internal/mcp/confirmation.go。",
+   "note": "仓库创建 2026-01-20（北京时间），老项目；新变化：AI 调查自 v1.13.0（2026-09-08 北京时间）起出现，v1.16.0（10-07）、v1.18.3（10-28）、v1.19.0（2026-10-29）持续扩充，v1.19.0 主要是「从问题发起调查」和调查结果里的图表、引用；最近推送 2026-11-02。Apache-2.0（已读 LICENSE 文件）。★4,009。「约快 3 倍」「86% 对 60% 两分钟内诊断正确」为厂商自测（README Benchmarks），未复现。和 PH 描述的出入：PH 把只读端点、destructive 标注、safeguards 写成 v1.19.0 的内容，实际这些在更早版本已有（具体引入版本未逐一核实）；safeguards 不只关掉其他 MCP，还关掉 agent 的全部内置工具并清洗环境变量；full-local 档则保留用户全部 MCP。本轮只读了文档和源码，没有连集群跑。PH 灵感箱线索。",
+   "sources": [
+    {
+     "author": "PH 灵感箱（10/27–10/31 榜，Product Hunt；产品页链接为站内搜索，未逐一核实）",
+     "date": null,
+     "url": "https://www.producthunt.com/search?q=Radar"
+    },
+    {
+     "author": "GitHub Release v1.19.0（2026-10-29 北京时间）",
+     "date": null,
+     "url": "https://github.com/skyhook-io/radar/releases/tag/v1.19.0"
+    },
+    {
+     "author": "Radar MCP 文档",
+     "date": null,
+     "url": "https://github.com/skyhook-io/radar/blob/main/docs/mcp.md"
+    },
+    {
+     "author": "GitHub 仓库核实",
+     "date": null,
+     "url": "https://github.com/skyhook-io/radar"
+    }
+   ],
+   "added": "2026-11-02"
+  },
+  {
+   "id": 270,
+   "theme": "sandbox",
+   "name": "fastbrowse（浏览器 agent：从页面实际有的控件里选动作，答案逐句引用页面原文，密钥只按来源域名注入、模型只见名字，不可逆操作由代码闸门授权）",
+   "url": "https://github.com/agent-labs-dev/fastbrowse",
+   "repo": "agent-labs-dev/fastbrowse",
+   "stars": 173,
+   "license": "MIT",
+   "pushed": "2026-11-02",
+   "archived": false,
+   "verified": true,
+   "what": "Rust 核心的浏览器 agent，CLI、Python 库、Node / Go SDK、MCP server 和给 coding agent 的 skill 共用一个内核。每一页先索引成可操作控件列表，由第三方托管的选择模型 Jev（Typesafe）从中挑一个，LLM 负责规划、阅读和填写；不可能点到页面上不存在的东西，也不用维护选择器。完整答案里的每个结论都带页面原文引用和滚动定位链接；提交、支付、删除、发送默认停下等授权；--secret 声明的密钥只在指定来源域名上输入，模型只看到名字；步数、时间、美元上限在代码里强制。浏览器可用 Browser Use Cloud、本机 Chrome 或任何已运行的 Chromium / Electron 应用。",
+   "borrow": "①不可逆操作闸门：crates/fastbrowse-core/src/safety.rs（may_be_irreversible、irreversible_question、starts_download、changes_credentials、sets_new_password），由代码判断、不靠提示词；工作台的「危险动作需授权」可以照这组判定拆。②密钥按来源域名限定 + 输出脱敏：同文件 secret_allowed()、ScopedSecrets、Redactor，以及 crates/fastbrowse-core/src/origins.rs 的 OriginGrant；Bitwarden / TOTP 适配在 crates/fastbrowse-browser/src/adapters/{bitwarden,totp}.rs。③「无效动作不算进展」：crates/fastbrowse-core/src/effects.rs 用控件状态生成 state_key，比较动作前后是否真的改了值、选中或地址，防止 agent 原地打转还报成功。④答案引用：crates/fastbrowse-core/src/citations.rs（text_fragment 生成 #:~:text= 定位链接）。⑤bench/cassettes/*.jsonl.gz 是可回放的录制夹具（含 mock-hidden-instruction、mock-false-success 等对抗场景），可参考做工作台浏览器工具的回归集。",
+   "note": "创建 2026-09-17（北京时间）；最新 v0.9.1@2026-10-31，近一周连发 v0.8.2–v0.9.1；最近推送 2026-11-02。MIT（已读 LICENSE 文件）。★173，beta。「46 任务 99.2% 对 96.3%、单次成本低 10.7 倍、慢约 3.6 秒」为 README 自报（release-0.7.1 评测）。注意：动作选择依赖第三方托管模型 Jev（Typesafe，也可经 OpenRouter 调），不是纯本地。与 PH 描述一致。本轮只读了 README 和源码，没有跑。PH 灵感箱线索。",
+   "sources": [
+    {
+     "author": "PH 灵感箱（10/27–10/31 榜，Product Hunt；产品页链接为站内搜索，未逐一核实）",
+     "date": null,
+     "url": "https://www.producthunt.com/search?q=fastbrowse"
+    },
+    {
+     "author": "GitHub 仓库核实",
+     "date": null,
+     "url": "https://github.com/agent-labs-dev/fastbrowse"
+    }
+   ],
+   "added": "2026-11-02"
+  },
+  {
+   "id": 271,
+   "theme": "enterprise",
+   "name": "♻️ XWiki LLM / MCP（xwiki-contrib/ai-llm 1.0.0：企业 wiki 的 MCP server，按登录用户的 XWiki 权限搜索和读写，OAuth 2.0 认证；RAG 索引也按用户查看权限过滤）",
+   "url": "https://github.com/xwiki-contrib/ai-llm",
+   "repo": "xwiki-contrib/ai-llm",
+   "stars": 18,
+   "license": "none",
+   "pushed": "2026-10-29",
+   "archived": false,
+   "verified": true,
+   "what": "XWiki 社区的 LLM 扩展集合（聊天、RAG 索引、模型配置、JWT 认证、MCP）。MCP 模块给外部 agent 提供 query_documents、get_document、get_tree、get_history、get_links、get_schema、query_objects，以及写文档 / 对象 / 附件 / 结构、删除等工具；所有工具以「当前登录用户」身份执行，每次解析引用后先过 wiki 范围、XWiki 权限检查（VIEW / EDIT / DELETE）和每个 wiki 的空间过滤；搜索走 XWiki 自带的 Solr 索引，按当前用户查看权限做结果后过滤。客户端没带有效 token 时按 guest 处理，需要时返回 401 + WWW-Authenticate: Bearer，引导客户端走 OAuth 2.0 授权码流程。",
+   "borrow": "这是本库第一个「权限感知检索（ACL-aware）」的可读源码样本，正好补 landscape 第 11 节「带权限的 RAG 仍空」。①统一授权入口：application-ai-llm-mcp/application-ai-llm-mcp-server/src/main/java/org/xwiki/contrib/llm/mcp/internal/access/DefaultMCPDocumentAccess.java 的 resolveAndAuthorize()：解析引用 → wiki 可达性闸（DefaultMCPWikiReach）→ 权限检查（ContextualAuthorizationManager）→ 空间过滤（DefaultMCPSpaceFilter），顺序固定，所有工具共用；跨 wiki 引用和调用目标不一致直接拒绝。②检索后过滤：internal/tool/MCPQueryDocumentsTool.java + access/DefaultMCPDocumentSearch.java，查询启用「当前用户查看权限后过滤」，工具说明里明确告诉 agent「总数是上限，可能含你看不到的文档」——不泄露数量也不假装精确，这句可以直接抄。RAG 侧：application-ai-llm-index/.../Collection.java（第 291 行附近：除集合自身权限外，始终再检查当前用户对每个来源页面的查看权）与 internal/xwikistore/XWikiDocumentStore.java。③MCP 资源服务器的 OAuth 接入：internal/server/DefaultMCPResource.java（受保护资源元数据、bearer_methods_supported、401 与 WWW-Authenticate 的分支）。④输出预算：mcp-api 的 MCPSourceText.java（单次工具输出约 6,000 token 上限，截断时给出续读 offset）。",
+   "note": "仓库创建 2023-05-09（北京时间），老项目；MCP server 于 2026-03-12 首次加入；新变化：application-ai-llm-1.0.0（Maven 发布，tag 时间 2026-10-29 北京时间）去掉 BETA 标记，同期修了一批 MCP 工具行为（LLMAI-186/188/194 等）；最近推送 2026-10-29。仓库里没有 LICENSE 文件（GitHub 识别为无），README 和源码文件头声明 LGPL-2.1+。★18。最低支持 XWiki 17.4。和 PH 描述的出入：PH 说「可能填补 ACL-aware 检索空白」，核实成立，但要说清楚是「检索后过滤」而非索引期按 ACL 分片，返回总数可能偏大；它是 XWiki 专用实现，不是通用组件。本轮只读了源码，没有部署 XWiki 实测。PH 灵感箱线索。",
+   "sources": [
+    {
+     "author": "PH 灵感箱（10/27–10/31 榜，Product Hunt；产品页链接为站内搜索，未逐一核实）",
+     "date": null,
+     "url": "https://www.producthunt.com/search?q=XWiki"
+    },
+    {
+     "author": "XWiki 扩展页 LLM Application",
+     "date": null,
+     "url": "https://extensions.xwiki.org/xwiki/bin/view/Extension/LLM/"
+    },
+    {
+     "author": "Git tag application-ai-llm-1.0.0（2026-10-29 北京时间）",
+     "date": null,
+     "url": "https://github.com/xwiki-contrib/ai-llm/tree/application-ai-llm-1.0.0"
+    },
+    {
+     "author": "GitHub 仓库核实",
+     "date": null,
+     "url": "https://github.com/xwiki-contrib/ai-llm"
+    }
+   ],
+   "added": "2026-11-02"
+  },
+  {
+   "id": 272,
+   "theme": "sandbox",
+   "name": "Backenly（coding agent 经 MCP 搭后端：所有结构变更只走一个带 dry-run、审计、回滚的类型化动作内核，没有改结构的裸 SQL 通道；自治循环只自动修可逆的安全档）",
+   "url": "https://github.com/backenly/backenly",
+   "repo": "backenly/backenly",
+   "stars": 102,
+   "license": "Apache-2.0",
+   "pushed": "2026-11-01",
+   "archived": false,
+   "verified": true,
+   "what": "「agent 原生」的后端平台：Postgres（每项目一个 schema，靠 Postgres 授权和 RLS 隔离）、PostgREST 数据面、认证、存储、实时、函数。你在 Claude Code / Cursor / Codex 里描述需求，LLM 规划器推导实体和动作，经 executeAction 应用并对着运行时验证；之后 MAPE-K 自治循环持续巡检，自动修复漂移、缺失索引、坏触发器、RLS 缺口；认证、外部凭据、破坏性或不可逆的变更一律等人批准。所有变更在一个 History 里可撤销，且不回滚数据。",
+   "borrow": "①单一变更内核：lib/ai/minimal-executor.ts 的 executeAction()（贡献指南明说绕过它写 DDL 的 PR 一律退回），执行与记录在 lib/execution/{real-executor,schema-writer,sql-recorder,migration-runner}.ts；非破坏性恢复 lib/rollback/non-destructive-restore.ts。工作台「agent 改基础设施」可以照抄「读走 SQL、写只走类型化动作」的分界。②自治分级与熔断：lib/autonomy/{autonomy-level,execution-mode,circuit-breaker,change-freeze,action-postconditions,fix-acceptance,reconciler,drift-watch}.ts——每个自动修复都有后置条件校验，连续失败熔断，变更冻结期不动手。③多租户隔离靠数据库而非应用层字符串过滤（README「Multi-tenant by construction」）。④客户端分离：packages/{mcp-server,cli,sdk} 为 MIT，平台 Apache-2.0。",
+   "note": "创建 2026-07-23（北京时间），正好落在本库新鲜度规则的起点；无 GitHub Release；最近推送 2026-11-01。Apache-2.0（已读 LICENSE 文件），packages/ 下客户端 MIT；另有 TRADEMARK.md 限制用 Backenly 名称分发。★102。和 PH 描述的出入：PH 说「backenly-js 的 README 称平台本体是托管服务，和主仓库开源说法对不上」——核实不成立。backenly-js README 原文是「平台本体在 github.com/backenly/backenly 开源，并以托管服务运行在 backenly.com」，主仓库 README「Self-hosting vs Cloud」也写明本仓库就是完整平台、云版跑同一份代码。真正的问题是 backenly-js 自 2026-07-23 后没再推送、★0，客户端代码实际在主仓库 packages/ 里维护。本轮只读了 README 和源码，没有自托管实测。PH 灵感箱线索。",
+   "sources": [
+    {
+     "author": "PH 灵感箱（10/27–10/31 榜，Product Hunt；产品页链接为站内搜索，未逐一核实）",
+     "date": null,
+     "url": "https://www.producthunt.com/search?q=Backenly"
+    },
+    {
+     "author": "Product Hunt 产品页（README 徽章所链）",
+     "date": null,
+     "url": "https://www.producthunt.com/products/backenly-2"
+    },
+    {
+     "author": "backenly-js 客户端仓库",
+     "date": null,
+     "url": "https://github.com/backenly/backenly-js"
+    },
+    {
+     "author": "GitHub 仓库核实",
+     "date": null,
+     "url": "https://github.com/backenly/backenly"
+    }
+   ],
+   "added": "2026-11-02"
+  },
+  {
+   "id": 273,
+   "theme": "plugin",
+   "name": "Godwit（开源 AI 邮件客户端：SKILL.md 技能、带权限声明的 TS 插件、MCP；统一权限网关 + 持久「已读邮件」污点标记；godwit mcp 可读信、建草稿，发信默认要在客户端里逐次确认）",
+   "url": "https://github.com/godwit-email/godwit",
+   "repo": "godwit-email/godwit",
+   "stars": 52,
+   "license": "Apache-2.0",
+   "pushed": "2026-11-02",
+   "archived": false,
+   "verified": true,
+   "what": "Go 写的桌面邮件客户端（macOS / Windows / Linux，任意 IMAP/SMTP），内置助手 Wit；所有 AI 功能（含内置功能）都走同一套扩展机制：数据目录 skills/ 下的 SKILL.md、带权限声明的 TypeScript 插件（goja 沙箱）、受信任的原生插件（C ABI，按文件哈希单独授权），以及外部 MCP server（每个 server 批一次、每次写调用都批）。godwit mcp 是给 Claude、Cursor 等外部 agent 用的 MCP server。设计决定全部以中文 ADR 写在 docs/adr/。",
+   "borrow": "①统一权限网关 + 持久污点：docs/adr/0004-permission-gateway-taint.md 与 core/gateway/gateway.go——插件、MCP、Wit 的所有工具调用和外发都按「调用来源 + 数据范围 + 外发目的地」判定；一条调用链读过邮件，之后的外发就要审批并显示目的域名；污点持久（会话重启后仍算，插件收过邮件就一直算到卸载）。这是工作台防「读了代码 / 工单后被注入外发」的现成模型。②审批绑定参数和对象版本、至多执行一次：ADR 0004「Consequences」与 0006-send-at-most-once.md（待审批 → 执行中 → 完成 / 失败的原子认领；崩溃后插件 / MCP 调用标 uncertain 不重试；readOnlyHint 不作为安全依据）。③MCP 发信三档：docs/adr/0023-mcp-send-setting.md、core/mcpsend.go（off / confirm / direct，默认 confirm：审批绑定草稿 revision，10 分钟或草稿再改即失效，最多 5 个待确认；--headless 下 confirm 等于不允许）。④插件清单与权限：core/plugins/{manifest,host,registry}.go，类型 sdk/godwit.d.ts；签名插件注册表 ADR 0016；原生插件按文件授权 ADR 0015。⑤MCP 方法白名单 ADR 0002（mcp 角色不能删除、移动、改设置、处理审批）。",
+   "note": "创建 2026-10-09（北京时间）；最新 v1.24.1@2026-11-02，单日多版本，发布很频繁；最近推送 2026-11-02。Apache-2.0（已读 LICENSE 文件）。★52。和 PH 描述的出入：PH 说「godwit mcp 只能读信和建草稿，不能发信」，这是 README 的说法，但 v1.13.0（2026-10-24）已加入经 MCP 发送草稿（send_draft），由设置决定，默认每次在 Godwit 里确认，用户也可以选「直接发送」；README 和 ADR 0023（状态仍写 proposed）没同步。README 还写「0.0.x 早期预览」，实际版本号已到 1.24.x。插件和 Wit 仍不能发信。本轮只读了 README、ADR 和源码，没有安装。PH 灵感箱线索。",
+   "sources": [
+    {
+     "author": "PH 灵感箱（10/27–10/31 榜，Product Hunt；产品页链接为站内搜索，未逐一核实）",
+     "date": null,
+     "url": "https://www.producthunt.com/search?q=Godwit"
+    },
+    {
+     "author": "Godwit 官网",
+     "date": null,
+     "url": "https://godwit.email/"
+    },
+    {
+     "author": "GitHub 仓库核实",
+     "date": null,
+     "url": "https://github.com/godwit-email/godwit"
+    }
+   ],
+   "added": "2026-11-02"
+  },
+  {
+   "id": 274,
+   "theme": "eval",
+   "name": "telemetry.dev SDK（LLM / agent 可观测的开源 SDK：Cursor hooks、opencode 插件、pi / omp 扩展把 coding agent 的每轮、工具调用、子 agent 映射成 OTel GenAI 语义约定；后端托管、不开源）",
+   "url": "https://github.com/telemetry-dev/telemetry",
+   "repo": "telemetry-dev/telemetry",
+   "stars": 37,
+   "license": "MIT",
+   "pushed": "2026-11-01",
+   "archived": false,
+   "verified": true,
+   "what": "telemetry.dev 的官方 TypeScript / Python SDK 和集成（OpenAI、Anthropic、Bedrock、Google GenAI、OpenRouter、LiteLLM、Vercel AI、TanStack AI、MCP，以及 Cursor、opencode、pi、omp 等 coding agent），基于 OpenTelemetry。README 明说采集服务和看板由 telemetry.dev 托管、不在本仓库。导出地址可用 TELEMETRY_DEV_BASE_URL 改，但能否直接对接自建 OTel collector 未核实。",
+   "borrow": "①coding agent 的「旁路观测」接法：packages/cursor/src/{install,hook,daemon}.ts（往 ~/.cursor/hooks.json 写入全部观测事件、可卸载，hook 进程把事件交给常驻 daemon 再导出，不改变 Cursor 行为）；packages/opencode/src/plugin.ts；packages/pi/src/extension.ts 与 packages/omp/src/extension.ts。工作台要统一采集多家 agent 的执行记录，可以照这四种挂载点做适配层。②跨语言字段契约：docs/sdk-conformance.md 把 span / generation / tool / agent 映射到 gen_ai.operation.name，token 用量拆到文本 / 图像 / 音频和缓存读写，采集内容按「脱敏 → 序列化 → 截断」顺序处理并打 telemetry.dev.capture.truncated 标记。③MCP 调用埋点：packages/mcp/src/index.ts（按 OTel MCP 属性约定给官方 TS MCP SDK v2 传输层打 span）。",
+   "note": "创建 2026-09-06（北京时间）；最新 cli-v0.1.6@2026-10-31、sdk-v0.2.2 / python-v0.3.2@2026-10-30；最近推送 2026-11-01。MIT（已读 LICENSE 文件）。★37。与 PH 描述一致：只开源 SDK，采集与看板是托管服务；docs/sdk-conformance.md 自己也说端到端测试在私有产品仓库里。按「SDK 层的接法可抄」收录，后端不可自托管这一点要记住。本轮只读了源码，没有发 trace。PH 灵感箱线索。",
+   "sources": [
+    {
+     "author": "PH 灵感箱（10/27–10/31 榜，Product Hunt；产品页链接为站内搜索，未逐一核实）",
+     "date": null,
+     "url": "https://www.producthunt.com/search?q=telemetry.dev"
+    },
+    {
+     "author": "telemetry.dev 文档",
+     "date": null,
+     "url": "https://telemetry.dev/docs"
+    },
+    {
+     "author": "GitHub 仓库核实",
+     "date": null,
+     "url": "https://github.com/telemetry-dev/telemetry"
+    }
+   ],
+   "added": "2026-11-02"
+  },
+  {
+   "id": 275,
+   "theme": "eval",
+   "name": "Coding Wrapped（一个 skill：读本机 Claude Code 和 Codex 会话记录，只保留白名单聚合指标，生成本地的人机协作习惯面板）",
+   "url": "https://github.com/senlindesign/coding-wrapped",
+   "repo": "senlindesign/coding-wrapped",
+   "stars": 7,
+   "license": "MIT",
+   "pushed": "2026-10-20",
+   "archived": false,
+   "verified": true,
+   "what": "Claude Code / Codex 通用的 Agent Skill（npx skills add 一条命令装两家），经用户同意后扫 ~/.claude/projects/**/*.jsonl 与 ~/.codex/sessions/**/*.jsonl，生成本地像素风面板：活跃天数、会话、项目数、模型构成、工具使用、提问节奏、最长专注时段，加上「你做了 / agent 做了 / 你的风格」三类洞察和一条从 40 条带出处的实践库里匹配的建议。自述不是对话记录查看器、生产力评分或员工监控工具。",
+   "borrow": "①会话日志解析：skills/coding-wrapped/scripts/scan_sessions.py 同时解析 Claude Code 与 Codex 两种 JSONL 格式，指标计算在 build_metrics.py。工作台做「团队怎么用 agent」的统计时，可以直接参考这两种本地日志的字段。②隐私边界写成契约：PRIVACY.md 与 skills/coding-wrapped/references/{data-contract,privacy-policy}.md 规定生成状态里不得出现原始提示词、回答、代码、工具输出、项目名、本地路径、URL、密钥，交给模型写洞察的只有白名单聚合字段（sanitized brief），扫描脚本不发任何网络请求。企业版使用画像可以照这个「只聚合、白名单出境」做。③evals/coding-wrapped/{evals.json,model-eval-protocol.md,run_eval.py} 是给 skill 本身做评测的小样板；一包两家清单 .claude-plugin/plugin.json 与 .codex-plugin/plugin.json。",
+   "note": "创建 2026-07-29（北京时间）；v0.1.0@2026-07-29，v0.2.0@2026-10-20；最近推送 2026-10-20。MIT（已读 LICENSE 文件）。★7，个人项目。与 PH 描述一致。本轮只读了 README、PRIVACY 和脚本目录，没有在本机跑。PH 灵感箱线索。",
+   "sources": [
+    {
+     "author": "PH 灵感箱（10/27–10/31 榜，Product Hunt；产品页链接为站内搜索，未逐一核实）",
+     "date": null,
+     "url": "https://www.producthunt.com/search?q=Coding Wrapped"
+    },
+    {
+     "author": "GitHub 仓库核实",
+     "date": null,
+     "url": "https://github.com/senlindesign/coding-wrapped"
+    }
+   ],
+   "added": "2026-11-02"
   }
  ]
 }
