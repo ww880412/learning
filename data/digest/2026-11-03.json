@@ -3,7 +3,15 @@
  "label": "11 月 3 日 · 星期二",
  "href": "digest/2026-11-03.html",
  "json": "data/digest/2026-11-03.json",
- "brief": null,
+ "brief": {
+  "title": "X 简报 · 11/3（周二）",
+  "href": "x-brief/2026-11-02.html",
+  "lines": [
+   "Claude API 上线「消息线程」公测（官方已发布）：长对话每轮只发新消息，Claude Code 已对多数用户默认开启：Anthropic 北京时间 11/3 凌晨宣布，Messages API 加一个 thread 参数后，服务器把对话暂存在内存里，下一轮只发新消息和上一条回复的 ID。官方称 Claude Code 默认开启后，50 万到 100 万 token 的请求首 token 等待中位数缩短约 35%；宝玉整理的官方数据是长对话单次请求中位数从约 800 KB 降到 1.8 KB（ClaudeDevs 原帖、宝玉 原帖、官方博客、文档）",
+   "DeepSeek Search / Fetch 结束免费：经 Claude Code、Codex、DeepSeek Harness 打出去的联网工具调用，北京时间 11/1 起按次收费：官方文档写明两个接口各按每千次成功请求 $0.75 计费，与返回条数和 token 无关；失败、空结果、超时不收钱；Search 每账号 100 QPS、Fetch 25 QPS。meng shao 换算：Agent 一天打 1 万次成功搜索约 $7.5，不含模型 token（meng shao 原帖、官方计费文档、价格页）",
+   "Vercel 构建默认拦截已知恶意 npm 版本：安装前查锁文件，安装中拦下载，不用配置：Vercel 11/2 更新日志称，所有套餐的新构建都会对照一份恶意或有漏洞的包版本黑名单，在依赖安装前检查锁文件（包括从构建缓存恢复的依赖），安装时拦截受影响的公共 npm 下载，命中就让部署失败、报出包名和版本，并尝试清掉受污染的构建缓存；Rauch 说目的是在 install 脚本运行前挡住，防止代码和密钥被偷（Rauch 原帖、vercel_dev 原帖、Vercel 更新日志）"
+  ]
+ },
  "posters": {
   "title": "5 张技术海报",
   "href": "x-posters/2026-11-03/index.html",
