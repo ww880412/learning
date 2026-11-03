@@ -24,6 +24,140 @@
   ],
   "days": [
     {
+      "date": "2026-11-02",
+      "source": "https://www.producthunt.com/leaderboard/daily/2026/11/2",
+      "fetched": "2026-11-03 19:35 北京",
+      "note": "周一榜，PH 页面只返回前十，从中收 5 个；第一名 beacon.sh 分数 416；未收 UnleashX、Xmind 2027、Cedric、Hera、Greta.sh。",
+      "picks": [
+        {
+          "id": "2026-11-02-beacon",
+          "why": "把 20 多种 coding agent 的会话归一成一种 OTel trace，再把经验经人审后变成可复用的记忆和技能，客户端 MIT 开源，工作台的统一回放和经验沉淀可以直接对标。",
+          "limit": "agent 存取记忆要云端 Pro（$20/月起），高危操作拦截只在企业版；交互安装默认选云端转发，要手动选 Local。"
+        },
+        {
+          "id": "2026-11-02-agent-inbox",
+          "why": "agent 用一个 ask/approve/choose 命令向指定的人提问或要批准，经邮件、Slack、Telegram 送达并阻塞等回答，带超时和有效期，工作台的人在回路接口可以照抄。",
+          "limit": "托管在 Novu，价格未查到；不支持企业微信、飞书等国内渠道。"
+        },
+        {
+          "id": "2026-11-02-hyperresearch",
+          "why": "调研报告交付前机器核对引语是否逐字存在、数字能否追到来源，不过就打回，开源版 MIT 能装进 Claude Code 和 Codex，工作台评审类任务可以抄这道出货闸。",
+          "limit": "托管版按次收费（$9/$49）、一次几十分钟起；「DRACO 第一」是官方自测。"
+        }
+      ],
+      "items": [
+        {
+          "id": "2026-11-02-beacon",
+          "name": "beacon.sh",
+          "tagline": "Open-source self-improving memory for AI coding agents",
+          "ph": "https://www.producthunt.com/products/asymptotelabs",
+          "site": "https://beacon.sh",
+          "repo": "https://github.com/asymptote-labs/agent-beacon",
+          "rank": 1,
+          "score": 416,
+          "comments": 78,
+          "what": "给 coding agent 做跨工具的会话记录和「经验记忆」：在本机挂钩子/OTLP，把 Claude Code、Codex、Cursor、OpenCode 等 20 多种 agent 的提示词、工具调用、命令、改动文件、审批、MCP 调用和 token 统一成一种基于 OpenTelemetry 的 trace，存成本地 JSONL；再把有用的做法、纠正和排错路径提炼成经人审过的记忆，供以后任何一个 agent 通过 MCP 或 Agent Skill 取用。客户端 Go 写的，MIT 开源。",
+          "problem": "在 Claude Code 里教会 agent 的事，换到 Codex 或 Cursor 又得重教；会话一结束，排过的坑和给过的纠正就丢了，团队也看不清 agent 实际干了什么、花了多少 token。",
+          "highlight": "README：本地模式什么都不外发，`beacon traces` 和本地只读面板看全部会话；交互安装默认预选 Beacon Cloud，确认那一步会写明转发到哪、谁运营，可选 Local 退出。记忆闭环是「采集→评估→提炼→人审→复用」：评估调用要先 dry run 显示选中的 trace 和预估费用、你同意后才发出；评估器只给概率（任务成功没有、值不值得留），课文由 agent 读源 trace 起草，每条都绑到具体 trace 事件，人批准才入库，记忆可再「升级」成仓库里的 .agents/skills/<名>/SKILL.md。召回时 agent 每次最多取 5 条，和你的指令或仓库文档冲突时以后者为准。还有 `beacon handoff` 把一个会话接到另一个 agent 里继续。仓库约 3180 星，最新 v1.3.52（11/2 北京）。云端免费档 50 条 findings，Pro $20/月起才有 agent 存取记忆，Team $30/人/月，拦截或审批高危操作只在企业版。雷达 data/radar.json 按仓库地址未查到。",
+          "inspo": "工作台可以抄两件事：①把各家 agent 的会话都归一成一种 OTel trace（提示词、工具、命令、文件、审批、token 各一类事件），统一回放和记账，而不是每家一个私有历史；②「经验记忆」走人审：评估器只打分、agent 从源 trace 起草、绑定证据、人批准才入库，召回限条数且明确「文档和用户指令优先」。前提是各 agent 都开放 hook 或 OTLP（覆盖表里 Codex 不记文件改动、Gemini CLI 不记会话）；企业内用要先定好哪些 trace 能出本机。",
+          "tags": [
+            "coding agent",
+            "开源",
+            "开发者工具",
+            "MCP"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-11-02-agent-inbox",
+          "name": "Agent Inbox",
+          "tagline": "Give your agent an email address, Slack and Telegram handle",
+          "ph": "https://www.producthunt.com/products/agent-inbox",
+          "site": "https://agentinbox.md",
+          "rank": 9,
+          "score": 136,
+          "comments": 20,
+          "what": "给 AI agent 一个收件箱：一个邮箱地址加 Slack、Telegram 账号，共用一个会话列表。agent 用 `@agentinbox/cli`（npm，MIT，源码在 novuhq/novu 仓库）或 MCP 收消息、回复，也能向指定的人发「问题 / 审批 / 单选」并阻塞等回答。由通知平台 Novu 运营。",
+          "problem": "agent 能调各种工具，却很难找到人：要问一句「部署到哪个环境」或要一个批准，就得给每个渠道各写一套胶水代码。",
+          "highlight": "CLI 文档：`send ask|approve|choose` 发结构化问题，命令会阻塞到有人回答；`--timeout` 到点退出码 11、回答之后仍会落在会话里，`--async` 不阻塞，`--ttl` 设问题多久内可答（默认 24 小时，最长 5 天），`--from` 标明「由哪个 bot 发起」。`--to` 只能发给已确认的联系人，陌生人来信只能 `reply`；`reply --to alice` 限定只有 Alice 能答。`list --wait` 阻塞等新消息，`listen` 在有消息时拉起 agent。暂停、删除和谁能联系 agent 只能在网页上设，不是命令。支持 Claude Code、Codex、Cursor、OpenCode、Hermes 等。官网称 SOC 2 Type II、ISO 27001（指 Novu 的基础设施）。价格未查到。",
+          "inspo": "工作台的「人在回路」可以直接照这套接口设计：agent 只调一个 `ask/approve/choose` 原语，带发起者、有效期和超时退出码，渠道（邮件、IM）由平台按联系人默认渠道路由，回答回到同一个会话；只有白名单联系人能答。前提是工作台已有可信的联系人/权限表；超时后回答怎么接回原任务要自己定。",
+          "tags": [
+            "AI工具",
+            "开发者工具",
+            "MCP"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-11-02-hyperresearch",
+          "name": "Hyperresearch",
+          "tagline": "Durable, verified agentic search",
+          "ph": "https://www.producthunt.com/products/hyperresearch",
+          "site": "https://hyperresearch.ai",
+          "repo": "https://github.com/jordan-gibbs/hyperresearch",
+          "rank": 10,
+          "score": 121,
+          "comments": 10,
+          "what": "深度调研服务：一个问题进去，出一份带引用的报告，每条引用都先核对来源再交付，读过的来源都留在可搜索的资料库里。有网页控制台、REST API、远程 MCP，以及 MIT 开源的本地版（Claude Code / Codex 的调研技能，约 4355 星）。这次上线的是 Answers MCP 和 API：agent 问一句，拿回带原文引语的短答案，查不到就返回「not found」。",
+          "problem": "agent 和人做调研时常引用并不支持该句的来源、编造引语，调研过的资料下次又从头搜。",
+          "highlight": "开源 README：16 步流水线，4 个评审 agent 并行挑刺，修补 agent 被工具限死只能做局部改动、不能重写全文；交付前有「出货闸」：引语必须逐字出现在资料库里，引用已撤稿论文会被拦，查不到出处的数字会被标出，`run init --budget` 超预算就停。抓来的网页正文一律包在 untrusted-source 标记里当数据处理。资料库以 Markdown 为准、SQLite 只是可重建的索引。Codex 版装一个 Stop hook，流水线没跑完不让会话结束。托管版按次收费：Light $9（约 30–40 分钟），Deep $49（约 3–5 小时）；`hr_test_` 测试 key 免费、跑假数据但流程和返回格式是真的。「DRACO 榜第一」是官方自己跑的对比（10 题、同一评审模型），未独立验证。雷达 data/radar.json 按仓库地址未查到。",
+          "inspo": "工作台的调研或评审类任务可以抄它的「出货闸」：交付前机器检查引语是否逐字存在于已抓取来源、数字能否追到证据，不过就打回；外部网页统一加「不可信数据」包装；agent 想提前收工时用 Stop hook 拦住。前提是任务产物有结构化的引用；托管版按次计费、一次几十分钟起，不适合快速查一个事实。",
+          "tags": [
+            "AI工具",
+            "开发者工具",
+            "开源",
+            "MCP"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-11-02-display",
+          "name": "Display 1.0",
+          "tagline": "Create docs and apps with any agent, in one workspace",
+          "ph": "https://www.producthunt.com/products/display-dev",
+          "site": "https://display.dev",
+          "rank": 8,
+          "score": 149,
+          "comments": 49,
+          "what": "给 agent 产出的 HTML、Markdown 文档一个带登录门槛的链接：任何 agent 通过 MCP、`dsp` CLI 或 API 发布，同事在页面上逐行评论、直接编辑，agent 读评论后在同一链接发布新版本并关掉它回答过的评论。用空间和文件夹组织，可搜索。",
+          "problem": "agent 做出来的报告、原型、看板散在本地文件或各家聊天里，要发给同事或客户，只能公开托管或挨个给人开账号。",
+          "highlight": "官网：文档默认私有，可分享给人或组、全公司或公开，查看者用 Google、Microsoft 或一次性密码登录；外部人员按文档或文件夹邀请，不用进你的组织。每次保存都是新版本，Solo 起可回滚。不按人头收费、查看者不限：免费 1 个编辑者、3 个受限文档；Solo $9/月（年付），Team $59/月，Business $199/月，企业版才有 SAML。页面可调用白名单域名（Business）。官网称不用客户内容训练模型。建内部应用、接数据源仍是内测。",
+          "inspo": "工作台可以抄「同一 URL 迭代」：agent 每次产出发布到固定链接，人逐行评论，agent 读评论改完发新版本并标记已处理，历史版本可回看。前提是产物是 HTML/Markdown；要放在公司内网就得自建，不能直接用它的云。",
+          "tags": [
+            "AI工具",
+            "个人效率",
+            "开发者工具"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-11-02-clayzo",
+          "name": "Clayzo",
+          "tagline": "Create animations and motion design with your coding agent",
+          "ph": "https://www.producthunt.com/products/clayzo",
+          "site": "https://clayzo.com",
+          "rank": 6,
+          "score": 192,
+          "comments": 34,
+          "what": "给 coding agent 用的动画引擎：让 Claude Code、Codex 或 Cursor 用代码写动效和动态图形，agent 逐帧检查，导出视频或放到网页上实时播放，也可在 Swift 原生播放。`npx clayzo@latest init` 开始，免费。",
+          "problem": "做产品演示动画、短视频动效通常要 AE 一类工具和专人；让 agent 写代码动画又看不到成品，出错只能靠人肉回看。",
+          "highlight": "npm 上的 CLI 说明：`clayzo preview`、`render-frame --tick 120` 渲染指定帧成 PNG、`review`、`export … --format mp4`；init 会装 `@clayzo/animation`、轻量 WebGL 播放器和 agent 技能（`npx skills add clayzo/agent-skills`）。写和校验不用账号，但预览、渲染、审阅、导出都要 `clayzo login` 或 CI 用的 token。CLI 许可是自定义（SEE LICENSE），不是开源许可证。",
+          "inspo": "做公众号或视频号的产品演示动画时可以试：让 agent 写动画、渲染关键帧 PNG 自己看、再导出 MP4。工作台层面可抄「渲染单帧给 agent 看」这种视觉自检回路。前提是要注册账号才能导出；中文字体和画面质量没验证过。",
+          "tags": [
+            "自媒体创作",
+            "AI工具",
+            "coding agent"
+          ],
+          "status": "新发现",
+          "followups": []
+        }
+      ]
+    },
+    {
       "date": "2026-11-01",
       "source": "https://www.producthunt.com/leaderboard/daily/2026/11/1",
       "fetched": "2026-11-02 20:20 北京",
