@@ -24,6 +24,136 @@
   ],
   "days": [
     {
+      "date": "2026-11-03",
+      "source": "https://www.producthunt.com/leaderboard/daily/2026/11/3",
+      "fetched": "2026-11-04 17:05 北京",
+      "note": "PH 页面只返回前十，从中收 5 个；第一名 AgentKit 分数 400；Teamily AI 官网是纯前端页面读不到内容，未收；也未收 Synter Canvas、Videco、Calendarly、People Search by Context.dev。",
+      "picks": [
+        {
+          "id": "2026-11-03-agentkit",
+          "why": "agent 调外部 SaaS 时用的是「发起请求的那个人」自己的授权，还能按任务只挂几个工具，正好对应工作台的连接器授权和工具范围设计。",
+          "limit": "不开源；SSO、BYOK、SIEM、自部署都在企业版，免费档额度定价页两处写法不一（1 万次或 5 千次）。"
+        },
+        {
+          "id": "2026-11-03-hookdeck-inspect",
+          "why": "一次 GET 挂起最多 25 秒等到下一个 webhook 再返回，agent 不用写轮询循环；MCP 默认只读、要显式开写权限，两种做法都能直接搬到工作台。",
+          "limit": "公开地址谁拿到谁能读，不适合敏感数据；API 还是 0.2.0 测试版，接口可能变。"
+        },
+        {
+          "id": "2026-11-03-machinemail",
+          "why": "进来的每封信先分五级可信度、去掉隐藏指令再给 agent，agent 按等级行事，是工作台读外部内容时防提示注入的现成样板。",
+          "limit": "去指令效果是厂商说法、未独立验证；免费档每天只有 100 封。"
+        }
+      ],
+      "items": [
+        {
+          "id": "2026-11-03-agentkit",
+          "name": "AgentKit by Scalekit",
+          "tagline": "MCP gateway for production agents that acts on your behalf",
+          "ph": "https://www.producthunt.com/products/scalekit",
+          "site": "https://www.scalekit.com/agentkit",
+          "rank": 1,
+          "score": 400,
+          "comments": 90,
+          "what": "给 agent 用的「工具和授权」网关：官网称有 600 多个连接器、3 万多个现成工具（Salesforce、GitHub、Jira、Gmail 等），agent 通过一个 MCP 网关调用，Scalekit 负责 OAuth、令牌存储、重试和限流；内部 API 或自建 MCP 服务可以作为自定义连接器接进来，用起来和内置的一样。",
+          "problem": "agent 要替不同用户操作各种 SaaS 时，每接一个应用都得自己写 OAuth、存令牌、处理刷新和权限，还容易变成大家共用一个服务账号。",
+          "highlight": "每个用户授权一次就生成一个「connected account」，之后 agent 每次调用都用这个用户自己的凭据，在目标应用里显示为该用户本人、权限不超过他授权的范围；令牌放在隔离的保险库里，官网称不进代码、日志和模型上下文。可以按角色把不同连接器里的工具拼成一个小工具包（PH 介绍里叫 Virtual MCP Servers），官网称工具少了能省最多 80% 的 token（厂商说法，未独立验证）。每次工具调用都记成结构化事件，分「连接器错误」和「API 错误」两类，可推到 Datadog、Splunk 等 SIEM（企业版）。另有 Triggers，比如来一封邮件就启动 agent。支持云、私有云和离线自部署。价格：免费档每月 1 万次工具调用和 1 万次触发事件（定价页对比表里又写「5K，硬上限」，两处不一致），Growth $99/月起；SSO、BYOK、SIEM 和自部署都在企业版。不开源。",
+          "inspo": "工作台可以照抄两点：①每个员工的连接器授权单独存一份，agent 调外部系统时带的是「这个人」的身份，审计里能落到具体的人，而不是一个共享的机器人账号；②按任务配工具包，一个任务只挂它要用的几个工具，而不是把所有 MCP 全挂上。前提是公司的内部系统支持按用户 OAuth 或能代发用户令牌；只有服务账号的老系统做不到「以本人身份」。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "MCP",
+            "AI工具"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-11-03-hookdeck-inspect",
+          "name": "Hookdeck Inspect",
+          "tagline": "Free webhook tester for you and your agent",
+          "ph": "https://www.producthunt.com/products/hookdeck",
+          "site": "https://inspect.hookdeck.com/",
+          "rank": 9,
+          "score": 117,
+          "comments": 12,
+          "what": "免费、免注册的 webhook 测试地址：POST 一下 inspect.hookdeck.com 就拿到一个临时接收地址和一个读取地址，第三方的 webhook 发进来，人在网页上看原样请求，agent 直接读接口。11/3 的更新日志说这是原来的 Hookdeck Console 改名而来。",
+          "problem": "开发 webhook 时需要一个公网地址来接 Stripe、GitHub 之类的回调；以前的测试工具是给人在网页上看的，agent 没法自己拿地址、等请求、读内容。",
+          "highlight": "给 agent 设计的接口很简单：`requests_url` 用 GET 一次最多挂起 25 秒，等到下一个请求就把它以 JSON 返回，agent 不用轮询；还带 450 多家服务商的模拟 webhook（更新日志里写 500+，两处数字不一）。不需要账号，谁拿到地址谁就能读，文档明说别发敏感数据；创建时返回的 `cli_key` 能把请求转发到本机，文档要求别贴进提示词。之后可以用 `hookdeck listen` 转发到 localhost，再升级到付费的 Event Gateway（队列、重试、转换）。CLI 自带 MCP 服务（`hookdeck gateway mcp`），默认只读，要加 `--allow-write` 才能改数据。API 还是早期测试版（0.2.0），接口可能变。",
+          "inspo": "工作台里「等外部事件」的地方可以抄这个接口：给 agent 一个一次调用就等到下一件事的长轮询（带超时），比让它写循环去轮询省 token 也不容易出错；MCP 默认只读、写权限要显式打开，也值得照搬到自家工具。前提是事件本身不敏感，或者换成带鉴权的版本；公开的 Inspect 地址不适合企业内网的数据。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "MCP"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-11-03-machinemail",
+          "name": "MachineMail",
+          "tagline": "Email inboxes for humans and bots",
+          "ph": "https://www.producthunt.com/products/machinemail",
+          "site": "https://machinemail.dev",
+          "rank": 8,
+          "score": 121,
+          "comments": 8,
+          "what": "给 AI agent 开真实邮箱：一个 API 调用建一个收件箱，或者把自己的域名设成全收，任何地址第一次收到信就自动出现；agent 通过 MCP 或 REST API 收发、回复、转发、打标签。",
+          "problem": "agent 注册服务时要接验证码或登录链接，或者要用邮件和陌生人往来，但又不能被邮件里藏的指令带跑。",
+          "highlight": "每封进来的信先出一份「可信报告」，分五级（verified、known、unknown、suspicious、quarantined），官网称会去掉隐藏指令后再给 agent 一份安全文本，让 agent 按等级行事而不是按发件人说的话（过滤效果是厂商说法，未独立验证）。MCP 里的 `wait_for_message` 会挂起最多一分钟等信到。回信可以先存成草稿给人审再发。REST API 兼容 AgentMail 的 `/v0`，换个地址和密钥就能用 AgentMail 的 SDK。agent 还能按 auth.md 自己注册，拿到沙盒邮箱后给你一个 6 位码认领。价格：收件箱都免费，免费档每月 3000 封、每天 100 封，Pro $9/月，Team $49/月，Scale $199/月，垃圾和隔离邮件不计费，可导出 mbox 或 JSONL。",
+          "inspo": "工作台读外部内容（邮件、工单、网页）时可以抄它的做法：进来的东西先打可信等级，再给 agent 一份去掉可疑指令的版本，agent 的权限跟着等级走（比如 unknown 只能读不能触发动作）。「对外发信先存草稿给人审」也可以作为默认。前提是有一层能判断来源的东西（SPF/DKIM、已知联系人名单），只靠模型自己判断不够。",
+          "tags": [
+            "AI工具",
+            "开发者工具",
+            "MCP"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-11-03-testifly",
+          "name": "Testifly",
+          "tagline": "Autonomous AI QA. Zero prompting. Zero maintenance.",
+          "ph": "https://www.producthunt.com/products/testifly-launch",
+          "site": "https://testifly.dev",
+          "rank": 3,
+          "score": 248,
+          "comments": 43,
+          "what": "给网页应用做端到端测试的 AI 服务：填上应用地址和测试账号，它自己摸清页面和用户流程、生成测试，每次部署都跑，界面改了会自己修测试。",
+          "problem": "小团队没有专职 QA，手写的端到端脚本又脆，界面一改就大片失败，没人维护。",
+          "highlight": "官网称能从 Jira、Linear、Notion 里的需求更新测试，区分「功能行为变了」和「只是标记变了」，失败时给出根因和会话录像（效果都是厂商说法）。有「影响范围」功能：改一个文件，先列出受影响的测试和流程（例：account-details.tsx 影响 3 个流程）。有 MCP 服务，编程助手能直接问「账单页有哪些测试、哪个挂了」。测试密码用项目专属密钥 AES-256-GCM 加密后再放 Azure Key Vault。支持云、内网和自部署。30 天免费试用，正式价格未查到。",
+          "inspo": "「改了哪个文件、影响哪些测试流程」的映射值得抄进工作台：agent 提交前先查影响范围，只跑相关的端到端测试，再把结果通过 MCP 回给 agent。前提是要先有一份「页面/文件到用户流程」的对照表，Testifly 是靠自己爬应用建的，自己做得先解决这一步。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "MCP"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-11-03-lifeval",
+          "name": "LifeVal",
+          "tagline": "OpenAI's benchmark for everyday life tasks with AI",
+          "ph": "https://www.producthunt.com/products/openai",
+          "site": "https://openai.com/index/lifeval/",
+          "rank": 7,
+          "score": 124,
+          "comments": 2,
+          "what": "OpenAI 11/2 发布的评测集，衡量模型和个人 agent 办日常生活事务的能力：照护、健康、教育、家务管理、个人财务、购物、办政府手续等，共 169 个任务，要用浏览器、电脑操作和连接器完成，按每个任务专门写的评分细则打分，报告各任务平均得分。",
+          "problem": "现有评测多看工作和编程能力，缺少衡量 AI 帮普通人办生活事务的尺子。",
+          "highlight": "选题来自美国时间使用调查（ATUS）、多国时间使用调查（MTUS）和 OpenAI 自己对约 4000 人的愿付价格调查；论文称任务由亲身多次办过这件事的人出题并写评分细则，经三轮人工质检，并用真实的 ChatGPT 对话和记忆做个性化。OpenAI 公布的结果是 GPT-5.2 得 49.3%、GPT-6 Astra 得 80.6%；任务集没有公开，所有成绩都是 OpenAI 自己跑的，BenchLM 因此只展示不计入排名。示例里有「搬家后挑选并报名合适的幼儿园」（93.1%）。",
+          "inspo": "两点可借：①工作台做自家 agent 评测时，按「真实发生频率和值不值钱」来挑任务，每个任务配一份由做过这件事的人写的评分细则，而不是只看通过/失败；②教育类示例（择校、报名表）说明家长事务已经是大模型厂商的重点场景，给小溪找学校、填表这类事可以留意 ChatGPT 的进展。前提：任务集没公开，没法拿来直接跑自家模型。",
+          "tags": [
+            "AI工具",
+            "教育"
+          ],
+          "status": "新发现",
+          "followups": []
+        }
+      ]
+    },
+    {
       "date": "2026-11-02",
       "source": "https://www.producthunt.com/leaderboard/daily/2026/11/2",
       "fetched": "2026-11-03 19:20 北京",
