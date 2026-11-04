@@ -1,0 +1,62 @@
+{
+ "date": "2026-11-04",
+ "label": "11 月 4 日 · 星期三",
+ "href": "digest/2026-11-04.html",
+ "json": "data/digest/2026-11-04.json",
+ "brief": {
+  "title": "X 简报 · 11/4（周三）",
+  "href": "x-brief/2026-11-03.html",
+  "lines": [
+   "Claude Team / Enterprise 插件可自动接入：管理员配好后，同事首次用插件就连上，不用再逐个授权（官方已发布）：Boris Cherny 说签入公司插件一个个授权很烦，所以 Claude 现在支持自动连接；ClaudeDevs 写明：MCP 服务器若接受 Claude 为 trusted issuer，用户登录后即可自动接入插件，少一次重新授权（Boris 原帖、ClaudeDevs 原帖、TestingCatalog 原帖）",
+   "UHP（Unified Harness Protocol）+ HarnessRouter：一套任务接口跑 Codex、Claude Code、Gemini CLI、Hermes、Pi 等（开源标准 + 参考实现）：Akshay 介绍 UHP 把「完整 harness」当成可插拔后端：产品后端按 harness_id 下发任务，HarnessRouter 起对应会话、流式回进度，文件、失败和最终输出走同一接口；规范站点与 Apache-2.0 参考实现已公开（Akshay 原帖、规范、HarnessRouter 仓库）",
+   "Claude Code / Cowork 产品负责人 Cat Wu 离开 Anthropic（本人宣布，未说明去向）：Cat Wu 发帖称周五是在 Anthropic 的最后一天；两年前 Claude Code 还是内部小工具时，她让它搭 RL 环境、自己几乎没手写代码就被吸引加入；今天默认是信任 Claude 自动批准权限，做大迁移和新产品。宝玉补充她还负责 Cowork，2024 年 8 月入职（Cat Wu 原帖、宝玉 原帖、Thariq 回复）"
+  ]
+ },
+ "posters": null,
+ "ph": {
+  "listDate": "2026-11-02",
+  "href": "ph-inspo/index.html",
+  "n": 5,
+  "source": "https://www.producthunt.com/leaderboard/daily/2026/11/2",
+  "picks": true,
+  "items": [
+   {
+    "rank": 1,
+    "pick": true,
+    "name": "beacon.sh",
+    "what": "给 coding agent 做跨工具的会话记录和「经验记忆」：在本机挂钩子/OTLP，把 Claude Code、Codex、Cursor、OpenCode 等 20 多种 agent 的提示词、工具调用、命令、改动文件、审批、MCP 调用和 token 统一成一种基于 OpenTelemetry 的 trace，存成本地 JSONL；再把有用的做法、纠正和排错路径提炼成经人审过的记忆，供以后任何一个 agent 通过 MCP 或 Agent Skill 取用。客户端 Go 写的，MIT 开源。",
+    "href": "ph-inspo/index.html#2026-11-02-beacon"
+   },
+   {
+    "rank": 9,
+    "pick": true,
+    "name": "Agent Inbox",
+    "what": "给 AI agent 一个收件箱：一个邮箱地址加 Slack、Telegram 账号，共用一个会话列表。agent 用 `@agentinbox/cli`（npm，MIT，源码在 novuhq/novu 仓库）或 MCP 收消息、回复，也能向指定的人发「问题 / 审批 / 单选」并阻塞等回答。由通知平台 Novu 运营。",
+    "href": "ph-inspo/index.html#2026-11-02-agent-inbox"
+   },
+   {
+    "rank": 10,
+    "pick": true,
+    "name": "Hyperresearch",
+    "what": "深度调研服务：一个问题进去，出一份带引用的报告，每条引用都先核对来源再交付，读过的来源都留在可搜索的资料库里。有网页控制台、REST API、远程 MCP，以及 MIT 开源的本地版（Claude Code / Codex 的调研技能，约 4355 星）。这次上线的是 Answers MCP 和 API：agent 问一句，拿回带原文引语的短答案，查不到就返回「not found」。",
+    "href": "ph-inspo/index.html#2026-11-02-hyperresearch"
+   },
+   {
+    "rank": 8,
+    "pick": false,
+    "name": "Display 1.0",
+    "what": "给 agent 产出的 HTML、Markdown 文档一个带登录门槛的链接：任何 agent 通过 MCP、`dsp` CLI 或 API 发布，同事在页面上逐行评论、直接编辑，agent 读评论后在同一链接发布新版本并关掉它回答过的评论。用空间和文件夹组织，可搜索。",
+    "href": "ph-inspo/index.html#2026-11-02-display"
+   },
+   {
+    "rank": 6,
+    "pick": false,
+    "name": "Clayzo",
+    "what": "给 coding agent 用的动画引擎：让 Claude Code、Codex 或 Cursor 用代码写动效和动态图形，agent 逐帧检查，导出视频或放到网页上实时播放，也可在 Swift 原生播放。`npx clayzo@latest init` 开始，免费。",
+    "href": "ph-inspo/index.html#2026-11-02-clayzo"
+   }
+  ]
+ },
+ "url": "https://ww880412.github.io/learning/digest/2026-11-04.html",
+ "rule": "汇总日 D 是北京时间。简报文件名是美东日期，北京时间 D 日 09:00 发布，那时美东还是 D−1 日，所以 D 一般对应 x-brief/(D−1).html（页面若有带时区的发布时间，则改用该时间换算到 Asia/Shanghai；链接仍是原文件）。海报是 x-posters/D/。产品灵感是最新一份榜单日 ≤ D−2 的那组（太平洋时间的 Product Hunt 日榜，北京时间 D 日 09:00 前能入库的最新一份），并标出实际榜单日。某一来源没有就是 null。"
+}
