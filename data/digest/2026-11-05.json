@@ -3,7 +3,15 @@
  "label": "11 月 5 日 · 星期四",
  "href": "digest/2026-11-05.html",
  "json": "data/digest/2026-11-05.json",
- "brief": null,
+ "brief": {
+  "title": "X 简报 · 11/5（周四）",
+  "href": "x-brief/2026-11-04.html",
+  "lines": [
+   "Postman 桌面版被曝自动给 Codex、Claude Code、Cursor 装插件和启动 hook，安装器源码还会尝试替自己的 hook 记「已信任」（用户日志 + 源码佐证，Postman 已在 issue 回应但未撤回）：GitHub issue 作者贴出 Postman 12.33.4 日志 auto-existing-upgrade 记录「claude-code:installed, codex:installed」，并在 ~/.codex/config.toml 看到 Postman marketplace、插件和带 trusted_hash 的 hook 记录；hook 在会话开始时注入「凡是 API 工程任务先加载 postman:api-engineer skill」，还装了 Postman CLI 和远程 MCP。另一用户在 12.35.1 复现同样的自动安装（这次没看到 trusted_hash）；有人补充 Copilot 也被写入（vikingmute 原帖、GitHub issue #14370）",
+   "Claude Code 后台子 Agent 更省额度：状态行每 30 秒更新一次，改由 Haiku 5.5 从短笔记生成，单次更新成本约降 99%（官方已发布）：ClaudeDevs 说以前每次刷新状态行都要重读子 Agent 的整段对话，现在只读简短笔记；Boris Cherny 转发（ClaudeDevs 原帖、Boris 转发）",
+   "OpenAI 宣布收购 Pierre：Codex App 里看文件树、看 diff 用的就是它的开源组件，团队将做面向 Agent 的 Git 工作流（官方公告，待监管审批）：官方博客写明 Pierre 的 Trees、Diffs 库已在 Codex 里用，另有 Code Storage（给应用存代码和 Git 历史的服务）和语法高亮 Highlights；目标是让 Codex 把公司发布的代码和人的决策连起来。开源项目继续开源，Code Storage 客户收购后可继续用，金额未披露（OpenAI 公告原帖、OpenAI 博客、Greg Brockman 原帖、宝玉 原帖）"
+  ]
+ },
  "posters": {
   "title": "6 张技术海报",
   "href": "x-posters/2026-11-05/index.html",
