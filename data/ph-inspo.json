@@ -24,6 +24,198 @@
   ],
   "days": [
     {
+      "date": "2026-11-05",
+      "source": "https://www.producthunt.com/leaderboard/daily/2026/11/5",
+      "fetched": "2026-11-06 17:00 北京",
+      "note": "太平洋 11/5 榜；decohack 标 11/5 的那篇其实是 11/4 产品（Render Sandboxes 等），交叉核对时别混。",
+      "picks": [
+        {
+          "id": "2026-11-05-pushary-for-teams",
+          "why": "按人路由审批、按工具定策略、跨 Claude Code/Codex/Cursor 留谁点了同意，正好是工作台多人 agent 的权限与审计层。",
+          "limit": "只靠 MCP 问问题拦不住每次工具调用；要靠各家 hooks 或应用自己闸门，超时默认拒绝可配。"
+        },
+        {
+          "id": "2026-11-05-zerg-client",
+          "why": "自研 zmux 让 agent 读写侧边终端窗格，多 agent 各挂一模型同屏，可抄「屏协议 + 窗格复用」进工作台。",
+          "limit": "评估测试版；交互端只支持 Apple Silicon Mac，不是开源（Zerg Source Available），商用另签协议。"
+        },
+        {
+          "id": "2026-11-05-maritime",
+          "why": "沙箱、持久 Agent Box、Linux/Windows 桌面和 Android 同一套 API 与账单，比只做 Linux 沙箱更接近工作台要分的机型。",
+          "limit": "Swarms 仍邀请制；Windows 需 Growth 及以上；厂商称约 0.6 秒唤醒等数字未独立验证。"
+        }
+      ],
+      "items": [
+        {
+          "id": "2026-11-05-pushary-for-teams",
+          "name": "Pushary for Teams",
+          "tagline": "See who said yes to your team’s AI agents",
+          "ph": "https://www.producthunt.com/products/pushary",
+          "site": "https://pushary.com",
+          "rank": 4,
+          "score": 194,
+          "comments": 33,
+          "what": "给 AI agent（含 Claude Code、Codex、Cursor、Gemini CLI、Hermes 等）做人工审批层：权限提示和问题推到对应人的手机或 Mac 刘海（Pushary Isle），并留下谁问了、谁点了同意的记录。本次上线的是团队版能力。",
+          "problem": "多人各自跑 coding agent 时，同意往往只在当事人终端里发生；出事时很难回答「谁的 agent、谁点了 yes」。只靠 MCP 发问又拦不住每一次工具调用。",
+          "highlight": "官网称：按工具设自动同意 / 拒绝 / 升级 / 超时；团队里默认问发起该 agent 的人，也可把某类工具（如推 infra）改派给负责人；手机、Mac App、面板上的回答会带人名写入只追加审计日志并可导出。接入方式含 hosted MCP、`npx pushary@latest setup`、以及 Vercel AI SDK / LangGraph / OpenAI Agents SDK / Claude Agent SDK 等适配器；应用侧用 `decisions.ask()`，无人回答时返回 `approved: false`（失败关闭）。官网价：Team 约 $59/月含 5 人、加人约 $12/月，新工作区 3 天试用；个人 Agent 档另有定价。限制：MCP 只能提问，强制拦截依赖各家 permission hooks 或应用自己闸门；厂商对比与合规说法未经独立验证。",
+          "inspo": "工作台可抄三层：①按工具的 allow / ask / deny 策略表，而不是全局 yolo；②审批路由按「发起人」默认、按仓库或工具改派负责人；③只追加、可导出的跨 agent 决策账本（谁问、参数摘要、谁答、从哪一界面答）。前提：每个 agent 会话能绑到具体人和策略，并且在真正执行危险工具前有 hook 或服务端闸门去读返回值，不能只靠「agent 记得去问」。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "AI工具"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-11-05-zerg-client",
+          "name": "Zerg Client",
+          "tagline": "The coding agent harness that drives its own terminal panes",
+          "ph": "https://www.producthunt.com/products/zerg",
+          "site": "https://zergai.com/ztc",
+          "rank": 17,
+          "score": 79,
+          "comments": 4,
+          "what": "Zerg AI 自用的 coding agent harness（命令 `ztc`），评估测试版：规划改动、改代码、跑测试；自带面向 agent 的终端复用器 zmux，可在侧边窗格打开 Vim、htop，或再开其他 agent。",
+          "problem": "多数 coding agent 把终端当管道，人只能看命令输出；多 agent、多模型协作时很难同屏盯住各自在干什么。",
+          "highlight": "创始人在 PH 称：TypeScript agent + 原生 Rust 绘屏，走同一协议，故同一 agent 可跑在终端、桌面 App、嵌入自有产品或无头服务器。窗格可再挂 agent，各用不同模型；可用 `/model` 中途换模型。安装：`npm install -g @zergai/ztc`（需 Node 20.19+ 或 22.12+），桌面目前仅 Apple Silicon Mac；无头模式支持 macOS / Linux / Windows。许可证是 Zerg Source Available License 1.0，官网与创始人明确说不是开源，评估免费、持续商用需另签。厂商演示的测试全过等数字属自述，未独立验证。",
+          "inspo": "可抄的是「屏协议」：agent 层与 UI/复用器层解耦，让 agent 能打开、读取、键入侧边窗格，人侧也能盯住；多任务时一窗格一模型，用会话内换模型做 build→review。前提：工作台得自己管窗格生命周期和权限（谁能碰鼠标键盘），且接受交互端先只做 Mac、或先做无头嵌入。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "AI工具"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-11-05-maritime",
+          "name": "Maritime",
+          "tagline": "Cloud computers for any AI agent, customized your way",
+          "ph": "https://www.producthunt.com/products/maritime",
+          "site": "https://maritime.sh",
+          "rank": 5,
+          "score": 189,
+          "comments": 11,
+          "what": "YC 背景的 agent 算力层：用同一 API / CLI / SDK / MCP 提供持久 Agent Box、一次性沙箱、Swarms，以及带屏幕的 Linux/Windows 桌面和 Android 手机，供 agent 跑代码、点界面；人可通过链接接管。",
+          "problem": "不同类型的 agent 任务要的机器不一样（抛一次性代码、留仓库的工作区、批量 eval、无 API 的 GUI、Windows 或手机），拆多家供应商会碎掉账单和接入。",
+          "highlight": "官网文档称：机器按秒计费；Agent Box 约 $1/月每 2GB（醒着睡着都收），默认小沙箱约 $0.022/小时，Linux 桌面 $0.12/小时、Windows $0.18/小时、Android $0.15/小时；睡着的非 Agent Box 只收磁盘约 $0.08/GB-月。计划 Starter $20 / Growth $100 等，月费转成同额用量额度；新账户 7 天试用、用量上限约 $20。支持 `maritime create --template`（含 openclaw、hermes、claude_code、codex、dsh 等）、按 `externalUserId` 一人一机、出网策略与花费上限。厂商称 Agent Box 空闲睡眠后约 0.6 秒唤醒（Windows 桌面约一分钟）——厂商说法，未独立验证。Swarms 仍邀请制；Windows 需 Growth 及以上。",
+          "inspo": "工作台机型矩阵可对齐它的三分法：一次性沙箱（任务结束删盘）、持久 Box（/data 保留、空闲睡）、带屏幕电脑（可截图点击 + 人接管链接）；对外暴露时用业务侧 user id 幂等开机器并设月度花费帽。前提：任务调度能区分「要不要留盘 / 要不要屏幕」，并接受 Swarms 与部分机型仍受计划与邀请限制。与已入库的 Render Sandboxes 重叠在 Linux 沙箱，但 Maritime 多了桌面/手机/一人一机与模板托管。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "AI工具"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-11-05-glasshand",
+          "name": "Glasshand",
+          "tagline": "Give your agent a real iPhone and Mac",
+          "ph": "https://www.producthunt.com/products/glasshand",
+          "site": "https://glasshand.com",
+          "rank": 1,
+          "score": 359,
+          "comments": 86,
+          "what": "在机房里租给 agent 用的真机 iPhone / Mac（不是模拟器）：通过 API 让 Claude Code、Codex、Cursor 等看到屏幕并点击输入，可装 App Store 应用、加 eSIM、自设密码；退租后擦除并恢复出厂。",
+          "problem": "agent 要发社媒、测原生 iOS、走真实短信验证时，云端 Linux 沙箱和模拟器不够；真机又难共享和管理擦除。",
+          "highlight": "官网称设备独占、可按月租、随时取消；到期或释放后擦除数据并重置手机与控制器。PH 问答里团队称目前主力是 iPhone SE 3，可按需求找机型；人可先自己登录再把控制权交给 agent，避免把密码打进对话；同一 Glasshand 账号下换 agent 仍用同一台设备。计费按月、不按小时。安全审计细节与擦除 SOP 为厂商自述，未见独立审计报告。",
+          "inspo": "若工作台要接「真机 computer-use」：设备租约与 agent 会话解耦（账号级设备，多 harness 复用）；敏感登录走人工接管后再交回；退租强制擦除+校验作为生命周期钩子。前提：任务真的依赖 Apple 生态或真 SMS，并接受月租与机型库存，而不是按秒沙箱。",
+          "tags": [
+            "coding agent",
+            "AI工具",
+            "开发者工具"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-11-05-living-brain",
+          "name": "Living Brain",
+          "tagline": "Interoperable, efficient memory layer for agentic AI",
+          "ph": "https://www.producthunt.com/products/chatandbuild",
+          "site": "https://docs.livingbrain.com/",
+          "rank": 2,
+          "score": 241,
+          "comments": 42,
+          "what": "ChatAndBuild 的跨工具 AI 记忆层：把对话、文档等编成可检查、可更新的知识库，经 API / SDK / CLI / 托管 MCP 提供给 ChatGPT、Claude、Cursor、Codex、Hermes、OpenClaw 等。",
+          "problem": "上下文锁在各家聊天与项目里，换模型或换 harness 就要重讲一遍；自建记忆又难跨工具复用。",
+          "highlight": "文档显示 early access：可 `POST /v1/brains` 建脑，MCP 暴露捕获/检索等工具（文档称约 60 个），并给出 Claude Code / Codex / Cursor 等配置片段；另有 `livingbrain` CLI。PH 上创始人给出内部评测：LoCoMo 上 92.2% 判定准确、约少用 63.8% 上下文等——厂商自测，未独立验证。可检查记忆内容、来源与健康度（Freshness / Strain / Readiness 等为产品自述）。",
+          "inspo": "工作台记忆层可做成「brain 实体 + subjectId」：捕获与检索走同一 MCP/API，并允许人检查来源与过期；给每个编码 agent 会话注入同一 subject 的检索结果，而不是把全历史塞进 prompt。前提：先定义哪些内容值得进脑、谁有权删，并接受目前仍是 early access。",
+          "tags": [
+            "AI工具",
+            "开发者工具",
+            "coding agent"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-11-05-rerun",
+          "name": "Rerun",
+          "tagline": "Turn your AI subscriptions into a team of coworkers",
+          "ph": "https://www.producthunt.com/products/rerun-2",
+          "site": "https://rerun.build",
+          "repo": "https://github.com/rerun-build/rerun",
+          "rank": 3,
+          "score": 240,
+          "comments": 14,
+          "what": "可视、可接管的 AI「同事」平台：每个 coworker 有工具、浏览器电脑、记忆与日程，敏感动作先问人；本次强调 AGPL-3.0 开源可自托管，与 Rerun Cloud 同代码。",
+          "problem": "聊天机器人停在「告诉你怎么做」；要 7×24 跑业务动作又怕黑箱乱发信、乱付款。",
+          "highlight": "仓库 README：Docker Compose + Node 22 + Supabase 自托管；可接自有 Claude/ChatGPT 订阅、API key、OpenRouter 或本地 OpenAI 兼容服务。官网称云端每工作区一台隔离机器、3000+ 集成等——部分能力在商业 `ee` 目录，开源构建默认不开，需另看商业许可。雷达 data/radar.json 尚未收录该仓库。",
+          "inspo": "可参考「Foreman 访谈需求→生成同事」与「敏感动作统一暂停」的产品骨架；自托管与云同代码便于企业内网。对 coding agent 工作台是旁路参考（偏业务自动化同事，不是代码 harness）。前提：接受 AGPL，并分清开源核与 `ee` 商业模块。",
+          "tags": [
+            "AI工具",
+            "开源",
+            "个人效率"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-11-05-clocknext",
+          "name": "Clocknext",
+          "tagline": "Pricing and Billing Infrastructure for AI Agents",
+          "ph": "https://www.producthunt.com/products/clocknext",
+          "site": "https://www.clocknext.com/",
+          "rank": 6,
+          "score": 143,
+          "comments": 49,
+          "what": "面向 AI 原生应用与 agent 的计量计费：实时跟踪产品内 AI 用量，用 credits / outcomes / units 等原语组定价，并看账户、agent、模型级成本与毛利。",
+          "problem": "token 好数，但要变成可开票的套餐、钱包与毛利，自建计量和账单管道很重。",
+          "highlight": "官网称支持预付、后付、混合与自助 top-up；定价变更可保存即生效；展示「两天出首张发票」「每周省 8 小时对账」等——均为厂商营销数字，未独立验证。适合卖 agent 能力的团队，而不是终端 coding 工作台本身。",
+          "inspo": "若工作台以后按 agent/任务向客户收费：用量上报与定价计划解耦（工程只打 meter，产品改价不发版）；按 agent 与模型看成本。前提：先有稳定的 usage 事件模型（谁、哪个 agent、哪类 outcome）。",
+          "tags": [
+            "AI工具",
+            "开发者工具"
+          ],
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "id": "2026-11-05-rainbrand",
+          "name": "Rainbrand",
+          "tagline": "The brand layer for agents",
+          "ph": "https://www.producthunt.com/products/rainbrand",
+          "site": "https://www.rainbrand.com/",
+          "rank": 9,
+          "score": 109,
+          "comments": 17,
+          "what": "给 agent 用的品牌上下文层：从官网、品牌手册与文件维护共享品牌指引和资产，经 MCP / API / 插件提供给 ChatGPT、Claude、Claude Code、Cursor 等；可要 Brief，也可对成品做 Review。",
+          "problem": "多工具生成内容时品牌口径分散，改一处指南很难同步到所有 agent。",
+          "highlight": "官网称：任务前取 Brief（指引+资产），可用自有工具或 AI Gateway 生成；Review 对 logo/色/字体/文案给 pass/fail/uncertain 等结论并附理由与证据图。Claude Code 可用插件市场 `rainbrandai/rainbrand-skills`；Cursor 可配 `https://mcp.rainbrand.com/mcp`。Plus 约 $20/月起——以官网定价页为准。",
+          "inspo": "自媒体或多产品线时，把「品牌」做成独立 MCP 资源：生成前 Brief、发布前 Review，而不是把指南粘进每个 agent 的系统提示。前提：先有可维护的品牌源，并让工作流强制经过 Brief/Review 两步。",
+          "tags": [
+            "自媒体创作",
+            "AI工具"
+          ],
+          "status": "新发现",
+          "followups": []
+        }
+      ]
+    },
+    {
       "date": "2026-11-04",
       "source": "https://www.producthunt.com/leaderboard/daily/2026/11/4",
       "fetched": "2026-11-05 17:10 北京",
