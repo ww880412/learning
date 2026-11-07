@@ -1,5 +1,8 @@
 // node scripts/test-progress.mjs
 import { createRequire } from 'node:module';
+import fs from 'node:fs';
+import path from 'node:path';
+import vm from 'node:vm';
 import assert from 'node:assert/strict';
 const require = createRequire(import.meta.url);
 const gh = require('../assets/gh.js');
@@ -325,5 +328,150 @@ await gh.commitJson('data/review.json', 'github_pat_x', (doc) => prog.applyLearn
   return jsonResp(201, {});
 });
 assert.equal(learnedPuts, 1);
+
+// 云写入口必须能列全，而且学习进度的提交只能从 commitReview 出去。hold 要挡在这个共享边界上。
+{
+  const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
+  const progressSrc = fs.readFileSync(path.join(root, 'assets/progress.js'), 'utf8');
+  const favSrc = fs.readFileSync(path.join(root, 'assets/favorites.js'), 'utf8');
+  const buildSrc = fs.readFileSync(path.join(root, 'build.mjs'), 'utf8');
+  const commitCalls = progressSrc.match(/GH\.commitJson\(/g) || [];
+  assert.equal(commitCalls.length, 1, 'progress.js 里学习进度的云写只能有一处');
+  const commitFn = progressSrc.slice(progressSrc.indexOf('function commitReview'), progressSrc.indexOf('function pushLearned'));
+  assert.ok(commitFn.includes('denyHeld'), 'commitReview 必须先看 hold');
+  assert.ok(commitFn.indexOf('denyHeld') < commitFn.indexOf('GH.commitJson'), 'hold 要在真正提交之前');
+  const gate = progressSrc.slice(progressSrc.indexOf('function denyHeld'), progressSrc.indexOf('function commitReview'));
+  assert.match(gate, /holdKeys\(\)/);
+  for (const name of ['pushLearned', 'onReview', 'syncLocal']) {
+    const start = progressSrc.indexOf('function ' + name);
+    const next = progressSrc.indexOf('\n  function ', start + 10);
+    const body = progressSrc.slice(start, next);
+    assert.match(body, /commitReview\(/, name + ' 必须走 commitReview');
+    assert.doesNotMatch(body, /GH\.commitJson/, name + ' 不能自己提交');
+  }
+  assert.match(progressSrc.slice(progressSrc.indexOf('function boot'), progressSrc.indexOf('root.addEventListener')), /syncLocal\(/);
+  const tokenHook = progressSrc.slice(progressSrc.indexOf('gh-token'), progressSrc.indexOf('root.PROG = Object.assign'));
+  assert.match(tokenHook, /syncLocal\(/);
+  assert.match(buildSrc, /PROG\.onReview/);
+  assert.match(buildSrc, /PROG\.syncLocal\(\)/);
+  assert.equal((buildSrc.match(/GH\.commitJson\(/g) || []).length, 0);
+  assert.match(favSrc, /FILE = 'favorites\.json'/);
+  assert.match(favSrc, /GH\.commitJson\(FILE/);
+  assert.doesNotMatch(favSrc, /data\/review\.json/);
+}
+
+function bootBrowser(init, hooks) {
+  const m = new Map(Object.entries(init || {}));
+  const sets = [];
+  const toasts = [];
+  let commits = 0;
+  const store = {
+    get length() { return m.size; },
+    key(i) { return [...m.keys()][i]; },
+    getItem(k) { if (store.fail && store.fail(k)) throw new Error('collection read failed'); return m.has(k) ? m.get(k) : null; },
+    setItem(k, v) { sets.push([k, String(v)]); m.set(k, String(v)); },
+    removeItem(k) { m.delete(k); },
+    fail: null,
+  };
+  const listeners = {};
+  const root = {
+    GH: {
+      token: () => 'synthetic-noncredential',
+      toast: (s) => { toasts.push(String(s)); },
+      commitJson: () => { commits++; return Promise.resolve({ skipped: true }); },
+    },
+    addEventListener: (ev, fn) => { (listeners[ev] = listeners[ev] || []).push(fn); },
+    dispatchEvent: (ev) => { (listeners[ev.type] || []).forEach((fn) => fn(ev)); },
+  };
+  const document = {
+    currentScript: { src: 'http://127.0.0.1/assets/progress.js' },
+    readyState: 'loading',
+    addEventListener() {},
+    getElementById: () => null,
+    querySelector: () => null,
+  };
+  const context = {
+    window: root, document, localStorage: store, sessionStorage: store,
+    location: { origin: 'http://127.0.0.1', href: 'http://127.0.0.1/courses/example.html', pathname: '/courses/example.html' },
+    URL, console, fetch: async () => ({ ok: true, json: async () => ({ items: [{ id: 'ex1', href: '/courses/example.html' }] }) }),
+  };
+  vm.createContext(context);
+  vm.runInContext(fs.readFileSync(new URL('../assets/progress.js', import.meta.url), 'utf8'), context);
+  if (hooks && hooks.fail) store.fail = hooks.fail;
+  return { root, m, store, sets, toasts, commits: () => commits, fire: (type) => root.dispatchEvent({ type }) };
+}
+
+const residual = JSON.stringify({ 1: { done: true, at: 100, on: '2026-11-06' } });
+const otherBackup = { version: 1, kind: 'learning-progress-local', done: { '/courses/example.html': '2026-11-01' }, rev: {}, ops: {} };
+{
+  const app = bootBrowser({
+    'prog-import-hold': JSON.stringify({ keys: ['rev-op:cs146s-L01', 'done:/courses/other.html'] }),
+    'rev-op:cs146s-L01': residual,
+    'done:/courses/other.html': '2026-08-02',
+    unrelated: 'sentinel',
+  });
+  app.root.PROG.onReview('cs146s-L01', {}, { 1: '2026-11-06' });
+  await app.root.PROG.pushLearned();
+  await app.root.PROG.syncLocal();
+  app.fire('gh-token');
+  await new Promise((r) => setTimeout(r, 20));
+  assert.equal(app.commits(), 0, 'hold 下今日勾选、学完了、打开页面补写、令牌事件都不应提交');
+  assert.ok(app.toasts.filter((t) => t.includes('暂停')).length >= 4, '四条云写入口都应明确暂停：' + app.toasts.join(' | '));
+  app.root.PROG.importLocalBackup(otherBackup, { confirm: true });
+  const heldOf = () => JSON.parse(JSON.stringify(app.root.PROG.importHold()));
+  assert.deepEqual(heldOf(), ['rev-op:cs146s-L01', 'done:/courses/other.html'], '无关导入不能解除别的残留键');
+  assert.equal(app.m.get('rev-op:cs146s-L01'), residual);
+  assert.equal(app.m.get('done:/courses/other.html'), '2026-08-02');
+  assert.equal(app.m.get('unrelated'), 'sentinel');
+  await app.root.PROG.syncLocal();
+  assert.equal(app.commits(), 0, '残留还在时不能重新上传');
+  app.root.PROG.importLocalBackup({ version: 1, kind: 'learning-progress-local', done: { '/courses/other.html': '2026-08-01' }, rev: {}, ops: {} }, { confirm: true });
+  assert.deepEqual(heldOf(), ['rev-op:cs146s-L01'], '只放下已经写上并读回的键');
+  assert.equal(app.m.get('done:/courses/other.html'), '2026-08-01');
+  assert.equal(app.m.get('rev-op:cs146s-L01'), residual);
+  const fixing = { version: 1, kind: 'learning-progress-local', done: {}, rev: {}, ops: { 'cs146s-L01': { 1: { done: true, on: '2026-11-07', at: 200 } } } };
+  app.root.PROG.importLocalBackup(fixing, { confirm: true });
+  assert.equal(app.root.PROG.importHold(), null, '这个键已经写上并读回，hold 可以放下');
+  assert.notEqual(app.m.get('rev-op:cs146s-L01'), residual);
+  await app.root.PROG.syncLocal();
+  app.root.PROG.onReview('cs146s-L01', {}, { 1: '2026-11-07' });
+  assert.ok(app.commits() >= 1, '残留解决后，原来的云写入口要能再次提交');
+}
+{
+  const app = bootBrowser({ 'done:/courses/example.html': '2026-01-01', unrelated: 'sentinel' });
+  app.store.fail = (k) => k === 'done:/courses/example.html';
+  const preview = app.root.PROG.previewBackupMerge(otherBackup);
+  assert.equal(preview.ok, false, '预览读失败不能当成空状态去合并');
+  assert.equal(app.sets.length, 0);
+  assert.equal(app.m.get('done:/courses/example.html'), '2026-01-01');
+  await assert.rejects(() => Promise.resolve().then(() => app.root.PROG.importLocalBackup(otherBackup, { confirm: true })), /没有写入/);
+  assert.equal(app.m.get('done:/courses/example.html'), '2026-01-01', '执行阶段读失败也不能把 1 月覆盖成 11 月');
+  assert.equal(app.m.get('unrelated'), 'sentinel');
+  assert.ok(app.sets.every(([k]) => k === 'prog-import-hold') || app.sets.length === 0);
+}
+{
+  const early = { version: 1, kind: 'learning-progress-local', done: { '/courses/example.html': '2026-01-01' }, rev: {}, ops: {} };
+  const app = bootBrowser({ 'done:/courses/example.html': '2026-11-01', unrelated: 'sentinel' });
+  const preview = app.root.PROG.previewBackupMerge(early);
+  assert.equal(preview.ok, true);
+  assert.ok(preview.changes >= 1, '读得完整时，更早的导入日期应该排进计划');
+  app.store.fail = (k) => k === 'done:/courses/example.html';
+  await assert.rejects(() => Promise.resolve().then(() => app.root.PROG.importLocalBackup(early, { confirm: true, sig: preview.sig })), /没有写入/);
+  assert.equal(app.m.get('done:/courses/example.html'), '2026-11-01');
+  assert.equal(app.sets.filter(([k]) => k.startsWith('done:')).length, 0, '预览之后、执行时读失败，不能写入');
+}
+{
+  const app = bootBrowser({ 'done:/courses/example.html': '2026-01-01', unrelated: 'sentinel' });
+  const origKey = app.store.key.bind(app.store);
+  app.store.key = (i) => { if (i === 0) throw new Error('enumeration failed'); return origKey(i); };
+  const preview = app.root.PROG.previewBackupMerge(otherBackup);
+  assert.equal(preview.ok, false);
+  assert.match(preview.error, /枚举本机学习记录失败/);
+  assert.equal(app.sets.length, 0);
+  await assert.rejects(() => Promise.resolve().then(() => app.root.PROG.importLocalBackup(otherBackup, { confirm: true })), /枚举本机学习记录失败/);
+  assert.equal(app.m.get('done:/courses/example.html'), '2026-01-01');
+  assert.throws(() => app.root.PROG.exportLocalBackup(), /枚举本机学习记录失败/);
+  assert.equal(app.sets.length, 0, '枚举失败时导出、预览、导入都不能写键');
+}
 
 console.log('ok');

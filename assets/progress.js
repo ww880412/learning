@@ -315,6 +315,47 @@
     return plan;
   }
   function planSig(plan) { return JSON.stringify((plan || []).map(function (p) { return [p.key, p.before, p.after]; })); }
+  // 备份的导入、导出、预览用这份。枚举或任一学习键读失败就停，不把缺掉的键当成「本机没有」。
+  // 打开页面、补写云端仍用上面会吞错的 collectLocal，普通渲染的容错不从这里扩大。
+  function readLearningStrict(storage) {
+    var done = {}, rev = {}, ops = {}, i, n, k, v, o, day, m, id;
+    function fail(msg) { return { ok: false, error: msg }; }
+    try { n = storage.length; } catch (e) { return fail('枚举本机学习记录失败（' + (e && e.message ? e.message : e) + '），已停止，没有写入'); }
+    if (typeof n !== 'number' || n < 0) return fail('枚举本机学习记录失败，已停止，没有写入');
+    for (i = 0; i < n; i++) {
+      try { k = storage.key(i); } catch (e) { return fail('枚举本机学习记录失败（' + (e && e.message ? e.message : e) + '），已停止，没有写入'); }
+      if (!k || !LEARN_KEY.test(k)) continue;
+      try { v = storage.getItem(k); } catch (e) { return fail('读不到 ' + k + '（' + (e && e.message ? e.message : e) + '），已停止，没有写入'); }
+      if (v == null || v === '') continue;
+      if (k.indexOf('done:') === 0) {
+        if (!okPath(k.slice(5)) || !isDate(v)) return fail('读到的 ' + k + ' 无法确认，已停止，没有写入');
+        done[k.slice(5)] = v;
+      } else if (k.indexOf('rev-done:') === 0) {
+        id = k.slice(9);
+        if (!okId(id)) return fail('读到的 ' + k + ' 无法确认，已停止，没有写入');
+        try { o = JSON.parse(v); } catch (e) { return fail('读不到 ' + k + '（不是合法 JSON），已停止，没有写入'); }
+        if (!o || typeof o !== 'object' || Array.isArray(o)) return fail('读到的 ' + k + ' 无法确认，已停止，没有写入');
+        m = {};
+        for (day in o) {
+          if (!okDay(day) || !isDate(o[day])) return fail('读到的 ' + k + ' 无法确认，已停止，没有写入');
+          m[day] = o[day];
+        }
+        if (Object.keys(m).length) rev[id] = m;
+      } else {
+        id = k.slice(7);
+        if (!okId(id)) return fail('读到的 ' + k + ' 无法确认，已停止，没有写入');
+        try { o = JSON.parse(v); } catch (e) { return fail('读不到 ' + k + '（不是合法 JSON），已停止，没有写入'); }
+        if (!o || typeof o !== 'object' || Array.isArray(o)) return fail('读到的 ' + k + ' 无法确认，已停止，没有写入');
+        m = {};
+        for (day in o) {
+          if (!okDay(day) || !okOp(o[day])) return fail('读到的 ' + k + ' 无法确认，已停止，没有写入');
+          m[day] = o[day];
+        }
+        if (Object.keys(m).length) ops[id] = m;
+      }
+    }
+    return { ok: true, state: { done: done, rev: rev, ops: ops } };
+  }
   function writeLearningPlan(storage, plan) {
     var written = [], fail = null, i, p, cur;
     for (i = 0; i < plan.length; i++) {
@@ -356,7 +397,7 @@
     if (restoreFailed.length) fail.phase = 'restore-failed';
     return { ok: false, phase: fail.phase, error: fail.error, written: written.length, restored: restoreFailed.length === 0, restoreFailed: restoreFailed, keptOther: keptOther, residue: restoreFailed.slice() };
   }
-  var api = { isDate: isDate, earlier: earlier, beijingToday: beijingToday, okPath: okPath, okId: okId, okDay: okDay, doneExpand: doneExpand, pathsMatch: pathsMatch, matchItem: matchItem, applyLearned: applyLearned, applyReviews: applyReviews, diffRev: diffRev, mergeLocal: mergeLocal, atMs: atMs, effReview: effReview, applyOps: applyOps, pruneOps: pruneOps, cleanState: cleanState, exportBackup: exportBackup, parseBackup: parseBackup, mergeBackup: mergeBackup, previewBackupMerge: previewBackupMerge, validateState: validateState, planImport: planImport, planSig: planSig, writeLearningPlan: writeLearningPlan };
+  var api = { isDate: isDate, earlier: earlier, beijingToday: beijingToday, okPath: okPath, okId: okId, okDay: okDay, doneExpand: doneExpand, pathsMatch: pathsMatch, matchItem: matchItem, applyLearned: applyLearned, applyReviews: applyReviews, diffRev: diffRev, mergeLocal: mergeLocal, atMs: atMs, effReview: effReview, applyOps: applyOps, pruneOps: pruneOps, cleanState: cleanState, exportBackup: exportBackup, parseBackup: parseBackup, mergeBackup: mergeBackup, previewBackupMerge: previewBackupMerge, validateState: validateState, planImport: planImport, planSig: planSig, writeLearningPlan: writeLearningPlan, readLearningStrict: readLearningStrict };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   root.PROG = api;
   if (typeof document === 'undefined' || !GH) return;
@@ -442,14 +483,22 @@
     try { localStorage.getItem(HOLD); return ''; } catch (e) { return '本机存储不可用（' + (e && e.message ? e.message : String(e)) + '），没有改动任何记录'; }
   }
   function readKey(k) { return localStorage.getItem(k); }
+  function strictLocal() {
+    var se = storageError(); if (se) return { ok: false, error: se };
+    return readLearningStrict(localStorage);
+  }
   function exportLocalBackup() {
-    return exportBackup(collectLocal());
+    var strict = strictLocal();
+    if (!strict.ok) throw new Error(strict.error);
+    return exportBackup(strict.state);
   }
   function previewLocal(input) {
-    var se = storageError(); if (se) return { ok: false, error: se };
-    var p = previewBackupMerge(collectLocal(), input);
+    var strict = strictLocal();
+    if (!strict.ok) return strict;
+    var p = previewBackupMerge(strict.state, input);
     if (!p.ok) return p;
-    var plan = planImport(readKey, p.state);
+    var plan;
+    try { plan = planImport(readKey, p.state); } catch (e) { return { ok: false, error: '读不到本机学习记录（' + (e && e.message ? e.message : e) + '），已停止，没有写入' }; }
     p.changes = plan.length; p.sig = planSig(plan);
     return p;
   }
@@ -457,11 +506,13 @@
   function importLocalBackup(input, opts) {
     var options = opts && typeof opts === 'object' ? opts : {};
     if (!options.confirm) throw importError('需要先预览并确认导入（confirm=true）', { phase: 'unconfirmed' });
-    var se = storageError(); if (se) throw importError(se, { phase: 'storage-unavailable' });
-    var base = collectLocal(), backup = exportBackup(base);
+    var strict = strictLocal();
+    if (!strict.ok) throw importError(strict.error, { phase: strict.error.indexOf('本机存储不可用') === 0 ? 'storage-unavailable' : 'read-failed' });
+    var base = strict.state, backup = exportBackup(base);
     var preview = previewBackupMerge(base, input);
     if (!preview.ok) throw importError(preview.error, { phase: 'invalid' });
-    var plan = planImport(readKey, preview.state);
+    var plan;
+    try { plan = planImport(readKey, preview.state); } catch (e) { throw importError('读不到本机学习记录（' + (e && e.message ? e.message : e) + '），已停止，没有写入', { phase: 'read-failed' }); }
     if (options.sig != null && planSig(plan) !== options.sig) throw importError('预览之后本机学习状态变了（可能是别的标签页），没有写入。请重新预览。', { phase: 'stale' });
     var res = writeLearningPlan(localStorage, plan);
     if (!res.ok) {
@@ -474,8 +525,30 @@
       if (res.keptOther.length) msg += '。' + res.keptOther.length + ' 个键在此期间被别的标签页改过，保留了它们的新值：' + res.keptOther.join('、');
       throw importError(msg, { phase: res.phase, result: res, backup: backup });
     }
-    setHold(null);
-    return { preview: preview.preview, report: preview.report, written: res.written, backup: backup };
+    var still = retainUnresolved(plan);
+    return { preview: preview.preview, report: preview.report, written: res.written, backup: backup, held: still };
+  }
+  // 成功导入只放下「这次写过、并且读回就是写入值」的残留键。没碰到的、读不回来的，继续暂停。
+  function retainUnresolved(plan) {
+    var held = holdKeys();
+    if (!held) return null;
+    var wrote = {};
+    (plan || []).forEach(function (p) { wrote[p.key] = p.after; });
+    var still = [];
+    held.forEach(function (k) {
+      if (!Object.prototype.hasOwnProperty.call(wrote, k)) { still.push(k); return; }
+      var cur;
+      try { cur = localStorage.getItem(k); } catch (e) { still.push(k); return; }
+      if (cur !== wrote[k]) still.push(k);
+    });
+    setHold(still.length ? still : null);
+    return still.length ? still : null;
+  }
+  function denyHeld() {
+    var held = holdKeys();
+    if (!held) return null;
+    try { GH.toast('有 ' + held.length + ' 个学习键没能恢复，已暂停自动同步。到收藏页「备份与恢复」处理残留后再试', 6000); } catch (e) {}
+    return { skipped: true, held: held };
   }
   // 提交（或发现云端更新）之后：按云端结果清掉已经落地或已经过时的本机操作，再把最新的 review.json 交给首页重画。
   function settle(res) {
@@ -491,7 +564,11 @@
     try { root.dispatchEvent(new CustomEvent('prog-doc', { detail: doc })); } catch (e) {}
     return res;
   }
+  // 学习进度的云端写入只从这里出去。调用方：打开页面和令牌变化时的 syncLocal、首页勾选 onReview、学完了 pushLearned。
+  // 收藏星标走 favorites.js，写的是 favorites.json，不带学习残留。
   function commitReview(mutate) {
+    var denied = denyHeld();
+    if (denied) return Promise.resolve(denied);
     return GH.commitJson('data/review.json', GH.token(), function (doc, ctx) {
       if (ctx.missing || !doc || !Array.isArray(doc.queue)) throw new Error('读不到 data/review.json');
       return mutate(doc);
@@ -503,6 +580,7 @@
       var id = matchItem(location.pathname, items, SITE);
       if (!id) { GH.toast('已记在本机。复习队列里没有这个地址，没有写入仓库', 5000); return null; }
       return commitReview(function (doc) { return applyLearned(doc, id, date); }).then(function (res) {
+        if (res && res.held) return res;
         GH.toast(!res || res.skipped ? '云端已有更早的学完日期，未改动' : '已同步学完日期');
         return res;
       });
@@ -523,8 +601,8 @@
   }
   function syncLocal() {
     if (!GH.token()) return Promise.resolve(null);
-    var held = holdKeys();
-    if (held) { GH.toast('上次导入失败，有 ' + held.length + ' 个学习键没能恢复，已暂停自动同步。到收藏页「备份与恢复」重新导入成功后会恢复同步', 6000); return Promise.resolve({ skipped: true, held: held }); }
+    var denied = denyHeld();
+    if (denied) return Promise.resolve(denied);
     return track(catalog().then(function (items) {
       return commitReview(function (doc) { return mergeLocal(doc, collectLocal(), items, SITE); });
     })).then(settle).then(function (res) {
@@ -556,6 +634,6 @@
     syncLocal().then(function () { root.__progReady = 1; }, function () { root.__progReady = 1; });
   }
   root.addEventListener('gh-token', function () { paintHint(); if (GH.token()) syncLocal(); });
-  root.PROG = Object.assign(api, { onReview: onReview, syncLocal: syncLocal, settingsHref: settingsHref, hookFinish: hookFinish, exportLocalBackup: exportLocalBackup, importLocalBackup: importLocalBackup, previewBackupMerge: previewLocal, importHold: holdKeys });
+  root.PROG = Object.assign(api, { onReview: onReview, syncLocal: syncLocal, settingsHref: settingsHref, hookFinish: hookFinish, exportLocalBackup: exportLocalBackup, importLocalBackup: importLocalBackup, previewBackupMerge: previewLocal, importHold: holdKeys, pushLearned: pushLearned });
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
 })(typeof window !== 'undefined' ? window : globalThis);
