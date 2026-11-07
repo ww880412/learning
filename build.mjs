@@ -33,6 +33,8 @@ const DSH = fs.existsSync(path.join(ROOT, 'data', 'dsh-plugins.json')) ? J('dsh-
 // Agent 工作台雷达：data/radar.json（scripts/sync-radar.mjs 同步）；没有文件时不出现导航和首页卡片
 const RADAR = fs.existsSync(path.join(ROOT, 'data', 'radar.json')) ? J('radar.json') : null;
 const dshVerified = DSH ? DSH.verify.reduce((n, g) => n + g.rows.length, 0) : 0;
+const dshHid = (h, i) => 'dsh-h-' + (String(h.name).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || String(i + 1));
+const dshVid = r => `dsh-v${r.n}`;
 const INTERVALS = [1, 3, 7, 14, 30];
 // status「未开始」= 待学条目（href 指向原文/官方资料），不算学习页、不进复习队列、不进正在学/最近学过；无 group 时列在栏目页
 const isPage = i => i.status !== '未开始';
@@ -380,17 +382,17 @@ const SEARCH = (() => {
   }
   for (const d of (PHI.days || [])) for (const i of (d.items || [])) push({ id: `ph:${i.id}`, type: '产品灵感', title: i.name, href: `ph-inspo/index.html#${i.id}`, date: d.date || null, source: d.source || null, tags: i.tags || [], summary: [i.what, i.problem, i.highlight].filter(Boolean).join(' · '), trace: { sourceFile: 'data/ph-inspo.json', key: i.id } });
   for (const e of (RADAR?.entries || [])) push({ id: `radar:${e.id}`, type: '雷达', title: e.name, href: `radar/index.html#r${e.id}`, date: e.added || null, source: e.url || null, tags: [RADAR?.themes?.find(t => t.key === e.theme)?.name, e.license].filter(Boolean), summary: e.why || e.note || '', trace: { sourceFile: 'data/radar.json', key: String(e.id) } });
-  for (const h of (DSH?.highlights || [])) push({ id: `dsh-highlight:${h.name}`, type: 'DSH 插件', title: h.name, href: 'dsh-plugins/index.html#picks', date: DSH?.asOf || null, source: h.url || null, tags: [h.group || '重点插件'], summary: h.copy || '', trace: { sourceFile: 'data/dsh-plugins.json', key: h.name } });
-  for (const g of (DSH?.verify || [])) for (const r of (g.rows || [])) push({ id: `dsh:${r.n}`, type: 'DSH 插件', title: r.name, href: 'dsh-plugins/index.html#verify', date: DSH?.asOf || null, source: r.url || null, tags: [g.group || '核实表', r.license || ''], summary: [r.blurb, r.downloads ? `下载 ${r.downloads}` : '', r.note].filter(Boolean).join(' · '), trace: { sourceFile: 'data/dsh-plugins.json', key: String(r.n) } });
-  const seen = new Set();
+  for (const [hi, h] of (DSH?.highlights || []).entries()) push({ id: `dsh-highlight:${h.name}`, type: 'DSH 插件', title: h.name, href: `dsh-plugins/index.html#${dshHid(h, hi)}`, date: DSH?.asOf || null, source: h.url || null, tags: [h.group || '重点插件'], summary: h.copy || '', trace: { sourceFile: 'data/dsh-plugins.json', key: h.name } });
+  for (const g of (DSH?.verify || [])) for (const r of (g.rows || [])) push({ id: `dsh:${r.n}`, type: 'DSH 插件', title: r.name, href: `dsh-plugins/index.html#${dshVid(r)}`, date: DSH?.asOf || null, source: r.url || null, tags: [g.group || '核实表', r.license || ''], summary: [r.blurb, r.downloads ? `下载 ${r.downloads}` : '', r.note].filter(Boolean).join(' · '), trace: { sourceFile: 'data/dsh-plugins.json', key: String(r.n) } });
+  const seen = new Set(), dropped = [];
   const entries = out.filter(x => {
-    if (!x.title || !x.href) return false;
-    if (!isPublicStr(JSON.stringify(x))) return false;
-    const k = `${x.type}|${x.href}`;
-    if (seen.has(k)) return false;
-    seen.add(k);
+    if (!x.title || !x.href) { dropped.push(`${x.id}（缺标题或链接）`); return false; }
+    if (!isPublicStr(JSON.stringify(x))) { dropped.push(`${x.id}（含非公开内容）`); return false; }
+    if (seen.has(x.id)) { dropped.push(`${x.id}（id 重复）`); return false; }
+    seen.add(x.id);
     return true;
   }).sort((a, b) => (String(b.date || '')).localeCompare(String(a.date || '')) || a.type.localeCompare(b.type) || a.title.localeCompare(b.title));
+  if (dropped.length) console.warn(`⚠️ warn: search index skipped ${dropped.length}: ${dropped.slice(0, 10).join('; ')}`);
   return { version: 1, note: '仅公开元数据索引：标题、链接、标签、摘要。不会收录私密原文或加密正文。', entries };
 })();
 fs.writeFileSync(path.join(ROOT, 'data', 'search-index.json'), JSON.stringify(SEARCH, null, 1) + '\n');
@@ -398,7 +400,7 @@ console.log('wrote data/search-index.json', SEARCH.entries.length);
 {
   const f = 'search/index.html';
   const body = `<div class="crumb"><a href="../index.html">首页</a> / 检索</div>
-<section class="hero sheet solo"><div class="say"><span class="kk">全站检索</span><h1>${ic('search', 26)} 跨内容找回</h1><p>统一检索学习页、概念卡、X 简报、X 海报、产品灵感、雷达和每日汇总。只用公开元数据，不收录加密正文或私密原文。</p></div></section>
+<section class="hero sheet solo"><div class="say"><span class="kk">全站检索</span><h1>${ic('search', 26)} 跨内容找回</h1><p>统一检索学习页、概念卡、X 简报、X 海报、产品灵感、雷达、DSH 插件和每日汇总。只用公开元数据，不收录加密正文或私密原文。DSH 的每个插件各自有锚点。</p></div></section>
 <div class="fbar"><input id="sq" type="search" placeholder="搜索标题、标签、摘要、来源链接"><select id="st"><option value="">全部类型</option></select></div>
 <div class="chips" id="stags"></div><div id="scount" style="font-size:13px;color:var(--meta);margin:12px 0 8px"></div><div class="list" id="slist"><div class="empty"><b>加载中…</b></div></div><div id="smore" style="margin-top:10px"></div>
 ${about('<p>索引文件：<code>data/search-index.json</code>，由 <code>build.mjs</code> 构建。bot 每次发布都会重建，避免手工维护第二份正文。</p><p>收录范围：课程/文章学习页、概念卡、X 简报、X 海报、产品灵感、雷达、DSH 插件、每日汇总。来源只存公开链接，保留原文和学习页关联。</p>')}`;
@@ -770,8 +772,8 @@ ${c.related?.length ? `<div class="kicker">相关概念</div><div class="chips">
 <details class="panel" id="settings"><summary>${ic('settings', 15)} 同步设置 <span class="s" id="tkstate"></span></summary><div class="pb">
 <div class="tkrow"><input id="tk" type="password" autocomplete="off" placeholder="粘贴 github_pat_ 开头的令牌"><button id="tksave" class="pri">保存</button><button id="tkclear">清除</button></div>
 <details class="panel" id="bk"><summary>${ic('download', 15)} 学习状态导出/导入（仅本地）</summary><div class="pb">
-<p style="margin:0 0 10px;color:var(--ink2);font-size:14px">只处理本机学习状态：<code>done:</code>、<code>rev-done:</code>、<code>rev-op:</code>。<b>不包含 GitHub 令牌</b>、收藏列表、私密原文。导入先预览，再确认执行；写入失败会回滚，不会静默部分覆盖。</p>
-<div class="tkrow"><button id="bkexp" class="pri">导出 JSON</button><button id="bkpick">选择备份文件</button><button id="bkpreview">预览导入</button><button id="bkimp">确认导入</button><input id="bkfile" type="file" accept="application/json,.json" style="display:none"></div>
+<p style="margin:0 0 10px;color:var(--ink2);font-size:14px">只处理本机学习状态：<code>done:</code>、<code>rev-done:</code>、<code>rev-op:</code>。<b>不包含 GitHub 令牌</b>、收藏列表、私密原文。导入先预览，再确认执行。浏览器存储没有多键事务，写入是尽力而为：只改要变的学习键，写前逐键核对；中途失败就把写过的键恢复成导入前的值，别的标签页后来改的值不动；恢复不了会列出残留键并暂停自动同步。每次导入都可以下载「导入前备份」。</p>
+<div class="tkrow"><button id="bkexp" class="pri">导出 JSON</button><button id="bkpick">选择备份文件</button><button id="bkpreview">预览导入</button><button id="bkimp">确认导入</button><button id="bkdl" hidden>下载导入前备份</button><input id="bkfile" type="file" accept="application/json,.json" style="display:none"></div>
 <textarea id="bkjson" rows="8" placeholder="粘贴备份 JSON，或点“选择备份文件”加载"></textarea>
 <p id="bkmsg" style="margin:8px 0 0;color:var(--meta);font-size:13px"></p>
 </div></details>
@@ -782,12 +784,15 @@ function tks(){var t=window.FAV&&FAV.token();document.getElementById('tkstate').
 function openS(){if(location.hash==='#settings')document.getElementById('settings').open=true}window.addEventListener('hashchange',openS);openS();
 document.getElementById('tksave').onclick=()=>{var v=document.getElementById('tk').value.trim();if(!/^(github_pat_|ghp_)/.test(v)){alert('看起来不是 GitHub 令牌，应以 github_pat_ 开头');return}FAV.setToken(v);document.getElementById('tk').value='';tks();FAV.toast('已保存令牌')};
 document.getElementById('tkclear').onclick=()=>{FAV.setToken('');tks();FAV.toast('已清除令牌')};
-function bkMsg(s){var m=document.getElementById('bkmsg');m.textContent=s||'';if(!s)m.removeAttribute('title')}
-document.getElementById('bkexp').onclick=()=>{if(!(window.PROG&&PROG.exportLocalBackup)){alert('导出功能还没就绪，请刷新后重试');return}var j=JSON.stringify(PROG.exportLocalBackup(),null,2);document.getElementById('bkjson').value=j;var blob=new Blob([j+'\\n'],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='learning-progress-local-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);window.__bkPreview=null;bkMsg('已导出：只含本地学习状态，不含令牌。')};
+function bkMsg(s,st){var m=document.getElementById('bkmsg');m.textContent=s||'';m.dataset.state=st||'';m.style.color=st==='err'?'var(--red)':st==='ok'?'var(--green)':'var(--meta)';if(!s)m.removeAttribute('title')}
+function bkSave(j,name){var blob=new Blob([j+'\\n'],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function bkBefore(b){window.__bkBefore=b||null;document.getElementById('bkdl').hidden=!b}
+document.getElementById('bkdl').onclick=()=>{if(window.__bkBefore)bkSave(JSON.stringify(window.__bkBefore,null,2),'learning-progress-before-import-'+new Date().toISOString().replace(/[:.]/g,'-').slice(0,19)+'.json')};
+document.getElementById('bkexp').onclick=()=>{if(!(window.PROG&&PROG.exportLocalBackup)){alert('导出功能还没就绪，请刷新后重试');return}var j=JSON.stringify(PROG.exportLocalBackup(),null,2);document.getElementById('bkjson').value=j;bkSave(j,'learning-progress-local-'+new Date().toISOString().slice(0,10)+'.json');window.__bkPreview=null;bkMsg('已导出：只含本地学习状态，不含令牌。','ok')};
 document.getElementById('bkpick').onclick=()=>document.getElementById('bkfile').click();
 document.getElementById('bkfile').onchange=async(ev)=>{var f=ev.target.files&&ev.target.files[0];if(!f)return;document.getElementById('bkjson').value=await f.text();window.__bkPreview=null;bkMsg('已加载文件：'+f.name+'。请先点“预览导入”。')};
-document.getElementById('bkpreview').onclick=()=>{var el=document.getElementById('bkjson');if(!(window.PROG&&PROG.previewBackupMerge)){alert('预览功能还没就绪，请刷新后重试');return}if(!el.value.trim()){bkMsg('先粘贴或加载备份 JSON。');return}var p=PROG.previewBackupMerge(el.value);if(!p.ok){window.__bkPreview=null;bkMsg('预览失败：'+p.error);return}window.__bkPreview={raw:el.value,preview:p};var r=p.report,c=(r.conflicts||[]);var d=r.decisions||{localWins:0,importWins:0,equal:0};bkMsg('预览：将导入 done '+r.imported.done+'、rev '+r.imported.rev+'、ops '+r.imported.ops+'；保留本机 '+d.localWins+' 条，采用导入 '+d.importWins+' 条，相同 '+d.equal+' 条。'+(c.length?' 冲突说明 '+c.length+' 条（见 title）':''));if(c.length)document.getElementById('bkmsg').title=c.slice(0,10).join('\\n')};
-document.getElementById('bkimp').onclick=()=>{if(!(window.PROG&&PROG.importLocalBackup)){alert('导入功能还没就绪，请刷新后重试');return}var st=window.__bkPreview;if(!st||!st.raw){bkMsg('请先点“预览导入”，确认后再执行。');return}if(!confirm('确认导入并合并？写入失败会回滚到导入前状态。')){bkMsg('已取消导入。');return}try{var out=PROG.importLocalBackup(st.raw,{confirm:true});var r=out.report,c=(r.conflicts||[]),d=r.decisions||{localWins:0,importWins:0,equal:0};bkMsg('导入完成：写入 done '+r.imported.done+'、rev '+r.imported.rev+'、ops '+r.imported.ops+'；保留本机 '+d.localWins+' 条，采用导入 '+d.importWins+' 条，相同 '+d.equal+' 条。'+(c.length?' 冲突说明 '+c.length+' 条。':''));if(c.length)document.getElementById('bkmsg').title=c.slice(0,10).join('\\n');window.__bkPreview=null;if(window.PROG&&PROG.syncLocal&&window.FAV&&FAV.token())PROG.syncLocal()}catch(e){bkMsg('导入失败：'+e.message)}};
+document.getElementById('bkpreview').onclick=()=>{var el=document.getElementById('bkjson');if(!(window.PROG&&PROG.previewBackupMerge)){alert('预览功能还没就绪，请刷新后重试');return}if(!el.value.trim()){bkMsg('先粘贴或加载备份 JSON。');return}var p=PROG.previewBackupMerge(el.value);if(!p.ok){window.__bkPreview=null;bkMsg('预览失败：'+p.error,'err');return}window.__bkPreview={raw:el.value,preview:p};var r=p.report,c=(r.conflicts||[]);var d=r.decisions||{localWins:0,importWins:0,equal:0};bkMsg('预览：备份里 done '+r.imported.done+'、rev '+r.imported.rev+'、ops '+r.imported.ops+'；保留本机 '+d.localWins+' 条，采用导入 '+d.importWins+' 条，相同 '+d.equal+' 条；实际要改 '+p.changes+' 个学习键。'+(c.length?' 冲突说明 '+c.length+' 条（见 title）':''),'preview');if(c.length)document.getElementById('bkmsg').title=c.slice(0,10).join('\\n')};
+document.getElementById('bkimp').onclick=()=>{if(!(window.PROG&&PROG.importLocalBackup)){alert('导入功能还没就绪，请刷新后重试');return}var st=window.__bkPreview;if(!st||!st.raw){bkMsg('请先点“预览导入”，确认后再执行。','err');return}if(!confirm('确认导入并合并？将改动 '+st.preview.changes+' 个学习键。失败会尽力恢复，结果如实显示。')){bkMsg('已取消导入，没有改动。');return}try{var out=PROG.importLocalBackup(st.raw,{confirm:true,sig:st.preview.sig});bkBefore(out.backup);var r=out.report,c=(r.conflicts||[]),d=r.decisions||{localWins:0,importWins:0,equal:0};bkMsg('导入完成：改了 '+out.written+' 个学习键；保留本机 '+d.localWins+' 条，采用导入 '+d.importWins+' 条，相同 '+d.equal+' 条。'+(c.length?' 冲突说明 '+c.length+' 条。':''),'ok');if(c.length)document.getElementById('bkmsg').title=c.slice(0,10).join('\\n');window.__bkPreview=null;if(window.PROG&&PROG.syncLocal&&window.FAV&&FAV.token())PROG.syncLocal()}catch(e){window.__bkPreview=null;bkBefore(e.backup);var m=document.getElementById('bkmsg');bkMsg(e.message,'err');m.dataset.phase=e.phase||''}};
 document.addEventListener('DOMContentLoaded',tks);`;
   write(f, page(f, '我的收藏', 'favorites', body, script));
 }
@@ -839,6 +844,8 @@ if (DSH) {
   if (String(DSH.kpis[3].value) !== String(DSH.mechanisms.length)) throw new Error('dsh kpi mechanisms');
   const nums = DSH.verify.flatMap(g => g.rows.map(r => r.n));
   if (nums.join(',') !== Array.from({ length: exp.verified }, (_, i) => i + 1).join(',')) throw new Error('dsh verify numbering');
+  const hids = DSH.highlights.map(dshHid);
+  if (new Set(hids).size !== hids.length) throw new Error('dsh highlight anchors not unique: ' + hids.join(','));
   for (const r of [...DSH.highlights, ...DSH.verify.flatMap(g => g.rows)]) {
     if (!/^https:\/\/github\.com\//.test(r.url || '')) throw new Error('dsh url ' + (r.name || r.n));
     if (r.downloads == null || r.downloads === '') throw new Error('dsh downloads ' + r.name);
@@ -871,11 +878,11 @@ if (DSH) {
   const cats = `<div class="dsh-box"><h3>最大的 ${DSH.categories.length} 类 <span class="tag">共 ${esc(DSH.categoryTotal)} 类</span></h3><div class="dsh-cat">${DSH.categories.map(c => `<div class="r"><span class="nm"><code>${esc(c.name)}</code></span><span class="b" title="${grp(c.n)} 条 · 占索引 ${((c.n / maxShare) * 100).toFixed(1)}%"><i style="width:${((c.n / maxCat) * 100).toFixed(2)}%"></i></span><span class="n">${grp(c.n)}</span></div>`).join('')}</div><p class="dsh-note">${inline(DSH.categoriesNote)}</p></div>`;
   const caps = `<div class="dsh-box"><h3>${esc(DSH.scan.tool)} ${esc(DSH.scan.version)}</h3><p>${inline(DSH.scan.lead)}</p><div class="dsh-caps">${DSH.scan.caps.map(c => `<div><b>${grp(c.n)}</b><span>${esc(c.name)}</span></div>`).join('')}</div><p class="dsh-note">${inline(DSH.scan.redLines)}</p><p class="dsh-note">${inline(DSH.scan.disclaimer)}</p></div>`;
   let prev = '', hrows = '';
-  for (const r of DSH.highlights) {
+  for (const [hi, r] of DSH.highlights.entries()) {
     if (r.group !== prev) { hrows += `<tr class="grp"><td colspan="7">${esc(r.group)}</td></tr>`; prev = r.group; }
-    hrows += `<tr><td>${gh(r.url, r.name)}</td><td class="num">${esc(r.created)}</td><td class="num">${esc(r.stars)}</td><td>${esc(r.license)}</td><td class="num">${esc(r.pushed)}</td><td class="num">${esc(r.downloads)}</td><td>${inline(r.copy)}</td></tr>`;
+    hrows += `<tr id="${dshHid(r, hi)}"><td>${gh(r.url, r.name)}</td><td class="num">${esc(r.created)}</td><td class="num">${esc(r.stars)}</td><td>${esc(r.license)}</td><td class="num">${esc(r.pushed)}</td><td class="num">${esc(r.downloads)}</td><td>${inline(r.copy)}</td></tr>`;
   }
-  const bodies = DSH.verify.map(g => `<tbody data-g="${esc(g.group)}"><tr class="grp"><td colspan="10">${esc(g.group)}</td></tr>${g.rows.map(r => `<tr><td class="num">${r.n}</td><td>${gh(r.url, r.name)}</td><td>${gh(r.url, r.repo)}</td><td class="num">${esc(r.created)}</td><td class="num">${esc(r.stars)}</td><td>${esc(r.license)}</td><td class="num">${esc(r.pushed)}</td><td class="num">${esc(r.downloads)}</td><td>${esc(r.blurb)}</td><td>${r.note ? esc(r.note) : ''}</td></tr>`).join('')}</tbody>`).join('');
+  const bodies = DSH.verify.map(g => `<tbody data-g="${esc(g.group)}"><tr class="grp"><td colspan="10">${esc(g.group)}</td></tr>${g.rows.map(r => `<tr id="${dshVid(r)}"><td class="num">${r.n}</td><td>${gh(r.url, r.name)}</td><td>${gh(r.url, r.repo)}</td><td class="num">${esc(r.created)}</td><td class="num">${esc(r.stars)}</td><td>${esc(r.license)}</td><td class="num">${esc(r.pushed)}</td><td class="num">${esc(r.downloads)}</td><td>${esc(r.blurb)}</td><td>${r.note ? esc(r.note) : ''}</td></tr>`).join('')}</tbody>`).join('');
   const chips = `<div class="dsh-bar"><button type="button" class="chip on" data-dsh-g="">全部<em>${dshVerified}</em></button>${DSH.verify.map(g => `<button type="button" class="chip" data-dsh-g="${esc(g.group)}">${esc(g.group)}<em>${g.rows.length}</em></button>`).join('')}<span class="cnt" id="dsh-vcnt"></span></div>`;
   const mechs = `<div class="dsh-mechs">${DSH.mechanisms.map((m, i) => `<article class="card dsh-mech" id="m${i + 1}"><div class="no">${String(i + 1).padStart(2, '0')}</div><h3>${esc(m.title)}</h3><p class="src">${inline(m.via)}</p><ul>${m.points.map(p => `<li>${inline(p)}</li>`).join('')}</ul></article>`).join('')}</div>`;
   const body = `<div class="crumb"><a href="../index.html">首页</a> / DSH 插件</div>

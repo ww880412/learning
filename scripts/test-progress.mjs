@@ -159,6 +159,121 @@ assert.equal(prog.pathsMatch('/learning/cs146s/L02-harness-anatomy.html', 'cours
   assert.ok(merged2.report.decisions.importWins >= 1, '应统计导入优先');
 }
 
+// 导入写入：假存储逐次计数，故障按调用序号注入，断言注入确实触发。
+{
+  class FakeStorage {
+    constructor(init) { this.m = new Map(Object.entries(init)); this.calls = { get: 0, set: 0, remove: 0 }; this.setLog = []; this.removeLog = []; this.failGet = null; this.failSet = null; this.failRemove = null; this.afterSet = null; this.fired = 0; }
+    getItem(k) { this.calls.get++; if (this.failGet && this.failGet(k)) { this.fired++; throw new Error('SecurityError: storage disabled'); } return this.m.has(k) ? this.m.get(k) : null; }
+    setItem(k, v) { this.calls.set++; this.setLog.push(k); if (this.failSet && this.failSet(k, this.calls.set)) { this.fired++; throw new Error('QuotaExceededError'); } this.m.set(k, String(v)); if (this.afterSet) this.afterSet(k, this); }
+    removeItem(k) { this.calls.remove++; this.removeLog.push(k); if (this.failRemove && this.failRemove(k)) { this.fired++; throw new Error('remove blocked'); } this.m.delete(k); }
+    snap() { return Object.fromEntries(this.m); }
+  }
+  const A = '/courses/cs146s/L01-agent-loop.html', B = '/courses/cs146s/L02-context.html';
+  const INIT = {
+    ['done:' + A]: '2026-10-20',
+    'rev-done:cs146s-L01': JSON.stringify({ 1: '2026-10-21' }),
+    'fav:token': 'example-not-a-token',
+    'fav:cache': '[{"url":"/example"}]',
+    'site-theme': 'example-light',
+  };
+  const local = { done: { [A]: '2026-10-20' }, rev: { 'cs146s-L01': { 1: '2026-10-21' } }, ops: {} };
+  const backup = prog.parseBackup(JSON.stringify(prog.exportBackup({ done: { [A]: '2026-10-18', [B]: '2026-10-19' }, rev: { 'cs146s-L01': { 1: '2026-10-18', 3: '2026-10-22' } }, ops: {} }))).data;
+  const merged = prog.mergeBackup(local, backup).state;
+  const mkPlan = st => prog.planImport(k => st.getItem(k), merged);
+  const isLearn = k => /^(done:|rev-done:|rev-op:)/.test(k);
+  const others = snap => Object.fromEntries(Object.entries(snap).filter(([k]) => !isLearn(k)));
+
+  {
+    const st = new FakeStorage(INIT);
+    const plan = mkPlan(st);
+    assert.deepEqual(plan.map(p => p.key), ['done:' + A, 'done:' + B, 'rev-done:cs146s-L01'], '只计划要变的学习键');
+    for (const p of plan) assert.notEqual(p.before, p.after, '计划里的每个键新旧值都不同：' + p.key);
+    assert.equal(plan[1].before, null);
+    const sameStore = new FakeStorage({ ...INIT, ['done:' + A]: '2026-10-18', ['done:' + B]: '2026-10-19', 'rev-done:cs146s-L01': JSON.stringify(merged.rev['cs146s-L01']) });
+    assert.equal(mkPlan(sameStore).length, 0, '值相同就不写');
+    const res = prog.writeLearningPlan(st, plan);
+    assert.equal(res.ok, true); assert.equal(res.written, 3);
+    assert.equal(st.calls.set, 3); assert.equal(st.calls.remove, 0);
+    assert.ok(st.setLog.every(isLearn), '只写学习键');
+    assert.deepEqual(others(st.snap()), others(INIT), '无关键原样');
+    assert.equal(st.getItem('done:' + A), '2026-10-18');
+  }
+  { // 存储整个被禁用：读就抛错，一次写都不应发生
+    const st = new FakeStorage(INIT); const plan = mkPlan(st); st.failGet = () => true;
+    const res = prog.writeLearningPlan(st, plan);
+    assert.equal(res.ok, false); assert.equal(res.phase, 'first'); assert.equal(res.written, 0); assert.equal(res.restored, true);
+    assert.ok(st.fired >= 1, '读故障确实触发'); assert.equal(st.calls.set, 0);
+    assert.deepEqual(st.snap(), INIT);
+  }
+  { // 配额一直满：第一次写就失败，只尝试一次，存储里的值不动
+    const st = new FakeStorage(INIT); const plan = mkPlan(st); st.failSet = () => true;
+    const res = prog.writeLearningPlan(st, plan);
+    assert.equal(res.phase, 'first'); assert.equal(res.written, 0); assert.equal(res.restored, true);
+    assert.equal(st.fired, 1); assert.equal(st.calls.set, 1);
+    assert.deepEqual(st.snap(), INIT);
+  }
+  { // 第一次写先落盘再抛错：不能报「没改动」，要把已经不同的新值改回去
+    const st = new FakeStorage(INIT); const plan = mkPlan(st);
+    st.failSet = (k, n) => { if (n !== 1) return false; st.m.set(k, plan[0].after); return true; };
+    const res = prog.writeLearningPlan(st, plan);
+    assert.notEqual(plan[0].after, plan[0].before);
+    assert.equal(res.phase, 'middle'); assert.equal(res.written, 1); assert.equal(res.restored, true);
+    assert.equal(st.fired, 1); assert.equal(st.calls.set, 2, '1 次失败的写入 + 1 次恢复');
+    assert.deepEqual(st.snap(), INIT);
+  }
+  { // 第二次写失败：第一键已经真的变成新值，再被恢复
+    const st = new FakeStorage(INIT); const plan = mkPlan(st); let seen = null;
+    st.failSet = (k, n) => n === 2;
+    st.afterSet = (k, s) => { if (s.calls.set === 1) seen = s.m.get(k); };
+    const res = prog.writeLearningPlan(st, plan);
+    assert.equal(seen, '2026-10-18', '中途失败前第一键确实写成了不同的新值');
+    assert.equal(res.phase, 'middle'); assert.equal(res.written, 1); assert.equal(res.restored, true); assert.deepEqual(res.residue, []);
+    assert.equal(st.fired, 1); assert.equal(st.calls.set, 3, '2 次导入写 + 1 次恢复写');
+    assert.deepEqual(st.snap(), INIT, '恢复后与导入前完全一致');
+  }
+  { // 第三次写失败：新增的键用 remove 恢复
+    const st = new FakeStorage(INIT); const plan = mkPlan(st);
+    st.failSet = (k, n) => n === 3;
+    const res = prog.writeLearningPlan(st, plan);
+    assert.equal(res.phase, 'middle'); assert.equal(res.written, 2); assert.equal(res.restored, true);
+    assert.deepEqual(st.removeLog, ['done:' + B]); assert.equal(st.fired, 1);
+    assert.deepEqual(st.snap(), INIT);
+  }
+  { // 恢复也失败：如实报告残留键，不谎称已回滚
+    const st = new FakeStorage(INIT); const plan = mkPlan(st);
+    st.failSet = (k, n) => n >= 2; st.failRemove = () => true;
+    const res = prog.writeLearningPlan(st, plan);
+    assert.equal(res.ok, false); assert.equal(res.phase, 'restore-failed'); assert.equal(res.restored, false);
+    assert.deepEqual(res.residue, ['done:' + A]);
+    assert.ok(st.fired >= 3, '写、恢复写、恢复删都确实失败过');
+    assert.equal(st.getItem('done:' + A), '2026-10-18', '残留值如实存在');
+    assert.deepEqual(others(st.snap()), others(INIT), '无关键原样');
+  }
+  { // 别的标签页在导入中途改了下一个目标键和无关键：停下，不覆盖它们
+    const st = new FakeStorage(INIT); const plan = mkPlan(st);
+    st.afterSet = (k, s) => { if (s.calls.set === 1) { s.m.set('done:' + B, '2026-10-25'); s.m.set('fav:cache', '[{"url":"/other-tab"}]'); } };
+    const res = prog.writeLearningPlan(st, plan);
+    assert.equal(res.phase, 'concurrent'); assert.equal(res.written, 1); assert.equal(res.restored, true);
+    assert.equal(st.getItem('done:' + B), '2026-10-25', '别的标签页写的目标键保留');
+    assert.equal(st.getItem('fav:cache'), '[{"url":"/other-tab"}]', '别的标签页写的无关键保留');
+    assert.equal(st.getItem('done:' + A), '2026-10-20', '自己写过的键恢复');
+    assert.equal(st.getItem('fav:token'), 'example-not-a-token');
+  }
+  { // 自己写过的键随后被别的标签页改了，再中途失败：恢复时不覆盖别人的值
+    const st = new FakeStorage(INIT); const plan = mkPlan(st);
+    st.failSet = (k, n) => { if (n !== 2) return false; st.m.set('done:' + A, '2026-10-01'); return true; };
+    const res = prog.writeLearningPlan(st, plan);
+    assert.equal(res.phase, 'middle'); assert.deepEqual(res.keptOther, ['done:' + A]); assert.equal(st.fired, 1);
+    assert.equal(st.getItem('done:' + A), '2026-10-01');
+    assert.equal(st.calls.set, 2, '没有恢复写');
+  }
+  { // 计划里混进非学习键：一个都不写
+    const st = new FakeStorage(INIT);
+    const res = prog.writeLearningPlan(st, [{ key: 'fav:token', before: 'example-not-a-token', after: 'x' }]);
+    assert.equal(res.phase, 'refused'); assert.equal(st.calls.set, 0);
+  }
+}
+
 function jsonResp(status, obj) { return { status, json: async () => obj }; }
 async function fakeCommit() {
   let sha = 's0', puts = 0, stored = { version: 1, items: [] };

@@ -34,7 +34,7 @@ const SAMPLES = {
   langchain: pickEntry((x) => /langchain-agents-async/.test(x.href)),
   poster: pickEntry((x) => x.type === 'X 海报' && /#/.test(x.href)),
   ph: pickEntry((x) => x.type === '产品灵感' && /#/.test(x.href)),
-  dsh: pickEntry((x) => x.type === 'DSH 插件'),
+  dsh: pickEntry((x) => x.type === 'DSH 插件' && /#dsh-v\d+$/.test(x.href)),
 };
 const SHOTS = process.env.SHOTS || '/workspace/shots';
 fs.mkdirSync(SHOTS, { recursive: true });
@@ -124,6 +124,62 @@ async function puts(page, file) {
 }
 function decode(body, gh) {
   return JSON.parse(gh.b64dec(body.content));
+}
+
+async function shot(page, name) {
+  await page.screenshot({ path: path.join(SHOTS, name) });
+}
+async function scrollTo(page, sel) {
+  await page.evaluate((s) => document.querySelector(s).scrollIntoView({ block: 'center', inline: 'nearest' }), sel);
+  await new Promise((r) => setTimeout(r, 150));
+}
+function installStoragePatch(mode) {
+  const P = Storage.prototype;
+  if (!window.__fiOrig) window.__fiOrig = { set: P.setItem, get: P.getItem, remove: P.removeItem };
+  const orig = window.__fiOrig;
+  const learn = (k) => /^(done:|rev-done:|rev-op:)/.test(k);
+  const fi = window.__fi = { sets: 0, removes: 0, gets: 0, throws: 0, learnSets: 0, firstAfter: null, setKeys: [], sawPlant: 0 };
+  P.getItem = function (k) {
+    fi.gets++;
+    if (mode === 'disabled') { fi.throws++; throw new DOMException('storage disabled', 'SecurityError'); }
+    const v = orig.get.call(this, k);
+    if (mode === 'concurrent' && k === window.__fiNext && v === window.__fiNextVal) fi.sawPlant++;
+    return v;
+  };
+  P.setItem = function (k, v) {
+    fi.sets++;
+    if (learn(k)) {
+      fi.learnSets++;
+      if (mode === 'first' && fi.learnSets === 1) { fi.throws++; throw new DOMException('QuotaExceededError', 'QuotaExceededError'); }
+      if ((mode === 'middle' || mode === 'restore') && fi.learnSets === 2) { fi.throws++; throw new DOMException('QuotaExceededError', 'QuotaExceededError'); }
+      if (mode === 'restore' && fi.learnSets > 2) { fi.throws++; throw new DOMException('restore blocked', 'QuotaExceededError'); }
+    }
+    const r = orig.set.call(this, k, v);
+    fi.setKeys.push(k);
+    if (learn(k) && fi.learnSets === 1) fi.firstAfter = orig.get.call(this, k);
+    if (mode === 'concurrent' && learn(k) && fi.learnSets === 1) {
+      orig.set.call(this, 'fav:cache', 'example-other-tab');
+      if (window.__fiNext) orig.set.call(this, window.__fiNext, window.__fiNextVal);
+    }
+    return r;
+  };
+  P.removeItem = function (k) {
+    fi.removes++;
+    if (mode === 'restore' && learn(k)) { fi.throws++; throw new DOMException('remove blocked', 'SecurityError'); }
+    return orig.remove.call(this, k);
+  };
+}
+async function patchStorage(page, mode) {
+  await page.evaluate(installStoragePatch, mode);
+}
+async function unpatchStorage(page) {
+  await page.evaluate(() => {
+    const o = window.__fiOrig;
+    if (!o) return;
+    Storage.prototype.setItem = o.set;
+    Storage.prototype.getItem = o.get;
+    Storage.prototype.removeItem = o.remove;
+  });
 }
 
 const results = [];
@@ -409,16 +465,31 @@ try {
     await page.goto(origin + '/favorites/index.html#settings', { waitUntil: 'networkidle0' });
     await page.waitForFunction(() => window.PROG && typeof PROG.exportLocalBackup === 'function');
     await page.evaluate(() => { document.getElementById('settings').open = true; document.getElementById('bk').open = true; });
+    await page.evaluate(() => localStorage.setItem('fav:cache', 'example-keep'));
+    const dlDir = path.join(SHOTS, 'download');
+    fs.rmSync(dlDir, { recursive: true, force: true });
+    fs.mkdirSync(dlDir, { recursive: true });
+    const cdp = await page.createCDPSession();
+    await cdp.send('Page.setDownloadBehavior', { behavior: 'allow', downloadPath: dlDir });
     await page.$eval('#bkexp', (b) => b.click());
     await page.waitForFunction(() => document.querySelector('#bkjson').value.length > 20);
-    const bk = await page.evaluate(() => JSON.parse(document.querySelector('#bkjson').value));
+    let downloaded = null;
+    for (let i = 0; i < 40 && !downloaded; i++) {
+      const names = fs.readdirSync(dlDir).filter((n) => n.endsWith('.json') && !n.endsWith('.crdownload'));
+      if (names.length) downloaded = path.join(dlDir, names[0]);
+      else await new Promise((r) => setTimeout(r, 200));
+    }
+    if (!downloaded) throw new Error('点击导出后没有下载到文件：' + fs.readdirSync(dlDir).join(','));
+    const bk = JSON.parse(fs.readFileSync(downloaded, 'utf8'));
+    const shown = await page.evaluate(() => JSON.parse(document.querySelector('#bkjson').value));
+    if (JSON.stringify(bk.done) !== JSON.stringify(shown.done) || JSON.stringify(bk.rev) !== JSON.stringify(shown.rev)) throw new Error('下载文件和页面上的导出不一致');
     if (bk.kind !== 'learning-progress-local' || bk.version !== 1) throw new Error('备份格式不对');
-    if (JSON.stringify(bk).includes('github_pat_') || JSON.stringify(bk).includes('fav:token')) throw new Error('备份不应包含令牌');
-    const filePath = path.join(SHOTS, 'backup-valid.json');
-    fs.writeFileSync(filePath, JSON.stringify(bk, null, 2) + '\n');
+    if (JSON.stringify(bk).includes('github_pat_') || JSON.stringify(bk).includes('fav:token') || JSON.stringify(bk).includes('example-keep')) throw new Error('备份不应包含令牌或无关键');
+    if (!bk.done['/courses/cs146s/L02-harness-anatomy.html'] || !bk.rev['cs146s-L01']) throw new Error('导出的学习状态不完整');
+    fs.writeFileSync(path.join(SHOTS, 'backup-valid.json'), JSON.stringify(bk, null, 2) + '\n');
     await page.$eval('#bkjson', (el) => { el.value = ''; });
     const input = await page.$('#bkfile');
-    await input.uploadFile(filePath);
+    await input.uploadFile(downloaded);
     await page.$eval('#bkfile', (el) => el.dispatchEvent(new Event('change', { bubbles: true })));
     await page.waitForFunction(() => document.querySelector('#bkjson').value.includes('learning-progress-local'));
     const before = await page.evaluate(() => ({ done: localStorage.getItem('done:/courses/cs146s/L02-harness-anatomy.html'), rev: localStorage.getItem('rev-done:cs146s-L01') }));
@@ -428,64 +499,206 @@ try {
       localStorage.removeItem('rev-done:cs146s-L01');
     });
     await page.click('#bkpreview');
-    await page.waitForFunction(() => document.querySelector('#bkmsg').textContent.includes('预览：将导入'));
+    await page.waitForFunction(() => {
+      const m = document.querySelector('#bkmsg');
+      return m.dataset.state === 'preview' && /实际要改 [1-9]/.test(m.textContent);
+    });
+    await page.setViewport({ width: 1280, height: 1000, deviceScaleFactor: 1 });
+    await scrollTo(page, '#bkmsg');
+    await shot(page, 'backup-preview-desktop.png');
+    await shot(page, 'backup-desktop.png');
+    await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 });
+    await scrollTo(page, '#bk');
+    await shot(page, 'backup-preview-mobile.png');
+    await shot(page, 'backup-mobile.png');
+    await page.setViewport({ width: 1280, height: 1000, deviceScaleFactor: 1 });
     await page.click('#bkimp');
     await page.waitForFunction(() => document.querySelector('#bkmsg').textContent.includes('导入完成'));
-    const imported = await page.evaluate(() => ({ done: localStorage.getItem('done:/courses/cs146s/L02-harness-anatomy.html'), rev: localStorage.getItem('rev-done:cs146s-L01') }));
-    if (!imported.done || !imported.rev) throw new Error('导入后本地状态没恢复');
-    await page.$eval('#bkjson', (el) => { el.value = '{"version":1,"kind":"learning-progress-local","done":{"\/bad":"2026-99-99"}}'; });
-    await page.click('#bkpreview');
-    await page.waitForFunction(() => document.querySelector('#bkmsg').textContent.includes('预览失败'));
-    await page.$eval('#bkjson', (el, text) => { el.value = text; }, JSON.stringify(bk));
-    await page.click('#bkpreview');
-    await page.evaluate(() => { window.confirm = () => false; });
-    await page.click('#bkimp');
-    await page.waitForFunction(() => document.querySelector('#bkmsg').textContent.includes('已取消导入'));
-    const snapBeforeFail = await page.evaluate(() => ({
+    const imported = await page.evaluate(() => ({
       done: localStorage.getItem('done:/courses/cs146s/L02-harness-anatomy.html'),
       rev: localStorage.getItem('rev-done:cs146s-L01'),
+      other: localStorage.getItem('fav:cache'),
+      dl: document.getElementById('bkdl').hidden,
     }));
-    await page.evaluate(() => {
-      const orig = localStorage.setItem.bind(localStorage);
-      let n = 0;
-      localStorage.setItem = function (k, v) {
-        n++;
-        if (n >= 2 && /^rev-done:/.test(k)) throw new Error('quota');
-        return orig(k, v);
-      };
-      window.confirm = () => true;
-    });
-    await page.click('#bkimp');
-    await page.waitForFunction(() => document.querySelector('#bkmsg').textContent.includes('导入失败，已回滚原状态'));
-    const snapAfterFail = await page.evaluate(() => ({
-      done: localStorage.getItem('done:/courses/cs146s/L02-harness-anatomy.html'),
-      rev: localStorage.getItem('rev-done:cs146s-L01'),
-    }));
-    if (JSON.stringify(snapBeforeFail) !== JSON.stringify(snapAfterFail)) throw new Error('失败后应回滚到导入前状态');
-    await page.screenshot({ path: path.join(SHOTS, 'backup-desktop.png') });
+    if (imported.done !== before.done || imported.rev !== before.rev) throw new Error('导入后本地学习状态没恢复');
+    if (imported.other !== 'example-keep') throw new Error('导入改动了无关键 fav:cache');
+    if (imported.dl) throw new Error('导入后应能下载导入前备份');
+    await page.$eval('#bkjson', (el) => { el.value = '{"version":1,"kind":"learning-progress-local","done":{"/bad":"2026-99-99"}}'; });
+    await page.click('#bkpreview');
+    await page.waitForFunction(() => document.querySelector('#bkmsg').dataset.state === 'err' && document.querySelector('#bkmsg').textContent.includes('预览失败'));
+    await scrollTo(page, '#bkmsg');
+    await shot(page, 'backup-error-desktop.png');
     await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 });
-    await page.screenshot({ path: path.join(SHOTS, 'backup-mobile.png') });
-    // 导入旧 rev-done + 云端更新取消，不应被复活
+    await scrollTo(page, '#bkmsg');
+    await shot(page, 'backup-error-mobile.png');
+    await page.setViewport({ width: 1280, height: 1000, deviceScaleFactor: 1 });
+    const diverge = () => page.evaluate(() => {
+      localStorage.setItem('done:/courses/cs146s/L02-harness-anatomy.html', '2099-01-01');
+      const rev = JSON.parse(localStorage.getItem('rev-done:cs146s-L01') || '{}');
+      const later = {};
+      Object.keys(rev).forEach((k) => { later[k] = '2099-01-02'; });
+      if (!Object.keys(later).length) later['1'] = '2099-01-02';
+      localStorage.setItem('rev-done:cs146s-L01', JSON.stringify(later));
+      localStorage.setItem('fav:cache', 'example-unrelated');
+      return { later };
+    });
+    const reloadBackup = async () => {
+      await page.$eval('#bkjson', (el, text) => { el.value = text; }, JSON.stringify(bk));
+      await page.click('#bkpreview');
+      await page.waitForFunction(() => /实际要改 [1-9]/.test(document.querySelector('#bkmsg').textContent));
+    };
+    await diverge();
+    await reloadBackup();
+    await page.evaluate(() => { window.confirm = () => false; });
+    const putsBeforeCancel = (await puts(page, 'data/review.json')).length;
+    await page.click('#bkimp');
+    await page.waitForFunction(() => document.querySelector('#bkmsg').textContent.includes('已取消导入，没有改动'));
+    const afterCancel = await page.evaluate(() => localStorage.getItem('done:/courses/cs146s/L02-harness-anatomy.html'));
+    if (afterCancel !== '2099-01-01') throw new Error('取消导入仍改了学习状态');
+    if ((await puts(page, 'data/review.json')).length !== putsBeforeCancel) throw new Error('取消导入不应同步');
+    const runFail = async (mode, expect) => {
+      await unpatchStorage(page);
+      await diverge();
+      await reloadBackup();
+      if (mode === 'concurrent') await page.evaluate(() => { window.__fiNext = 'rev-done:cs146s-L01'; window.__fiNextVal = '{"1":"2098-06-01"}'; });
+      await patchStorage(page, mode);
+      await page.evaluate(() => { window.confirm = () => true; });
+      const ghBefore = await page.evaluate(() => window.__gh.length);
+      await page.click('#bkimp');
+      await page.waitForFunction((part) => document.querySelector('#bkmsg').dataset.state === 'err' && document.querySelector('#bkmsg').textContent.includes(part), {}, expect.part);
+      const got = await page.evaluate(() => {
+        const get = window.__fiOrig ? (k) => window.__fiOrig.get.call(localStorage, k) : (k) => localStorage.getItem(k);
+        return {
+          fi: window.__fi,
+          msg: document.querySelector('#bkmsg').textContent,
+          phase: document.querySelector('#bkmsg').dataset.phase,
+          done: get('done:/courses/cs146s/L02-harness-anatomy.html'),
+          rev: get('rev-done:cs146s-L01'),
+          cache: get('fav:cache'),
+          gh: window.__gh.length,
+        };
+      });
+      await unpatchStorage(page);
+      if (got.msg.includes('已回滚原状态')) throw new Error(mode + ' 不应谎称已回滚：' + got.msg);
+      if (!got.fi || got.fi.throws < expect.throws) throw new Error(mode + ' 拦截没有触发 ' + JSON.stringify(got.fi));
+      if (got.fi.learnSets !== expect.learnSets) throw new Error(mode + ' 学习键写入次数不对 ' + JSON.stringify(got.fi));
+      if (got.gh !== ghBefore) throw new Error(mode + ' 失败后请求了 GitHub');
+      expect.check(got);
+    };
+    await runFail('disabled', {
+      part: '本机存储不可用', throws: 1, learnSets: 0,
+      check(got) {
+        if (got.done !== '2099-01-01' || got.cache !== 'example-unrelated') throw new Error('存储不可用时改了数据 ' + JSON.stringify(got));
+        if (got.fi.sets !== 0) throw new Error('存储不可用时仍有 setItem ' + got.fi.sets);
+      },
+    });
+    await runFail('first', {
+      part: '第一步写入就失败', throws: 1, learnSets: 1,
+      check(got) {
+        if (got.done !== '2099-01-01') throw new Error('首次失败后 done 变了 ' + got.done);
+        if (got.cache !== 'example-unrelated') throw new Error('首次失败碰了无关键');
+        if (got.fi.setKeys.some((k) => k.startsWith('done:') || k.startsWith('rev-'))) throw new Error('首次失败仍写入了学习键 ' + got.fi.setKeys.join(','));
+      },
+    });
+    await runFail('middle', {
+      part: '导入中途失败', throws: 1, learnSets: 3,
+      check(got) {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(got.fi.firstAfter || '') || got.fi.firstAfter === '2099-01-01') throw new Error('中途失败前没有写成不同的新值 ' + got.fi.firstAfter);
+        if (!got.msg.includes('恢复成导入前的值')) throw new Error('中途失败应说明已恢复：' + got.msg);
+        if (got.done !== '2099-01-01') throw new Error('中途失败后没有恢复 done ' + got.done);
+        if (got.cache !== 'example-unrelated') throw new Error('中途失败碰了无关键');
+      },
+    });
+    await runFail('concurrent', {
+      part: '被别的标签页改了', throws: 0, learnSets: 2,
+      check(got) {
+        if (got.fi.sawPlant < 1) throw new Error('没有观察到别的标签页写入');
+        if (got.fi.firstAfter === '2099-01-01') throw new Error('并发场景没有先写成不同的值');
+        if (got.done !== '2099-01-01') throw new Error('自己写过的键没有恢复 ' + got.done);
+        if (got.rev !== '{"1":"2098-06-01"}') throw new Error('盖过了别的标签页的学习键 ' + got.rev);
+        if (got.cache !== 'example-other-tab') throw new Error('盖过了别的标签页的无关键 ' + got.cache);
+        if (!got.msg.includes('已停止导入')) throw new Error(got.msg);
+      },
+    });
+    await runFail('restore', {
+      part: '恢复也失败', throws: 3, learnSets: 3,
+      check(got) {
+        if (got.phase !== 'restore-failed') throw new Error('阶段应是 restore-failed，实际 ' + got.phase);
+        if (!got.msg.includes('仍是导入的新值') || !got.msg.includes('已暂停自动同步')) throw new Error(got.msg);
+        if (got.done === '2099-01-01') throw new Error('恢复失败却回到了旧值');
+        if (got.fi.firstAfter === '2099-01-01') throw new Error('恢复失败前没有写成不同的新值');
+        if (got.cache !== 'example-unrelated') throw new Error('恢复失败碰了无关键');
+      },
+    });
+    const held = await page.evaluate(() => window.PROG.importHold());
+    if (!held || !held.length) throw new Error('恢复失败后应暂停同步');
+    const ghAtHold = await page.evaluate(() => window.__gh.length);
+    await page.evaluate((tok) => window.FAV.setToken(tok), TOKEN);
+    await new Promise((r) => setTimeout(r, 400));
+    const holdSync = await page.evaluate(() => ({
+      gh: window.__gh.filter((c) => c.method === 'PUT').length,
+      toast: (document.querySelector('.fav-toast') || {}).textContent || '',
+    }));
+    if (holdSync.gh !== 0) throw new Error('暂停同步后仍 PUT');
+    if (!holdSync.toast.includes('暂停自动同步')) throw new Error('没有说明暂停同步：' + holdSync.toast);
+    if ((await page.evaluate(() => window.__gh.length)) < ghAtHold) throw new Error('计数异常');
+    await page.evaluate(() => { window.FAV.setToken(''); localStorage.removeItem('prog-import-hold'); sessionStorage.removeItem('prog-import-hold'); window.__progImportHold = null; });
+    // 导入旧 rev-done + 云端更新的取消。有令牌时会真的跑同步，取消不能被旧记录改回完成。
     const cloud = JSON.parse(REVIEW);
     const q = cloud.queue.find((x) => x.item === 'cs146s-L01');
     const at = new Date(Date.now() - 1000).toISOString();
     for (const r of q.reviews) if (DUE.includes(r.day)) { r.done = false; delete r.doneOn; r.at = at; }
     await page.goto(origin + '/favorites/index.html', { waitUntil: 'networkidle0' });
-    await page.evaluate((c, stale) => {
+    await page.evaluate((c, stale, tok) => {
+      localStorage.setItem('fav:token', tok);
       localStorage.setItem('__test:cloud-review', JSON.stringify(c, null, 2));
       localStorage.setItem('rev-done:cs146s-L01', JSON.stringify(stale));
-    }, cloud, Object.fromEntries(DUE.map((d) => [d, TODAY])));
+      const drop = [];
+      for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k && k.indexOf('done:') === 0) drop.push(k); }
+      drop.forEach((k) => localStorage.removeItem(k));
+    }, cloud, Object.fromEntries(DUE.map((d) => [d, TODAY])), TOKEN);
     await page.goto(origin + HOME, { waitUntil: 'networkidle0' });
     await page.waitForFunction(() => window.__cloudReady === 1 && window.__progReady === 1 && !window.__progPending);
-    if ((await puts(page, 'data/review.json')).length) throw new Error('导入旧记录后不应把取消复活到云端');
+    const calls = await page.evaluate(() => window.__gh.map((c) => c.method + ' ' + c.path));
+    if (!calls.some((c) => c === 'GET data/review.json')) throw new Error('有令牌时同步没有读云端：' + calls.join(','));
+    for (const p of await puts(page, 'data/review.json')) {
+      const doc = decode(p.body, gh);
+      const item = doc.queue.find((x) => x.item === 'cs146s-L01');
+      for (const day of DUE) {
+        const row = item && item.reviews.find((r) => r.day === day);
+        if (row && row.done) throw new Error('旧 rev-done 把第 ' + day + ' 天复活成了完成');
+      }
+    }
     if (page._errors.length) throw new Error(page._errors.join('\n'));
     await page._ctx.close();
   });
 
   await check('跨内容检索页：多类型关键词、锚点命中、300+结果可达', async () => {
     const page = await boot(browser, origin);
+    await page.setViewport({ width: 1280, height: 1000, deviceScaleFactor: 1 });
     await page.goto(origin + '/search/index.html', { waitUntil: 'networkidle0' });
-    await page.waitForFunction(() => document.querySelectorAll('#slist .row').length > 10);
+    await page.waitForFunction(() => document.querySelectorAll('#slist .row').length > 10 && document.querySelector('#smoreb'));
+    await page.evaluate(() => window.scrollTo(0, 0));
+    const topOk = await page.evaluate(() => {
+      const inView = (s) => { const el = document.querySelector(s); if (!el) return false; const r = el.getBoundingClientRect(); return r.width > 0 && r.top >= -1 && r.bottom <= window.innerHeight + 1; };
+      return { top: inView('header.top'), sq: inView('#sq'), st: inView('#st'), sc: inView('#scount') };
+    });
+    if (!topOk.top || !topOk.sq || !topOk.st || !topOk.sc) throw new Error('桌面首屏没有同时露出顶栏、筛选和计数 ' + JSON.stringify(topOk));
+    await shot(page, 'search-desktop.png');
+    await scrollTo(page, '#smoreb');
+    const moreOk = await page.evaluate(() => { const r = document.querySelector('#smoreb').getBoundingClientRect(); return r.top >= 0 && r.bottom <= window.innerHeight && r.width > 0; });
+    if (!moreOk) throw new Error('桌面没有把「加载更多」放进画面');
+    await shot(page, 'search-more-desktop.png');
+    await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 });
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await shot(page, 'search-mobile.png');
+    await scrollTo(page, '#scount');
+    await shot(page, 'search-count-mobile.png');
+    await scrollTo(page, '#smoreb');
+    const moreMobile = await page.evaluate(() => { const r = document.querySelector('#smoreb').getBoundingClientRect(); return r.top >= 0 && r.bottom <= window.innerHeight; });
+    if (!moreMobile) throw new Error('手机画面没有「加载更多」');
+    await shot(page, 'search-more-mobile.png');
+    await page.setViewport({ width: 1280, height: 1000, deviceScaleFactor: 1 });
     const cases = [
       { key: 'langchain', entry: SAMPLES.langchain },
       { key: pickKeyword(SAMPLES.poster, 'poster'), entry: SAMPLES.poster },
@@ -512,6 +725,14 @@ try {
       });
       if (!hit.path.endsWith(c.entry.href.split('#')[0])) throw new Error('未跳到目标页 ' + c.entry.href + ' actual=' + hit.path);
       if (c.entry.href.includes('#') && (!hit.hash || !hit.has)) throw new Error('锚点未命中 ' + c.entry.href + ' actualHash=' + hit.hash);
+      if (/#dsh-v\d+$/.test(c.entry.href)) {
+        const id = c.entry.href.split('#')[1];
+        await page.waitForFunction((anchor) => {
+          const el = document.getElementById(anchor);
+          const d = el && el.closest('details');
+          return !!(el && el.tagName === 'TR' && d && d.id === 'verify' && d.open);
+        }, {}, id);
+      }
     }
     // 300+ 结果可达：加载更多直到末尾，并命中最后一条
     await page.goto(origin + '/search/index.html', { waitUntil: 'networkidle0' });
@@ -531,10 +752,24 @@ try {
       return { shown, last: last && ('../' + last.href), hasLast: !!(last && links.includes('../' + last.href)) };
     });
     if (!reach.hasLast) throw new Error('加载更多后仍无法访问末尾条目: ' + JSON.stringify(reach));
-    await page.setViewport({ width: 1280, height: 1000, deviceScaleFactor: 1 });
-    await page.screenshot({ path: path.join(SHOTS, 'search-desktop.png') });
-    await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 });
-    await page.screenshot({ path: path.join(SHOTS, 'search-mobile.png') });
+    const total = await page.evaluate(() => (window.__searchData || []).length);
+    if (!reach.shown.includes(total + '/' + total)) throw new Error('没有显示到最后一条: ' + reach.shown);
+    const lastHref = reach.last.slice(3);
+    await page.evaluate((href) => {
+      const a = [...document.querySelectorAll('#slist .row .t a')].find((x) => x.getAttribute('href') === '../' + href);
+      a.scrollIntoView({ block: 'center' });
+      a.click();
+    }, lastHref);
+    await page.waitForFunction((href) => {
+      const base = href.split('#')[0];
+      const id = href.includes('#') ? decodeURIComponent(href.split('#')[1]) : '';
+      if (!location.pathname.endsWith(base)) return false;
+      if (!id) return true;
+      const el = document.getElementById(id);
+      if (!el) return false;
+      const d = el.closest('details');
+      return !d || d.open;
+    }, { timeout: 15000 }, lastHref);
     if (page._errors.length) throw new Error(page._errors.join('\n'));
     await page._ctx.close();
   });
