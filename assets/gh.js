@@ -9,11 +9,20 @@
   var chains = {};
   // mutate(doc, {missing, sha}) → {doc, message}，或 null 表示不写。
   // 同一文件的提交串行执行，避免两笔同时拿旧 sha。
-  function commitJson(file, token, mutate, f, tries) {
+  // gate() 可选。学习进度用它在排队任务真正开始、每次 mutate、以及每次 PUT / 重试之前再看一眼暂停；不把函数开头的结果缓存下来。收藏不传 gate。
+  function commitJson(file, token, mutate, f, tries, gate) {
     f = f || fetch; tries = tries || 4;
+    function heldNow() {
+      if (typeof gate !== 'function') return null;
+      var hit = gate();
+      if (!hit) return null;
+      return hit.skipped ? hit : { skipped: true, held: hit };
+    }
     var run = async function () {
       var url = api(file), h = headers(token);
       for (var i = 0; i < tries; i++) {
+        var stop = heldNow();
+        if (stop) return stop;
         var r = await f(url + '?ref=' + BRANCH + '&t=' + Date.now(), { headers: h, cache: 'no-store' });
         var sha = null, doc = null, missing = false;
         if (r.status === 200) {
@@ -22,12 +31,20 @@
           try { doc = JSON.parse(b64dec(j.content)); } catch (e) { throw new Error(file + ' 内容损坏，没有写入（请先修好仓库里的这个文件）'); }
         } else if (r.status === 404) missing = true;
         else throw new Error(r.status === 401 ? '令牌无效或已过期' : r.status === 403 ? '令牌没有写权限（需要 Contents: Read and write）' : '读取失败 ' + r.status);
+        stop = heldNow();
+        if (stop) return stop;
         var out = mutate(doc, { missing: missing, sha: sha });
         if (!out) return { doc: doc, skipped: true };
+        stop = heldNow();
+        if (stop) return stop;
         var body = { message: String(out.message || ('update ' + file)).slice(0, 72), branch: BRANCH, content: b64enc(JSON.stringify(out.doc, null, 2) + '\n') };
         if (sha) body.sha = sha;
         var p = await f(url, { method: 'PUT', headers: h, body: JSON.stringify(body) });
-        if (p.status === 200 || p.status === 201) return { doc: out.doc, skipped: false };
+        if (p.status === 200 || p.status === 201) {
+          var done = { doc: out.doc, skipped: false };
+          if (out.sentOps) done.sentOps = out.sentOps;
+          return done;
+        }
         if (p.status === 409 || p.status === 422) continue;
         throw new Error(p.status === 401 ? '令牌无效或已过期' : p.status === 403 || p.status === 404 ? '令牌没有这个仓库的写权限' : '保存失败 ' + p.status);
       }

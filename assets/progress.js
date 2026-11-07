@@ -152,6 +152,25 @@
     return { doc: doc, message: ('review: ' + itemId + ' ' + days.join(',') + (undo ? ' undo' : ' done')).slice(0, 72) };
   }
   // 云端已经有同样新或更新的记录，本机操作就不用再传了；返回还要保留的操作。
+  function opSame(a, b) {
+    if (!a || !b || a.done !== b.done || atMs(a.at) !== atMs(b.at)) return false;
+    return (isDate(a.on) ? a.on : '') === (isDate(b.on) ? b.on : '');
+  }
+  // 同步和清理用。读失败、JSON 坏了、值无法确认都不是「空操作」。
+  function readOpStrict(storage, id) {
+    var raw, o, day, out = {};
+    if (!okId(id)) return { ok: false, error: 'rev-op 条目无法确认' };
+    try { raw = storage.getItem('rev-op:' + id); }
+    catch (e) { return { ok: false, error: '读不到 rev-op:' + id + '（' + (e && e.message ? e.message : e) + '）' }; }
+    if (raw == null || raw === '') return { ok: true, ops: {} };
+    try { o = JSON.parse(raw); } catch (e) { return { ok: false, error: '读不到 rev-op:' + id + '（不是合法 JSON）' }; }
+    if (!o || typeof o !== 'object' || Array.isArray(o)) return { ok: false, error: '读到的 rev-op:' + id + ' 无法确认' };
+    for (day in o) {
+      if (!okDay(day) || !okOp(o[day])) return { ok: false, error: '读到的 rev-op:' + id + ' 无法确认' };
+      out[day] = o[day];
+    }
+    return { ok: true, ops: out };
+  }
   function pruneOps(doc, itemId, ops) {
     var hit = findQueue(doc, itemId), keep = {};
     Object.keys(ops || {}).forEach(function (day) {
@@ -315,8 +334,8 @@
     return plan;
   }
   function planSig(plan) { return JSON.stringify((plan || []).map(function (p) { return [p.key, p.before, p.after]; })); }
-  // 备份的导入、导出、预览用这份。枚举或任一学习键读失败就停，不把缺掉的键当成「本机没有」。
-  // 打开页面、补写云端仍用上面会吞错的 collectLocal，普通渲染的容错不从这里扩大。
+  // 备份的导入、导出、预览，以及同步收集，用这份。枚举或任一学习键读失败就停，不把缺掉的键当成「本机没有」。
+  // collectLocal / readOps 仍吞错，只留给不写云端的兼容路径。同步和 settle 不再用它们。
   function readLearningStrict(storage) {
     var done = {}, rev = {}, ops = {}, i, n, k, v, o, day, m, id;
     function fail(msg) { return { ok: false, error: msg }; }
@@ -397,7 +416,7 @@
     if (restoreFailed.length) fail.phase = 'restore-failed';
     return { ok: false, phase: fail.phase, error: fail.error, written: written.length, restored: restoreFailed.length === 0, restoreFailed: restoreFailed, keptOther: keptOther, residue: restoreFailed.slice() };
   }
-  var api = { isDate: isDate, earlier: earlier, beijingToday: beijingToday, okPath: okPath, okId: okId, okDay: okDay, doneExpand: doneExpand, pathsMatch: pathsMatch, matchItem: matchItem, applyLearned: applyLearned, applyReviews: applyReviews, diffRev: diffRev, mergeLocal: mergeLocal, atMs: atMs, effReview: effReview, applyOps: applyOps, pruneOps: pruneOps, cleanState: cleanState, exportBackup: exportBackup, parseBackup: parseBackup, mergeBackup: mergeBackup, previewBackupMerge: previewBackupMerge, validateState: validateState, planImport: planImport, planSig: planSig, writeLearningPlan: writeLearningPlan, readLearningStrict: readLearningStrict };
+  var api = { isDate: isDate, earlier: earlier, beijingToday: beijingToday, okPath: okPath, okId: okId, okDay: okDay, doneExpand: doneExpand, pathsMatch: pathsMatch, matchItem: matchItem, applyLearned: applyLearned, applyReviews: applyReviews, diffRev: diffRev, mergeLocal: mergeLocal, atMs: atMs, effReview: effReview, applyOps: applyOps, pruneOps: pruneOps, opSame: opSame, readOpStrict: readOpStrict, cleanState: cleanState, exportBackup: exportBackup, parseBackup: parseBackup, mergeBackup: mergeBackup, previewBackupMerge: previewBackupMerge, validateState: validateState, planImport: planImport, planSig: planSig, writeLearningPlan: writeLearningPlan, readLearningStrict: readLearningStrict };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   root.PROG = api;
   if (typeof document === 'undefined' || !GH) return;
@@ -550,29 +569,59 @@
     try { GH.toast('有 ' + held.length + ' 个学习键没能恢复，已暂停自动同步。到收藏页「备份与恢复」处理残留后再试', 6000); } catch (e) {}
     return { skipped: true, held: held };
   }
-  // 提交（或发现云端更新）之后：按云端结果清掉已经落地或已经过时的本机操作，再把最新的 review.json 交给首页重画。
+  // 这次确认写上、而且本机现在仍是同一个值的操作才拿掉。读错、没进这次快照、或写入期间又改过的，留下。
+  function keepAfterSync(doc, id, current, sentForId) {
+    if (!sentForId) return current;
+    var keep = pruneOps(doc, id, current);
+    Object.keys(current).forEach(function (day) {
+      if (!opSame(current[day], sentForId[day])) keep[day] = current[day];
+    });
+    return keep;
+  }
+  // 只有本次 PUT 成功并带回 sentOps 才清理。云端失败、暂停、无变更都不删。枚举失败则一个键都不改。
   function settle(res) {
     var doc = res && res.doc;
-    if (!doc || !Array.isArray(doc.queue)) return res;
-    try {
-      for (var i = localStorage.length - 1; i >= 0; i--) {
-        var k = localStorage.key(i); if (!k || k.indexOf('rev-op:') !== 0) continue;
-        var id = k.slice(7); if (!okId(id)) continue;
-        writeOps(id, pruneOps(doc, id, readOps(id)));
-      }
-    } catch (e) {}
-    try { root.dispatchEvent(new CustomEvent('prog-doc', { detail: doc })); } catch (e) {}
+    if (doc && Array.isArray(doc.queue) && res.sentOps && !res.skipped && !res.held) {
+      var plan = null;
+      try {
+        var n = localStorage.length;
+        if (typeof n !== 'number' || n < 0) throw new Error('枚举失败');
+        var keys = [], i, k, id, cur;
+        for (i = 0; i < n; i++) { k = localStorage.key(i); if (k && k.indexOf('rev-op:') === 0) keys.push(k); }
+        plan = [];
+        for (i = 0; i < keys.length; i++) {
+          id = keys[i].slice(7);
+          if (!okId(id)) continue;
+          cur = readOpStrict(localStorage, id);
+          if (!cur.ok) continue;
+          plan.push({ id: id, keep: keepAfterSync(doc, id, cur.ops, res.sentOps[id]) });
+        }
+      } catch (e) { plan = null; }
+      if (plan) for (i = 0; i < plan.length; i++) writeOps(plan[i].id, plan[i].keep);
+    }
+    if (doc && Array.isArray(doc.queue)) { try { root.dispatchEvent(new CustomEvent('prog-doc', { detail: doc })); } catch (e) {} }
     return res;
   }
   // 学习进度的云端写入只从这里出去。调用方：打开页面和令牌变化时的 syncLocal、首页勾选 onReview、学完了 pushLearned。
-  // 收藏星标走 favorites.js，写的是 favorites.json，不带学习残留。
+  // 收藏星标走 favorites.js，写的是 favorites.json，不带学习残留，也不传 gate。
+  // 开头的 denyHeld 只挡住已经暂停的调用。真正排队后的 GET、mutate、PUT 和每一次重试，由 gate() 当时再读 holdKeys()。
   function commitReview(mutate) {
     var denied = denyHeld();
     if (denied) return Promise.resolve(denied);
+    var told = false;
+    function gate() {
+      var held = holdKeys();
+      if (!held) return null;
+      if (!told) {
+        told = true;
+        try { GH.toast('有 ' + held.length + ' 个学习键没能恢复，已暂停自动同步。到收藏页「备份与恢复」处理残留后再试', 6000); } catch (e) {}
+      }
+      return { skipped: true, held: held };
+    }
     return GH.commitJson('data/review.json', GH.token(), function (doc, ctx) {
       if (ctx.missing || !doc || !Array.isArray(doc.queue)) throw new Error('读不到 data/review.json');
       return mutate(doc);
-    });
+    }, null, null, gate);
   }
   function pushLearned() {
     var date = beijingToday();
@@ -588,12 +637,21 @@
   }
   // 首页勾选或取消后调用。首页先把操作写进 rev-op:<id>，这里把它传上去；旧页面没写操作时退回按 rev-done 前后差异提交。
   function onReview(id, before, after) {
-    var ops = okId(id) ? readOps(id) : {};
+    var first = okId(id) ? readOpStrict(localStorage, id) : { ok: true, ops: {} };
+    if (!first.ok) { GH.toast('读不到本机复习操作（' + first.error + '），没有上传，本机记录还在', 5000); return; }
+    var ops = first.ops;
     var useOps = Object.keys(ops).length > 0;
     var changes = useOps ? Object.keys(ops).map(function (d) { return { day: +d, done: ops[d].done }; }) : diffRev(before, after);
     if (!changes.length) return;
     if (!GH.token()) { if (changes.some(function (c) { return c.done; })) hintLearn(); return; }
-    track(commitReview(function (doc) { return useOps ? applyOps(doc, id, ops) : applyReviews(doc, id, changes); }).then(settle).then(function (res) {
+    track(commitReview(function (doc) {
+      var again = okId(id) ? readOpStrict(localStorage, id) : { ok: true, ops: {} };
+      if (!again.ok) throw new Error(again.error);
+      var live = again.ops, liveUse = Object.keys(live).length > 0;
+      var out = liveUse ? applyOps(doc, id, live) : applyReviews(doc, id, changes);
+      if (out && liveUse) { out.sentOps = {}; out.sentOps[id] = live; }
+      return out;
+    }).then(settle).then(function (res) {
       if (!res || res.skipped) return res;
       GH.toast(changes.every(function (c) { return c.done === false; }) ? '已取消这次复习的云端记录' : '已同步复习进度');
       return res;
@@ -604,7 +662,13 @@
     var denied = denyHeld();
     if (denied) return Promise.resolve(denied);
     return track(catalog().then(function (items) {
-      return commitReview(function (doc) { return mergeLocal(doc, collectLocal(), items, SITE); });
+      return commitReview(function (doc) {
+        var local = readLearningStrict(localStorage);
+        if (!local.ok) throw new Error(local.error);
+        var merged = mergeLocal(doc, local.state, items, SITE);
+        if (merged) merged.sentOps = local.state.ops || {};
+        return merged;
+      });
     })).then(settle).then(function (res) {
       if (res && !res.skipped) GH.toast('已把本机进度补写到仓库');
       return res;

@@ -340,6 +340,14 @@ assert.equal(learnedPuts, 1);
   const commitFn = progressSrc.slice(progressSrc.indexOf('function commitReview'), progressSrc.indexOf('function pushLearned'));
   assert.ok(commitFn.includes('denyHeld'), 'commitReview 必须先看 hold');
   assert.ok(commitFn.indexOf('denyHeld') < commitFn.indexOf('GH.commitJson'), 'hold 要在真正提交之前');
+  assert.match(commitFn, /function gate\(\)[\s\S]*holdKeys\(\)/, '写入前的 gate 必须当时再读 hold，不能用开头缓存的结果');
+  assert.match(commitFn, /null, null, gate\)/);
+  const ghSrc = fs.readFileSync(path.join(root, 'assets/gh.js'), 'utf8');
+  const ghCommit = ghSrc.slice(ghSrc.indexOf('function commitJson'), ghSrc.indexOf('function token'));
+  const putAt = ghCommit.indexOf("method: 'PUT'");
+  assert.ok(putAt > 0, 'gh.js 仍要能 PUT');
+  assert.ok(ghCommit.lastIndexOf('stop = heldNow()', putAt) > ghCommit.indexOf('for (var i = 0; i < tries; i++)'), '每次重试写入前都要再看暂停');
+  assert.ok(ghCommit.indexOf('stop = heldNow()') < ghCommit.indexOf('mutate(doc'), 'mutate 前要看暂停');
   const gate = progressSrc.slice(progressSrc.indexOf('function denyHeld'), progressSrc.indexOf('function commitReview'));
   assert.match(gate, /holdKeys\(\)/);
   for (const name of ['pushLearned', 'onReview', 'syncLocal']) {
@@ -472,6 +480,192 @@ const otherBackup = { version: 1, kind: 'learning-progress-local', done: { '/cou
   assert.equal(app.m.get('done:/courses/example.html'), '2026-01-01');
   assert.throws(() => app.root.PROG.exportLocalBackup(), /枚举本机学习记录失败/);
   assert.equal(app.sets.length, 0, '枚举失败时导出、预览、导入都不能写键');
+}
+
+function bootReal(opts = {}) {
+  const m = new Map(Object.entries(opts.init || {}));
+  const ss = new Map();
+  const listeners = {};
+  const root = {
+    addEventListener: (k, fn) => { (listeners[k] = listeners[k] || []).push(fn); },
+    dispatchEvent: (ev) => { (listeners[ev.type] || []).forEach((fn) => fn(ev)); },
+  };
+  const store = {
+    get length() { return m.size; },
+    key(i) { return [...m.keys()][i]; },
+    getItem(k) { if (store.fail && store.fail(k)) throw new Error('selective read failure'); return m.has(k) ? m.get(k) : null; },
+    setItem(k, v) { m.set(k, String(v)); },
+    removeItem(k) { m.delete(k); },
+    fail: null,
+  };
+  const puts = [];
+  let release = null;
+  let githubGets = 0;
+  const cloud = () => JSON.parse(JSON.stringify(opts.cloud || { queue: [{ item: 'cs146s-L01', learned: '2026-10-12', reviews: [{ day: 1, done: true }, { day: 3, done: false }] }] }));
+  const context = {
+    window: root,
+    document: {
+      currentScript: { src: 'http://127.0.0.1/assets/progress.js' },
+      readyState: 'loading',
+      addEventListener() {},
+      getElementById: () => null,
+      querySelector: () => null,
+    },
+    localStorage: store,
+    sessionStorage: { getItem: (k) => ss.get(k) || null, setItem: (k, v) => ss.set(k, String(v)), removeItem: (k) => ss.delete(k) },
+    location: { origin: 'http://127.0.0.1', href: 'http://127.0.0.1/index.html', pathname: opts.pathname || '/courses/cs146s/L01-agent-loop.html' },
+    URL, console, Buffer,
+    fetch: async (url, opt = {}) => {
+      const u = String(url);
+      if (!u.includes('api.github.com')) {
+        return { ok: true, json: async () => ({ items: opts.items || [{ id: 'cs146s-L01', href: '/courses/cs146s/L01-agent-loop.html' }, { id: 'cs146s-L02', href: '/courses/cs146s/L02.html' }] }) };
+      }
+      if (opts.onFetch) return opts.onFetch(u, opt, { puts, cloud, noteGet: () => { githubGets += 1; } });
+      if (opt.method === 'PUT') {
+        puts.push(JSON.parse(Buffer.from(JSON.parse(opt.body).content, 'base64').toString()));
+        return { status: opts.putStatus || 200 };
+      }
+      githubGets += 1;
+      if (opts.blockFirstGet && githubGets === 1) {
+        if (opts.onBlocked) opts.onBlocked();
+        await new Promise((r) => { release = r; });
+      }
+      return { status: 200, json: async () => ({ sha: 'stub', content: Buffer.from(JSON.stringify(cloud())).toString('base64') }) };
+    },
+  };
+  vm.createContext(context);
+  vm.runInContext(fs.readFileSync(new URL('../assets/gh.js', import.meta.url), 'utf8'), context);
+  root.GH.toast = () => {};
+  root.GH.token = () => 'synthetic-noncredential';
+  vm.runInContext(fs.readFileSync(new URL('../assets/progress.js', import.meta.url), 'utf8'), context);
+  return { m, store, root, puts, release: () => { if (release) release(); } };
+}
+
+const cancelOp = JSON.stringify({ 1: { done: false, at: 200, on: '' } });
+{
+  let blocked;
+  const ready = new Promise((r) => { blocked = r; });
+  const app = bootReal({
+    blockFirstGet: true,
+    onBlocked: () => blocked(),
+    init: { 'done:/courses/cs146s/L01-agent-loop.html': '2026-10-01' },
+  });
+  const pending = app.root.PROG.syncLocal();
+  await ready;
+  const queued = app.root.PROG.syncLocal();
+  await new Promise((r) => setTimeout(r, 0));
+  app.m.set('prog-import-hold', JSON.stringify({ keys: ['rev-op:cs146s-L01'] }));
+  app.m.set('done:/courses/cs146s/L01-agent-loop.html', '2026-11-06');
+  app.release();
+  await pending;
+  await queued;
+  assert.equal(app.puts.length, 0, 'GET 等待期间才出现的 hold，已排队的提交也不能 PUT');
+  assert.deepEqual(JSON.parse(JSON.stringify(app.root.PROG.importHold())), ['rev-op:cs146s-L01']);
+  assert.equal(app.m.get('done:/courses/cs146s/L01-agent-loop.html'), '2026-11-06');
+}
+
+{
+  const calls = [];
+  const app = bootReal({
+    init: { 'done:/courses/cs146s/L02.html': '2026-10-02' },
+    pathname: '/courses/cs146s/L02.html',
+    onFetch: async (url, opt) => {
+      if (opt.method === 'PUT') {
+        calls.push(JSON.parse(Buffer.from(JSON.parse(opt.body).content, 'base64').toString()));
+        if (calls.length === 1) {
+          app.m.set('prog-import-hold', JSON.stringify({ keys: ['rev-op:cs146s-L01'] }));
+          app.m.set('done:/courses/other.html', '2026-11-06');
+          return { status: 409 };
+        }
+        return { status: 200 };
+      }
+      return { status: 200, json: async () => ({ sha: 'stub', content: Buffer.from(JSON.stringify({ queue: [{ item: 'cs146s-L02', reviews: [{ day: 1, done: false }] }] })).toString('base64') }) };
+    },
+  });
+  await app.root.PROG.syncLocal();
+  assert.equal(calls.length, 1, '冲突重试前已经暂停，不能再 PUT');
+  assert.equal(calls[0].queue[0].learned, '2026-10-02');
+  assert.ok(!JSON.stringify(calls[0]).includes('2026-11-06'));
+  const favPuts = [];
+  await app.root.GH.commitJson('favorites.json', 'synthetic-noncredential', () => ({ doc: { version: 1, items: [{ url: '/a', title: '一页' }] }, message: 'fav: + 一页' }), async (url, opt = {}) => {
+    if (opt.method === 'PUT') { favPuts.push(1); return { status: 200 }; }
+    return { status: 200, json: async () => ({ sha: 'f', content: Buffer.from(JSON.stringify({ version: 1, items: [] })).toString('base64') }) };
+  });
+  assert.equal(favPuts.length, 1, '学习暂停不挡住收藏写入');
+}
+
+{
+  const app = bootReal({
+    init: {
+      'done:/courses/cs146s/L01-agent-loop.html': '2026-11-06',
+      'rev-op:cs146s-L01': cancelOp,
+    },
+  });
+  app.store.fail = (k) => k === 'rev-op:cs146s-L01';
+  await app.root.PROG.syncLocal();
+  assert.equal(app.puts.length, 0, 'rev-op 读失败不能当成没有操作去提交');
+  assert.equal(app.m.get('rev-op:cs146s-L01'), cancelOp);
+  app.root.PROG.onReview('cs146s-L01', { 1: '2026-11-06' }, {});
+  await new Promise((r) => setTimeout(r, 20));
+  assert.equal(app.puts.length, 0, '取消入口读失败也不能提交');
+  assert.equal(app.m.get('rev-op:cs146s-L01'), cancelOp, '读失败不能删掉未上传的取消');
+}
+
+{
+  const seen = [];
+  const app = bootReal({
+    init: { 'rev-op:cs146s-L01': JSON.stringify({ 1: { done: false, at: 100, on: '' } }) },
+    onFetch: async (url, opt) => {
+      if (!opt.method || opt.method === 'GET') {
+        app.m.set('rev-op:cs146s-L01', JSON.stringify({ 1: { done: false, at: 300, on: '' } }));
+        return { status: 200, json: async () => ({ sha: 'stub', content: Buffer.from(JSON.stringify({ queue: [{ item: 'cs146s-L01', reviews: [{ day: 1, done: true }] }] })).toString('base64') }) };
+      }
+      const body = JSON.parse(Buffer.from(JSON.parse(opt.body).content, 'base64').toString());
+      seen.push(body);
+      app.m.set('rev-op:cs146s-L01', JSON.stringify({ 1: { done: false, at: 900, on: '' }, 3: { done: true, at: 950, on: '2026-11-07' } }));
+      app.m.set('rev-op:cs146s-L02', JSON.stringify({ 1: { done: false, at: 960, on: '' } }));
+      return { status: 200 };
+    },
+  });
+  await app.root.PROG.syncLocal();
+  assert.equal(seen.length, 1);
+  assert.equal(Date.parse(seen[0].queue[0].reviews[0].at), 300, 'GET 等待期间更新的操作要进本次提交，而不是用更早的快照');
+  const kept = JSON.parse(app.m.get('rev-op:cs146s-L01'));
+  assert.equal(kept[1].at, 900, 'PUT 期间又改过的操作不能按已上传的旧值删掉');
+  assert.equal(kept[3].at, 950, '同步期间新加的复习日要留下');
+  assert.ok(app.m.has('rev-op:cs146s-L02'), '同步期间新加的另一条操作要留下');
+}
+
+{
+  const app = bootReal({
+    init: { 'rev-op:cs146s-L01': cancelOp },
+    putStatus: 500,
+  });
+  await app.root.PROG.syncLocal();
+  assert.equal(app.puts.length, 1);
+  assert.equal(app.m.get('rev-op:cs146s-L01'), cancelOp, '云端保存失败不能清理本机操作');
+}
+
+{
+  const app = bootReal({ init: { 'rev-op:cs146s-L01': cancelOp } });
+  await app.root.PROG.syncLocal();
+  assert.equal(app.puts.length, 1);
+  assert.equal(app.puts[0].queue[0].reviews[0].done, false);
+  assert.equal(app.m.has('rev-op:cs146s-L01'), false, '确认写上且本机仍是同一个值，才清掉');
+  const learned = bootReal({
+    pathname: '/courses/cs146s/L02.html',
+    init: { 'done:/courses/cs146s/L02.html': '2026-11-02' },
+    cloud: { queue: [{ item: 'cs146s-L02', reviews: [{ day: 1, done: false }] }] },
+  });
+  await learned.root.PROG.pushLearned();
+  assert.equal(learned.puts.length, 1, '没有暂停时，学完了仍然提交');
+  assert.ok(/^\d{4}-\d{2}-\d{2}$/.test(learned.puts[0].queue[0].learned));
+  const undo = bootReal({ init: { 'rev-op:cs146s-L01': cancelOp } });
+  undo.root.PROG.onReview('cs146s-L01', { 1: '2026-11-01' }, {});
+  await new Promise((r) => setTimeout(r, 30));
+  assert.equal(undo.puts.length, 1, '没有暂停时，取消入口仍然提交');
+  assert.equal(undo.puts[0].queue[0].reviews[0].done, false);
+  assert.equal(undo.m.has('rev-op:cs146s-L01'), false);
 }
 
 console.log('ok');
