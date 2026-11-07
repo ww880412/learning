@@ -1,0 +1,17 @@
+{
+  "note": "公开规则变更的可复现样本。测试用 git show 读取这两个提交里的 build.mjs 和 README.md，核对旧结论、新结论和提交里写明的原因。这不是用户判断，不新增判断记录，索引的 trace 也只表示来源位置。",
+  "notUserJudgment": true,
+  "commit": "30a9bd2f0baf2664b614056dd2f04728e8ac6563",
+  "parent": "6fd9b4498adcd837abe3bcacf348c2dce6637f65",
+  "committedAt": "2026-10-26T18:20:36+08:00",
+  "subject": "已学完按「学完了」算",
+  "old": {
+    "rule": "const passed = (it.quiz?.correct ?? 0) >= 5 && it.retell === true;",
+    "readme": "小测答对 ≥ 5/6"
+  },
+  "next": {
+    "rule": "已学完：点过学习页的「学完了」",
+    "reason": "小测（quiz）和复述（retell）只是学习记录，不再决定状态（2026-10-26 王玮定：「已学完」按「学完了」按钮算）。",
+    "readme": "小测、复述不影响状态（2026-10-26 定）"
+  }
+}
