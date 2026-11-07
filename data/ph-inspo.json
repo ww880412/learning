@@ -24,6 +24,153 @@
   ],
   "days": [
     {
+      "date": "2026-11-06",
+      "source": "https://www.producthunt.com/leaderboard/daily/2026/11/6",
+      "fetched": "2026-11-07 16:55 北京",
+      "note": "太平洋 11/6 榜单页只取到前 10 名；Turnstone 直接对标 Grok Bot，和我们自己用的工具是竞品关系。",
+      "picks": [
+        {
+          "id": "2026-11-06-crystl",
+          "why": "一会话一 worktree、未合并提交数挂在标签上、hooks 驱动的审批卡片和结构化终端记录，几乎是工作台多 agent 会话层的现成样板。",
+          "limit": "只支持 macOS、不开源；编排、远程和完整 CLI 控制要 $170/年的 Guild，没有 hooks 的 agent 只剩普通终端。"
+        },
+        {
+          "id": "2026-11-06-tracex",
+          "why": "「根因 + 置信度 + 每条结论挂证据 + 最小修复 PR + 验证步骤」可直接抄成 agent 排障任务的标准产物。",
+          "limit": "私测阶段；要给它只读数据库和日志权限，演示里的置信度等数字是示例，未独立验证。"
+        },
+        {
+          "id": "2026-11-06-turnstone",
+          "why": "直接对标 Grok Bot：额度用完自动换供应商、同一对话不断，值得对照做工作台的模型路由策略。",
+          "limit": "只有 Mac 和 iPhone；用消费级订阅接入第三方是否合各家条款没说明，自动切换的效果未独立验证。"
+        }
+      ],
+      "items": [
+        {
+          "name": "crystl",
+          "tagline": "multitasking terminal for AI coding agents, built for macOS",
+          "ph": "https://www.producthunt.com/products/crystl-multitasking-terminal",
+          "site": "https://crystl.dev",
+          "rank": 6,
+          "score": 64,
+          "comments": 6,
+          "what": "原生 Swift 写的 macOS 终端，专给 Claude Code、Codex、opencode、aider、Kimi Code 等 CLI agent 用：按项目（gem）管理会话（shard），可多 agent 并行、编排、定时跑，并有 iPhone 端远程看和批准。",
+          "problem": "同时在多个项目里跑多个 CLI agent 时，人要翻 scrollback 找哪个卡住、哪个在等批准；换 agent 后上下文要重讲；各项目的 CLAUDE.md / AGENTS.md 慢慢走样。",
+          "highlight": "官网称：每个隔离 shard 自带 git worktree 和分支，标签页上显示未合并提交数，可直接合并 / rebase，关掉的 shard 留下的分支能重新挂回；审批、提问和通知通过 agent hooks 变成浮动卡片（Claude Code 与 Codex 支持 hooks，Antigravity CLI 暂不支持）；自研 cavrn 终端把每轮对话、工具调用和结果存成结构化数据，让 agent 能读彼此的会话；每个项目一份 WORKBENCH.md 任务清单，人和 agent 共用；「project optimizer」给项目的 agent 配置打分并一键补缺；自带可被 agent 调用的 crystl CLI（生成 shard、读终端、处理审批）。免费版含 worktree 隔离、浮动卡片、最多 3 个定时任务等；编排、序列自动化、远程 iPhone、完整 CLI 控制要 Guild（官网价 $170/年）。只支持 macOS，不开源。",
+          "inspo": "工作台可抄三处：①「一会话一 worktree」做成默认，并在会话标签上直接显示「领先 N 个提交」和合并按钮，关会话不丢分支；②把终端输出按「轮次 / 工具调用 / 结果」结构化存下来，供别的 agent 和审计检索，而不是只存纯文本；③项目里放一份人和 agent 共读共写的 markdown 任务清单。前提：先给每个 agent 分好分支和工作目录；结构化记录要靠接入方的 hooks，像 Antigravity 这种没有 hooks 的 agent 只能退回纯终端。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "效率"
+          ],
+          "id": "2026-11-06-crystl",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "TraceX",
+          "tagline": "The AI engineer for your production issues",
+          "ph": "https://www.producthunt.com/products/tracex",
+          "site": "https://tracexpro.com",
+          "rank": 8,
+          "score": 69,
+          "comments": 6,
+          "what": "处理线上问题的 AI 工程师：从客服邮件、Slack、Jira 工单或面板提问开始，只读查数据库、代码与近期提交、Sentry / Datadog / CloudWatch 日志，给出带证据的根因、修复 PR 和给客户的回复草稿。",
+          "problem": "一个客户投诉要工程师在数据库、代码、日志和工单之间来回查，排查过程难复用，结论也常缺证据。",
+          "highlight": "官网称：数据库（PostgreSQL / MySQL / MongoDB）只用只读凭据、只跑只读查询，不存查到的行、不建代码或数据索引，导出文件 24 小时后删除；每个根因写出置信度、「预期 vs 实际」，每条结论引用具体记录、代码行或日志行，并由第二个模型对照证据复核；修复以 PR 形式提交，附风险等级和验证步骤；也有终端命令 `tracex -c`，在未关联的仓库里当 coding agent 用，每次改动和命令都先问；支持 SSO、角色和审计日志，可用自己的 Anthropic / Gemini key。目前私测、测试期免费。官网演示里的 93% 置信度等是示例，没有独立验证。",
+          "inspo": "工作台可抄「调查报告」这个产物格式：根因 + 置信度 + 预期/实际 + 每条结论挂证据链接 + 最小修复 PR + 验证步骤，适合作为 agent 排障任务的标准输出；另一个做法是生产数据一律走只读凭据、结果只留「查了什么、在哪」而不留数据行。前提：要先给 agent 配好只读账号和日志平台的接入；第二模型复核会多一份调用成本。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "AI工具"
+          ],
+          "id": "2026-11-06-tracex",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Turnstone",
+          "tagline": "Grok Bot alternative that runs on your AI, completely free",
+          "ph": "https://www.producthunt.com/products/turnstone",
+          "site": "https://myturnstone.ai/",
+          "rank": 2,
+          "score": 255,
+          "comments": 29,
+          "what": "直接对标 Grok Bot 的个人 agent 团队应用，Mac 和 iPhone 可用：先建一个「Chief of Staff」agent，由它按你的工作拆出多个 agent，各自有浏览器标签、定时任务和记忆，跑在你已有的 AI 订阅或模型上。",
+          "problem": "创始人在 PH 说：用 Grok Bot 常在干活中途撞到用量上限，而手上的 Claude、ChatGPT 订阅却闲着。",
+          "highlight": "官网和创始人称：可用 ChatGPT、Claude、Grok、Cursor 的订阅登录，或接 OpenRouter key、Ollama 本地模型、自定义端点；一个订阅到限额时，agent 在同一对话里切到另一个继续；对话中途也可换模型，agent 保留身份和已知信息；agent 之间能互相派活，结果回到你的对话；数据、对话和记忆存在 Mac 上一个可打开的文件夹里；连接器经 Composio，创始人称零数据保留；提供一个把 Grok Bot 上的 bot 连同技能和定时任务迁过来的迁移 bot。PH 页显示 YC 背景，Mac 端官网称永久免费。用消费级订阅给第三方应用跑 agent 是否符合各家条款，官网没说明，也没有独立核实。",
+          "inspo": "和你自己现在用 Grok Bot 的方式直接相关，可当竞品对照：①「额度用完自动换供应商、对话不断」值得在工作台的模型路由里做成显式策略（主模型、备用模型、切换时记一笔）；②「Chief of Staff 先拆团队」是新用户上手的引导方式；③记忆放在用户可打开的本地文件夹。前提：企业场景得先确认各模型供应商允许这种账号接入和切换，且切换时要能看出是哪个模型产出的。",
+          "tags": [
+            "AI工具",
+            "效率"
+          ],
+          "id": "2026-11-06-turnstone",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Tobira Site Agent",
+          "tagline": "Turn your website into an AI agent that sells to AI agents",
+          "ph": "https://www.producthunt.com/products/tobira-ai",
+          "site": "https://tobira.ai",
+          "rank": 1,
+          "score": 359,
+          "comments": 107,
+          "what": "给网站配一个对外 agent：对访客和替用户来问的 ChatGPT、Claude 等 AI agent 用结构化数据回答价格、方案、文档，并直接约演示、收款、发试用；另有给个人和公司 agent 分配公开 @handle 的 agent 网络（早期访问）。",
+          "problem": "越来越多买家让 AI 助手去比价和找供应商，普通网站只是被抓取，没法回答 agent 的具体问题，也接不住预约和下单。",
+          "highlight": "官网称：给 agent 发布 llms.txt、agent.json、AGENTS.md，并提供专门的 A2A 入口；回答只来自你上传的网站、PDF 和 FAQ，答不上就转人工或约电话；可分「公开 / 私有」材料；Claude、ChatGPT、Codex 等 MCP 客户端能直接配置和更新它；有自带 key 的免费档，付费档 $49–$799/月。官网引用的「92× 更少 token」是自己的示例，「90% B2B 购买将由 agent 中介」等是第三方预测，均未独立验证。",
+          "inspo": "对工作台和个人站都有一个可抄的小做法：给站点或产品文档同时发布 llms.txt / AGENTS.md 和一个只读的结构化问答入口（MCP），让外部 agent 不靠抓网页也能拿到准确信息。前提：内容要先分清哪些能公开；它的约演示、收款那一套偏销售场景，你用不上。",
+          "tags": [
+            "AI工具"
+          ],
+          "id": "2026-11-06-tobira-site-agent",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Pauta",
+          "tagline": "Your private memory for every conversation",
+          "ph": "https://www.producthunt.com/products/pauta",
+          "site": "https://www.pauta-ai.com/en",
+          "rank": 10,
+          "score": 87,
+          "comments": 7,
+          "what": "Mac 和 Windows 上的本地会议录音转写工具：不往会议里加机器人，直接录麦克风和系统声音，本机转写、总结，按项目归档并能跨多次会议提问。",
+          "problem": "会议记录工具多数要把录音传到云端，还常往会里塞一个机器人；而且每次会议的纪要彼此孤立，查「这件事到底定了什么」很麻烦。",
+          "highlight": "官网称：转写和总结默认都在本机（转写用 Parakeet V3，总结默认本地 Qwen 2.5 3B），可离线；也可接自己的 Claude / ChatGPT key；能记住说话人声音，改一次名字以后自动认；录音结束建议归到某个项目，项目有汇总，并能问「到目前为止定了什么」；可同步到 Obsidian。买断约 $5，一个许可证 2 台电脑，7 天免卡试用。iOS / Android 还在做。",
+          "inspo": "可抄「按项目汇总多次会议，再对整个项目提问」这层，而不是一次会议一份纪要；放到工作台里，就是把多次 agent 会话按需求或分支汇总成一份「目前已定」的清单。个人使用上，$5 买断、本地跑，可以直接拿来记孩子学校的家长会或课程讲座。前提：录音前要告知参与者。",
+          "tags": [
+            "效率",
+            "AI工具",
+            "教育"
+          ],
+          "id": "2026-11-06-pauta",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Rankfender v3.0",
+          "tagline": "The SEO/GEO operating system, built for people and AI agents",
+          "ph": "https://www.producthunt.com/products/rankfender",
+          "site": "https://rankfender.com",
+          "rank": 3,
+          "score": 166,
+          "comments": 15,
+          "what": "SEO 加 GEO（在 AI 助手回答里的可见度）一体平台：站点审计、关键词机会、竞品对比、AI 写文并发布到 WordPress，还定期查 ChatGPT、Claude、Gemini、Perplexity 等怎么提到你的品牌。",
+          "problem": "内容和品牌在 Google 排名之外，越来越多是在 AI 助手的回答里被提到或被漏掉，传统 SEO 工具看不到这一块。",
+          "highlight": "官网称：每周（高档可每天）用官方 API 向最多 8 个 AI 助手问买家会问的问题，统计提及率、位置、语气和引用来源，并找出「AI 提了谁而没提你」；审计约 60 项 SEO/GEO/AEO 检查，含 AI 爬虫访问、llms.txt、schema；写文从来源出发、带引用，有「发布闸门」挡住编造的引语和数字；内置 RAISA agent 需你确认才执行；可从 Claude 或 ChatGPT 连接操作。价格 $89/月起，无试用期。案例里的曝光数字是厂商自报。",
+          "inspo": "做自媒体可以借它的检查清单，不一定要买：定期拿固定的几个问题去问几个 AI 助手，记下有没有提到你、引用了哪篇，作为内容效果的一项指标。前提：除 Perplexity 外其他助手回答来自模型自身知识，波动大，要固定问题、多次取样才有参考意义。",
+          "tags": [
+            "创作",
+            "AI工具"
+          ],
+          "id": "2026-11-06-rankfender-v3",
+          "status": "新发现",
+          "followups": []
+        }
+      ]
+    },
+    {
       "date": "2026-11-05",
       "source": "https://www.producthunt.com/leaderboard/daily/2026/11/5",
       "fetched": "2026-11-06 17:00 北京",
