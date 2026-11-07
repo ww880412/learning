@@ -89,9 +89,9 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
   <header class="doc-head"><span class="kicker">X 推文 · Xudong Han · 2026-11-07 北京时间 09:00 · LangChain 博客 · Sydney Runkle、Thushanth Bengre · November 5, 2026</span>
   <h1>后台任务不再堵住主循环</h1>
   <p class="lede" data-points="p0002" id="e1">Xudong Han 把 DeepSeek 的 Super-agent 和 LangChain 的《Agents Are Going Async》放在一起看。他的判断是：Agent 的架构正在发生一个重要变化。</p>
-  <p data-points="p0011" id="e1b">他把 Agent 的这个变化收成一句趋势。原话放在下面，这里不重复后半句。</p>
+  <p data-points="p0011" id="e1b">他看到的方向是：Agent 离开单个 Session 里做完再等的循环，去持续处理多项任务。</p>
   <blockquote class="quote"><p data-points="p0011" id="e1c">从单个 Session 的执行循环，走向能够持续处理多项任务的工作系统。</p><cite>Xudong Han 推文</cite></blockquote>
-  <p class="links extra"><a href="https://x.com/Xudong07452910/status/2118871055360303354">Xudong Han 的推文 <svg class="i i-external-link" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a><a href="https://www.langchain.com/blog/agents-are-going-async">LangChain 原文 <svg class="i i-external-link" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a><span>导读约 18 分钟。精读全文等加密版，这页先不放入口。</span></p></header>
+  <p class="links extra"><a href="https://x.com/Xudong07452910/status/2118871055360303354">Xudong Han 的推文 <svg class="i i-external-link" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a><a href="https://www.langchain.com/blog/agents-are-going-async">LangChain 原文 <svg class="i i-external-link" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a><span>导读约 18 分钟</span></p></header>
   <div class="doc-body">
     <div class="callout extra" id="c-judge">
       <p><b>补充：学习搭子的判断。</b>方向有原文支撑。LangChain 自己就把 Claude Code、OpenAI 的 dots、DeepSeek Harness 列成同一类：一个人留下来，后台工人去做长活。</p>
@@ -106,7 +106,7 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
     <p data-points="p0005" id="e4">原推对机制的转述：主 Agent，也就是 Orchestrator，负责和用户说话。耗时任务交给后台 Subagent。每个任务一条自己的 Thread。启动后立即返回，不再一直堵住主 Agent。</p>
     <p data-points="p0006" id="e5">他接着说，更实用的一点是：任务跑起来之后，依然可以控制。</p>
     <p data-points="p0007" id="e6">他举的例子是 Coding Agent 正在改代码，人突然要换技术方案。主 Agent 把新指令发给后台任务，可以选择中断重跑，也可以等当前工作做完再执行。这是原推的说法。原文后面把这两种做法写成 interrupt 和 enqueue，细节在第 4 节。</p>
-    <p data-points="p0008" id="e7">再下一句只是他喜欢的一个过渡，没有给出新机制。</p>
+    <p data-points="p0008" id="e7">他特别喜欢的一处做法，是后台任务的记录不要跟着对话一起被挤掉。</p>
     <p data-points="p0009" id="e8">原推接着认为：后台状态被单独留下，Context 被压缩时记录不会丢；做完会通知主 Agent；主 Agent 在做别的事，或在等人工审批，也各有办法。LangChain 原文 How notifications work 并不是这句话。原文只说未完成任务列在 system prompt 里。单独留下、防压缩，标成原推解读，未由本文证明。</p>
     <p data-points="p0010" id="e9">原推认为这和 DeepSeek 的 Super-agent 很接近。他划的区别是：LangChain 更关注执行过程中的异步调度和控制；DeepSeek 则进一步用 GitHub、飞书等事件去发现和推进工作。后半句是原推的范围，不能写成 LangChain 原文否定了事件触发。</p>
     <p data-points="p0012" id="e10">原推收束时用了「可能」：Agent 好不好用，看你敢不敢把活交出去，还看你需要时能不能插手。LangChain 原文 How async subagents work 没有把插手写成无条件。用户够到编排器，要等它自己的 loop 不忙。</p>
@@ -121,7 +121,7 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
     <p data-points="p0016" id="e13">Key Takeaways 有三条。目标变大之后，agent 要 stay responsive，同时把很多长任务往前做。Async subagents 把 agent 拆成留在用户身边的 orchestrator，和在后台跑、做完向 orchestrator 汇报的 subagents。Background work 正在变成 agent 基础设施的常态，从 coding agent 的 Claude Code，到个人 agent 的 OpenAI dots。</p>
     <p data-points="p0021" id="e14">开头用幕僚长做比方。你交一个大项目，他只有做完才回来，你 probably 会马上辞掉他。好的幕僚长让项目在后台走，自己仍找得到，还会中途告诉你进度。作者说 agent 面向更大目标时，需要同样两个性质。</p>
     <p class="callout key" data-points="p0021" id="e15">responsive：新指令来了马上做，而且带着此前的全部上下文。productive：很多大任务同时有进展。</p>
-    <p data-points="p0022" id="e17">作者把 can't 放在句中：用了很久的架构做不到同时满足这两条。标准 ReAct 循环里，一次长的工具调用会堵住循环，别的任务都排在后面。他看到的收敛是：一个 agent 留在用户身边，后台工人去做长活。Claude Code 默认让子任务在后台跑。OpenAI 的 dots 把工作交给后台工人，好让几件事同时有进展。DeepSeek Harness 的 super agent 是一个对人说话的 router，加上并行干活的后台工人。</p>
+    <p data-points="p0022" id="e17">用了很久的架构做不到这两条同时成立。标准 ReAct 循环里，一次长的工具调用会堵住循环，别的任务都排在后面。他看到的收敛是：一个 agent 留在用户身边，后台工人去做长活。Claude Code 默认让子任务在后台跑。OpenAI 的 dots 把工作交给后台工人，好让几件事同时有进展。DeepSeek Harness 的 super agent 是一个对人说话的 router，加上并行干活的后台工人。</p>
     <p data-points="p0023" id="e18">他们把这套模式放进 Deep Agents。编排器继续对用户可用，并维持对话上下文的秩序。后台工人做完再汇报。能接的工作量跟着后台工人的数量长，不跟着一条循环的长度长。</p>
   </div>
   <div class="src article"><span class="source-anchor" data-source-section="s2"><a href="https://www.langchain.com/blog/agents-are-going-async">作者与日期</a></span> · <span class="source-anchor" data-source-section="s3"><a href="https://www.langchain.com/blog/agents-are-going-async">Key Takeaways</a></span> · <span class="source-anchor" data-source-section="s4"><a href="https://www.langchain.com/blog/agents-are-going-async">开头</a></span></div>
@@ -131,9 +131,9 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
   <div class="doc-body">
     <p data-points="p0025" id="e19">agent 仍是一个循环：模型调用工具，等结果，再决定下一步。以前工具和 subagents 会堵住这个循环，直到返回，像代码把每个慢调用依次 await。async subagent 像用 asyncio.create_task 起的任务，或一个你先不 await 的 Promise。调用马上返回。工作在后台独立跑。结果以后才回来。</p>
     <figure class="figure orig" data-asset="img-sync" data-points="p0026" id="fa1"><img src="img/sync-vs-async.png" alt="Sync vs async subagents"><figcaption><b>原图 1 · 同步子任务堵住主线程，异步子任务启动后主线程空出来</b> <span class="source-anchor" data-source-section="s5">出处：Sydney Runkle、Thushanth Bengre · <a href="https://www.langchain.com/blog/agents-are-going-async">How async subagents work</a></span><span class="how">左栏 Sync subagent：用户的新消息进来时，Agent 线程画着斜线，标着 Busy，要等 Subagent 的 Result 才 Reply。右栏 Async subagent：Agent 发出 start_async_task，先回 Started, I'll report back，线程标 Free；用户的新消息可以马上 Reply。紫色的 Subagent 自己跑完，再 Reports back，Agent 才 Reply with the result。图例三条：实心蓝是线程在跑，斜线是只在等子任务，紫色是子任务在跑。图注写的是：编排器把工作交给异步子任务，自己仍能和用户说话。</span></figcaption></figure>
-    <p data-points="p0028" id="e20">Async work 靠系统的两个性质。下面两条是作者加粗的原句，不是改写。</p>
-    <p class="callout limit" data-points="p0028" id="e21">第一条加粗句是：用户要够得到编排器。Async 这件事里，Subagents 不再占住它的循环。所以只有它自己的 loop 不忙，用户才找得到，不必等每一个子任务结束。不忙是前提，不是任意时刻。</p>
-    <p data-points="p0028" id="e22">第二条加粗句是：任务并行，而且不互相堵住。工作来一件就启动一个，不用等一整批一起返回。</p>
+    <p data-points="p0028" id="e20">Async 要靠两件事：人找得到编排器，任务来一件就启动一件。</p>
+    <p class="callout limit" data-points="p0028" id="e21">Async 这件事里，用户要够得到编排器。Subagents 不再占住它的循环，所以只有它自己的 loop 不忙，用户才找得到，不必等每一个子任务结束。不忙是前提，不是任意时刻。</p>
+    <p data-points="p0028" id="e22">任务可以并行，而且不互相堵住。工作来一件就启动一个，不用等一整批一起返回。</p>
   </div>
   <div class="src article"><span class="source-anchor" data-source-section="s5"><a href="https://www.langchain.com/blog/agents-are-going-async">How async subagents work</a></span></div>
 </section>
@@ -181,22 +181,10 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
 <section class="sec" data-toc="Python、JavaScript、托管" id="s7" data-source-section="s7">
   <header class="doc-head"><span class="kicker">怎么打开</span><h2>Python、JavaScript 和托管版都能开；通知仍是 beta</h2></header>
   <div class="doc-body">
-    <p data-points="p0050" id="e38">Async 这一档已经可以在 Deep Agents 的 Python、JavaScript，以及 Managed 里用。托管版把一个子任务设成异步，只加一个字段。</p>
-    <p data-points="p0051" id="st0">下面六段按博客示例的原顺序、原缩进、原字面量排开。博客里它们是同一段代码。公开页分段只为对照着看，拼回去就是原文。</p>
-    <div class="pair codewalk" data-asset="code-1"><div class="code-panel"><div class="code-toolbar"><span>第 1 行 · 引入</span></div><div class="pair-source" tabindex="0"><pre data-lines="1"><code data-language="python">from managed_deepagents import define_deep_agent</code></pre></div></div><div class="pair-notes"><div class="step" tabindex="0" data-hl="1" data-points="p0051" id="st1"><h3>从托管包引入</h3><p>第一行从托管包引入定义函数。函数名和包名都在左边，不改字。</p></div></div></div>
-    <div class="pair codewalk" data-asset="code-2"><div class="code-panel"><div class="code-toolbar"><span>第 2–4 行 · 空行和名字</span></div><div class="pair-source" tabindex="0"><pre data-lines="1"><code data-language="python">
-agent = define_deep_agent(
-    name="research-assistant",</code></pre></div></div><div class="pair-notes"><div class="step" tabindex="0" data-hl="1-3" data-points="p0051" id="st2"><h3>调用，并写上名字</h3><p>接着调用这个函数。name 的字符串原样留在左边。</p></div></div></div>
-    <div class="pair codewalk" data-asset="code-3"><div class="code-panel"><div class="code-toolbar"><span>第 5–8 行 · 模型与子任务名</span></div><div class="pair-source" tabindex="0"><pre data-lines="1"><code data-language="python">    model="openai:gpt-5.5",
-    subagents=[
-        {
-            "name": "researcher",</code></pre></div></div><div class="pair-notes"><div class="step" tabindex="0" data-hl="1-4" data-points="p0051" id="st3"><h3>模型字面量，以及 researcher</h3><p>model 用左边的模型名。子任务列表的第一项名字是 researcher。</p></div></div></div>
-    <div class="pair codewalk" data-asset="code-4"><div class="code-panel"><div class="code-toolbar"><span>第 9 行 · 描述</span></div><div class="pair-source" tabindex="0"><pre data-lines="1"><code data-language="python">            "description": "Researches a topic in the background.",</code></pre></div></div><div class="pair-notes"><div class="step" tabindex="0" data-hl="1" data-points="p0051" id="st4"><h3>描述句原样</h3><p>description 那一句英文留在左边，讲解不改写它。</p></div></div></div>
-    <div class="pair codewalk" data-asset="code-5"><div class="code-panel"><div class="code-toolbar"><span>第 10 行 · 系统提示</span></div><div class="pair-source" tabindex="0"><pre data-lines="1"><code data-language="python">            "system_prompt": "Research the topic and report your findings.",</code></pre></div></div><div class="pair-notes"><div class="step" tabindex="0" data-hl="1" data-points="p0051" id="st5"><h3>系统提示原样</h3><p>system_prompt 那一句也整句留在左边。</p></div></div></div>
-    <div class="pair codewalk" data-asset="code-6"><div class="code-panel"><div class="code-toolbar"><span>第 11–14 行 · 打开异步</span></div><div class="pair-source" tabindex="0"><pre data-lines="1"><code data-language="python">            "async": True,
-        },
-    ],
-)</code></pre></div></div><div class="pair-notes"><div class="step" tabindex="0" data-hl="1-4" data-points="p0051" id="st6"><h3>一个字段放进后台</h3><p>async 设为 True，括号按原缩进关上。原文说托管版只要这一个字段。</p></div></div></div>
+    <p data-points="p0050" id="e38">Async 这一档已经可以在 Deep Agents 的 Python、JavaScript，以及 Managed 里用。托管示例从包 <code>managed_deepagents</code> 里调用 <code>define_deep_agent</code>。<code>name</code> 是这个 agent 的名字，<code>model</code> 指定用哪一个模型，<code>subagents</code> 列出可以委派的子任务。子任务自己的 <code>name</code> 用来称呼它，<code>description</code> 告诉编排器它做什么，<code>system_prompt</code> 是它自己的指令。要放进后台，就在这个子任务上加一个字段。下面这一行只是那个字段，不是一段能单独运行的程序。</p>
+    <div id="st1" data-asset="code-async">
+      <pre><code data-language="python">            "async": True,</code></pre>
+    </div>
     <p data-points="p0052" id="e39">在 Managed Deep Agents 里，每个被服务的 agent 还会得到一份 general-purpose subagent 的异步副本。它因此可以在运行时决定：委派出去的工作放前台，还是放后台。</p>
     <p class="callout limit" data-points="p0053" id="e40">Task notifications 是 beta，所以 API 可能还会变。async-deep-agents 仓库里有一个能跑的 supervisor，带 researcher 和 coder 两个 subagents，Python 和 TypeScript 都有。</p>
     <p data-points="p0054" id="e41">原文的结尾是邀请试用，并让读者到 GitHub issues 或 forum 说看法。这里没有给出上线承诺。</p>
