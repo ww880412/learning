@@ -85,28 +85,28 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
  html body .fin-btn{top:6px;bottom:auto;left:auto;right:12px;width:112px;max-width:112px;height:44px;padding:8px;font-size:13px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:41;box-shadow:none}
 }
 </style></head><body>
-<header class="top"><button class="btn toc-toggle" aria-label="打开目录" aria-expanded="false"><svg class="i i-menu" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h16"/></svg></button><span class="course">Agent 记忆的部件</span><span class="track" role="presentation"><i></i></span><span class="count"></span><button class="btn theme-toggle" aria-label="切换深浅色">深浅色</button></header><main class="deck"><section class="sec hero" data-toc="引介：只取得摘要" id="s1" data-source-section="s1">
+<header class="top"><button class="btn toc-toggle" aria-label="打开目录" aria-expanded="false"><svg class="i i-menu" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h16"/></svg></button><span class="course">Agent 记忆的部件</span><span class="track" role="presentation"><i></i></span><span class="count"></span><button class="btn theme-toggle" aria-label="切换深浅色">深浅色</button></header><main class="deck"><section class="sec hero" data-toc="山景城小路的引介" id="s1" data-source-section="s1">
   <header class="doc-head"><span class="kicker">研究博客 · Lance Martin · Nov 6, 2026 · 推文只作引介</span>
   <h1>Agent 记忆的部件：记下、整理、表示、核对</h1>
-  <p class="lede" data-points="p0002" id="e0002">山景城小路这条推文把读者指向 Anthropic 工程博客 The components of agent memory。公开接口只返回到摘要的前半，后半没有取得。</p>
-  <p class="links extra"><a href="https://x.com/Zen_with_AI/status/2118842700124602653">山景城小路的推文</a><a href="https://www.anthropic.com/research/components-of-agent-memory">Anthropic 原文</a><span>导读约 25 分钟。精读全文等加密版，这页先不放入口。</span></p></header>
+  <p class="lede" data-points="p0002" id="e0002">山景城小路这条推文把读者指向 Anthropic 工程博客 The components of agent memory。</p>
+  <p class="links extra"><a href="https://x.com/Zen_with_AI/status/2118842700124602653">山景城小路的推文</a><a href="https://www.anthropic.com/research/components-of-agent-memory">Anthropic 原文</a><span>导读约 25 分钟</span></p></header>
   <div class="doc-body">
   <div class="callout extra" id="c-extra"><p>补充：这篇真正要带走的，是记录、整理、表示和验证，以及表示和检索互为补充。不是记得越多越好，也不是睡一觉就自动变聪明。跨模型的数字都带着样本限制，不能写成模型的总成绩。</p></div>
-<p data-points="p0001" id="e0001">这节只引山景城小路的推文，而且只到公开接口返回的地方。</p>
+<p data-points="p0001" id="e0001">这一节是山景城小路的推文，只作引介。</p>
 <p data-points="p0003" id="e0003">摘要里他把「记忆」拆成三件能动手的事：记什么、什么时候整理、整理成什么样。后文以博客自己的结构为准。</p>
-<p data-points="p0004" id="e0004">摘要后半只核实到这里：宝可梦红版，Sonnet 3.7 写了 413 个记忆文件、225 个文件夹，1 个徽章；下一行在 Fable 5 处被截断。</p>
-<p data-points="p0005" id="e0005">采集说明：text 在 Fable 5 截断，note_tweet 没返回。5 只是这个截断点，后半没有获取，也不补写。</p>
+<p data-points="p0004" id="e0004">他写到让 Claude 玩宝可梦红版：Sonnet 3.7 写了 413 个记忆文件、225 个文件夹，只拿到 1 个徽章，然后提到 Fable 5。</p>
+<p data-points="p0005" id="e0005">这条推文的后半没有取到，公开接口只给到 Fable 5，这里不补。</p>
   </div>
   <div class="src article"><span class="source-anchor" data-source-section="s1"><a href="https://x.com/Zen_with_AI/status/2118842700124602653">推文摘要</a></span></div>
 </section>
 <section class="sec" data-toc="记下与离线整理" id="s2" data-source-section="s2">
   <header class="doc-head"><h2>当时抓经历，离线再整理，agent 记忆也可以这样分</h2></header>
   <div class="doc-body">
-<p data-points="p0006" id="e0006">从这里起是 Lance Martin 的博客 The components of agent memory，不再沿用推文的未取得后半。</p>
+<p data-points="p0006" id="e0006">从这里起是 Lance Martin 的博客 The components of agent memory。</p>
 <p data-points="p0007" id="e0007">作者 Lance Martin，团队 Engineering，日期 Nov 6, 2026。主题写成 Agents、Context engineering、Agent memory。日期没有时区。</p>
 <figure class="figure orig" data-asset="cover" data-points="p0008" id="e0008"><img src="img/cover.jpg" alt="封面"><figcaption><b>原图 1 · 封面插图，不是编号 Figure</b> <span class="source-anchor" data-source-section="s2">出处：Lance Martin · <a href="https://www.anthropic.com/research/components-of-agent-memory">封面插图，不是编号 Figure</a></span><span class="how">封面是页面顶部的插图，不是编号 Figure。</span></figcaption></figure>
 <p data-points="p0009" id="e0009">封面画的是两个错开的半圆，一绿一粉，中间有一道缝，浅底。没有实验数字。</p>
-<p data-points="p0010" id="e0010">开篇借 Kierkegaard：生活只能向后理解，却必须向前过。做 agent 记忆时他们碰到类似的两难。only 在这里是「只能向后理解」。</p>
+<p data-points="p0010" id="e0010">开篇借 Kierkegaard：生活只能向后理解，却必须向前过。做 agent 记忆时他们碰到类似的两难。</p>
 <p data-points="p0011" id="e0011">人随时在编码记忆。海马体当时抓住经历，所以形成得快、马上能用。但只有一部分经历会变成长期知识。</p>
 <p data-points="p0012" id="e0012">巩固很多发生在离线时：睡觉和安静休息里，海马体重放近期经历，慢慢蒸馏进新皮层。</p>
 <p data-points="p0013" id="e0013">agent 也可以这样分工。工作先落在日志或 transcript 里。Letta 和 UC Berkeley 提出过 sleep-time compute，用交互之间的空档重组已有上下文。同一想法用来整理记忆：对着日志改错，或写出新笔记和新表示。这常常被叫做 dreaming，见图 1。</p>
@@ -134,7 +134,7 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
   <header class="doc-head"><h2>写下规则，是在预测以后还会用到它</h2></header>
   <div class="doc-body">
 <p data-points="p0025" id="e0025">这一节说，记忆有时是对未来需要的预测。</p>
-<p data-points="p0026" id="e0026">写下一条规则，就是预测这个模式以后还会用到。例如记下一条已核实的事实，是预测未来的会话会想直接依赖它，而不再复查。Claude 做这种预测已经好了很多。occasionally 是「有时」，不是每条笔记都是预测。</p>
+<p data-points="p0026" id="e0026">记忆有时是预测。写下一条规则，就是预测这个模式以后还会用到。例如记下一条已核实的事实，是预测未来的会话会想直接依赖它，而不再复查。Claude 做这种预测已经好了很多。不是每条笔记都是预测。</p>
 <p data-points="p0027" id="e0027">例子来自 Continual Learning Bench（CL-Bench）1.0：衡量 agent 能不能用记忆做长程任务。其中一项要 Claude 查数据库回答一串问题。答完会被告知正确答案，然后可以写记忆，帮助以后的问题。</p>
 <p data-points="p0028" id="e0028">这里记忆可以撑起一个学习环。答错就记下失败，提出哪里错了的猜想，检验猜想，再收成以后怎么答的规则。</p>
 <p data-points="p0029" id="e0029">这项 CL-Bench 1.0 用 Claude Managed Agents 跑。每道题开新会话，只有一个例外：可以从一个跨会话保留的记忆目录里取文件。</p>
@@ -160,7 +160,7 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
 <p data-points="p0043" id="e0043">图注：玩宝可梦时，Sonnet 3.7 和 Fable 5 的记忆目录。</p>
 <p data-points="p0044" id="e0044">Sonnet 3.7 的问题主要是宝可梦局面一直在变，写得很细的记录不断过时。于是越往后，越要把时间和资源花在翻记忆，而不是玩游戏。大约第 10,000 步，它开始第四夹 master 记忆文件。接下来 17 步里，新建六个文件、删掉九个，游戏里一步都没走。</p>
 <p data-points="p0045" id="e0045">Fable 5 把记忆用在游戏没有直接告诉它的事情上。Sonnet 3.7 记下的有些东西，比如手里有多少钱、人在地图哪，每回合都能从屏幕读到，存下来是重复。策略、计划和检验过的规则，只有 Claude 自己推出来才存在，不写下来就会消失。</p>
-<p data-points="p0046" id="e0046">Fable 5 就按这个来组织。global.md 像仪表盘：当前目标、打馆的预先计划（徽章在馆里赢），以及它自己用记忆的规则。locations 夹放特定路线的导航计划，gameplay 夹放它学到的玩法策略。连续七个精灵球没抓住一只鲤鱼王（最好抓的之一）之后，它写下：如果连续 3 个以上球失败，就改变按键时机。</p>
+<p data-points="p0046" id="e0046">Fable 5 就按这个来组织。global.md 像仪表盘：当前目标、打馆的预先计划（徽章在馆里赢），以及它自己用记忆的规则。locations 夹放特定路线的导航计划，gameplay 夹放它学到的玩法策略。连续七个精灵球没抓住一只鲤鱼王（最好抓的之一）之后，它在自己的笔记里写下：如果连续至少 3 个球失败，就改变按键时机，在菜单步骤之间多按 wait。笔记写着，这样做之后抓到了。这是模型自己的笔记，不是已经普遍验证的游戏规律。七次失败、改时机并插入 wait、随后抓到，这三件事的先后都在，但不能当成已经证明的因果。</p>
 <p data-points="p0047" id="e0047">记忆夹小得多的 Fable 5，在游戏里比 Sonnet 3.7 走得远得多。Opus 5.5 做法相近：只留一小夹笔记，记当前目标和接下来几步，边玩边改，并且打通了游戏。</p>
   </div>
   <div class="src article"><span class="source-anchor" data-source-section="s5"><a href="https://www.anthropic.com/research/components-of-agent-memory">本节</a></span> </div>
@@ -278,8 +278,6 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
 <p data-points="p0119" id="e0119">把 transcript 搜索当作 Claude 记忆的底子，也说得通。把 wiki 这类表示和搜索合在一起（图 10）有时有效。但 Claude 得花算力去维护这些表示，并确保它们不堆积错误或幻觉。</p>
 <p data-points="p0120" id="e0120">即便 Claude 对显著性的判断已经变好，没有模型真能知道以后的回合会发生什么。dreaming 给它一个向后看的机会，用算力整理记忆、改正错误、维持让以后的会话更容易取到记忆的表示。记忆系统会随 Claude 变强而变，他们关于怎么设计 Claude 的记忆，还有很多要学。</p>
 <p data-points="p0121" id="e0121">文末指向两份动手材料：dreaming 的 cookbook，以及 knowledge wiki 的快速开始仓库。</p>
-<p data-points="p0122" id="e0122">作者与致谢从这里分开写，先是栏目标题。</p>
-<p data-points="p0123" id="e0123">致谢标题自己占一行，下面才是名单。</p>
 <p data-points="p0124" id="e0124">正文由 Lance Martin 写。编辑指导来自 Caitlin Love、Tom Chivers、Rebecca Hiscott、Jake Eaton、Blake Wilson。讨论和贡献致谢里还有 Barry Zhang、Theodora Chu、Daliang Li 等人，以及 Claude Plays Pokémon 的 David Hershey。图由 Monika Tuchowska 画。</p>
 <ul class="refs extra"><li><a href="https://arxiv.org/abs/2504.13171">arxiv.org/abs/2504.13171</a></li>
 <li><a href="https://code.claude.com/docs/en/memory">code.claude.com/docs/en/memory</a></li>
