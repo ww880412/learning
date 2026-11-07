@@ -1,0 +1,568 @@
+<!DOCTYPE html><html lang="zh-CN" class="layout-article" data-layout="article"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<script>(function(){var v;try{v=localStorage.getItem('site-theme')}catch(e){}document.documentElement.dataset.theme=/^[ABC]$/.test(v||'')?v:'C'})();
+(function(){var k='theme',s=localStorage.getItem(k);if(s?s==='dark':matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark');
+window.__tt=function(){var f=function(){var d=document.documentElement.classList.toggle('dark');localStorage.setItem(k,d?'dark':'light')};if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.startViewTransition(f);else f()}})();</script>
+<title>Agent 记忆的部件</title><style>
+/* Site tokens copied verbatim, in cascade order, from ref/site-assets/site.css. */
+:root{--paper:#f6f7f9;--sheet:#fff;--card:#fff;--ink:#111827;--ink2:#4b5563;--meta:#6b7280;--hair:#e5e7eb;--hair2:#eef0f3;--blue:#2563eb;--blue-soft:#eff4ff;--red:#dc2626;--red-soft:#fef2f2;--green:#16a34a;--green-soft:#f0fdf4;--amber:#b45309;--amber-soft:#fffbeb;--purple:#7c3aed;--purple-soft:#f5f3ff;--font:system-ui,-apple-system,"PingFang SC","Noto Sans SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;--serif:var(--font);--mono:ui-monospace,SFMono-Regular,Menlo,monospace;--r-lg:12px;--r-sm:8px;--grad:none;color-scheme:light}
+html.dark{--paper:#0f1115;--sheet:#171a21;--card:#171a21;--ink:#e5e7eb;--ink2:#b6bcc6;--meta:#9ca3af;--hair:#2a2f3a;--hair2:#20242c;--blue:#7aa2ff;--blue-soft:rgba(122,162,255,.12);--red:#f87171;--red-soft:rgba(248,113,113,.12);--green:#4ade80;--green-soft:rgba(74,222,128,.12);--amber:#fbbf24;--amber-soft:rgba(251,191,36,.12);--purple:#c4b5fd;--purple-soft:rgba(196,181,253,.14);color-scheme:dark}
+[data-theme=B]{--paper:#fbfbfc;--sheet:#fff;--card:#fff;--ink:#16171a;--ink2:#4a4c55;--meta:#6e707a;--hair:#ececf0;--hair2:#f2f2f5;--blue:#5e6ad2;--blue-soft:#eef0fb;--red:#d4483b;--red-soft:#fdf0ee;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif}
+html.dark[data-theme=B]{--paper:#0e0f12;--sheet:#16171b;--card:#16171b;--ink:#e8e9ed;--ink2:#b3b5bd;--meta:#8b8d97;--hair:#26272d;--hair2:#1f2025;--blue:#8b93f0;--blue-soft:rgba(139,147,240,.14);--red:#f0776b}
+[data-theme=A]{--paper:#f7f4ee;--sheet:#fffdf9;--card:#fffdf9;--ink:#2b2722;--ink2:#5f574e;--meta:#8a8076;--hair:#e6dfd3;--hair2:#efe8dc;--blue:#b4532a;--blue-soft:#f6e1d6;--red:#a2461f;--red-soft:#f6e1d6;--green:#5f7a3a;--green-soft:#e7ecd9;--purple:#7a5a8c;--purple-soft:#eee4f1;--serif:"Noto Serif CJK SC","Noto Serif SC","Songti SC",serif;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif}
+html.dark[data-theme=A]{--paper:#1b1814;--sheet:#23201b;--card:#23201b;--ink:#ede6da;--ink2:#c7bdaf;--meta:#9b9184;--hair:#3a342c;--hair2:#2d2923;--blue:#e08a5f;--blue-soft:rgba(224,138,95,.15);--red:#e8916a;--red-soft:rgba(232,145,106,.15)}
+[data-theme=C]{--paper:#f3f5fb;--sheet:#fff;--card:#fff;--ink:#1d2340;--ink2:#5a6185;--meta:#8a90ad;--hair:#e6e9f4;--hair2:#eef0f7;--blue:#3b5bfd;--blue-soft:#e8edff;--red:#d4483b;--red-soft:#ffe6e3;--green:#1f9d5c;--green-soft:#e3f7ec;--amber:#d9771e;--amber-soft:#fff1e0;--purple:#7a4bf5;--purple-soft:#f2eaff;--r-lg:20px;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif;--sh:0 1px 2px rgba(30,40,90,.04),0 8px 24px rgba(30,40,90,.06)}
+html.dark[data-theme=C]{--paper:#0f1222;--sheet:#181c33;--card:#181c33;--ink:#e6e9fb;--ink2:#aab0d0;--meta:#7d84a8;--hair:#272c48;--hair2:#20253f;--blue:#7d93ff;--blue-soft:rgba(125,147,255,.15);--red:#ff8a7d;--red-soft:rgba(255,138,125,.15);--green-soft:rgba(31,157,92,.18);--amber-soft:rgba(217,119,30,.18);--purple-soft:rgba(122,75,245,.2);--sh:0 1px 2px rgba(0,0,0,.3)}
+:root{--acc2:#8b5cf6;--ease:cubic-bezier(.22,1,.36,1)}
+[data-theme=A]{--acc2:#c98a2b}
+html.dark[data-theme=A]{--paper:#181512;--sheet:#211d18;--card:#211d18;--meta:#a89d8f;--hair:#382f26;--acc2:#e3b15c}
+[data-theme=B]{--paper:#fafafb;--blue:#5b5bd6;--blue-soft:#efeffc;--acc2:#a855f7}
+html.dark[data-theme=B]{--paper:#0c0d10;--sheet:#14151a;--card:#14151a;--ink:#ececf1;--ink2:#babcc6;--meta:#9597a3;--hair:#262830;--hair2:#1c1d23;--blue:#9198ff;--blue-soft:rgba(145,152,255,.14);--acc2:#c084fc}
+[data-theme=C]{--acc2:#06b6d4}
+html.dark[data-theme=C]{--meta:#a3a9b8;--acc2:#22d3ee}
+html.dark{--meta:#a1a7b3}
+[data-theme=B]{--paper:#eef1f5;--hair:#dfe4ea;--hair2:#eef1f5;--green:#16a34a}
+html.dark[data-theme=B]{--paper:#0b0d12;--hair:#252a35;--hair2:#1a1e27}
+[data-theme=C]{--blue:#7b5cff;--blue-soft:#f0ecff;--acc2:#ff5e8a}
+html.dark[data-theme=C]{--paper:#0b0b0f;--sheet:#15151c;--card:#15151c;--ink:#f2f2f5;--ink2:#b8b8c6;--meta:#9a9aab;--hair:#26262f;--hair2:#1d1d25;--blue:#a08bff;--blue-soft:rgba(160,139,255,.14)}
+:root{--sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:24px;--sp-6:32px;--fs-xs:12px;--fs-sm:13.5px;--fs-md:15px;--fs-lg:18px;--fs-xl:24px;--fs-2xl:32px;--r-xs:6px;--r-sm:8px;--r-md:10px;--r-lg:12px;--r-xl:18px;--r-pill:999px;--sh-1:0 1px 2px rgba(15,23,42,.06);--sh-2:0 4px 16px -8px rgba(15,23,42,.22);--sh-3:0 14px 30px -12px rgba(15,23,42,.28);--dur-1:120ms;--dur-2:220ms;--dur-3:420ms;--ease:cubic-bezier(.22,1,.36,1);--ease-in-out:cubic-bezier(.65,0,.35,1);--spring:cubic-bezier(.34,1.3,.64,1);--icon-stroke:2}
+:root{--spring:linear(0,.0089,.0346,.0752,.1286,.1927,.2654,.3445,.4278,.5131,.5983,.6812,.7598,.8325,.8981,.9555,1.0042,1.0441,1.0753,1.0982,1.1134,1.1218,1.1243,1.1218,1.1155,1.1062,1.0949,1.0825,1.0697,1.0571,1.0451,1.034,1.0242,1.0157,1.0085,1.0027,.9982,.995,.9928,.9916,.9912,.9914,.9921,.9931,.9943,.9956,.9968,.998,.999,1)}
+html.dark{--sh-1:0 1px 2px rgba(0,0,0,.4);--sh-2:0 4px 16px -8px rgba(0,0,0,.6);--sh-3:0 14px 30px -12px rgba(0,0,0,.7)}
+/* Five reading levels: title / section / subsection / body / note. */
+:root{--reading-width:680px;--toc-width:208px;--rail-width:180px;--reading-gap:28px;--top-height:56px;--body-size:18px;--body-leading:1.8;--finish-space:104px}
+*{box-sizing:border-box}html{scroll-padding-top:72px}html,body{margin:0;background:var(--paper);color:var(--ink);font:var(--body-size)/var(--body-leading) var(--font);-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}a{color:var(--blue);text-underline-offset:3px;overflow-wrap:anywhere}a:hover{text-decoration-thickness:2px}button,input,textarea,select{font:inherit;color:inherit}button,a,summary{touch-action:manipulation}button{cursor:pointer}button:disabled{opacity:.5;cursor:default}:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+h1,h2,h3{color:var(--ink);font-family:var(--serif);line-height:1.35;letter-spacing:-.02em;overflow-wrap:anywhere}h1{font-size:var(--fs-2xl);margin:8px 0 16px}h2{font-size:var(--fs-xl);margin:8px 0 16px}h3{font-size:var(--fs-lg);margin:24px 0 8px}p{margin:0 0 12px}ul,ol{padding-left:24px}li{margin:4px 0}code{font:.88em var(--mono);background:var(--hair2);padding:1px 4px;border-radius:var(--r-xs)}pre{overflow:auto;white-space:pre;tab-size:4;font:14px/1.65 var(--mono);padding:16px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-md);margin:12px 0}pre code{font:inherit;white-space:inherit;background:none;padding:0}
+.i{display:inline-block;vertical-align:middle;flex:none;width:18px;height:18px;stroke-width:2}.btn,button.opt{min-height:44px;border:1px solid var(--hair);border-radius:var(--r-sm);background:var(--sheet);padding:8px 14px;font-size:var(--fs-md);font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:6px}.btn:hover{border-color:var(--blue);background:var(--blue-soft)}.btn.main{background:var(--blue);color:var(--sheet)}.btn.sm{font-size:var(--fs-sm)}textarea{display:block;width:100%;padding:10px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-sm);resize:vertical}
+.top{position:fixed;inset:0 0 auto;height:var(--top-height);z-index:30;display:flex;align-items:center;gap:16px;padding:0 20px;background:var(--paper);border-bottom:1px solid var(--hair)}.top .course{font-size:var(--fs-sm);font-weight:700;max-width:35vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.top .track{flex:1;height:4px;background:var(--hair);border-radius:var(--r-pill);overflow:hidden}.top .track i{display:block;width:0;height:100%;background:var(--blue);transition:width var(--dur-2) var(--ease)}.top .count{font-size:var(--fs-sm);max-width:32vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.toc-toggle{min-width:44px}.top .theme-toggle{font-size:var(--fs-sm);min-height:44px}
+.layout-article .deck,.layout-pair .deck{padding:80px 20px calc(var(--finish-space) + env(safe-area-inset-bottom));max-width:720px;margin:0 auto;min-width:0}.layout-article .sec{position:relative;margin:0 0 32px;padding-top:16px;border-top:1px solid var(--hair);scroll-margin-top:72px;min-width:0}.layout-article .hero{border:0;padding-top:0}.kicker,.meta,.src,.source-anchor,figcaption,caption,.aside{font-size:var(--fs-sm);line-height:1.65}.kicker{display:block;color:var(--blue);font-weight:700}.lede{font-size:var(--fs-lg);font-weight:600}.links{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:var(--fs-sm)}.links a{display:inline-flex;align-items:center;min-height:44px}.src{margin:16px 0 0;padding-top:8px;border-top:1px solid var(--hair);color:var(--ink2)}.source-anchor{display:block;color:var(--ink2);margin-top:6px;overflow-wrap:anywhere}.source-anchor a{min-height:44px;display:inline-flex;align-items:center}.src.extra::before{content:'补充 · ';color:var(--amber)}.src.official::before{content:'官方 · ';color:var(--blue)}.src.article::before{content:'原文 · ';color:var(--blue)}
+.toc{position:fixed;left:max(20px,calc((100vw - 1192px)/2));top:76px;width:var(--toc-width);max-height:calc(100dvh - 180px);overflow:auto;font-size:var(--fs-sm);line-height:1.5;z-index:25}.toc ol{list-style:none;margin:0;padding:0}.toc a{display:flex;gap:8px;align-items:center;min-height:44px;padding:6px 10px;color:var(--ink2);text-decoration:none;border-radius:var(--r-sm)}.toc a[aria-current=true]{background:var(--blue-soft);color:var(--blue);font-weight:700}.toc b{display:block;margin:0 10px 8px}.toc-backdrop{display:none}.tldr,.argmap{padding:16px;background:var(--blue-soft);border-radius:var(--r-lg);margin:16px 0}.tldr a,.argmap a{display:block;min-height:44px;align-content:center}.argmap ol{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 16px;margin:0}.points{padding:12px 16px 12px 36px;background:var(--hair2);border-radius:var(--r-md)}
+figure.orig,figure.redraw,.figure{margin:20px 0;min-width:0}figure img{display:block;max-width:100%;height:auto;border:1px solid var(--hair);border-radius:var(--r-md);cursor:zoom-in;background:var(--sheet)}figcaption{margin-top:8px;color:var(--ink2)}figcaption b{color:var(--ink)}.how{margin-top:6px}.table{margin:20px 0;overflow-x:auto}.table table,table.data{width:100%;border-collapse:collapse;background:var(--sheet);font-size:var(--fs-md)}th,td{border-bottom:1px solid var(--hair);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--hair2)}caption{text-align:left;font-weight:700;padding:8px 0}.table-note{font-size:var(--fs-sm);color:var(--ink2)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;margin:16px 0}.stat{padding:12px 14px;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet)}.stat b{display:block;font-size:var(--fs-xl);line-height:1.35;color:var(--blue);font-variant-numeric:tabular-nums}.stat span{display:block;font-size:var(--fs-sm);color:var(--ink2)}.stat .source-anchor{font-size:var(--fs-xs)}
+blockquote.quote{margin:16px 0;padding:12px 16px;border-left:3px solid var(--blue);background:var(--sheet)}.quote cite{display:block;font-style:normal;font-size:var(--fs-sm);color:var(--ink2)}.callout{padding:12px 16px;margin:16px 0;border-left:3px solid var(--blue);background:var(--blue-soft);border-radius:0 var(--r-sm) var(--r-sm) 0}.callout.limit{border-color:var(--amber);background:var(--amber-soft)}.callout.extra{border:1px dashed var(--meta);background:var(--sheet)}.callout.myth{border-color:var(--amber);background:var(--hair2)}.callout.limit::before{content:'作者的限定 · ';font-weight:700}.aside{padding:12px;border-left:2px solid var(--hair);color:var(--ink2);margin:12px 0}
+.stories,.compare,.roles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}.story,.compare>div,.roles>div{padding:12px;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);font-size:var(--fs-md)}.story b,.roles b{display:block}.story dt{font-weight:700;color:var(--ink2);font-size:var(--fs-sm)}.story dd{margin:0 0 8px}.story p,.story .fix{display:block;margin:8px 0}.steps,.ladder{display:grid;gap:8px;padding:0;list-style:none;counter-reset:step}.steps>li,.ladder>li{padding:10px 14px;background:var(--hair2);border-radius:var(--r-sm);counter-increment:step}.steps>li::before{content:counter(step)'. ';color:var(--blue);font-weight:700}.ladder i{font-style:normal;font-weight:700;margin-right:8px}.matrix{border:1px solid var(--hair);padding:16px;border-radius:var(--r-md)}.matrix .axes{font-size:var(--fs-sm);color:var(--ink2)}.matrix ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));list-style:none;padding:0;gap:1px;background:var(--hair)}.matrix li{margin:0;padding:16px;background:var(--sheet)}.refs{font-size:var(--fs-sm);line-height:1.7}.refs a{display:inline-block;min-height:44px;align-content:center}.thread{border-left:2px solid var(--hair);padding-left:16px}.formula{padding:16px;border:1px solid var(--hair);overflow:auto}.formula math{font-size:var(--fs-xl)}details.more{margin:12px 0;border-top:1px solid var(--hair);font-size:var(--fs-md)}summary{min-height:44px;cursor:pointer;display:flex;align-items:center;gap:8px}summary .i{transition:transform var(--dur-1)}details[open] summary .i{transform:rotate(90deg)}
+/* Shared interactive components. No fixed page/card height. */
+.flow-scroll{max-width:100%;overflow-x:auto;min-width:0;touch-action:pan-x pan-y}.flow-scroll svg.flow{display:block;width:100%;height:auto;min-height:0}.flow-tip{font-size:var(--fs-sm);color:var(--ink2)}.fl-node rect{fill:var(--sheet);stroke:var(--hair);stroke-width:2}.fl-node text{font:600 17px var(--font);fill:var(--ink)}.fl-node .sub{font-size:13px;font-weight:400;fill:var(--ink2)}.fl-node.act rect{stroke:var(--blue);fill:var(--blue-soft);stroke-width:3}.fl-node.blue rect{stroke:var(--blue)}.fl-node.amber rect,.fl-node.red rect{stroke:var(--amber)}.fl-node.green rect{stroke:var(--green)}.fl-edge{fill:none;stroke:var(--meta);stroke-width:2}.fl-edge.act{stroke:var(--blue);stroke-width:3}.fl-elab{font:13px var(--font);fill:var(--ink2)}
+.sim{margin:16px 0;padding:12px;border:1px solid var(--hair);border-radius:var(--r-lg);background:var(--sheet);display:flex;flex-direction:column;gap:12px}.sim .ctl{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.sim .ctl label{min-height:44px;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm)}.sim .ctl input[type=range]{min-width:110px}.sim .body{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}.sim .narr{order:-1;background:var(--blue-soft);padding:10px 12px;border-radius:var(--r-sm);font-size:var(--fs-md)}.sim .log{max-height:240px;overflow:auto;font:var(--fs-sm)/1.6 var(--mono)}.sim .msg{border-left:3px solid var(--hair);padding:8px;margin:6px 0;background:var(--paper);white-space:pre-wrap;overflow-wrap:anywhere}.msg b{display:block;font-family:var(--font)}.sim .msg.err{border-color:var(--amber)}.prediction{order:-2}.component-error{padding:16px;border:1px solid var(--amber);color:var(--amber)}
+.quiz{margin:16px 0;padding:16px;border:1px solid var(--hair);border-radius:var(--r-lg);background:var(--sheet)}.quiz .qn{font-size:var(--fs-sm);color:var(--ink2)}.quiz .qt{font-size:var(--fs-lg);font-weight:700;margin-bottom:12px}.quiz .opt{display:block;width:100%;text-align:left;margin:8px 0;font-weight:400}.quiz .opt.ok{border-color:var(--green);background:var(--green-soft)}.quiz .opt.no{border-color:var(--amber);background:var(--amber-soft)}.quiz .fb{margin:12px 0;font-size:var(--fs-md)}.quiz .nav{display:flex;gap:8px;margin-top:12px}.quiz label{display:block;font-size:var(--fs-sm)}.stack{display:grid;gap:6px;font-size:var(--fs-sm)}.stack .row{display:grid;grid-template-columns:28px 80px minmax(0,1fr);gap:8px;padding:8px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-sm)}.stack .t{overflow-wrap:anywhere;white-space:pre-wrap}.stack .new{background:var(--blue-soft)}.bar{display:grid;grid-template-columns:100px minmax(0,1fr) 80px;gap:8px;margin:8px 0;align-items:center;font-size:var(--fs-sm)}.bar .bt{height:20px;background:var(--hair2);border-radius:var(--r-xs);overflow:hidden}.bar .bt i{display:block;height:100%;background:var(--blue)}.bar .bn,.bar .bmiss{grid-column:2/4}.bars .bc{font-size:var(--fs-sm);color:var(--ink2)}
+/* Paired material stays inside its own container; highlighting never scrolls the page. */
+.pair.codewalk,.pair.read-pair,.pair.material-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start;margin:20px 0;position:relative;min-width:0}.pair-source{position:sticky;top:72px;max-height:calc(100dvh - 160px);overflow:auto;overscroll-behavior:contain;min-width:0;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);padding:12px;scroll-padding:16px}.pair-notes{min-width:0}.pair-notes .step{padding:16px 0 24px;border-top:1px solid var(--hair);scroll-margin-top:84px}.pair-notes .step.is-active{border-color:var(--blue)}.pair-source .source-block{padding:12px 8px;border-left:3px solid transparent}.pair-source .source-block.is-active{background:var(--blue-soft);border-color:var(--blue)}.source-text{overflow-wrap:anywhere}.pair-source pre{border:0;padding:0;margin:8px 0;overflow:visible}.code-line{display:block;min-height:1.65em;white-space:pre;padding-left:48px;position:relative}.code-line::before{content:attr(data-line);position:absolute;left:0;width:36px;text-align:right;color:var(--meta);user-select:none}.code-line.hl{background:var(--blue-soft)}.copy-code{position:static;flex:none;white-space:nowrap}.pair-source .source-anchor{font-size:var(--fs-xs)}
+/* A separate toolbar never shares the scrolling code viewport. */
+.heading-source{font-size:var(--fs-xs);margin:0 0 8px}
+.pair.codewalk{grid-template-columns:minmax(0,60%) minmax(0,1fr)}
+.code-panel{position:sticky;top:72px;display:flex;flex-direction:column;min-width:0;max-height:calc(100dvh - 160px);border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);overflow:hidden}
+.code-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;flex:none;border-bottom:1px solid var(--hair);font-size:var(--fs-xs);color:var(--ink2)}
+.code-panel .pair-source{position:static;max-height:none;min-height:0;flex:1 1 auto;border:0;border-radius:0;box-shadow:none;overflow:auto}
+.code-panel .pair-source pre{width:max-content;min-width:100%}
+dialog.image-dialog{width:calc(100vw - 24px);max-width:none;max-height:92dvh;padding:12px;border:1px solid var(--hair);background:var(--sheet);color:var(--ink);border-radius:var(--r-md);overflow:auto}dialog::backdrop{background:rgba(0,0,0,.75)}.image-dialog img{max-width:none;width:max(100%,min(1400px,180vw));height:auto}.image-dialog .dialog-close{position:sticky;top:0;left:0}.image-open{min-height:44px;border:0;background:transparent;padding:0;display:block;cursor:zoom-in;max-width:100%}.image-open img{max-width:100%}
+/* Only CSS changes the unchanged finish.js button. High specificity beats injected styles. */
+html body .fin-btn{bottom:calc(16px + env(safe-area-inset-bottom));right:16px;min-height:44px;z-index:35}html body #quiz-return{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:35;max-width:45vw}
+@media(min-width:1180px){.layout-article .deck{width:var(--reading-width);max-width:none;padding-left:0;padding-right:0;margin-left:max(260px,calc((100vw - 1192px)/2 + 236px));margin-right:0}.layout-article .sec>.doc-body>figure,.layout-article .sec>.doc-body>.table,.layout-article .sec>.codewalk{width:calc(100% + 120px);margin-left:0}.layout-article .aside{position:absolute;left:calc(100% + 28px);top:24px;width:var(--rail-width);margin:0}.layout-article .aside~figure{width:100%}html.layout-article body .fin-btn{left:max(20px,calc((100vw - 1192px)/2));right:auto;max-width:208px}.layout-pair .deck{max-width:1280px;margin-left:236px;margin-right:20px}.layout-pair .toc{width:188px;left:20px}html.layout-pair body .fin-btn{left:20px;right:auto;max-width:188px}}
+@media(max-width:1179px){.toc{display:none;visibility:hidden;left:0;top:var(--top-height);width:min(360px,90vw);max-height:calc(100dvh - 72px);background:var(--sheet);padding:16px;border-right:1px solid var(--hair);border-bottom:1px solid var(--hair)}html.toc-open .toc{display:block;visibility:visible}html.toc-open .toc-backdrop{display:block;position:fixed;inset:var(--top-height) 0 0;background:rgba(0,0,0,.3);z-index:24}}
+@media(max-width:820px){:root{--body-size:17px}.layout-article .deck,.layout-pair .deck{padding-left:18px;padding-right:18px}.top{gap:8px;padding:0 12px}.top .course{display:none}.top .count{max-width:44vw}.top .track{min-width:24px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stories,.compare,.roles{grid-template-columns:minmax(0,1fr)}.argmap ol{grid-template-columns:minmax(0,1fr)}table.data thead,.table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}table.data,table.data tbody,table.data tr,table.data td,.table table,.table tbody,.table tr,.table td{display:block;width:100%}table.data tr,.table tr{padding:8px 12px;margin-bottom:8px;border:1px solid var(--hair);background:var(--sheet);border-radius:var(--r-md)}table.data td,.table td{border:0;padding:4px 0}td[data-label]::before{content:attr(data-label)'：';font-size:var(--fs-sm);font-weight:700;color:var(--ink2)}.table caption,table.data caption{display:block;width:100%}.pair.codewalk,.pair.read-pair,.pair.material-pair{display:block}.pair-notes{margin-top:12px}.code-panel{top:var(--top-height);max-height:40dvh;z-index:15}.pair-source{top:var(--top-height);max-height:40dvh;z-index:15;box-shadow:var(--sh-1)}.pair-notes .step{scroll-margin-top:calc(40dvh + 80px)}.flow-scroll svg.flow{width:var(--flow-width);max-width:none;height:var(--flow-height)}.sim .flow-scroll svg.flow{width:100%;height:auto}.stack .row{grid-template-columns:22px 64px minmax(0,1fr)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+@media print{.top,.toc,.fin-btn,#quiz-return,.toc-backdrop,.zoom-toggle,.code-toolbar{display:none!important}.layout-article .deck,.layout-pair .deck{margin:0;padding:0;max-width:100%;width:auto}.pair-source,.code-panel{position:static;max-height:none;overflow:visible}.sec{break-inside:auto}figure,.stat{break-inside:avoid}}
+/* Applies after legacy CSS too. Zoom is an intentional local viewport; non-zoom stays unnested. */
+html body .sim .flow-scroll.zoom{overflow:auto;max-height:40dvh;min-height:0;height:auto;overscroll-behavior:contain;scroll-padding:16px;padding:16px}
+html body .sim .flow-scroll.zoom svg.flow{width:var(--flow-width);min-width:var(--flow-width);height:var(--flow-height);max-height:none;flex:none}
+html body .sim .zoom-toggle{min-height:44px;justify-self:start}.layout-deck .sim .body{position:relative}.layout-deck .card{padding-bottom:8px}.layout-deck .deck{bottom:calc(92px + env(safe-area-inset-bottom))}
+html body .fin-btn{bottom:calc(16px + env(safe-area-inset-bottom));right:16px;min-height:44px}html.layout-deck .bottom{padding-right:170px;padding-left:12px;height:76px}.layout-deck .btn,.layout-deck .sim .branches label{min-height:44px}.layout-deck details.more summary::before{content:none}.layout-deck .fl-edge.act{animation:none}
+@media(max-width:820px){html.layout-deck .bottom{padding-right:12px;gap:8px}.layout-deck .bottom .btn{padding:8px 10px;font-size:13px}html.layout-deck body .fin-btn{padding:8px 12px;font-size:13px}.layout-deck .card.full:has(.sim)>.head-full{position:sticky;top:0;z-index:4;background:var(--sheet);padding-top:12px;padding-bottom:12px}.layout-deck .sim .body{overflow:visible}.layout-deck .card .stage:has(.sim){overflow:visible}.layout-deck .sim .flow-scroll:not(.zoom){overflow:visible}}
+
+.layout-deck .card.doc.on{display:block;overflow:auto;padding:24px}.layout-deck .card.doc .doc-body{overflow:visible}.layout-deck .hero.card{height:auto}
+
+/* Legacy .stage svg also matches button icons: keep Lucide at its declared size. */
+html body svg.i{width:18px;height:18px;max-height:none;flex:none}
+
+/* Below the desktop sidebar breakpoint, finish lives in the opaque top bar.
+   Reserve its width before laying out the title; keep the deck footer for paging. */
+@media(max-width:1179px){
+ html body .top{gap:8px;padding:0 132px 0 12px;z-index:40;background:var(--paper)}
+ html body .top .course{display:none}
+ html body .top .count{flex:1;min-width:0;max-width:none;font-size:var(--fs-sm);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ html body .top .track{position:absolute;left:12px;right:12px;bottom:0;height:2px;min-width:0}
+ html body .top .toc-toggle{width:44px;flex:none;padding:0}
+ html body .top .theme-toggle{flex:none;padding:8px;font-size:var(--fs-sm)}
+ html body .fin-btn{top:6px;bottom:auto;left:auto;right:12px;width:112px;max-width:112px;height:44px;padding:8px;font-size:13px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:41;box-shadow:none}
+}
+</style></head><body>
+<header class="top"><button class="btn toc-toggle" aria-label="打开目录" aria-expanded="false"><svg class="i i-menu" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h16"/></svg></button><span class="course">Agent 记忆的部件</span><span class="track" role="presentation"><i></i></span><span class="count"></span><button class="btn theme-toggle" aria-label="切换深浅色">深浅色</button></header><main class="deck"><section class="sec hero" data-toc="引介：只取得摘要" id="s1" data-source-section="s1">
+  <header class="doc-head"><span class="kicker">研究博客 · Lance Martin · Nov 6, 2026 · 推文只作引介</span>
+  <h1>Agent 记忆的部件：记下、整理、表示、核对</h1>
+  <p class="lede" data-points="p0002" id="e0002">山景城小路这条推文把读者指向 Anthropic 工程博客 The components of agent memory。公开接口只返回到摘要的前半，后半没有取得。</p>
+  <p class="links extra"><a href="https://x.com/Zen_with_AI/status/2118842700124602653">山景城小路的推文</a><a href="https://www.anthropic.com/research/components-of-agent-memory">Anthropic 原文</a><span>导读约 25 分钟。精读全文等加密版，这页先不放入口。</span></p></header>
+  <div class="doc-body">
+  <div class="callout extra" id="c-extra"><p>补充：这篇真正要带走的，是记录、整理、表示和验证，以及表示和检索互为补充。不是记得越多越好，也不是睡一觉就自动变聪明。跨模型的数字都带着样本限制，不能写成模型的总成绩。</p></div>
+<p data-points="p0001" id="e0001">这节只引山景城小路的推文，而且只到公开接口返回的地方。</p>
+<p data-points="p0003" id="e0003">摘要里他把「记忆」拆成三件能动手的事：记什么、什么时候整理、整理成什么样。后文以博客自己的结构为准。</p>
+<p data-points="p0004" id="e0004">摘要后半只核实到这里：宝可梦红版，Sonnet 3.7 写了 413 个记忆文件、225 个文件夹，1 个徽章；下一行在 Fable 5 处被截断。</p>
+<p data-points="p0005" id="e0005">采集说明：text 在 Fable 5 截断，note_tweet 没返回。5 只是这个截断点，后半没有获取，也不补写。</p>
+  </div>
+  <div class="src article"><span class="source-anchor" data-source-section="s1"><a href="https://x.com/Zen_with_AI/status/2118842700124602653">推文摘要</a></span></div>
+</section>
+<section class="sec" data-toc="记下与离线整理" id="s2" data-source-section="s2">
+  <header class="doc-head"><h2>当时抓经历，离线再整理，agent 记忆也可以这样分</h2></header>
+  <div class="doc-body">
+<p data-points="p0006" id="e0006">从这里起是 Lance Martin 的博客 The components of agent memory，不再沿用推文的未取得后半。</p>
+<p data-points="p0007" id="e0007">作者 Lance Martin，团队 Engineering，日期 Nov 6, 2026。主题写成 Agents、Context engineering、Agent memory。日期没有时区。</p>
+<figure class="figure orig" data-asset="cover" data-points="p0008" id="e0008"><img src="img/cover.jpg" alt="封面"><figcaption><b>原图 1 · 封面插图，不是编号 Figure</b> <span class="source-anchor" data-source-section="s2">出处：Lance Martin · <a href="https://www.anthropic.com/research/components-of-agent-memory">封面插图，不是编号 Figure</a></span><span class="how">封面是页面顶部的插图，不是编号 Figure。</span></figcaption></figure>
+<p data-points="p0009" id="e0009">封面画的是两个错开的半圆，一绿一粉，中间有一道缝，浅底。没有实验数字。</p>
+<p data-points="p0010" id="e0010">开篇借 Kierkegaard：生活只能向后理解，却必须向前过。做 agent 记忆时他们碰到类似的两难。only 在这里是「只能向后理解」。</p>
+<p data-points="p0011" id="e0011">人随时在编码记忆。海马体当时抓住经历，所以形成得快、马上能用。但只有一部分经历会变成长期知识。</p>
+<p data-points="p0012" id="e0012">巩固很多发生在离线时：睡觉和安静休息里，海马体重放近期经历，慢慢蒸馏进新皮层。</p>
+<p data-points="p0013" id="e0013">agent 也可以这样分工。工作先落在日志或 transcript 里。Letta 和 UC Berkeley 提出过 sleep-time compute，用交互之间的空档重组已有上下文。同一想法用来整理记忆：对着日志改错，或写出新笔记和新表示。这常常被叫做 dreaming，见图 1。</p>
+<p data-points="p0014" id="e0014">他们发现 dreaming 有助于给 Claude 有效记忆。这篇讲他们怎么看待 agent memory，以及几项评估里 dreaming 和每个部件各起什么作用。</p>
+<figure class="figure orig" data-asset="fig-01" data-points="p0015" id="e0015"><img src="img/fig-01.png" alt="Figure 1"><figcaption><b>原图 2 · Figure 1</b> <span class="source-anchor" data-source-section="s2">出处：Lance Martin · <a href="https://www.anthropic.com/research/components-of-agent-memory">Figure 1</a></span><span class="how">图 1 是记忆分层的总图。</span></figcaption></figure>
+<p data-points="p0016" id="e0016">自下而上四层：transcripts（可搜索的事件日志）、Claude 写的 memory notes、wikis 这类 memory representations、以及每次会话都载入的 injected context。Dreaming 方框里，箭头从 transcripts 指向上面各层，相邻上层之间双向。</p>
+<p data-points="p0017" id="e0017">图注：dreaming 可以整理记忆。它能改错、写笔记、做新的记忆表示，或决定下次会话预先载入什么。</p>
+  </div>
+  <div class="src article"><span class="source-anchor" data-source-section="s2"><a href="https://www.anthropic.com/research/components-of-agent-memory">本节</a></span> </div>
+</section>
+<section class="sec" data-toc="记忆指什么" id="s3" data-source-section="s3">
+  <header class="doc-head"><h2>会话之间还能读的经验，才是这里的 agent memory</h2></header>
+  <div class="doc-body">
+<p data-points="p0018" id="e0018">这一节给 agent memory 下定义。</p>
+<p data-points="p0019" id="e0019">agent memory 指 Claude 从经验里得到的知识，包括和用户的互动、被派的任务，并且留在会话之间，存成以后还能读的上下文。它排除三件别的事：改 weights（训练时定下的内部参数）、in-context learning（一次对话内部学到的）、compaction（Claude 写摘要换掉更早的回合，以便在新窗口里接着干）。</p>
+<p data-points="p0020" id="e0020">人脑里，经历之前、当时或之后放出的化学信号，可以把一段记忆标成重要。被标过的，离线时常常比没标过的更常被重放。这种 replay 帮助它稳下来，并整合进长期记忆。</p>
+<p data-points="p0021" id="e0021">类似地，Claude 可以在会话日志里当时就把显著事件标出来，以后更好找；也可以写进记忆库，比如一夹 memory notes，见图 2。问题是：还不知道后面会发生什么时，当下怎么判断什么显著。</p>
+<figure class="figure orig" data-asset="fig-02" data-points="p0022" id="e0022"><img src="img/fig-02.png" alt="Figure 2"><figcaption><b>原图 3 · Figure 2</b> <span class="source-anchor" data-source-section="s3">出处：Lance Martin · <a href="https://www.anthropic.com/research/components-of-agent-memory#memory-notes">Figure 2</a></span><span class="how">图 2 把笔记这一层单独标出来。</span></figcaption></figure>
+<p data-points="p0023" id="e0023">同一套分层里，memory notes 被高亮。箭头从当次会话直接指向笔记，说明是 Claude 写下的显著观察。</p>
+<p data-points="p0024" id="e0024">图注很短：Claude 可以把笔记写进记忆。</p>
+  </div>
+  <div class="src article"><span class="source-anchor" data-source-section="s3"><a href="https://www.anthropic.com/research/components-of-agent-memory">本节</a></span> </div>
+</section>
+<section class="sec" data-toc="记忆有时是预测" id="s4" data-source-section="s4">
+  <header class="doc-head"><h2>写下规则，是在预测以后还会用到它</h2></header>
+  <div class="doc-body">
+<p data-points="p0025" id="e0025">这一节说，记忆有时是对未来需要的预测。</p>
+<p data-points="p0026" id="e0026">写下一条规则，就是预测这个模式以后还会用到。例如记下一条已核实的事实，是预测未来的会话会想直接依赖它，而不再复查。Claude 做这种预测已经好了很多。occasionally 是「有时」，不是每条笔记都是预测。</p>
+<p data-points="p0027" id="e0027">例子来自 Continual Learning Bench（CL-Bench）1.0：衡量 agent 能不能用记忆做长程任务。其中一项要 Claude 查数据库回答一串问题。答完会被告知正确答案，然后可以写记忆，帮助以后的问题。</p>
+<p data-points="p0028" id="e0028">这里记忆可以撑起一个学习环。答错就记下失败，提出哪里错了的猜想，检验猜想，再收成以后怎么答的规则。</p>
+<p data-points="p0029" id="e0029">这项 CL-Bench 1.0 用 Claude Managed Agents 跑。每道题开新会话，只有一个例外：可以从一个跨会话保留的记忆目录里取文件。</p>
+<p data-points="p0030" id="e0030">不同模型把自己的学习环走到不同地步。Claude Sonnet 4.6 走到能写出「为什么错」的猜想。记忆目录里是一批文件，每份列着几条还没检验的猜测。</p>
+<figure class="figure orig" data-asset="fig-03" data-points="p0031" id="e0031"><img src="img/fig-03.png" alt="Figure 3"><figcaption><b>原图 4 · Figure 3</b> <span class="source-anchor" data-source-section="s4">出处：Lance Martin · <a href="https://www.anthropic.com/research/components-of-agent-memory#memory-can-be-a-prediction-about-what-the-future-will-need">Figure 3</a></span><span class="how">图 3 比较有记忆库和没有状态的基线。</span></figcaption></figure>
+<p data-points="p0032" id="e0032">左图是 CL-Bench 数据库任务的平均奖励，无状态基线在前、记忆库在后。Opus 5.5：0.655、0.838。Sonnet 5.5：0.644、0.833。Opus 5：0.564、0.828。Opus 4.7：0.383、0.700。Sonnet 5：0.306、0.610。Sonnet 4.6：0.330、0.364。右图是同样这些模型、有无记忆时，30 道题上的滚动平均奖励。</p>
+<p data-points="p0033" id="e0033">图注：CL-Bench 数据库任务，各模型的记忆对照无状态基线。</p>
+<p data-points="p0034" id="e0034">Claude Opus 4.7 把笔记收成一份参考文档，并开始标明哪些事实查过、哪些还没确认。Claude Sonnet 5 在评分器核过之后把答案标成已确认，答错就写更正。</p>
+<p data-points="p0035" id="e0035">这些模型里，Claude Opus 5 第一个把环闭上。它的条目大多含一条规则（以及怎么知道它为真）、前面问题的答案，还有沿途发现的陷阱警告，见图 3。</p>
+<p data-points="p0036" id="e0036">Claude Opus 5.5 和 Claude Sonnet 5.5 也像 Opus 5 一样闭上了环，用记忆记下已验证的答题规则。有记忆时两者分数大约和 Opus 5 一样，但它们没有记忆时的基线略高一些。</p>
+  </div>
+  <div class="src article"><span class="source-anchor" data-source-section="s4"><a href="https://www.anthropic.com/research/components-of-agent-memory">本节</a></span> </div>
+</section>
+<section class="sec" data-toc="宝可梦只各跑一次" id="s5" data-source-section="s5">
+  <header class="doc-head"><h2>各一次 run、大约一万步，不能写成模型的总成绩</h2></header>
+  <div class="doc-body">
+<p data-points="p0037" id="e0037">这一节用宝可梦看 Claude 会不会判断该记什么。</p>
+<p data-points="p0038" id="e0038">他们让 Claude 玩 Pokémon Red。视频说明它要走复杂的长程任务，链接是演示，不是这页的静态图。记忆要检验的是：它判断该把什么存下来。每次运行开始，给模型一个记忆文件夹，边玩边读边写，见图 4。</p>
+<p data-points="p0039" id="e0039">比较的是 Claude Sonnet 3.7 和 Claude Fable 5 各一次 run，都大约走到 10,000 步。Sonnet 3.7 默认什么都可能重要，不加选择地写。档案里常常是一次战斗、一件道具、一个 NPC 各一份文件。最后 Sonnet 3.7 写了 413 个记忆文件、225 个文件夹，拿到一枚徽章。这不能写成对整个模型的总定论。</p>
+<p data-points="p0040" id="e0040">Fable 5 对照着写了九个文件、两个文件夹，再加一份顶层的 global.md，拿到四枚徽章。</p>
+<figure class="figure orig" data-asset="fig-04" data-points="p0041" id="e0041"><img src="img/fig-04.png" alt="Figure 4"><figcaption><b>原图 5 · Figure 4</b> <span class="source-anchor" data-source-section="s5">出处：Lance Martin · <a href="https://www.anthropic.com/research/components-of-agent-memory#claude-has-learned-to-judge-salience">Figure 4</a></span><span class="how">图 4 是两份记忆目录的面积图，面积表示字符数，同一比例。</span></figcaption></figure>
+<p data-points="p0042" id="e0042">Sonnet 3.7 又大又挤：413 个文件、977,930 个字符，文件夹包括 locations、main、battles，以及好几夹 consolidated。Fable 5 很小：10 个文件、43,406 个字符，在 locations、gameplay 和 global.md 里。正文说的九个文件加 global.md，和图上的 10 个文件是同一笔账。</p>
+<p data-points="p0043" id="e0043">图注：玩宝可梦时，Sonnet 3.7 和 Fable 5 的记忆目录。</p>
+<p data-points="p0044" id="e0044">Sonnet 3.7 的问题主要是宝可梦局面一直在变，写得很细的记录不断过时。于是越往后，越要把时间和资源花在翻记忆，而不是玩游戏。大约第 10,000 步，它开始第四夹 master 记忆文件。接下来 17 步里，新建六个文件、删掉九个，游戏里一步都没走。</p>
+<p data-points="p0045" id="e0045">Fable 5 把记忆用在游戏没有直接告诉它的事情上。Sonnet 3.7 记下的有些东西，比如手里有多少钱、人在地图哪，每回合都能从屏幕读到，存下来是重复。策略、计划和检验过的规则，只有 Claude 自己推出来才存在，不写下来就会消失。</p>
+<p data-points="p0046" id="e0046">Fable 5 就按这个来组织。global.md 像仪表盘：当前目标、打馆的预先计划（徽章在馆里赢），以及它自己用记忆的规则。locations 夹放特定路线的导航计划，gameplay 夹放它学到的玩法策略。连续七个精灵球没抓住一只鲤鱼王（最好抓的之一）之后，它写下：如果连续 3 个以上球失败，就改变按键时机。</p>
+<p data-points="p0047" id="e0047">记忆夹小得多的 Fable 5，在游戏里比 Sonnet 3.7 走得远得多。Opus 5.5 做法相近：只留一小夹笔记，记当前目标和接下来几步，边玩边改，并且打通了游戏。</p>
+  </div>
+  <div class="src article"><span class="source-anchor" data-source-section="s5"><a href="https://www.anthropic.com/research/components-of-agent-memory">本节</a></span> </div>
+</section>
+<section class="sec" data-toc="规则可能帮倒忙" id="s6" data-source-section="s6">
+  <header class="doc-head"><h2>更强的模型被定死规则，记忆带来的增益可能变小</h2></header>
+  <div class="doc-body">
+<p data-points="p0048" id="e0048">这一节讲该怎么告诉 Claude 写记忆。</p>
+<p data-points="p0049" id="e0049">有用的是告诉它记忆是干什么的，而不是怎么用。CL-Bench 上他们只说有一个记忆夹。这种笼统提示就够 Opus 4.7 和 Opus 5 把记忆用起来，而且都有明显提升，见图 3。</p>
+<p data-points="p0050" id="e0050">他们也试过规定该写什么，每次测试一条规则，再拿「有这条规则时记忆带来的增益」对照「没有这条规则时的增益」。规则设成「只能记录失败」时，Opus 5 和 Opus 4.7 都丢掉了记忆带来的大部分提升，见图 5 右。对更强的模型，让它们自己判断显著性，比事先定死规则更有效，那些规则还可能削弱表现。</p>
+<figure class="figure orig" data-asset="fig-05" data-points="p0051" id="e0051"><img src="img/fig-05.png" alt="Figure 5"><figcaption><b>原图 6 · Figure 5</b> <span class="source-anchor" data-source-section="s6">出处：Lance Martin · <a href="https://www.anthropic.com/research/components-of-agent-memory#steering-claude-to-write-memory">Figure 5</a></span><span class="how">图 5 左边是提示怎么改变 Sonnet 4.6，右边是「只记失败」怎么改变增益。图上还能看见样本次数：有记忆的 Opus 5 参考线写着 16 runs，Opus 4.7 写着 3 runs；Sonnet 4.6 左图三根柱都是 3 runs；右图 Sonnet 4.6 是 1 run。左图误差线是各次 run 的标准差，右图是标准误。</span></figcaption></figure>
+<p data-points="p0052" id="e0052">左：Sonnet 4.6 在 CL-Bench 数据库任务上的平均奖励，基线 0.330，有记忆 0.364，记忆加收紧后的指令 0.641。参考线是有记忆的 Opus 4.7 为 0.700，有记忆的 Opus 5 为 0.828。右：被要求只能记录失败时，记忆增益的变化：Opus 5 为 −0.234，Opus 4.7 为 −0.150，Sonnet 4.6 为 −0.020。</p>
+<p data-points="p0053" id="e0053">图注左：Sonnet 4.6 在这项任务上，有没有用来引导记忆的提示。图注右：被要求只能记录失败时，各模型从记忆得到的增益变了多少。</p>
+<p data-points="p0054" id="e0054">引导对更早的模型帮助最大。例如 Sonnet 4.6 常常不读记忆目录里的文件，也不去检验自己为什么答错的猜想。</p>
+<p data-points="p0055" id="e0055">这个例子里，提示它答题前先读记忆文件，并且明确检验猜想，分数将近翻倍，见图 5 左。Sonnet 5 自己就会这样做。没人提示时，它 10 次里有 9 次答题前读了记忆。Sonnet 4.6 不到一半次数会这样做。</p>
+<p data-points="p0056" id="e0056">对前沿的 Claude 模型，他们通常只给简单引导：人要求时，或明显值得记时，就写记忆笔记，判断留给 Claude。</p>
+  </div>
+  <div class="src article"><span class="source-anchor" data-source-section="s6"><a href="https://www.anthropic.com/research/components-of-agent-memory">本节</a></span> </div>
+</section>
+<section class="sec" data-toc="对着日志改错" id="s7" data-source-section="s7">
+  <header class="doc-head"><h2>dreaming 拿原始记录改笔记，不是凭空反思</h2></header>
+  <div class="doc-body">
+<p data-points="p0057" id="e0057">这一节：dreaming 可以按原始记录改正记忆，不是凭空反思。</p>
+<p data-points="p0058" id="e0058">因为 Claude 按会话中自己判断的显著性来写，一条一开始就错、或环境变了之后漂掉的笔记，以后的会话可能读到并信任。</p>
+<p data-points="p0059" id="e0059">dreaming 让 Claude 拿笔记去对原始 transcript，见图 6。一个正例是用 Managed Agents 玩宝可梦，记忆挂在一个目录上。</p>
+<figure class="figure orig" data-asset="fig-06" data-points="p0060" id="e0060"><img src="img/fig-06.png" alt="Figure 6"><figcaption><b>原图 7 · Figure 6</b> <span class="source-anchor" data-source-section="s7">出处：Lance Martin · <a href="https://www.anthropic.com/research/components-of-agent-memory#dreaming-can-correct-memory">Figure 6</a></span><span class="how">图 6 标出 dreaming 从日志改笔记的那支箭头。</span></figcaption></figure>
+<p data-points="p0061" id="e0061">分层图里，从 transcripts 指上 memory notes 的箭头被标出，表示 dreaming 对着记录改正笔记。</p>
+<p data-points="p0062" id="e0062">图注：dreaming 可以改正记忆里的错误。</p>
+<p data-points="p0063" id="e0063">游戏里要穿过月见山：洞口在地图西边，出口在东边。入口附近有个陷阱，单向崖壁会把人掉回路上，没有明显的办法爬回去。Claude 拿洞口的宝可梦中心当路标，会不会走下崖壁，取决于它以为中心在山的哪一侧。</p>
+<p data-points="p0064" id="e0064">有一次它写错了：中心在东边。走出中心时它宣布月见山已经在身后，并把笔记改成月见山完成。其实月见山并不在身后。几步之后它走下崖壁，掉回原来的路，见图 7。导航工具没显示这段落差，于是它断定自己向西冲过头了，而且一直在正确的一侧。它没有。</p>
+<figure class="figure orig" data-asset="fig-07" data-points="p0065" id="e0065"><img src="img/fig-07.png" alt="Figure 7"><figcaption><b>原图 8 · Figure 7</b> <span class="source-anchor" data-source-section="s7">出处：Lance Martin · <a href="https://www.anthropic.com/research/components-of-agent-memory#dreaming-can-correct-memory">Figure 7</a></span><span class="how">图 7 是崖壁旁的两张地图。</span></figcaption></figure>
+<p data-points="p0066" id="e0066">左是未改正的 Raw memory：存着的笔记是错的，箭头指向下一座城。右是 Memory + dreaming：离线核对改正了笔记，箭头转回洞口。</p>
+<p data-points="p0067" id="e0067">图注：改正后的笔记改变了宝可梦里的走向。未改正时它说月见山在身后，朝下一座城走，结果掉回路上。dreaming 改正后，它说要找洞口再进去，并且回到了洞里。</p>
+<p data-points="p0068" id="e0068">他们接着测 dreaming 能不能帮它避开这个陷阱。对那份把宝可梦中心位置写错的记忆夹跑 dreaming：Claude 拿笔记对会话 transcript，抓住错误并改写。transcript 给了它核对记忆的依据。笔记改正后，它直接回到月见山，后来到了华蓝市。</p>
+<p data-points="p0069" id="e0069">未改正的那次，它掉回早先那条路三次。第三次之后它像是放弃了，写下自己要停，而不是继续绕圈。实验设置的自动回复让它继续。它就继续，一路回到山前的深灰市，想去治疗和补给。这次运行结束时，它始终没到华蓝市。</p>
+<figure class="figure orig" data-asset="fig-08" data-points="p0070" id="e0070"><img src="img/fig-08.png" alt="Figure 8"><figcaption><b>原图 9 · Figure 8</b> <span class="source-anchor" data-source-section="s7">出处：Lance Martin · <a href="https://www.anthropic.com/research/components-of-agent-memory#dreaming-can-correct-memory">Figure 8</a></span><span class="how">图 8 是通向华蓝的进度曲线。</span></figcaption></figure>
+<p data-points="p0071" id="e0071">横轴是累计动作，画到 3,000。记忆加 dreaming 的那次在第 1,935 个动作到达华蓝。未改正的 raw memory 掉下崖壁，折返深灰。没有记忆的那次始终没到华蓝。</p>
+<p data-points="p0072" id="e0072">图注：dreaming 改正记忆后，Claude 回到洞里并到达下一座城。未改正的 Raw memory 过不了这座山，没有记忆的那次也过不了。</p>
+  </div>
+  <div class="src article"><span class="source-anchor" data-source-section="s7"><a href="https://www.anthropic.com/research/components-of-agent-memory">本节</a></span> </div>
+</section>
+<section class="sec" data-toc="wiki 和搜索不是一个口径" id="s8" data-source-section="s8">
+  <header class="doc-head"><h2>wiki、搜索、两者合用，分数不能混成一个</h2></header>
+  <div class="doc-body">
+<p data-points="p0073" id="e0073">这一节：dreaming 可以做出新的记忆表示，用来在记忆里找路。</p>
+<p data-points="p0074" id="e0074">有 dreaming 时，Claude 可以做出帮助浏览记忆的表示，见图 9。它用的一种叫 wiki：Claude 写并维护的页面，把一个主题上它知道的收在一起，并连到别的笔记。这些链接等于一张地图，需要时能更快定位。</p>
+<figure class="figure orig" data-asset="fig-09" data-points="p0075" id="e0075"><img src="img/fig-09.png" alt="Figure 9"><figcaption><b>原图 10 · Figure 9</b> <span class="source-anchor" data-source-section="s8">出处：Lance Martin · <a href="https://www.anthropic.com/research/components-of-agent-memory#dreaming-can-build-new-memory-representations">Figure 9</a></span><span class="how">图 9 把箭头指到 wiki 这一层表示。</span></figcaption></figure>
+<p data-points="p0076" id="e0076">箭头从 transcripts 和 memory notes 指上 memory representations，例如 wikis。</p>
+<p data-points="p0077" id="e0077">图注：dreaming 可以建造记忆表示。</p>
+<p data-points="p0078" id="e0078">wiki 这类表示帮助 Claude 走过不断变大的知识。他们用一批内部文档做实验：大约 350,000 个文件、大约 420M tokens，来自他们在五月收购的软件公司 Stainless。评估集是关于这批文档的 25 道题，并给 Claude 一个搜索工具。他们也让 Claude 用 dreaming 基于这些文件建 wiki。128 个会话里，提示 Opus 5 去翻文件、写或改正互相链接的 wiki 页、合并重复、拿主张对来源核对。</p>
+<p data-points="p0079" id="e0079">每个会话接上前面会话的进度，用一份共享日志协调。dreaming 从 2 个会话加到 128 个时，这 25 道题上的成绩从评分标准的 13% 长到 48%，见图 10。</p>
+<p data-points="p0080" id="e0080">wiki 是一点点建的。有了初稿之后，后面几轮 dreaming 用来补充、修改或删减。早期它像新员工，只靠 wiki 答题很有限。梦得越多，知识地图越富，像老员工。测试里，wiki 在同时还给搜索工具时帮助最大。搜索加 wiki 时，总分随 wiki 变大从 54% 到 61%；只有搜索是 53%。只用 wiki 答题，最好是 48%。搜索加 wiki 还大约每题省 20,000 tokens。这几个百分比口径不同，不能混成一个分数。</p>
+<figure class="figure orig" data-asset="fig-10" data-points="p0081" id="e0081"><img src="img/fig-10.png" alt="Figure 10"><figcaption><b>原图 11 · Figure 10</b> <span class="source-anchor" data-source-section="s8">出处：Lance Martin · <a href="https://www.anthropic.com/research/components-of-agent-memory#dreaming-can-build-new-memory-representations">Figure 10</a></span><span class="how">图 10 中间是分数随 dreaming 变长的曲线，左右是 2 次和 128 次会话后的 wiki 网。</span></figcaption></figure>
+<p data-points="p0082" id="e0082">中间：评分标准达成率，dreaming 从 2M tokens 到 128M tokens。wiki 加搜索从 54% 到 61%，只有 wiki 从 13% 到 48%，没有 wiki 的搜索停在 53%。左右例子：2 个会话后 103 页、766 条链接；128 个会话后 222 页、12,893 条链接。</p>
+<p data-points="p0083" id="e0083">图注：中间是一家公司文档上 25 道题的分数，Claude 在一连串会话里建 wiki。左右是两个会话和 128 个会话后的例子；点是页，线是链接。</p>
+<p data-points="p0084" id="e0084">他们还想看哪些任务能从 wiki 受益。用了 Harvey LAB 基准，外加一批关于一次并购的文档。基准给一批文档，让 Claude 据此写法律备忘，再按标准列表打分。这些材料没有宝可梦好玩，但文档集合更多样。</p>
+<p data-points="p0085" id="e0085">他们让 Claude 用这些文档建 wiki，再让它既从 wiki、也从直接搜文件来回答并购问题或写 LAB 备忘。一项测试对并购问了 24 题，见图 11 左。其中超过一半要跨几份文件找信息，很多还要判断或做算术。这些项上（红线和橙线），查 wiki 是 87%，只搜索是 73%。</p>
+<figure class="figure orig" data-asset="fig-11" data-points="p0086" id="e0086"><img src="img/fig-11.png" alt="Figure 11"><figcaption><b>原图 12 · Figure 11</b> <span class="source-anchor" data-source-section="s8">出处：Lance Martin · <a href="https://www.anthropic.com/research/components-of-agent-memory#dreaming-can-build-new-memory-representations">Figure 11</a></span><span class="how">图 11 把评分项连到所需的源文件。</span></figcaption></figure>
+<p data-points="p0087" id="e0087">左是 wiki 更有帮助的那项：24 条标准里，大多数连到 10 份文件中的两份或更多，其中九条要判断或算术。右是帮助更小的那项：57 条标准大多能在单份文件里用文本搜索找到，通常是交易概览备忘。</p>
+<p data-points="p0088" id="e0088">图注：每栏左边是被评分的内容，右边是要满足它所需的源文件。左：关于并购的 24 题，大多看公开备案就能答，超过一半的标准要拼几份文件。右：一项 LAB 任务，wiki 没有明确增益，大多数标准单份文件就能满足。</p>
+<p data-points="p0089" id="e0089">另一些情况下 wiki 没那么有用。一项 LAB 任务（图 11 右）里，备忘标准常常能从单份文件用文本搜索拿到，wiki 相对搜索没有明确增益。另一项 LAB 任务里，wiki 长得比文档本身还大，见图 12。像 Borges 极短篇里把地图画得和国家一样大的制图师，Claude 做出一份极细的 wiki，实际上什么都没抽象掉。</p>
+<figure class="figure orig" data-asset="fig-12" data-points="p0090" id="e0090"><img src="img/fig-12.png" alt="Figure 12"><figcaption><b>原图 13 · Figure 12</b> <span class="source-anchor" data-source-section="s8">出处：Lance Martin · <a href="https://www.anthropic.com/research/components-of-agent-memory#dreaming-can-build-new-memory-representations">Figure 12</a></span><span class="how">图 12 是语料和建出来的 wiki 谁更大。</span></figcaption></figure>
+<p data-points="p0091" id="e0091">左边圆是语料：10 份文件、115 KB 文本。箭头指向更大的圆，即由此建成的 wiki：68 页、255 条链接、203 KB，是语料的 1.77 倍。有些 wiki 页没有链接。</p>
+<p data-points="p0092" id="e0092">图注：wiki 长得比原始文件还大。</p>
+  </div>
+  <div class="src article"><span class="source-anchor" data-source-section="s8"><a href="https://www.anthropic.com/research/components-of-agent-memory">本节</a></span> </div>
+</section>
+<section class="sec" data-toc="顶层必须小" id="s9" data-source-section="s9">
+  <header class="doc-head"><h2>预先载入的那一层要小，Claude Code 只读 MEMORY.md 开头</h2></header>
+  <div class="doc-body">
+<p data-points="p0093" id="e0093">这一节：dreaming 可以把笔记浮到记忆层级的顶上。</p>
+<p data-points="p0094" id="e0094">dreaming 还能把笔记浮到层级顶部，harness 可以在每次会话开始时预先载入，见图 13。这样 Claude 不必去搜，甚至不必知道有东西可搜。</p>
+<p data-points="p0095" id="e0095">把记忆推进新会话（一种 context injection）必须小心。注入的记忆占用 token，一条错误笔记会带进每一次会话。载入也不保证 Claude 照做：Claude Code 的文档警告，更长的指令文件会降低遵守程度。所以顶层必须保持相对小。dreaming 在这里的很多工作就是维持这一点：把一些细节往下放，只留下链接。</p>
+<p data-points="p0096" id="e0096">Claude Code 的自动记忆用同样方式把注入层做小，由 Claude 在会话中维护。它不会把全部自动记忆载入每个会话。它只有 MEMORY.md 的前 200 行或 25 KB 会载入。这个头是索引，告诉 Claude 自己知道什么、到哪去找。</p>
+<figure class="figure orig" data-asset="fig-13" data-points="p0097" id="e0097"><img src="img/fig-13.png" alt="Figure 13"><figcaption><b>原图 14 · Figure 13</b> <span class="source-anchor" data-source-section="s9">出处：Lance Martin · <a href="https://www.anthropic.com/research/components-of-agent-memory#dreaming-can-promote-notes-up-the-memory-hierarchy">Figure 13</a></span><span class="how">图 13 把箭头指到最上面的注入层。</span></figcaption></figure>
+<p data-points="p0098" id="e0098">箭头从 transcripts 和 memory representations 指上最顶的 injected context，并送进下一次会话。</p>
+<p data-points="p0099" id="e0099">图注：dreaming 可以写到记忆层级的顶部。注入的上下文每次会话都载入，下面几层在 Claude 需要时才读或搜索。</p>
+  </div>
+  <div class="src article"><span class="source-anchor" data-source-section="s9"><a href="https://www.anthropic.com/research/components-of-agent-memory">本节</a></span> </div>
+</section>
+<section class="sec" data-toc="这一次改的是写法" id="s10" data-source-section="s10">
+  <header class="doc-head"><h2>41/57 到 57/57 是每份合同单独一页并逐字引用</h2></header>
+  <div class="doc-body">
+<p data-points="p0100" id="e0100">这一节：dreaming 可以围着一个具体目标来长记忆。</p>
+<p data-points="p0101" id="e0101">dreaming 也能决定记忆怎么长大。像 Claude Duet 这样的助手，常常受益于围绕它所帮助的那个人来组织记忆，dreaming 可以调成服务于某个特定目标。</p>
+<p data-points="p0102" id="e0102">引导记忆怎么长的指令因任务而异，告诉 Claude 什么信息真正要紧。例如 LAB 基准里有一项模拟公司收购，提供一组合同。备忘的评分看它有没有正确写出合同条款。</p>
+<p data-points="p0103" id="e0103">一开始生成 wiki 的指令很基本，没告诉 Claude 怎么用这份 wiki。这项任务很依赖合同条款。建 wiki 时，几个 agent 同时往一张共享的合同条款表里写，见图 14 左。</p>
+<figure class="figure orig" data-asset="fig-14" data-points="p0104" id="e0104"><img src="img/fig-14.png" alt="Figure 14"><figcaption><b>原图 15 · Figure 14</b> <span class="source-anchor" data-source-section="s10">出处：Lance Martin · <a href="https://www.anthropic.com/research/components-of-agent-memory#dreaming-can-focus-memory-on-a-specific-goal">Figure 14</a></span><span class="how">图 14 是改指令前后，评分用的合同事实有多少进了 wiki。</span></figcaption></figure>
+<p data-points="p0105" id="e0105">之前：四个 agent 写同一页共享的 provisions.md，一个 agent 的保存抹掉另一个的行；57 条评分事实里活下来 41 条。之后：四个 agent 各自写自己那份合同的页，条款逐字抄下；57 条里 57 条都在。</p>
+<p data-points="p0106" id="e0106">图注：改指令前后，有多少被评分的合同事实进了 wiki。左：几个 agent 写同一页，41/57 留下。右：每个合同一个 agent、各写一页并逐字引条款，57/57 留下。</p>
+<p data-points="p0107" id="e0107">结果是 wiki 缺了关键事实。用这份 wiki 生成的备忘去评分时，57 条事实里 Claude 只有 41 条写进了备忘，也就是 72%。看错在哪：共享表把条款概括得很差，有的干脆漏了，因为 agent 互相覆盖。</p>
+<p data-points="p0108" id="e0108">合同条款是这份 wiki 最重要的部分，但指令没这么说。为了找到更好的指令，他们跑了一个环：Claude 反思失败，提议改指令，再重建 wiki。这个环让它发现必须跟着条款走，并据此改写建 wiki 的指令。</p>
+<p data-points="p0109" id="e0109">每份合同在 wiki 里有自己的一页，由单独一个 agent 来写，条款是逐字引用，而不是概括进共享表。用改进后的 wiki 生成备忘再评分，100% 的标准都能满足，之前是 72%。这是这一项任务、这一套写法上的变化，不是任何任务加上 wiki 都会这样。</p>
+  </div>
+  <div class="src article"><span class="source-anchor" data-source-section="s10"><a href="https://www.anthropic.com/research/components-of-agent-memory">本节</a></span> </div>
+</section>
+<section class="sec" data-toc="第二遍补洞" id="s11" data-source-section="s11">
+  <header class="doc-head"><h2>九条坏链接被改指，并加了三页</h2></header>
+  <div class="doc-body">
+<p data-points="p0110" id="e0110">这一节：dreaming 可以补上单次会话留下的洞。</p>
+<p data-points="p0111" id="e0111">Claude 写记忆笔记时，只有那一次会话的上下文看得到。dreaming 可以搜许多会话，找共同模式，或改正共同的错。</p>
+<p data-points="p0112" id="e0112">给 LAB 建 wiki 时（例子见图 14），Claude 有时会链到还没建出来的页。第二遍 dreaming 补上很多这种洞。有一项任务（图 15）里，它找到九条指向缺失页的链接，并改指到同一份文件已有的页。它还加了三张新页，其中包括一份索引，用来改进 wiki。</p>
+<figure class="figure orig" data-asset="fig-15" data-points="p0113" id="e0113"><img src="img/fig-15.png" alt="Figure 15"><figcaption><b>原图 16 · Figure 15</b> <span class="source-anchor" data-source-section="s11">出处：Lance Martin · <a href="https://www.anthropic.com/research/components-of-agent-memory#dreaming-can-fill-in-gaps-a-session-leaves-behind">Figure 15</a></span><span class="how">图 15 是第二遍 dreaming 前后的 wiki 网络。</span></figcaption></figure>
+<p data-points="p0114" id="e0114">第二遍之前：38 个条目、225 条链接，其中六页上的九条链接指向并不存在的 escrow-agreement。之后：41 个条目、278 条链接，那九条都指向 buyer-form-escrow-agreement，并新增三页：index、instructions email、escalations。</p>
+<p data-points="p0115" id="e0115">图注：第二遍 dreaming 前后的 wiki。</p>
+  </div>
+  <div class="src article"><span class="source-anchor" data-source-section="s11"><a href="https://www.anthropic.com/research/components-of-agent-memory">本节</a></span> </div>
+</section>
+<section class="sec" data-toc="三件还没定" id="s12" data-source-section="s12">
+  <header class="doc-head"><h2>什么时候写、怎么保持不过时、检索打底，都还开放</h2></header>
+  <div class="doc-body">
+<p data-points="p0116" id="e0116">结尾把还没解决的问题摊开。</p>
+<p data-points="p0117" id="e0117">给 agent 设计记忆还有很多开放问题。其一是 Claude 什么时候该写记忆。干活时它可以写进记忆库（文件夹、文件或数据库），在源头抓住显著性，让重要细节马上能给以后的回合或会话用。但当时记笔记，不可避免会把注意力从主任务上拉开。反过来，dreaming 可以把写记忆推到后台，可是 dreaming 的产出可能不马上能被 Claude 用到。</p>
+<p data-points="p0118" id="e0118">另一个问题是怎样让记忆可靠地保持不过时。Claude 可能预测错，或一开始就把错规则写进记忆。环境变了，记忆也会漂、变得不相干。dreaming 是改正这些错误的一种办法（图 8），但它要算力。让 Claude 不停检查全部记忆可能不现实。更要紧的也许是把 dreaming 集中在可能变化的信息上，或仔细调 dreaming 的节奏（例如按记忆常常被访问的频率）。</p>
+<p data-points="p0119" id="e0119">把 transcript 搜索当作 Claude 记忆的底子，也说得通。把 wiki 这类表示和搜索合在一起（图 10）有时有效。但 Claude 得花算力去维护这些表示，并确保它们不堆积错误或幻觉。</p>
+<p data-points="p0120" id="e0120">即便 Claude 对显著性的判断已经变好，没有模型真能知道以后的回合会发生什么。dreaming 给它一个向后看的机会，用算力整理记忆、改正错误、维持让以后的会话更容易取到记忆的表示。记忆系统会随 Claude 变强而变，他们关于怎么设计 Claude 的记忆，还有很多要学。</p>
+<p data-points="p0121" id="e0121">文末指向两份动手材料：dreaming 的 cookbook，以及 knowledge wiki 的快速开始仓库。</p>
+<p data-points="p0122" id="e0122">作者与致谢从这里分开写，先是栏目标题。</p>
+<p data-points="p0123" id="e0123">致谢标题自己占一行，下面才是名单。</p>
+<p data-points="p0124" id="e0124">正文由 Lance Martin 写。编辑指导来自 Caitlin Love、Tom Chivers、Rebecca Hiscott、Jake Eaton、Blake Wilson。讨论和贡献致谢里还有 Barry Zhang、Theodora Chu、Daliang Li 等人，以及 Claude Plays Pokémon 的 David Hershey。图由 Monika Tuchowska 画。</p>
+<ul class="refs extra"><li><a href="https://arxiv.org/abs/2504.13171">arxiv.org/abs/2504.13171</a></li>
+<li><a href="https://code.claude.com/docs/en/memory">code.claude.com/docs/en/memory</a></li>
+<li><a href="https://continual-learning-bench.com/news/cl-bench-1-0/">continual-learning-bench.com/news/cl-bench-1-0</a></li>
+<li><a href="https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f">ub.com/karpathy/442a6bf555914893e9891c11519de94f</a></li>
+<li><a href="https://github.com/anthropics/claude-quickstarts/tree/main/managed-agents/knowledge-wiki">ckstarts/tree/main/managed-agents/knowledge-wiki</a></li>
+<li><a href="https://github.com/harveyai/harvey-labs">github.com/harveyai/harvey-labs</a></li>
+<li><a href="https://platform.claude.com/cookbook/managed-agents-cma-dreaming-with-a-dynamic-workflow">aged-agents-cma-dreaming-with-a-dynamic-workflow</a></li>
+<li><a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/memory-tool">om/docs/en/agents-and-tools/tool-use/memory-tool</a></li>
+<li><a href="https://platform.claude.com/docs/en/build-with-claude/compaction">.claude.com/docs/en/build-with-claude/compaction</a></li>
+<li><a href="https://platform.claude.com/docs/en/managed-agents/dreams">latform.claude.com/docs/en/managed-agents/dreams</a></li>
+<li><a href="https://platform.claude.com/docs/en/managed-agents/memory">latform.claude.com/docs/en/managed-agents/memory</a></li>
+<li><a href="https://platform.claude.com/docs/en/managed-agents/overview">tform.claude.com/docs/en/managed-agents/overview</a></li>
+<li><a href="https://research.google/blog/the-sleep-framework-a-new-way-for-llms-to-retain-knowledge-in-continual-learning/">r-llms-to-retain-knowledge-in-continual-learning</a></li>
+<li><a href="https://stanford.edu/~jlmcc/papers/McCMcNaughtonOReilly95.pdf">ord.edu/~jlmcc/papers/McCMcNaughtonOReilly95.pdf</a></li>
+<li><a href="https://support.claude.com/en/articles/17631495-get-started-with-claude-duet">n/articles/17631495-get-started-with-claude-duet</a></li>
+<li><a href="https://www.anthropic.com/research/components-of-agent-memory">nthropic.com/research/components-of-agent-memory</a></li>
+<li><a href="https://www.anthropic.com/research/in-context-learning-and-induction-heads">research/in-context-learning-and-induction-heads</a></li>
+<li><a href="https://www.nature.com/articles/385533a0">www.nature.com/articles/385533a0</a></li>
+<li><a href="https://www.nature.com/articles/s41467-018-06213-1">www.nature.com/articles/s41467-018-06213-1</a></li>
+<li><a href="https://www.nature.com/articles/s41593-019-0467-3">www.nature.com/articles/s41593-019-0467-3</a></li>
+<li><a href="https://www.science.org/doi/10.1126/science.adk8261?referrer=https%3A%2F%2Fwww.google.com%2F">www.science.org/doi/10.1126/science.adk8261</a></li>
+<li><a href="https://www.youtube.com/watch?v=CXhYDOvgpuU">www.youtube.com/watch</a></li>
+<li><a href="https://x.com/Zen_with_AI/status/2118842700124602653">x.com/Zen_with_AI/status/2118842700124602653</a></li></ul>
+  </div>
+  <div class="src article"><span class="source-anchor" data-source-section="s12"><a href="https://www.anthropic.com/research/components-of-agent-memory">本节</a></span> <span class="source-anchor" data-source-section="s13"><a href="https://www.anthropic.com/research/components-of-agent-memory">Authors</a></span> <span class="source-anchor" data-source-section="s14"><a href="https://www.anthropic.com/research/components-of-agent-memory">Acknowledgements</a></span></div>
+</section>
+<section class="sec" data-toc="小测" id="s13" data-source-section="s14">
+  <header class="doc-head"><h2>三道题，只考边界</h2></header>
+  <div class="doc-body">
+    <div class="quiz"><script type="application/json">
+[{"q":"作者说的 agent memory 是哪一种？","opts":["训练时改掉 weights","一次对话里临时学会的东西","经验留下来，下次会话还能读"],"a":2,"why":"文中的 agent memory 是经验留下、会话之间还能读的上下文。weights、in-context learning、compaction 被排除在外。","back":3},{"q":"宝可梦这场比较能不能当成两个模型的总成绩？","opts":["能，因为徽章差了好几枚","不能，各只有一次 run，大约 10,000 步","能，目录大小已经说明一切"],"a":1,"why":"正文写的是各一次 run，大约 10,000 步时的记忆夹。不能推广成模型的整体定论。","back":5},{"q":"合同事实从 41/57 到 57/57，说明什么？","opts":["这一次改成每份合同单独一页，并逐字引条款","任何任务加上 wiki 都会到 100%","做梦本身就会把漏掉的事实补满"],"a":0,"why":"提升发生在这一项任务、这一套写法上：不再让多个 agent 覆盖同一张表。作者没有把它写成普遍提升。","back":10}]
+    </script></div>
+    <p class="extra">这三题考的是原文边界。答错只标所选的那一项。</p>
+  </div>
+  <div class="src extra">教学小测。没有做模拟器：原文没有给出可逐步点按的运行轨迹。视频只有宝可梦演示链接，不在这页播放。</div>
+</section>
+</main><script>var __H=location.hash;window.lessonIcons={"menu": "<svg class=\"i i-menu\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/><\/svg>", "play": "<svg class=\"i i-play\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z\"/><\/svg>", "pause": "<svg class=\"i i-pause\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"14\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/><rect x=\"5\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/><\/svg>", "check": "<svg class=\"i i-check\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 6 9 17l-5-5\"/><\/svg>", "x": "<svg class=\"i i-x\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/><\/svg>", "zoom-in": "<svg class=\"i i-zoom-in\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><line x1=\"21\" x2=\"16.65\" y1=\"21\" y2=\"16.65\"/><line x1=\"11\" x2=\"11\" y1=\"8\" y2=\"14\"/><line x1=\"8\" x2=\"14\" y1=\"11\" y2=\"11\"/><\/svg>", "zoom-out": "<svg class=\"i i-zoom-out\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><line x1=\"21\" x2=\"16.65\" y1=\"21\" y2=\"16.65\"/><line x1=\"8\" x2=\"14\" y1=\"11\" y2=\"11\"/><\/svg>", "copy": "<svg class=\"i i-copy\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\"/><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"/><\/svg>", "chevron-right": "<svg class=\"i i-chevron-right\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m9 18 6-6-6-6\"/><\/svg>", "book-open": "<svg class=\"i i-book-open\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 5v16\"/><path d=\"M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z\"/><\/svg>", "external-link": "<svg class=\"i i-external-link\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M15 3h6v6\"/><path d=\"M10 14 21 3\"/><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/><\/svg>"};window.lessonIcon=n=>window.lessonIcons[n]||"";</script><script>/* Article/pair navigation only. No global swipe or arrow-key paging. */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const H=document.documentElement, sections=$$('main.deck > .sec, main.deck > .hero, .pair-notes > .sec');
+if(!sections.length)return;
+const ids=new Set($$('[id]').map(n=>n.id));
+sections.forEach((s,i)=>{if(!s.id){let n=i+1,id=s.classList.contains('hero')?'intro':'s'+n;while(ids.has(id))id='s'+(++n);s.id=id;ids.add(id)}});
+const title=s=>s.dataset.toc||$('h2,h1,h3',s)?.textContent||s.id;
+const toc=document.createElement('nav');toc.className='toc';toc.id='lesson-toc';toc.setAttribute('aria-label','目录');
+const heading=document.createElement('b');heading.textContent='目录';toc.appendChild(heading);const ol=document.createElement('ol');toc.appendChild(ol);
+sections.forEach((s,i)=>{const li=document.createElement('li'),a=document.createElement('a');a.href='#'+s.id;a.textContent=(i+1)+'. '+title(s);li.appendChild(a);ol.appendChild(li)});document.body.appendChild(toc);
+const links=$$('a',toc),toggle=$('.toc-toggle'),count=$('.count'),bar=$('.track i');
+const shade=document.createElement('div');shade.className='toc-backdrop';document.body.appendChild(shade);
+function open(value){H.classList.toggle('toc-open',value);toggle?.setAttribute('aria-expanded',String(value));if(value)links.find(a=>a.getAttribute('aria-current')==='true')?.focus();else toggle?.focus()}
+if(toggle){toggle.setAttribute('aria-controls',toc.id);toggle.onclick=()=>open(!H.classList.contains('toc-open'))}shade.onclick=()=>open(false);
+addEventListener('keydown',e=>{if(e.key==='Escape'&&H.classList.contains('toc-open'))open(false)});
+function locate(hash){let id;try{id=decodeURIComponent(hash.replace(/^#/,''))}catch(e){return null}if(/^\d+$/.test(id))return sections[+id-1];return document.getElementById(id)}
+function jump(target){if(!target)return;H.classList.remove('toc-open');toggle?.setAttribute('aria-expanded','false');target.scrollIntoView({block:'start',behavior:'instant'});history.replaceState(null,'','#'+target.id);update();dispatchEvent(new Event('lesson:navigate'))}
+window.lessonNav={layout:H.dataset.layout,go:n=>jump(document.getElementById('s'+n)||sections[n-1]),returnTo:box=>jump(box.closest('.sec')||box),jump};window.goCard=n=>window.lessonNav.go(n);
+toc.onclick=e=>{const a=e.target.closest('a');if(!a)return;e.preventDefault();jump(locate(a.hash))};
+const key='pos:'+location.pathname;let queued=false,restoring=true;
+function update(){queued=false;let current=sections[0];const line=H.dataset.layout==='pair'&&innerWidth<=820?innerHeight*.4+90:100;for(const s of sections)if(s.getBoundingClientRect().top<=line)current=s;
+ count.textContent=title(current);links.forEach(a=>a.setAttribute('aria-current',String(a.hash==='#'+current.id)));const max=H.scrollHeight-innerHeight;bar.style.width=Math.max(0,Math.min(100,max>0?scrollY/max*100:100))+'%';
+ if(!restoring)try{localStorage.setItem(key,JSON.stringify({id:current.id,offset:scrollY-(current.getBoundingClientRect().top+scrollY)}))}catch(e){}
+}
+addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(update)}},{passive:true});addEventListener('resize',update);addEventListener('hashchange',()=>jump(locate(location.hash)));
+addEventListener('load',()=>{const hash=window.__H||location.hash;let target=locate(hash),offset=0;if(!hash){try{const pos=JSON.parse(localStorage.getItem(key)||'null');if(pos){target=document.getElementById(pos.id);offset=Number(pos.offset)||0}}catch(e){}}
+ if(target){target.scrollIntoView({block:'start',behavior:'instant'});if(!hash)scrollBy(0,offset+72)}restoring=false;update();
+});update();
+})();
+</script><script>/* Reveal an offscreen simulator first, then move only its local SVG viewport. */
+(function(root){
+function delta(start,end,low,high,pad=16){if(start<low+pad)return start-low-pad;if(end>high-pad)return end-high+pad;return 0}
+function focus(svg,scroller){
+ let frame=scroller.getBoundingClientRect(),bottom=innerHeight-88;
+ const top=document.querySelector('.top')?.getBoundingClientRect().bottom||56;
+ if(frame.bottom<=top||frame.top+112>bottom){
+  scroller.closest('.sim').scrollIntoView({block:'start',behavior:'instant'});
+  frame=scroller.getBoundingClientRect();
+ }
+ for(let p=scroller.parentElement;p&&p!==document.body;p=p.parentElement){const c=getComputedStyle(p);if(/auto|scroll|hidden|clip/.test(c.overflowY)){const r=p.getBoundingClientRect();bottom=Math.min(bottom,r.top+p.clientHeight)}}
+ const space=Math.max(112,Math.min(innerHeight*.4,bottom-frame.top));scroller.style.maxHeight=space+'px';
+ frame=scroller.getBoundingClientRect();const node=svg.querySelector('.fl-node.act');if(!node)return;const r=node.getBoundingClientRect();
+ scroller.scrollTop+=delta(r.top,r.bottom,frame.top,frame.top+scroller.clientHeight);
+ scroller.scrollLeft+=delta(r.left,r.right,frame.left,frame.left+scroller.clientWidth);
+}
+root.LessonGeometry={delta,focus};if(typeof module!=='undefined')module.exports={delta,focus};
+})(typeof window==='undefined'?globalThis:window);
+</script><script>/* Shared material/explanation pairing, original-image dialog and copy actions. */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)],ic=window.lessonIcon;
+window.lessonCopy=async(text,button)=>{try{if(navigator.clipboard?.writeText)await navigator.clipboard.writeText(text);else{const t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();if(!document.execCommand('copy'))throw Error('copy');t.remove()}button.textContent='已复制'}catch(e){button.textContent='复制未成功，请选中文字复制'}};
+$$('.pair.codewalk,.pair.read-pair,.pair.material-pair').forEach(pair=>{
+ const source=$('.pair-source',pair),notes=$('.pair-notes',pair);if(!source||!notes)return;
+ const pre=$('pre[data-lines]',source),code=pre&&$('code',pre),steps=$$('.step',notes);let lines=[],raw='';
+ if(code){raw=code.textContent;const first=Number(pre.dataset.lines)||1;code.textContent='';const pieces=raw.replace(/\n$/,'').split('\n');pieces.forEach((text,i)=>{const line=document.createElement('span');line.className='code-line';line.dataset.line=String(first+i);line.textContent=text;code.appendChild(line);lines.push(line)});
+  const panel=document.createElement('div');panel.className='code-panel';source.before(panel);
+  const toolbar=document.createElement('div');toolbar.className='code-toolbar';
+  const hint=document.createElement('span');hint.className='code-scroll-hint';hint.textContent='长行可横向滚动';
+  const button=document.createElement('button');button.className='btn sm copy-code';button.innerHTML=ic('copy')+' 复制代码';button.onclick=()=>window.lessonCopy(raw,button);
+  toolbar.append(hint,button);panel.append(toolbar,source);
+ }
+ let active=null;
+ function select(step){if(!step||active===step)return;active=step;steps.forEach(s=>s.classList.toggle('is-active',s===step));let targets=[];
+  if(code){const ranges=(step.dataset.hl||'').split(',').map(v=>v.split('-').map(Number));lines.forEach(line=>{const n=Number(line.dataset.line),on=ranges.some(([a,b=a])=>n>=a&&n<=b);line.classList.toggle('hl',on);if(on)targets.push(line)})}
+  else{const ids=(step.dataset.explains||step.dataset.target||'').split(/\s+/);$$('.source-block,[data-material]',source).forEach(block=>{const on=ids.includes(block.dataset.sourceId||block.id);block.classList.toggle('is-active',on);if(on)targets.push(block)})}
+  if(targets.length){const a=targets[0].getBoundingClientRect(),b=targets[targets.length-1].getBoundingClientRect(),r=source.getBoundingClientRect();const bottom=r.top+source.clientHeight;source.scrollTop+=b.bottom-a.top>source.clientHeight-32?a.top-r.top-16:window.LessonGeometry.delta(a.top,b.bottom,r.top,bottom)}
+ }
+ const update=()=>{
+  const rect=notes.getBoundingClientRect(),material=source.closest('.code-panel')||source;
+  const top=Math.max(0,$(".top")?.getBoundingClientRect().bottom||0,innerWidth<=820?material.getBoundingClientRect().bottom:0),bottom=Math.min(innerHeight,rect.bottom);
+  if(bottom<=top)return;
+  const line=top+(bottom-top)*.4;let step=steps[0];
+  for(const s of steps)if(s.getBoundingClientRect().top<=line)step=s;
+  const last=steps.at(-1),lastRect=last?.getBoundingClientRect();
+  if(scrollY+innerHeight>=document.documentElement.scrollHeight-2&&lastRect?.top<bottom&&lastRect.bottom>top)step=last;
+  select(step);
+ };
+ let queued=false;addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(()=>{queued=false;update()})}},{passive:true});addEventListener('resize',update);
+ steps.forEach(step=>{step.addEventListener('focusin',()=>select(step));step.addEventListener('click',e=>{select(step);const a=e.target.closest('a');if(a?.hash&&source.querySelector(a.hash)){e.preventDefault();source.focus()}})});select(steps[0]);addEventListener('load',update);
+});
+$$('figure img').forEach(img=>{const button=document.createElement('button');button.className='image-open';button.type='button';button.setAttribute('aria-label','放大图片：'+img.alt);img.replaceWith(button);button.appendChild(img);button.onclick=()=>{
+ const dialog=document.createElement('dialog');dialog.className='image-dialog';dialog.setAttribute('aria-label',img.alt);const close=document.createElement('button');close.className='btn dialog-close';close.innerHTML=ic('x')+' 关闭';const large=img.cloneNode();large.removeAttribute('loading');dialog.append(close,large);document.body.appendChild(dialog);close.onclick=()=>dialog.close();dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close()});dialog.addEventListener('close',()=>{dialog.remove();button.focus()});dialog.showModal();close.focus();
+}});
+$$('details.more summary').forEach(s=>{if(!s.textContent.trim())s.textContent='展开细节';s.insertAdjacentHTML('afterbegin',ic('chevron-right'))});
+})();
+</script><script>/* 学习搭子 固定组件库 — 不要在课程里改这个文件。 */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const NS='http://www.w3.org/2000/svg';
+const data=(box,kind)=>JSON.parse(box.querySelector('script[type="application/json"]')?.textContent||box.dataset[kind]);
+const ic=window.lessonIcon;
+const el=(t,a={},p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p&&p.appendChild(e);return e};
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+function component(selector,render){
+  $$(selector).forEach(box=>{try{render(box)}catch(error){
+    const message=document.createElement('p');message.className='component-error';
+    message.textContent='这张图的数据有误';message.setAttribute('role','status');
+    box.replaceWith(message);console.error('组件数据有误',error);
+  }});
+}
+
+/* ---------- flow：用 JSON 画流程图 ----------
+ spec = {w,h,nodes:[{id,x,y,t,s?,c?,w?}],edges:[{f,t,l?,bend?}]}  节点坐标是中心点 */
+function drawFlow(svg,spec){
+  svg.innerHTML='';
+  const defs=el('defs',{},svg);
+  [['a','var(--meta)'],['b','var(--blue)'],['red','var(--amber)'],['amber','var(--amber)'],['green','var(--green)']].forEach(([id,c])=>{const m=el('marker',{id:'ar'+id+svg.dataset.uid,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:7,markerHeight:7,orient:'auto-start-reverse'},defs);el('path',{d:'M0,0L10,5L0,10z',fill:c},m)});
+  const N={};spec.nodes.forEach(n=>N[n.id]={...n,w:n.w||150,h:n.h||(n.s?70:56)});
+  const ns=Object.values(N);
+  let x0=Math.min(...ns.map(n=>n.x-n.w/2)),x1=Math.max(...ns.map(n=>n.x+n.w/2)),y0=Math.min(...ns.map(n=>n.y-n.h/2)),y1=Math.max(...ns.map(n=>n.y+n.h/2));
+  const B={x0,x1,y0,y1};
+  const eg=el('g',{},svg),ng=el('g',{},svg);svg._edges={};svg._nodes={};
+  const clip=(a,b)=>{const dx=b.x-a.x,dy=b.y-a.y;const s=Math.min(Math.abs((a.w/2+6)/(dx||1e-9)),Math.abs((a.h/2+6)/(dy||1e-9)));return[a.x+dx*s,a.y+dy*s]};
+  spec.edges.forEach(e=>{const a=N[e.f],b=N[e.t];let d,lx,ly;
+    if(e.route){ /* 沿外圈走的直角线：top|bottom|left|right，lane 控制离外框的距离 */
+      const g=30+(e.lane||0)*30,oa=e.oa||0,ob=e.ob||0;
+      if(e.route==='top'||e.route==='bottom'){const t=e.route==='top',Y=t?B.y0-g:B.y1+g,ya=a.y+(t?-1:1)*(a.h/2+2),yb=b.y+(t?-1:1)*(b.h/2+8);
+        d=`M${a.x+oa},${ya} V${Y} H${b.x+ob} V${yb}`;lx=(a.x+oa+b.x+ob)/2;ly=Y+(t?-8:18);
+        t?(y0=Math.min(y0,Y-26)):(y1=Math.max(y1,Y+26));}
+      else{const l=e.route==='left',X=l?B.x0-g:B.x1+g,xa=a.x+(l?-1:1)*(a.w/2+2),xb=b.x+(l?-1:1)*(b.w/2+8);
+        d=`M${xa},${a.y+oa} H${X} V${b.y+ob} H${xb}`;lx=X+(l?-8:8);ly=(a.y+b.y)/2;
+        l?(x0=Math.min(x0,X-90)):(x1=Math.max(x1,X+90));}
+    }else{const[p1,q1]=clip(a,b),[p2,q2]=clip(b,a);const mx=(p1+p2)/2,my=(q1+q2)/2,len=Math.hypot(p2-p1,q2-q1)||1,bd=e.bend||0;
+      const cx=mx-(q2-q1)/len*bd,cy=my+(p2-p1)/len*bd;d=`M${p1},${q1} Q${cx},${cy} ${p2},${q2}`;
+      const qx=.25*p1+.5*cx+.25*p2,qy=.25*q1+.5*cy+.25*q2,sg=bd>=0?1:-1;lx=qx-(q2-q1)/len*sg*14;ly=qy+(p2-p1)/len*sg*14+4;}
+    const mk=e.c||'a';const p=el('path',{d,class:'fl-edge '+(e.c||''),'marker-end':`url(#ar${mk}${svg.dataset.uid})`},eg);p._mk=mk;
+    let lab=null;if(e.l){const anc=e.route==='left'?'end':e.route==='right'?'start':'middle';lab=el('text',{x:lx,y:ly,'text-anchor':anc,class:'fl-elab '+(e.c||''),stroke:'var(--paper)','stroke-width':5,'paint-order':'stroke'},eg);lab.textContent=e.l}
+    svg._edges[e.f+'>'+e.t]={p,lab}});
+  ns.forEach(n=>{const g=el('g',{class:'fl-node '+(n.c||'')},ng);
+    el('rect',{x:n.x-n.w/2,y:n.y-n.h/2,width:n.w,height:n.h,rx:14},g);
+    const t=el('text',{x:n.x,y:n.y+(n.s?-4:6),'text-anchor':'middle'},g);t.textContent=n.t;
+    if(n.s){const s=el('text',{x:n.x,y:n.y+18,'text-anchor':'middle',class:'sub'},g);s.textContent=n.s}
+    svg._nodes[n.id]=g});
+  /* 自动贴合：viewBox 只包住内容，图会放大填满面板 */
+  const P=spec.pad??8,W=x1-x0+2*P,H=y1-y0+2*P+20;
+  svg.setAttribute('viewBox',`${x0-P} ${y0-P-10} ${W} ${H}`);
+  svg.style.setProperty('--flow-width',W+'px');svg.style.setProperty('--flow-height',H+'px');
+  const scroll=document.createElement('div');scroll.className='flow-scroll';
+  svg.replaceWith(scroll);scroll.appendChild(svg);
+  if(!scroll.closest('.sim')&&W>innerWidth-78){const t=document.createElement('p');t.className='flow-tip';t.textContent='← 左右滑动看全图 →';scroll.after(t)}
+  svg._set=(act,edge)=>{for(const k in svg._nodes)svg._nodes[k].classList.toggle('act',k===act);
+    for(const k in svg._edges){const on=k===edge,E=svg._edges[k];E.p.classList.toggle('act',on);E.p.setAttribute('marker-end',`url(#ar${on?'b':E.p._mk}${svg.dataset.uid})`);E.lab&&E.lab.classList.toggle('act',on)}};
+  svg._set(svg.dataset.act,svg.dataset.edge);
+  svg._center=()=>{if(!matchMedia('(max-width:820px)').matches)return;
+    const active=Object.values(svg._nodes).find(n=>n.classList.contains('act'));if(!active)return;
+    const a=active.getBoundingClientRect(),r=scroll.getBoundingClientRect();
+    scroll.scrollLeft+=a.left+a.width/2-r.left-r.width/2;
+  };
+}
+let uid=0;
+component('svg.flow',s=>{s.dataset.uid=++uid;drawFlow(s,data(s,'flow'))});
+
+/* ---------- sim：一步步走的模拟器 ----------
+ data-sim = {flow:{...}, steps:[{act,edge,msg:{r:user|asst|tool|err|sys,n?,t},say}], alt?:{label,steps:[...]}} */
+component('.sim',box=>{
+  const spec=data(box,'sim');if(spec.alt&&!spec.alts)spec.alts=[spec.alt];const AL=spec.alts||[];const gname='br'+(++uid);
+  box.innerHTML=`<div class="ctl"><button class="btn sm" data-a="step">下一步</button><button class="btn sm" data-a="play">${ic("play")} 自动</button><button class="btn sm" data-a="reset">重置</button>
+   <label>速度 <input type="range" min="300" max="2500" step="100" value="1200"></label></div>${AL.length?`<div class="ctl branches"><label><input type="radio" name="${gname}" value="-1" checked> ${esc(spec.label||'正常路径')}</label>${AL.map((a,j)=>`<label><input type="radio" name="${gname}" value="${j}"> ${esc(a.label)}</label>`).join('')}</div>`:''}
+   <div class="body"><svg class="flow"></svg><div class="log"></div></div><div class="narr"></div>`;
+  if(spec.layout==='wide')box.classList.add('wide');
+  const svg=$('.body > svg.flow',box);svg.dataset.uid=++uid;drawFlow(svg,spec.flow);
+  const fs=svg.parentElement,tip=document.createElement('p');tip.className='flow-tip';tip.textContent='点图放大看字，再点回到全图';fs.after(tip);
+  const focus=()=>{if(!fs.classList.contains('zoom'))return svg._center();window.LessonGeometry.focus(svg,fs)};
+  const zoom=document.createElement('button');zoom.className='btn sm zoom-toggle';zoom.innerHTML=ic('zoom-in')+' 放大图';zoom.setAttribute('aria-pressed','false');tip.replaceWith(zoom);const toggle=()=>{const on=fs.classList.toggle('zoom');zoom.innerHTML=ic(on?'zoom-out':'zoom-in')+(on?' 返回全图':' 放大图');zoom.setAttribute('aria-pressed',String(on));if(!on){fs.style.maxHeight='';fs.scrollTop=0}focus()};fs.onclick=toggle;zoom.onclick=toggle;window.addEventListener('resize',focus);window.addEventListener('load',()=>requestAnimationFrame(()=>{const params=new URLSearchParams(location.search);if((params.has('sim')||params.has('zoom'))&&!(window.__H??location.hash)&&box===$('.sim')){const section=box.closest('.sec,.card');if(window.lessonNav.layout==='deck')window.goCard($$('.card').indexOf(section)+1);else section.scrollIntoView({block:'start',behavior:'instant'})}focus()}));window.addEventListener('lesson:navigate',()=>requestAnimationFrame(focus));
+  const log=$('.log',box),narr=$('.narr',box),radios=$$('input[type=radio]',box),spd=$('input[type=range]',box),play=$('[data-a=play]',box);
+  let i=0,timer=null,predicted=!spec.predict;const prediction=document.createElement('div');if(spec.predict){prediction.className='prediction callout';prediction.innerHTML='<p>先预测：'+esc(spec.predict)+'</p><label>你的判断<textarea rows="2"></textarea></label><button class="btn sm" data-a="predict">提交预测，再看过程</button>';box.prepend(prediction)};const sel=()=>{const r=radios.find(r=>r.checked);return r?+r.value:-1};const steps=()=>sel()>=0?AL[sel()].steps:spec.steps;
+  const hint=spec.note?esc(spec.note)+'　点「下一步」开始。':'点「下一步」开始。';const reset=()=>{i=0;log.innerHTML='';narr.innerHTML=hint;svg._set(null,null);stop()};
+  const stop=()=>{clearTimeout(timer);timer=null;play.innerHTML=ic('play')+' 自动'};
+  const step=()=>{const S=steps();if(i>=S.length){narr.textContent='流程结束。点「重置」再走一遍。';stop();return false}
+    const s=S[i++];svg._set(s.act,s.edge);focus();if(s.msg){const d=document.createElement('div');d.className='msg '+s.msg.r;
+      d.innerHTML=`<b>${esc(s.msg.n||({user:'用户',asst:'模型',tool:'工具结果',err:'出错',sys:'系统提示词'}[s.msg.r]))}</b>${esc(s.msg.t)}`;log.appendChild(d);log.scrollTop=1e9}
+    narr.innerHTML=`<b>第 ${i}/${S.length} 步</b>　${esc(s.say)}`;return true};
+  const loop=()=>{if(step())timer=setTimeout(loop,+spd.value);else stop()};
+  box.onclick=e=>{const a=e.target.closest('button')?.dataset.a;if(a==='predict'){predicted=true;prediction.hidden=true;step()}if(a==='step'){stop();if(predicted)step();else prediction.querySelector('textarea').focus()}if(a==='reset')reset();if(a==='play'){if(!predicted){prediction.querySelector('textarea').focus();return}if(timer)stop();else{play.innerHTML=ic('pause')+' 暂停';loop()}}};
+  narr.innerHTML=hint;radios.forEach(r=>r.onchange=reset);
+  const P=new URLSearchParams(location.search);if(P.get('alt')&&radios[+P.get('alt')]){radios[+P.get('alt')].checked=true}for(let n=+P.get('sim')||0;n>0;n--)step();if(P.get('sim')){predicted=true;prediction.hidden=true}if(P.get('zoom')){fs.classList.add('zoom');zoom.setAttribute('aria-pressed','true');zoom.innerHTML=ic('zoom-out')+' 返回全图'} /* 自查用：?sim=5&alt=1&zoom=1 */
+});
+
+/* ---------- bars：横向条形图 ----------
+ data-bars = {unit, items:[{l,v,c?:blue|amber|green|red,note?}], caption?}  数字必须来自原文 */
+component('.bars',box=>{const B=data(box,'bars'),mx=Math.max(1,...B.items.filter(i=>i.v!=null).map(i=>i.v));
+  box.innerHTML=B.items.map(i=>`<div class="bar ${i.c||''}"><span class="bl">${esc(i.l)}</span>${i.v==null?`<span class="bmiss">${esc(i.miss||'原文未给数字')}</span>`:`<span class="bt"><i style="width:${(i.v/(B.axis==='independent'?Math.max(1,i.v):mx)*100).toFixed(1)}%"></i></span><span class="bv">${esc(i.v)}${esc(i.unit||B.unit||'')}</span>`}${i.note?`<span class="bn">${esc(i.note)}</span>`:''}</div>`).join('')+(B.caption?`<div class="bc">${esc(B.caption)}</div>`:'')});
+
+/* ---------- quiz：页内小测 ----------
+ data-quiz = [{q,opts:[...],a:正确下标,why,back:答错时回到第几张卡片}] */
+component('.quiz,.checkpoint',box=>{
+  const checkpoint=box.classList.contains('checkpoint');box.classList.add('quiz');const raw=data(box,checkpoint?'checkpoint':'quiz'),Q=Array.isArray(raw)?raw:[raw],P=new URLSearchParams(checkpoint?'':location.search);
+  let k=Math.max(0,Math.min(Q.length-1,(parseInt(P.get('q'))||1)-1));
+  const answers=Q.map(()=>({first:null,selected:null,retries:0}));
+  const score=()=>answers.filter((s,i)=>s.first===Q[i].a).length;
+  const complete=()=>answers.every(s=>s.selected!==null);
+  const reviewButton=i=>{
+    const target=window.lessonNav.layout==='deck'?$$('.card')[Q[i].back-1]:document.getElementById('s'+Q[i].back);
+    const title=target.dataset.toc||$('h2,h1,h3',target)?.textContent||'相关内容';
+    return `<button class="btn sm" data-review="${i}">回看：${esc(title)}</button>`;
+  };
+  function summary(){
+    const wrong=answers.map((s,i)=>s.first!==Q[i].a?i:-1).filter(i=>i>=0);
+    const recovered=wrong.filter(i=>answers[i].selected===Q[i].a).length;
+    box.innerHTML=`<div class="qt">小测总结</div><p>首次得分：${score()} / ${Q.length}。重试答对：${recovered} 题。</p>
+      <div>${wrong.length?wrong.map(i=>`<p>第 ${i+1} 题：${esc(Q[i].q)} ${reviewButton(i)} <button class="btn sm" data-question="${i}">回到此题</button></p>`).join(''):'没有首次错题。'}</div>
+      <p>用自己的话复述这页的核心机制，再举一个新场景。</p><label>你的复述<textarea class="retelling" rows="3"></textarea></label><button class="btn sm" data-copy-result="1">${ic("copy")} 复制学习结果 JSON</button><button class="btn sm" data-question="0">查看作答</button>`;
+  }
+  function render(){const q=Q[k],s=answers[k];
+    box.innerHTML=`<div class="qn">第 ${k+1} / ${Q.length} 题 ${checkpoint?'· 不计分':'· 首次答对 '+score()}</div><div class="qt">${esc(q.q)}</div>
+      ${q.opts.map((o,j)=>`<button class="opt ${s.selected===null?'':j===s.selected?(j===q.a?'ok':'no'):''}" data-j="${j}" aria-pressed="${j===s.selected}">${String.fromCharCode(65+j)}. ${esc(o)}</button>`).join('')}
+      <div class="fb" aria-live="polite">${s.selected===null?'':s.selected===q.a?ic('check')+' 对。'+esc(q.why):ic('x')+' 不对。先回去看看，或再试一次。'}
+      ${s.selected!==null&&s.selected!==q.a?reviewButton(k)+' <button class="btn sm" data-retry="1">再试一次</button>':''}</div>
+      <div class="nav"><button class="btn sm" data-n="-1" ${k?'':'disabled'}>上一题</button>
+      <button class="btn sm main" data-n="1" ${s.selected===null?'disabled':''}>${checkpoint?'完成检查':k===Q.length-1?'查看总结':'下一题'}</button></div>`;
+  }
+  box.onclick=e=>{const t=e.target.closest('button');if(!t)return;
+    if(t.dataset.review!==undefined){const i=+t.dataset.review;window.lessonNav.go(Q[i].back);
+      let ret=$('#quiz-return');if(!ret){ret=document.createElement('button');ret.id='quiz-return';ret.className='btn sm';document.body.appendChild(ret)}
+      ret.textContent='回到小测';ret.onclick=()=>{window.lessonNav.returnTo(box);ret.remove()};return;
+    }
+    if(t.dataset.copyResult!==undefined){const result={path:location.pathname,firstScore:score(),total:Q.length,answers:answers.map((s,i)=>({question:i+1,first:s.first,selected:s.selected,retries:s.retries,wrong:s.first!==Q[i].a,review:'#s'+Q[i].back})),retelling:$('.retelling',box).value};window.lessonCopy(JSON.stringify(result,null,2),t);return}
+    if(t.dataset.question!==undefined){k=+t.dataset.question;render();return}
+    if(t.dataset.retry){answers[k].selected=null;answers[k].retries++;render();return}
+    if(t.dataset.n){if(checkpoint&&+t.dataset.n===1){box.querySelector('.nav').hidden=true;return}if(k===Q.length-1&&+t.dataset.n===1){if(complete())summary();else{k=answers.findIndex(s=>s.selected===null);render()}return}k+=+t.dataset.n;render();return}
+    if(t.dataset.j===undefined||answers[k].selected!==null)return;
+    const j=+t.dataset.j;answers[k].selected=j;if(answers[k].first===null)answers[k].first=j;render();const nv=$('.nav',box);nv&&nv.scrollIntoView&&nv.scrollIntoView({block:'nearest'});
+  };
+  render();
+  const pk=P.get('pick'),pick=pk==='wrong'?Q[k].opts.findIndex((_,i)=>i!==Q[k].a):pk!==null&&/^\d+$/.test(pk)?+pk:-1;
+  if(pick>=0&&$$('.opt',box)[pick])$$('.opt',box)[pick].click();
+
+});
+
+})();
+</script><script>/* End-of-build readiness marker, used by the screenshot harness. */
+document.querySelector('.theme-toggle').onclick=window.__tt;
+window.__lessonReady=true;
+</script><script>/* ---------- 学完了：点一下记为已学完（存在本机浏览器） ---------- */
+(function(){if(window.__finish)return;window.__finish=1;
+if(!document.querySelector('.deck'))return;
+const st=document.createElement('style');st.textContent=`.fin-btn{position:fixed;right:16px;bottom:76px;z-index:50;padding:10px 16px;border-radius:999px;border:0;background:#16a34a;color:#fff;font:600 15px system-ui;box-shadow:0 4px 14px rgba(0,0,0,.18);cursor:pointer}.fin-btn.done{background:#e5e7eb;color:#166534}`;document.head.appendChild(st);
+const p=n=>String(n).padStart(2,'0');
+const doneKeys=()=>{const out=new Set();const seed=location.pathname;const vs=new Set([seed]);if(seed.endsWith('/index.html')){const d=seed.slice(0,-10);vs.add(d);vs.add(d.replace(/\/$/,'')||'/')}else if(seed.endsWith('/')){vs.add(seed+'index.html');vs.add(seed.replace(/\/$/,'')||'/')}else if(!/\.[a-z0-9]+$/i.test(seed)){vs.add(seed+'/');vs.add(seed+'/index.html')}for(const u of vs){out.add(u);const m=u.match(/^(.*)\/courses\/(.+)$/);if(m)out.add(m[1]+'/'+m[2]);const m2=u.match(/^(.*)\/(cs146s)\/(.+)$/);if(m2&&!u.includes('/courses/'))out.add(m2[1]+'/courses/'+m2[2]+'/'+m2[3])}return[...out]};
+const getDone=()=>{for(const k of doneKeys()){const d=localStorage.getItem('done:'+k);if(d)return d}return null};
+const setDone=v=>{for(const k of doneKeys())localStorage.setItem('done:'+k,v)};
+const clearDone=()=>{for(const k of doneKeys())localStorage.removeItem('done:'+k)};
+const b=document.createElement('button');b.className='fin-btn';document.body.appendChild(b);
+const show=()=>{const d=getDone();b.classList.toggle('done',!!d);b.textContent=d?'✓ 已学完 '+d:'✓ 学完了';b.title=d?'再点一下取消':''};show();
+b.onclick=()=>{if(getDone()){if(confirm('取消「已学完」记录？'))clearDone()}else{const x=new Date();setDone(x.getFullYear()+'-'+p(x.getMonth()+1)+'-'+p(x.getDate()))}show()};
+})();
+</script><script src="../../assets/gh.js" defer></script><script src="../../assets/progress.js" defer></script></body></html>
