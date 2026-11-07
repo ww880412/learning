@@ -29,12 +29,18 @@
         "item": "managed-agents-workshop",
         "card": 3,
         "note": "a model in a loop with tools"
+      },
+      {
+        "item": "langchain-agents-async",
+        "card": 2,
+        "note": "标准 ReAct 里，长工具调用会堵住循环"
       }
     ],
     "related": [
       "tool-calling",
       "system-prompt",
-      "context"
+      "context",
+      "async-subagent"
     ]
   },
   {
@@ -89,6 +95,11 @@
         "item": "huangtongxueh-ai-dev",
         "card": 2,
         "note": "模型变强后，写死的工作流变成噪声"
+      },
+      {
+        "item": "langchain-agents-async",
+        "card": 5,
+        "note": "未完成任务列在编排器的 system prompt 里"
       }
     ],
     "related": [
@@ -121,6 +132,11 @@
         "item": "huangtongxueh-ai-dev",
         "card": 1,
         "note": "少写死工作流，多给上下文、环境和判断依据"
+      },
+      {
+        "item": "langchain-agents-async",
+        "card": 1,
+        "note": "原推说单独保存以防压缩；原文只写进系统提示词"
       }
     ],
     "related": [
@@ -732,6 +748,33 @@
     "related": [
       "people-out-of-loop",
       "outside-judge"
+    ]
+  },
+  {
+    "id": "async-subagent",
+    "term": "异步子任务",
+    "en": "async subagent",
+    "def": "LangChain 这篇博客里的后台工人。编排器用 start_async_task 在它自己的线程上启动，调用马上返回。改进行中的任务看 update_strategy：默认 interrupt 是停掉当前这一轮再按新指令启动，enqueue 是等这一轮结束再处理。每个未完成任务列在编排器的 system prompt 里。任务通知仍是 beta，接口可能还会变。",
+    "refs": [
+      {
+        "item": "langchain-agents-async",
+        "card": 3,
+        "note": "调用立刻返回，工作在自己的线程里"
+      },
+      {
+        "item": "langchain-agents-async",
+        "card": 4,
+        "note": "五个工具，interrupt 与 enqueue"
+      },
+      {
+        "item": "langchain-agents-async",
+        "card": 5,
+        "note": "忙、闲、等审批，三种收结果"
+      }
+    ],
+    "related": [
+      "agent-loop",
+      "system-prompt"
     ]
   }
 ]
