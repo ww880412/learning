@@ -336,8 +336,15 @@ const XR = (() => {
 // ---- 全站检索索引（仅公开元数据，不收录加密正文/私密内容）----
 const SEARCH = (() => {
   const out = [];
+  const isPublicStr = v => {
+    const s = String(v || '');
+    if (!s) return true;
+    if (/_private\/|staticrypt|github_pat_|ghp_|token\s*[:=]|password\s*[:=]/i.test(s)) return false;
+    return true;
+  };
   const push = (x) => {
     if (!x || !x.href || /^https?:/.test(x.href)) return;
+    if (!isPublicStr(x.href) || !isPublicStr(x.source) || !isPublicStr(x.summary) || !isPublicStr(x.title)) return;
     out.push({
       id: x.id || `k${out.length + 1}`,
       type: x.type || '页面',
@@ -347,40 +354,44 @@ const SEARCH = (() => {
       source: x.source || null,
       tags: Array.isArray(x.tags) ? [...new Set(x.tags.map(t => txt(t)).filter(Boolean))].slice(0, 12) : [],
       summary: txt(x.summary).slice(0, 280),
+      trace: x.trace || null,
     });
   };
   for (const it of items) {
     const g = groups.find(x => x.id === it.group);
     const c = colById[it.column];
-    push({ id: `item:${it.id}`, type: '学习页', title: it.title, href: it.href, date: it.start || null, source: it.source || g?.source || null, tags: [c?.title, g?.title, it.label].filter(Boolean), summary: it.note || '' });
+    push({ id: `item:${it.id}`, type: '学习页', title: it.title, href: it.href, date: it.start || null, source: it.source || g?.source || null, tags: [c?.title, g?.title, it.label].filter(Boolean), summary: it.note || '', trace: { sourceFile: 'data/items.json', key: `items.${it.id}` } });
   }
-  for (const c of concepts) push({ id: `concept:${c.id}`, type: '概念卡', title: c.term, href: `concepts/${c.id}.html`, tags: [c.en], summary: c.def });
-  for (const d of DG.list) push({ id: `digest:${d.date}`, type: '每日汇总', title: d.label, href: d.href, date: d.date, tags: [d.brief ? '简报' : '', d.posters ? '海报' : '', d.ph ? '灵感' : ''].filter(Boolean), summary: [d.brief?.title, d.posters?.title, d.ph ? `榜单 ${d.ph.listDate}` : ''].filter(Boolean).join(' · ') });
+  for (const c of concepts) push({ id: `concept:${c.id}`, type: '概念卡', title: c.term, href: `concepts/${c.id}.html`, tags: [c.en], summary: c.def, trace: { sourceFile: 'data/concepts.json', key: `concepts.${c.id}` } });
+  for (const d of DG.list) push({ id: `digest:${d.date}`, type: '每日汇总', title: d.label, href: d.href, date: d.date, tags: [d.brief ? '简报' : '', d.posters ? '海报' : '', d.ph ? '灵感' : ''].filter(Boolean), summary: [d.brief?.title, d.posters?.title, d.ph ? `榜单 ${d.ph.listDate}` : ''].filter(Boolean).join(' · '), trace: { sourceFile: 'data/digest/' + d.date + '.json', key: d.date } });
   for (const f of (fs.existsSync(path.join(ROOT, 'x-brief')) ? fs.readdirSync(path.join(ROOT, 'x-brief')) : []).filter(x => /^\d{4}-\d\d-\d\d\.html$/.test(x))) {
     const h = fs.readFileSync(path.join(ROOT, 'x-brief', f), 'utf8');
     const h1 = txt((h.match(/<h1>([\s\S]*?)<\/h1>/) || [])[1]) || `X 简报 ${f.slice(0, 10)}`;
     const q = (h.match(/<ol class="quick">([\s\S]*?)<\/ol>/) || [])[1] || '';
     const qs = [...q.matchAll(/<li>([\s\S]*?)<\/li>/g)].map(m => txt(m[1])).filter(Boolean).slice(0, 3).join('；');
-    push({ id: `brief:${f.slice(0, 10)}`, type: 'X 简报', title: h1, href: `x-brief/${f}`, date: briefBeijingDate(f.slice(0, 10), h), summary: qs });
+    push({ id: `brief:${f.slice(0, 10)}`, type: 'X 简报', title: h1, href: `x-brief/${f}`, date: briefBeijingDate(f.slice(0, 10), h), summary: qs, trace: { sourceFile: 'x-brief/' + f, key: f.slice(0, 10) } });
   }
   for (const d of (fs.existsSync(path.join(ROOT, 'x-posters')) ? fs.readdirSync(path.join(ROOT, 'x-posters')) : []).filter(x => /^\d{4}-\d\d-\d\d$/.test(x))) {
     const fp = path.join(ROOT, 'x-posters', d, 'index.html');
     if (!fs.existsSync(fp)) continue;
     const h = fs.readFileSync(fp, 'utf8');
     const cards = posterCards(h);
-    for (const c of cards) push({ id: `poster:${d}:${c.id}`, type: 'X 海报', title: txt(c.h3) || txt(c.alt), href: `x-posters/${d}/index.html#${c.id}`, date: d, summary: `X 海报 ${d}` });
+    for (const c of cards) push({ id: `poster:${d}:${c.id}`, type: 'X 海报', title: txt(c.h3) || txt(c.alt), href: `x-posters/${d}/index.html#${c.id}`, date: d, summary: `X 海报 ${d}`, trace: { sourceFile: `x-posters/${d}/index.html`, key: c.id } });
   }
-  for (const d of (PHI.days || [])) for (const i of (d.items || [])) push({ id: `ph:${i.id}`, type: '产品灵感', title: i.name, href: `ph-inspo/index.html#${i.id}`, date: d.date || null, source: d.source || null, tags: i.tags || [], summary: [i.what, i.problem, i.highlight].filter(Boolean).join(' · ') });
-  for (const e of (RADAR?.entries || [])) push({ id: `radar:${e.id}`, type: '雷达', title: e.name, href: `radar/index.html#r${e.id}`, date: e.added || null, source: e.url || null, tags: [RADAR?.themes?.find(t => t.key === e.theme)?.name, e.license].filter(Boolean), summary: e.why || e.note || '' });
+  for (const d of (PHI.days || [])) for (const i of (d.items || [])) push({ id: `ph:${i.id}`, type: '产品灵感', title: i.name, href: `ph-inspo/index.html#${i.id}`, date: d.date || null, source: d.source || null, tags: i.tags || [], summary: [i.what, i.problem, i.highlight].filter(Boolean).join(' · '), trace: { sourceFile: 'data/ph-inspo.json', key: i.id } });
+  for (const e of (RADAR?.entries || [])) push({ id: `radar:${e.id}`, type: '雷达', title: e.name, href: `radar/index.html#r${e.id}`, date: e.added || null, source: e.url || null, tags: [RADAR?.themes?.find(t => t.key === e.theme)?.name, e.license].filter(Boolean), summary: e.why || e.note || '', trace: { sourceFile: 'data/radar.json', key: String(e.id) } });
+  for (const h of (DSH?.highlights || [])) push({ id: `dsh-highlight:${h.name}`, type: 'DSH 插件', title: h.name, href: 'dsh-plugins/index.html#picks', date: DSH?.asOf || null, source: h.url || null, tags: [h.group || '重点插件'], summary: h.copy || '', trace: { sourceFile: 'data/dsh-plugins.json', key: h.name } });
+  for (const g of (DSH?.verify || [])) for (const r of (g.rows || [])) push({ id: `dsh:${r.n}`, type: 'DSH 插件', title: r.name, href: 'dsh-plugins/index.html#verify', date: DSH?.asOf || null, source: r.url || null, tags: [g.group || '核实表', r.license || ''], summary: [r.blurb, r.downloads ? `下载 ${r.downloads}` : '', r.note].filter(Boolean).join(' · '), trace: { sourceFile: 'data/dsh-plugins.json', key: String(r.n) } });
   const seen = new Set();
   const entries = out.filter(x => {
     if (!x.title || !x.href) return false;
+    if (!isPublicStr(JSON.stringify(x))) return false;
     const k = `${x.type}|${x.href}`;
     if (seen.has(k)) return false;
     seen.add(k);
     return true;
   }).sort((a, b) => (String(b.date || '')).localeCompare(String(a.date || '')) || a.type.localeCompare(b.type) || a.title.localeCompare(b.title));
-  return { version: 1, generatedAt: new Date().toISOString(), note: '仅公开元数据索引：标题、链接、标签、摘要。不会收录私密原文或加密正文。', entries };
+  return { version: 1, note: '仅公开元数据索引：标题、链接、标签、摘要。不会收录私密原文或加密正文。', entries };
 })();
 fs.writeFileSync(path.join(ROOT, 'data', 'search-index.json'), JSON.stringify(SEARCH, null, 1) + '\n');
 console.log('wrote data/search-index.json', SEARCH.entries.length);
@@ -389,17 +400,18 @@ console.log('wrote data/search-index.json', SEARCH.entries.length);
   const body = `<div class="crumb"><a href="../index.html">首页</a> / 检索</div>
 <section class="hero sheet solo"><div class="say"><span class="kk">全站检索</span><h1>${ic('search', 26)} 跨内容找回</h1><p>统一检索学习页、概念卡、X 简报、X 海报、产品灵感、雷达和每日汇总。只用公开元数据，不收录加密正文或私密原文。</p></div></section>
 <div class="fbar"><input id="sq" type="search" placeholder="搜索标题、标签、摘要、来源链接"><select id="st"><option value="">全部类型</option></select></div>
-<div class="chips" id="stags"></div><div id="scount" style="font-size:13px;color:var(--meta);margin:12px 0 8px"></div><div class="list" id="slist"><div class="empty"><b>加载中…</b></div></div>
-${about('<p>索引文件：<code>data/search-index.json</code>，由 <code>build.mjs</code> 构建。bot 每次发布都会重建，避免手工维护第二份正文。</p><p>收录范围：课程/文章学习页、概念卡、X 简报、X 海报、产品灵感、雷达、每日汇总。来源只存公开链接，保留原文和学习页关联。</p>')}`;
-  const script = `const SQ=document.getElementById('sq'),ST=document.getElementById('st'),SG=document.getElementById('stags'),SC=document.getElementById('scount'),SL=document.getElementById('slist');let DATA=[],TYPE='',TAG='';
+<div class="chips" id="stags"></div><div id="scount" style="font-size:13px;color:var(--meta);margin:12px 0 8px"></div><div class="list" id="slist"><div class="empty"><b>加载中…</b></div></div><div id="smore" style="margin-top:10px"></div>
+${about('<p>索引文件：<code>data/search-index.json</code>，由 <code>build.mjs</code> 构建。bot 每次发布都会重建，避免手工维护第二份正文。</p><p>收录范围：课程/文章学习页、概念卡、X 简报、X 海报、产品灵感、雷达、DSH 插件、每日汇总。来源只存公开链接，保留原文和学习页关联。</p>')}`;
+  const script = `const SQ=document.getElementById('sq'),ST=document.getElementById('st'),SG=document.getElementById('stags'),SC=document.getElementById('scount'),SL=document.getElementById('slist'),SM=document.getElementById('smore');let DATA=[],TYPE='',TAG='',LIMIT=120,PAGE=1;
 const E=s=>String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function uniq(a){return[...new Set(a.filter(Boolean))]}
 function norm(s){return String(s||'').toLowerCase()}
 function row(x){const src=x.source?'<div style="font-weight:400;font-size:13px;color:var(--meta)">来源：'+(x.source.startsWith('http')?'<a href="'+E(x.source)+'" target="_blank" rel="noopener">'+E(x.source.replace(/^https?:\\/\\//,''))+'</a>':E(x.source))+'</div>':'';const sum=x.summary?'<div style="font-weight:400;font-size:13px;color:var(--ink2)">'+E(x.summary)+'</div>':'';const tags=(x.tags||[]).slice(0,5).map(t=>'<span class="tag">'+E(t)+'</span>').join('');return '<div class="row"><span class="tag blue">'+E(x.type)+'</span><span class="t"><a href="../'+E(x.href)+'">'+E(x.title)+'</a>'+sum+src+'</span><span class="d">'+(x.date?E(x.date):'')+(tags?'<div>'+tags+'</div>':'')+'</span></div>'}
-function render(){const q=norm(SQ.value).trim();const list=DATA.filter(x=>(!TYPE||x.type===TYPE)&&(!TAG||(x.tags||[]).includes(TAG))&&(!q||norm([x.title,x.summary,x.source,(x.tags||[]).join(' ')].join(' ')).includes(q)));SC.textContent='索引 '+DATA.length+' 条'+(list.length===DATA.length?'':'，筛出 '+list.length+' 条');SL.innerHTML=list.length?list.slice(0,300).map(row).join(''):'<div class="empty"><b>没有匹配结果</b>试试更短关键词或切换类型/标签</div>'}
-function renderFilters(){const types=uniq(DATA.map(x=>x.type));const cur=ST.value;ST.innerHTML='<option value="">全部类型</option>'+types.map(t=>'<option value="'+E(t)+'">'+E(t)+'</option>').join('');ST.value=types.includes(cur)?cur:'';TYPE=ST.value;const tags=uniq(DATA.flatMap(x=>x.tags||[]));SG.innerHTML=tags.map(t=>'<a class="chip'+(TAG===t?' more':'')+'" href="#" data-t="'+E(t)+'">#'+E(t)+'</a>').join('');SG.querySelectorAll('a').forEach(a=>a.onclick=e=>{e.preventDefault();TAG=(TAG===a.dataset.t?'':a.dataset.t);renderFilters();render()})}
-fetch('../data/search-index.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject(new Error('索引加载失败'))).then(j=>{DATA=Array.isArray(j.entries)?j.entries:[];renderFilters();render()}).catch(e=>{SL.innerHTML='<div class="empty"><b>加载失败</b>'+E(e.message)+'</div>'});
-SQ.oninput=render;ST.onchange=()=>{TYPE=ST.value;render()};`;
+function listNow(){const q=norm(SQ.value).trim();return DATA.filter(x=>(!TYPE||x.type===TYPE)&&(!TAG||(x.tags||[]).includes(TAG))&&(!q||norm([x.title,x.summary,x.source,(x.tags||[]).join(' ')].join(' ')).includes(q)))}
+function render(){const list=listNow(),show=list.slice(0,PAGE*LIMIT);SC.textContent='索引 '+DATA.length+' 条 · 当前显示 '+show.length+'/'+list.length;SL.innerHTML=list.length?show.map(row).join(''):'<div class="empty"><b>没有匹配结果</b>试试更短关键词或切换类型/标签</div>';if(list.length>show.length){SM.innerHTML='<button id="smoreb" class="btn ghost sm" type="button">加载更多（剩余 '+(list.length-show.length)+' 条）</button>';document.getElementById('smoreb').onclick=()=>{PAGE++;render()}}else SM.innerHTML=''}
+function renderFilters(){const types=uniq(DATA.map(x=>x.type));const cur=ST.value;ST.innerHTML='<option value="">全部类型</option>'+types.map(t=>'<option value="'+E(t)+'">'+E(t)+'</option>').join('');ST.value=types.includes(cur)?cur:'';TYPE=ST.value;const tags=uniq(DATA.flatMap(x=>x.tags||[]));SG.innerHTML=tags.map(t=>'<a class="chip'+(TAG===t?' more':'')+'" href="#" data-t="'+E(t)+'">#'+E(t)+'</a>').join('');SG.querySelectorAll('a').forEach(a=>a.onclick=e=>{e.preventDefault();TAG=(TAG===a.dataset.t?'':a.dataset.t);PAGE=1;renderFilters();render()})}
+fetch('../data/search-index.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject(new Error('索引加载失败'))).then(j=>{DATA=Array.isArray(j.entries)?j.entries:[];window.__searchData=DATA;renderFilters();render()}).catch(e=>{SL.innerHTML='<div class="empty"><b>加载失败</b>'+E(e.message)+'</div>'});
+SQ.oninput=()=>{PAGE=1;render()};ST.onchange=()=>{TYPE=ST.value;PAGE=1;render()};`;
   write(f, page(f, '检索', 'search', body, script));
 }
 // ---- 首页 ----
@@ -758,9 +770,9 @@ ${c.related?.length ? `<div class="kicker">相关概念</div><div class="chips">
 <details class="panel" id="settings"><summary>${ic('settings', 15)} 同步设置 <span class="s" id="tkstate"></span></summary><div class="pb">
 <div class="tkrow"><input id="tk" type="password" autocomplete="off" placeholder="粘贴 github_pat_ 开头的令牌"><button id="tksave" class="pri">保存</button><button id="tkclear">清除</button></div>
 <details class="panel" id="bk"><summary>${ic('download', 15)} 学习状态导出/导入（仅本地）</summary><div class="pb">
-<p style="margin:0 0 10px;color:var(--ink2);font-size:14px">只处理本机学习状态：<code>done:</code>、<code>rev-done:</code>、<code>rev-op:</code>。<b>不包含 GitHub 令牌</b>、收藏列表、私密原文。导入按「合并」执行：保留本机更新/更早记录，冲突会提示，不会整库覆盖。</p>
-<div class="tkrow"><button id="bkexp" class="pri">导出 JSON</button><button id="bkimp">导入并合并</button></div>
-<textarea id="bkjson" rows="8" placeholder="把导出的 JSON 粘贴到这里，再点「导入并合并」"></textarea>
+<p style="margin:0 0 10px;color:var(--ink2);font-size:14px">只处理本机学习状态：<code>done:</code>、<code>rev-done:</code>、<code>rev-op:</code>。<b>不包含 GitHub 令牌</b>、收藏列表、私密原文。导入先预览，再确认执行；写入失败会回滚，不会静默部分覆盖。</p>
+<div class="tkrow"><button id="bkexp" class="pri">导出 JSON</button><button id="bkpick">选择备份文件</button><button id="bkpreview">预览导入</button><button id="bkimp">确认导入</button><input id="bkfile" type="file" accept="application/json,.json" style="display:none"></div>
+<textarea id="bkjson" rows="8" placeholder="粘贴备份 JSON，或点“选择备份文件”加载"></textarea>
 <p id="bkmsg" style="margin:8px 0 0;color:var(--meta);font-size:13px"></p>
 </div></details>
 <ol><li>电脑上打开 GitHub，右上角头像 → <b>Settings</b> → 左侧最下面 <b>Developer settings</b> → <b>Personal access tokens</b> → <b>Fine-grained tokens</b> → <b>Generate new token</b>。</li><li>Token name 填「学习站同步」，Expiration 选一个期限（比如 1 年）。</li><li>Repository access 选 <b>Only select repositories</b>，只勾 <code>ww880412/learning</code>。</li><li>Permissions → Repository permissions 里找到 <b>Contents</b>，改成 <b>Read and write</b>，其他保持不动。</li><li>点 <b>Generate token</b>，复制那串 <code>github_pat_…</code>，粘贴到上面的框里点「保存」。每个浏览器（手机、电脑）各做一次。令牌只留在这个浏览器里，用来同步收藏和学习进度（学完、今日复习），不会上传到别的服务器。</li></ol></div></details>`;
@@ -770,8 +782,12 @@ function tks(){var t=window.FAV&&FAV.token();document.getElementById('tkstate').
 function openS(){if(location.hash==='#settings')document.getElementById('settings').open=true}window.addEventListener('hashchange',openS);openS();
 document.getElementById('tksave').onclick=()=>{var v=document.getElementById('tk').value.trim();if(!/^(github_pat_|ghp_)/.test(v)){alert('看起来不是 GitHub 令牌，应以 github_pat_ 开头');return}FAV.setToken(v);document.getElementById('tk').value='';tks();FAV.toast('已保存令牌')};
 document.getElementById('tkclear').onclick=()=>{FAV.setToken('');tks();FAV.toast('已清除令牌')};
-document.getElementById('bkexp').onclick=()=>{if(!(window.PROG&&PROG.exportLocalBackup)){alert('导出功能还没就绪，请刷新后重试');return}var j=JSON.stringify(PROG.exportLocalBackup(),null,2);document.getElementById('bkjson').value=j;var blob=new Blob([j+'\\n'],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='learning-progress-local-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);document.getElementById('bkmsg').textContent='已导出：只含本地学习状态，不含令牌。'};
-document.getElementById('bkimp').onclick=()=>{var el=document.getElementById('bkjson'),msg=document.getElementById('bkmsg');if(!(window.PROG&&PROG.importLocalBackup)){alert('导入功能还没就绪，请刷新后重试');return}if(!el.value.trim()){msg.textContent='先粘贴要导入的 JSON。';return}try{var r=PROG.importLocalBackup(el.value);var c=(r.conflicts||[]);msg.textContent='导入完成：新增 done '+r.imported.done+'、rev '+r.imported.rev+'、ops '+r.imported.ops+'；跳过 done '+r.skipped.done+'、rev '+r.skipped.rev+'、ops '+r.skipped.ops+(c.length?'；冲突 '+c.length+'（保留本机优先）':'');if(c.length)msg.title=c.slice(0,8).join('\\n');if(window.PROG&&PROG.syncLocal&&window.FAV&&FAV.token())PROG.syncLocal();}catch(e){msg.textContent='导入失败：'+e.message}};
+function bkMsg(s){var m=document.getElementById('bkmsg');m.textContent=s||'';if(!s)m.removeAttribute('title')}
+document.getElementById('bkexp').onclick=()=>{if(!(window.PROG&&PROG.exportLocalBackup)){alert('导出功能还没就绪，请刷新后重试');return}var j=JSON.stringify(PROG.exportLocalBackup(),null,2);document.getElementById('bkjson').value=j;var blob=new Blob([j+'\\n'],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='learning-progress-local-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);window.__bkPreview=null;bkMsg('已导出：只含本地学习状态，不含令牌。')};
+document.getElementById('bkpick').onclick=()=>document.getElementById('bkfile').click();
+document.getElementById('bkfile').onchange=async(ev)=>{var f=ev.target.files&&ev.target.files[0];if(!f)return;document.getElementById('bkjson').value=await f.text();window.__bkPreview=null;bkMsg('已加载文件：'+f.name+'。请先点“预览导入”。')};
+document.getElementById('bkpreview').onclick=()=>{var el=document.getElementById('bkjson');if(!(window.PROG&&PROG.previewBackupMerge)){alert('预览功能还没就绪，请刷新后重试');return}if(!el.value.trim()){bkMsg('先粘贴或加载备份 JSON。');return}var p=PROG.previewBackupMerge(el.value);if(!p.ok){window.__bkPreview=null;bkMsg('预览失败：'+p.error);return}window.__bkPreview={raw:el.value,preview:p};var r=p.report,c=(r.conflicts||[]);var d=r.decisions||{localWins:0,importWins:0,equal:0};bkMsg('预览：将导入 done '+r.imported.done+'、rev '+r.imported.rev+'、ops '+r.imported.ops+'；保留本机 '+d.localWins+' 条，采用导入 '+d.importWins+' 条，相同 '+d.equal+' 条。'+(c.length?' 冲突说明 '+c.length+' 条（见 title）':''));if(c.length)document.getElementById('bkmsg').title=c.slice(0,10).join('\\n')};
+document.getElementById('bkimp').onclick=()=>{if(!(window.PROG&&PROG.importLocalBackup)){alert('导入功能还没就绪，请刷新后重试');return}var st=window.__bkPreview;if(!st||!st.raw){bkMsg('请先点“预览导入”，确认后再执行。');return}if(!confirm('确认导入并合并？写入失败会回滚到导入前状态。')){bkMsg('已取消导入。');return}try{var out=PROG.importLocalBackup(st.raw,{confirm:true});var r=out.report,c=(r.conflicts||[]),d=r.decisions||{localWins:0,importWins:0,equal:0};bkMsg('导入完成：写入 done '+r.imported.done+'、rev '+r.imported.rev+'、ops '+r.imported.ops+'；保留本机 '+d.localWins+' 条，采用导入 '+d.importWins+' 条，相同 '+d.equal+' 条。'+(c.length?' 冲突说明 '+c.length+' 条。':''));if(c.length)document.getElementById('bkmsg').title=c.slice(0,10).join('\\n');window.__bkPreview=null;if(window.PROG&&PROG.syncLocal&&window.FAV&&FAV.token())PROG.syncLocal()}catch(e){bkMsg('导入失败：'+e.message)}};
 document.addEventListener('DOMContentLoaded',tks);`;
   write(f, page(f, '我的收藏', 'favorites', body, script));
 }

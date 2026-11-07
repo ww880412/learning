@@ -11,6 +11,7 @@ const puppeteer = require('puppeteer-core');
 const prog = require('../assets/progress.js');
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const REVIEW = fs.readFileSync(path.join(ROOT, 'data/review.json'), 'utf8');
+const SEARCH_JSON = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/search-index.json'), 'utf8'));
 const TOKEN = 'github_pat_testtoken1234';
 const BJ = prog.beijingToday(new Date());
 // 今日勾选的用例跟着 review.json 走：取 cs146s-L01 下一次没做的复习，用 ?today= 把那天调出来。
@@ -21,6 +22,20 @@ const L01_OPEN = L01.reviews.filter((r) => !r.done);
 const TODAY = L01_OPEN.length ? [BJ, addDays(L01_BASE, L01_OPEN[0].day)].sort().pop() : BJ;
 const DUE = L01_OPEN.filter((r) => addDays(L01_BASE, r.day) <= TODAY).map((r) => r.day);
 const HOME = '/index.html?today=' + TODAY;
+const pickEntry = (f) => SEARCH_JSON.entries.find(f);
+const pickKeyword = (entry, fallback) => {
+  if (!entry) return fallback;
+  const t = String(entry.title || '');
+  const en = t.match(/[A-Za-z][A-Za-z0-9-]{3,}/);
+  if (en) return en[0].toLowerCase();
+  return t.slice(0, 4) || fallback;
+};
+const SAMPLES = {
+  langchain: pickEntry((x) => /langchain-agents-async/.test(x.href)),
+  poster: pickEntry((x) => x.type === 'X 海报' && /#/.test(x.href)),
+  ph: pickEntry((x) => x.type === '产品灵感' && /#/.test(x.href)),
+  dsh: pickEntry((x) => x.type === 'DSH 插件'),
+};
 const SHOTS = process.env.SHOTS || '/workspace/shots';
 fs.mkdirSync(SHOTS, { recursive: true });
 
@@ -393,44 +408,133 @@ try {
     await new Promise((r) => setTimeout(r, 200));
     await page.goto(origin + '/favorites/index.html#settings', { waitUntil: 'networkidle0' });
     await page.waitForFunction(() => window.PROG && typeof PROG.exportLocalBackup === 'function');
-    const bk = await page.evaluate(() => PROG.exportLocalBackup());
+    await page.evaluate(() => { document.getElementById('settings').open = true; document.getElementById('bk').open = true; });
+    await page.$eval('#bkexp', (b) => b.click());
+    await page.waitForFunction(() => document.querySelector('#bkjson').value.length > 20);
+    const bk = await page.evaluate(() => JSON.parse(document.querySelector('#bkjson').value));
     if (bk.kind !== 'learning-progress-local' || bk.version !== 1) throw new Error('备份格式不对');
     if (JSON.stringify(bk).includes('github_pat_') || JSON.stringify(bk).includes('fav:token')) throw new Error('备份不应包含令牌');
+    const filePath = path.join(SHOTS, 'backup-valid.json');
+    fs.writeFileSync(filePath, JSON.stringify(bk, null, 2) + '\n');
+    await page.$eval('#bkjson', (el) => { el.value = ''; });
+    const input = await page.$('#bkfile');
+    await input.uploadFile(filePath);
+    await page.$eval('#bkfile', (el) => el.dispatchEvent(new Event('change', { bubbles: true })));
+    await page.waitForFunction(() => document.querySelector('#bkjson').value.includes('learning-progress-local'));
     const before = await page.evaluate(() => ({ done: localStorage.getItem('done:/courses/cs146s/L02-harness-anatomy.html'), rev: localStorage.getItem('rev-done:cs146s-L01') }));
     if (!before.done || !before.rev) throw new Error('准备数据失败');
-    const imported = await page.evaluate((payload) => {
+    await page.evaluate(() => {
       localStorage.removeItem('done:/courses/cs146s/L02-harness-anatomy.html');
       localStorage.removeItem('rev-done:cs146s-L01');
-      const rep = PROG.importLocalBackup(JSON.stringify(payload));
-      return { rep, done: localStorage.getItem('done:/courses/cs146s/L02-harness-anatomy.html'), rev: localStorage.getItem('rev-done:cs146s-L01') };
-    }, bk);
+    });
+    await page.click('#bkpreview');
+    await page.waitForFunction(() => document.querySelector('#bkmsg').textContent.includes('预览：将导入'));
+    await page.click('#bkimp');
+    await page.waitForFunction(() => document.querySelector('#bkmsg').textContent.includes('导入完成'));
+    const imported = await page.evaluate(() => ({ done: localStorage.getItem('done:/courses/cs146s/L02-harness-anatomy.html'), rev: localStorage.getItem('rev-done:cs146s-L01') }));
     if (!imported.done || !imported.rev) throw new Error('导入后本地状态没恢复');
-    if (!imported.rep || imported.rep.imported.done < 1) throw new Error('导入报告不对');
-    const bad = await page.evaluate(() => { try { PROG.importLocalBackup('{"version":99}'); return 'noerr'; } catch (e) { return String(e.message || e); } });
-    if (bad === 'noerr' || !/版本不支持/.test(bad)) throw new Error('坏版本应被拒绝');
+    await page.$eval('#bkjson', (el) => { el.value = '{"version":1,"kind":"learning-progress-local","done":{"\/bad":"2026-99-99"}}'; });
+    await page.click('#bkpreview');
+    await page.waitForFunction(() => document.querySelector('#bkmsg').textContent.includes('预览失败'));
+    await page.$eval('#bkjson', (el, text) => { el.value = text; }, JSON.stringify(bk));
+    await page.click('#bkpreview');
+    await page.evaluate(() => { window.confirm = () => false; });
+    await page.click('#bkimp');
+    await page.waitForFunction(() => document.querySelector('#bkmsg').textContent.includes('已取消导入'));
+    const snapBeforeFail = await page.evaluate(() => ({
+      done: localStorage.getItem('done:/courses/cs146s/L02-harness-anatomy.html'),
+      rev: localStorage.getItem('rev-done:cs146s-L01'),
+    }));
+    await page.evaluate(() => {
+      const orig = localStorage.setItem.bind(localStorage);
+      let n = 0;
+      localStorage.setItem = function (k, v) {
+        n++;
+        if (n >= 2 && /^rev-done:/.test(k)) throw new Error('quota');
+        return orig(k, v);
+      };
+      window.confirm = () => true;
+    });
+    await page.click('#bkimp');
+    await page.waitForFunction(() => document.querySelector('#bkmsg').textContent.includes('导入失败，已回滚原状态'));
+    const snapAfterFail = await page.evaluate(() => ({
+      done: localStorage.getItem('done:/courses/cs146s/L02-harness-anatomy.html'),
+      rev: localStorage.getItem('rev-done:cs146s-L01'),
+    }));
+    if (JSON.stringify(snapBeforeFail) !== JSON.stringify(snapAfterFail)) throw new Error('失败后应回滚到导入前状态');
+    await page.screenshot({ path: path.join(SHOTS, 'backup-desktop.png') });
+    await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 });
+    await page.screenshot({ path: path.join(SHOTS, 'backup-mobile.png') });
+    // 导入旧 rev-done + 云端更新取消，不应被复活
+    const cloud = JSON.parse(REVIEW);
+    const q = cloud.queue.find((x) => x.item === 'cs146s-L01');
+    const at = new Date(Date.now() - 1000).toISOString();
+    for (const r of q.reviews) if (DUE.includes(r.day)) { r.done = false; delete r.doneOn; r.at = at; }
+    await page.goto(origin + '/favorites/index.html', { waitUntil: 'networkidle0' });
+    await page.evaluate((c, stale) => {
+      localStorage.setItem('__test:cloud-review', JSON.stringify(c, null, 2));
+      localStorage.setItem('rev-done:cs146s-L01', JSON.stringify(stale));
+    }, cloud, Object.fromEntries(DUE.map((d) => [d, TODAY])));
+    await page.goto(origin + HOME, { waitUntil: 'networkidle0' });
+    await page.waitForFunction(() => window.__cloudReady === 1 && window.__progReady === 1 && !window.__progPending);
+    if ((await puts(page, 'data/review.json')).length) throw new Error('导入旧记录后不应把取消复活到云端');
     if (page._errors.length) throw new Error(page._errors.join('\n'));
     await page._ctx.close();
   });
 
-  await check('跨内容检索页：覆盖多类型并可点击跳转', async () => {
+  await check('跨内容检索页：多类型关键词、锚点命中、300+结果可达', async () => {
     const page = await boot(browser, origin);
     await page.goto(origin + '/search/index.html', { waitUntil: 'networkidle0' });
     await page.waitForFunction(() => document.querySelectorAll('#slist .row').length > 10);
-    await page.type('#sq', 'agent');
-    await new Promise((r) => setTimeout(r, 250));
-    const got = await page.evaluate(() => {
-      const rows = [...document.querySelectorAll('#slist .row')];
-      const types = [...new Set(rows.map(r => (r.querySelector('.tag.blue') || {}).textContent).filter(Boolean))];
-      const first = rows[0] && rows[0].querySelector('.t a');
-      return { n: rows.length, types, firstHref: first && first.getAttribute('href') };
+    const cases = [
+      { key: 'langchain', entry: SAMPLES.langchain },
+      { key: pickKeyword(SAMPLES.poster, 'poster'), entry: SAMPLES.poster },
+      { key: pickKeyword(SAMPLES.ph, 'product'), entry: SAMPLES.ph },
+      { key: pickKeyword(SAMPLES.dsh, 'dsh'), entry: SAMPLES.dsh },
+    ];
+    for (const c of cases) {
+      if (!c.entry) throw new Error('缺少样本 ' + c.key);
+      await page.goto(origin + '/search/index.html', { waitUntil: 'networkidle0' });
+      await page.waitForFunction(() => !!window.__searchData);
+      await page.$eval('#sq', (el, v) => { el.value = v; el.dispatchEvent(new Event('input', { bubbles: true })); }, c.key);
+      await new Promise((r) => setTimeout(r, 250));
+      const target = await page.evaluate((href) => {
+        const a = [...document.querySelectorAll('#slist .row .t a')].find((x) => x.getAttribute('href') === '../' + href);
+        if (!a) return null;
+        a.click();
+        return true;
+      }, c.entry.href);
+      if (!target) throw new Error('关键词未命中目标：' + c.key + ' -> ' + c.entry.href);
+      await new Promise((r) => setTimeout(r, 250));
+      const hit = await page.evaluate(() => {
+        const h = location.hash ? decodeURIComponent(location.hash.slice(1)) : '';
+        return { path: location.pathname, hash: h, has: h ? !!document.getElementById(h) : true };
+      });
+      if (!hit.path.endsWith(c.entry.href.split('#')[0])) throw new Error('未跳到目标页 ' + c.entry.href + ' actual=' + hit.path);
+      if (c.entry.href.includes('#') && (!hit.hash || !hit.has)) throw new Error('锚点未命中 ' + c.entry.href + ' actualHash=' + hit.hash);
+    }
+    // 300+ 结果可达：加载更多直到末尾，并命中最后一条
+    await page.goto(origin + '/search/index.html', { waitUntil: 'networkidle0' });
+    await page.waitForFunction(() => !!window.__searchData && document.querySelector('#scount').textContent.includes('/'));
+    let guard = 0;
+    while (guard++ < 20) {
+      const hasMore = await page.$('#smoreb');
+      if (!hasMore) break;
+      await page.click('#smoreb');
+      await new Promise((r) => setTimeout(r, 150));
+    }
+    const reach = await page.evaluate(() => {
+      const data = window.__searchData || [];
+      const last = data[data.length - 1];
+      const shown = document.querySelector('#scount').textContent || '';
+      const links = [...document.querySelectorAll('#slist .row .t a')].map((a) => a.getAttribute('href'));
+      return { shown, last: last && ('../' + last.href), hasLast: !!(last && links.includes('../' + last.href)) };
     });
-    if (got.n < 5) throw new Error('检索结果过少 ' + got.n);
-    if (got.types.length < 3) throw new Error('类型覆盖不足 ' + JSON.stringify(got.types));
-    if (!got.firstHref || !got.firstHref.startsWith('../')) throw new Error('结果链接格式不对 ' + got.firstHref);
-    await page.click('#slist .row .t a');
-    await new Promise((r) => setTimeout(r, 250));
-    const jumped = await page.evaluate(() => ({ href: location.href, ok: location.pathname !== '/search/index.html' }));
-    if (!jumped.ok) throw new Error('点击后没离开检索页: ' + jumped.href);
+    if (!reach.hasLast) throw new Error('加载更多后仍无法访问末尾条目: ' + JSON.stringify(reach));
+    await page.setViewport({ width: 1280, height: 1000, deviceScaleFactor: 1 });
+    await page.screenshot({ path: path.join(SHOTS, 'search-desktop.png') });
+    await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 });
+    await page.screenshot({ path: path.join(SHOTS, 'search-mobile.png') });
     if (page._errors.length) throw new Error(page._errors.join('\n'));
     await page._ctx.close();
   });

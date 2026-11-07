@@ -140,6 +140,10 @@ assert.equal(prog.pathsMatch('/learning/cs146s/L02-harness-anatomy.html', 'cours
   const parsed = prog.parseBackup(JSON.stringify(bk));
   assert.equal(parsed.ok, true);
   assert.equal(prog.parseBackup('{"version":2}').ok, false, '版本不对时应拒绝');
+  assert.equal(prog.parseBackup(JSON.stringify({ version: 1, kind: 'learning-progress-local', done: { '/bad': '2026-13-40' } })).ok, false, '内容坏时也应拒绝');
+  const pv = prog.previewBackupMerge({ done: {}, rev: {}, ops: {} }, JSON.stringify(bk));
+  assert.equal(pv.ok, true);
+  assert.equal(pv.preview.counts.done, 1);
   const merged = prog.mergeBackup({
     done: { '/courses/cs146s/L01-agent-loop.html': '2026-10-19' }, // 本机更早
     rev: { 'cs146s-L01': { 1: '2026-10-19' } }, // 本机更早
@@ -149,6 +153,10 @@ assert.equal(prog.pathsMatch('/learning/cs146s/L02-harness-anatomy.html', 'cours
   assert.equal(merged.state.rev['cs146s-L01'][1], '2026-10-19');
   assert.equal(merged.state.ops['cs146s-L01'][3].done, true);
   assert.ok(merged.report.conflicts.length >= 1, '冲突应在报告里可见');
+  assert.ok(merged.report.decisions.localWins >= 1, '应统计本机优先');
+  const merged2 = prog.mergeBackup({ done: { '/courses/cs146s/L01-agent-loop.html': '2026-10-20' }, rev: {}, ops: {} }, { done: { '/courses/cs146s/L01-agent-loop.html': '2026-10-19' }, rev: {}, ops: {} });
+  assert.equal(merged2.state.done['/courses/cs146s/L01-agent-loop.html'], '2026-10-19');
+  assert.ok(merged2.report.decisions.importWins >= 1, '应统计导入优先');
 }
 
 function jsonResp(status, obj) { return { status, json: async () => obj }; }
