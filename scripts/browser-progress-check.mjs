@@ -381,6 +381,60 @@ try {
     }
   });
 
+  await check('导出/导入本地学习状态：版本校验、合并恢复、无令牌泄漏', async () => {
+    const page = await boot(browser, origin);
+    await page.goto(origin + '/courses/cs146s/L02-harness-anatomy.html', { waitUntil: 'networkidle0' });
+    await page.waitForFunction(() => window.__progReady === 1 && document.querySelector('.fin-btn'));
+    await page.click('.fin-btn');
+    await page.waitForFunction(() => !!localStorage.getItem('done:' + location.pathname));
+    await page.goto(origin + HOME, { waitUntil: 'networkidle0' });
+    await page.waitForFunction(() => window.__progReady === 1 && document.querySelector('[data-id="rev:cs146s-L01"]'));
+    await page.click('[data-id="rev:cs146s-L01"]');
+    await new Promise((r) => setTimeout(r, 200));
+    await page.goto(origin + '/favorites/index.html#settings', { waitUntil: 'networkidle0' });
+    await page.waitForFunction(() => window.PROG && typeof PROG.exportLocalBackup === 'function');
+    const bk = await page.evaluate(() => PROG.exportLocalBackup());
+    if (bk.kind !== 'learning-progress-local' || bk.version !== 1) throw new Error('备份格式不对');
+    if (JSON.stringify(bk).includes('github_pat_') || JSON.stringify(bk).includes('fav:token')) throw new Error('备份不应包含令牌');
+    const before = await page.evaluate(() => ({ done: localStorage.getItem('done:/courses/cs146s/L02-harness-anatomy.html'), rev: localStorage.getItem('rev-done:cs146s-L01') }));
+    if (!before.done || !before.rev) throw new Error('准备数据失败');
+    const imported = await page.evaluate((payload) => {
+      localStorage.removeItem('done:/courses/cs146s/L02-harness-anatomy.html');
+      localStorage.removeItem('rev-done:cs146s-L01');
+      const rep = PROG.importLocalBackup(JSON.stringify(payload));
+      return { rep, done: localStorage.getItem('done:/courses/cs146s/L02-harness-anatomy.html'), rev: localStorage.getItem('rev-done:cs146s-L01') };
+    }, bk);
+    if (!imported.done || !imported.rev) throw new Error('导入后本地状态没恢复');
+    if (!imported.rep || imported.rep.imported.done < 1) throw new Error('导入报告不对');
+    const bad = await page.evaluate(() => { try { PROG.importLocalBackup('{"version":99}'); return 'noerr'; } catch (e) { return String(e.message || e); } });
+    if (bad === 'noerr' || !/版本不支持/.test(bad)) throw new Error('坏版本应被拒绝');
+    if (page._errors.length) throw new Error(page._errors.join('\n'));
+    await page._ctx.close();
+  });
+
+  await check('跨内容检索页：覆盖多类型并可点击跳转', async () => {
+    const page = await boot(browser, origin);
+    await page.goto(origin + '/search/index.html', { waitUntil: 'networkidle0' });
+    await page.waitForFunction(() => document.querySelectorAll('#slist .row').length > 10);
+    await page.type('#sq', 'agent');
+    await new Promise((r) => setTimeout(r, 250));
+    const got = await page.evaluate(() => {
+      const rows = [...document.querySelectorAll('#slist .row')];
+      const types = [...new Set(rows.map(r => (r.querySelector('.tag.blue') || {}).textContent).filter(Boolean))];
+      const first = rows[0] && rows[0].querySelector('.t a');
+      return { n: rows.length, types, firstHref: first && first.getAttribute('href') };
+    });
+    if (got.n < 5) throw new Error('检索结果过少 ' + got.n);
+    if (got.types.length < 3) throw new Error('类型覆盖不足 ' + JSON.stringify(got.types));
+    if (!got.firstHref || !got.firstHref.startsWith('../')) throw new Error('结果链接格式不对 ' + got.firstHref);
+    await page.click('#slist .row .t a');
+    await new Promise((r) => setTimeout(r, 250));
+    const jumped = await page.evaluate(() => ({ href: location.href, ok: location.pathname !== '/search/index.html' }));
+    if (!jumped.ok) throw new Error('点击后没离开检索页: ' + jumped.href);
+    if (page._errors.length) throw new Error(page._errors.join('\n'));
+    await page._ctx.close();
+  });
+
   await check('截图：首页 A/B/C 和一课', async () => {
     const page = await boot(browser, origin);
     await page.setViewport({ width: 1280, height: 1000, deviceScaleFactor: 1 });

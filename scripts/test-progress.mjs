@@ -126,6 +126,31 @@ assert.equal(prog.pathsMatch('/learning/cs146s/L02-harness-anatomy.html', 'cours
   assert.deepEqual(injected({ done: true, doneOn: '2026-10-26', at: new Date(T1).toISOString() }, '', undefined), { done: true, on: '2026-10-26' });
 }
 
+// ---------- 本地备份导出/导入（不含令牌） ----------
+{
+  const base = {
+    done: { '/courses/cs146s/L01-agent-loop.html': '2026-10-20' },
+    rev: { 'cs146s-L01': { 1: '2026-10-20' } },
+    ops: { 'cs146s-L01': { 3: { done: false, at: Date.parse('2026-10-26T02:00:00Z') } } },
+  };
+  const bk = prog.exportBackup(base);
+  assert.equal(bk.version, 1);
+  assert.equal(bk.kind, 'learning-progress-local');
+  assert.deepEqual(Object.keys(bk).sort(), ['done', 'exportedAt', 'kind', 'ops', 'rev', 'scope', 'version'].sort());
+  const parsed = prog.parseBackup(JSON.stringify(bk));
+  assert.equal(parsed.ok, true);
+  assert.equal(prog.parseBackup('{"version":2}').ok, false, '版本不对时应拒绝');
+  const merged = prog.mergeBackup({
+    done: { '/courses/cs146s/L01-agent-loop.html': '2026-10-19' }, // 本机更早
+    rev: { 'cs146s-L01': { 1: '2026-10-19' } }, // 本机更早
+    ops: { 'cs146s-L01': { 3: { done: true, on: '2026-10-26', at: Date.parse('2026-10-26T03:00:00Z') } } }, // 本机更新
+  }, parsed.data);
+  assert.equal(merged.state.done['/courses/cs146s/L01-agent-loop.html'], '2026-10-19');
+  assert.equal(merged.state.rev['cs146s-L01'][1], '2026-10-19');
+  assert.equal(merged.state.ops['cs146s-L01'][3].done, true);
+  assert.ok(merged.report.conflicts.length >= 1, '冲突应在报告里可见');
+}
+
 function jsonResp(status, obj) { return { status, json: async () => obj }; }
 async function fakeCommit() {
   let sha = 's0', puts = 0, stored = { version: 1, items: [] };

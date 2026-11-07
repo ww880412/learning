@@ -194,7 +194,71 @@
     if (!n) return null;
     return { doc: copy, message: 'learn: sync local' };
   }
-  var api = { isDate: isDate, earlier: earlier, beijingToday: beijingToday, okPath: okPath, okId: okId, okDay: okDay, doneExpand: doneExpand, pathsMatch: pathsMatch, matchItem: matchItem, applyLearned: applyLearned, applyReviews: applyReviews, diffRev: diffRev, mergeLocal: mergeLocal, atMs: atMs, effReview: effReview, applyOps: applyOps, pruneOps: pruneOps };
+  function cleanState(raw) {
+    var src = raw && typeof raw === 'object' ? raw : {}, done = {}, rev = {}, ops = {}, id, day, v, o;
+    if (src.done && typeof src.done === 'object') for (var p in src.done) if (okPath(p) && isDate(src.done[p])) done[p] = src.done[p];
+    if (src.rev && typeof src.rev === 'object') for (id in src.rev) {
+      if (!okId(id) || !src.rev[id] || typeof src.rev[id] !== 'object') continue;
+      o = {};
+      for (day in src.rev[id]) if (okDay(day) && isDate(src.rev[id][day])) o[day] = src.rev[id][day];
+      if (Object.keys(o).length) rev[id] = o;
+    }
+    if (src.ops && typeof src.ops === 'object') for (id in src.ops) {
+      if (!okId(id) || !src.ops[id] || typeof src.ops[id] !== 'object') continue;
+      o = {};
+      for (day in src.ops[id]) if (okDay(day) && okOp(src.ops[id][day])) o[day] = { done: src.ops[id][day].done, at: atMs(src.ops[id][day].at), on: isDate(src.ops[id][day].on) ? src.ops[id][day].on : '' };
+      if (Object.keys(o).length) ops[id] = o;
+    }
+    return { done: done, rev: rev, ops: ops };
+  }
+  function exportBackup(local) {
+    var s = cleanState(local || {});
+    return { version: 1, kind: 'learning-progress-local', exportedAt: new Date().toISOString(), scope: ['done', 'rev', 'ops'], done: s.done, rev: s.rev, ops: s.ops };
+  }
+  function parseBackup(input) {
+    var raw = input, data;
+    if (typeof raw === 'string') { try { data = JSON.parse(raw); } catch (e) { return { ok: false, error: 'JSON 解析失败：' + e.message }; } }
+    else data = raw;
+    if (!data || typeof data !== 'object' || Array.isArray(data)) return { ok: false, error: '备份格式不对：应是对象' };
+    if (+data.version !== 1 || data.kind !== 'learning-progress-local') return { ok: false, error: '版本不支持：需要 version=1 且 kind=learning-progress-local' };
+    return { ok: true, data: cleanState(data) };
+  }
+  function mergeBackup(base, incoming) {
+    var cur = cleanState(base || {}), inc = cleanState(incoming || {}), report = { imported: { done: 0, rev: 0, ops: 0 }, skipped: { done: 0, rev: 0, ops: 0 }, conflicts: [] };
+    Object.keys(inc.done).forEach(function (p) {
+      var a = cur.done[p], b = inc.done[p];
+      if (!a) { cur.done[p] = b; report.imported.done++; return; }
+      if (a === b) { report.skipped.done++; return; }
+      var keep = earlier(a, b);
+      if (keep !== a) { cur.done[p] = keep; report.imported.done++; return; }
+      report.skipped.done++; report.conflicts.push('done ' + p + ' 保留本机更早日期 ' + a + '，忽略导入值 ' + b);
+    });
+    Object.keys(inc.rev).forEach(function (id) {
+      var dst = cur.rev[id] || {}, changed = false;
+      Object.keys(inc.rev[id]).forEach(function (day) {
+        var a = dst[day], b = inc.rev[id][day];
+        if (!a) { dst[day] = b; report.imported.rev++; changed = true; return; }
+        if (a === b) { report.skipped.rev++; return; }
+        var keep = earlier(a, b);
+        if (keep !== a) { dst[day] = keep; report.imported.rev++; changed = true; return; }
+        report.skipped.rev++; report.conflicts.push('rev ' + id + ' 第' + day + '天保留本机更早日期 ' + a + '，忽略导入值 ' + b);
+      });
+      if (changed || Object.keys(dst).length) cur.rev[id] = dst;
+    });
+    Object.keys(inc.ops).forEach(function (id) {
+      var dst = cur.ops[id] || {}, changed = false;
+      Object.keys(inc.ops[id]).forEach(function (day) {
+        var a = dst[day], b = inc.ops[id][day], ta = atMs(a && a.at), tb = atMs(b && b.at);
+        if (!a) { dst[day] = b; report.imported.ops++; changed = true; return; }
+        if (tb > ta) { dst[day] = b; report.imported.ops++; changed = true; return; }
+        if (tb === ta && a.done === b.done && (isDate(a.on) ? a.on : '') === (isDate(b.on) ? b.on : '')) { report.skipped.ops++; return; }
+        report.skipped.ops++; report.conflicts.push('ops ' + id + ' 第' + day + '天保留本机更新/同时刻记录，忽略导入值');
+      });
+      if (changed || Object.keys(dst).length) cur.ops[id] = dst;
+    });
+    return { state: cur, report: report };
+  }
+  var api = { isDate: isDate, earlier: earlier, beijingToday: beijingToday, okPath: okPath, okId: okId, okDay: okDay, doneExpand: doneExpand, pathsMatch: pathsMatch, matchItem: matchItem, applyLearned: applyLearned, applyReviews: applyReviews, diffRev: diffRev, mergeLocal: mergeLocal, atMs: atMs, effReview: effReview, applyOps: applyOps, pruneOps: pruneOps, cleanState: cleanState, exportBackup: exportBackup, parseBackup: parseBackup, mergeBackup: mergeBackup };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   root.PROG = api;
   if (typeof document === 'undefined' || !GH) return;
@@ -260,6 +324,18 @@
     return out;
   }
   function writeOps(id, o) { try { if (!o || !Object.keys(o).length) localStorage.removeItem('rev-op:' + id); else localStorage.setItem('rev-op:' + id, JSON.stringify(o)); } catch (e) {} }
+  function exportLocalBackup() {
+    return exportBackup(collectLocal());
+  }
+  function importLocalBackup(input) {
+    var parsed = parseBackup(input);
+    if (!parsed.ok) throw new Error(parsed.error);
+    var merged = mergeBackup(collectLocal(), parsed.data), s = merged.state;
+    Object.keys(s.done).forEach(function (p) { try { localStorage.setItem('done:' + p, s.done[p]); } catch (e) {} });
+    Object.keys(s.rev).forEach(function (id) { try { localStorage.setItem('rev-done:' + id, JSON.stringify(s.rev[id])); } catch (e) {} });
+    Object.keys(s.ops).forEach(function (id) { writeOps(id, s.ops[id]); });
+    return merged.report;
+  }
   // 提交（或发现云端更新）之后：按云端结果清掉已经落地或已经过时的本机操作，再把最新的 review.json 交给首页重画。
   function settle(res) {
     var doc = res && res.doc;
@@ -337,6 +413,6 @@
     syncLocal().then(function () { root.__progReady = 1; }, function () { root.__progReady = 1; });
   }
   root.addEventListener('gh-token', function () { paintHint(); if (GH.token()) syncLocal(); });
-  root.PROG = Object.assign(api, { onReview: onReview, syncLocal: syncLocal, settingsHref: settingsHref, hookFinish: hookFinish });
+  root.PROG = Object.assign(api, { onReview: onReview, syncLocal: syncLocal, settingsHref: settingsHref, hookFinish: hookFinish, exportLocalBackup: exportLocalBackup, importLocalBackup: importLocalBackup });
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
 })(typeof window !== 'undefined' ? window : globalThis);
