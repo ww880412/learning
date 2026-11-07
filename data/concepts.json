@@ -142,7 +142,8 @@
     "related": [
       "agent-loop",
       "harness",
-      "big-three"
+      "big-three",
+      "agent-memory"
     ]
   },
   {
@@ -775,6 +776,32 @@
     "related": [
       "agent-loop",
       "system-prompt"
+    ]
+  },
+  {
+    "id": "agent-memory",
+    "term": "Agent 记忆",
+    "en": "agent memory",
+    "def": "Lance Martin 这篇里的定义：Claude 从经验（和用户的互动、被派的任务）里得到、并且留在会话之间、以后还能读的上下文。不包括改 weights、一次对话里的 in-context learning，以及用摘要换掉旧回合的 compaction。显著性是对未来还会用到的预测。dreaming 是对着原始记录整理这些笔记，不是凭空反思。",
+    "refs": [
+      {
+        "item": "agent-memory-components",
+        "card": 3,
+        "note": "排除 weights、in-context learning、compaction"
+      },
+      {
+        "item": "agent-memory-components",
+        "card": 4,
+        "note": "写下规则是在预测以后还会用到"
+      },
+      {
+        "item": "agent-memory-components",
+        "card": 7,
+        "note": "dreaming 拿 transcript 改正记错的笔记"
+      }
+    ],
+    "related": [
+      "context"
     ]
   }
 ]
