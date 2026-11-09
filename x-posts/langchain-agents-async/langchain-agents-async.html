@@ -111,6 +111,14 @@ html body svg.i{width:18px;height:18px;max-height:none;flex:none}
     <p data-points="p0010" id="e9">原推认为这和 DeepSeek 的 Super-agent 很接近。他划的区别是：LangChain 更关注执行过程中的异步调度和控制；DeepSeek 则进一步用 GitHub、飞书等事件去发现和推进工作。后半句是原推的范围，不能写成 LangChain 原文否定了事件触发。</p>
     <p data-points="p0012" id="e10">原推收束时用了「可能」：Agent 好不好用，看你敢不敢把活交出去，还看你需要时能不能插手。LangChain 原文 How async subagents work 没有把插手写成无条件。用户够到编排器，要等它自己的 loop 不忙。</p>
     <p data-points="p0013" id="e11">推文末行给出 LangChain 原文链接。下面按这篇博客本身讲，不再把原推的推断算进原文。</p>
+    <div class="callout extra" id="c-smartpig">
+      <p><b>补充（2026-11-09）：另一条帖子的判断，Smartpig。</b>下面两句是他帖子里的原话，其余是学习搭子的讲解。</p>
+      <blockquote class="quote"><p>未来最有价值的 Agent，未必是单次回答最聪明的那个。</p><cite>Smartpig X 帖</cite></blockquote>
+      <blockquote class="quote"><p>异步架构解决的是任务阻塞问题，不代表 Agent 的可靠性问题已经全部解决。</p><cite>Smartpig X 帖</cite></blockquote>
+      <p><b>讲解：</b>他把 Agent 分成三个阶段：回答问题、执行任务、协调任务，认为异步子 Agent 是第三阶段的一种实现。他点出的五个工具名和 update_async_task 的两种策略（Interrupt 重来、Enqueue 排队）与本页第 4 节一致，只是没提原文写明 interrupt 是默认。他说的完成通知三种情形（主 Agent 忙、闲、等审批）对应本页第 5 节。他自己也给了边界：异步不等于无限并行，资源竞争、权限冲突、成本和人工审批的要求都还在。</p>
+      <p><b>未确认：</b>他说 Claude Code 等产品也在探索后台任务。本文原文也这样写，但这是 LangChain 的说法，本站没有到 Claude Code 官方文档独立核实。</p>
+      <p>来源：<a href="https://x.com/Smartpigai/status/2119728200771424435">Smartpig 的 X 帖</a>（2026-11-09 北京 17:46）。帖里的第二篇链接单独做了一页：<a href="../langchain-managed-deep-agents/langchain-managed-deep-agents.html">Managed Deep Agents v0.10：浏览器与后台子 Agent</a>。</p>
+    </div>
   </div>
   <div class="src article">推文 <span class="source-anchor" data-source-section="s1"><a href="https://x.com/Xudong07452910/status/2118871055360303354">整条推文</a></span></div>
 </section>
