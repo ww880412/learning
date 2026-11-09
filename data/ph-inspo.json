@@ -24,6 +24,141 @@
   ],
   "days": [
     {
+      "date": "2026-11-08",
+      "source": "https://www.producthunt.com/leaderboard/daily/2026/11/8",
+      "fetched": "2026-11-09 17:20 北京",
+      "note": "太平洋 11/8 是周日，榜单页只取到前 10 名；第 9 名 outages.live 挂在已入库的 Polylane（10/23）同一个 PH 页面下，没重复收；页面上的分数是抓取时的当前分，和名次（按当天结束时排）可能对不上，如 DocsAlot 142 分排第 6、NoMac 140 分排第 5。",
+      "picks": [
+        {
+          "id": "2026-11-08-nomac",
+          "why": "agent 自己开一台云 Mac、用完即删、持久盘按 agent 命名、密钥注入不进对话，是工作台「给 agent 临时执行环境」的现成样板。",
+          "limit": "只解决 Apple 平台构建；「免密 + 自动点掉权限弹窗」不适合直接搬进企业环境，速度数字是官网自述。"
+        },
+        {
+          "id": "2026-11-08-agent-clan",
+          "why": "全局常驻的 agent 状态环（忙 / 完成 / 等你）加原地批准权限请求，正好对应多 agent 并行时人最痛的「谁在等我」。",
+          "limit": "3D 和手势偏玩具，不开源；对外的 MCP 连接器还没上线。"
+        },
+        {
+          "id": "2026-11-08-inkling-2-small",
+          "why": "在多种 agent harness 上做 RL、奖励还评解题过程，并承诺 Apache 2.0 开放权重，是企业私有部署 coding 模型的潜在底座。",
+          "limit": "截至北京 11/9 权重还没放，只能走 Tinker；594B MoE 部署成本高，第三方测得首 token 慢、实际上下文 256K。"
+        }
+      ],
+      "items": [
+        {
+          "slug": "nomac",
+          "name": "NoMac",
+          "tagline": "Your AI agent's own Mac, billed per minute. No subscription",
+          "ph": "https://www.producthunt.com/products/nomac",
+          "site": "https://nomac.app",
+          "repo": "https://github.com/NoMac-app/simulator-use",
+          "rank": 5,
+          "score": 140,
+          "comments": 20,
+          "what": "给 AI agent 按需租用的云端 Mac：Claude Code、Codex、Cursor 等通过 MCP、CLI、REST API 或 SSH 自己开一台装好 Xcode 的 macOS，构建、跑 iOS 模拟器、签名上传 TestFlight / 提交 App Store，用完自己关机。",
+          "problem": "在 Windows、Linux 或云端跑的 coding agent 没法做 Apple 平台的构建、测试和发布；自己养 Mac 构建机又贵，还常卡在密码弹窗和系统权限对话框上等人点。",
+          "highlight": "官网称：Apple M6 / M5 Pro 实机，约一分钟就绪（PH 简介写约 30 秒）；agent 是管理员，sudo 免密、系统权限和密码弹窗自动应答、屏幕不锁，「不等人」；每台 Mac 用完即删，但带一块 20 GB 加密盘（~/drive）跨会话保留项目和 Xcode 构建缓存，并行的多个 agent 各有自己的盘、可按 agent 命名；密钥只配一次、注入每台 Mac、不经过对话、输出里打码；浏览器里能看 agent 操作桌面也能接管；每个会话有花费上限；提交 App Review 要「你确认时」才做。另有轻量的云 iOS 模拟器，基于它开源的 simulator-use（MIT，GitHub 约 6 星），把屏幕读成文本、按标签点击。按分钟计费 $0.90/小时，预充值不过期。速度和「最省 token」都是官网自述，未见独立测评。雷达 data/radar.json 按仓库地址未查到 simulator-use。",
+          "inspo": "工作台可抄三处：①把「临时执行环境」做成 agent 自己能开关的工具（MCP 一行接入、带花费上限、用完即删），而不是人先配好机器；②「机器用完即删、持久盘按 agent 命名保留缓存」的拆法，既隔离又能增量构建，前提是项目和缓存都放在约定目录里；③密钥统一注入环境、在输出里打码、不进对话上下文，正好对应企业场景的审计要求。注意它的「免密 + 自动点掉权限弹窗」是为无人值守做的，搬进企业环境要换成显式的权限策略和审计记录，发版这类不可撤回的动作要保留人确认。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "开源"
+          ],
+          "id": "2026-11-08-nomac",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "slug": "agent-clan",
+          "name": "Agent Clan",
+          "tagline": "Command your Claude Code and Codex agents with gestures",
+          "ph": "https://www.producthunt.com/products/agent-clan",
+          "site": "https://agentclan.app",
+          "rank": 10,
+          "score": 95,
+          "comments": 12,
+          "what": "Mac / Windows 桌面应用，把本机的 Claude Code 和 Codex 会话变成屏幕上的 3D 角色团队：手势或鼠标选中某个 agent、用语音下任务，agent 请求权限时向右拉允许、向左拉拒绝；可以设「组长 + 组员」分工。",
+          "problem": "同时开很多个 coding agent 时，人要在一堆终端之间来回切，才知道谁在干活、谁做完了、谁卡在等你批权限。",
+          "highlight": "官网称：每个 agent 在屏幕角落常驻一个小头像，外圈表示「工作中 / 已完成 / 等你」，指向头像就能看结果并在任意应用前直接批准或拒绝；把图片、文件、文字拖到某个 agent 身上就成了它的提示词；手势识别和语音转文字在本机跑，不上传摄像头画面和原始录音；Pro 版可以让 Claude agent 用应用自带的 MCP 工具给 Agent Clan 本身写小插件（mods），它会看截图自检再修，插件放在独立的 Workshop 文件夹、可逐个关闭。计划中的 MCP 连接器能让外部常驻助手查看谁忙谁闲、派任务、取结果，但批准权限仍留给人——官网写明尚未上线。免费 1 个项目 2 个 agent，Pro 一次性 $14（原价 $19）；用自己的 Claude Code / Codex 账号计费。不开源。",
+          "inspo": "可抄的不是 3D 和手势，而是两件事：①全局常驻的「agent 状态环」——每个 agent 只显示忙 / 完成 / 等你三种状态，等你的那条带上具体请求（如「能跑 npm install 吗？」）可原地批或拒，不用切回终端；②「拖一个东西到某个 agent 上就是派任务」的派发方式。前提是工作台能统一拿到每个 agent 会话的状态和权限请求事件。它计划中的「外部助手只能看状态和派活、批准权限留给人」也是值得照搬的权限边界。",
+          "tags": [
+            "coding agent",
+            "效率",
+            "开发者工具"
+          ],
+          "id": "2026-11-08-agent-clan",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "slug": "inkling-2-small",
+          "name": "Inkling 2 Small",
+          "tagline": "A model that can see and refine what it builds",
+          "ph": "https://www.producthunt.com/products/tinker-2",
+          "site": "https://thinkingmachines.ai/news/inkling-2-small/",
+          "rank": 3,
+          "score": 177,
+          "comments": 4,
+          "what": "Thinking Machines Lab 的第二代模型：594B 总参数、每 token 激活 17B 的 MoE，支持图片输入和可调推理强度，目前只能通过它的 Tinker 平台推理和微调。",
+          "problem": "企业想要一个能放进自家 agent 流程、能用自己数据微调、将来还能自己部署的强 coding / 视觉模型，而不只是调闭源 API。",
+          "highlight": "官方博客称：在数十万个长程编码任务上做 RL，覆盖多种 agent harness 和上下文压缩策略；奖励不只看单测是否通过，还有一个 agent 评分器评「怎么解决的」；早期版本以 Fledge-Alpha 的名字在 OpenCode 上实测；会看自己构建出来的网页、游戏的画面再迭代。Artificial Analysis 智能指数 31（上一代 13）。官方自列局限：表达不够简洁，技能很多的代码库里不总是选对工具，聊天体验没优化，不支持音频。截至北京 11/9，权重未公开，官方说外部安全测试后「下周」以 Apache 2.0 发布，第三方追踪站推算约 11/12，未兑现前仍是闭源。eesel 等第三方文章称：服务端上下文实际 256K（卡片写 1M），首 token 约 28.8 秒偏慢；价格 $0.30 / 百万输入、$1.00 / 百万输出 token。",
+          "inspo": "对工作台有两点可用：①它是少数明确「在多种 agent harness 上训练、并承诺开放权重」的强 coding 模型，等权重真的放出来，可作为企业私有部署的备选底座——前提是确认 11/12 前后真放了、并有足够算力跑 594B MoE；②「奖励不只看测试通过，还评过程」的做法可以搬到工作台的 agent 评测里：除了 CI 过没过，再给改动方式打分（改动范围、有没有自测）。它自己承认「技能多时选错工具」，接入时要控制一次暴露给它的技能数量。",
+          "tags": [
+            "AI工具",
+            "coding agent"
+          ],
+          "id": "2026-11-08-inkling-2-small",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "slug": "sagecraft",
+          "name": "Sage2 / SageCraft",
+          "tagline": "Turn live talk into structured data and instant actions",
+          "ph": "https://www.producthunt.com/products/sagecraft",
+          "site": "https://levanto.ai/sagecraft",
+          "repo": "https://github.com/levantolabs/sagecraft",
+          "rank": 2,
+          "score": 209,
+          "comments": 3,
+          "what": "Levanto 用来展示自家决策模型 Sage 的开源 harness（Apache 2.0）：Sage 只看截图、在 harness 给出的几个选项里挑动作，harness 负责按键，让一个《魔兽世界》角色从 1 级练到 5 级；全过程的决策都有记录，可离线回放。",
+          "problem": "agent 的每一步「下一步做什么」如果都交给通用大模型，又慢又贵，也很难审计它为什么这么选。",
+          "highlight": "官网称：32 个会话共 4,573 次决策、5 小时 29 分钟实际游玩、Sage 费用约 $3.32，中位请求 0.8 秒；两次会话之间做了 16 次 harness 修复，至少 8 次人工（多数用桌面自动化 agent）把角色救回来，只有最后一次会话全程无人干预；官方自己说只有一个地图一个职业、没有对照组。Sage 接口只给 5 种回答形状（是否、单选、打分、标签、排序），每个回答带 0–1 置信度，不确定时返回 null 让代码转给人。harness 的回放只把记录的事件载入本地 SQLite 并打印摘要，不跑游戏、不调模型。GitHub 约 7 星。PH 页面上的 tagline 是 Sage 产品原有的，和这次发布内容不一致。",
+          "inspo": "可抄的是 harness 的写法：①让模型只在 harness 列出的有限选项里选，而不是自由生成动作，选项之外的事由代码做；②每次决策连同截图、选项、校验结果都落进事件日志，能离线回放复盘；③模型回答带置信度，低于阈值或为空就停下转人工。工作台给 coding agent 加「危险操作要不要执行」这类判定点时可以照这个形状做。这是游戏 demo，不是 coding 工具，自动玩游戏还可能违反游戏条款。",
+          "tags": [
+            "AI工具",
+            "开发者工具",
+            "开源"
+          ],
+          "id": "2026-11-08-sagecraft",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "slug": "docsalot-support",
+          "name": "DocsAlot for customer support",
+          "tagline": "Slack and Discord bot that answers your customers questions",
+          "ph": "https://www.producthunt.com/products/docsalot-2",
+          "site": "https://docsalot.dev",
+          "rank": 6,
+          "score": 142,
+          "comments": 19,
+          "what": "面向小团队的托管文档平台，这次发布的是挂在 Slack 和 Discord 里、用文档回答客户问题的客服机器人；平台本身把帮助中心、知识库和开发者文档合成一处，同时输出给人看和给 AI 读的版本。",
+          "problem": "文档分散在 Notion、Intercom、README 和工单里，产品变了文档跟不上，客服反复回答同样的问题，AI 助手也读不到权威说法。",
+          "highlight": "官网称：自动生成 llms.txt、skill.md、带 frontmatter 和稳定锚点的页面，并提供托管 MCP 服务做文档检索；有官方 CLI，`docsalot skills install` 会识别本机的 coding agent 并把 DocsAlot 技能装进对应的技能目录；能从 OpenAPI 生成可交互的 API 文档。网站首页的 Markdown 版专门写了「AI 该怎么描述我们、别夸大什么」。价格 $39/月起。客服机器人的答对率等效果数据未见公开。",
+          "inspo": "一个能直接抄的小做法：给工作台自己的文档同时发布 llms.txt 和 skill.md，并做一条命令把技能装进用户本机 coding agent 的技能目录，这样客户的 agent 读到的是最新正本而不是过期上下文。前提是文档本身有专人维护、有稳定的锚点。",
+          "tags": [
+            "开发者工具",
+            "AI工具"
+          ],
+          "id": "2026-11-08-docsalot-support",
+          "status": "新发现",
+          "followups": []
+        }
+      ]
+    },
+    {
       "date": "2026-11-07",
       "source": "https://www.producthunt.com/leaderboard/daily/2026/11/7",
       "fetched": "2026-11-08 17:06 北京",
