@@ -1,0 +1,62 @@
+{
+ "date": "2026-11-10",
+ "label": "11 月 10 日 · 星期二",
+ "href": "digest/2026-11-10.html",
+ "json": "data/digest/2026-11-10.json",
+ "brief": {
+  "title": "X 简报 · 11/10（周二）",
+  "href": "x-brief/2026-11-09.html",
+  "lines": [
+   "Anthropic 发布 Claude Fable 5.2 / Mythos 5.2：官方称几乎所有评测都高于 Opus 5.5，输出最高快 30%，API 从 $10/$50 降到 $8/$40；日常写代码仍建议先用 Opus 5.5，大而开放的任务再换 Fable（官方发布）：FrontierCode 2.0 上 Fable High 约 45.3%，与 Opus 5.5 Max 的 45.5% 持平但单任务花费约一半；Xhigh 到 49.1%。Claude Code 需 ≥2.1.321；默认 Medium 档；可选快速模式价格翻倍。Mythos 与 Fable 同底座，去掉网安/生物护栏，只给通过验证计划的机构（claudeai 发布、对比 Opus、FrontierCode、定价与上线、何时用 Opus、Mythos 申请、官方博客、宝玉 整理、Addy 原帖）",
+   "Fable 额度：Pro 本周可从套餐额度扣（最多一半）并送 1 次免费重置；Max/Ultra/Team Premium 按订阅时长送 1–3 次重置；Alex 给了四条用法（Anthropic 团队说明 + 个人经验）：不满半年 1 次、半年到一年 2 次、一年以上 3 次；重置只退 Fable 已用额度、有 5 小时窗的会补满窗口，不提高周上限。Alex：先问「我的想法哪里不对」、med/high 起步把 xhigh 留给最难题、事先说清哪些操作要批准、给整项目让它连跑几小时（bcherny 重置说明、Pro/Max 细则、alexalbert__ 用法、全项目体检提示、Addy token 提醒、宝玉 体检提示中文、Gorden Sun Pro 本周可用）",
+   "OpenAI 开发者号：同一个 dot 可挂多台本地电脑，任务时可指定在哪台跑——一边本机写代码，一边让专用机构建/测（官方功能发布）：举例包括第二台 Mac 用 Xcode 测 iOS 并回传截图、同测用例在新旧 SDK 机器上对比、UI 流程在副机点完再抓失败点（OpenAIDevs 原帖、用法续帖）"
+  ]
+ },
+ "posters": null,
+ "ph": {
+  "listDate": "2026-11-08",
+  "href": "ph-inspo/index.html",
+  "n": 5,
+  "source": "https://www.producthunt.com/leaderboard/daily/2026/11/8",
+  "picks": true,
+  "items": [
+   {
+    "rank": 5,
+    "pick": true,
+    "name": "NoMac",
+    "what": "给 AI agent 按需租用的云端 Mac：Claude Code、Codex、Cursor 等通过 MCP、CLI、REST API 或 SSH 自己开一台装好 Xcode 的 macOS，构建、跑 iOS 模拟器、签名上传 TestFlight / 提交 App Store，用完自己关机。",
+    "href": "ph-inspo/index.html#2026-11-08-nomac"
+   },
+   {
+    "rank": 10,
+    "pick": true,
+    "name": "Agent Clan",
+    "what": "Mac / Windows 桌面应用，把本机的 Claude Code 和 Codex 会话变成屏幕上的 3D 角色团队：手势或鼠标选中某个 agent、用语音下任务，agent 请求权限时向右拉允许、向左拉拒绝；可以设「组长 + 组员」分工。",
+    "href": "ph-inspo/index.html#2026-11-08-agent-clan"
+   },
+   {
+    "rank": 3,
+    "pick": true,
+    "name": "Inkling 2 Small",
+    "what": "Thinking Machines Lab 的第二代模型：594B 总参数、每 token 激活 17B 的 MoE，支持图片输入和可调推理强度，目前只能通过它的 Tinker 平台推理和微调。",
+    "href": "ph-inspo/index.html#2026-11-08-inkling-2-small"
+   },
+   {
+    "rank": 2,
+    "pick": false,
+    "name": "Sage2 / SageCraft",
+    "what": "Levanto 用来展示自家决策模型 Sage 的开源 harness（Apache 2.0）：Sage 只看截图、在 harness 给出的几个选项里挑动作，harness 负责按键，让一个《魔兽世界》角色从 1 级练到 5 级；全过程的决策都有记录，可离线回放。",
+    "href": "ph-inspo/index.html#2026-11-08-sagecraft"
+   },
+   {
+    "rank": 6,
+    "pick": false,
+    "name": "DocsAlot for customer support",
+    "what": "面向小团队的托管文档平台，这次发布的是挂在 Slack 和 Discord 里、用文档回答客户问题的客服机器人；平台本身把帮助中心、知识库和开发者文档合成一处，同时输出给人看和给 AI 读的版本。",
+    "href": "ph-inspo/index.html#2026-11-08-docsalot-support"
+   }
+  ]
+ },
+ "url": "https://ww880412.github.io/learning/digest/2026-11-10.html",
+ "rule": "汇总日 D 是北京时间。简报文件名是美东日期，北京时间 D 日 09:00 发布，那时美东还是 D−1 日，所以 D 一般对应 x-brief/(D−1).html（页面若有带时区的发布时间，则改用该时间换算到 Asia/Shanghai；链接仍是原文件）。海报是 x-posters/D/。产品灵感是最新一份榜单日 ≤ D−2 的那组（太平洋时间的 Product Hunt 日榜，北京时间 D 日 09:00 前能入库的最新一份），并标出实际榜单日。某一来源没有就是 null。"
+}
