@@ -72,9 +72,50 @@ expectFail('坏 JSON', d => fs.writeFileSync(path.join(d, 'data', 'concepts.json
 expectFail('ID 重复', d => edit(d, 'items.json', j => { j.items[1].id = j.items[0].id; }), /data\/items\.json items\[1\] \(id=[^)]+\)：id 重复/);
 expectFail('javascript: 链接', d => edit(d, 'items.json', j => { j.items[0].href = 'javascript:alert(1)'; }), /data\/items\.json items\[0\] \(id=[^)]+\)：href 不是 http\/https/);
 expectFail('不存在的日期', d => edit(d, 'review.json', j => { j.queue[0].learned = '2026-02-30'; }), /data\/review\.json queue\[0\] \(item=[^)]+\)：learned 不是合法日期/);
-{ // 好数据：校验通过，正常构建
+{ // 好数据：校验通过。没 joined 的自动复习清成空数组，条目和 learned 都留着，不把第 14 天标成 done
   const dir = sandbox();
-  try { const r = spawnSync(process.execPath, ['build.mjs'], { cwd: dir, encoding: 'utf8' }); assert.equal(r.status, 0, r.stderr); }
-  finally { fs.rmSync(dir, { recursive: true, force: true }); }
+  try {
+    const before = JSON.parse(fs.readFileSync(path.join(dir, 'data/review.json'), 'utf8'));
+    const r = spawnSync(process.execPath, ['build.mjs'], { cwd: dir, encoding: 'utf8' });
+    assert.equal(r.status, 0, r.stderr);
+    const after = JSON.parse(fs.readFileSync(path.join(dir, 'data/review.json'), 'utf8'));
+    assert.ok(after.queue.length >= before.queue.length, '不能删队列条目，否则学完写不上去');
+    for (const q of before.queue) {
+      const n = after.queue.find((x) => x.item === q.item);
+      assert.ok(n, '丢失条目 ' + q.item);
+      assert.equal(n.learned ?? undefined, q.learned ?? undefined, '丢掉了 learned ' + q.item);
+      if (!q.joined) {
+        assert.deepEqual(n.reviews, [], q.item + ' 没加入复习却还留着 reviews');
+        assert.equal(Object.prototype.hasOwnProperty.call(n, 'joined'), false);
+      }
+    }
+    const l01 = after.queue.find((q) => q.item === 'cs146s-L01');
+    assert.equal(l01.learned, before.queue.find((q) => q.item === 'cs146s-L01').learned);
+    assert.equal(l01.reviews.some((row) => row.done), false, '清积压不能把旧复习标成 done');
+  } finally { fs.rmSync(dir, { recursive: true, force: true }); }
+}
+{ // 用户已经加入的复习：构建保留 done，并补齐 1/3/7/14/30，不把没做的标成完成
+  const dir = sandbox();
+  try {
+    edit(dir, 'review.json', (j) => {
+      const q = j.queue.find((x) => x.item === 'cs146s-L01');
+      q.joined = '2026-11-01';
+      q.joinAt = '2026-11-01T00:00:00.000Z';
+      q.reviews = [{ day: 14, date: '2026-11-15', done: true, doneOn: '2026-11-15', at: '2026-11-15T00:00:00.000Z' }];
+    });
+    const r = spawnSync(process.execPath, ['build.mjs'], { cwd: dir, encoding: 'utf8' });
+    assert.equal(r.status, 0, r.stderr);
+    const after = JSON.parse(fs.readFileSync(path.join(dir, 'data/review.json'), 'utf8'));
+    const l01 = after.queue.find((q) => q.item === 'cs146s-L01');
+    assert.equal(l01.joined, '2026-11-01');
+    assert.equal(l01.learned, JSON.parse(fs.readFileSync(path.join(ROOT, 'data/review.json'), 'utf8')).queue.find((q) => q.item === 'cs146s-L01').learned);
+    assert.deepEqual(l01.reviews.map((row) => row.day), [1, 3, 7, 14, 30]);
+    const d14 = l01.reviews.find((row) => row.day === 14);
+    assert.equal(d14.done, true);
+    assert.equal(d14.doneOn, '2026-11-15');
+    assert.ok(l01.reviews.filter((row) => row.day !== 14).every((row) => row.done === false));
+    const other = after.queue.find((q) => q.item !== 'cs146s-L01' && !q.joined);
+    assert.deepEqual(other.reviews, []);
+  } finally { fs.rmSync(dir, { recursive: true, force: true }); }
 }
 console.log('ok');

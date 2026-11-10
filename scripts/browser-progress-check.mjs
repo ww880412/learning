@@ -13,13 +13,20 @@ const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..')
 const REVIEW = fs.readFileSync(path.join(ROOT, 'data/review.json'), 'utf8');
 const TOKEN = 'github_pat_testtoken1234';
 const BJ = prog.beijingToday(new Date());
-// 今日勾选的用例跟着 review.json 走：取 cs146s-L01 下一次没做的复习，用 ?today= 把那天调出来。
 const addDays = (d, n) => { const t = new Date(d + 'T00:00:00Z'); t.setUTCDate(t.getUTCDate() + n); return t.toISOString().slice(0, 10); };
-const L01 = JSON.parse(REVIEW).queue.find((q) => q.item === 'cs146s-L01');
-const L01_BASE = L01.learned || L01.start;
-const L01_OPEN = L01.reviews.filter((r) => !r.done);
-const TODAY = L01_OPEN.length ? [BJ, addDays(L01_BASE, L01_OPEN[0].day)].sort().pop() : BJ;
-const DUE = L01_OPEN.filter((r) => addDays(L01_BASE, r.day) <= TODAY).map((r) => r.day);
+// 勾选用例自己造一份「已加入复习」的队列。自动排期已经清掉，不能再从文件里的 reviews 推今天。
+const JOINED = '2026-11-09';
+const TODAY = '2026-11-10';
+const DUE = [1];
+function joinedCloud(raw = REVIEW) {
+  const cloud = JSON.parse(raw);
+  const q = cloud.queue.find((x) => x.item === 'cs146s-L01');
+  const at = '2026-11-09T01:00:00.000Z';
+  q.joined = JOINED;
+  q.joinAt = at;
+  q.reviews = prog.INTERVALS.map((n) => ({ day: n, date: addDays(JOINED, n), done: false, at }));
+  return cloud;
+}
 const HOME = '/index.html?today=' + TODAY;
 const SHOTS = process.env.SHOTS || '/workspace/shots';
 fs.mkdirSync(SHOTS, { recursive: true });
@@ -126,6 +133,17 @@ const browser = await puppeteer.launch({
   args: ['--no-sandbox', '--disable-dev-shm-usage', '--hide-scrollbars'],
 });
 
+async function withCloud(cloud, local, url) {
+  const page = await boot(browser, origin, { token: TOKEN });
+  // 假 API 在页面加载时读 __test:cloud-review，先写进去再重开一次首页。
+  await page.goto(origin + '/favorites/index.html', { waitUntil: 'networkidle0' });
+  await page.evaluate((t, loc) => { localStorage.setItem('__test:cloud-review', t); for (const [k, v] of Object.entries(loc || {})) localStorage.setItem(k, v); }, JSON.stringify(cloud, null, 2), local || {});
+  await page.goto(origin + (url || HOME), { waitUntil: 'networkidle0' });
+  await page.waitForFunction(() => window.__cloudReady === 1 && window.__progReady === 1);
+  await page.waitForFunction(() => !window.__progPending);
+  return page;
+}
+
 try {
   await check('没令牌：学完了只写本机', async () => {
     const page = await boot(browser, origin);
@@ -166,8 +184,11 @@ try {
     const l01 = doc.queue.find((q) => q.item === 'cs146s-L01');
     const orig = JSON.parse(REVIEW);
     if (l02.learned !== BJ) throw new Error('learned 不是北京日期 ' + l02.learned + ' expected ' + BJ);
+    if (!doc.queue.find((q) => q.item === 'cs146s-L02')) throw new Error('学完把队列条目删了');
     if (l01.learned !== orig.queue.find((q) => q.item === 'cs146s-L01').learned) throw new Error('别的条目 learned 被改了');
-    if (l02.reviews[0].done !== false) throw new Error('学完了不该改 reviews.done');
+    if (l02.joined) throw new Error('学完了不该写入 joined');
+    if ((l02.reviews || []).some((r) => r.done)) throw new Error('学完了不该把复习标成 done');
+    if (JSON.stringify(l02.reviews) !== JSON.stringify(orig.queue.find((q) => q.item === 'cs146s-L02').reviews)) throw new Error('学完了改了 reviews ' + JSON.stringify(l02.reviews));
     await page.click('.fin-btn');
     await new Promise((r) => setTimeout(r, 600));
     const n = await page.evaluate(() => window.__gh.filter((c) => c.method === 'PUT').length);
@@ -180,7 +201,13 @@ try {
 
   await check('没令牌：今日勾选只写本机，没有同步链接', async () => {
     const page = await boot(browser, origin);
-    await page.goto(origin + HOME, { waitUntil: 'networkidle0' });
+    await page.goto(origin + '/courses/cs146s/L01-agent-loop.html', { waitUntil: 'networkidle0' });
+    await page.waitForFunction(() => window.__progReady === 1 && document.querySelector('.rev-join'));
+    await page.click('.rev-join');
+    const joined = await page.evaluate(() => { const o = JSON.parse(localStorage.getItem('rev-join:cs146s-L01') || 'null'); return o && o.joined; });
+    if (joined !== BJ) throw new Error('本机加入日不对 ' + joined);
+    const due = addDays(joined, 1);
+    await page.goto(origin + '/index.html?today=' + due, { waitUntil: 'networkidle0' });
     await page.waitForFunction(() => window.__progReady === 1 && document.querySelector('[data-id="rev:cs146s-L01"]'));
     const hint = await page.$eval('#prog-hint', (el) => ({ hidden: el.hidden, html: el.innerHTML }));
     if (hint.hidden || !hint.html.includes('favorites/#settings') || !hint.html.includes('同步设置')) throw new Error('首页提示不对 ' + JSON.stringify(hint));
@@ -190,17 +217,16 @@ try {
     await page.click('[data-id="rev:cs146s-L01"]');
     const rev = await page.evaluate(() => localStorage.getItem('rev-done:cs146s-L01'));
     const o = JSON.parse(rev || '{}');
-    for (const day of DUE) if (!/^\d{4}-\d{2}-\d{2}$/.test(o[day] || '')) throw new Error('rev-done 缺少第 ' + day + ' 天 ' + rev);
-    for (const r of L01_OPEN) if (!DUE.includes(r.day) && o[r.day]) throw new Error('不该勾还没到期的 ' + rev);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(o[1] || '')) throw new Error('rev-done 缺少第 1 天 ' + rev);
+    for (const day of [3, 7, 14, 30]) if (o[day]) throw new Error('不该勾还没到期的 ' + rev);
     if ((await page.evaluate(() => window.__gh.length)) !== 0) throw new Error('没令牌却请求了 GitHub');
     if (page._errors.length) throw new Error(page._errors.join('\n'));
     await page._ctx.close();
   });
 
   await check('有令牌：今日勾选和取消打出 done', async () => {
-    const page = await boot(browser, origin, { token: TOKEN });
-    await page.goto(origin + HOME, { waitUntil: 'networkidle0' });
-    await page.waitForFunction(() => window.__progReady === 1 && document.querySelector('[data-id="rev:cs146s-L01"]'));
+    const page = await withCloud(joinedCloud());
+    await page.waitForSelector('[data-id="rev:cs146s-L01"]');
     const hintHidden = await page.$eval('#prog-hint', (el) => el.hidden);
     if (!hintHidden) throw new Error('有令牌时不该显示去设置的提示');
     if ((await page.evaluate(() => window.__gh.some((c) => c.method === 'PUT')))) throw new Error('空的本机记录不应 PUT');
@@ -209,9 +235,9 @@ try {
     await page.waitForFunction(() => !window.__progPending);
     const [put] = await puts(page, 'data/review.json');
     const doc = decode(put.body, gh);
-    const orig = JSON.parse(REVIEW);
+    const seeded = joinedCloud();
     const item = doc.queue.find((q) => q.item === 'cs146s-L01');
-    const old = orig.queue.find((q) => q.item === 'cs146s-L01');
+    const old = seeded.queue.find((q) => q.item === 'cs146s-L01');
     const localToday = (await page.evaluate(() => JSON.parse(localStorage.getItem('rev-done:cs146s-L01'))))[DUE[0]];
     if (item.learned !== old.learned) throw new Error('勾选复习改了 learned');
     for (const r of item.reviews) {
@@ -223,7 +249,7 @@ try {
     }
     for (const q of doc.queue) {
       if (q.item === 'cs146s-L01') continue;
-      const was = orig.queue.find((x) => x.item === q.item);
+      const was = seeded.queue.find((x) => x.item === q.item);
       if (JSON.stringify(q) !== JSON.stringify(was)) throw new Error('别的条目被改了 ' + q.item);
     }
     if (!put.body.message.includes('cs146s-L01') || !put.body.message.includes('done')) throw new Error('提交说明 ' + put.body.message);
@@ -242,18 +268,8 @@ try {
     await page._ctx.close();
   });
 
-  async function withCloud(cloud, local, url) {
-    const page = await boot(browser, origin, { token: TOKEN });
-    // 假 API 在页面加载时读 __test:cloud-review，先写进去再重开一次首页。
-    await page.goto(origin + '/favorites/index.html', { waitUntil: 'networkidle0' });
-    await page.evaluate((t, loc) => { localStorage.setItem('__test:cloud-review', t); for (const [k, v] of Object.entries(loc || {})) localStorage.setItem(k, v); }, JSON.stringify(cloud, null, 2), local || {});
-    await page.goto(origin + (url || HOME), { waitUntil: 'networkidle0' });
-    await page.waitForFunction(() => window.__cloudReady === 1 && window.__progReady === 1);
-    await page.waitForFunction(() => !window.__progPending);
-    return page;
-  }
   await check('(a)5 别的设备今天勾完的复习：这台设备显示「已看」，可在同一行取消', async () => {
-    const cloud = JSON.parse(REVIEW);
+    const cloud = joinedCloud();
     const q = cloud.queue.find((x) => x.item === 'cs146s-L01');
     const at = new Date(Date.now() - 60000).toISOString();
     for (const r of q.reviews) if (DUE.includes(r.day)) { r.done = true; r.doneOn = TODAY; r.at = at; }
@@ -279,7 +295,7 @@ try {
   });
 
   await check('(b)2 别的设备更晚的取消不会被这台的旧记录勾回去', async () => {
-    const cloud = JSON.parse(REVIEW);
+    const cloud = joinedCloud();
     const q = cloud.queue.find((x) => x.item === 'cs146s-L01');
     const at = new Date(Date.now() - 60000).toISOString();
     for (const r of q.reviews) if (DUE.includes(r.day)) { r.done = false; delete r.doneOn; r.at = at; }
@@ -295,7 +311,7 @@ try {
   });
 
   await check('(b)2 没传上去的更新操作：下次打开时补传，压过云端更早的记录', async () => {
-    const cloud = JSON.parse(REVIEW);
+    const cloud = joinedCloud();
     const q = cloud.queue.find((x) => x.item === 'cs146s-L01');
     const old = new Date(Date.now() - 3600000).toISOString();
     for (const r of q.reviews) if (DUE.includes(r.day)) { r.done = true; r.doneOn = TODAY; r.at = old; }
@@ -436,6 +452,96 @@ try {
       if (page._errors.length) throw new Error(u + ' ' + page._errors.join('\n'));
       await page._ctx.close();
     }
+  });
+
+  await check('有令牌：加入复习从加入日排 5 次，不标 done，不删 learned', async () => {
+    const page = await boot(browser, origin, { token: TOKEN });
+    await page.goto(origin + '/courses/cs146s/L02-harness-anatomy.html', { waitUntil: 'networkidle0' });
+    await page.waitForFunction(() => window.__progReady === 1 && document.querySelector('.rev-join'));
+    if (await page.evaluate(() => window.__gh.some((c) => c.method === 'PUT'))) throw new Error('还没点加入复习就 PUT 了');
+    await page.click('.rev-join');
+    await page.waitForFunction(() => window.__gh.some((c) => c.method === 'PUT' && c.path === 'data/review.json'));
+    await page.waitForFunction(() => !window.__progPending);
+    const [put] = await puts(page, 'data/review.json');
+    if (!String(put.body.message).startsWith('review: join cs146s-L02')) throw new Error('提交说明 ' + put.body.message);
+    const doc = decode(put.body, gh);
+    const orig = JSON.parse(REVIEW);
+    if (doc.queue.length !== orig.queue.length) throw new Error('队列条目数变了 ' + doc.queue.length);
+    const l02 = doc.queue.find((q) => q.item === 'cs146s-L02');
+    const was = orig.queue.find((q) => q.item === 'cs146s-L02');
+    const l01 = doc.queue.find((q) => q.item === 'cs146s-L01');
+    if (l02.joined !== BJ) throw new Error('joined 不是今天 ' + l02.joined);
+    if (l02.learned !== was.learned) throw new Error('加入复习改了 learned');
+    if (l02.reviews.length !== 5 || l02.reviews.some((r) => r.done)) throw new Error('新排期应是 5 次且都没完成 ' + JSON.stringify(l02.reviews));
+    const dates = prog.INTERVALS.map((n) => addDays(BJ, n));
+    if (l02.reviews.map((r) => r.date).join() !== dates.join()) throw new Error('不是从加入日算 ' + l02.reviews.map((r) => r.date).join());
+    if (l01.learned !== orig.queue.find((q) => q.item === 'cs146s-L01').learned) throw new Error('别的 learned 被改');
+    if (JSON.stringify(l01.reviews) !== JSON.stringify(orig.queue.find((q) => q.item === 'cs146s-L01').reviews)) throw new Error('别的 reviews 被改');
+    if (page._errors.length) throw new Error(page._errors.join('\n'));
+    await page._ctx.close();
+  });
+
+  await check('旧 rev-done/rev-op 不把清掉的复习写回来，也不标成 done', async () => {
+    const page = await withCloud(JSON.parse(REVIEW), {
+      'rev-done:cs146s-L01': JSON.stringify({ 1: '2026-10-25', 14: '2026-10-25' }),
+      'rev-op:cs146s-L01': JSON.stringify({ 14: { done: true, on: '2026-10-25', at: Date.now() } }),
+    }, '/index.html?today=2026-11-10');
+    if ((await puts(page, 'data/review.json')).length) throw new Error('旧操作把复习写回了云端');
+    if (await page.$('[data-id^="rev:"]')) throw new Error('首页又出现了复习');
+    const left = await page.evaluate(() => localStorage.getItem('rev-done:cs146s-L01') || localStorage.getItem('rev-op:cs146s-L01'));
+    if (left) throw new Error('没加入的旧记录应清掉 ' + left);
+    if (page._errors.length) throw new Error(page._errors.join('\n'));
+    await page._ctx.close();
+  });
+
+  await check('截图：清积压、学完不排复习、加入后到期出现', async () => {
+    const art = '/opt/cursor/artifacts';
+    fs.mkdirSync(art, { recursive: true });
+    const shot = async (page, name, el) => {
+      const path = art + '/' + name + '.png';
+      if (el) await el.screenshot({ path });
+      else await page.screenshot({ path });
+    };
+    const page = await boot(browser, origin);
+    await page.setViewport({ width: 1280, height: 900, deviceScaleFactor: 1 });
+    await page.goto(origin + '/index.html?today=2026-11-10', { waitUntil: 'networkidle0' });
+    await page.waitForFunction(() => window.__cloudReady === 1 && window.__progReady === 1);
+    const cleared = await page.$eval('#today', (el) => el.innerText);
+    if (/积压|第 \d+ 天复习/.test(cleared)) throw new Error('清掉积压后首页还有复习\n' + cleared);
+    if (!cleared.includes('继续学')) throw new Error('没有继续学\n' + cleared);
+    await shot(page, 'today-cleared', await page.$('#today'));
+
+    await page.goto(origin + '/courses/cs146s/L02-harness-anatomy.html', { waitUntil: 'networkidle0' });
+    await page.waitForFunction(() => window.__progReady === 1 && document.querySelector('.fin-btn') && document.querySelector('.rev-join'));
+    await page.click('.fin-btn');
+    await page.waitForFunction(() => { const b = document.querySelector('.fin-btn'); return b && b.textContent.includes('已学完'); });
+    const joinLabel = await page.$eval('.rev-join', (b) => b.textContent);
+    if (joinLabel !== '加入复习') throw new Error('学完后按钮应仍是加入复习：' + joinLabel);
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await shot(page, 'lesson-learned');
+
+    await page.goto(origin + '/index.html?today=2026-11-10', { waitUntil: 'networkidle0' });
+    await page.waitForFunction(() => window.__cloudReady === 1 && window.__progReady === 1);
+    if (await page.$('[data-id^="rev:"]')) throw new Error('学完之后首页出现了复习');
+    await shot(page, 'today-after-learned', await page.$('#today'));
+
+    await page.goto(origin + '/courses/cs146s/L02-harness-anatomy.html', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('.rev-join');
+    await page.click('.rev-join');
+    const joined = await page.evaluate(() => JSON.parse(localStorage.getItem('rev-join:cs146s-L02')).joined);
+    const due = addDays(joined, 1);
+    await page.goto(origin + '/index.html?today=' + due, { waitUntil: 'networkidle0' });
+    await page.waitForFunction(() => window.__cloudReady === 1 && document.querySelector('[data-id="rev:cs146s-L02"]'));
+    const dueText = await page.$eval('[data-id="rev:cs146s-L02"]', (b) => b.closest('.row').innerText);
+    if (!dueText.includes('第 1 天')) throw new Error('到期复习文案不对 ' + dueText);
+    await shot(page, 'today-due', await page.$('#today'));
+    await page.click('[data-id="rev:cs146s-L02"]');
+    await page.goto(origin + '/index.html?today=' + addDays(due, 1), { waitUntil: 'networkidle0' });
+    await page.waitForFunction(() => window.__cloudReady === 1 && window.__progReady === 1);
+    if (await page.$('[data-id="rev:cs146s-L02"]')) throw new Error('勾完的下一天还应消失');
+    await shot(page, 'today-after-check', await page.$('#today'));
+    if (page._errors.length) throw new Error(page._errors.join('\n'));
+    await page._ctx.close();
   });
 
   await check('截图：首页 A/B/C 和一课', async () => {
