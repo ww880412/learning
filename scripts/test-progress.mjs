@@ -126,6 +126,31 @@ assert.equal(prog.pathsMatch('/learning/cs146s/L02-harness-anatomy.html', 'cours
   assert.deepEqual(injected({ done: true, doneOn: '2026-10-26', at: new Date(T1).toISOString() }, '', undefined), { done: true, on: '2026-10-26' });
 }
 
+// ---------- 首页继续学：learned 或本机 done 都跳过，没学完的留下 ----------
+{
+  const list = [
+    { id: 'huangtongxueh-ai-dev', href: 'x-posts/huangtongxueh-ai-dev/huangtongxueh-ai-dev.html', title: '已有 learned' },
+    { id: 'langchain-managed-deep-agents', href: 'x-posts/langchain-managed-deep-agents/langchain-managed-deep-agents.html', title: '本机学完' },
+    { id: 'addy-agents-manager', href: 'x-posts/addy-agents-manager/addy-agents-manager.html', title: '还在进行中' },
+  ];
+  const queue = [
+    { item: 'huangtongxueh-ai-dev', learned: '2026-10-23', reviews: [{ day: 1, done: true }] },
+    { item: 'langchain-managed-deep-agents', start: '2026-11-09', reviews: [{ day: 1, done: false }] },
+    { item: 'addy-agents-manager', start: '2026-11-08', reviews: [{ day: 1, done: true }] },
+  ];
+  const doneOf = (href) => href.indexOf('langchain-managed-deep-agents') >= 0 ? '2026-11-10' : '';
+  assert.equal(prog.nextContinue(list, queue, {}, doneOf).id, 'addy-agents-manager', 'learned 和本机 done 都排除，未学完的留下');
+  assert.equal(prog.nextContinue([list[0]], queue, {}, () => ''), null, '只有 learned 的不推荐');
+  assert.equal(prog.nextContinue([list[2]], queue, {}, () => '').id, 'addy-agents-manager', '复习勾选不算学完');
+  assert.equal(prog.nextContinue(list.slice(1), queue, {}, () => '').id, 'langchain-managed-deep-agents', '没有 learned、没有本机 done 的留下');
+  assert.equal(prog.nextContinue([{ href: 'x-posts/huangtongxueh-ai-dev/huangtongxueh-ai-dev.html' }], queue, { 'huangtongxueh-ai-dev': { href: 'x-posts/huangtongxueh-ai-dev/huangtongxueh-ai-dev.html' } }, () => ''), null, '没有 id 时按 href 对上 learned');
+  const doneOfPath = (href) => prog.pathsMatch('/learning/cs146s/L02-harness-anatomy.html', href, '/learning/') ? '2026-11-10' : '';
+  assert.equal(prog.nextContinue([{ id: 'cs146s-L02', href: 'courses/cs146s/L02-harness-anatomy.html' }], [{ item: 'cs146s-L02' }], {}, doneOfPath), null, '课程软链路径上的 done 也算学完');
+  assert.equal(prog.nextContinue([], queue, {}, doneOf), null);
+  const injectedNext = new Function('return (' + prog.nextContinue.toString() + ')')();
+  assert.equal(injectedNext(list, queue, {}, doneOf).id, 'addy-agents-manager', '注入首页的源码与导出版一致');
+}
+
 function jsonResp(status, obj) { return { status, json: async () => obj }; }
 async function fakeCommit() {
   let sha = 's0', puts = 0, stored = { version: 1, items: [] };

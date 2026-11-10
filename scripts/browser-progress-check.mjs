@@ -338,6 +338,63 @@ try {
     await page._ctx.close();
   });
 
+  function continuePool() {
+    const items = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/items.json'), 'utf8')).items;
+    const learned = new Set(JSON.parse(REVIEW).queue.filter((q) => q.learned).map((q) => q.item));
+    return items.filter((i) => i.status !== '未开始' && !learned.has(i.id)).sort((a, b) => String(b.start || '').localeCompare(String(a.start || '')));
+  }
+  async function contHrefs(page) {
+    return page.evaluate(() => [...document.querySelectorAll('[data-td="list"] .row')].filter((r) => {
+      const s = r.querySelector('.td-src span');
+      return s && s.textContent === '继续学';
+    }).map((r) => { const a = r.querySelector('a'); return a ? a.getAttribute('href') : ''; }));
+  }
+  await check('今日继续学跳过已学完，未学完的留下', async () => {
+    const pool = continuePool();
+    const first = pool[0], second = pool[1];
+    if (!first || !second) throw new Error('进行中的学习页不够两篇');
+    const items = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/items.json'), 'utf8')).items;
+    const learnedTitles = ['huangtongxueh-ai-dev', 'felix-ambitious'].map((id) => items.find((i) => i.id === id).title);
+    const page = await boot(browser, origin);
+    await page.setViewport({ width: 1100, height: 900, deviceScaleFactor: 1 });
+    await page.goto(origin + '/index.html?today=2026-01-01', { waitUntil: 'networkidle0' });
+    await page.waitForFunction(() => window.__progReady === 1);
+    let hrefs = await contHrefs(page);
+    if (hrefs.length !== 1 || !hrefs[0].endsWith(first.href)) throw new Error('未学完的应留在继续学 ' + JSON.stringify(hrefs) + ' expected ' + first.href);
+    const leaked = await page.evaluate((titles) => [...document.querySelectorAll('[data-td="list"] .row')].filter((r) => {
+      const s = r.querySelector('.td-src span');
+      return s && s.textContent === '继续学' && titles.some((t) => r.textContent.includes(t));
+    }).map((r) => r.textContent), learnedTitles);
+    if (leaked.length) throw new Error('已有 learned 的还在继续学 ' + leaked.join(' | '));
+    await (await page.$('#today')).screenshot({ path: path.join(SHOTS, 'today-continue-open.png') });
+    await page.goto(origin + '/' + first.href, { waitUntil: 'networkidle0' });
+    await page.waitForFunction(() => window.__progReady === 1 && document.querySelector('.fin-btn'));
+    await page.click('.fin-btn');
+    await page.waitForFunction(() => { const b = document.querySelector('.fin-btn'); return b && b.textContent.includes('已学完'); });
+    const stored = await page.evaluate(() => localStorage.getItem('done:' + location.pathname));
+    if (!stored) throw new Error('学完了没有写下 done:');
+    await page.goto(origin + '/index.html?today=2026-01-01', { waitUntil: 'networkidle0' });
+    await page.waitForFunction(() => window.__progReady === 1);
+    hrefs = await contHrefs(page);
+    if (hrefs.some((h) => h.endsWith(first.href))) throw new Error('点了学完了之后还在继续学 ' + JSON.stringify(hrefs));
+    if (hrefs.length !== 1 || !hrefs[0].endsWith(second.href)) throw new Error('下一篇未学完的应顶上 ' + JSON.stringify(hrefs) + ' expected ' + second.href);
+    if (page._errors.length) throw new Error(page._errors.join('\n'));
+    await page.setViewport({ width: 1100, height: 900, deviceScaleFactor: 1 });
+    await (await page.$('#today')).screenshot({ path: path.join(SHOTS, 'today-continue-after-done.png') });
+    await page._ctx.close();
+
+    const cloud = JSON.parse(REVIEW);
+    const q = cloud.queue.find((x) => x.item === first.id);
+    if (!q) throw new Error('队列里没有 ' + first.id);
+    q.learned = '2026-11-09';
+    const page2 = await withCloud(cloud, {}, '/index.html?today=2026-01-01');
+    hrefs = await contHrefs(page2);
+    if (hrefs.some((h) => h.endsWith(first.href))) throw new Error('云端 learned 之后还在继续学 ' + JSON.stringify(hrefs));
+    if (hrefs.length !== 1 || !hrefs[0].endsWith(second.href)) throw new Error('云端 learned 后应改推荐下一篇 ' + JSON.stringify(hrefs) + ' expected ' + second.href);
+    if (page2._errors.length) throw new Error(page2._errors.join('\n'));
+    await page2._ctx.close();
+  });
+
   await check('收藏仍然可用', async () => {
     const page = await boot(browser, origin, { token: TOKEN });
     await page.goto(origin + '/index.html', { waitUntil: 'networkidle0' });

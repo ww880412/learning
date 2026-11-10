@@ -463,9 +463,12 @@ ${nx ? `<a class="nx" href="${esc(nx.href)}"${ext(nx.href)}><b>${['已学完', '
     if (rdPick && e) return [{ d: RADAR.updated, href: rdPick.href, title: rdPick.title, sub: rdPick.sub, n: L.length }];
     return e ? [{ d: RADAR.updated, href: `radar/index.html#r${e.id}`, title: e.name, sub: e.what, n: L.length }] : []; })() : [];
   const colTitle = id => (columns.find(c => c.id === id) || {}).title || '';
-  const TD_CONT = items.filter(i => isPage(i) && stateOf(i) === '进行中').sort((a, b) => String(b.start || '').localeCompare(String(a.start || '')))
-    .slice(0, 1).map(i => ({ href: i.href, title: i.title, sub: [colTitle(i.column), i.label, i.start ? `${i.start.slice(5).replace('-', '/')} 开始` : '', lessonSecs(i) ? `${lessonSecs(i)} 节` : ''].filter(Boolean).join(' · ') }));
-  const tdPayload = { cont: TD_CONT, dg: TD_DG, radar: TD_RD, ic: { dg: icDg, radar: icRd, brief: icBrief, poster: icPost, ph: icPh, rev: icRev } };
+  // 继续学候选：学习页已上线、review.json 还没有 learned（stateOf 为进行中），按开始日从新到旧。
+  // 页面只展示最近一篇，并且本机 done:<路径> 或之后同步来的 learned 也会跳过（nextContinue）。已学完的不推荐。
+  const contPool = items.filter(i => isPage(i) && stateOf(i) === '进行中').sort((a, b) => String(b.start || '').localeCompare(String(a.start || '')))
+    .map(i => ({ id: i.id, href: i.href, title: i.title, sub: [colTitle(i.column), i.label, i.start ? `${i.start.slice(5).replace('-', '/')} 开始` : '', lessonSecs(i) ? `${lessonSecs(i)} 节` : ''].filter(Boolean).join(' · ') }));
+  const TD_CONT = contPool.slice(0, 1);
+  const tdPayload = { cont: contPool, dg: TD_DG, radar: TD_RD, ic: { dg: icDg, radar: icRd, brief: icBrief, poster: icPost, ph: icPh, rev: icRev } };
   // 汇总那一行：Node 端先按北京时间渲染，浏览器端用同一个函数（toString 注入）按浏览者的北京时间重渲染
   function dgRow(x, fresh, on, CKH, E, IC) {
     var md = function (d) { return d.slice(5).replace('-', '/'); };
@@ -548,6 +551,8 @@ const diff=(a,b)=>Math.round((new Date(b+'T12:00:00')-new Date(a+'T12:00:00'))/8
 /* 复习是否完成：以最后一次操作为准。云端 reviews[].at、本机待上传操作 rev-op:<itemId>（{第几天:{done,on,at}}）谁新听谁的；
    都没有操作时间的旧记录：云端 done 或本机 rev-done:<itemId>（第几天 → 完成日期）有一边就算完成。规则在 assets/progress.js 的 effReview，这里注入的是同一份源码。 */
 const EFF=${PROG.effReview.toString()};
+/* 继续学跳过已学完：queue.learned 或本机 done:。只留最近一篇还在进行中的。规则在 assets/progress.js 的 nextContinue，这里注入的是同一份源码。 */
+const NEXT=${PROG.nextContinue.toString()};
 const G={over:[],today:[],later:[],seen:[]};
 function revMap(id){try{const o=JSON.parse(localStorage.getItem('rev-done:'+id)||'{}');return o&&typeof o==='object'&&!Array.isArray(o)?o:{}}catch(e){return {}}}
 function revPut(id,o){try{const k='rev-done:'+id;if(!o||!Object.keys(o).length)localStorage.removeItem(k);else localStorage.setItem(k,JSON.stringify(o))}catch(e){}}
@@ -593,7 +598,7 @@ function tdRows(){var rows=[],src=TD.dg&&TD.dg.length?TD.dg.slice().sort(functio
  if(g)rows.push({id:'digest:'+g.d,dg:g});else rows.push({src:'每日汇总',ic:TD.ic.dg,title:'还没有汇总'});
  if(TD.radar.length){if(rd)rows.push({id:'radar:'+rd.d,src:'雷达',ic:TD.ic.radar,href:rd.href,title:rd.title,sub:rd.sub||'',meta:tdMeta(rd.fresh,rd.d,'新增 '+rd.n+' 条').replace('最近一天','最近一次')});else rows.push({src:'雷达',ic:TD.ic.radar,title:'雷达还没有条目'})}
  var due=[].concat(G.over,G.today,G.seen);
- if(!due.length){var nx=G.later[0],ni=nx&&R.items[nx.item];rows.push({src:'复习',ic:TD.ic.rev,title:'今天没有到期的复习 '+__ic('party-popper',15)+(ni?'<small>下一次 '+E(nx.date.slice(5).replace('-','/'))+'：'+E(ni.title)+'</small>':''),html:1});(TD.cont||[]).forEach(function(c){rows.push({src:'继续学',ic:TD.ic.rev,title:'<a href="'+E(c.href)+'">'+E(c.title)+'</a><small>'+E(c.sub)+'</small>',html:1})})}
+ if(!due.length){var nx=G.later[0],ni=nx&&R.items[nx.item];rows.push({src:'复习',ic:TD.ic.rev,title:'今天没有到期的复习 '+__ic('party-popper',15)+(ni?'<small>下一次 '+E(nx.date.slice(5).replace('-','/'))+'：'+E(ni.title)+'</small>':''),html:1});var cont=NEXT(TD.cont,R.queue,R.items,doneOf);if(cont)rows.push({src:'继续学',ic:TD.ic.rev,title:'<a href="'+E(cont.href)+'">'+E(cont.title)+'</a><small>'+E(cont.sub)+'</small>',html:1})}
  else due.forEach(function(r){var it=R.items[r.item];if(!it)return;var q=R.queue.find(function(x){return x.item===r.item}),lo=q&&q.start?q.start.slice(5).replace('-','/'):'';rows.push({id:'rev:'+r.item,src:'复习',ic:TD.ic.rev,href:it.href,title:it.title,sub:(it.col?it.col+' · ':'')+(it.label?it.label+' · ':'')+(lo?lo+' 学完，':'')+'第 '+r.day+' 天复习'+(r.n>1?' · 积压 '+r.n+' 次':''),meta:r.late>0?('逾期 '+r.late+' 天'):'今天到期',over:r.late>0,on:r.on?1:0})});
  return rows}
 var tdFirst=1;
