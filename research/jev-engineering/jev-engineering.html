@@ -1,0 +1,640 @@
+<!DOCTYPE html><html lang="zh-CN" class="layout-article" data-layout="article"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<script>(function(){var v;try{v=localStorage.getItem('site-theme')}catch(e){}document.documentElement.dataset.theme=/^[ABC]$/.test(v||'')?v:'C'})();
+(function(){var k='theme',s=localStorage.getItem(k);if(s?s==='dark':matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark');
+window.__tt=function(){var f=function(){var d=document.documentElement.classList.toggle('dark');localStorage.setItem(k,d?'dark':'light')};if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.startViewTransition(f);else f()}})();</script>
+<title>Jev Engineering for Coding Agents</title><style>
+/* Site tokens copied verbatim, in cascade order, from ref/site-assets/site.css. */
+:root{--paper:#f6f7f9;--sheet:#fff;--card:#fff;--ink:#111827;--ink2:#4b5563;--meta:#6b7280;--hair:#e5e7eb;--hair2:#eef0f3;--blue:#2563eb;--blue-soft:#eff4ff;--red:#dc2626;--red-soft:#fef2f2;--green:#16a34a;--green-soft:#f0fdf4;--amber:#b45309;--amber-soft:#fffbeb;--purple:#7c3aed;--purple-soft:#f5f3ff;--font:system-ui,-apple-system,"PingFang SC","Noto Sans SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;--serif:var(--font);--mono:ui-monospace,SFMono-Regular,Menlo,monospace;--r-lg:12px;--r-sm:8px;--grad:none;color-scheme:light}
+html.dark{--paper:#0f1115;--sheet:#171a21;--card:#171a21;--ink:#e5e7eb;--ink2:#b6bcc6;--meta:#9ca3af;--hair:#2a2f3a;--hair2:#20242c;--blue:#7aa2ff;--blue-soft:rgba(122,162,255,.12);--red:#f87171;--red-soft:rgba(248,113,113,.12);--green:#4ade80;--green-soft:rgba(74,222,128,.12);--amber:#fbbf24;--amber-soft:rgba(251,191,36,.12);--purple:#c4b5fd;--purple-soft:rgba(196,181,253,.14);color-scheme:dark}
+[data-theme=B]{--paper:#fbfbfc;--sheet:#fff;--card:#fff;--ink:#16171a;--ink2:#4a4c55;--meta:#6e707a;--hair:#ececf0;--hair2:#f2f2f5;--blue:#5e6ad2;--blue-soft:#eef0fb;--red:#d4483b;--red-soft:#fdf0ee;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif}
+html.dark[data-theme=B]{--paper:#0e0f12;--sheet:#16171b;--card:#16171b;--ink:#e8e9ed;--ink2:#b3b5bd;--meta:#8b8d97;--hair:#26272d;--hair2:#1f2025;--blue:#8b93f0;--blue-soft:rgba(139,147,240,.14);--red:#f0776b}
+[data-theme=A]{--paper:#f7f4ee;--sheet:#fffdf9;--card:#fffdf9;--ink:#2b2722;--ink2:#5f574e;--meta:#8a8076;--hair:#e6dfd3;--hair2:#efe8dc;--blue:#b4532a;--blue-soft:#f6e1d6;--red:#a2461f;--red-soft:#f6e1d6;--green:#5f7a3a;--green-soft:#e7ecd9;--purple:#7a5a8c;--purple-soft:#eee4f1;--serif:"Noto Serif CJK SC","Noto Serif SC","Songti SC",serif;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif}
+html.dark[data-theme=A]{--paper:#1b1814;--sheet:#23201b;--card:#23201b;--ink:#ede6da;--ink2:#c7bdaf;--meta:#9b9184;--hair:#3a342c;--hair2:#2d2923;--blue:#e08a5f;--blue-soft:rgba(224,138,95,.15);--red:#e8916a;--red-soft:rgba(232,145,106,.15)}
+[data-theme=C]{--paper:#f3f5fb;--sheet:#fff;--card:#fff;--ink:#1d2340;--ink2:#5a6185;--meta:#8a90ad;--hair:#e6e9f4;--hair2:#eef0f7;--blue:#3b5bfd;--blue-soft:#e8edff;--red:#d4483b;--red-soft:#ffe6e3;--green:#1f9d5c;--green-soft:#e3f7ec;--amber:#d9771e;--amber-soft:#fff1e0;--purple:#7a4bf5;--purple-soft:#f2eaff;--r-lg:20px;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif;--sh:0 1px 2px rgba(30,40,90,.04),0 8px 24px rgba(30,40,90,.06)}
+html.dark[data-theme=C]{--paper:#0f1222;--sheet:#181c33;--card:#181c33;--ink:#e6e9fb;--ink2:#aab0d0;--meta:#7d84a8;--hair:#272c48;--hair2:#20253f;--blue:#7d93ff;--blue-soft:rgba(125,147,255,.15);--red:#ff8a7d;--red-soft:rgba(255,138,125,.15);--green-soft:rgba(31,157,92,.18);--amber-soft:rgba(217,119,30,.18);--purple-soft:rgba(122,75,245,.2);--sh:0 1px 2px rgba(0,0,0,.3)}
+:root{--acc2:#8b5cf6;--ease:cubic-bezier(.22,1,.36,1)}
+[data-theme=A]{--acc2:#c98a2b}
+html.dark[data-theme=A]{--paper:#181512;--sheet:#211d18;--card:#211d18;--meta:#a89d8f;--hair:#382f26;--acc2:#e3b15c}
+[data-theme=B]{--paper:#fafafb;--blue:#5b5bd6;--blue-soft:#efeffc;--acc2:#a855f7}
+html.dark[data-theme=B]{--paper:#0c0d10;--sheet:#14151a;--card:#14151a;--ink:#ececf1;--ink2:#babcc6;--meta:#9597a3;--hair:#262830;--hair2:#1c1d23;--blue:#9198ff;--blue-soft:rgba(145,152,255,.14);--acc2:#c084fc}
+[data-theme=C]{--acc2:#06b6d4}
+html.dark[data-theme=C]{--meta:#a3a9b8;--acc2:#22d3ee}
+html.dark{--meta:#a1a7b3}
+[data-theme=B]{--paper:#eef1f5;--hair:#dfe4ea;--hair2:#eef1f5;--green:#16a34a}
+html.dark[data-theme=B]{--paper:#0b0d12;--hair:#252a35;--hair2:#1a1e27}
+[data-theme=C]{--blue:#7b5cff;--blue-soft:#f0ecff;--acc2:#ff5e8a}
+html.dark[data-theme=C]{--paper:#0b0b0f;--sheet:#15151c;--card:#15151c;--ink:#f2f2f5;--ink2:#b8b8c6;--meta:#9a9aab;--hair:#26262f;--hair2:#1d1d25;--blue:#a08bff;--blue-soft:rgba(160,139,255,.14)}
+:root{--sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:24px;--sp-6:32px;--fs-xs:12px;--fs-sm:13.5px;--fs-md:15px;--fs-lg:18px;--fs-xl:24px;--fs-2xl:32px;--r-xs:6px;--r-sm:8px;--r-md:10px;--r-lg:12px;--r-xl:18px;--r-pill:999px;--sh-1:0 1px 2px rgba(15,23,42,.06);--sh-2:0 4px 16px -8px rgba(15,23,42,.22);--sh-3:0 14px 30px -12px rgba(15,23,42,.28);--dur-1:120ms;--dur-2:220ms;--dur-3:420ms;--ease:cubic-bezier(.22,1,.36,1);--ease-in-out:cubic-bezier(.65,0,.35,1);--spring:cubic-bezier(.34,1.3,.64,1);--icon-stroke:2}
+:root{--spring:linear(0,.0089,.0346,.0752,.1286,.1927,.2654,.3445,.4278,.5131,.5983,.6812,.7598,.8325,.8981,.9555,1.0042,1.0441,1.0753,1.0982,1.1134,1.1218,1.1243,1.1218,1.1155,1.1062,1.0949,1.0825,1.0697,1.0571,1.0451,1.034,1.0242,1.0157,1.0085,1.0027,.9982,.995,.9928,.9916,.9912,.9914,.9921,.9931,.9943,.9956,.9968,.998,.999,1)}
+html.dark{--sh-1:0 1px 2px rgba(0,0,0,.4);--sh-2:0 4px 16px -8px rgba(0,0,0,.6);--sh-3:0 14px 30px -12px rgba(0,0,0,.7)}
+/* Five reading levels: title / section / subsection / body / note. */
+:root{--reading-width:680px;--toc-width:208px;--rail-width:180px;--reading-gap:28px;--top-height:56px;--body-size:18px;--body-leading:1.8;--finish-space:104px}
+*{box-sizing:border-box}html{scroll-padding-top:72px}html,body{margin:0;background:var(--paper);color:var(--ink);font:var(--body-size)/var(--body-leading) var(--font);-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}a{color:var(--blue);text-underline-offset:3px;overflow-wrap:anywhere}a:hover{text-decoration-thickness:2px}button,input,textarea,select{font:inherit;color:inherit}button,a,summary{touch-action:manipulation}button{cursor:pointer}button:disabled{opacity:.5;cursor:default}:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+h1,h2,h3{color:var(--ink);font-family:var(--serif);line-height:1.35;letter-spacing:-.02em;overflow-wrap:anywhere}h1{font-size:var(--fs-2xl);margin:8px 0 16px}h2{font-size:var(--fs-xl);margin:8px 0 16px}h3{font-size:var(--fs-lg);margin:24px 0 8px}p{margin:0 0 12px}ul,ol{padding-left:24px}li{margin:4px 0}code{font:.88em var(--mono);background:var(--hair2);padding:1px 4px;border-radius:var(--r-xs)}pre{overflow:auto;white-space:pre;tab-size:4;font:14px/1.65 var(--mono);padding:16px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-md);margin:12px 0}pre code{font:inherit;white-space:inherit;background:none;padding:0}
+.i{display:inline-block;vertical-align:middle;flex:none;width:18px;height:18px;stroke-width:2}.btn,button.opt{min-height:44px;border:1px solid var(--hair);border-radius:var(--r-sm);background:var(--sheet);padding:8px 14px;font-size:var(--fs-md);font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:6px}.btn:hover{border-color:var(--blue);background:var(--blue-soft)}.btn.main{background:var(--blue);color:var(--sheet)}.btn.sm{font-size:var(--fs-sm)}textarea{display:block;width:100%;padding:10px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-sm);resize:vertical}
+.top{position:fixed;inset:0 0 auto;height:var(--top-height);z-index:30;display:flex;align-items:center;gap:16px;padding:0 20px;background:var(--paper);border-bottom:1px solid var(--hair)}.top .course{font-size:var(--fs-sm);font-weight:700;max-width:35vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.top .track{flex:1;height:4px;background:var(--hair);border-radius:var(--r-pill);overflow:hidden}.top .track i{display:block;width:0;height:100%;background:var(--blue);transition:width var(--dur-2) var(--ease)}.top .count{font-size:var(--fs-sm);max-width:32vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.toc-toggle{min-width:44px}.top .theme-toggle{font-size:var(--fs-sm);min-height:44px}
+.layout-article .deck,.layout-pair .deck{padding:80px 20px calc(var(--finish-space) + env(safe-area-inset-bottom));max-width:720px;margin:0 auto;min-width:0}.layout-article .sec{position:relative;margin:0 0 32px;padding-top:16px;border-top:1px solid var(--hair);scroll-margin-top:72px;min-width:0}.layout-article .hero{border:0;padding-top:0}.kicker,.meta,.src,.source-anchor,figcaption,caption,.aside{font-size:var(--fs-sm);line-height:1.65}.kicker{display:block;color:var(--blue);font-weight:700}.lede{font-size:var(--fs-lg);font-weight:600}.links{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:var(--fs-sm)}.links a{display:inline-flex;align-items:center;min-height:44px}.src{margin:16px 0 0;padding-top:8px;border-top:1px solid var(--hair);color:var(--ink2)}.source-anchor{display:block;color:var(--ink2);margin-top:6px;overflow-wrap:anywhere}.source-anchor a{min-height:44px;display:inline-flex;align-items:center}.src.extra::before{content:'补充 · ';color:var(--amber)}.src.official::before{content:'官方 · ';color:var(--blue)}.src.article::before{content:'原文 · ';color:var(--blue)}
+.toc{position:fixed;left:max(20px,calc((100vw - 1192px)/2));top:76px;width:var(--toc-width);max-height:calc(100dvh - 180px);overflow:auto;font-size:var(--fs-sm);line-height:1.5;z-index:25}.toc ol{list-style:none;margin:0;padding:0}.toc a{display:flex;gap:8px;align-items:center;min-height:44px;padding:6px 10px;color:var(--ink2);text-decoration:none;border-radius:var(--r-sm)}.toc a[aria-current=true]{background:var(--blue-soft);color:var(--blue);font-weight:700}.toc b{display:block;margin:0 10px 8px}.toc-backdrop{display:none}.tldr,.argmap{padding:16px;background:var(--blue-soft);border-radius:var(--r-lg);margin:16px 0}.tldr a,.argmap a{display:block;min-height:44px;align-content:center}.argmap ol{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 16px;margin:0}.points{padding:12px 16px 12px 36px;background:var(--hair2);border-radius:var(--r-md)}
+figure.orig,figure.redraw,.figure{margin:20px 0;min-width:0}figure img{display:block;max-width:100%;height:auto;border:1px solid var(--hair);border-radius:var(--r-md);cursor:zoom-in;background:var(--sheet)}figcaption{margin-top:8px;color:var(--ink2)}figcaption b{color:var(--ink)}.how{margin-top:6px}.table{margin:20px 0;overflow-x:auto}.table table,table.data{width:100%;border-collapse:collapse;background:var(--sheet);font-size:var(--fs-md)}th,td{border-bottom:1px solid var(--hair);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--hair2)}caption{text-align:left;font-weight:700;padding:8px 0}.table-note{font-size:var(--fs-sm);color:var(--ink2)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;margin:16px 0}.stat{padding:12px 14px;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet)}.stat b{display:block;font-size:var(--fs-xl);line-height:1.35;color:var(--blue);font-variant-numeric:tabular-nums}.stat span{display:block;font-size:var(--fs-sm);color:var(--ink2)}.stat .source-anchor{font-size:var(--fs-xs)}
+blockquote.quote{margin:16px 0;padding:12px 16px;border-left:3px solid var(--blue);background:var(--sheet)}.quote cite{display:block;font-style:normal;font-size:var(--fs-sm);color:var(--ink2)}.callout{padding:12px 16px;margin:16px 0;border-left:3px solid var(--blue);background:var(--blue-soft);border-radius:0 var(--r-sm) var(--r-sm) 0}.callout.limit{border-color:var(--amber);background:var(--amber-soft)}.callout.extra{border:1px dashed var(--meta);background:var(--sheet)}.callout.myth{border-color:var(--amber);background:var(--hair2)}.callout.limit::before{content:'作者的限定 · ';font-weight:700}.aside{padding:12px;border-left:2px solid var(--hair);color:var(--ink2);margin:12px 0}
+.stories,.compare,.roles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}.story,.compare>div,.roles>div{padding:12px;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);font-size:var(--fs-md)}.story b,.roles b{display:block}.story dt{font-weight:700;color:var(--ink2);font-size:var(--fs-sm)}.story dd{margin:0 0 8px}.story p,.story .fix{display:block;margin:8px 0}.steps,.ladder{display:grid;gap:8px;padding:0;list-style:none;counter-reset:step}.steps>li,.ladder>li{padding:10px 14px;background:var(--hair2);border-radius:var(--r-sm);counter-increment:step}.steps>li::before{content:counter(step)'. ';color:var(--blue);font-weight:700}.ladder i{font-style:normal;font-weight:700;margin-right:8px}.matrix{border:1px solid var(--hair);padding:16px;border-radius:var(--r-md)}.matrix .axes{font-size:var(--fs-sm);color:var(--ink2)}.matrix ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));list-style:none;padding:0;gap:1px;background:var(--hair)}.matrix li{margin:0;padding:16px;background:var(--sheet)}.refs{font-size:var(--fs-sm);line-height:1.7}.refs a{display:inline-block;min-height:44px;align-content:center}.thread{border-left:2px solid var(--hair);padding-left:16px}.formula{padding:16px;border:1px solid var(--hair);overflow:auto}.formula math{font-size:var(--fs-xl)}details.more{margin:12px 0;border-top:1px solid var(--hair);font-size:var(--fs-md)}summary{min-height:44px;cursor:pointer;display:flex;align-items:center;gap:8px}summary .i{transition:transform var(--dur-1)}details[open] summary .i{transform:rotate(90deg)}
+/* Shared interactive components. No fixed page/card height. */
+.flow-scroll{max-width:100%;overflow-x:auto;min-width:0;touch-action:pan-x pan-y}.flow-scroll svg.flow{display:block;width:100%;height:auto;min-height:0}.flow-tip{font-size:var(--fs-sm);color:var(--ink2)}.fl-node rect{fill:var(--sheet);stroke:var(--hair);stroke-width:2}.fl-node text{font:600 17px var(--font);fill:var(--ink)}.fl-node .sub{font-size:13px;font-weight:400;fill:var(--ink2)}.fl-node.act rect{stroke:var(--blue);fill:var(--blue-soft);stroke-width:3}.fl-node.blue rect{stroke:var(--blue)}.fl-node.amber rect,.fl-node.red rect{stroke:var(--amber)}.fl-node.green rect{stroke:var(--green)}.fl-edge{fill:none;stroke:var(--meta);stroke-width:2}.fl-edge.act{stroke:var(--blue);stroke-width:3}.fl-elab{font:13px var(--font);fill:var(--ink2)}
+.sim{margin:16px 0;padding:12px;border:1px solid var(--hair);border-radius:var(--r-lg);background:var(--sheet);display:flex;flex-direction:column;gap:12px}.sim .ctl{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.sim .ctl label{min-height:44px;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm)}.sim .ctl input[type=range]{min-width:110px}.sim .body{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}.sim .narr{order:-1;background:var(--blue-soft);padding:10px 12px;border-radius:var(--r-sm);font-size:var(--fs-md)}.sim .log{max-height:240px;overflow:auto;font:var(--fs-sm)/1.6 var(--mono)}.sim .msg{border-left:3px solid var(--hair);padding:8px;margin:6px 0;background:var(--paper);white-space:pre-wrap;overflow-wrap:anywhere}.msg b{display:block;font-family:var(--font)}.sim .msg.err{border-color:var(--amber)}.prediction{order:-2}.component-error{padding:16px;border:1px solid var(--amber);color:var(--amber)}
+.quiz{margin:16px 0;padding:16px;border:1px solid var(--hair);border-radius:var(--r-lg);background:var(--sheet)}.quiz .qn{font-size:var(--fs-sm);color:var(--ink2)}.quiz .qt{font-size:var(--fs-lg);font-weight:700;margin-bottom:12px}.quiz .opt{display:block;width:100%;text-align:left;margin:8px 0;font-weight:400}.quiz .opt.ok{border-color:var(--green);background:var(--green-soft)}.quiz .opt.no{border-color:var(--amber);background:var(--amber-soft)}.quiz .fb{margin:12px 0;font-size:var(--fs-md)}.quiz .nav{display:flex;gap:8px;margin-top:12px}.quiz label{display:block;font-size:var(--fs-sm)}.stack{display:grid;gap:6px;font-size:var(--fs-sm)}.stack .row{display:grid;grid-template-columns:28px 80px minmax(0,1fr);gap:8px;padding:8px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-sm)}.stack .t{overflow-wrap:anywhere;white-space:pre-wrap}.stack .new{background:var(--blue-soft)}.bar{display:grid;grid-template-columns:100px minmax(0,1fr) 80px;gap:8px;margin:8px 0;align-items:center;font-size:var(--fs-sm)}.bar .bt{height:20px;background:var(--hair2);border-radius:var(--r-xs);overflow:hidden}.bar .bt i{display:block;height:100%;background:var(--blue)}.bar .bn,.bar .bmiss{grid-column:2/4}.bars .bc{font-size:var(--fs-sm);color:var(--ink2)}
+/* Paired material stays inside its own container; highlighting never scrolls the page. */
+.pair.codewalk,.pair.read-pair,.pair.material-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start;margin:20px 0;position:relative;min-width:0}.pair-source{position:sticky;top:72px;max-height:calc(100dvh - 160px);overflow:auto;overscroll-behavior:contain;min-width:0;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);padding:12px;scroll-padding:16px}.pair-notes{min-width:0}.pair-notes .step{padding:16px 0 24px;border-top:1px solid var(--hair);scroll-margin-top:84px}.pair-notes .step.is-active{border-color:var(--blue)}.pair-source .source-block{padding:12px 8px;border-left:3px solid transparent}.pair-source .source-block.is-active{background:var(--blue-soft);border-color:var(--blue)}.source-text{overflow-wrap:anywhere}.pair-source pre{border:0;padding:0;margin:8px 0;overflow:visible}.code-line{display:block;min-height:1.65em;white-space:pre;padding-left:48px;position:relative}.code-line::before{content:attr(data-line);position:absolute;left:0;width:36px;text-align:right;color:var(--meta);user-select:none}.code-line.hl{background:var(--blue-soft)}.copy-code{position:static;flex:none;white-space:nowrap}.pair-source .source-anchor{font-size:var(--fs-xs)}
+/* A separate toolbar never shares the scrolling code viewport. */
+.heading-source{font-size:var(--fs-xs);margin:0 0 8px}
+.pair.codewalk{grid-template-columns:minmax(0,60%) minmax(0,1fr)}
+.code-panel{position:sticky;top:72px;display:flex;flex-direction:column;min-width:0;max-height:calc(100dvh - 160px);border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);overflow:hidden}
+.code-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;flex:none;border-bottom:1px solid var(--hair);font-size:var(--fs-xs);color:var(--ink2)}
+.code-panel .pair-source{position:static;max-height:none;min-height:0;flex:1 1 auto;border:0;border-radius:0;box-shadow:none;overflow:auto}
+.code-panel .pair-source pre{width:max-content;min-width:100%}
+dialog.image-dialog{width:calc(100vw - 24px);max-width:none;max-height:92dvh;padding:12px;border:1px solid var(--hair);background:var(--sheet);color:var(--ink);border-radius:var(--r-md);overflow:auto}dialog::backdrop{background:rgba(0,0,0,.75)}.image-dialog img{max-width:none;width:max(100%,min(1400px,180vw));height:auto}.image-dialog .dialog-close{position:sticky;top:0;left:0}.image-open{min-height:44px;border:0;background:transparent;padding:0;display:block;cursor:zoom-in;max-width:100%}.image-open img{max-width:100%}
+/* Only CSS changes the unchanged finish.js button. High specificity beats injected styles. */
+html body .fin-btn{bottom:calc(16px + env(safe-area-inset-bottom));right:16px;min-height:44px;z-index:35}html body #quiz-return{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:35;max-width:45vw}
+@media(min-width:1180px){.layout-article .deck{width:var(--reading-width);max-width:none;padding-left:0;padding-right:0;margin-left:max(260px,calc((100vw - 1192px)/2 + 236px));margin-right:0}.layout-article .sec>.doc-body>figure,.layout-article .sec>.doc-body>.table,.layout-article .sec>.codewalk{width:calc(100% + 120px);margin-left:0}.layout-article .aside{position:absolute;left:calc(100% + 28px);top:24px;width:var(--rail-width);margin:0}.layout-article .aside~figure{width:100%}html.layout-article body .fin-btn{left:max(20px,calc((100vw - 1192px)/2));right:auto;max-width:208px}.layout-pair .deck{max-width:1280px;margin-left:236px;margin-right:20px}.layout-pair .toc{width:188px;left:20px}html.layout-pair body .fin-btn{left:20px;right:auto;max-width:188px}}
+@media(max-width:1179px){.toc{display:none;visibility:hidden;left:0;top:var(--top-height);width:min(360px,90vw);max-height:calc(100dvh - 72px);background:var(--sheet);padding:16px;border-right:1px solid var(--hair);border-bottom:1px solid var(--hair)}html.toc-open .toc{display:block;visibility:visible}html.toc-open .toc-backdrop{display:block;position:fixed;inset:var(--top-height) 0 0;background:rgba(0,0,0,.3);z-index:24}}
+@media(max-width:820px){:root{--body-size:17px}.layout-article .deck,.layout-pair .deck{padding-left:18px;padding-right:18px}.top{gap:8px;padding:0 12px}.top .course{display:none}.top .count{max-width:44vw}.top .track{min-width:24px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stories,.compare,.roles{grid-template-columns:minmax(0,1fr)}.argmap ol{grid-template-columns:minmax(0,1fr)}table.data thead,.table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}table.data,table.data tbody,table.data tr,table.data td,.table table,.table tbody,.table tr,.table td{display:block;width:100%}table.data tr,.table tr{padding:8px 12px;margin-bottom:8px;border:1px solid var(--hair);background:var(--sheet);border-radius:var(--r-md)}table.data td,.table td{border:0;padding:4px 0}td[data-label]::before{content:attr(data-label)'：';font-size:var(--fs-sm);font-weight:700;color:var(--ink2)}.table caption,table.data caption{display:block;width:100%}.pair.codewalk,.pair.read-pair,.pair.material-pair{display:block}.pair-notes{margin-top:12px}.code-panel{top:var(--top-height);max-height:40dvh;z-index:15}.pair-source{top:var(--top-height);max-height:40dvh;z-index:15;box-shadow:var(--sh-1)}.pair-notes .step{scroll-margin-top:calc(40dvh + 80px)}.flow-scroll svg.flow{width:var(--flow-width);max-width:none;height:var(--flow-height)}.sim .flow-scroll svg.flow{width:100%;height:auto}.stack .row{grid-template-columns:22px 64px minmax(0,1fr)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+@media print{.top,.toc,.fin-btn,#quiz-return,.toc-backdrop,.zoom-toggle,.code-toolbar{display:none!important}.layout-article .deck,.layout-pair .deck{margin:0;padding:0;max-width:100%;width:auto}.pair-source,.code-panel{position:static;max-height:none;overflow:visible}.sec{break-inside:auto}figure,.stat{break-inside:avoid}}
+/* Applies after legacy CSS too. Zoom is an intentional local viewport; non-zoom stays unnested. */
+html body .sim .flow-scroll.zoom{overflow:auto;max-height:40dvh;min-height:0;height:auto;overscroll-behavior:contain;scroll-padding:16px;padding:16px}
+html body .sim .flow-scroll.zoom svg.flow{width:var(--flow-width);min-width:var(--flow-width);height:var(--flow-height);max-height:none;flex:none}
+html body .sim .zoom-toggle{min-height:44px;justify-self:start}.layout-deck .sim .body{position:relative}.layout-deck .card{padding-bottom:8px}.layout-deck .deck{bottom:calc(92px + env(safe-area-inset-bottom))}
+html body .fin-btn{bottom:calc(16px + env(safe-area-inset-bottom));right:16px;min-height:44px}html.layout-deck .bottom{padding-right:170px;padding-left:12px;height:76px}.layout-deck .btn,.layout-deck .sim .branches label{min-height:44px}.layout-deck details.more summary::before{content:none}.layout-deck .fl-edge.act{animation:none}
+@media(max-width:820px){html.layout-deck .bottom{padding-right:12px;gap:8px}.layout-deck .bottom .btn{padding:8px 10px;font-size:13px}html.layout-deck body .fin-btn{padding:8px 12px;font-size:13px}.layout-deck .card.full:has(.sim)>.head-full{position:sticky;top:0;z-index:4;background:var(--sheet);padding-top:12px;padding-bottom:12px}.layout-deck .sim .body{overflow:visible}.layout-deck .card .stage:has(.sim){overflow:visible}.layout-deck .sim .flow-scroll:not(.zoom){overflow:visible}}
+
+.layout-deck .card.doc.on{display:block;overflow:auto;padding:24px}.layout-deck .card.doc .doc-body{overflow:visible}.layout-deck .hero.card{height:auto}
+
+/* Legacy .stage svg also matches button icons: keep Lucide at its declared size. */
+html body svg.i{width:18px;height:18px;max-height:none;flex:none}
+
+/* Below the desktop sidebar breakpoint, finish lives in the opaque top bar.
+   Reserve its width before laying out the title; keep the deck footer for paging. */
+@media(max-width:1179px){
+ html body .top{gap:8px;padding:0 132px 0 12px;z-index:40;background:var(--paper)}
+ html body .top .course{display:none}
+ html body .top .count{flex:1;min-width:0;max-width:none;font-size:var(--fs-sm);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ html body .top .track{position:absolute;left:12px;right:12px;bottom:0;height:2px;min-width:0}
+ html body .top .toc-toggle{width:44px;flex:none;padding:0}
+ html body .top .theme-toggle{flex:none;padding:8px;font-size:var(--fs-sm)}
+ html body .fin-btn{top:6px;bottom:auto;left:auto;right:12px;width:112px;max-width:112px;height:44px;padding:8px;font-size:13px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:41;box-shadow:none}
+}
+</style></head><body>
+<header class="top"><button class="btn toc-toggle" aria-label="打开目录" aria-expanded="false"><svg class="i i-menu" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h16"/></svg></button><span class="course">Jev Engineering for Coding Agents</span><span class="track" role="presentation"><i></i></span><span class="count"></span><button class="btn theme-toggle" aria-label="切换深浅色">深浅色</button></header><main class="deck"><section class="sec hero" data-toc="开篇：这份 PDF 讲什么" id="s1" data-source-section="s1">
+  <header class="doc-head"><span class="kicker">PDF · 独立汇编，据 Diogo Almeida（TypeSafe）设计笔记 · 2026 年 9 月 · 收录起因：旺旺的 X 帖（2026-11-10 北京 14:32）</span><h1>Jev Engineering for Coding Agents：上下文该按每一轮组装，而不是一路堆积</h1>
+  <p class="lede" data-points="m03" id="h-lede">这份 12 页的 PDF 把 TypeSafe 创始人 Diogo Almeida 的设计笔记整理成文。它的判断是：coding agent 本身很简单，<b>通常</b>就是一个模型加几样工具的 while 循环；真正的杠杆在每一轮喂给模型什么。它从一个问题出发：如果语言模型没有 KV cache，你会怎么设计 coding agent？这个问题暴露出现有 agent 不加审视就继承的六个设计选择。随后它提出一种替代架构：状态显式、带类型，由 Jev 做每一轮的决策。每块上下文按当前问题打分，路由价格把重新处理的成本算进去，工具分层披露，指令按条件加载，只读的后台任务共享一次检索。它还算了路由的账、真实会话里 token 花在哪，以及为什么路由要看文件敏感度，不能只看难度。</p>
+  <p class="links extra"><a href="https://github.com/yibie/jev-engineering-zh/blob/main/assets/original.pdf">原始 PDF（GitHub） <svg class="i i-external-link" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a><a href="https://x.com/TiagerBao/status/2120041783568875653">旺旺的 X 帖 <svg class="i i-external-link" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a><a href="https://docs.google.com/document/d/1G61uUB0FifUnmmrPzFQojZ3KpczYKmXGpgEXDJ2l_Zg/edit">底稿：公开的设计笔记（Google Docs） <svg class="i i-external-link" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a><a href="jev-engineering-close.html">精读版（加密，全文对照） <svg class="i i-external-link" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a><span>全文讲解约 35 分钟</span></p></header>
+  <div class="doc-body">
+    <p data-points="m04" id="h-terms">PDF 给的索引词：Jev、TypeSafe、coding agents、harness engineering、KV cache、context engineering、model routing、sub-agents、tool calling、compaction、AGENTS.md、background agents。</p>
+    <ul class="tldr extra" id="tldr">
+      <li><a href="#s2">第 2 节 · 旺旺的判断：Token 大多花在读和搜，不在写代码</a></li>
+      <li><a href="#s3">第 3 节 · 这份 PDF 是谁写的、底稿从哪来</a></li>
+      <li><a href="#s6">第 6、7 节 · KV cache 带来的六个症状，含路由算术</a></li>
+      <li><a href="#s8">第 8 节 · Token 真正花在哪：原表 3</a></li>
+      <li><a href="#s10">第 10–15 节 · 替代架构：可见度阶梯、分层工具、条件指令、安全路由、后台任务</a></li>
+    </ul>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s1"><a href="https://github.com/yibie/jev-engineering-zh/blob/main/assets/original.pdf">PDF 第 1 页 Abstract</a></span></div>
+</section>
+<section class="sec" data-toc="旺旺：Token 花在哪" id="s2" data-source-section="s2">
+  <header class="doc-head"><span class="kicker">收录起因 · 旺旺的 X 帖</span><h2>旺旺：Coding Agent 最费 Token 的地方可能不是写代码，上下文应该按任务组装</h2></header>
+  <div class="doc-body">
+    <p class="extra" id="tb-intro">补充：这一节只讲旺旺帖子里说了什么。帖子是他读这份 PDF 后的摘要；下面各节只讲 PDF 本身怎么说。</p>
+    <blockquote class="quote" id="tb1q"><p>Coding Agent 最浪费 Token 的地方，可能根本不是写代码。</p><cite><a href="https://x.com/TiagerBao/status/2120041783568875653">旺旺 @TiagerBao · X 帖首句</a></cite></blockquote>
+    <p data-points="tb01" id="tb1">讲解：开篇他就说，Coding Agent 花 Token 最多的地方<b>可能</b>并不在写代码上。他用的是「可能」，不是定论。</p>
+    <p data-points="tb02" id="tb2">他说自己最近读了一份《Jev Engineering for Coding Agents》，内容是整理 TypeSafe 创始人 Diogo Almeida 对 Agent 架构的思考，并挑出几个他认为值得关注的观点：</p>
+    <ul>
+      <li data-points="tb03" id="tb3a">写代码<b>只</b>占<b>约</b> 4%～10% 的 Token，更多消耗在读取、搜索和命令输出上。</li>
+      <li data-points="tb03" id="tb3b">小模型<b>不一定</b>省钱：换模型之后要重建上下文，这一步<b>可能</b>更贵。</li>
+      <li data-points="tb03" id="tb3c">MCP 工具不该一次把全部 Schema 都加载进来。</li>
+      <li data-points="tb03" id="tb3d">Compaction 不该盲目压缩，而应按当前任务去取上下文。</li>
+      <li data-points="tb03" id="tb3e">AGENTS.md 应按条件加载，免得无关规则长期占着上下文。</li>
+      <li data-points="tb03" id="tb3f">子 Agent 应共享检索结果，少做重复读取。</li>
+    </ul>
+    <p data-points="tb04" id="tb4">他的核心概括：上下文<b>应该</b>按任务动态组装，而不是让聊天记录无限累积。</p>
+    <p data-points="tb05" id="tb5">他也给了定性：这是一份<b>第三方汇编</b>的设计笔记，<b>不是已经落地的完整方案</b>，但很值得做 Agent 的开发者参考。</p>
+    <p data-points="tb06" id="tb6">帖子附了<a href="https://github.com/yibie/jev-engineering-zh/blob/main/assets/original.pdf">原文 PDF 的链接</a>，最后问读者：Coding Agent 下一阶段最大的优化空间，是模型能力，还是上下文管理和任务调度？</p>
+    <div class="callout extra" id="tb-check"><p><b>补充 · 帖子各条和 PDF 的对应（我们核对的结果）</b></p><p>4%～10%：PDF 原表 3 写的是 Writing and editing code 一行 4–10%，表头是 ~Share，口径是「按子任务分的已处理 token 占比，偏输入的视角，重复读取每次都算」。PDF 文末说这张表是示意性估计，不是测量数据。底稿里它是一张标题为 SLOP 的表格截图，没有写数据怎么来的，来源<b>未确认</b>。</p><p>其余五条分别对应 PDF 第 II 节 A（路由）、第 VII 节（分层工具）、第 V 节（可见度阶梯）、第 VIII 节（条件指令）、第 X 节（后台任务共享检索）。PDF 摘要和第 X 节讲的是「只读的后台任务共享一次检索」，帖子写成了「子 Agent」。</p></div>
+  </div>
+  <div class="src article">原帖 <span class="source-anchor" data-source-section="s2"><a href="https://x.com/TiagerBao/status/2120041783568875653">旺旺 @TiagerBao · 2026-11-10</a></span></div>
+</section>
+<section class="sec" data-toc="这份 PDF 的来历" id="s3" data-source-section="s3">
+  <header class="doc-head"><span class="kicker">材料性质</span><h2>这是一份独立汇编的学习笔记，底稿是 Diogo Almeida 的设计笔记，与 TypeSafe 无隶属</h2></header>
+  <div class="doc-body">
+    <p data-points="m01" id="m1">首页页眉写着这是 2026 年 9 月的一份「Jev 工程实践工作笔记」。主标题 JEV ENGINEERING FOR CODING AGENTS，副标题说它是 TypeSafe 创始人用 Jev 做东西的蓝图。署名一行说它是一份 A Synthesis for Study（供学习的综合整理），依据 Diogo Almeida（TypeSafe）的设计笔记。下面一行斜体：2026 年 9 月独立汇编，与 TypeSafe 无隶属，也未获其背书。</p>
+    <p data-points="m59" id="m59">文末 Sources 一节把来源分得很清楚：</p>
+    <ul>
+      <li data-points="m59" id="m59a">Jev 的描述来自 TypeSafe 的材料：一个返回带类型的 choice、score 和 noul 决策、并附概率的决策模型。</li>
+      <li data-points="m59" id="m59b">核心论点、路由算术、六个症状和提出的功能，来自 TypeSafe 创始人 Diogo Almeida 的设计笔记，原话说这些笔记是「提供给汇编者的」。</li>
+      <li data-points="m59" id="m59c">读和搜的占比数字（56.2% of tool-use turns，46.5% of main-agent tokens，GPT-5.4 轨迹）引自 Microsoft 的 fastcontext 项目。</li>
+      <li data-points="m59" id="m59d">token 占比那张表（原表 3）是对 CLI coding-agent 会话的 illustrative estimate，示意性估计。</li>
+      <li data-points="m59" id="m59e">Recursive language models 出自 A. Zhang, 2025；工具出处是 headroom、rtk、ast-grep、ast-outline、fastcontext、fff（GitHub）。</li>
+      <li data-points="m59" id="m59f">模型标价沿用笔记里的数字，<b>可能</b>已经变了。所有示意图都是汇编者原创。</li>
+    </ul>
+    <p data-points="m60" id="m60">最后一页页脚再声明一次：这是供学习的独立整理，不是 TypeSafe、Anthropic、OpenAI、Microsoft 或文中任何项目的出版物，与它们都无隶属、未获背书；成本数字是示意，依据底稿里引用的标价。</p>
+    <div class="callout extra" id="m-prov"><p><b>补充 · 我们核实了什么</b></p><p>TypeSafe 与 Jev：TypeSafe 官网博客 2026-09-15 的发布文由 Diogo Almeida（founder, TypeSafe）署名，介绍 Jev 是返回带类型、带概率决策的模型（<a href="https://typesafe.ai/blog/introducing-system-one-models-and-jev">TypeSafe 博客</a>）。</p><p>底稿：Latent Space 的 Jev 访谈页写「Diogo has published a note on the Tyranny of the KV Cache」，链接到一份公开的 Google Docs「[public] thoughts on a typesafe coding agent」（<a href="https://latent.space/p/jev">Latent Space 节目页</a>）。我们导出了这份文档，结构和 PDF 对得上：六个「weird things」、路由算术、附录里的 fastcontext 数字和 SLOP 表都在。文档本身的所有者我们没法直接核实，归属依据是 Latent Space 的指认。</p><p>汇编者：PDF 没有署名。PDF 由 WeasyPrint 生成，放在 GitHub 仓库 yibie/jev-engineering-zh 里，该仓库 2026-09-22 建立，是它的中文全译；汇编者是不是仓库作者，<b>未确认</b>。仓库 README 称根目录是「第三方根据笔记汇编整理」，与帖子所说「第三方汇编」一致。本页讲解以英文 PDF 为准，中文译本只作参考。</p><p>fastcontext：PDF 写的 Microsoft fastcontext 项目，github.com/microsoft/fastcontext 今天访问返回 404，56.2% 和 46.5% 两个数字<b>未确认</b>，这里只转述 PDF 怎么说。</p></div>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s3"><a href="https://github.com/yibie/jev-engineering-zh/blob/main/assets/original.pdf">PDF 第 1 页署名与第 12 页 Sources</a></span><span class="source-anchor" data-source-section="s31"></span></div>
+</section>
+<section class="sec" data-toc="总图与摘要" id="s4" data-source-section="s3">
+  <header class="doc-head"><span class="kicker">原图 1 · 摘要</span><h2>agent 只是一个循环，杠杆不在循环里，在每一轮喂给模型的东西里</h2></header>
+  <div class="doc-body">
+    <figure class="figure orig" data-asset="img-1" data-points="m02" id="f1"><img src="images/fig1.png" alt="Fig. 1. The Jev harness. Explicit state (left) is stored as addressable, typed chunks. Jev (right) answers the per-turn questions: which chunks to show, whether to reuse the cache, which model and tool to use, and whether a command may run. Context Assembly and the Router feed the Runtime, which calls hundreds of tools disclosed snippet-first and routes work to frontier, sub-agent, cheap, or background models under a security policy."><figcaption><b>原图 1 · Fig. 1 The Jev harness</b> <span class="source-anchor" data-source-section="s3">出处：Jev Engineering for Coding Agents · <a href="https://github.com/yibie/jev-engineering-zh/blob/main/assets/original.pdf">PDF 第 1 页 Fig. 1</a></span><span class="how">怎么看：左上是显式状态，每样东西（工具调用、推理、用户轮次、AGENTS.md、diff 和文件、缓存前缀）都存成可寻址、带类型的块（Chunk store）。右上是 Jev 每一轮要回答的问题：哪些块给模型看、要不要复用缓存、用哪个模型、选哪个工具、命令能不能跑，输出是 typed answers + probabilities。两边分别汇入 Context Assembly 和 Router，再驱动 Runtime；Runtime 调用下方几百个工具（snippets first, schema on demand），并按 security policy 把活派给右侧的前沿模型、子 agent 模型、便宜或开放模型、后台审阅模型。</span></figcaption></figure>
+    <p data-points="m02" id="m2">原图注：Jev harness。显式状态（左）存成可寻址、带类型的块；Jev（右）回答每一轮的问题：显示哪些块、是否复用缓存、用哪个模型和工具、一条命令能否执行。Context Assembly 和 Router 驱动 Runtime；Runtime 调用几百个先给片段再披露的工具，在安全策略下把工作派给前沿、子 agent、便宜或后台模型。</p>
+    <p data-points="m03" id="m3">摘要先下判断：coding agent 简单得出人意料，大多是一个模型加少量工具的 while 循环，模型之外几乎没有有意义的创新。这份笔记综合 Diogo Almeida 的设计笔记，讲怎样围绕 Jev 构建 coding agent。Jev 是 TypeSafe 的决策模型，把结构化状态转成带类型的输出，比如 choice、score 和 noul 决策。</p>
+    <p class="extra" id="m3x">补充：PDF 没有解释 noul 这个词。按 TypeSafe 的公开介绍，它是 Jev 三种问题类型之一，用 0 到 1 的概率回答一个陈述是否成立，相当于带概率的「是/否」。</p>
+    <p data-points="m03" id="m3b">摘要接着说，笔记从一个挑衅性的问题开始：如果语言模型没有 KV cache，你会怎么设计 coding agent？这个问题暴露出六个被不加审视就继承的设计选择：会亏钱的路由、挤占上下文的工具调用、盲目压缩的 compaction、几乎不触发的子 agent、丢掉状态的重启，以及电池之争（batteries debate，要不要内置大量能力）。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s3"><a href="https://github.com/yibie/jev-engineering-zh/blob/main/assets/original.pdf">PDF 第 1 页 Fig. 1 与 Abstract</a></span></div>
+</section>
+<section class="sec" data-toc="为什么再做一个 agent" id="s5" data-source-section="s4">
+  <header class="doc-head"><span class="kicker">I. Why Yet Another Agent · A. Where Jev Sits</span><h2>有些能力只能原生构建，因为它们要控制每一轮的上下文怎么组装</h2></header>
+  <div class="doc-body">
+    <p data-points="m05" id="m5">笔记以四个工作假设开场：</p>
+    <ol class="steps">
+      <li data-points="m05" id="m5a"><b>coding agent 很简单</b>，尤其是 agent 那部分：一个循环、一个模型、几样工具。</li>
+      <li data-points="m05" id="m5b"><b>现有 agent 最好的部分可以复用</b>：前沿模型都能通过 API 拿到，开源项目提供灵感，甚至 UI 组件；<b>只有</b>少数领域真有复杂度，比如 MCP 服务器的认证。</li>
+      <li data-points="m05" id="m5c"><b>第一方 agent 的成本优势</b><b>可能</b><b>在缩小</b>，因为用量正从打包订阅转向按量付费的 API 计价。</li>
+      <li data-points="m05" id="m5d"><b>最重要的一条：有些能力只能原生构建。</b>它们没法做成别人 agent 的插件，因为它们需要控制每一轮上下文怎么组装。</li>
+    </ol>
+    <p class="callout key" data-points="m06" id="m6">第四条就是全文论点。如果 agent 只是一个循环，杠杆就不在循环里，而在循环每转一次喂给模型的东西里。</p>
+    <p data-points="m07" id="m7">Jev 站在哪里：<b>Jev 不是写代码的模型，它是旁边那层决策层。</b>harness 把当前应用状态（目标、上下文、规则、可用动作、之前的动作）连同一个预先定义的问题交给 Jev，Jev 返回一个带类型的答案：一个 choice、一个 score 或一个 noul 决策，每个都带概率。真正干活的是前沿模型、子 agent、工具和确定性代码。因为输出带类型、不是自由文本，harness 可以验证它、设阈值、按它分支，不用去解析一段话。</p>
+    <p data-points="m08" id="m8">笔记里每个原生功能，底层都是在一个高频决策点上问 Jev 一个问题：下一轮该看哪些块？这个子任务能不能离开前沿模型？哪个工具对得上这个意图？这条命令该不该跑？每个会话要问上千次，笔记认为杠杆就在这些小决策里。</p>
+    <table class="data" data-asset="tbl-1" data-points="m09" id="t1"><caption>原表 1 · TABLE I. The Jev Questions in a Coding Agent <span class="source-anchor" data-source-section="s4">出处：Jev Engineering for Coding Agents · <a href="https://github.com/yibie/jev-engineering-zh/blob/main/assets/original.pdf">PDF 第 3 页 TABLE I</a></span></caption><thead><tr><th>Decision point</th><th>Question to Jev</th><th>Typed answer</th></tr></thead><tbody>
+      <tr><td data-label="Decision point">Context</td><td data-label="Question to Jev">How visible should this chunk be for this query?</td><td data-label="Typed answer">choice: hide / short / long / full</td></tr>
+      <tr><td data-label="Decision point">Cache</td><td data-label="Question to Jev">Reuse the cached prefix or rebuild?</td><td data-label="Typed answer">noul + probability</td></tr>
+      <tr><td data-label="Decision point">Routing</td><td data-label="Question to Jev">Can this subtask leave the frontier model?</td><td data-label="Typed answer">choice + cost estimate</td></tr>
+      <tr><td data-label="Decision point">Tools</td><td data-label="Question to Jev">Which tool fits this intent?</td><td data-label="Typed answer">ranked choice, top-k</td></tr>
+      <tr><td data-label="Decision point">Permissions</td><td data-label="Question to Jev">Should this command run?</td><td data-label="Typed answer">allow / ask / deny</td></tr>
+      <tr><td data-label="Decision point">Security</td><td data-label="Question to Jev">Which files will this task touch?</td><td data-label="Typed answer">sensitivity score</td></tr>
+    </tbody></table>
+    <p data-points="m09" id="m9">怎么读原表 1：六个决策点各对应一个问 Jev 的问题和一种答案类型。上下文问「这块对这次查询该有多可见」，答案是在隐藏、短、长、全文四档里选一档；缓存问「复用缓存前缀还是重建」，答案是 noul 加概率；路由问「这个子任务能否离开前沿模型」，答案是 choice 加成本估计；工具问「哪个工具合这个意图」，答案是排好序的 top-k；权限问「这条命令该不该跑」，答案是允许、先问、拒绝三选一；安全问「这个任务会碰哪些文件」，答案是敏感度分数。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s4"><a href="https://github.com/yibie/jev-engineering-zh/blob/main/assets/original.pdf">PDF 第 2–3 页 I. Why Yet Another Agent</a></span><span class="source-anchor" data-source-section="s5"></span></div>
+</section>
+<section class="sec" data-toc="KV cache 的暴政" id="s6" data-source-section="s6">
+  <header class="doc-head"><span class="kicker">I.B The Question That Organizes Everything · II. Six Symptoms · A. Routing</span><h2>KV cache 让 agent 只能追加记录；把它拿掉，就看清「交给便宜模型」为什么会亏</h2></header>
+  <div class="doc-body">
+    <p data-points="m10" id="m10">笔记说作者爱问其他工程师一个问题：如果 LLM 没有 KV cache，你会怎么设计 coding agent？KV cache 正是 agent 被做成只追加的对话记录（append-only transcripts）的原因：复用缓存前缀很便宜，改动上下文靠前的任何东西都会让缓存失效，模型得把改动之后的一切重新处理一遍。这一条经济事实塑造了现有 agent 的<b>几乎</b>每个设计决定，而且<b>通常</b>没人把它说出来。</p>
+    <p data-points="m11" id="m11">想象把缓存拿掉有两个作用。一是允许一种为 Jev 设计、状态显式的架构，上下文是被组装的，不是被累积的。二是揭示为什么直觉上对的想法，比如把简单的活交给便宜模型，实际会失败。笔记管这叫 the tyranny of the KV cache（KV cache 的暴政）。</p>
+    <table class="data" data-asset="tbl-2" data-points="m12" id="t2"><caption>原表 2 · TABLE II. Six Design Choices Current Agents Inherit <span class="source-anchor" data-source-section="s6">出处：Jev Engineering for Coding Agents · <a href="https://github.com/yibie/jev-engineering-zh/blob/main/assets/original.pdf">PDF 第 3 页 TABLE II</a></span></caption><thead><tr><th>Symptom</th><th>Why it exists</th><th>What it costs</th></tr></thead><tbody>
+      <tr><td data-label="Symptom">1. Routing fails</td><td data-label="Why it exists">Handing back to the large model reprocesses context</td><td data-label="What it costs">Mixed routes cost more than pure frontier</td></tr>
+      <tr><td data-label="Symptom">2. Tools crowd context</td><td data-label="Why it exists">Schemas must sit in the system message</td><td data-label="What it costs">Tokens spent on irrelevant tools; weaker selection</td></tr>
+      <tr><td data-label="Symptom">3. Compaction</td><td data-label="Why it exists">One shared state assumed for all future turns</td><td data-label="What it costs">Query-blind compression loses what matters later</td></tr>
+      <tr><td data-label="Symptom">4. Sub-agents are rare</td><td data-label="Why it exists">Choosing what context to pass in and merge back is hard</td><td data-label="What it costs">Little automatic parallelism</td></tr>
+      <tr><td data-label="Symptom">5. Restarts</td><td data-label="Why it exists">Stateful transcripts corrupt over time</td><td data-label="What it costs">Relevant old state discarded with the bad</td></tr>
+      <tr><td data-label="Symptom">6. Batteries debate</td><td data-label="Why it exists">Every built-in costs permanent context</td><td data-label="What it costs">Forced choice between ease and power</td></tr>
+    </tbody></table>
+    <p data-points="m12" id="m12">怎么读原表 2：PDF 给六个症状编了号 1 到 6，每行写症状、它为什么存在、代价是什么。1 路由失败，因为交回大模型时要重新处理上下文，混合路线比一直用前沿模型更贵；2 工具挤占上下文，因为 schema 必须放在 system message 里，token 花在无关工具上，选择也更差；3 compaction 假设以后每一轮都要同一份共享状态，不看问题的压缩会丢掉之后要用的东西；4 子 agent 少见，因为挑选传进去和合并回来的上下文很难，自动并行就少；5 重启，因为有状态的记录会随时间变坏，有用的旧状态跟坏的一起扔掉；6 电池之争，因为每个内置能力都永久占上下文，只能在易用和强大之间二选一。</p>
+    <h3>A. 路由不工作：先算账</h3>
+    <p data-points="m13" id="m13">直觉方案是让前沿模型做计划，把执行交给便宜模型，再请前沿模型回来审。笔记用标价算账：Opus 每百万 token 输入 $5、输出 $25，Sonnet 是 $3 和 $15。设 X 为上下文 token，Y 为生成的输出 token，Z 为干活时额外读进来的 token，比如命令输出和读文件。</p>
+    <figure class="figure code" data-asset="code-1" data-points="m14" id="c1"><pre><code data-language="text">Path 1 pure Opus
+  generate 25·Y
+  read      5·Z
+  total    25Y + 5Z
+
+Path 2 Opus → Sonnet → Opus
+  Sonnet loads context       3·X
+  Sonnet generates          15·Y
+  Sonnet reads               3·Z
+  Opus reloads what changed  5·(Y+Z)
+  total     3X + 20Y + 8Z</code></pre><figcaption><b>原代码 1 · 两条路径的成本算式</b> <span class="source-anchor" data-source-section="s6">出处：Jev Engineering for Coding Agents · <a href="https://github.com/yibie/jev-engineering-zh/blob/main/assets/original.pdf">PDF 第 4 页 II.A Routing Does Not Work</a></span></figcaption></figure>
+    <p data-points="m14" id="m14">怎么读原代码 1：路径 1 一直用 Opus，成本是生成 25·Y 加读取 5·Z。路径 2 先交给 Sonnet：Sonnet 要先把上下文载入（3·X），再生成（15·Y）、读取（3·Z）；回到 Opus 时，Opus 要把变化的部分重新载入（5·(Y+Z)）。合计 3X + 20Y + 8Z。多出来的是来回两次「载入上下文」。</p>
+    <p data-points="m15" id="m15">笔记的结论：会话长（X 大）、或者活儿读得远比写得多、或者两者兼有时，路径 2 都更贵。代入一个看似合理的会话比例 X = 0.65、Y = 0.12、Z = 0.23，一直用 Opus 是 4.15，绕一圈是 6.19。留在前沿模型上的花费，大约只有那条本想省钱路线的三分之二。</p>
+    <figure class="figure orig" data-asset="img-2" data-points="m16" id="f2"><img src="images/fig2.png" alt="Fig. 2. The routing trap. Delegating execution to the cheaper model adds a context load on the way down and a reprocessing pass on the way back, which together outweigh the per-token discount."><figcaption><b>原图 2 · Fig. 2 The routing trap</b> <span class="source-anchor" data-source-section="s6">出处：Jev Engineering for Coding Agents · <a href="https://github.com/yibie/jev-engineering-zh/blob/main/assets/original.pdf">PDF 第 4 页 Fig. 2</a></span><span class="how">怎么看：左柱一直用 Opus，4.15；右柱绕道 Sonnet，堆起来 6.19。右柱里最大的两段是 load 1.95（Sonnet 载入上下文）和 Opus reload 1.75（交回时重新载入），Sonnet gen 1.80 和 Sonnet reads 0.69 才是活本身。纵轴是每个会话的相对成本。</span></figcaption></figure>
+    <p data-points="m16" id="m16">原图注：路由陷阱。把执行派给便宜模型，下去时多一次上下文载入，回来时多一次重新处理，两者加起来超过了每 token 的折扣。</p>
+    <p class="callout key" data-points="m17" id="m17">教训不是路由错了，是「按 token 定价」的路由错了，应该按「重建一次上下文」定价。<b>只有</b>当 harness 能给便宜模型一份小而专门的上下文、不交出整份记录，并且回程不逼前沿模型把帮手产出的一切重读一遍时，路由才可行。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s6"><a href="https://github.com/yibie/jev-engineering-zh/blob/main/assets/original.pdf">PDF 第 3–4 页 I.B 与 II.A</a></span><span class="source-anchor" data-source-section="s7"></span><span class="source-anchor" data-source-section="s8"></span></div>
+</section>
+<section class="sec" data-toc="另外五个症状" id="s7" data-source-section="s9">
+  <header class="doc-head"><span class="kicker">II.B–F 其余五个症状</span><h2>工具、compaction、子 agent、重启和电池之争，都是同一个缓存约束的副作用</h2></header>
+  <div class="doc-body">
+    <h3>B. 工具调用是个怪取舍</h3>
+    <p data-points="m18" id="m18">工具必须在 system message 里预先声明，连同完整的参数 schema，不管跟当前这一轮有没有关系。这占掉一大块上下文，而且按笔记的判断，并没换来特别聪明的工具选择。笔记的工作假设是：模型难以应付两件事的某种组合，一是 high cardinality（一次面对很多工具），二是 off-policy tool calling（工具用法跟模型训练时见过的不一样）。这<b>可能</b>是 skills 为什么<b>往往</b>比原始工具列表和 MCP 服务器表现更好的部分原因：skills 先只载入一句简短描述，细节往后放。</p>
+    <h3>C. compaction 的存在</h3>
+    <p data-points="m19" id="m19">如果以后每一轮都要同一份共享状态，compaction 完全说得通。笔记质疑的正是这个假设。compaction 做的是通用压缩，又难又有损。按查询压缩容易得多：知道下一个问题是什么，就知道该留什么。在问题出现之前写好的摘要，必然会扔掉这个问题需要的某样东西。</p>
+    <h3>D. 子 agent 差点意思</h3>
+    <p data-points="m20" id="m20">模型并行得比人们预期的少。笔记怀疑原因在状态管理：要决定把父上下文的哪些部分传进去，又把每个子 agent 发现的哪些部分合并回来。这个决定又贵又容易出错时，模型就干脆不做。</p>
+    <h3>E. 重启的存在</h3>
+    <p data-points="m21" id="m21">会话跑偏或记录坏掉时，标准办法是重启，坏状态和好状态一起扔。状态可寻址以后，另一种做法是干净地重新开始，再按需<b>只</b>把仍然相关的旧块载回来。</p>
+    <h3>F. 电池不含在内</h3>
+    <p data-points="m22" id="m22">agent 该不该自带内置能力，一直有争论。眼下这是易用和强大之间的取舍：一头是「电池」装得很满的 agent，另一头是 Claude Code 和 Codex 这类给熟练用户的工具。取舍之所以存在，是因为每一块「电池」都永久占上下文。把这份成本去掉，争论自然消失。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s9"><a href="https://github.com/yibie/jev-engineering-zh/blob/main/assets/original.pdf">PDF 第 4–5 页 II.B–F</a></span><span class="source-anchor" data-source-section="s10"></span><span class="source-anchor" data-source-section="s11"></span><span class="source-anchor" data-source-section="s12"></span><span class="source-anchor" data-source-section="s13"></span></div>
+</section>
+<section class="sec" data-toc="Token 花在哪" id="s8" data-source-section="s14">
+  <header class="doc-head"><span class="kicker">III. Where Tokens Actually Go · 原表 3 · 原图 3</span><h2>读文件和搜代码占大头，写代码是最小的几项之一</h2></header>
+  <div class="doc-body">
+    <p data-points="m23" id="m23">改 harness 之前，先弄清会话里哪一部分在花预算。下表估计了一次典型 CLI coding-agent 会话里，各子任务占全部已处理 token 的比例。这是偏输入的视角，所以重复读取每次都算。</p>
+    <table class="data" data-asset="tbl-3" data-points="m23" id="t3"><caption>原表 3 · TABLE III. Token Share by Subtask (Input-Heavy View) <span class="source-anchor" data-source-section="s14">出处：Jev Engineering for Coding Agents · <a href="https://github.com/yibie/jev-engineering-zh/blob/main/assets/original.pdf">PDF 第 5 页 TABLE III</a></span></caption><thead><tr><th>Subtask</th><th>~Share</th><th>Note</th></tr></thead><tbody>
+      <tr><td data-label="Subtask">Reading file contents</td><td data-label="~Share">30–40%</td><td data-label="Note">Largest bucket; files reread as context</td></tr>
+      <tr><td data-label="Subtask">Searching the codebase</td><td data-label="~Share">10–18%</td><td data-label="Note">grep, glob, listings; noisy output</td></tr>
+      <tr><td data-label="Subtask">Command output</td><td data-label="~Share">10–20%</td><td data-label="Note">Stack traces and logs balloon on failure</td></tr>
+      <tr><td data-label="Subtask">System prompt, tool schemas, AGENTS.md</td><td data-label="~Share">5–12%</td><td data-label="Note">Fixed overhead paid on every turn</td></tr>
+      <tr><td data-label="Subtask">Conversation replay</td><td data-label="~Share">amplifier</td><td data-label="Note">Why everything above is counted repeatedly</td></tr>
+      <tr><td data-label="Subtask">Reasoning and planning</td><td data-label="~Share">5–15%</td><td data-label="Note">Higher on hard debugging</td></tr>
+      <tr><td data-label="Subtask">Writing and editing code</td><td data-label="~Share">4–10%</td><td data-label="Note">Diffs and str_replace edits are compact</td></tr>
+      <tr><td data-label="Subtask">Explaining to the user</td><td data-label="~Share">2–5%</td><td data-label="Note">Terse by design in CLI agents</td></tr>
+    </tbody></table>
+    <p data-points="m23" id="m23b">怎么读原表 3：读文件内容 30–40%，是最大的一桶，因为文件会被当作上下文反复读；搜代码库 10–18%，grep、glob、目录列表的输出很吵；命令输出 10–20%，失败时调用栈和日志会暴涨；system prompt、工具 schema 和 AGENTS.md 5–12%，每一轮都要付的固定开销；对话回放不是单独一项，是「放大器」，它让上面每一项被重复计数；推理和计划 5–15%，难调的 bug 上更高；写和改代码 4–10%，diff 和 str_replace 编辑很紧凑；向用户解释 2–5%，CLI agent 本来就写得简短。表头的「~」表示约数，PDF 文末说这张表是示意性估计。</p>
+    <p data-points="m24" id="m24">笔记说最醒目的是靠下那一行：写代码明明是 coding agent 存在的理由，却是最小的几项之一；读和搜占了主导。它引独立分析佐证：Microsoft 的 fastcontext 项目报告，在 GPT-5.4 的轨迹里，读和搜占全部工具调用轮次的 56.2%，占主 agent 总 token 的 46.5%。<b>如果</b>这能推广，coding agent 最大的效率提升就不是更好的模型或更好的 diff 格式，而是更聪明的检索。</p>
+    <figure class="figure orig" data-asset="img-3" data-points="m25" id="f3"><img src="images/fig3.png" alt="Fig. 3. Retrieval dominates. Reading, searching, and command output together account for roughly two thirds of processed tokens; writing code is under a tenth."><figcaption><b>原图 3 · Fig. 3 Retrieval dominates</b> <span class="source-anchor" data-source-section="s14">出处：Jev Engineering for Coding Agents · <a href="https://github.com/yibie/jev-engineering-zh/blob/main/assets/original.pdf">PDF 第 6 页 Fig. 3</a></span><span class="how">怎么看：这是把原表 3 每个区间取中点画成的一根横条，从左到右 read files 35%、search 14%、commands 15%、sys 8%、reasoning 10%、edit 7%，最右一小格 3%（图上没写标签，按原表 3 的顺序应是向用户解释那一项）。最深的三段（读、搜、命令）挤在左边。</span></figcaption></figure>
+    <p data-points="m25" id="m25">原图注：检索占主导。读、搜和命令输出加起来<b>大约</b>占已处理 token 的三分之二；写代码不到十分之一。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s14"><a href="https://github.com/yibie/jev-engineering-zh/blob/main/assets/original.pdf">PDF 第 5–6 页 III</a></span></div>
+</section>
+<section class="sec" data-toc="权限与工具路由" id="s9" data-source-section="s15">
+  <header class="doc-head"><span class="kicker">IV. Basic Layer: Permissions and Tool Routing</span><h2>两项基础改进任何 agent 都能接：可编程的权限，和由 harness 代选工具</h2></header>
+  <div class="doc-body">
+    <p data-points="m26" id="m26">笔记先给两项改进，任何现有 agent 都能接，原生不原生都行。第一项是可编程权限：agent 跑的每条命令都带出一个问题，它到底该不该跑。Claude 的 auto mode 用一个分类器回答。笔记主张更进一步：把权限写成对「允许什么、不允许什么」的可编程查询，在值得的地方做更深的检查，比如执行一个 Python 或 shell 文件前先读它的内容，而不是<b>只</b>批准命令名。</p>
+    <figure class="figure code" data-asset="code-2" data-points="m27" id="c2"><pre><code data-language="text">policy "exec":
+  deny   if command touches ~/.ssh or .env*
+  deny   if script contents contain network
+egress
+         and task.scope != "deploy"
+  ask    if command writes outside repo root
+  allow if command in read_only_set
+  allow if tests/ and exit code is expected</code></pre><figcaption><b>原代码 2 · 权限策略示例 policy "exec"</b> <span class="source-anchor" data-source-section="s15">出处：Jev Engineering for Coding Agents · <a href="https://github.com/yibie/jev-engineering-zh/blob/main/assets/original.pdf">PDF 第 6 页 IV.A Programmable Permissions</a></span></figcaption></figure>
+    <p data-points="m27" id="m27">怎么读原代码 2：命令碰到 ~/.ssh 或 .env* 就拒绝；脚本内容里有网络外发、而且任务范围不是 deploy，也拒绝；命令要写仓库根目录以外的地方，先问人；命令在只读集合里就放行；在 tests/ 下且退出码符合预期，也放行。第二条看的是脚本内容，不是命令名，这就是上面说的「更深的检查」。</p>
+    <p class="extra" id="c2x">补充：原 PDF 里「egress」单独折到下一行、顶格排，像是排版时长行被折断；这里按 PDF 显示的样子原样保留，没有替它合并。</p>
+    <p data-points="m28" id="m28">第二项是让 harness 当工具路由器。不把每个工具的 schema 都摆给模型，而是让 harness 站在「意图」和「调用」之间：模型用大白话说它想干什么，harness 用一串带类型的 Jev 调用挑出最合适的那一个工具，或前几个候选，并替它构造参数。模型不必在上下文里装着几百个 schema，参数类型写错会变成一个校验错误，而不是一次悄无声息的失败。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s15"><a href="https://github.com/yibie/jev-engineering-zh/blob/main/assets/original.pdf">PDF 第 6 页 IV</a></span><span class="source-anchor" data-source-section="s16"></span><span class="source-anchor" data-source-section="s17"></span></div>
+</section>
+<section class="sec" data-toc="上下文是一个决策" id="s10" data-source-section="s18">
+  <header class="doc-head"><span class="kicker">V. Meta-Attention: Context as a Decision · 原图 4</span><h2>每个查询都重新决定上下文：同一块内容，这次看全文，下次可以不看</h2></header>
+  <div class="doc-body">
+    <p data-points="m29" id="m29">核心提议是去掉「上下文是静态的」这个想法。对每个用户查询，harness 问 Jev 两件事。第一，之前的上下文有多好：复用现有 KV cache 是对的，还是从头重建会更便宜、更好；这被当作一个明确、算过成本的决定，不是默认行为。第二，怎么构造一份新上下文，相关的全都在，别的一样不要。</p>
+    <p data-points="m30" id="m30">最简单的形式，是对每一块上下文做一次 noul：每个工具调用的输入、每个工具调用的输出、每段内部推理，<b>可能</b>还有每次和用户的往来。后一个版本把分数换成一个可见度等级。</p>
+    <figure class="figure orig" data-asset="img-4" data-points="m31" id="f4"><img src="images/fig4.png" alt="Fig. 4. The visibility ladder. The same chunk can be hidden, summarized briefly, summarized at length, or shown in full depending on the current query. This is query-aware compression, the property compaction lacks."><figcaption><b>原图 4 · Fig. 4 The visibility ladder</b> <span class="source-anchor" data-source-section="s18">出处：Jev Engineering for Coding Agents · <a href="https://github.com/yibie/jev-engineering-zh/blob/main/assets/original.pdf">PDF 第 7 页 Fig. 4</a></span><span class="how">怎么看：左边四块状态，中间是按查询判断的 Jev，右边是它们这一次被给到的可见度：2,400 行的 grep 输出变成「短摘要，12 处命中」，失败的测试日志变成「长摘要：调用栈加原因」，auth/session.ts 因为与查询相关给全文，已被取代的旧计划不显示。</span></figcaption></figure>
+    <p data-points="m31" id="m31">原图注：可见度阶梯。同一块内容可以隐藏、简短摘要、详细摘要或全文显示，取决于当前查询。这就是按查询压缩，compaction 缺的正是这一点。</p>
+    <p class="callout key" data-points="m32" id="m32">好处是 compaction 背后的想法保留下来，它的主要缺陷没了。compaction 在知道问题之前压一次；阶梯在知道问题之后，每个查询压一次。一份 2,400 行的 grep 结果，对一个问题是十二处相关命中，对下一个问题可以完全不可见，而它从来没有从状态里删掉。</p>
+    <p data-points="m33" id="m33">笔记还提了一个视觉上的点子：如果 harness 能对 grep 输出画热力图，标出哪部分相关，就能按预算允许的任意程度把输出过滤下来。笔记说，这样看起来也会很酷。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s18"><a href="https://github.com/yibie/jev-engineering-zh/blob/main/assets/original.pdf">PDF 第 6–7 页 V</a></span></div>
+</section>
+<section class="sec" data-toc="路由和子 agent 再看" id="s11" data-source-section="s19">
+  <header class="doc-head"><span class="kicker">VI. Routing and Sub-Agents Revisited</span><h2>能为子任务造一份小上下文之后，路由重新划算，子 agent 也能常用</h2></header>
+  <div class="doc-body">
+    <p data-points="m34" id="m34">一等公民的动态上下文让路由重新成立。harness 一旦能为子任务建一份小而相关的上下文，把子任务交给更便宜或更快的模型，就不再需要它载入整个会话；结果也能作为一个打过分的块合并回来，而不是一份前沿模型必须重读的记录。一切都同时顾及成本和智能。</p>
+    <p data-points="m35" id="m35">同一机制也解开了子 agent。笔记猜测，今天子 agent 的成本里，很大一块花在决定传什么上下文上，而不是花在用户会随手打的那种简单指令上。如果构建这份上下文变得便宜、自动，子 agent 就能用得多得多。它还带来一个给用户的开关：多花钱换更快或更好的结果，或者保守运行、尽量少花。</p>
+    <h3>A. 极端并行</h3>
+    <p data-points="m36" id="m36">派一个任务如果变便宜，就会有很多任务同时跑，harness 也就继承了并发系统的问题：同步原语、agent 之间的通信，以及几个 agent 共享状态时的写冲突。笔记建议用带锁的共享状态。让这件事可控的，是把「读」和「写」明确区分成不同类型，因为只读任务之间永远不会争抢。</p>
+    <h3>B. 给目标去重</h3>
+    <p data-points="m37" id="m37">对 /goal 这类目标驱动的循环，有个悬而未决的问题：agent 会不会重复干活。一种缓解办法：派出任何子任务之前，先把它登记为一个子目标，和之前所有子目标去重。已经做完或正在做的工作，永远不会被启动第二次。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s19"><a href="https://github.com/yibie/jev-engineering-zh/blob/main/assets/original.pdf">PDF 第 7–8 页 VI</a></span><span class="source-anchor" data-source-section="s20"></span><span class="source-anchor" data-source-section="s21"></span></div>
+</section>
+<section class="sec" data-toc="分层披露工具" id="s12" data-source-section="s22">
+  <header class="doc-head"><span class="kicker">VII. Tools and Skills from First Principles · 原图 5</span><h2>工具分三层披露：先给一行片段，选中才给 schema，一次性查询才给文档</h2></header>
+  <div class="doc-body">
+    <p data-points="m38" id="m38">笔记主张在今天「始终加载的工具」和「按需加载的 skills」之间加一层。模型没法提出一个它不知道存在的动作，所以它需要简短的片段说明有什么可用，类似 skill 的描述。但这些片段不必放在 system message 里，可以在相关时动态载入。片段背后，是需要时把可用动作的完整 schema 倒出来的能力，类似一个 tool-search 工具。把这些串起来的要求是：用完之后，这些东西都不能污染上下文。</p>
+    <figure class="figure orig" data-asset="img-5" data-points="m39" id="f5"><img src="images/fig5.png" alt="Fig. 5. Tiered disclosure. The model sees a cheap map of everything, pays for detail only on what it selects, and drops the detail from context when it is done."><figcaption><b>原图 5 · Fig. 5 Tiered disclosure</b> <span class="source-anchor" data-source-section="s22">出处：Jev Engineering for Coding Agents · <a href="https://github.com/yibie/jev-engineering-zh/blob/main/assets/original.pdf">PDF 第 8 页 Fig. 5</a></span><span class="how">怎么看：从上往下三层，越往下每一轮的成本越高（左侧竖字 cost per turn rises）。第一层每个能力一行片段，相关时才载入，可以有几百个工具；第二层只给选中的少数几个完整参数；第三层是为一次性查询翻手册。</span></figcaption></figure>
+    <p data-points="m39" id="m39">原图注：分层披露。模型看到的是一张关于一切的廉价地图，只为它选中的东西付细节的钱，用完就把细节从上下文里拿掉。</p>
+    <p data-points="m40" id="m40"><b>如果</b>这行得通，第 II 节的电池之争就消失了：一个内置能力在被用到之前几乎不花钱，agent 就能自带几百个工具和几千页文档。笔记还指出第二个好处：接近零成本的集成是很强的联合营销渠道，也让东西直接能用。</p>
+    <p data-points="m41" id="m41">更好的电池：很多社区工具声称能帮 agent，实际并不能。笔记以一个工具输出压缩器为例，猜测原因是模型并不天然理解这些工具。原生 harness 可以自带第一方提示，教模型怎么用每一个工具，相当于每个工具配一个内置的子 agent 或 skill；它的干净上下文也让工具的自定义逻辑不会毒害会话的其余部分。这里也有营销角度：给眼下流行的工具做集成，能让 agent 一直被人谈论。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s22"><a href="https://github.com/yibie/jev-engineering-zh/blob/main/assets/original.pdf">PDF 第 8 页 VII</a></span><span class="source-anchor" data-source-section="s23"></span></div>
+</section>
+<section class="sec" data-toc="按条件加载指令" id="s13" data-source-section="s24">
+  <header class="doc-head"><span class="kicker">VIII. Conditional Instructions · 原图 6</span><h2>AGENTS.md 按条件分段加载，条件成立就重新载入，不怕被 compaction 压掉</h2></header>
+  <div class="doc-body">
+    <p data-points="m42" id="m42">今天 AGENTS.md 是整份加载的。笔记提议分段按条件加载：写前端代码时载入风格指南；在某个子目录里干活时，载入那个目录的 footguns 文件（容易踩的坑），笔记还建议每个子目录都该有一份。</p>
+    <figure class="figure orig" data-asset="img-6" data-points="m43" id="f6"><img src="images/fig6.png" alt="Fig. 6. Conditional AGENTS.md. Instructions attach to conditions rather than to the session, and a conditional fragment is pinned so compaction cannot summarize it away."><figcaption><b>原图 6 · Fig. 6 Conditional AGENTS.md</b> <span class="source-anchor" data-source-section="s24">出处：Jev Engineering for Coding Agents · <a href="https://github.com/yibie/jev-engineering-zh/blob/main/assets/original.pdf">PDF 第 9 页 Fig. 6</a></span><span class="how">怎么看：当前任务往下分三个条件：改到 *.tsx 吗？在 billing/ 里吗？在写文章吗？每个条件成立时挂上对应的片段：style-guide.md、billing/GOTCHAS.md、文风样本加「不要做」清单。</span></figcaption></figure>
+    <p data-points="m43" id="m43">原图注：条件化的 AGENTS.md。指令挂在条件上而不是挂在会话上；条件片段被钉住，compaction 没法把它摘要掉。</p>
+    <p data-points="m44" id="m44">这像 skills，但笔记分了一下：skills 的意思<b>往往</b>是「现在就做这个」，条件指令的意思是「把这个记在某处」。后一种还需要 skills 没有的性质：不受 compaction 影响。长会话早期载入的 skill 迟早会被压缩或摘要掉；绑定条件的指令，只要条件成立就会重新载入。</p>
+    <p data-points="m45" id="m45">笔记说普通聊天里也有同样的需要：要摘要时，应带上偏好的格式；要按自己的文风写东西时，应带上样本和一份要避免的清单；要代码时，应带上风格指南，以及一句「别加一百万个断言」。</p>
+    <p data-points="m46" id="m46">结构化 skills：看 harness 能做到多可编程，skills 可以带的不只是指令，还有行为改变，类似 Claude Code 的 skill hooks，但更强。笔记指出现有 hook 系统的一个局限：hook 一旦加上，就永久留在会话里。结构化 skills 会随着触发它的条件挂上、卸下行为。</p>
+    <p data-points="m47" id="m47">递归语言模型：相关的一个方向是 recursive language model 的做法，把 agent 更多的状态当作显式变量，而不是记录里的文字。状态存在有名字的变量里，<b>可能</b>比「状态就是碰巧还留在上下文窗口里的东西」干净得多。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s24"><a href="https://github.com/yibie/jev-engineering-zh/blob/main/assets/original.pdf">PDF 第 9 页 VIII</a></span><span class="source-anchor" data-source-section="s25"></span><span class="source-anchor" data-source-section="s26"></span></div>
+</section>
+<section class="sec" data-toc="按敏感度路由" id="s14" data-source-section="s27">
+  <header class="doc-head"><span class="kicker">IX. Security-Aware Routing · 原表 4</span><h2>路由除了难度和成本还要看信任：按任务会碰的文件决定能用哪些模型</h2></header>
+  <div class="doc-body">
+    <p data-points="m48" id="m48">今天的路由围绕难度和成本。笔记加了第三个维度：信任。一些通过低价服务商提供的开放权重模型比前沿 API 便宜得多，笔记担心经过其中某些端点的数据<b>可能</b>不会保持私密。提议是给每个子任务估计它<b>可能</b>碰到哪些类型的文件，给文件类型挂策略，再据此路由子任务。</p>
+    <table class="data" data-asset="tbl-4" data-points="m49" id="t4"><caption>原表 4 · TABLE IV. Routing by Data Sensitivity <span class="source-anchor" data-source-section="s27">出处：Jev Engineering for Coding Agents · <a href="https://github.com/yibie/jev-engineering-zh/blob/main/assets/original.pdf">PDF 第 10 页 TABLE IV</a></span></caption><thead><tr><th>Files likely touched</th><th>Policy</th><th>Eligible models</th></tr></thead><tbody>
+      <tr><td data-label="Files likely touched">Public docs, open-source deps</td><td data-label="Policy">open</td><td data-label="Eligible models">any, cheapest first</td></tr>
+      <tr><td data-label="Files likely touched">Application code</td><td data-label="Policy">standard</td><td data-label="Eligible models">vetted providers</td></tr>
+      <tr><td data-label="Files likely touched">Secrets, env, infra config</td><td data-label="Policy">restricted</td><td data-label="Eligible models">first-party frontier only</td></tr>
+      <tr><td data-label="Files likely touched">Proprietary research code</td><td data-label="Policy">custom</td><td data-label="Eligible models">excludes named vendors</td></tr>
+    </tbody></table>
+    <p data-points="m49" id="m49">怎么读原表 4：公开文档和开源依赖，策略 open，任何模型都行，便宜的优先；应用代码，策略 standard，用审核过的服务商；密钥、环境变量、基础设施配置，策略 restricted，<b>只</b>用第一方前沿模型；专有研究代码，策略 custom，排除点名的厂商。</p>
+    <p data-points="m50" id="m50">最后一行反映笔记里一个更大的观点：难度和成本不是路由的唯一理由。团队可能为了自己的模型研究避开某家厂商的模型，或者在安全敏感的工作上避开某些服务商。路由由策略驱动之后，这些偏好就成了配置，而不靠人自觉。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s27"><a href="https://github.com/yibie/jev-engineering-zh/blob/main/assets/original.pdf">PDF 第 9–10 页 IX</a></span></div>
+</section>
+<section class="sec" data-toc="后台任务共享检索" id="s15" data-source-section="s28">
+  <header class="doc-head"><span class="kicker">X. Background Processing · 原图 7</span><h2>只读的后台任务共用一次检索，跑多少个都便宜</h2></header>
+  <div class="doc-body">
+    <p data-points="m51" id="m51">笔记观察到几个流行 agent 工作流里正在出现一种模式：</p>
+    <ul>
+      <li data-points="m51" id="m51a">一边干活一边并行更新的 HTML 页面；</li>
+      <li data-points="m51" id="m51b">「理解而不是生成才是新瓶颈」这一论点；</li>
+      <li data-points="m51" id="m51c">在后台生成 evals，也就是评测用例；</li>
+      <li data-points="m51" id="m51d">一个 ELI5 skill，用几张大图和很少的字解释一个系统；</li>
+      <li data-points="m51" id="m51e">让 agent 维护一个小小的、已部署的进度页，带截图和笔记，长任务跑着时能用手机查看。</li>
+    </ul>
+    <p data-points="m51" id="m51f">还有一个相关的生产做法：把线上流量镜像给候选模型，在切换之前自动生成<b>大约</b>一天的 evals。</p>
+    <p data-points="m52" id="m52">它们的共同点：都在后台跑，是正常编码工作流的延伸，而且都是当前代码库状态的只读函数。跨模型审阅，比如让一家厂商的 agent 审另一家的活，也属于同一类。</p>
+    <figure class="figure orig" data-asset="img-7" data-points="m53" id="f7"><img src="images/fig7.png" alt="Fig. 7. Background processing on explicit state. The expensive work of finding what is relevant to a change is done once and shared by every read-only background task."><figcaption><b>原图 7 · Fig. 7 Background processing on explicit state</b> <span class="source-anchor" data-source-section="s28">出处：Jev Engineering for Coding Agents · <a href="https://github.com/yibie/jev-engineering-zh/blob/main/assets/original.pdf">PDF 第 10 页 Fig. 7</a></span><span class="how">怎么看：只有主 agent 写；它下面是一次共享检索，相关文件、符号和 diff 只找一次。五个后台任务都从这份检索结果读：跨模型审阅、后台生成 eval、ELI5 讲解和小测、实时进度页、微型世界模拟。底部写着：只读，永远不争锁。</span></figcaption></figure>
+    <p data-points="m53" id="m53">原图注：显式状态上的后台处理。找出与一次改动相关内容这件贵活只做一次，由每个只读后台任务共享。</p>
+    <p data-points="m54" id="m54">笔记说 Jev 论点在这里兑现。以 Jev 为中心的 harness 必须精确知道上下文里有什么、每个操作是读还是写。找出与一次代码改动相关的信息不是小活。如果这次检索被所有后台任务共享，而不是每个各做一遍，跑它们就便宜得多，跑更多个也划算。既然第 III 节发现检索占了 token 预算的主导，共享它就是能拿到的最大一笔单项节省。用笔记的话说，把读和写分清楚，迟早会给 agent 超能力。</p>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s28"><a href="https://github.com/yibie/jev-engineering-zh/blob/main/assets/original.pdf">PDF 第 10–11 页 X</a></span></div>
+</section>
+<section class="sec" data-toc="电池清单与结论" id="s16" data-source-section="s29">
+  <header class="doc-head"><span class="kicker">XI. The Batteries Shortlist · XII. Conclusion · 原表 5</span><h2>这些都不需要更好的模型，需要把上下文窗口当成有意组装的东西</h2></header>
+  <div class="doc-body">
+    <p data-points="m55" id="m55">笔记最后列了几个可以原生集成的开源项目，每个都附一句设计说明：以 Jev 为中心的 harness 会怎么用它。</p>
+    <table class="data" data-asset="tbl-5" data-points="m55" id="t5"><caption>原表 5 · TABLE V. Candidate Built-In Tools <span class="source-anchor" data-source-section="s29">出处：Jev Engineering for Coding Agents · <a href="https://github.com/yibie/jev-engineering-zh/blob/main/assets/original.pdf">PDF 第 11 页 TABLE V</a></span></caption><thead><tr><th>Project</th><th>Role</th><th>Native angle</th></tr></thead><tbody>
+      <tr><td data-label="Project">headroom</td><td data-label="Role">context compressor</td><td data-label="Native angle">classifier checks the compression kept the needed facts</td></tr>
+      <tr><td data-label="Project">rtk</td><td data-label="Role">tool-output compressor</td><td data-label="Native angle">first-party prompts so the model understands it</td></tr>
+      <tr><td data-label="Project">ast-grep</td><td data-label="Role">structural search</td><td data-label="Native angle">load manual once, generate N queries, filter by relevance</td></tr>
+      <tr><td data-label="Project">ast-outline</td><td data-label="Role">structural outline</td><td data-label="Native angle">hierarchical calling: pick the subtree to inspect</td></tr>
+      <tr><td data-label="Project">fastcontext</td><td data-label="Role">repo-exploration sub-agent</td><td data-label="Native angle">route to it, or replace its search with structure</td></tr>
+      <tr><td data-label="Project">fff</td><td data-label="Role">path and content search</td><td data-label="Native angle">in-memory index, frequency-ranked, faster than ripgrep in long sessions</td></tr>
+    </tbody></table>
+    <p data-points="m55" id="m55b">怎么读原表 5：headroom 是上下文压缩器，原生做法是用分类器检查压缩后是否留住了需要的事实；rtk 是工具输出压缩器，配第一方提示让模型理解它；ast-grep 做结构化搜索，手册载入一次、生成 N 条查询、再按相关性过滤；ast-outline 给结构化大纲，用于分层调用，挑要看的子树；fastcontext 是探索仓库的子 agent，可以路由给它，或用结构替换它的搜索；fff 做路径和内容搜索，内存索引、按频率排序，在长会话里比 ripgrep 快。</p>
+    <p data-points="m56" id="m56">结论：这份设计笔记的论点说起来容易，做起来难。coding agent 是简单的循环，杠杆不在循环里，而在 harness 每一轮摆在模型面前的东西里；今天这个决定是默认做出的，由一份围绕 KV cache 经济学成形的、只追加的记录来做。</p>
+    <p data-points="m57" id="m57">把缓存当思想实验拿掉，六种熟悉的行为就不一样了。路由失败，是因为上下文要重新处理，不是因为便宜模型弱。工具挤满窗口，是因为必须预先声明。compaction 丢信息，是因为它在知道问题之前就压缩。子 agent 少见，是因为传状态难。重启把好状态和坏状态一起扔。电池之争<b>只</b>因为每个内置能力永远占上下文才存在。</p>
+    <p data-points="m58" id="m58">提出的 harness 用一个动作处理全部六个：让状态显式、带类型，让 Jev 按每个查询决定上下文、路由、工具和权限。块在可见度阶梯上打分；路由按重建一次上下文定价；工具分层披露；指令挂在条件上；后台任务共享一次检索。</p>
+    <blockquote class="quote" id="m58q"><p>None of this requires a better model.</p><cite><a href="https://github.com/yibie/jev-engineering-zh/blob/main/assets/original.pdf">Jev Engineering for Coding Agents · XII. Conclusion</a></cite></blockquote>
+    <p data-points="m58" id="m58b">讲解：这些都不需要更好的模型，需要的是把上下文窗口当成有意组装的东西，而不是意外堆积起来的东西。</p>
+    <div class="callout extra" id="m-limit"><p><b>补充 · 读这份 PDF 时要记住的几处</b></p><p>它是一份设计构想，不是实现报告：PDF 没有给任何已实现系统的测试结果。路由算术里的 X、Y、Z 比例，原文自己的说法是「一个看似合理的会话比例」；原表 3 是示意性估计；成本数字依据可能已变的标价。帖子说「不是已经落地的完整方案」，和这一点一致。</p></div>
+    <ul class="refs extra" id="refs">
+      <li><a href="https://github.com/yibie/jev-engineering-zh/blob/main/assets/original.pdf">原始 PDF（GitHub 上的 original.pdf）</a></li>
+      <li><a href="https://github.com/yibie/jev-engineering-zh">中文译本仓库（只作参考）</a></li>
+      <li><a href="https://docs.google.com/document/d/1G61uUB0FifUnmmrPzFQojZ3KpczYKmXGpgEXDJ2l_Zg/edit">底稿：[public] thoughts on a typesafe coding agent</a></li>
+      <li><a href="https://latent.space/p/jev">Latent Space：Jev 访谈页（指认底稿作者）</a></li>
+      <li><a href="https://typesafe.ai/blog/introducing-system-one-models-and-jev">TypeSafe 博客：Introducing System One Models &amp; Jev</a></li>
+      <li><a href="https://x.com/TiagerBao/status/2120041783568875653">旺旺的 X 帖</a></li>
+    </ul>
+  </div>
+  <div class="src article">原文 <span class="source-anchor" data-source-section="s29"><a href="https://github.com/yibie/jev-engineering-zh/blob/main/assets/original.pdf">PDF 第 11 页 XI–XII</a></span><span class="source-anchor" data-source-section="s30"></span></div>
+</section>
+<section class="sec" data-toc="小测" id="s17" data-source-section="extra">
+  <header class="doc-head"><span class="kicker">对照原文，不记分</span><h2>三道题，专打容易混的地方</h2></header>
+  <div class="doc-body">
+    <div class="quiz"><script type="application/json">
+[{"q":"一个团队想省钱：前沿模型规划，便宜模型执行，前沿模型复查。会话已经很长。按 PDF 的算账，问题出在哪？","opts":["便宜模型能力太弱，写出的代码还得再返工","来回两次都要载入或重读整份上下文","便宜模型的输出 token 单价反而比前沿模型高"],"a":1,"why":"PDF 说路由失败是因为上下文要重新处理，不是因为便宜模型弱；只有给便宜模型一份小而专门的上下文、回程不重读全部时，路由才可行。","back":6},{"q":"一个子目录的坑点说明写在会话开头加载了，三小时后 agent 又踩了同一个坑。PDF 提议的做法是？","opts":["把这段说明钉成条件指令，进入该目录时重新载入","改成 skill，让它在会话开头一次性载入更详细的版本","每隔一小时把整份 AGENTS.md 重新载入"],"a":0,"why":"skill 载入早了迟早会被 compaction 压掉；绑定条件的指令只要条件成立就重新载入，并且被钉住不会被摘要掉。","back":13},{"q":"任务要改 infra 配置和 .env，有一个开放权重模型便宜十倍。按原表 4，应该怎么路由？","opts":["按难度：改配置简单，交给便宜模型","按成本：便宜优先，只要服务商审核过","restricted，只用第一方前沿模型"],"a":2,"why":"原表 4 里密钥、环境变量、基础设施配置那一行的策略是 restricted，只用第一方前沿模型；路由除了难度和成本，还要看信任。","back":14}]
+</script></div>
+    <p class="extra" id="quiz-note">补充：答错只标你选的那一项，不揭晓答案；回看对应小节再试。</p>
+  </div>
+  <div class="src extra">教学小测，回看第 6、13、14 节。没有做运行模拟器：原文没有给出可逐步执行的轨迹。</div>
+</section>
+</main><script>var __H=location.hash;window.lessonIcons={"menu": "<svg class=\"i i-menu\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/><\/svg>", "play": "<svg class=\"i i-play\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z\"/><\/svg>", "pause": "<svg class=\"i i-pause\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"14\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/><rect x=\"5\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/><\/svg>", "check": "<svg class=\"i i-check\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 6 9 17l-5-5\"/><\/svg>", "x": "<svg class=\"i i-x\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/><\/svg>", "zoom-in": "<svg class=\"i i-zoom-in\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><line x1=\"21\" x2=\"16.65\" y1=\"21\" y2=\"16.65\"/><line x1=\"11\" x2=\"11\" y1=\"8\" y2=\"14\"/><line x1=\"8\" x2=\"14\" y1=\"11\" y2=\"11\"/><\/svg>", "zoom-out": "<svg class=\"i i-zoom-out\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><line x1=\"21\" x2=\"16.65\" y1=\"21\" y2=\"16.65\"/><line x1=\"8\" x2=\"14\" y1=\"11\" y2=\"11\"/><\/svg>", "copy": "<svg class=\"i i-copy\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\"/><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"/><\/svg>", "chevron-right": "<svg class=\"i i-chevron-right\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m9 18 6-6-6-6\"/><\/svg>", "book-open": "<svg class=\"i i-book-open\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 5v16\"/><path d=\"M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z\"/><\/svg>", "external-link": "<svg class=\"i i-external-link\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M15 3h6v6\"/><path d=\"M10 14 21 3\"/><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/><\/svg>"};window.lessonIcon=n=>window.lessonIcons[n]||"";</script><script>/* Article/pair navigation only. No global swipe or arrow-key paging. */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const H=document.documentElement, sections=$$('main.deck > .sec, main.deck > .hero, .pair-notes > .sec');
+if(!sections.length)return;
+const ids=new Set($$('[id]').map(n=>n.id));
+sections.forEach((s,i)=>{if(!s.id){let n=i+1,id=s.classList.contains('hero')?'intro':'s'+n;while(ids.has(id))id='s'+(++n);s.id=id;ids.add(id)}});
+const title=s=>s.dataset.toc||$('h2,h1,h3',s)?.textContent||s.id;
+const toc=document.createElement('nav');toc.className='toc';toc.id='lesson-toc';toc.setAttribute('aria-label','目录');
+const heading=document.createElement('b');heading.textContent='目录';toc.appendChild(heading);const ol=document.createElement('ol');toc.appendChild(ol);
+sections.forEach((s,i)=>{const li=document.createElement('li'),a=document.createElement('a');a.href='#'+s.id;a.textContent=(i+1)+'. '+title(s);li.appendChild(a);ol.appendChild(li)});document.body.appendChild(toc);
+const links=$$('a',toc),toggle=$('.toc-toggle'),count=$('.count'),bar=$('.track i');
+const shade=document.createElement('div');shade.className='toc-backdrop';document.body.appendChild(shade);
+function open(value){H.classList.toggle('toc-open',value);toggle?.setAttribute('aria-expanded',String(value));if(value)links.find(a=>a.getAttribute('aria-current')==='true')?.focus();else toggle?.focus()}
+if(toggle){toggle.setAttribute('aria-controls',toc.id);toggle.onclick=()=>open(!H.classList.contains('toc-open'))}shade.onclick=()=>open(false);
+addEventListener('keydown',e=>{if(e.key==='Escape'&&H.classList.contains('toc-open'))open(false)});
+function locate(hash){let id;try{id=decodeURIComponent(hash.replace(/^#/,''))}catch(e){return null}if(/^\d+$/.test(id))return sections[+id-1];return document.getElementById(id)}
+function jump(target){if(!target)return;H.classList.remove('toc-open');toggle?.setAttribute('aria-expanded','false');target.scrollIntoView({block:'start',behavior:'instant'});history.replaceState(null,'','#'+target.id);update();dispatchEvent(new Event('lesson:navigate'))}
+window.lessonNav={layout:H.dataset.layout,go:n=>jump(document.getElementById('s'+n)||sections[n-1]),returnTo:box=>jump(box.closest('.sec')||box),jump};window.goCard=n=>window.lessonNav.go(n);
+toc.onclick=e=>{const a=e.target.closest('a');if(!a)return;e.preventDefault();jump(locate(a.hash))};
+const key='pos:'+location.pathname;let queued=false,restoring=true;
+function update(){queued=false;let current=sections[0];const line=H.dataset.layout==='pair'&&innerWidth<=820?innerHeight*.4+90:100;for(const s of sections)if(s.getBoundingClientRect().top<=line)current=s;
+ count.textContent=title(current);links.forEach(a=>a.setAttribute('aria-current',String(a.hash==='#'+current.id)));const max=H.scrollHeight-innerHeight;bar.style.width=Math.max(0,Math.min(100,max>0?scrollY/max*100:100))+'%';
+ if(!restoring)try{localStorage.setItem(key,JSON.stringify({id:current.id,offset:scrollY-(current.getBoundingClientRect().top+scrollY)}))}catch(e){}
+}
+addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(update)}},{passive:true});addEventListener('resize',update);addEventListener('hashchange',()=>jump(locate(location.hash)));
+addEventListener('load',()=>{const hash=window.__H||location.hash;let target=locate(hash),offset=0;if(!hash){try{const pos=JSON.parse(localStorage.getItem(key)||'null');if(pos){target=document.getElementById(pos.id);offset=Number(pos.offset)||0}}catch(e){}}
+ if(target){target.scrollIntoView({block:'start',behavior:'instant'});if(!hash)scrollBy(0,offset+72)}restoring=false;update();
+});update();
+})();
+</script><script>/* Reveal an offscreen simulator first, then move only its local SVG viewport. */
+(function(root){
+function delta(start,end,low,high,pad=16){if(start<low+pad)return start-low-pad;if(end>high-pad)return end-high+pad;return 0}
+function focus(svg,scroller){
+ let frame=scroller.getBoundingClientRect(),bottom=innerHeight-88;
+ const top=document.querySelector('.top')?.getBoundingClientRect().bottom||56;
+ if(frame.bottom<=top||frame.top+112>bottom){
+  scroller.closest('.sim').scrollIntoView({block:'start',behavior:'instant'});
+  frame=scroller.getBoundingClientRect();
+ }
+ for(let p=scroller.parentElement;p&&p!==document.body;p=p.parentElement){const c=getComputedStyle(p);if(/auto|scroll|hidden|clip/.test(c.overflowY)){const r=p.getBoundingClientRect();bottom=Math.min(bottom,r.top+p.clientHeight)}}
+ const space=Math.max(112,Math.min(innerHeight*.4,bottom-frame.top));scroller.style.maxHeight=space+'px';
+ frame=scroller.getBoundingClientRect();const node=svg.querySelector('.fl-node.act');if(!node)return;const r=node.getBoundingClientRect();
+ scroller.scrollTop+=delta(r.top,r.bottom,frame.top,frame.top+scroller.clientHeight);
+ scroller.scrollLeft+=delta(r.left,r.right,frame.left,frame.left+scroller.clientWidth);
+}
+root.LessonGeometry={delta,focus};if(typeof module!=='undefined')module.exports={delta,focus};
+})(typeof window==='undefined'?globalThis:window);
+</script><script>/* Shared material/explanation pairing, original-image dialog and copy actions. */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)],ic=window.lessonIcon;
+window.lessonCopy=async(text,button)=>{try{if(navigator.clipboard?.writeText)await navigator.clipboard.writeText(text);else{const t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();if(!document.execCommand('copy'))throw Error('copy');t.remove()}button.textContent='已复制'}catch(e){button.textContent='复制未成功，请选中文字复制'}};
+$$('.pair.codewalk,.pair.read-pair,.pair.material-pair').forEach(pair=>{
+ const source=$('.pair-source',pair),notes=$('.pair-notes',pair);if(!source||!notes)return;
+ const pre=$('pre[data-lines]',source),code=pre&&$('code',pre),steps=$$('.step',notes);let lines=[],raw='';
+ if(code){raw=code.textContent;const first=Number(pre.dataset.lines)||1;code.textContent='';const pieces=raw.replace(/\n$/,'').split('\n');pieces.forEach((text,i)=>{const line=document.createElement('span');line.className='code-line';line.dataset.line=String(first+i);line.textContent=text;code.appendChild(line);lines.push(line)});
+  const panel=document.createElement('div');panel.className='code-panel';source.before(panel);
+  const toolbar=document.createElement('div');toolbar.className='code-toolbar';
+  const hint=document.createElement('span');hint.className='code-scroll-hint';hint.textContent='长行可横向滚动';
+  const button=document.createElement('button');button.className='btn sm copy-code';button.innerHTML=ic('copy')+' 复制代码';button.onclick=()=>window.lessonCopy(raw,button);
+  toolbar.append(hint,button);panel.append(toolbar,source);
+ }
+ let active=null;
+ function select(step){if(!step||active===step)return;active=step;steps.forEach(s=>s.classList.toggle('is-active',s===step));let targets=[];
+  if(code){const ranges=(step.dataset.hl||'').split(',').map(v=>v.split('-').map(Number));lines.forEach(line=>{const n=Number(line.dataset.line),on=ranges.some(([a,b=a])=>n>=a&&n<=b);line.classList.toggle('hl',on);if(on)targets.push(line)})}
+  else{const ids=(step.dataset.explains||step.dataset.target||'').split(/\s+/);$$('.source-block,[data-material]',source).forEach(block=>{const on=ids.includes(block.dataset.sourceId||block.id);block.classList.toggle('is-active',on);if(on)targets.push(block)})}
+  if(targets.length){const a=targets[0].getBoundingClientRect(),b=targets[targets.length-1].getBoundingClientRect(),r=source.getBoundingClientRect();const bottom=r.top+source.clientHeight;source.scrollTop+=b.bottom-a.top>source.clientHeight-32?a.top-r.top-16:window.LessonGeometry.delta(a.top,b.bottom,r.top,bottom)}
+ }
+ const update=()=>{
+  const rect=notes.getBoundingClientRect(),material=source.closest('.code-panel')||source;
+  const top=Math.max(0,$(".top")?.getBoundingClientRect().bottom||0,innerWidth<=820?material.getBoundingClientRect().bottom:0),bottom=Math.min(innerHeight,rect.bottom);
+  if(bottom<=top)return;
+  const line=top+(bottom-top)*.4;let step=steps[0];
+  for(const s of steps)if(s.getBoundingClientRect().top<=line)step=s;
+  const last=steps.at(-1),lastRect=last?.getBoundingClientRect();
+  if(scrollY+innerHeight>=document.documentElement.scrollHeight-2&&lastRect?.top<bottom&&lastRect.bottom>top)step=last;
+  select(step);
+ };
+ let queued=false;addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(()=>{queued=false;update()})}},{passive:true});addEventListener('resize',update);
+ steps.forEach(step=>{step.addEventListener('focusin',()=>select(step));step.addEventListener('click',e=>{select(step);const a=e.target.closest('a');if(a?.hash&&source.querySelector(a.hash)){e.preventDefault();source.focus()}})});select(steps[0]);addEventListener('load',update);
+});
+$$('figure img').forEach(img=>{const button=document.createElement('button');button.className='image-open';button.type='button';button.setAttribute('aria-label','放大图片：'+img.alt);img.replaceWith(button);button.appendChild(img);button.onclick=()=>{
+ const dialog=document.createElement('dialog');dialog.className='image-dialog';dialog.setAttribute('aria-label',img.alt);const close=document.createElement('button');close.className='btn dialog-close';close.innerHTML=ic('x')+' 关闭';const large=img.cloneNode();large.removeAttribute('loading');dialog.append(close,large);document.body.appendChild(dialog);close.onclick=()=>dialog.close();dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close()});dialog.addEventListener('close',()=>{dialog.remove();button.focus()});dialog.showModal();close.focus();
+}});
+$$('details.more summary').forEach(s=>{if(!s.textContent.trim())s.textContent='展开细节';s.insertAdjacentHTML('afterbegin',ic('chevron-right'))});
+})();
+</script><script>/* 学习搭子 固定组件库 — 不要在课程里改这个文件。 */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const NS='http://www.w3.org/2000/svg';
+const data=(box,kind)=>JSON.parse(box.querySelector('script[type="application/json"]')?.textContent||box.dataset[kind]);
+const ic=window.lessonIcon;
+const el=(t,a={},p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p&&p.appendChild(e);return e};
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+function component(selector,render){
+  $$(selector).forEach(box=>{try{render(box)}catch(error){
+    const message=document.createElement('p');message.className='component-error';
+    message.textContent='这张图的数据有误';message.setAttribute('role','status');
+    box.replaceWith(message);console.error('组件数据有误',error);
+  }});
+}
+
+/* ---------- flow：用 JSON 画流程图 ----------
+ spec = {w,h,nodes:[{id,x,y,t,s?,c?,w?}],edges:[{f,t,l?,bend?}]}  节点坐标是中心点 */
+function drawFlow(svg,spec){
+  svg.innerHTML='';
+  const defs=el('defs',{},svg);
+  [['a','var(--meta)'],['b','var(--blue)'],['red','var(--amber)'],['amber','var(--amber)'],['green','var(--green)']].forEach(([id,c])=>{const m=el('marker',{id:'ar'+id+svg.dataset.uid,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:7,markerHeight:7,orient:'auto-start-reverse'},defs);el('path',{d:'M0,0L10,5L0,10z',fill:c},m)});
+  const N={};spec.nodes.forEach(n=>N[n.id]={...n,w:n.w||150,h:n.h||(n.s?70:56)});
+  const ns=Object.values(N);
+  let x0=Math.min(...ns.map(n=>n.x-n.w/2)),x1=Math.max(...ns.map(n=>n.x+n.w/2)),y0=Math.min(...ns.map(n=>n.y-n.h/2)),y1=Math.max(...ns.map(n=>n.y+n.h/2));
+  const B={x0,x1,y0,y1};
+  const eg=el('g',{},svg),ng=el('g',{},svg);svg._edges={};svg._nodes={};
+  const clip=(a,b)=>{const dx=b.x-a.x,dy=b.y-a.y;const s=Math.min(Math.abs((a.w/2+6)/(dx||1e-9)),Math.abs((a.h/2+6)/(dy||1e-9)));return[a.x+dx*s,a.y+dy*s]};
+  spec.edges.forEach(e=>{const a=N[e.f],b=N[e.t];let d,lx,ly;
+    if(e.route){ /* 沿外圈走的直角线：top|bottom|left|right，lane 控制离外框的距离 */
+      const g=30+(e.lane||0)*30,oa=e.oa||0,ob=e.ob||0;
+      if(e.route==='top'||e.route==='bottom'){const t=e.route==='top',Y=t?B.y0-g:B.y1+g,ya=a.y+(t?-1:1)*(a.h/2+2),yb=b.y+(t?-1:1)*(b.h/2+8);
+        d=`M${a.x+oa},${ya} V${Y} H${b.x+ob} V${yb}`;lx=(a.x+oa+b.x+ob)/2;ly=Y+(t?-8:18);
+        t?(y0=Math.min(y0,Y-26)):(y1=Math.max(y1,Y+26));}
+      else{const l=e.route==='left',X=l?B.x0-g:B.x1+g,xa=a.x+(l?-1:1)*(a.w/2+2),xb=b.x+(l?-1:1)*(b.w/2+8);
+        d=`M${xa},${a.y+oa} H${X} V${b.y+ob} H${xb}`;lx=X+(l?-8:8);ly=(a.y+b.y)/2;
+        l?(x0=Math.min(x0,X-90)):(x1=Math.max(x1,X+90));}
+    }else{const[p1,q1]=clip(a,b),[p2,q2]=clip(b,a);const mx=(p1+p2)/2,my=(q1+q2)/2,len=Math.hypot(p2-p1,q2-q1)||1,bd=e.bend||0;
+      const cx=mx-(q2-q1)/len*bd,cy=my+(p2-p1)/len*bd;d=`M${p1},${q1} Q${cx},${cy} ${p2},${q2}`;
+      const qx=.25*p1+.5*cx+.25*p2,qy=.25*q1+.5*cy+.25*q2,sg=bd>=0?1:-1;lx=qx-(q2-q1)/len*sg*14;ly=qy+(p2-p1)/len*sg*14+4;}
+    const mk=e.c||'a';const p=el('path',{d,class:'fl-edge '+(e.c||''),'marker-end':`url(#ar${mk}${svg.dataset.uid})`},eg);p._mk=mk;
+    let lab=null;if(e.l){const anc=e.route==='left'?'end':e.route==='right'?'start':'middle';lab=el('text',{x:lx,y:ly,'text-anchor':anc,class:'fl-elab '+(e.c||''),stroke:'var(--paper)','stroke-width':5,'paint-order':'stroke'},eg);lab.textContent=e.l}
+    svg._edges[e.f+'>'+e.t]={p,lab}});
+  ns.forEach(n=>{const g=el('g',{class:'fl-node '+(n.c||'')},ng);
+    el('rect',{x:n.x-n.w/2,y:n.y-n.h/2,width:n.w,height:n.h,rx:14},g);
+    const t=el('text',{x:n.x,y:n.y+(n.s?-4:6),'text-anchor':'middle'},g);t.textContent=n.t;
+    if(n.s){const s=el('text',{x:n.x,y:n.y+18,'text-anchor':'middle',class:'sub'},g);s.textContent=n.s}
+    svg._nodes[n.id]=g});
+  /* 自动贴合：viewBox 只包住内容，图会放大填满面板 */
+  const P=spec.pad??8,W=x1-x0+2*P,H=y1-y0+2*P+20;
+  svg.setAttribute('viewBox',`${x0-P} ${y0-P-10} ${W} ${H}`);
+  svg.style.setProperty('--flow-width',W+'px');svg.style.setProperty('--flow-height',H+'px');
+  const scroll=document.createElement('div');scroll.className='flow-scroll';
+  svg.replaceWith(scroll);scroll.appendChild(svg);
+  if(!scroll.closest('.sim')&&W>innerWidth-78){const t=document.createElement('p');t.className='flow-tip';t.textContent='← 左右滑动看全图 →';scroll.after(t)}
+  svg._set=(act,edge)=>{for(const k in svg._nodes)svg._nodes[k].classList.toggle('act',k===act);
+    for(const k in svg._edges){const on=k===edge,E=svg._edges[k];E.p.classList.toggle('act',on);E.p.setAttribute('marker-end',`url(#ar${on?'b':E.p._mk}${svg.dataset.uid})`);E.lab&&E.lab.classList.toggle('act',on)}};
+  svg._set(svg.dataset.act,svg.dataset.edge);
+  svg._center=()=>{if(!matchMedia('(max-width:820px)').matches)return;
+    const active=Object.values(svg._nodes).find(n=>n.classList.contains('act'));if(!active)return;
+    const a=active.getBoundingClientRect(),r=scroll.getBoundingClientRect();
+    scroll.scrollLeft+=a.left+a.width/2-r.left-r.width/2;
+  };
+}
+let uid=0;
+component('svg.flow',s=>{s.dataset.uid=++uid;drawFlow(s,data(s,'flow'))});
+
+/* ---------- sim：一步步走的模拟器 ----------
+ data-sim = {flow:{...}, steps:[{act,edge,msg:{r:user|asst|tool|err|sys,n?,t},say}], alt?:{label,steps:[...]}} */
+component('.sim',box=>{
+  const spec=data(box,'sim');if(spec.alt&&!spec.alts)spec.alts=[spec.alt];const AL=spec.alts||[];const gname='br'+(++uid);
+  box.innerHTML=`<div class="ctl"><button class="btn sm" data-a="step">下一步</button><button class="btn sm" data-a="play">${ic("play")} 自动</button><button class="btn sm" data-a="reset">重置</button>
+   <label>速度 <input type="range" min="300" max="2500" step="100" value="1200"></label></div>${AL.length?`<div class="ctl branches"><label><input type="radio" name="${gname}" value="-1" checked> ${esc(spec.label||'正常路径')}</label>${AL.map((a,j)=>`<label><input type="radio" name="${gname}" value="${j}"> ${esc(a.label)}</label>`).join('')}</div>`:''}
+   <div class="body"><svg class="flow"></svg><div class="log"></div></div><div class="narr"></div>`;
+  if(spec.layout==='wide')box.classList.add('wide');
+  const svg=$('.body > svg.flow',box);svg.dataset.uid=++uid;drawFlow(svg,spec.flow);
+  const fs=svg.parentElement,tip=document.createElement('p');tip.className='flow-tip';tip.textContent='点图放大看字，再点回到全图';fs.after(tip);
+  const focus=()=>{if(!fs.classList.contains('zoom'))return svg._center();window.LessonGeometry.focus(svg,fs)};
+  const zoom=document.createElement('button');zoom.className='btn sm zoom-toggle';zoom.innerHTML=ic('zoom-in')+' 放大图';zoom.setAttribute('aria-pressed','false');tip.replaceWith(zoom);const toggle=()=>{const on=fs.classList.toggle('zoom');zoom.innerHTML=ic(on?'zoom-out':'zoom-in')+(on?' 返回全图':' 放大图');zoom.setAttribute('aria-pressed',String(on));if(!on){fs.style.maxHeight='';fs.scrollTop=0}focus()};fs.onclick=toggle;zoom.onclick=toggle;window.addEventListener('resize',focus);window.addEventListener('load',()=>requestAnimationFrame(()=>{const params=new URLSearchParams(location.search);if((params.has('sim')||params.has('zoom'))&&!(window.__H??location.hash)&&box===$('.sim')){const section=box.closest('.sec,.card');if(window.lessonNav.layout==='deck')window.goCard($$('.card').indexOf(section)+1);else section.scrollIntoView({block:'start',behavior:'instant'})}focus()}));window.addEventListener('lesson:navigate',()=>requestAnimationFrame(focus));
+  const log=$('.log',box),narr=$('.narr',box),radios=$$('input[type=radio]',box),spd=$('input[type=range]',box),play=$('[data-a=play]',box);
+  let i=0,timer=null,predicted=!spec.predict;const prediction=document.createElement('div');if(spec.predict){prediction.className='prediction callout';prediction.innerHTML='<p>先预测：'+esc(spec.predict)+'</p><label>你的判断<textarea rows="2"></textarea></label><button class="btn sm" data-a="predict">提交预测，再看过程</button>';box.prepend(prediction)};const sel=()=>{const r=radios.find(r=>r.checked);return r?+r.value:-1};const steps=()=>sel()>=0?AL[sel()].steps:spec.steps;
+  const hint=spec.note?esc(spec.note)+'　点「下一步」开始。':'点「下一步」开始。';const reset=()=>{i=0;log.innerHTML='';narr.innerHTML=hint;svg._set(null,null);stop()};
+  const stop=()=>{clearTimeout(timer);timer=null;play.innerHTML=ic('play')+' 自动'};
+  const step=()=>{const S=steps();if(i>=S.length){narr.textContent='流程结束。点「重置」再走一遍。';stop();return false}
+    const s=S[i++];svg._set(s.act,s.edge);focus();if(s.msg){const d=document.createElement('div');d.className='msg '+s.msg.r;
+      d.innerHTML=`<b>${esc(s.msg.n||({user:'用户',asst:'模型',tool:'工具结果',err:'出错',sys:'系统提示词'}[s.msg.r]))}</b>${esc(s.msg.t)}`;log.appendChild(d);log.scrollTop=1e9}
+    narr.innerHTML=`<b>第 ${i}/${S.length} 步</b>　${esc(s.say)}`;return true};
+  const loop=()=>{if(step())timer=setTimeout(loop,+spd.value);else stop()};
+  box.onclick=e=>{const a=e.target.closest('button')?.dataset.a;if(a==='predict'){predicted=true;prediction.hidden=true;step()}if(a==='step'){stop();if(predicted)step();else prediction.querySelector('textarea').focus()}if(a==='reset')reset();if(a==='play'){if(!predicted){prediction.querySelector('textarea').focus();return}if(timer)stop();else{play.innerHTML=ic('pause')+' 暂停';loop()}}};
+  narr.innerHTML=hint;radios.forEach(r=>r.onchange=reset);
+  const P=new URLSearchParams(location.search);if(P.get('alt')&&radios[+P.get('alt')]){radios[+P.get('alt')].checked=true}for(let n=+P.get('sim')||0;n>0;n--)step();if(P.get('sim')){predicted=true;prediction.hidden=true}if(P.get('zoom')){fs.classList.add('zoom');zoom.setAttribute('aria-pressed','true');zoom.innerHTML=ic('zoom-out')+' 返回全图'} /* 自查用：?sim=5&alt=1&zoom=1 */
+});
+
+/* ---------- bars：横向条形图 ----------
+ data-bars = {unit, items:[{l,v,c?:blue|amber|green|red,note?}], caption?}  数字必须来自原文 */
+component('.bars',box=>{const B=data(box,'bars'),mx=Math.max(1,...B.items.filter(i=>i.v!=null).map(i=>i.v));
+  box.innerHTML=B.items.map(i=>`<div class="bar ${i.c||''}"><span class="bl">${esc(i.l)}</span>${i.v==null?`<span class="bmiss">${esc(i.miss||'原文未给数字')}</span>`:`<span class="bt"><i style="width:${(i.v/(B.axis==='independent'?Math.max(1,i.v):mx)*100).toFixed(1)}%"></i></span><span class="bv">${esc(i.v)}${esc(i.unit||B.unit||'')}</span>`}${i.note?`<span class="bn">${esc(i.note)}</span>`:''}</div>`).join('')+(B.caption?`<div class="bc">${esc(B.caption)}</div>`:'')});
+
+/* ---------- quiz：页内小测 ----------
+ data-quiz = [{q,opts:[...],a:正确下标,why,back:答错时回到第几张卡片}] */
+component('.quiz,.checkpoint',box=>{
+  const checkpoint=box.classList.contains('checkpoint');box.classList.add('quiz');const raw=data(box,checkpoint?'checkpoint':'quiz'),Q=Array.isArray(raw)?raw:[raw],P=new URLSearchParams(checkpoint?'':location.search);
+  let k=Math.max(0,Math.min(Q.length-1,(parseInt(P.get('q'))||1)-1));
+  const answers=Q.map(()=>({first:null,selected:null,retries:0}));
+  const score=()=>answers.filter((s,i)=>s.first===Q[i].a).length;
+  const complete=()=>answers.every(s=>s.selected!==null);
+  const reviewButton=i=>{
+    const target=window.lessonNav.layout==='deck'?$$('.card')[Q[i].back-1]:document.getElementById('s'+Q[i].back);
+    const title=target.dataset.toc||$('h2,h1,h3',target)?.textContent||'相关内容';
+    return `<button class="btn sm" data-review="${i}">回看：${esc(title)}</button>`;
+  };
+  function summary(){
+    const wrong=answers.map((s,i)=>s.first!==Q[i].a?i:-1).filter(i=>i>=0);
+    const recovered=wrong.filter(i=>answers[i].selected===Q[i].a).length;
+    box.innerHTML=`<div class="qt">小测总结</div><p>首次得分：${score()} / ${Q.length}。重试答对：${recovered} 题。</p>
+      <div>${wrong.length?wrong.map(i=>`<p>第 ${i+1} 题：${esc(Q[i].q)} ${reviewButton(i)} <button class="btn sm" data-question="${i}">回到此题</button></p>`).join(''):'没有首次错题。'}</div>
+      <p>用自己的话复述这页的核心机制，再举一个新场景。</p><label>你的复述<textarea class="retelling" rows="3"></textarea></label><button class="btn sm" data-copy-result="1">${ic("copy")} 复制学习结果 JSON</button><button class="btn sm" data-question="0">查看作答</button>`;
+  }
+  function render(){const q=Q[k],s=answers[k];
+    box.innerHTML=`<div class="qn">第 ${k+1} / ${Q.length} 题 ${checkpoint?'· 不计分':'· 首次答对 '+score()}</div><div class="qt">${esc(q.q)}</div>
+      ${q.opts.map((o,j)=>`<button class="opt ${s.selected===null?'':j===s.selected?(j===q.a?'ok':'no'):''}" data-j="${j}" aria-pressed="${j===s.selected}">${String.fromCharCode(65+j)}. ${esc(o)}</button>`).join('')}
+      <div class="fb" aria-live="polite">${s.selected===null?'':s.selected===q.a?ic('check')+' 对。'+esc(q.why):ic('x')+' 不对。先回去看看，或再试一次。'}
+      ${s.selected!==null&&s.selected!==q.a?reviewButton(k)+' <button class="btn sm" data-retry="1">再试一次</button>':''}</div>
+      <div class="nav"><button class="btn sm" data-n="-1" ${k?'':'disabled'}>上一题</button>
+      <button class="btn sm main" data-n="1" ${s.selected===null?'disabled':''}>${checkpoint?'完成检查':k===Q.length-1?'查看总结':'下一题'}</button></div>`;
+  }
+  box.onclick=e=>{const t=e.target.closest('button');if(!t)return;
+    if(t.dataset.review!==undefined){const i=+t.dataset.review;window.lessonNav.go(Q[i].back);
+      let ret=$('#quiz-return');if(!ret){ret=document.createElement('button');ret.id='quiz-return';ret.className='btn sm';document.body.appendChild(ret)}
+      ret.textContent='回到小测';ret.onclick=()=>{window.lessonNav.returnTo(box);ret.remove()};return;
+    }
+    if(t.dataset.copyResult!==undefined){const result={path:location.pathname,firstScore:score(),total:Q.length,answers:answers.map((s,i)=>({question:i+1,first:s.first,selected:s.selected,retries:s.retries,wrong:s.first!==Q[i].a,review:'#s'+Q[i].back})),retelling:$('.retelling',box).value};window.lessonCopy(JSON.stringify(result,null,2),t);return}
+    if(t.dataset.question!==undefined){k=+t.dataset.question;render();return}
+    if(t.dataset.retry){answers[k].selected=null;answers[k].retries++;render();return}
+    if(t.dataset.n){if(checkpoint&&+t.dataset.n===1){box.querySelector('.nav').hidden=true;return}if(k===Q.length-1&&+t.dataset.n===1){if(complete())summary();else{k=answers.findIndex(s=>s.selected===null);render()}return}k+=+t.dataset.n;render();return}
+    if(t.dataset.j===undefined||answers[k].selected!==null)return;
+    const j=+t.dataset.j;answers[k].selected=j;if(answers[k].first===null)answers[k].first=j;render();const nv=$('.nav',box);nv&&nv.scrollIntoView&&nv.scrollIntoView({block:'nearest'});
+  };
+  render();
+  const pk=P.get('pick'),pick=pk==='wrong'?Q[k].opts.findIndex((_,i)=>i!==Q[k].a):pk!==null&&/^\d+$/.test(pk)?+pk:-1;
+  if(pick>=0&&$$('.opt',box)[pick])$$('.opt',box)[pick].click();
+
+});
+
+})();
+</script><script>/* End-of-build readiness marker, used by the screenshot harness. */
+document.querySelector('.theme-toggle').onclick=window.__tt;
+window.__lessonReady=true;
+</script><script>/* ---------- 学完了：点一下记为已学完（存在本机浏览器） ---------- */
+(function(){if(window.__finish)return;window.__finish=1;
+if(!document.querySelector('.deck'))return;
+const st=document.createElement('style');st.textContent=`.fin-btn{position:fixed;right:16px;bottom:76px;z-index:50;padding:10px 16px;border-radius:999px;border:0;background:#16a34a;color:#fff;font:600 15px system-ui;box-shadow:0 4px 14px rgba(0,0,0,.18);cursor:pointer}.fin-btn.done{background:#e5e7eb;color:#166534}`;document.head.appendChild(st);
+const p=n=>String(n).padStart(2,'0');
+const doneKeys=()=>{const out=new Set();const seed=location.pathname;const vs=new Set([seed]);if(seed.endsWith('/index.html')){const d=seed.slice(0,-10);vs.add(d);vs.add(d.replace(/\/$/,'')||'/')}else if(seed.endsWith('/')){vs.add(seed+'index.html');vs.add(seed.replace(/\/$/,'')||'/')}else if(!/\.[a-z0-9]+$/i.test(seed)){vs.add(seed+'/');vs.add(seed+'/index.html')}for(const u of vs){out.add(u);const m=u.match(/^(.*)\/courses\/(.+)$/);if(m)out.add(m[1]+'/'+m[2]);const m2=u.match(/^(.*)\/(cs146s)\/(.+)$/);if(m2&&!u.includes('/courses/'))out.add(m2[1]+'/courses/'+m2[2]+'/'+m2[3])}return[...out]};
+const getDone=()=>{for(const k of doneKeys()){const d=localStorage.getItem('done:'+k);if(d)return d}return null};
+const setDone=v=>{for(const k of doneKeys())localStorage.setItem('done:'+k,v)};
+const clearDone=()=>{for(const k of doneKeys())localStorage.removeItem('done:'+k)};
+const b=document.createElement('button');b.className='fin-btn';document.body.appendChild(b);
+const show=()=>{const d=getDone();b.classList.toggle('done',!!d);b.textContent=d?'✓ 已学完 '+d:'✓ 学完了';b.title=d?'再点一下取消':''};show();
+b.onclick=()=>{if(getDone()){if(confirm('取消「已学完」记录？'))clearDone()}else{const x=new Date();setDone(x.getFullYear()+'-'+p(x.getMonth()+1)+'-'+p(x.getDate()))}show()};
+})();
+</script><script src="../../assets/gh.js" defer></script><script src="../../assets/progress.js" defer></script></body></html>
