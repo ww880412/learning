@@ -84,7 +84,7 @@ node scripts/test-progress.mjs      # 纯逻辑测试，打印 ok
 node scripts/test-guards.mjs        # 坏数据拦截：坏 JSON 不写、build.mjs 入口校验，打印 ok
 node scripts/test-publish.mjs       # 构建失败就停发：rebuild-home.sh 和 box 上两个发布脚本，坏数据时非零退出、不推送，打印 ok
 NODE_PATH=<装了 puppeteer-core 的 node_modules> SHOTS=/workspace/<截图目录> \
-  node scripts/browser-progress-check.mjs   # 无头 Chrome（/usr/bin/google-chrome）+ 假 GitHub API，11 项应全部 PASS，并截首页 A/B/C 和一课
+  node scripts/browser-progress-check.mjs   # 无头 Chrome（/usr/bin/google-chrome）+ 假 GitHub API，12 项应全部 PASS，并截首页 A/B/C 和一课
 git add -A && git commit -m "…" && git push -u origin <分支>
 # 开 PR → squash 合并 → git push origin --delete <分支>
 ```

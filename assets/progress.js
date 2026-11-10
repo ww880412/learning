@@ -194,7 +194,30 @@
     if (!n) return null;
     return { doc: copy, message: 'learn: sync local' };
   }
-  var api = { isDate: isDate, earlier: earlier, beijingToday: beijingToday, okPath: okPath, okId: okId, okDay: okDay, doneExpand: doneExpand, pathsMatch: pathsMatch, matchItem: matchItem, applyLearned: applyLearned, applyReviews: applyReviews, diffRev: diffRev, mergeLocal: mergeLocal, atMs: atMs, effReview: effReview, applyOps: applyOps, pruneOps: pruneOps };
+  // 首页「继续学」只留还没点「学完了」的一篇。list 按开始日从新到旧。
+  // 学完 = 队列里有 learned，或 doneOf(href) 非空（本机 done:<路径>，路径展开由调用方的 doneOf 负责）。
+  // 不看复习勾选，不改排期。源码会注入首页脚本，必须自包含。
+  function nextContinue(list, queue, items, doneOf) {
+    var i, c, q, j, id, k, local;
+    list = list || [];
+    queue = queue || [];
+    for (i = 0; i < list.length; i++) {
+      c = list[i];
+      if (!c) continue;
+      q = null;
+      id = c.id || '';
+      if (!id && c.href && items) {
+        for (k in items) if (items[k] && items[k].href === c.href) { id = k; break; }
+      }
+      if (id) for (j = 0; j < queue.length; j++) if (queue[j] && queue[j].item === id) { q = queue[j]; break; }
+      local = (c.href && typeof doneOf === 'function') ? doneOf(c.href) : '';
+      if (local) continue;
+      if (q && q.learned) continue;
+      return c;
+    }
+    return null;
+  }
+  var api = { isDate: isDate, earlier: earlier, beijingToday: beijingToday, okPath: okPath, okId: okId, okDay: okDay, doneExpand: doneExpand, pathsMatch: pathsMatch, matchItem: matchItem, applyLearned: applyLearned, applyReviews: applyReviews, diffRev: diffRev, mergeLocal: mergeLocal, atMs: atMs, effReview: effReview, applyOps: applyOps, pruneOps: pruneOps, nextContinue: nextContinue };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   root.PROG = api;
   if (typeof document === 'undefined' || !GH) return;
