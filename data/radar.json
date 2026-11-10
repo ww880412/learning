@@ -21,7 +21,7 @@
   "githubNote": "stars/license/pushed_at 来自 GitHub API，抓取于 2026-10-21，2026-10-26 全量刷新；pushed_at 为北京时间日期；repo_verified=false 表示无仓库或未能确认"
  },
  "generated": "2026-10-21",
- "updated": "2026-11-02",
+ "updated": "2026-11-09",
  "tz": "北京时间",
  "batches": [
   {
@@ -122,33 +122,42 @@
     275
    ],
    "n": 10
+  },
+  {
+   "date": "2026-11-09",
+   "label": "周扫补录（窗口 2026-11-02~11-09 北京时间）",
+   "ids": [
+    276,
+    286
+   ],
+   "n": 11
   }
  ],
  "themes": [
   {
    "key": "plugin",
    "title": "端侧插件生态",
-   "n": 63
+   "n": 64
   },
   {
    "key": "enterprise",
    "title": "企业资产与知识库",
-   "n": 30
+   "n": 31
   },
   {
    "key": "memory",
    "title": "上下文/记忆",
-   "n": 25
+   "n": 26
   },
   {
    "key": "harness",
    "title": "harness 与编排",
-   "n": 49
+   "n": 51
   },
   {
    "key": "sandbox",
    "title": "沙箱与安全权限",
-   "n": 22
+   "n": 26
   },
   {
    "key": "gateway",
@@ -163,12 +172,12 @@
   {
    "key": "cost",
    "title": "成本与模型路由",
-   "n": 16
+   "n": 17
   },
   {
    "key": "review",
    "title": "代码审查与 CI",
-   "n": 15
+   "n": 16
   },
   {
    "key": "other",
@@ -183,14 +192,14 @@
    "name": "DeepSeek Harness (DSH)",
    "url": "https://github.com/deepseek-ai/deepseek-harness",
    "repo": "deepseek-ai/deepseek-harness",
-   "stars": 261392,
+   "stars": 276509,
    "license": "MIT",
-   "pushed": "2026-10-23",
+   "pushed": "2026-11-04",
    "archived": false,
    "verified": true,
    "what": "DeepSeek 开源的 coding agent harness，口号「Everything is a Plugin」，仓库 .agents/skills/ 自带 11 个真实工程 Skill（Code Review、Pre-push、找过度设计、Stacked PR、文档同步等）。",
    "borrow": "插件化内核的标杆：把上下文洞察、轨迹、LoopX 等都做成插件（dsh-context、loopx 插件），可直接对照它的插件 API 与 skill 目录约定设计工作台扩展点；仓库自带 skills 是「团队工程规范=Skill」的现成样本。",
-   "note": "2026-10-26 补：rc.3 是小版本：左栏、会话视图和右栏新增「更多」菜单，方便浏览和创建插件，另有草稿找回修复。生态侧：dsh-im 周下载 15,232、月下载 60,318（npm 下载 API，@xmanrui/dsh-im，周窗口 10-16~10-22）；破甲插件 dsh-purge 作者宣布 10-27 闭源（多条 X 帖，未核实），反映出插件许可和供应的不稳定。；2026-11-02 补：v0.2.2-alpha.2 插件管理支持更新第三方插件包、热更新失败自动回滚旧版本；新增实验插件「subagent_oar 工具」（把独立任务交给本机 Codex / Claude CLI）、「开发者工具-统计」（按轮次和步骤看上下文、缓存、模型与工具耗时）、「变更请求与工作树」（会话跑在独立 git worktree，看关联 PR 状态和 diff）。生态侧 DSH Go（#264）一周 ★4,661。",
+   "note": "2026-10-26 补：rc.3 是小版本：左栏、会话视图和右栏新增「更多」菜单，方便浏览和创建插件，另有草稿找回修复。生态侧：dsh-im 周下载 15,232、月下载 60,318（npm 下载 API，@xmanrui/dsh-im，周窗口 10-16~10-22）；破甲插件 dsh-purge 作者宣布 10-27 闭源（多条 X 帖，未核实），反映出插件许可和供应的不稳定。；2026-11-02 补：v0.2.2-alpha.2 插件管理支持更新第三方插件包、热更新失败自动回滚旧版本；新增实验插件「subagent_oar 工具」（把独立任务交给本机 Codex / Claude CLI）、「开发者工具-统计」（按轮次和步骤看上下文、缓存、模型与工具耗时）、「变更请求与工作树」（会话跑在独立 git worktree，看关联 PR 状态和 diff）。生态侧 DSH Go（#264）一周 ★4,661。；2026-11-09 补：dsh-v0.2.2-rc.1 是 0.2.2 首个候选版，把 alpha 期的第三方插件更新与回滚、subagent_oar、统计插件、变更请求与工作树汇总；新增实验插件「个性化推荐」、会话可完整复制为 Markdown、右键菜单开放开发者扩展。团队另发 Super-agent 设计长文与原型，见 #276。",
    "sources": [
     {
      "author": "@yaojingang",
@@ -226,6 +235,16 @@
      "author": "GitHub Release dsh-v0.2.2-alpha.2（2026-10-28 北京时间）",
      "date": null,
      "url": "https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.2.2-alpha.2"
+    },
+    {
+     "author": "GitHub Release dsh-v0.2.2-rc.1（2026-11-04 北京时间）",
+     "date": null,
+     "url": "https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.2.2-rc.1"
+    },
+    {
+     "author": "X @DeepSeekHarness Super-agent 长文（2026-11-01）",
+     "date": null,
+     "url": "https://x.com/DeepSeekHarness/status/2116857257245987236"
     }
    ],
    "added": "2026-10-21"
@@ -543,14 +562,14 @@
    "name": "Tencent TeamAI CLI",
    "url": "https://github.com/Tencent/teamai-cli",
    "repo": "Tencent/teamai-cli",
-   "stars": 5653,
+   "stars": 5797,
    "license": "NOASSERTION",
-   "pushed": "2026-10-26",
+   "pushed": "2026-11-09",
    "archived": false,
    "verified": true,
    "what": "把团队使用 Agent 的 Skills、Rules、Hooks、MCP、Docs 统一放进共享 Git，通过 PR 评审合并分发；适配 Claude Code、Codex、Cursor、WorkBuddy、OpenCode 等。",
    "borrow": "企业插件/规则治理的关键模式：配置即代码、PR 审核、可追溯回滚、多 Agent 适配层。几乎就是企业工作台「资产分发」模块的开源原型。",
-   "note": "license 为 NOASSERTION，商用前需看仓库条款",
+   "note": "license 为 NOASSERTION，商用前需看仓库条款；2026-11-09 补：v0.29.0 所有 AI 调用统一从工具描述符启动；评分可把一个会话或一次 skill 运行「租给」驱动方自己的评审模型；看板显示评分通过率、主要影响因素，以及团队改动有没有带来提升；状态页显示未确认的自动上报。",
    "sources": [
     {
      "author": "@frxiaobei",
@@ -561,6 +580,11 @@
      "author": "@seekjourney",
      "date": "2026-09-07",
      "url": "https://x.com/seekjourney/status/2096930812029808782"
+    },
+    {
+     "author": "GitHub Release v0.29.0（2026-11-04 北京时间）",
+     "date": null,
+     "url": "https://github.com/Tencent/teamai-cli/releases/tag/v0.29.0"
     }
    ],
    "added": "2026-10-21"
@@ -766,19 +790,34 @@
    "name": "HarnessRouter",
    "url": "https://github.com/HarnessRouter/harnessrouter",
    "repo": "HarnessRouter/harnessrouter",
-   "stars": 3632,
+   "stars": 4296,
    "license": "Apache-2.0",
-   "pushed": "2026-10-26",
+   "pushed": "2026-11-09",
    "archived": false,
    "verified": true,
    "what": "「OpenRouter 路由模型，HarnessRouter 路由 harness」：一套 API 之下切换 Codex、Claude Code、Hermes 等。",
    "borrow": "企业工作台大概率要兼容多家 harness；统一接口层+按任务路由是避免绑定单一厂商的做法。",
-   "note": "",
+   "note": "2026-11-09 补：v0.38.0 远程 MCP 的地址和凭据只留在服务端，agent 会话只拿一个本轮结束即失效的本地地址 + token（此前多数 base 把 bearer token 写进会话里的配置文件，还会进 checkpoint，官方建议轮换 MCP token）；所有安装首次启动自动生成 HR_SECRET_KEY，存量明文凭据加密（说明里写明密钥和数据同卷只防存储副本泄露）。v0.39.0 支持从某次回复分叉会话（branch: true + previous_response_id，只带该轮结束时已提交的文件和对话，不带凭据）。社区帖称支持 30 种 harness、「只换 harness 成本降 25%–64%」为官方基准自报。",
    "sources": [
     {
      "author": "@aigclink",
      "date": "2026-08-19",
      "url": "https://x.com/aigclink/status/2089884445495169241"
+    },
+    {
+     "author": "GitHub Release v0.38.0（2026-11-04 北京时间）",
+     "date": null,
+     "url": "https://github.com/HarnessRouter/harnessrouter/releases/tag/v0.38.0"
+    },
+    {
+     "author": "GitHub Release v0.39.0（2026-11-09 北京时间）",
+     "date": null,
+     "url": "https://github.com/HarnessRouter/harnessrouter/releases/tag/v0.39.0"
+    },
+    {
+     "author": "X @akshay_pachaar 帖（@ww880412 转发，2026-11-04 北京时间）",
+     "date": null,
+     "url": "https://x.com/akshay_pachaar/status/2117605592999313843"
     }
    ],
    "added": "2026-10-21"
@@ -1239,14 +1278,14 @@
    "name": "Deep Agents（LangChain）",
    "url": "https://github.com/langchain-ai/deepagents",
    "repo": "langchain-ai/deepagents",
-   "stars": 30583,
+   "stars": 31109,
    "license": "MIT",
-   "pushed": "2026-10-26",
+   "pushed": "2026-11-09",
    "archived": false,
    "verified": true,
    "what": "LangChain 的「开箱即用 agent harness」；v0.7 称基础输入 Token 减少 65%、性能基本持平（系统提示、工具定义等 harness 开销优化）。",
    "borrow": "harness 固定开销的削减手段；另有《The anatomy of an agent harness》入门文。",
-   "note": "https://www.langchain.com/blog/deep-agents-v0-7",
+   "note": "https://www.langchain.com/blog/deep-agents-v0-7；2026-11-09 补：Deep Agents 加入异步子 agent：编排者用 start / check / update / cancel / list_async_task 五个工具管理后台任务，update_strategy 分 interrupt（默认，改方向重跑）和 enqueue（做完再追加）；未完成任务列在编排者系统提示里；子 agent 等审批时显示 waiting、在自己的线程里答，不打断编排者。通知功能是 beta。本周 deepagents 0.7.33 / 0.7.34 发版，本轮没核对异步子 agent 从哪一版起可用。",
    "sources": [
     {
      "author": "@Xudong07452910",
@@ -1257,6 +1296,16 @@
      "author": "@Pluvio9yte",
      "date": "2026-07-30",
      "url": "https://x.com/Pluvio9yte/status/2082458657120452718"
+    },
+    {
+     "author": "LangChain 博客《Agents Are Going Async》（2026-11-05）",
+     "date": null,
+     "url": "https://www.langchain.com/blog/agents-are-going-async"
+    },
+    {
+     "author": "X @xubinrencs 帖（@ww880412 转发，2026-11-08 北京时间）",
+     "date": null,
+     "url": "https://x.com/xubinrencs/status/2119076943043965290"
     }
    ],
    "added": "2026-10-21"
@@ -1775,14 +1824,14 @@
    "name": "OpenWiki（LangChain）",
    "url": "https://github.com/langchain-ai/openwiki",
    "repo": "langchain-ai/openwiki",
-   "stars": 17409,
+   "stars": 17823,
    "license": "MIT",
-   "pushed": "2026-10-25",
+   "pushed": "2026-11-08",
    "archived": false,
    "verified": true,
    "what": "一个命令为代码库生成并维护面向 Agent 的文档，可用 git action 每日更新，注入 AGENTS.md；把 wiki 拆成「主张+版本化证据」，代码演进后自动发现可疑知识并纠正。",
    "borrow": "企业文档资产的「自我纠正」机制，解决文档过期。",
-   "note": "",
+   "note": "2026-11-09 补：v0.8.0 更新规划器会看到每页基线之后的提交信息，按改动意图而不只按改了哪些文件来路由；v0.9.0 聚焦更新时 MCP 宿主可推迟无关的过期 Claim 页，但保留它们的「证据欠账」。",
    "sources": [
     {
      "author": "@shao__meng",
@@ -1793,6 +1842,11 @@
      "author": "@lxfater",
      "date": "2026-08-07",
      "url": "https://x.com/lxfater/status/2085581847313215979"
+    },
+    {
+     "author": "GitHub Release v0.9.0（2026-11-05 北京时间）",
+     "date": null,
+     "url": "https://github.com/langchain-ai/openwiki/releases/tag/v0.9.0"
     }
    ],
    "added": "2026-10-21"
@@ -2867,9 +2921,9 @@
    "name": "Raven（Harness of Harnesses）",
    "url": "https://github.com/EverMind-AI/Raven",
    "repo": "EverMind-AI/Raven",
-   "stars": 5818,
+   "stars": 6115,
    "license": "Apache-2.0",
-   "pushed": "2026-10-26",
+   "pushed": "2026-11-09",
    "archived": false,
    "verified": true,
    "what": "EverMind-AI 的多 Agent 编排框架：自带 Research/Code/Design/Oncall 子 harness，并可通过 ACP、CLI 或 OpenAI 兼容 API 编排 13 种第三方 Agent（Claude Code、Codex 等），共享任务图与记忆；Agent loop 拆成 Memory/Planning/Capability/Action 四个可替换策略模块，由 Curator 持续改写。",
@@ -4401,14 +4455,14 @@
    "name": "Bifrost（Maxim）",
    "url": "https://github.com/maximhq/bifrost",
    "repo": "maximhq/bifrost",
-   "stars": 9099,
+   "stars": 9437,
    "license": "Apache-2.0",
-   "pushed": "2026-10-26",
+   "pushed": "2026-11-09",
    "archived": false,
    "verified": true,
    "what": "高性能开源 AI 网关，兼做 LLM 网关与 MCP 网关；自动 fallback、多 key/多 provider 负载均衡。",
    "borrow": "插件式拆分：plugins/governance（治理/预算）、plugins/routing、plugins/semanticcache、plugins/otel、plugins/logging；core/billingheader.go 可看计费头处理。",
-   "note": "README 称自适应负载均衡、集群、护栏、MCP 网关等属企业部署能力，开源版边界需核对。；2026-11-02 补：transports v2.4.0 新增 Relays：非 LLM API（Tavily、Textract 等）也走网关，一份存储凭据、按路由计价，调用记到调用方虚拟 key、团队和客户预算上，虚拟 key 有 relay_grants；路由可从 OpenAPI 文档导入。",
+   "note": "README 称自适应负载均衡、集群、护栏、MCP 网关等属企业部署能力，开源版边界需核对。；2026-11-02 补：transports v2.4.0 新增 Relays：非 LLM API（Tavily、Textract 等）也走网关，一份存储凭据、按路由计价，调用记到调用方虚拟 key、团队和客户预算上，虚拟 key 有 relay_grants；路由可从 OpenAPI 文档导入。；2026-11-09 补：transports v2.5.0 MCP 网关支持按用户发现工具（per_user_discovery：每个调用方只看到自己凭据能解锁的工具、prompt 和资源，登录时存储、凭据删除时一并删除）；/mcp/<slug> 透传 MCP Apps 的 ui:// 资源且 app-only 工具不进模型；转发上游 input_required 实现多轮往返。",
    "sources": [
     {
      "author": "GitHub 搜索「mcp gateway」(2026-10-21)",
@@ -4424,6 +4478,11 @@
      "author": "GitHub Release transports/v2.4.0（2026-10-30 北京时间）",
      "date": null,
      "url": "https://github.com/maximhq/bifrost/releases/tag/transports%2Fv2.4.0"
+    },
+    {
+     "author": "GitHub Release transports/v2.5.0（2026-11-07 北京时间）",
+     "date": null,
+     "url": "https://github.com/maximhq/bifrost/releases/tag/transports%2Fv2.5.0"
     }
    ],
    "added": "2026-10-21"
@@ -4574,14 +4633,14 @@
    "name": "PR-Agent",
    "url": "https://github.com/The-PR-Agent/pr-agent",
    "repo": "The-PR-Agent/pr-agent",
-   "stars": 13607,
+   "stars": 15608,
    "license": "MIT",
-   "pushed": "2026-10-26",
+   "pushed": "2026-11-09",
    "archived": false,
    "verified": true,
    "what": "开源 PR 审查器（README 声明不是 Qodo 免费版），提供 /review、/improve、/describe、/ask，每个工具一次 LLM 调用。",
    "borrow": "工具实现 pr_agent/tools/（pr_description.py、pr_code_suggestions.py 等），行为由 TOML 配置驱动（pr_agent/settings/configuration.toml、ignore.toml、generated_code_ignore.toml）；大 PR 的压缩策略见其 docs（compression_strategy）。",
-   "note": "原 qodo-ai/pr-agent 已迁至 The-PR-Agent/pr-agent。",
+   "note": "原 qodo-ai/pr-agent 已迁至 The-PR-Agent/pr-agent。；2026-11-09 补：v0.50.0 破坏性变更——仓库里的 .pr_agent.toml 不能再覆盖 GitHub 请求节奏 / 重试、num_retries（上限 10）、自定义标签、建议调用次数上限等宿主级设置，评论命令也不能改超时和调用次数。「仓库配置不能放大宿主的成本与权限」可以直接当工作台配置分层的规则。",
    "sources": [
     {
      "author": "GitHub 搜索「pr review agent」(2026-10-21)",
@@ -4592,6 +4651,11 @@
      "author": "GitHub 仓库核实",
      "date": null,
      "url": "https://github.com/The-PR-Agent/pr-agent"
+    },
+    {
+     "author": "GitHub Release v0.50.0（2026-11-08 北京时间）",
+     "date": null,
+     "url": "https://github.com/The-PR-Agent/pr-agent/releases/tag/v0.50.0"
     }
    ],
    "added": "2026-10-21"
@@ -7275,12 +7339,12 @@
    "repo": "Tuskira/ai-agent-gateway",
    "stars": 83,
    "license": "Apache-2.0",
-   "pushed": "2026-10-23",
+   "pushed": "2026-11-06",
    "archived": false,
    "verified": true,
    "what": "一个二进制同时挡在 MCP 工具服务器和 LLM（Claude 直连或经 Bedrock、OpenAI、Gemini）前面：每个请求都要网关签发的 API key；出站 MCP 调用时从加密密钥库按请求注入凭据；按 agent profile 限定工具；每次调用都记日志。分三个面：MCP 8080、API 与控制台 8081、LLM 8082。",
    "borrow": "「MCP 网关 / 工具鉴权」空白方向本周最完整的开源样本。①tools/call 每次都按 profile 强制校验，而不只是在 tools/list 里过滤；key 绑定 profile 后，调用方不能用请求头自报身份（docs/profiles.md，X-Agent-Profile-Name）。②工具服务器的凭据永远不交给 agent，按请求注入，可轮换，支持 tool_arg_overrides（docs/connectors-and-credentials.md）。③Skills 和命令挂在 profile 上，通过 MCP 原生下发（gateway__skill 工具、命令作为 prompts，docs/skills.md）。④安全模型、租户隔离和已知限制写在 docs/security-model.md；审计在 internal/api/handlers/audit.go，出站防护在 internal/netguard，K8s 网络策略在 deploy/k8s/base/networkpolicy.yaml。",
-   "note": "创建 2026-10-01（北京时间）；本周连发 v0.5.0、v0.6.0@2026-10-22 和 v0.6.1@2026-10-23；最近推送 2026-10-23。Apache-2.0。★83。",
+   "note": "创建 2026-10-01（北京时间）；本周连发 v0.5.0、v0.6.0@2026-10-22 和 v0.6.1@2026-10-23；最近推送 2026-10-23。Apache-2.0。★83。；2026-11-09 补：v0.8.0 新增 agent API key 的「限制 → 吊销」分级遏制、受监控的工具授权与检测事件、GET /auth/me 返回调用方解析后的权限；v0.10.0 控制台支持 OIDC 单点登录。SSO 空白方向的一个新开源样本。",
    "sources": [
     {
      "author": "GitHub 搜索「mcp gateway created:>=2026-10-01」(2026-10-26)",
@@ -7291,6 +7355,16 @@
      "author": "GitHub 仓库核实",
      "date": null,
      "url": "https://github.com/Tuskira/ai-agent-gateway"
+    },
+    {
+     "author": "GitHub Release v0.8.0（2026-11-03 北京时间）",
+     "date": null,
+     "url": "https://github.com/Tuskira/ai-agent-gateway/releases/tag/v0.8.0"
+    },
+    {
+     "author": "GitHub Release v0.10.0（2026-11-06 北京时间）",
+     "date": null,
+     "url": "https://github.com/Tuskira/ai-agent-gateway/releases/tag/v0.10.0"
     }
    ],
    "added": "2026-10-26"
@@ -7868,14 +7942,14 @@
    "name": "cedr（多家 coding agent 的统一控制面：路由、跨厂商评审合议、Skills/MCP 锁定、一份配置编译到各家）",
    "url": "https://github.com/Sheernox/cedr",
    "repo": "Sheernox/cedr",
-   "stars": 65,
+   "stars": 43,
    "license": "Apache-2.0",
-   "pushed": "2026-11-02",
+   "pushed": "2026-11-09",
    "archived": false,
    "verified": true,
    "what": "Rust 写的 CLI（也能作为 MCP 被 agent 调用），五个子产品：Route 按 routes.toml 给每类工作选 agent、模型、推理强度，同等合适时交给额度剩得最多的套餐，接近上限的跳过；Council 每家厂商起一个评审，合并报告、把指向同一处的发现归组，任何 P0/P1 阻断，报告数不够不会默默放行；Guard 检查 agent 配置，把每个 skill 和 MCP server 锁进 .cedr/guard.lock，工具、描述或网络面变了就让 CI 失败；Sync 把一份配置编译进各家 agent 自己的文件；Monitor 统计用量、花费和套餐限额。公测中，命令和文件格式 1.0 前可能变。",
    "borrow": "①Skills / MCP 锁文件（防「装上后悄悄变了」）：crates/cedr-core/src/{lock,surface,introspect,diff,risk,verify}.rs，surface.rs 记录 MCP server 暴露的工具面，diff.rs 比对变化。正好对应本周 Cursor 市场 Claude Code 扩展被植入后门的教训：插件版本要锁、变化要能被 CI 发现。②跨厂商评审合议：crates/cedr-route/src/council.rs（「报告不足不算通过」的规则值得照抄）。③按额度路由：crates/cedr-route/src/{pick,pool,readings}.rs；限额与价格 crates/cedr-monitor/src/{limits,pricing}.rs。④一份配置编译多家：crates/cedr-sync/src/{emit,merge,org}.rs，org.rs 处理组织级配置。",
-   "note": "创建 2026-10-30（北京时间）；最近推送 2026-11-02。Apache-2.0。★65，公测、个人 / 小团队项目。本轮只读了 README 和源码目录，没有跑过。",
+   "note": "创建 2026-10-30（北京时间）；最近推送 2026-11-02。Apache-2.0。★65，公测、个人 / 小团队项目。本轮只读了 README 和源码目录，没有跑过。；2026-11-09 补：v0.9.0 / v0.10.0（11-06）——Council 拒收空的或失败的评审报告，文本报告必须带 Score 行或「No findings.」（破坏性变更）；Sync 支持 CLAUDE.md、GEMINI.md 直接链到 AGENTS.md；Route 读取 Claude Code 自己的用量缓存（不读凭据），按模型族分别计周限额。",
    "sources": [
     {
      "author": "GitHub 搜索「近 7~10 天新建」（2026-11-02）",
@@ -7891,6 +7965,11 @@
      "author": "GitHub 仓库核实",
      "date": null,
      "url": "https://github.com/Sheernox/cedr"
+    },
+    {
+     "author": "GitHub Release v0.10.0（2026-11-06 北京时间）",
+     "date": null,
+     "url": "https://github.com/Sheernox/cedr/releases/tag/v0.10.0"
     }
    ],
    "added": "2026-11-02"
@@ -8419,14 +8498,14 @@
    "name": "Godwit（开源 AI 邮件客户端：SKILL.md 技能、带权限声明的 TS 插件、MCP；统一权限网关 + 持久「已读邮件」污点标记；godwit mcp 可读信、建草稿，发信默认要在客户端里逐次确认）",
    "url": "https://github.com/godwit-email/godwit",
    "repo": "godwit-email/godwit",
-   "stars": 52,
+   "stars": 98,
    "license": "Apache-2.0",
-   "pushed": "2026-11-02",
+   "pushed": "2026-11-09",
    "archived": false,
    "verified": true,
    "what": "Go 写的桌面邮件客户端（macOS / Windows / Linux，任意 IMAP/SMTP），内置助手 Wit；所有 AI 功能（含内置功能）都走同一套扩展机制：数据目录 skills/ 下的 SKILL.md、带权限声明的 TypeScript 插件（goja 沙箱）、受信任的原生插件（C ABI，按文件哈希单独授权），以及外部 MCP server（每个 server 批一次、每次写调用都批）。godwit mcp 是给 Claude、Cursor 等外部 agent 用的 MCP server。设计决定全部以中文 ADR 写在 docs/adr/。",
    "borrow": "①统一权限网关 + 持久污点：docs/adr/0004-permission-gateway-taint.md 与 core/gateway/gateway.go——插件、MCP、Wit 的所有工具调用和外发都按「调用来源 + 数据范围 + 外发目的地」判定；一条调用链读过邮件，之后的外发就要审批并显示目的域名；污点持久（会话重启后仍算，插件收过邮件就一直算到卸载）。这是工作台防「读了代码 / 工单后被注入外发」的现成模型。②审批绑定参数和对象版本、至多执行一次：ADR 0004「Consequences」与 0006-send-at-most-once.md（待审批 → 执行中 → 完成 / 失败的原子认领；崩溃后插件 / MCP 调用标 uncertain 不重试；readOnlyHint 不作为安全依据）。③MCP 发信三档：docs/adr/0023-mcp-send-setting.md、core/mcpsend.go（off / confirm / direct，默认 confirm：审批绑定草稿 revision，10 分钟或草稿再改即失效，最多 5 个待确认；--headless 下 confirm 等于不允许）。④插件清单与权限：core/plugins/{manifest,host,registry}.go，类型 sdk/godwit.d.ts；签名插件注册表 ADR 0016；原生插件按文件授权 ADR 0015。⑤MCP 方法白名单 ADR 0002（mcp 角色不能删除、移动、改设置、处理审批）。",
-   "note": "创建 2026-10-09（北京时间）；最新 v1.24.1@2026-11-02，单日多版本，发布很频繁；最近推送 2026-11-02。Apache-2.0（已读 LICENSE 文件）。★52。和 PH 描述的出入：PH 说「godwit mcp 只能读信和建草稿，不能发信」，这是 README 的说法，但 v1.13.0（2026-10-24）已加入经 MCP 发送草稿（send_draft），由设置决定，默认每次在 Godwit 里确认，用户也可以选「直接发送」；README 和 ADR 0023（状态仍写 proposed）没同步。README 还写「0.0.x 早期预览」，实际版本号已到 1.24.x。插件和 Wit 仍不能发信。本轮只读了 README、ADR 和源码，没有安装。PH 灵感箱线索。",
+   "note": "创建 2026-10-09（北京时间）；最新 v1.24.1@2026-11-02，单日多版本，发布很频繁；最近推送 2026-11-02。Apache-2.0（已读 LICENSE 文件）。★52。和 PH 描述的出入：PH 说「godwit mcp 只能读信和建草稿，不能发信」，这是 README 的说法，但 v1.13.0（2026-10-24）已加入经 MCP 发送草稿（send_draft），由设置决定，默认每次在 Godwit 里确认，用户也可以选「直接发送」；README 和 ADR 0023（状态仍写 proposed）没同步。README 还写「0.0.x 早期预览」，实际版本号已到 1.24.x。插件和 Wit 仍不能发信。本轮只读了 README、ADR 和源码，没有安装。PH 灵感箱线索。；2026-11-09 补：本周 v1.25.0–v1.30.0；v1.26.0 起可按封邮件编辑标签和安全分级。",
    "sources": [
     {
      "author": "PH 灵感箱（10/27–10/31 榜，Product Hunt；产品页链接为站内搜索，未逐一核实）",
@@ -8442,6 +8521,11 @@
      "author": "GitHub 仓库核实",
      "date": null,
      "url": "https://github.com/godwit-email/godwit"
+    },
+    {
+     "author": "GitHub Release v1.26.0（2026-11-04 北京时间）",
+     "date": null,
+     "url": "https://github.com/godwit-email/godwit/releases/tag/v1.26.0"
     }
    ],
    "added": "2026-11-02"
@@ -8506,6 +8590,354 @@
     }
    ],
    "added": "2026-11-02"
+  },
+  {
+   "id": 276,
+   "theme": "harness",
+   "name": "dsh-superagent-prototype（DeepSeek Harness 团队的 Super-agent 研究原型：长驻 Router 只派活、Worker 各自隔离执行；事件驱动，按 Ticket + Mandate 授权）",
+   "url": "https://github.com/deepseek-ai/dsh-superagent-prototype",
+   "repo": "deepseek-ai/dsh-superagent-prototype",
+   "stars": 21204,
+   "license": "MIT",
+   "pushed": "2026-11-03",
+   "archived": false,
+   "verified": true,
+   "what": "一个「面向单个 GitHub 仓库的主动式 coding agent」，打包成 DSH 插件：监听 GitHub（可选飞书），有权限的人提需求时开一个工作项（Ticket），在自己的 agent 会话和目录里干活，在原对话里回复（例如提 PR），Web 面板只列需要人处理的事。对应长文的架构：两级结构（长驻 Router 层只和人交互、派活，不带 Bash；Worker 层每任务一个隔离会话）、事件先过「代码规则快路径 + 模型语义慢路径」两道筛、Thread 订阅直通（后续事件不经 Router 直接到订阅它的 Worker）、计算 / 状态 / 环境分离 + Watchdog。README 明说是研究原型、不是官方产品，与内部版本和长文描述不完全一致。",
+   "borrow": "①领域模型：docs/001-domain.md 只用 Source / Trigger / Thread / Eval / Mandate / Ticket / Assignment / Subscription 八个概念，并列出被否掉的概念和理由（例如「人」不是实体、不做跨来源身份映射）。工作台的「任务 / 授权 / 执行」数据结构可以直接照这张表起草。②授权：docs/002-authorization.md——消息、评论、引用文档只是判断依据，不能改权限；Mandate 记录这次接活的 Policy 版本、范围、强度（explicit / inferred）和发起人在该来源的身份，不可变，范围变大就开新 Ticket；Policy 收紧后已开的 Ticket 在恢复前重新校验；机器人消息最多算 inferred，永远不能发起显式请求或叫停。准入表（名单内 / 名单外 × 是否 @agent）按来源配置。③实现位置：src/admission.ts（准入）、src/core/{intake,engine,tickets,assignments}.ts、src/app/outbox.ts（对外写回）、prompts/{orchestrator,worker,admission,dispatch}.md（Router / Worker 的提示词分工）、skills/dsh-superagent-github/SKILL.md。④长文第 7 节自测：Router 批处理在每分钟 1→40 个待决事件时，单次决策摊销耗时 6.4 s→1.6 s；去掉订阅直通后 Router 决策多约 30%、缓存读 token 多约 37%（均为团队自报）。和库里 #273 Godwit（读敏感数据后外发要审批）、#269 Radar（只读 MCP 关笼）组合：Mandate 管「这件活准不准干、干到哪」，污点和只读档管「干的过程中能碰什么」。",
+   "note": "创建 2026-10-31（北京时间），长文 2026-11-01 发布；仓库只有 10-31 一个提交，最近推送 2026-11-03。MIT。★21,204（10 天内）。上期漏报，本周中文圈大量解读（@ww880412 本周转发十余条相关帖），社区已有落地实现 thefullgc/opensuperagent（11-02 创建，★51，Apache-2.0，还很早期）。本轮只读了 README、docs/001、docs/002 和目录，没有部署。",
+   "sources": [
+    {
+     "author": "X @DeepSeekHarness 长文《Exploring Super-agent Design: Towards a More Autonomous Agent System》（2026-11-01 北京时间）",
+     "date": null,
+     "url": "https://x.com/DeepSeekHarness/status/2116857257245987236"
+    },
+    {
+     "author": "X @antiAIvo 帖（@ww880412 转发，2026-11-03 北京时间）",
+     "date": null,
+     "url": "https://x.com/antiAIvo/status/2117255686862336455"
+    },
+    {
+     "author": "X @canghe 帖（@ww880412 转发，2026-11-04 北京时间）",
+     "date": null,
+     "url": "https://x.com/canghe/status/2117876700101189638"
+    },
+    {
+     "author": "X @aehyok 帖（@ww880412 转发，2026-11-07 北京时间）",
+     "date": null,
+     "url": "https://x.com/aehyok/status/2118549137943867432"
+    },
+    {
+     "author": "GitHub 仓库核实",
+     "date": null,
+     "url": "https://github.com/deepseek-ai/dsh-superagent-prototype"
+    }
+   ],
+   "added": "2026-11-09"
+  },
+  {
+   "id": 277,
+   "theme": "harness",
+   "name": "Agent Autoloop（GitHub 用户 Khazix 开源：让命令行 agent 在后台按规则接活，拿不准才推卡片请人拍板；等待期间进程退出、不耗 token）",
+   "url": "https://github.com/KKKKhazix/agent-autoloop",
+   "repo": "KKKKhazix/agent-autoloop",
+   "stars": 4107,
+   "license": "MIT",
+   "pushed": "2026-11-09",
+   "archived": false,
+   "verified": true,
+   "what": "零外部依赖的本机「自动化中台」：事件（GitHub / GitLab Webhook、HTTP、cron）→ 按 ~/.agent-autoloop/rules.json 派给某个 agent（Claude Code、Codex、ACP、DSH、任意命令行）在某个目录干一轮 → agent 在最后一条回复里交代结果，需要请示就附一个 agent-autoloop 代码块（ask / notice / resolve / later / events）→ 内核把卡片推到飞书、钉钉、企微、Slack、Discord 或桌面通知，人回答后接回原会话继续。自带早报、Issue 跟进、告警排查、收件箱分诊、PR 交付等模板。",
+   "borrow": "①内核四条机制（README「内核的四个机制」，代码在 kernel/{decide,store,rules,due,cron,credentials}.ts，约 1850 行）：挂起零消耗（等待状态落库、进程退出）；事件溯源（只追加日志 + 索引同事务落盘，状态全由日志算出，格式变了直接重放，不写迁移）；指令数据分离（Issue 标题正文等外部文字只作为文件资料，不拼进提示词；事件里带 cwd、agent、access 字段直接拒收，用哪个 agent、在哪个目录、什么权限只由本机规则决定）；跳数熔断（agent 交回的事件层数累加，经过人工提问也不清零，超过 8 层只记录不派活）。后两条可以直接写进工作台的事件入口规范。②agent 与中台的唯一约定：最后一条回复里的结构化回执，JSON 写错只让原会话重写回执、不重做业务（docs/protocol.md）。③插件四个方向：plugins/{github,gitlab}/source.ts、plugins/{claude,codex,acp,dsh,command}/agent.ts、plugins/{feishu,desktop,webhook}/channel.ts、plugins/delivery/delivery.ts（打 deliver 标签后审查 → 等 CI → 合并 → 核对线上版本，审查配置只从 main 读，不在接单机器上跑 PR 代码）。④rules.json 支持 check / explain / emit --dry-run 预演，改错了继续按旧规则跑并发卡片提醒。",
+   "note": "创建 2026-11-03（北京时间）；最新 v1.6.4@2026-11-08（11-06 起 v1.6.0–v1.6.4 连发）；最近推送 2026-11-09。MIT。★4,107。README 自述：Claude Code、Codex、ACP 跑通多轮问答和会话续接，飞书跑通发送和回调；Webhook 模板只在本地模拟服务验证，GitLab 没连过真实实例，场景模板没在真实账号上跑过完整业务。本轮只读了 README 和目录，没有安装。",
+   "sources": [
+    {
+     "author": "GitHub 搜索「近 7~10 天新建」（2026-11-09）",
+     "date": null,
+     "url": "https://github.com/search?q=created%3A%3E%3D2026-10-30+agent&type=repositories&s=stars"
+    },
+    {
+     "author": "GitHub 仓库核实",
+     "date": null,
+     "url": "https://github.com/KKKKhazix/agent-autoloop"
+    }
+   ],
+   "added": "2026-11-09"
+  },
+  {
+   "id": 278,
+   "theme": "enterprise",
+   "name": "♻️ Ankole（多角色组织的开源 Agent OS：员工和 agent 都是 Principal，检索与记忆按「提问者 ∩ agent ∩ 房间在场者」的权限交集过滤，撤回源文档后派生记忆随之不可见）",
+   "url": "https://github.com/AgentBull/ankole",
+   "repo": "AgentBull/ankole",
+   "stars": 179,
+   "license": "Apache-2.0",
+   "pushed": "2026-11-09",
+   "archived": false,
+   "verified": true,
+   "what": "自托管的团队 Agent OS（Slack、Teams、飞书、钉钉、企微等接入）：上层是 agent 优先的工作空间（页面、带类型的数据表、内部应用、群聊），底层是多用户内核——有状态控制面管存储、权限、封存凭据、会话路由，按需 Linux 沙箱跑 Bash / Python / DuckDB / 浏览器 / 编程 CLI，沙箱通过 FUSE 只挂载本次会话有权看的文档、表快照和记忆。作者长文《为团队构建真正的 Agent OS：来自 Ankole 的工程实践》（2026-11-04）讲了五层架构。",
+   "borrow": "①带权限的检索 / 记忆（库里第二个 ACL-aware 样本，比 #271 XWiki 更贴近 agent 记忆）：长文第 4 节——每条提炼出的记忆都带指向源消息 / 页面 / 事件的硬链接，排序或渲染前逐条核验「提问者 ∩ agent ∩ 房间受众」能否读每一份出处；受限结论单独成条，公共摘要只用共享来源构建；源文档撤回后派生记忆下次读取即不可见。代码入口：app/control_plane/lib/ankole/brain/access.ex（disclosure 结构含 mode: strict/relaxed、asker_uid、present_uids）、app/control_plane/lib/ankole/authz/{authorizer,turn_authority,checks/grant_check}.ex（turn_authority 在提交事务里校验「授权这次写入的指令是否仍有效」）。②Skill 和 AGENTS.md 属于 agent 身份、不放共享文件夹：长文 4.2 节（否则多人会话里低权限者一插话，交集缩水，agent 的 Skill 中途消失）。③沙箱按权限挂载：app/agent_computer/rclone/overlay/vfs/（FUSE 虚拟文件系统，带写入背压和配额）。④未经证实的说法保留发言人归属（「Alice 在周会上推测」），重复出现也不升级为事实。",
+   "note": "仓库创建 2026-04-19（北京时间），老项目；本周变化：v2.0.0-alpha 系列连发（最新 v2.0.0-alpha.95@2026-11-09），作者长文 2026-11-04 发布。Apache-2.0。★179。本轮只读了长文、目录和上面两个文件开头，没有核对 brain/access.ex 的完整过滤路径，也没有部署。",
+   "sources": [
+    {
+     "author": "X @0xDing 帖（@ww880412 转发，2026-11-04 北京时间）",
+     "date": null,
+     "url": "https://x.com/0xDing/status/2117883383489675593"
+    },
+    {
+     "author": "GitHub 仓库核实",
+     "date": null,
+     "url": "https://github.com/AgentBull/ankole"
+    }
+   ],
+   "added": "2026-11-09"
+  },
+  {
+   "id": 279,
+   "theme": "memory",
+   "name": "♻️ dsh-auto-memory（DSH 的可信记忆插件：整理出的记忆先是 candidate、带原文证据，只有用户能升为 verified；有争议的不再注入；1.6 起带保质期）",
+   "url": "https://github.com/AskTheWay/dsh-auto-memory",
+   "repo": "AskTheWay/dsh-auto-memory",
+   "stars": 125,
+   "license": "MIT",
+   "pushed": "2026-11-09",
+   "archived": false,
+   "verified": true,
+   "what": "DeepSeek Harness 原生记忆插件，纯 Markdown 存储、不要服务和 embedding：记忆分 user / feedback / project / reference 四类、工作区与用户两层作用域，自动注入每次系统提示（空时零 token）；后台整合产物生来是 candidate 并附原文引用，只有用户能授予 verified，disputed 的不再注入；每次写入在存储入口过一道注入模式检查；面板有健康检查、召回漏斗（「注入了但从没被读」可见）。",
+   "borrow": "①四态信任机与证据链：src/{store,consolidate,audit,matching,prompt}.ts；设计说明 docs/design.md，事故复盘 docs/postmortem-pr-5696.md。工作台的「AI 整理出的结论要区分来源和人工确认」可以直接照 candidate → verified / disputed 这套状态做。②记忆保质期：README 1.6 说明（validUntil 到期不再注入、健康页一键续期、召回时标为历史），package.json 已是 1.6.0，GitHub Release 最新仍是 v1.5.0。③自带四层评测：evals/l0/{eviction-correctness,index-budget,injection-snr,link-expansion}.spec.ts、evals/runners/{l1-retrieval,l2-e2e,l2-longmemeval,l3-consolidation}.mjs，结果在 evals/results/（含公开的不达标分数）。④导入导出：src/import-claude.ts、src/export-agents.ts。",
+   "note": "仓库创建 2026-09-22（北京时间）；近期 v1.1.0@10-25、v1.2.0@10-26、v1.3.0@10-30、v1.5.0@2026-11-08；最近推送 2026-11-09。MIT。★125。@aehyok 11-06 的 DSH 插件盘点帖（10 个插件）里唯一不在库的记忆类插件。本轮只读了 README、目录和 Release 说明，没有安装。",
+   "sources": [
+    {
+     "author": "X @aehyok 帖（@ww880412 转发，2026-11-07 北京时间）",
+     "date": null,
+     "url": "https://x.com/aehyok/status/2118549137943867432"
+    },
+    {
+     "author": "GitHub Release v1.5.0（2026-11-08 北京时间）",
+     "date": null,
+     "url": "https://github.com/AskTheWay/dsh-auto-memory/releases/tag/v1.5.0"
+    },
+    {
+     "author": "GitHub 仓库核实",
+     "date": null,
+     "url": "https://github.com/AskTheWay/dsh-auto-memory"
+    }
+   ],
+   "added": "2026-11-09"
+  },
+  {
+   "id": 280,
+   "theme": "sandbox",
+   "name": "♻️ boxery（让 agent 自己管 Linux VM：本机 / 远端 / 云沙箱一套 MCP；VM 里没有真凭据，按 grant 由宿主代理注入；fork、快照、租约）",
+   "url": "https://github.com/modem-dev/boxery",
+   "repo": "modem-dev/boxery",
+   "stars": 98,
+   "license": "MIT",
+   "pushed": "2026-11-09",
+   "archived": false,
+   "verified": true,
+   "what": "agent 留在你本机（保留你的登录和配置），VM 是它干活的地方：Claude Code、Codex、Cursor、opencode 经 MCP（另有 pi 扩展）创建、fork、快照、丢弃 VM，跑代码、Chrome 和桌面；后端可混用 Lima、libvirt、Cloud Hypervisor、OpenShell、exe.dev、boat.dev。自述早期实验软件，版本间会有破坏性变更。",
+   "borrow": "①凭据不进 VM：ARCHITECTURE.md「Trust model」——LLM 与 HTTP 凭据只在控制面，VM 拿可撤销的每 VM token，proxy/boxery-proxy.mjs 校验 token、按路由做方法 / 路径白名单和大小 / 并发 / 时长限制后注入真凭据，拒绝 WebSocket 升级。②agent 申请权限要人批：vm_grant 走人工审批（core/{grants,grant-operations,grant-approval}.mjs，MCP 用 elicitation 弹窗，CLI 走 /dev/tty），grant 落在 VM 的 tmpfs 上。③多 agent 共享 VM 池用独占、会过期的租约：core/leases.mjs、controller/leases.mjs（SQLite leases.db + 每分钟回收）。④一张工具表同时生成 MCP 和 pi 前端，测试保证两边与 CLI 不漂移：core/boxery-tools.mjs、test/parity.test.mjs。和 #254 DevBox iron-proxy、#117 OpenSandbox 凭据保险库、devvm（本期）是同一「占位 token + 宿主注入」思路的四个落点。",
+   "note": "创建 2026-10-31（北京时间）；本周连发 v0.9.0@11-03、v0.10.0 / v0.10.1@11-04、v0.11.0@2026-11-09；最近推送 2026-11-09。MIT。★98。「约 13 s 起桌面 VM、约 1 s 快照」为 README 自报（libvirt）。本轮只读了 README 和 ARCHITECTURE.md，没有安装。",
+   "sources": [
+    {
+     "author": "GitHub 搜索「近 7~10 天新建」（2026-11-09）",
+     "date": null,
+     "url": "https://github.com/search?q=created%3A%3E%3D2026-10-30+agent&type=repositories&s=stars"
+    },
+    {
+     "author": "GitHub 仓库核实",
+     "date": null,
+     "url": "https://github.com/modem-dev/boxery"
+    }
+   ],
+   "added": "2026-11-09"
+  },
+  {
+   "id": 281,
+   "theme": "sandbox",
+   "name": "devvm（每个项目一台本机 VM：自动识别工具链，agent 在 VM 里跑；四档网络、代理注入凭据、.git 防篡改）",
+   "url": "https://github.com/devvmhq/devvm",
+   "repo": "devvmhq/devvm",
+   "stars": 413,
+   "license": "MIT",
+   "pushed": "2026-11-09",
+   "archived": false,
+   "verified": true,
+   "what": "在项目目录敲 devvm，就按项目文件（package.json 等）建一台带对应工具链的 Lima VM，Claude Code、Codex、opencode、pi 在 VM 里跑并沿用你的设置、skills 和 MCP；同目录再敲一次回到同一台 VM。支持 macOS 13+ 和 Linux（arm64 / x86_64），发布包有 minisign 签名。",
+   "borrow": "①网络四档：docs/content/docs/safety/network.md——open / internet / allowlist（默认）/ none，除 open 外都被关在本机代理后；VM 不持有任何已保存的凭据，代理按白名单主机把占位值换成真 token（时序图在同一文件）；devvm network allow / deny / lock / log 管理。②.git 防篡改：docs/content/docs/safety/git-protection.md——VM 里改不了宿主仓库的 hooks 和 .git/config（core.fsmonitor、core.hooksPath、core.sshCommand），macOS 用 root 也清不掉的文件标志，Linux 在 VM 视图里只读。这是「agent 在沙箱里改代码、人在宿主上跑 git」时最容易漏掉的逃逸面，工作台可以直接照抄检查清单。③agent 登录托管：internal/agentlogin/{capture,redact,restore}.go（登录留在宿主、按需带进 VM）。④攻击面清单：docs/content/docs/safety/attack-vectors.md。",
+   "note": "创建 2026-11-06（北京时间）；v0.1.0@2026-11-07、v0.1.1-rc.1@11-08；最近推送 2026-11-09。MIT。★413。README 自述没在 Intel Mac 上测过。本轮只读了 README 和两篇安全文档，没有安装。",
+   "sources": [
+    {
+     "author": "GitHub 搜索「近 7~10 天新建」（2026-11-09）",
+     "date": null,
+     "url": "https://github.com/search?q=created%3A%3E%3D2026-10-30+agent&type=repositories&s=stars"
+    },
+    {
+     "author": "devvm 文档 Staying safe",
+     "date": null,
+     "url": "https://devvm.dev/docs/safety/"
+    },
+    {
+     "author": "GitHub 仓库核实",
+     "date": null,
+     "url": "https://github.com/devvmhq/devvm"
+    }
+   ],
+   "added": "2026-11-09"
+  },
+  {
+   "id": 282,
+   "theme": "sandbox",
+   "name": "sandbox-mcp（Scott Hanselman：给 agent 一台用完即扔的真 Windows 11 机器——Windows Sandbox 自动化，默认断网，失败留证据）",
+   "url": "https://github.com/shanselman/sandbox-mcp",
+   "repo": "shanselman/sandbox-mcp",
+   "stars": 336,
+   "license": "MIT",
+   "pushed": "2026-11-07",
+   "archived": false,
+   "verified": true,
+   "what": "用 sbx CLI（可选 MCP 适配器）自动化 Windows Sandbox：启动全新 Windows 11 客户机、部署应用、用 UI Automation 点控件、抓崩溃和截图 / 录像、保留证据后销毁。典型用法是在「干净、断网的客户机」上复现「我机器上能跑」的问题，例如缺 VC++ 运行库。",
+   "borrow": "①「干净机器验收」的证据格式：docs/compatibility.md 与 docs/compatibility/results.json（每次运行记录 PASS / FAIL、退出码、原因、耗时；装过运行库的标「PROVISIONED，不算干净机器通过」），可以借来定义工作台「交付前在干净环境验证」的结果结构。②客户机代理：agent/{agent.ps1,uia.cs,snap.cs,record.ps1,protocol.cs}。③一份仓库同时是 CLI、MCP 和 agent 插件：plugin.json、mcp.json、.github/plugin/marketplace.json；给 agent 的安装说明 docs/agent-setup.md（先校验下载、改管理员设置或重启前先问）。",
+   "note": "创建 2026-11-07（北京时间）；v1.0.0@11-07 04:14、v1.1.0@11-07、v1.2.0@2026-11-07 14:40；最近推送 2026-11-07。MIT。★336。只支持装了 Windows Sandbox 的 Windows 主机。「40–50 秒端到端」为 README 实测自报。本轮只读了 README 和目录。",
+   "sources": [
+    {
+     "author": "GitHub 搜索「近 7~10 天新建」（2026-11-09）",
+     "date": null,
+     "url": "https://github.com/search?q=created%3A%3E%3D2026-10-30+agent&type=repositories&s=stars"
+    },
+    {
+     "author": "sandbox-mcp 网站",
+     "date": null,
+     "url": "https://shanselman.github.io/sandbox-mcp/"
+    },
+    {
+     "author": "GitHub 仓库核实",
+     "date": null,
+     "url": "https://github.com/shanselman/sandbox-mcp"
+    }
+   ],
+   "added": "2026-11-09"
+  },
+  {
+   "id": 283,
+   "theme": "sandbox",
+   "name": "♻️ Stroq（本机 coding agent 安全平台：重放过去 30 天 Claude Code / Codex 会话，数出「有多少命令来自 agent 读到的文字」「哪些密钥离开了本机」；hook 在执行前拦截）",
+   "url": "https://github.com/AGGIB/Stroq",
+   "repo": "AGGIB/Stroq",
+   "stars": 216,
+   "license": "Apache-2.0",
+   "pushed": "2026-11-09",
+   "archived": false,
+   "verified": true,
+   "what": "npx @stroq/cli 读本机近 30 天 Claude Code 和 Codex 会话，在一次性 home 里按策略重放（不执行、不外发），打印一张卡：agent 跑了多少命令、其中多少来自它读到的文字（README、网页、issue、工具结果）、哪些密钥离开了本机（只列名字不列值）、哪些仓库一被 agent 打开就会执行代码。init 后以 hook 接入 Claude Code、Cursor、Codex 等：拒绝 curl | sh 和带已知密钥的外发，命令复述了 agent 读到的文字时先问人。",
+   "borrow": "①会话污点：docs/platform/session-taint.md（读过什么 → 后续命令要不要问），与 #273 Godwit「读过邮件后外发要审批」同一模型，Stroq 把它落在 coding agent 的 shell 调用上。②0.31.0（11-09）新增 stroq inspect：别人发来的文件夹先看「会被当代码执行的地方」（解码后执行、藏在行尾远处的代码、Makefile 里拉取进 shell、工具会自动执行的配置、让 agent 去拉取执行的指令文件），会话里第一次在这类目录跑 git 或项目代码时先问人，stroq trust --folder 只信任当前内容、文件一变再问。③MCP 治理与 Skill 隔离：docs/platform/{mcp-governance,mcp-tool-contracts,mcp-containment,skill-quarantine}.md。④docs/SANDBOXES.md 讲清 hook 和隔离各管什么：hook 是判断，不是墙。",
+   "note": "仓库创建 2026-09-04（北京时间），老项目；本周 v0.30.0@2026-11-05（无命令即出卡片）、v0.31.0@2026-11-09（inspect 与目录信任）；最近推送 2026-11-09。Apache-2.0。★216。「36 种攻击 0 通过」是仓库自测徽章。本轮只读了 README、CHANGELOG 和文档目录，没有装 hook。",
+   "sources": [
+    {
+     "author": "Hacker News: Show HN: Stroq – a local audit of what your coding agent did and why（2026-11-05）",
+     "date": null,
+     "url": "https://news.ycombinator.com/item?id=50380704"
+    },
+    {
+     "author": "Stroq CHANGELOG 0.30.0 / 0.31.0",
+     "date": null,
+     "url": "https://github.com/AGGIB/Stroq/blob/main/CHANGELOG.md"
+    },
+    {
+     "author": "GitHub 仓库核实",
+     "date": null,
+     "url": "https://github.com/AGGIB/Stroq"
+    }
+   ],
+   "added": "2026-11-09"
+  },
+  {
+   "id": 284,
+   "theme": "plugin",
+   "name": "awesome-agent-loops（DSH / Codex / Claude Code 的 Loop Skills、工作流自动化和云端交付配方目录，一键安装精选）",
+   "url": "https://github.com/ABLingss/awesome-agent-loops",
+   "repo": "ABLingss/awesome-agent-loops",
+   "stars": 106,
+   "license": "MIT",
+   "pushed": "2026-11-09",
+   "archived": false,
+   "verified": true,
+   "what": "偏「长跑 / 循环」方向的插件与 Skill 盘点：DSH 侧有 dsh-loop（/loop、状态、恢复、停止）、dsh-mnemon 系列记忆源、dsh-permission-rules、dsh-context、dsh-undo-savepoint、cc-safety-net、dsh-computer-use、官方 subagent-codex / subagent-claude-code / tool-subagent 等；另附三份配方 recipes/{pr-babysitting,experiment-watchdog,research-watch}.md 和 install-skills.sh（--dsh 同时装 DSH 插件）。",
+   "borrow": "①把「长跑 agent 需要的东西」按类整理成清单，可当工作台 Loop 能力的检查表：循环控制、记忆源、权限边界、回滚点、危险命令拦截、子 agent 委派。②三份配方是现成的值守流程样板（盯 PR、盯实验、盯研究信源）。注意：install-skills.sh 是 curl | bash 方式，企业内不要照搬安装方式。",
+   "note": "创建 2026-11-05（北京时间）；最近推送 2026-11-09。MIT。★106。只是目录，列出的插件本轮没有逐个核实（已在库的有 #210 dsh-context、#212 dsh-permission-rules）。",
+   "sources": [
+    {
+     "author": "GitHub 搜索「近 7~10 天新建」（2026-11-09）",
+     "date": null,
+     "url": "https://github.com/search?q=created%3A%3E%3D2026-10-30+agent&type=repositories&s=stars"
+    },
+    {
+     "author": "GitHub 仓库核实",
+     "date": null,
+     "url": "https://github.com/ABLingss/awesome-agent-loops"
+    }
+   ],
+   "added": "2026-11-09"
+  },
+  {
+   "id": 285,
+   "theme": "review",
+   "name": "AgentCompare（DSH 插件：同一需求独立跑两版，有页面就实际预览，盲选后再揭晓模型 / 策略，核对后写回）",
+   "url": "https://github.com/lijiaqi-AI-Product-Manager/dsh-agent-compare",
+   "repo": "lijiaqi-AI-Product-Manager/dsh-agent-compare",
+   "stars": 241,
+   "license": "MIT",
+   "pushed": "2026-11-08",
+   "archived": false,
+   "verified": true,
+   "what": "在 DSH 主对话里对同一需求独立做两版回答、文件或网页；能跑的页面实际预览、共同验收，跑不了的只按内容比较且不宣称通过功能测试；先体验再选，选后才揭晓是哪个模型或策略；采用前核对当前项目与候选改动，确认后写回，可撤销。1.3.0（11-08）起支持普通文件夹、非 Vite Node 项目和静态网页，无 Git 目录从私有空白工作区开始。",
+   "borrow": "①盲评流程：docs/blind-comparison.md（先体验、后揭晓，避免「知道是哪个模型」带来的偏见），可当工作台「模型 / 提示词 / harness 选型」的人评环节。②运行与恢复：docs/runs-and-recovery.md。③实测记录：docs/measurements/{current-context,first-use}-2026-11-05.json。和 #262 tstack council（多模型合议）互补：一个让模型互审，一个让人盲选。",
+   "note": "创建 2026-11-02（北京时间）；v1.1.0@11-05、v1.2.0@11-07、v1.3.0@2026-11-08；最近推送 2026-11-08。MIT。★241。本轮只读了 README 和文档目录，没有安装。",
+   "sources": [
+    {
+     "author": "GitHub 搜索「近 7~10 天新建」（2026-11-09）",
+     "date": null,
+     "url": "https://github.com/search?q=created%3A%3E%3D2026-10-30+agent&type=repositories&s=stars"
+    },
+    {
+     "author": "AgentCompare CHANGELOG 1.3.0",
+     "date": null,
+     "url": "https://github.com/lijiaqi-AI-Product-Manager/dsh-agent-compare/blob/main/CHANGELOG.md"
+    },
+    {
+     "author": "GitHub 仓库核实",
+     "date": null,
+     "url": "https://github.com/lijiaqi-AI-Product-Manager/dsh-agent-compare"
+    }
+   ],
+   "added": "2026-11-09"
+  },
+  {
+   "id": 286,
+   "theme": "cost",
+   "name": "tinker-ai-skill（把自己的 Claude Code 会话做成 SFT 数据，在 Tinker 上训 LoRA，导出 GGUF 本地跑；Tess-4 / 4.5 的配方）",
+   "url": "https://github.com/drost-ai/tinker-ai-skill",
+   "repo": "drost-ai/tinker-ai-skill",
+   "stars": 263,
+   "license": "MIT",
+   "pushed": "2026-11-08",
+   "archived": false,
+   "verified": true,
+   "what": "一个 Agent Skill（Claude Code、Codex、OpenCode 可用）：九步流程从收集会话、清洗、匿名化、切块压缩、建数据集，到 Tinker 训练、合并、导出 GGUF、llama.cpp 本地服务；花钱的步骤前停下问人；带合成会话生成器，可五分钟空跑全流程。作者称 Tess-4-27B、Tess-4.5-27B 开源权重就是这样训出来的。",
+   "borrow": "①会话数据出境前的匿名化：scripts/anonymize_sessions.py 与 references/anonymization.md（按值替换所有凭据，每个会话随机分配用户名、目录、人名、邮箱、组织；有残留就失败）。企业要用内部 agent 会话做数据时，这一步可以直接抄。②Claude Code 会话格式与切块：references/{claude-code-transcripts,chunking-and-compaction}.md、scripts/{collect_sessions,normalize_sessions,build_dataset}.py。③踩坑记录 references/lessons-learned.md。和 #220 smithtune（LangSmith 成功轨迹 → 小模型）同一方向，这个是从本机会话出发。",
+   "note": "创建 2026-11-08（北京时间）；最近推送 2026-11-08。MIT。★263。Tess 模型效果和「几美元到几百美元」为作者自报。本轮只读了 README 和文件列表，没有跑。",
+   "sources": [
+    {
+     "author": "GitHub 搜索「近 7~10 天新建」（2026-11-09）",
+     "date": null,
+     "url": "https://github.com/search?q=created%3A%3E%3D2026-10-30+agent&type=repositories&s=stars"
+    },
+    {
+     "author": "GitHub 仓库核实",
+     "date": null,
+     "url": "https://github.com/drost-ai/tinker-ai-skill"
+    }
+   ],
+   "added": "2026-11-09"
   }
  ]
 }
