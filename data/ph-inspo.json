@@ -24,6 +24,144 @@
   ],
   "days": [
     {
+      "date": "2026-11-10",
+      "source": "https://www.producthunt.com/leaderboard/daily/2026/11/10",
+      "fetched": "2026-11-11 17:10 北京",
+      "note": "第 1、2、4 名是销售、广告、会计类 agent，未收；ForAgent（给 agent 分配私人号码互相通话、首次来电要人工接听才放行）思路新，但官网信息太少、评论数也查不到，先不收；Render Sandboxes 是 11/4 已入库产品再次上榜；TK by Medium 的 PH 页挂在 Medium 名下。",
+      "picks": [
+        {
+          "id": "2026-11-10-co-review",
+          "why": "把整仓当一次评审来读：agent 写导读、按区域统计你读过多少、文件改了回到未读，正对「agent 写的代码团队还掌握多少」这个工作台问题，而且 MIT 开源可直接拆。",
+          "limit": "新项目、星数很少；导读和评审记录只存在本机、不进仓库，团队共享要自己补；导读在大仓库上会不会变浅还没人验证。"
+        },
+        {
+          "id": "2026-11-10-seldon",
+          "why": "用「起点 + 目标 + 通过标准」三句大白话写验收，让 QA agent 自己探路、失败附录像和复现步骤，可以直接当工作台验收环节的样板。",
+          "limit": "只支持 Web；按次收费 $3；不会自动清理测试数据，碰真钱的步骤靠提示词拦不住；87% 行为一致是厂商自测。"
+        },
+        {
+          "id": "2026-11-10-almanzor",
+          "why": "文档问答必须带出处、答不出就说不知道，并把答不出的问题汇总成文档待补清单，同一套内容还以 MCP 给 coding agent 查。",
+          "limit": "托管服务、不开源；重新抓取目前要手动或自己接 API 触发；多版本文档怎么区分没说清。"
+        }
+      ],
+      "items": [
+        {
+          "name": "Co-Review",
+          "tagline": "Read the whole repository with the agent that built it",
+          "ph": "https://www.producthunt.com/products/co-review",
+          "site": "https://sdsvn.github.io/co-review/",
+          "repo": "https://github.com/sdsvn/co-review",
+          "rank": 9,
+          "score": 101,
+          "comments": 11,
+          "what": "一个独立开发者做的开源「代码评审桌面应用」（基于 Eclipse Theia）：把整个仓库、一次改动、别人的 PR 或一份设计稿都打开成评审页，你在行、函数、文件或文件夹上留评论提问，由写这段代码的 coding agent 在评论串里回答。",
+          "problem": "用 coding agent 写了几个月，每个 diff 看着都没问题，但整个代码库已经不在自己脑子里了：不知道东西放在哪、为什么这么做；逐个 diff 评审补不回整体地图。",
+          "highlight": "官网称：①整仓审计——agent 先写一份导读（地图、术语、流程、模式和命名、薄弱点），按区域给出待你接受或驳回的发现，每章附一个自测问题；②「已读覆盖率」按区域统计你读过哪些文件，文件被改动后自动回到未读；③评论锚定在代码行上，代码后续改动时评论跟着走并提示「已变化」；④PR 评审在独立 worktree 里检出快照，结论作为一条带行内评论的正式 review 发回 GitHub；⑤设计先行：agent 写 L1/L2/L3 三层步骤树加 Mermaid 图，你评论到具体节点，它修改后只实现你批准的部分。所有 agent 通过 `co-review mcp` 接入，Claude Code 有插件（带后台回答评论的子代理、会话启动时告知待答问题的 hook），Pi / Oh My Pi 有原生包，Codex、Cursor、Gemini CLI、OpenCode 等走 MCP。PH 评论里作者说导读首行写明对应的 commit，事实按 commit 缓存，线程里的回答则按提问时的代码实时读；评审数据存在 ~/.co-review/ 下的 JSON 和 Markdown，不往仓库里写文件。MIT 许可，无账号、无遥测；GitHub 星数还很少，项目很新。",
+          "inspo": "工作台可以抄三点：①把「人重新掌握 agent 写的代码」做成一个正式环节，而不只是逐 PR 审：定期生成整仓导读 + 按区域的已读覆盖率，文件变了就回到未读，管理者一眼看出哪些区域没人真正读过；②评审意见锚定到行并随改动迁移，回答标明基于哪个 commit，过期就提示重问；③「设计树先评、批准的节点才实现」可以直接做成工作台里大任务的默认流程。前提是工作台能拿到每个 agent 的会话并把评论实时推回去（Co-Review 用的是 MCP + Claude Code channels）。仓库 MIT，可以直接拉下来试，看它的 MCP 工具定义。",
+          "tags": [
+            "coding agent",
+            "代码评审",
+            "开源",
+            "开发者工具"
+          ],
+          "id": "2026-11-10-co-review",
+          "slug": "co-review",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Seldon（Wren）",
+          "tagline": "Behavioral QA agents that use your product like customers do",
+          "ph": "https://www.producthunt.com/products/seldon",
+          "site": "https://www.seldon.com/products/wren",
+          "rank": 5,
+          "score": 234,
+          "comments": 90,
+          "what": "Seldon（做人类行为模拟的研究公司）推出的 QA agent Wren：用一两句大白话写清从哪开始、要做什么、怎样算通过，它在真实浏览器里并行跑端到端测试，像真实用户一样边看边决定下一步。",
+          "problem": "Playwright 这类脚本化端到端测试要一步步写死操作，维护成本高，而且只覆盖开发者想得到的路径；用户真实会走的歪路（结账走到一半回去改地址、支付失败重试）往往上线后才暴露。",
+          "highlight": "官网称：测试用自然语言定义（展示为 YAML），由 Seldon 的行为模型引导每个 agent 下一步尝试什么，所以一条用例可能跑出你没写过的新用例（例：点「加入购物袋」没反馈、用户再点一次，购物车里变成两件）；每次运行有逐步录像、失败证据和复现步骤。价格按完成的运行计：每次 $3（含模型和浏览器费用、无席位费），前 10 次免费，因 agent 或平台故障没跑完的不收费。目前只支持 Web，原生 App 在做。PH 评论里团队承认：「运行前不要提交扣款」这类指令不能保证硬拦截，碰真钱要用只能动测试资金的账号；跑完不会自动清理测试数据，要自己写成步骤或用一次性账号。官网称模拟用户与真人在整段旅程里 87% 的情况下选择一致，这是厂商自测。PH 页显示带 MCP server。不开源。",
+          "inspo": "工作台的「agent 改完怎么验收」可以借两点：①验收用例用「起点 + 目标 + 通过标准」三段大白话写，由验收 agent 自己探路，比让 coding agent 写一堆 Playwright 脚本更不容易和实现一起出错；②每条失败必须带录像和复现步骤，作为退回给 coding agent 的输入。前提是有隔离的预发环境和测试账号，且要接受探索式测试结果不完全可重复；涉及写操作或付费的流程要靠环境隔离而不是提示词来兜底。",
+          "tags": [
+            "测试",
+            "AI工具",
+            "开发者工具"
+          ],
+          "id": "2026-11-10-seldon",
+          "slug": "seldon",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Almanzor",
+          "tagline": "Ask AI + MCP server for your docs, with cited answers",
+          "ph": "https://www.producthunt.com/products/almanzor",
+          "site": "https://almanzor.cloud",
+          "rank": 16,
+          "score": 80,
+          "comments": 6,
+          "what": "把文档站或企业官网变成问答助手的托管服务：贴上文档地址即可，回答只来自你的内容、附上引用页面、答不出就说「不知道」；可用一行 script 嵌到网站、分享链接、WordPress 插件、REST API，或给 Cursor / Claude Code 一个托管的文档 MCP server。",
+          "problem": "文档问答机器人常常瞎编，团队事后才发现；而文档缺了什么，通常只能从工单里猜。开发者在 IDE 里问某个库怎么用时，agent 也拿不到带出处的官方答案。",
+          "highlight": "官网称：每个回答链接到所用页面；答不出时明确说不知道，这些问题汇总成「本周未回答」清单，直接当文档待补列表；数据托管在欧盟、不用于训练。PH 评论里作者说重新抓取目前是手动的（在后台点「重新导入」，新版本替换旧版本），也可以通过 REST API 或管理用的 MCP 在文档发布时触发，定时重抓还在计划中；多版本文档怎么区分没有正面回答。14 天免费试用。不开源。",
+          "inspo": "工作台给 agent 接内部文档时可以照做：①文档 MCP 返回结果必须带来源页链接，agent 引用时原样带上；②把「agent 查了文档却查不到」的问题自动记成清单，定期交给文档负责人补——这比从工单反推缺口准。前提是工作台能记录每次文档检索的问题和是否命中；多版本文档要自己先解决版本标注，Almanzor 目前没给出方案。",
+          "tags": [
+            "MCP",
+            "知识库",
+            "开发者工具"
+          ],
+          "id": "2026-11-10-almanzor",
+          "slug": "almanzor",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "TK by Medium",
+          "tagline": "An agentic notebook to build your best thinking",
+          "ph": "https://www.producthunt.com/products/medium",
+          "site": "https://techcrunch.com/2026/11/09/mediums-new-tk-app-brings-ai-assistance-directly-into-the-writing-process/",
+          "rank": 3,
+          "score": 237,
+          "comments": 41,
+          "what": "Medium 推出的私人笔记和写作应用：编辑器里随时输入 @TK 呼出 AI（查事实、调出你以前写过的片段），带编辑反馈、标题反馈等技能，还能把一类笔记整理成 wiki 式主题页；有 MCP server 和 Claude skill，让你自己的 agent 读写你的笔记。",
+          "problem": "想法散落在语音备忘、半成品草稿、各种 AI 对话和旧笔记库里，写作时要来回切标签页找资料；通用聊天工具能帮查资料，但帮不了「用自己积累的东西写出自己的文章」。",
+          "highlight": "据 TechCrunch、The Verge 和 CEO 在 PH 的介绍：名字来自出版业占位符 TK（「待补」），在文中打 @TK 就地让 AI 补信息，不打断写作；能导入 Medium 旧文、Bear / Obsidian 笔记库，支持 Markdown 导入导出（但本身不是 Markdown 应用）；/wikify 把笔记变成小知识库，能对照 Medium 刊物的风格指南给反馈；每天早上出一个写作提示；有私人小组可以请真人反馈；官方说 TK 不会替你写整篇文章。Claude Daily Note 插件经 MCP 每天建一篇日记、原地更新并把没勾的待办顺延。免费版不限笔记；Pro $12/月才有完整的 agent、技能、摘要和 MCP。Web、iOS、Android 已上线，桌面版在路上；笔记不加密。",
+          "inspo": "对王玮的自媒体写作：①「在正文里留占位符、AI 就地补」比切到聊天框更顺，可以在自己的写作流程（如 Human Writer）里加一个类似的行内指令；②「把一个主题的笔记 wikify 成带链接回原笔记的摘要页」正好对应学习站的知识沉淀，可以借这种页面结构。TK 的 MCP 要 Pro 才能用，笔记不加密，敏感内容别放进去。",
+          "tags": [
+            "自媒体创作",
+            "个人效率",
+            "AI工具",
+            "MCP"
+          ],
+          "id": "2026-11-10-tk-by-medium",
+          "slug": "tk-by-medium",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "AppuBot",
+          "tagline": "Grok Bot alternative that runs on your AI, completely free",
+          "ph": "https://www.producthunt.com/products/appubot",
+          "site": "https://appubot.com",
+          "rank": 13,
+          "score": 85,
+          "comments": 3,
+          "what": "桌面上的「AI 队友」应用（Mac 为主，也有 Windows、Linux）：建几个 bot、给它们分工，bot 在你的电脑上直接操作各种应用和网站，用的是你已经登录的 Claude Code、Codex、Cursor、Grok、Copilot 或 OpenCode 账号；可选付费云电脑让它们 24 小时干活。PH 标语直接自称 Grok Bot 替代品。",
+          "problem": "很多 AI agent 只能在浏览器标签页里聊、碰不到真实应用，还要在已有的 ChatGPT / Claude 订阅之外再付一份钱或配 API key。",
+          "highlight": "官网称：不需要 API key 和 AppuBot 账号，直接驱动你本机已登录的 agent CLI，用量算在你自己的订阅里，设置页按模型和日期统计各 agent 用量和估算花费（只在本机读取）；computer use 在应用窗口内按名称找按钮和输入框、尽量不占用鼠标，可随时旁观、接管或停止，「替我审批」模式下重要操作先问你、可在手机上批；「Teach」录一遍你的点击、按键和截图后，bot 自己写成技能下次照做；可在应用、手机或 Telegram 上对话；支持定时任务、群聊里由「主管」bot 带队，创始人在 PH 称接了 1000+ 应用。本机版抢先体验期免费，云电脑 $19/月起，团队 $69/月起。数据不经过 AppuBot 服务器，只发给各自的 AI 提供方，外加匿名功能计数。不开源。",
+          "inspo": "和 Grok Bot、Turnstone 同一赛道，值得当竞品看。对工作台可借鉴：①「复用用户已登录的 agent CLI 和订阅、不碰 API key」降低接入门槛，同时在本地按模型、按天统计用量和估算成本；②「录一遍操作 → 自动写成技能」把人示范转成可复用流程。前提是各家 agent 的订阅条款允许被第三方程序驱动，企业场景还要单独确认合规。",
+          "tags": [
+            "AI工具",
+            "个人效率",
+            "agent 平台"
+          ],
+          "id": "2026-11-10-appubot",
+          "slug": "appubot",
+          "status": "新发现",
+          "followups": []
+        }
+      ]
+    },
+    {
       "date": "2026-11-09",
       "source": "https://www.producthunt.com/leaderboard/daily/2026/11/9",
       "fetched": "2026-11-10 17:02 北京",
