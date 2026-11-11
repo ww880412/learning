@@ -35,6 +35,9 @@ assert.equal(Object.keys(set.doc.queue[1])[1], 'learned');
 const earlier = prog.applyLearned(reviewDoc(), 'cs146s-L01', '2026-10-01');
 assert.equal(earlier.doc.queue[0].learned, '2026-10-01');
 assert.ok(earlier.doc.queue[0].reviews.length === 3, '不删 reviews');
+assert.equal(earlier.doc.queue.length, 2, '学完不删队列条目，否则写不上云');
+assert.equal(earlier.doc.queue[0].joined, undefined, '学完不表示加入复习');
+assert.equal(set.doc.queue[1].reviews[0].done, false, '学完不把复习标成 done');
 
 const doc = reviewDoc();
 prog.applyLearned(doc, 'cs146s-L02', '2026-10-24');
@@ -60,14 +63,14 @@ const merged = prog.mergeLocal(cloud, {
   { id: 'cs146s-L01', href: 'courses/cs146s/L01-agent-loop.html' },
   { id: 'cs146s-L02', href: 'courses/cs146s/L02-harness-anatomy.html' },
 ], '/');
+assert.equal(merged.doc.queue.length, 2, '同步学完不删队列条目');
 assert.equal(merged.doc.queue[1].learned, '2026-10-18');
 assert.equal(merged.doc.queue[0].learned, '2026-10-12', '本机更晚的 done 不覆盖更早的 learned');
-assert.equal(merged.doc.queue[1].reviews[0].done, true);
-assert.equal(merged.doc.queue[1].reviews[0].doneOn, '2026-10-19');
-assert.equal(merged.doc.queue[0].reviews[2].done, true, '云端已完成的复习还在');
+assert.equal(merged.doc.queue[1].joined, undefined, '学完不同时加入复习');
+assert.equal(merged.doc.queue[1].reviews[0].done, false, '没加入时，旧 rev-done 不能把复习标成 done');
+assert.equal(merged.doc.queue[0].reviews[0].done, false, '没加入时，旧 rev-done 不复活第 1 天');
+assert.equal(merged.doc.queue[0].reviews[2].done, true, '云端原来的 done 还在，这一步不负责清积压');
 assert.equal(merged.doc.queue[0].reviews[2].doneOn, '2026-10-20');
-assert.equal(merged.doc.queue[0].reviews[0].done, true);
-assert.equal(merged.doc.queue[0].reviews[0].doneOn, '2026-10-13');
 
 const noDelete = prog.mergeLocal(reviewDoc(), { done: {}, rev: {} }, [], '/');
 assert.equal(noDelete, null);
@@ -93,6 +96,9 @@ assert.equal(prog.pathsMatch('/learning/cs146s/L02-harness-anatomy.html', 'cours
   const b = prog.applyOps(JSON.parse(JSON.stringify(cloud)), 'cs146s-L01', { 3: { done: false, at: T2 } });
   assert.equal(b.doc.queue[0].reviews[1].done, false); assert.equal('doneOn' in b.doc.queue[0].reviews[1], false);
   assert.match(b.message, / undo$/); cloud = b.doc;
+  // 下面这几条测的是「已经加入复习」之后的勾选冲突。没 joined 的旧自动复习不在这里测。
+  cloud.queue[0].joined = '2026-10-11';
+  cloud.queue[0].joinAt = '2026-10-11T00:00:00.000Z';
   // 设备 A 重新打开：本机还留着第 3 天的 rev-done（操作已传过、没有待上传操作）→ 不再把取消改回去
   assert.equal(prog.mergeLocal(cloud, { done: {}, rev: { 'cs146s-L01': { 3: '2026-10-26' } }, ops: {} }, items, '/'), null, '取消不能被旧设备复活');
   // 设备 A 断网时在 T1 勾的操作（比云端 T2 的取消早）→ 不改云端，并且这条操作被清掉
@@ -108,9 +114,21 @@ assert.equal(prog.pathsMatch('/learning/cs146s/L02-harness-anatomy.html', 'cours
   assert.equal(c2.doc.queue[1].reviews[0].done, false, '更新的取消要留住');
   // 同一时刻不重复写（幂等）
   assert.equal(prog.applyOps(c2.doc, 'cs146s-L02', { 1: { done: false, at: T3 } }), null);
-  // 没有 at 的旧数据：旧本机记录照旧补上（向后兼容），云端已有 at 的那天不补
-  const legacy = prog.mergeLocal(reviewDoc(), { done: {}, rev: { 'cs146s-L01': { 1: '2026-10-13' } } }, items, '/');
-  assert.equal(legacy.doc.queue[0].reviews[0].done, true);
+  // 没加入复习：旧 rev-done / rev-op 不写回，也不把任何一天标成 done（避免第 14 天被标完成、文章变成已掌握）
+  const stale = prog.mergeLocal(reviewDoc(), {
+    done: {},
+    rev: { 'cs146s-L01': { 1: '2026-10-13', 14: '2026-10-25' } },
+    ops: { 'cs146s-L01': { 14: { done: true, on: '2026-10-25', at: T3 } } },
+  }, items, '/');
+  assert.equal(stale, null, '没加入复习时，旧操作不产生提交');
+  const untouched = reviewDoc();
+  assert.equal(untouched.queue[0].reviews.some((r) => r.day === 14 && r.done), false);
+  // 已加入、但这一天带了 at：旧 rev-done 补不进去
+  const enrolled = reviewDoc();
+  enrolled.queue[0].joined = '2026-10-11';
+  enrolled.queue[0].joinAt = '2026-10-11T00:00:00.000Z';
+  enrolled.queue[0].reviews[0].at = '2026-10-11T00:00:00.000Z';
+  assert.equal(prog.mergeLocal(enrolled, { done: {}, rev: { 'cs146s-L01': { 1: '2026-10-13' } }, ops: {} }, items, '/'), null, '带 at 的新排期不被旧 rev-done 勾上');
   // 坏操作被忽略
   assert.equal(prog.applyOps(reviewDoc(), 'cs146s-L01', { 1: { done: 'yes', at: T1 }, 2: { done: true, at: 0 }, x: { done: true, at: T1 } }), null);
   // 首页显示：effReview
@@ -124,6 +142,57 @@ assert.equal(prog.pathsMatch('/learning/cs146s/L02-harness-anatomy.html', 'cours
   // effReview 的源码会注入首页内联脚本，必须自包含
   const injected = new Function('return (' + E.toString() + ')')();
   assert.deepEqual(injected({ done: true, doneOn: '2026-10-26', at: new Date(T1).toISOString() }, '', undefined), { done: true, on: '2026-10-26' });
+}
+
+// ---------- 加入复习和学完分开存；排期从加入日算，不把旧复习标成 done ----------
+{
+  const items = [{ id: 'cs146s-L01', href: 'courses/cs146s/L01-agent-loop.html' }, { id: 'cs146s-L02', href: 'courses/cs146s/L02-harness-anatomy.html' }];
+  const T0 = Date.parse('2026-11-10T02:00:00Z');
+  const base = reviewDoc();
+  const joined = prog.applyEnroll(base, 'cs146s-L01', { joined: '2026-11-10', at: T0 });
+  assert.equal(joined.doc.queue.length, 2, '加入复习不删其他条目');
+  assert.equal(joined.doc.queue[0].learned, '2026-10-12', '加入复习不动 learned');
+  assert.equal(joined.doc.queue[0].joined, '2026-11-10');
+  assert.deepEqual(joined.doc.queue[0].reviews.map((r) => r.day), [1, 3, 7, 14, 30]);
+  assert.deepEqual(joined.doc.queue[0].reviews.map((r) => r.date), ['2026-11-11', '2026-11-13', '2026-11-17', '2026-11-24', '2026-12-10']);
+  assert.ok(joined.doc.queue[0].reviews.every((r) => r.done === false), '新排期全部未完成，不会凭空已掌握');
+  assert.equal(joined.doc.queue[1].learned, undefined);
+  assert.equal(prog.applyEnroll(joined.doc, 'cs146s-L01', { joined: '2026-11-10', at: T0 + 1000 }), null, '同一天再加入不重排、不抹掉进度');
+  const day14 = joined.doc.queue[0].reviews.find((r) => r.day === 14);
+  day14.done = true; day14.doneOn = '2026-11-24';
+  assert.equal(prog.applyEnroll(joined.doc, 'cs146s-L01', { joined: '2026-11-10', at: T0 + 2000 }), null);
+  assert.equal(day14.done, true, '重复加入保留已经做过的第 14 天');
+  const cancelled = prog.applyEnroll(joined.doc, 'cs146s-L01', { joined: '', at: T0 + 5000 });
+  assert.equal(cancelled.doc.queue[0].learned, '2026-10-12', '取消复习不删 learned');
+  assert.equal(cancelled.doc.queue[0].joined, undefined);
+  assert.deepEqual(cancelled.doc.queue[0].reviews, []);
+  assert.equal(cancelled.doc.queue.length, 2, '取消复习不删条目');
+  assert.ok(cancelled.doc.queue[0].joinAt);
+  assert.equal(prog.applyEnroll(cancelled.doc, 'cs146s-L01', { joined: '2026-11-10', at: T0 }), null, '更早的加入压不过取消');
+  const again = prog.applyEnroll(cancelled.doc, 'cs146s-L01', { joined: '2026-11-12', at: T0 + 9000 });
+  assert.ok(again.doc.queue[0].reviews.every((r) => r.done === false), '重新加入是新排期，不把旧的第 14 天带回来');
+  assert.equal(again.doc.queue[0].learned, '2026-10-12');
+  // 本机旧操作 + 新的加入：旧 rev-done 不能把新的第 14 天勾上
+  const fresh = reviewDoc();
+  const synced = prog.mergeLocal(fresh, {
+    done: { '/courses/cs146s/L02-harness-anatomy.html': '2026-11-10' },
+    rev: { 'cs146s-L01': { 14: '2026-10-25' }, 'cs146s-L02': { 1: '2026-11-11' } },
+    ops: { 'cs146s-L01': { 14: { done: true, on: '2026-10-25', at: T0 - 1000 } } },
+    joins: { 'cs146s-L01': { joined: '2026-11-10', at: T0 } },
+  }, items, '/');
+  const l01 = synced.doc.queue.find((q) => q.item === 'cs146s-L01');
+  const l02 = synced.doc.queue.find((q) => q.item === 'cs146s-L02');
+  assert.equal(l02.learned, '2026-11-10', '学完照常写入，且条目还在');
+  assert.equal(l02.joined, undefined);
+  assert.equal(l02.reviews[0].done, false, '只学完的篇不排进完成');
+  assert.equal(l01.learned, '2026-10-12');
+  assert.equal(l01.joined, '2026-11-10');
+  assert.equal(l01.reviews.find((r) => r.day === 14).done, false, '加入之前的旧勾选不复活');
+  assert.equal(prog.effectiveJoin(l01, null), '2026-11-10');
+  assert.equal(prog.effectiveJoin(l01, { joined: '', at: T0 + 1 }), '', '更新的取消优先');
+  assert.equal(prog.effectiveJoin({ joined: '2026-11-01', joinAt: new Date(T0).toISOString() }, { joined: '2026-11-02', at: T0 - 1 }), '2026-11-01', '更早的本机加入不盖过云端');
+  const injectedJoin = new Function('return (' + prog.effectiveJoin.toString() + ')')();
+  assert.equal(injectedJoin(l01, null), '2026-11-10');
 }
 
 // ---------- 首页继续学：learned 或本机 done 都跳过，没学完的留下 ----------

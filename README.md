@@ -18,7 +18,7 @@
 ```
 node build.mjs
 ```
-生成：`index.html`、各栏目 `*/index.html`、主题页（如 `courses/cs146s/index.html`）、`glossary.html`、`concepts/*.html`、`review.md`；并为新学习页自动补排复习日期（写回 `data/review.json`）。学习页本身（如 `L01-agent-loop.html`）不由它生成，仍用 xuexi-template 的 `build.sh` 制作。同时重写 `digest/YYYY-MM-DD.html` 和 `data/digest/`。
+生成：`index.html`、各栏目 `*/index.html`、主题页（如 `courses/cs146s/index.html`）、`glossary.html`、`concepts/*.html`、`review.md`；新学习页只补一条空的复习队列（`reviews: []`，不排日期，写回 `data/review.json`）。学习页本身（如 `L01-agent-loop.html`）不由它生成，仍用 xuexi-template 的 `build.sh` 制作。同时重写 `digest/YYYY-MM-DD.html` 和 `data/digest/`。
 
 ## 每日汇总
 
@@ -49,21 +49,23 @@ node build.mjs
 1. 用 `/workspace/skills-src/xuexi-template/build.sh` 做好学习页，放到对应栏目目录（公开课放 `courses/<课程>/`，其他一篇一个目录）。
 2. 在 `data/items.json` 的 `items` 里加一条：`id, column, group(公开课填课程 id), order, label, title, href, preview, status(进行中/已学/待小测), start(YYYY-MM-DD), note, source`。节数不用写：build.mjs 从学习页里数 `<section class="sec">` 自动算。新课程还要在 `groups` 里加一条。
 3. 涉及的概念：在 `data/concepts.json` 给已有概念的 `refs` 加 `{"item":"…","card":卡片号,"note":"…"}`，或新增概念（定义只写学习页/原文里有的内容）。
-4. `node build.mjs`。复习日期按开始日期第 1、3、7、14、30 天自动排好。
+4. `node build.mjs`。新篇进入复习队列，但不会自动排复习；用户在学习页点「加入复习」之后才按第 1、3、7、14、30 天排。
 
 ## 加一个栏目
 建目录（如 `podcasts/`），在 `data/columns.json` 加一条 `{"id","dir","title","icon","desc"}`，`node build.mjs`。首页会多一张卡片，空栏目显示「还没有内容」。
 
 ## 复习打卡
-在首页「今日」勾上一条到期复习，就把这篇当前已经到期、还没完成的复习全部记成完成。记录在这台浏览器的 localStorage（`rev-done:<条目 id>`，第几天对应完成日期）。同一天取消勾选会撤销。勾完的行当天仍显示为已看，第二天消失；下一次复习按原定日期出现。
+点「学完了」只表示学完（写入 `learned`），不会自动排复习。学习页标题下和栏目、课程列表的卡片上有「加入复习」。点了才排第 1、3、7、14、30 天，从点下的那天（北京日期，`joined`）算起，不从学完日往回补。再点一次是「取消复习」，排期清掉，学完记录还在。
 
-也可以把 `data/review.json` 里对应的 `"done": false` 改成 `true`，再 `node build.mjs`。首页按北京时间的今天计算（`?today=YYYY-MM-DD` 可自查）。
+在首页「今日」勾上一条到期复习，就把这篇当前已经到期、还没完成的复习全部记成完成。记录在这台浏览器的 localStorage（`rev-done:<条目 id>`，第几天对应完成日期）。同一天取消勾选会撤销。勾完的行当天仍显示为已看，第二天消失；下一次复习按加入日顺延。没点「加入复习」的篇不会出现在「今日」。
 
-本机若在收藏页「同步设置」保存了和收藏相同的 GitHub 令牌，「今日」勾选还会把 `data/review.json` 里对应的 `done` 写成 `true`（带 `doneOn` 完成日和 `at` 操作时间）。取消勾选写回 `false`（同样带 `at`），不删除 `learned`。别的设备当天勾完的复习，这台设备也显示为已看，可以在同一行取消。
+也可以把 `data/review.json` 里对应的 `"done": false` 改成 `true`，再 `node build.mjs`。没有 `joined` 的 `reviews` 构建时会被清掉。首页按北京时间的今天计算（`?today=YYYY-MM-DD` 可自查）。
+
+本机若在收藏页「同步设置」保存了和收藏相同的 GitHub 令牌，「加入复习 / 取消」和「今日」勾选都会写回 `data/review.json`。勾选把对应的 `done` 写成 `true`（带 `doneOn` 完成日和 `at` 操作时间）。取消勾选写回 `false`（同样带 `at`），不删除 `learned`。别的设备当天勾完的复习，这台设备也显示为已看，可以在同一行取消。
 
 首页「今日」没有到期复习时，会推荐一篇「继续学」（开始日最近、还在进行中的学习页）。`review.json` 里已有 `learned`，或这台浏览器有 `done:<路径>` 的，不出现在这行；点完「学完了」马上换掉，下一篇还没学完的顶上，不用等重建。
 
-**两台设备冲突时，以最后一次操作为准**（2026-10-26 定）。每次勾选或取消，浏览器先在本机记一条待上传操作 `rev-op:<条目 id>`（第几天 → `{done, on, at}`，`at` 是操作时刻），传上去后写进 `reviews[].at`。谁的 `at` 新听谁的：晚于云端的取消会留住，旧设备上更早的勾选不会把它改回来；没传上去的操作（没令牌、断网）留在本机，下次打开时再传。本功能上线前留下的、没有 `at` 的旧记录一律算更早：只在云端那一天还没有 `at` 时补成完成。课程页「学完了」会把北京时间的日期写入 `learned`，已有更早的日期则保留更早的。没有令牌时只写本机。
+**两台设备冲突时，以最后一次操作为准**（2026-10-26 定）。加入或取消先记在 `rev-join:<条目 id>`（`{joined, at}`，`joined` 为空就是取消），勾选或取消勾选记在 `rev-op:<条目 id>`（第几天 → `{done, on, at}`）。传上去后分别写进 `joinAt` 和 `reviews[].at`。谁的 `at` 新听谁的。没传上去的操作留在本机，下次打开时再传。2026-11-10 起，没加入复习的旧 `rev-done` / `rev-op` 不再写回，也不会在以后点「加入复习」时把旧的自动复习勾回来。课程页「学完了」会把北京时间的日期写入 `learned`，已有更早的日期则保留更早的，不创建 `reviews`。队列条目一直留着，没加入只是 `reviews` 为空。再点一次「学完了」只清本机 `done:`，不删云端 `learned`。没有令牌时只写本机。
 
 ## 发布
 `.gitignore` 已排除 `_private/` 和指向它的快捷方式；`.nojekyll` 已放好。改完后 `node build.mjs`，再 `git push` 到 main。L01 的 lesson.html 源文件在 `_private/cs146s/L01-lesson/`（不发布）。
@@ -77,7 +79,7 @@ node build.mjs
 | 未开始 | 灰 | 条目 `status: "未开始"`，还没有学习页（只列官方资料） |
 | 进行中 | 蓝 | 学习页已上线，还没点「学完了」 |
 | 已学完 | 绿 | 点过学习页底部的「学完了」：`review.json` 里有 `learned`，或这台浏览器有 `done:<路径>`（页面打开时补上）。小测、复述不影响状态（2026-10-26 定） |
-| 已掌握 | 紫 | 已学完，**且** `review.json` 里第 14 天复习 `done: true`，期间没有因答错重置（`reset` 为空或 0） |
+| 已掌握 | 紫 | 已学完，**且** 加入复习后第 14 天 `done: true`，期间没有因答错重置（`reset` 为空或 0）。没加入复习就不会是已掌握 |
 
 - 「学完了」按钮（学习页里的 finish.js，按 `doneKeys()` 记 `done:<路径>`）是唯一的「已学完」口径。有令牌时它把北京日期写进 `review.json` 的 `learned`，别的设备打开页面时读到。
 - 小测、复述仍可以记在 items.json 的 `quiz`、`retell`，只作学习记录，不改状态。

@@ -14,7 +14,7 @@ Codex、Cursor、Claude Code、其他 Grok Bot 改这个仓库前先读这一页
 |---|---|---|
 | `build.mjs`、`assets/`（`site.css`、`vp-head.js`、`gh.js`、`favorites.js`、`progress.js`、`icons.json`）、`scripts/` | 源码 | 能。改完要重建，见第 6 节 |
 | `data/columns.json`、`items.json`、`concepts.json`、`inbox.json`、`ph-inspo.json`、`dsh-plugins.json` | 数据源 | 能，改完 `node build.mjs` |
-| `data/review.json` | 数据源，但构建会补排期，浏览器也会写 | 能，只改自己的条目，见第 4 节 |
+| `data/review.json` | 数据源，但构建会补空队列、清掉没加入的复习，浏览器也会写 | 能，只改自己的条目，见第 4 节 |
 | `data/radar.json` | `scripts/sync-radar.mjs` 生成 | 不要手改，重跑同步脚本 |
 | `data/radar-weekly/*.md` | `scripts/sync-radar.mjs` 从 `/workspace/agent-workbench/weekly/` 原样复制（雷达周报原文，文件名是北京日期） | 不要手改，改雷达目录里的源文件再同步 |
 | `favorites.json` | 浏览器经 GitHub API 写 | 不要手改 |
@@ -37,13 +37,14 @@ Codex、Cursor、Claude Code、其他 Grok Bot 改这个仓库前先读这一页
 | PH灵感箱（自己的 worktree `/workspace/learning-ph`，步骤见 `/workspace/ph-inspo/RUNBOOK.md`） | 约北京 20:00 | `data/ph-inspo.json`、`ph-inspo/index.html`、`index.html`、`digest/`、`data/digest/` | `ph-inspo: …` |
 | Agent工作台雷达（指挥家代为发布，步骤见 `/workspace/agent-workbench/SYNC.md`） | 每周一（北京 09:00 周报），平时随时补录 | 先 `node scripts/sync-radar.mjs`（读 `/workspace/agent-workbench`）写 `data/radar.json` 和 `data/radar-weekly/`，再 `node build.mjs` 写 `radar/index.html`、`radar/weekly/<日期>.html` 等 | `radar: …` |
 | 学习搭子 | 不定时 | 学习页（`courses/…`、`x-posts/…`、`research/…`、`wechat/…`、`video/…`）、`data/items.json`、`data/concepts.json`、`data/review.json`，以及构建后的全部生成页 | `courses: …`、`x-posts: …`、`review.json：…` |
-| 浏览器（王玮点收藏、学完了、今日勾选） | 随时 | `favorites.json`、`data/review.json`（GitHub Contents API 直接提交） | `fav: + / - …`、`learn: …`、`review: …` |
+| 浏览器（王玮点收藏、学完了、加入复习、今日勾选） | 随时 | `favorites.json`、`data/review.json`（GitHub Contents API 直接提交） | `fav: + / - …`、`learn: …`、`review: join / unjoin / …` |
 
 两个发布脚本都会调 `scripts/rebuild-home.sh`（内部就是 `node build.mjs`；**构建失败就停发**，2026-10-26 起它和两个发布脚本都非零退出、丢掉半成品、不提交不推送，并打印原因），提交自己的目录、`index.html` 和 `digest/`、`data/digest/`（首页链到当天的汇总页，必须一起推；2026-10-25 起）。发布前它们会丢掉工作区里上次没提交的生成文件，对齐最新 `origin/main`；推送被拒就回到最新 `origin/main` 重新生成再推（不管 rebase 能不能成功，免得首页嵌着旧数据）。脚本在仓库外：`/workspace/x-brief/site/publish.sh`、`/workspace/daily-x-tech-posters/scripts/publish_gallery.py`。
 
 ## 4. 数据和同步
 
-- **`data/review.json`**：复习队列，跨设备以它为准。每条 `{item, learned?, start, reviews:[{day, date, done, doneOn?, at?}]}`，间隔 1/3/7/14/30 天。`learned` 是「学完了」的北京日期；`reviews[].done` 是这一次复习做没做，`doneOn` 是完成日。构建会给新学习页补排期，但保留已有的 `learned`、`done`、`doneOn`，丢了会直接报错。浏览器从不删 `learned`（只补、取更早的日期）。复习勾选和取消以最后一次操作为准：`at` 是那次操作的时刻（ISO 时间），浏览器只在自己的操作比云端 `at` 新时才改那一天；规则写在 `assets/progress.js` 的 `effReview` / `applyOps`，首页内联脚本注入的是同一份源码。手改 `review.json` 的某次复习时，把它的 `at` 写成当前 UTC 时间，否则浏览器里更早的记录可能盖过你。「已学完」只看「学完了」按钮（`learned` 或本机 `done:`），不看 `quiz`、`retell`。
+- **`data/review.json`**：复习队列，跨设备以它为准。每条 `{item, learned?, start, joined?, joinAt?, reviews:[{day, date, done, doneOn?, at?}]}`。`learned` 是「学完了」的北京日期，**点学完不排复习**。`joined` 是用户点「加入复习」的北京日期；只有有 `joined` 才有 `reviews`，间隔 1/3/7/14/30，从 `joined` 当天算起，不从学完日或 `start` 回补。`joinAt` 是最近一次加入或取消的 ISO 时间，取消后 `joined` 去掉、`reviews` 清空，`joinAt` 留下，用来压过更早的本机操作。`reviews[].done` 是这一次复习做没做，`doneOn` 是完成日。构建给新学习页补 `{item, start, reviews: []}`，**不预排日期**；没有 `joined` 的 `reviews` 会清掉。`learned` 丢了会直接报错；已加入的 `done` / `doneOn` / `at` 也会保住。浏览器从不删 `learned`（只补、取更早的日期）。加入、取消、勾选、取消勾选都以最后一次操作为准（`joinAt` 或 `reviews[].at`）。规则写在 `assets/progress.js` 的 `effectiveJoin` / `applyEnroll` / `effReview` / `applyOps`，首页内联脚本注入的是同一份源码。手改某次复习时，把它的 `at` 写成当前 UTC 时间，否则浏览器里更早的记录可能盖过你。「已学完」只看「学完了」按钮（`learned` 或本机 `done:`），不看 `quiz`、`retell`。
+- **内容 bot 写入约定**（2026-11-10 起）：往 `review.json` 加新篇写成 `{item, start, learned?, reviews: []}`。不要写 `joined`，不要预填 `reviews`。旧格式 `{item, start, reviews:[{day, date, done}]}` 在下次 `node build.mjs` 时会被清成空 `reviews`，首页也不把没有 `joined` 的行当复习。本机还没同步的 `rev-done:` / `rev-op:` 只作用在已经 `joined` 的条目上，不会把清掉的自动复习写回来。
 - 首页「今日」打开时会重新读仓库里的 `data/review.json`（有令牌走 API，没令牌读 Pages 副本），所以浏览器提交的勾选不用等 bot 重建就能在别的设备上生效（Pages 副本最多有约 10 分钟缓存）。
 - **`data/radar.json`**：只由 `scripts/sync-radar.mjs` 生成。周报原文放在雷达目录 `weekly/YYYY-MM-DD.md`（北京日期，第一行是标题，`**结论先说**` 后的编号列表进页头），同步到 `data/radar-weekly/`，`build.mjs` 生成 `radar/weekly/YYYY-MM-DD.html` 并在雷达页列出。
 - **收藏**：存仓库根目录的 `favorites.json`（公开，只存标题、链接、标签）。
@@ -79,7 +80,7 @@ Codex、Cursor、Claude Code、其他 Grok Bot 改这个仓库前先读这一页
 git fetch origin && git worktree add /workspace/learning-<任务> -b <分支> origin/main
 cd /workspace/learning-<任务>
 # 改源码 / 数据
-node build.mjs                      # 重建所有生成页，并补排 data/review.json
+node build.mjs                      # 重建所有生成页；新篇只补空队列，没 joined 的复习清掉
 node scripts/test-progress.mjs      # 纯逻辑测试，打印 ok
 node scripts/test-guards.mjs        # 坏数据拦截：坏 JSON 不写、build.mjs 入口校验，打印 ok
 node scripts/test-publish.mjs       # 构建失败就停发：rebuild-home.sh 和 box 上两个发布脚本，坏数据时非零退出、不推送，打印 ok
