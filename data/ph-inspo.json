@@ -24,6 +24,139 @@
   ],
   "days": [
     {
+      "date": "2026-11-11",
+      "source": "https://www.producthunt.com/leaderboard/daily/2026/11/11",
+      "fetched": "2026-11-12 16:59 北京",
+      "note": "榜单页只取到前 10 名；第 1 名是广告反作弊、第 9 名是 Reddit 购物页功能，未收；Scribe v3（ElevenLabs）、MiniMax H3-Image、Muse Ember（Meta）挂在各自公司的 PH 页下，是模型更新，没收；Nod 挂在 n8n 的 PH 页下，团队在评论里直接点名 Grok Bot 作对比。",
+      "picks": [
+        {
+          "id": "2026-11-11-skillbox",
+          "why": "把「技能库」和「当前启用集」分开管，上游改动先看 diff、每个版本单独做安全放行，正是工作台给多个 coding agent 分发技能和规则要解决的事。",
+          "limit": "不开源、没找到仓库；不会按当前打开的仓库自动切换技能，多个 worktree 规则不同时怎么处理没回答；安全扫描官方也说只是证据不是保证。"
+        },
+        {
+          "id": "2026-11-11-nod",
+          "why": "开源（Apache 2.0）的个人 agent，把「这一步是不是用户要的」做成服务端的独立检查，外部内容一律当数据、凭据不进模型，可以直接读代码看工作台的动作审批怎么落地。",
+          "limit": "研究预览版，电脑睡着不跑、一个 Nod 只有一个主人；那个独立检查本身也是模型、会出错；98% 完成率是厂商在模拟环境里的自测。"
+        },
+        {
+          "id": "2026-11-11-relay",
+          "why": "交付物之外单独附「决策背景」和「必须回问人的清单」，接手的 agent 只能照背景解释、碰到折扣日期这类事必须退回，可以当 agent 之间交接任务的格式样板。",
+          "limit": "托管服务、不开源，偏销售提案场景；对方在自己的 AI 里读时看不到私聊过程；回答基于哪一版背景是否可查，没说清。"
+        }
+      ],
+      "items": [
+        {
+          "name": "Skillbox",
+          "tagline": "One library for your AI skills, synced to every agent",
+          "ph": "https://www.producthunt.com/products/skillbox-5",
+          "site": "https://skillbox.so",
+          "rank": 5,
+          "score": 152,
+          "comments": 14,
+          "what": "一个管理 AI 技能（SKILL.md 这类说明文件）的桌面工具：所有技能放进一个库，只把需要的那一小部分同步到 Claude Code、Cursor、Codex 实际读取的目录，可以按项目分配。",
+          "problem": "技能散在 GitHub 仓库、项目文件夹和各工具自己的目录里，同一个技能在 Claude Code 装了、Cursor 没装，队友手里的版本更新了也不知道，说不清哪个 agent 用的是哪一版、安不安全。",
+          "highlight": "官网称：①「收藏」和「启用」分开——库里存多少都行，只把启用的小集合交付给工具，因为每个加载的技能都占上下文；不用的会自动暂停、重叠的会提示；②从 GitHub/GitLab 加的技能保留来源，上游改了先显示 diff，由你决定接不接，不会悄悄覆盖本机已改过的版本；③每个版本同步前都扫一遍提示注入、数据外泄、硬编码密钥和混淆代码（用 Cisco Skill Scanner，结果按 STRIDE/OWASP 标注），带可执行脚本的技能要你单独同意，放行只对那一个版本有效，下个版本要重新审；④会话做得好时可以让 agent 把方法存成技能，并帮你去掉只属于这次对话的路径和私人信息；⑤Trim 把测试、git、构建的冗长输出截短再给 agent 读，PH 评论里作者说命令失败时完整输出存在本机、agent 一条命令就能取回。还有团队共享库。PH 标「Free Options」，没找到公开源码仓库。PH 评论里作者承认不会按当前打开的仓库自动切换技能，只能把技能分配到某个项目文件夹；有人问多个 worktree 规则不同怎么办，未见回答。",
+          "inspo": "工作台的技能/规则分发可以直接抄三点：①「库」和「启用集」分两层，按项目只下发需要的，控制上下文占用；②技能跟着来源走，上游更新先出 diff 再决定，不覆盖本地改动；③安全放行绑定到具体版本内容（例如按文件哈希），内容一变就重新审，带脚本的单独授权。前提是工作台统一掌握每个 agent 读技能的目录，并给每个技能记来源和版本哈希。Trim 的「失败时保留全文、给 agent 一个取回命令」也适合放进工作台的命令输出层。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "效率"
+          ],
+          "id": "2026-11-11-skillbox",
+          "slug": "skillbox",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Nod by n8n",
+          "tagline": "Open source personal agent with its own computer",
+          "ph": "https://www.producthunt.com/products/n8n-io",
+          "site": "https://nod.n8n.io",
+          "repo": "https://github.com/n8n-io/nod",
+          "rank": 2,
+          "score": 288,
+          "comments": 37,
+          "what": "n8n Labs 出的开源个人 agent（研究预览版，独立于 n8n）：在你的 Mac 或 Windows 电脑上开一台本地虚拟机和浏览器，替你在 Gmail、Slack、Notion、日历和没有 API 的网站上把事办完，比如催发票、取消试用、准备会议。",
+          "problem": "聊天式 AI 只会告诉你怎么做、不替你做；而能真动手的 agent 又让人担心它乱发、乱付、被网页里的指令带偏，或者把数据放在别人的服务器上。",
+          "highlight": "官网和 README 称：①权限检查放在服务端而不是提示词里——每个应用动作、每个会改东西的网页步骤，都由一个独立检查对照你的原话和规则，没覆盖到的发送、付款、预订、删除先等你点头（官方承认这个检查本身也是模型、会出错）；②网页、邮件、应用返回的内容一律按「数据」标给模型，不当指令；③密码、验证码、银行卡由 Vault 在网页上私下填，模型看不到，模型服务的密钥也不进沙箱和浏览器；④每个动作、登录、用卡和每个任务的花费都记在 Usage 里，API 模型可设月度上限；⑤自带定时和盯梢任务；可选 20 多家模型或 ChatGPT Plus/Pro 登录。技术栈 TypeScript/Node.js 24、Fastify、PostgreSQL + pg-boss、Pi agent runtime、agent-browser、Composio、MCP、Electron。Apache 2.0，GitHub 约 600 星，11/11 发了 v0.6.2。PH 首帖称在模拟环境里 226 个任务跑 678 次完成 98%、没做过未经批准的发送和付款，这是厂商自测。电脑睡着时不运行，暂时也不会打电话；一个 Nod 目前只有一个主人。团队在 PH 评论里直接点名 Grok Bot 作对比。",
+          "inspo": "和我们自己用的 Grok Bot 是同类竞品，但开源，正好拆来看工作台的「动作审批」怎么落地：①把「这一步是不是用户要的」做成服务端的独立检查，对照用户原话而不是靠主 agent 自觉；②外部内容统一打上数据标记再给模型；③凭据由专门的填写器处理、永不进模型上下文和沙箱；④每个动作和花费落一条审计记录并有预算上限。前提是工作台的所有外部动作都经过一个统一网关，才能在那里放检查。代码 Apache 2.0，可以直接读它 server 里 trust check 和 Vault 的实现。",
+          "tags": [
+            "AI工具",
+            "效率",
+            "开源"
+          ],
+          "id": "2026-11-11-nod",
+          "slug": "nod",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Relay",
+          "tagline": "DocSend for AI agents: send and receive docs with context",
+          "ph": "https://www.producthunt.com/products/relaytoai",
+          "site": "https://relayto.ai",
+          "rank": 7,
+          "score": 126,
+          "comments": 20,
+          "what": "一个「带背景发文档」的分享服务：发提案、方案或合同时，文档给对方本人，你选定的背景说明（为什么这么定价、排除了什么、还有哪些没定）给对方的 AI，对方和对方的 AI 都能就此提问。",
+          "problem": "现在别人收到文档后，常常先让自己的 AI 读；AI 只看得到页面上的字，看不到背后的取舍，要么答错，要么还得再约一次会来解释。",
+          "highlight": "官网称：一句「relay 什么 给谁 为了什么」就能发出；发前你同时审文档和背景，并标出哪些话题必须回到你这里（例如折扣、日期），对方的 agent 只能照你批准的背景解释、不能替你拍板；对方转给第三人（如 CFO）时背景一起走，新访问要你一键批准；可随时改文档或背景生成新版本、对方只看到最新版，也能撤销访问（已保存的副本收不回）；也能反过来请对方的 agent 准备材料发给你。PH 评论里团队说每个 relay 有活动页，显示谁的 agent 读了、看了哪些页、问了什么；但对方在自己的 ChatGPT 或 Claude 里读时，只看得到读取和回传给你的内容，看不到对方的私聊。有 MCP server（relayto.ai/mcp），90 天免费试用，不开源。",
+          "inspo": "工作台里 agent 之间交接任务可以抄这个分层：交付物本身之外，单独附一份「决策背景」（为什么这么做、排除了什么、还没定什么），再加一张「必须回问人的清单」，接手的 agent 遇到清单里的事只能退回、不能自己定。前提是交接格式里有放背景和待决项的固定位置，并能记录每次回答基于背景的哪个版本（PH 评论里有人问 Relay 这点，未见明确回答）。",
+          "tags": [
+            "AI工具",
+            "效率"
+          ],
+          "id": "2026-11-11-relay",
+          "slug": "relay",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "CALL-E",
+          "tagline": "Make phone calls with your AI agent (Muse, ChatGPT, Claude)",
+          "ph": "https://www.producthunt.com/products/call-e",
+          "site": "https://www.heycall-e.com/",
+          "rank": 3,
+          "score": 242,
+          "comments": 62,
+          "what": "让 AI 助手替你打电话的服务：在 ChatGPT、Claude 等助手里说一句要办的事（订位、改预约、问报价、问库存），它补问缺的信息、给你看通话计划，你确认后拨打真实的美国或加拿大号码，回来给你结果和全文记录。",
+          "problem": "很多事最后都卡在「得打个电话」：按菜单、排队等待、留言回拨，人总是一拖再拖。",
+          "highlight": "官网称：固定三步「计划 → 确认 → 拨打」，不确认不拨；能听电话菜单按键、在线等待、处理语音信箱；每次结果附全文记录、依据和置信度标签。开发者可以用一句提示在 Claude Code、Codex、Cursor、OpenClaw 里装官方 `calle` 技能，或用 MCP、TypeScript/Python SDK 和 REST API；可以给一个通话目标定义结果的 JSON 结构，每通电话按这个结构返回字段（PH 评论举例：前一天确认演示预约，返回是否确认、改约时间和备注，再写回 HubSpot）。PH 评论里团队说有预检查防止通话中编造信息或未经你同意做决定。只拨出不接听；本地号码只有美国和加拿大，其他国家的号码目前主要用于开发测试；新用户 100 个免费额度。不开源。",
+          "inspo": "两点可借：①所有对外动作走「先出计划、人确认、再执行」三段，计划里写明这次能谈什么、不能答应什么；②让调用方给任务定义返回的结构（JSON schema），执行端按结构回填字段并附原始记录作证据，比让下游再去解析文字可靠。工作台里给 agent 派外部任务时可以照搬这个契约。打电话本身在国内用不上。",
+          "tags": [
+            "AI工具",
+            "效率"
+          ],
+          "id": "2026-11-11-call-e",
+          "slug": "call-e",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Shot.video",
+          "tagline": "Multi-camera videos with the phones you already own",
+          "ph": "https://www.producthunt.com/products/shot-video",
+          "site": "https://shot.video/",
+          "rank": 8,
+          "score": 117,
+          "comments": 15,
+          "what": "把笔记本和手边几部手机变成多机位录制间的网页工具：手机扫二维码就成为一个机位（不用装 App），点一次录制，所有机位、屏幕和声音同步录下，再由 AI 剪出第一版。",
+          "problem": "多数人录视频只用一个摄像头，因为多机位要买设备、对齐时间、花几小时剪辑，太麻烦。",
+          "highlight": "官网称：AI 按你看向哪个镜头切机位，对屏幕录制里正在变化的区域做平滑放大，在长段口播处建议 B-roll（可以 AI 生成），每一条建议都要你批准、可再改；屏幕可以显示为原样、浏览器框或 3D 展示；默认用笔记本的麦克风，手机离说话人更近时可以改用手机的声音。有免费版、不用绑卡。适合产品演示、课程、教程、播客。",
+          "inspo": "做讲解或演示类视频时可以直接试：一部手机拍人、笔记本录屏，省掉多机位对齐和粗剪。前提是录的时候有意识地看向不同机位，AI 才有切换依据；成片效果要自己试过才知道，官网例子是示意。",
+          "tags": [
+            "创作",
+            "AI工具"
+          ],
+          "id": "2026-11-11-shot-video",
+          "slug": "shot-video",
+          "status": "新发现",
+          "followups": []
+        }
+      ]
+    },
+    {
       "date": "2026-11-10",
       "source": "https://www.producthunt.com/leaderboard/daily/2026/11/10",
       "fetched": "2026-11-11 17:10 北京",
