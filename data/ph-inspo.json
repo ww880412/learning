@@ -24,6 +24,212 @@
   ],
   "days": [
     {
+      "date": "2026-11-13",
+      "source": "https://www.producthunt.com/leaderboard/daily/2026/11/13",
+      "fetched": "2026-11-14 17:10 北京",
+      "note": "榜单页只取到前 10 名；第 14、16 名的排名和综合分来自 PH 产品页的日榜名次，以及 hunted.space（其前 10 名分数与官网日榜一致）。第 1 名 Templify AI（iPhone 模板剪辑）、第 2 名 Filament by Galaxy（Apache-2.0 数据复制引擎，偏数据工程，未核到面向 agent 的独立产品层）、第 9 名 Paxper、第 10 名 Google Pixel Tag 未收。decohack 标「11.13」实为太平洋 11/12 产品，已在昨日收录，今天还没有对应太平洋 11/13 的那篇。",
+      "picks": [
+        {
+          "id": "2026-11-13-expo-simulators",
+          "why": "给每个 agent 一台隔离的云端模拟器，用已有的本机驱动命令验证界面，并把录屏、截图和日志作为证据交回 PR，正好补上「能写代码却看不见自己做出了什么」这一环。",
+          "limit": "只在付费 EAS 方案上提供，按时长计费；没有真机，也替代不了本机已有的 Xcode / Android Studio 工作流。"
+        },
+        {
+          "id": "2026-11-13-qorqbot",
+          "why": "不另起一套模型运行时，而是围着已经在用的 Claude Code / Codex 加共享上下文、敏感动作签字，以及从会话里提炼可审查的技能和流程。",
+          "limit": "仍是 early access，macOS 应用还没公证；源码是 PolyForm Noncommercial，不是 OSI 开源，商用要按人授权（官网称 2027-01-01 前免费）。"
+        },
+        {
+          "id": "2026-11-13-burnstate",
+          "why": "把 Claude Code / Codex / Cursor 的限额对照时间窗口来看，并在不离开当前窗口的卡片里处理权限询问，正好是日常会撞上的两件事。",
+          "limit": "只要 Mac；一个 Mac 目前只跟当前那一个 Claude Code 账号；费用是按公开 API 单价从本地日志估算的，不是订阅实扣。"
+        }
+      ],
+      "items": [
+        {
+          "name": "Expo Simulators",
+          "tagline": "Cloud simulators built for agents",
+          "ph": "https://www.producthunt.com/products/expo",
+          "site": "https://expo.dev/services/simulators",
+          "repo": "",
+          "rank": 16,
+          "score": 83,
+          "comments": 3,
+          "what": "Expo 推出的云端 iOS 模拟器 / Android 模拟器服务，coding agent、CI 或同事可以用同一套命令安装构建、驱动应用并取回录屏和日志，不必在本机跑模拟器。",
+          "problem": "agent 能写代码，却常常看不见自己做出的界面；本机模拟器又吃资源、难并行，云端沙箱或非 Mac 环境更是没有 iOS 模拟器。",
+          "highlight": "官网和文档称：①每个会话跑在独立虚拟机上，多个 agent 不会抢同一台模拟器；②agent 用和本地相同的 agent-device、Argent 或 Appium 命令驱动，也可用浏览器实时预览，或开 web-preview-only 只给人看；③会话结束留下整段录屏、截图、日志，以及网络和 CPU/内存等证据，可挂到 PR 上；④用官方 skill：`npx skills@latest add expo/skills --skill eas-simulator`，或 `npx eas-cli@latest simulator --platform ios`；也可从 REST API、EAS Workflows、GitHub Actions 启动。⑤构建可来自 EAS Build、任意 URL，或装 Expo Go 再连本地 Metro 做 Fast Refresh；官网称 Expo、React Native、SwiftUI、Jetpack Compose、Flutter、Unity 等面向模拟器的构建都能跑。⑥会话最长 2 小时，可设更短上限和空闲超时，结束后控制端点关闭，证据留在会话页。需要付费 EAS 方案；按时长计费，官网称 iOS/Android 均为每分钟 $0.10，Starter / Production / Enterprise 在 2027 年前每月含 60 分钟。没有真机。这些能力来自 Expo 博客和文档，雷达未收录（这是托管服务，不是开源仓库）。",
+          "inspo": "工作台可以把「验证」从本机模拟器里拆出来，变成每个 agent 一份隔离的云端设备：启动时带上构建、最长时长和空闲超时，结束时强制回收，避免忘了关还在计费；驱动接口尽量兼容 agent 已经会用的本机命令，同时把录屏、截图、日志作为证据交回 PR，而不是只贴一段代码 diff。前提是工作台能给后台 agent 发 CLI/API 凭证，并且任务里已经标明要验证的是哪一个构建、哪一条用户路径。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "AI工具"
+          ],
+          "id": "2026-11-13-expo-simulators",
+          "slug": "expo-simulators",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "qorqbot",
+          "tagline": "Proactive agent for business work",
+          "ph": "https://www.producthunt.com/products/qorqbot",
+          "site": "https://qorqbot.com",
+          "repo": "https://github.com/49-Agents/qorqbot",
+          "rank": 7,
+          "score": 113,
+          "comments": 11,
+          "what": "一层跑在你已有 Claude Code / Codex 等 harness 外面的主动式业务 agent：在本机（或浏览器仪表盘）上带着共享上下文和运营工具干活，敏感动作要你签字。",
+          "problem": "日常的客户沟通、CRM、长任务，往往还得另找一套 agent；已有的编程订阅又用不在这些流程上，中间缺少把注意力和审批收回来的一层。",
+          "highlight": "仓库 49-Agents/qorqbot（Python，许可证为 PolyForm Noncommercial 1.0.0，不是 OSI 开源）和 README 写明：它「围绕已有 agent harness 工作」，补上共享上下文、运营工具和协作界面；运营层用来处理客户、CRM、表格和沟通；Signoffs 卡住敏感动作，等你批准。作者在 PH 发布说明里称还有 Overseer，会读会话记录并建议对 agent 层的「delta」（新技能、插件、流程、工具），并对所运行的 harness 有完整控制权。本机需要先装并登录 `claude` 或 `codex` CLI，Mac 要 Apple 芯片 + macOS 14+，还要 python@3.12、git、tmux；也可在浏览器打开 127.0.0.1:1049 的仪表盘，Windows 走 WSL2 Ubuntu 24.04。首次安装进 `~/Qorqbot/qorqbot`，用邮箱验证码登录。目前是 early access，macOS 应用尚未公证。个人和非商用免费；官网称商用按人授权，2027-01-01 前商用免费，之后 $20/人/月或年付 $10/月，agent 不另算许可证。雷达尚未收录该仓库。",
+          "inspo": "工作台不必再做一套新的 harness，可以明确分成「harness 负责执行」和「外面这一层负责共享上下文、敏感动作签字、以及从会话里提炼可审查的规则/技能」。签字要绑到具体对象（这封邮件、这个附件、这个收件人），草稿若在等待期间改过，就作废重审。前提是工作台已经能接上 Claude Code / Codex 这类现成 CLI，并且能把「提议的规则变更」和「一次对外发送」分成两道人审。",
+          "tags": [
+            "coding agent",
+            "AI工具",
+            "开发者工具"
+          ],
+          "id": "2026-11-13-qorqbot",
+          "slug": "qorqbot",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Burnstate",
+          "tagline": "Claude Code, Codex & Cursor limits, paced in your menu bar",
+          "ph": "https://www.producthunt.com/products/burnstate",
+          "site": "https://burnstate.dev",
+          "repo": "",
+          "rank": 14,
+          "score": 90,
+          "comments": 21,
+          "what": "原生 Mac 菜单栏应用，把 Claude Code、Codex、Cursor 和 Vercel AI Gateway 的限额对照时间窗口来看，并在不抢焦点的卡片里处理权限询问。",
+          "problem": "「已用 60%」看不出这窗口还剩多久；5 小时额度经常在任务做到一半时耗尽，你还得切到终端去点允许或回答问题。",
+          "highlight": "官网称：每条限额旁有白色刻度表示窗口已过去的时间，进度超前就说明烧得比时钟快，并预估何时会耗尽。限额数字来自 Anthropic、OpenAI、Cursor 账户接口，约每 5 分钟刷新；Claude Code 和 Codex 同时看 5 小时和周限额，Claude 若有单模型周限额会单独一条。作者在 PH 上补充：阈值目前各工具相同，剩余不足 15% 或进度超前时钟超过 20% 时提醒；预估用的是窗口开始以来的平均速率。Token 和费用来自本机日志，按公开 API 单价估算（含缓存读写），不是订阅实扣；Cursor 则用 Cursor 自己的数字。Claude Code 的权限询问、选择题和回合结束会以不抢焦点的卡片弹出，可直接允许、拒绝或作答。Cooldown 只看键盘鼠标空闲，休息只计真正离开的时间，agent 可继续跑。年报以链接分享，数字写在链接里，不上传。无需账号、无分析、无 Burnstate 服务器，用你 Mac 上已有登录。系统要求官网写 macOS 15 Sequoia+（Apple Intelligence 洞察需 macOS 26 Tahoe 和 Apple 芯片）。定价官网写月付 $3.99 或一次买断 $49.99（1 台 Mac，$69.99/2 台，$89.99/3 台），也有年付 $24.99；PH 发布帖曾写 macOS 26.5 起、买断 $12 起，与当前官网不一致，以官网为准。目前一个 Mac 只跟当前那一个 Claude Code 账号。",
+          "inspo": "限额不要只显示百分比，把「窗口已经过去多少」和「额度用了多少」画在同一根尺子上，并按窗口开始以来的平均速率预估耗尽时间；权限询问用一张不抢焦点的卡片答完，不必切回终端。前提是工作台拿得到各家账户的限额和重置时间，以及本机会话日志，并且能在不打断当前前台应用的情况下把允许/拒绝收回来。",
+          "tags": [
+            "开发者工具",
+            "效率",
+            "coding agent"
+          ],
+          "id": "2026-11-13-burnstate",
+          "slug": "burnstate",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Gemini 4 Hydrogen",
+          "tagline": "Fast agentic development for coders",
+          "ph": "https://www.producthunt.com/products/gemini-6",
+          "site": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/introducing-gemini-4-hydrogen/",
+          "repo": "",
+          "rank": 6,
+          "score": 142,
+          "comments": 2,
+          "what": "Google 新推出的 Gemini 4 系快速执行模型，面向日常编码和 agent 工作流，也可在 Google Antigravity 里与 Carbon / Argon 组成 Orchestrator，在同一会话里自动切换。",
+          "problem": "前沿模型适合做计划和难推理，但整段任务都用它们又慢又贵；需要一个更快、更守指令的执行模型来写代码、跑测试和验证。",
+          "highlight": "官网称模型 id 为 `gemini-4-hydrogen`，统一 1,048,576 token 上下文（输入、思考、输出共用），长输出可用 background 或 continuation token 到最多 1M；思考档为 low / medium / high（默认）和新增的 xhigh。API 官网报价整个窗口统一定价：输入 $1.50 / 百万 token，输出 $7.50 / 百万 token。在 Google AI Studio 和 Gemini API 的免费与付费档都可用，也进入 Gemini 应用、Search，以及付费 Google AI Pro / Ultra 的 Antigravity。官网介绍的 Orchestrator 会在同一会话里动态切换 Carbon 与 Hydrogen：Carbon 可先只读规划，Hydrogen 再写代码和跑测试，受阻再交回 Carbon。厂商在 Terminal-Bench 上称 Orchestrator 成功率接近 Carbon，平均少用 24% 配额、快 19%（博客一处写 Terminal-Bench 4.0，Antigravity 博客写 4.1，数字同为 24% / 19%，未独立验证）。Antigravity 博客称 Orchestrator (Carbon) 和 (Argon) 面向 Ultra，Pro 付费用户先提供 Orchestrator (Argon)。Google Cloud 文档还写明 Hydrogen 是短期 GA，最少提前 45 天通知退役；隐式缓存对 4096 token 以上的共享前缀自动生效，不支持显式上下文缓存。以上评测和「比 3.8 Flash 快 2.5 倍、少编造 5 倍以上」等数字均为官网或厂商自测，没有独立验证。",
+          "inspo": "工作台可以把「规划模型」和「执行模型」拆开，但对用户仍是一次会话：先用强模型只读探索并写出带重规划触发条件的计划，再交给更快的模型改代码、跑测试；失败就回到规划模型看现场、改计划。并行时让强模型当协调者，执行模型在隔离工作区里当工人和验证者。前提是工作台已经能按任务阶段选模型，并且每个工人有自己的工作区，不会改到同一份未提交文件。",
+          "tags": [
+            "coding agent",
+            "AI工具",
+            "开发者工具"
+          ],
+          "id": "2026-11-13-gemini-4-hydrogen",
+          "slug": "gemini-4-hydrogen",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Replicate（Letter）",
+          "tagline": "Turn Webflow/Framer app into a Claude/Codex project for free",
+          "ph": "https://www.producthunt.com/products/replicate-10",
+          "site": "https://letter.dev/replicate",
+          "repo": "",
+          "rank": 4,
+          "score": 214,
+          "comments": 13,
+          "what": "Letter 推出的免费迁移工具，把 Webflow、Framer、Squarespace 或 Wix 网站收成 GitHub 仓库里的 Next.js 或 Astro 项目，方便交给 Claude Code、Codex 或 Cursor 继续改。",
+          "problem": "从网站搭建器迁走时，图片 CDN、CMS 和压缩/混淆后的前端很难对齐，迁完的代码又往往不能直接交给 coding agent 接着做。",
+          "highlight": "官网称流程是四步：按桌面和手机宽度抓取整站；去掉搭建器运行时，公共框架收成组件、重复页面收成 Markdown；逐页构建并和原站做像素级对比，直到匹配；一次提交到你的 GitHub。图片转到开放 CDN 并做降采样；博客可迁到 CMS、Markdown 或 JSON；框架用 Next.js 或 Astro。官网写「完全免费」。这些是厂商说法，我没有亲自跑一次迁移来核对像素级一致或免费额度。注意这不是机器学习平台 Replicate。",
+          "inspo": "要把「不能进仓库的站点」交给 coding agent，先做一次可验证的收编：抓取、编译成可维护的组件和内容文件，再用像素对比当验收，最后只提交到用户自己的 GitHub。前提是用户拥有该站点、能授权读取，并且接受迁完后用 Next.js 或 Astro 而不是原来的搭建器来维护。",
+          "tags": [
+            "开发者工具",
+            "coding agent",
+            "AI工具"
+          ],
+          "id": "2026-11-13-replicate-letter",
+          "slug": "replicate-letter",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Claude Meetings",
+          "tagline": "Add Claude to your call and get work started as you talk",
+          "ph": "https://www.producthunt.com/products/claude",
+          "site": "https://claude.com/resources/articles/claude-meetings",
+          "repo": "",
+          "rank": 3,
+          "score": 276,
+          "comments": 13,
+          "what": "Anthropic 推出的会议功能（目前 beta）：Claude 作为可见参会者加入视频通话，边听边开始写文档、白板和待办，会后材料留在 claude.ai 的会议页。",
+          "problem": "开会时要另找人做笔记、会后才把讨论收成文档；普通会议机器人往往只出摘要，不会在通话中就把活干起来，工具调用的权限也不清楚。",
+          "highlight": "官方介绍称：可用语音或聊天向 Claude 提问，默认书面作答；用已连接工具前要经当事人许可，首次同意可记住，但语音提问时每次都要确认是谁在说。可在会议中一起写文档、白板和其他产物，笔记和待办由 Claude 来写。目前支持 Google Meet，其他会议平台「即将推出」；先向 Team 和 Enterprise 计划开放（Team 默认可用、管理员可关；Enterprise 需管理员打开）。默认不加入有组织外嘉宾的会议，中途进来也会离开，管理员可允许；对外会议里 Claude 只在聊天里发告知、不在那里回复，嘉宾发言仍会进笔记和转录。它保存转录、摘要和屏幕描述，不保存音频。加入时会作为参会者出现，并在聊天里发告知。与 Gong、Attention、Granola、Fireflies、Otter、Plaud 等的转录对接「即将提供」。Beta 期间，Team/Enterprise 的笔记和转录免费；通话中的回答若不走已连接工具也免费，走工具则计入用量；会议里做的文档和白板免费至 2027-02-10。零数据保留（ZDR）、HIPAA 就绪或客户管理密钥（CMEK）的组织在 beta 期间不可用。官方提醒：打开前需征得与会者同意转录。",
+          "inspo": "让 agent 进入一场正在进行的多人会话时，它应该是可见的参与者，并先在聊天里声明自己在场和在转录；写文档、白板可以当场开始，但调用个人工具必须落到「是谁在问、是否允许」上，语音触发每次都要确认说话人。对组织外的人，默认不要进会，即使进了也不在群聊里回答。会后所有产物归到这一场会议的页面，而不是散落在各个会话里。前提是工作台已经知道会议的组织边界（谁是内部、谁是嘉宾），并能把工具权限记在具体的人而不是「这个房间」上。",
+          "tags": [
+            "效率",
+            "AI工具"
+          ],
+          "id": "2026-11-13-claude-meetings",
+          "slug": "claude-meetings",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Trainn MCP",
+          "tagline": "Create product videos and courses from any AI chat",
+          "ph": "https://www.producthunt.com/products/trainn",
+          "site": "https://trainn.co/mcp/",
+          "repo": "",
+          "rank": 5,
+          "score": 173,
+          "comments": 46,
+          "what": "Trainn 的 MCP 服务器，让 Claude、ChatGPT、Notion 或 Cursor 通过对话规划、制作和更新产品视频、帮助文章和课程，发布前必须你签字。",
+          "problem": "普通对话只能写出脚本或大纲，真要剪产品视频、组课程还得回到专用编辑器里手工做；产品一改，材料也容易过期。",
+          "highlight": "官网称把 `https://mcp.trainn.co/mcp` 加成自定义 MCP 即可。可把 Zoom、Loom、网络研讨会等录屏剪成带 AI 旁白和视觉效果的产品视频（官网写明不支持动画或动态图形）；也可把笔记或视频收成帮助文章，或用对话生成带课时、测验和证书的课程。产物先作为草稿，你发布后才上线。AI 可检索你在 Trainn 里的产品知识库，避免凭空写。14 天试用含全部 MCP 功能，之后方案官网称从 $19/月起。Trainn 称不用你的内容训练模型，并称符合 ISO 27001、SOC 2 和 GDPR。这些能力来自官网和帮助文档。",
+          "inspo": "把「做视频/课程」当成 MCP 工具交给已有的对话 agent，但工具只允许写到草稿，发布权留在人手里；更新时让 agent 先查已有的产品知识库，而不是重新编一份。前提是团队已经把录屏和产品说明放进同一个内容库，并且 MCP 的发布接口与写作接口是分开授权的。",
+          "tags": [
+            "创作",
+            "AI工具"
+          ],
+          "id": "2026-11-13-trainn-mcp",
+          "slug": "trainn-mcp",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Ganella",
+          "tagline": "Your Mac Dock, with live widgets for the apps you use",
+          "ph": "https://www.producthunt.com/products/ganella",
+          "site": "https://www.ganella.app/",
+          "repo": "",
+          "rank": 8,
+          "score": 106,
+          "comments": 14,
+          "what": "替换 macOS Dock 的原生应用，把常用 App 做成可点的直播件：正在放的歌、下一个日程、打开的浏览器标签，以及 Xcode 构建、终端和 Claude / Codex / ChatGPT 的状态。",
+          "problem": "Dock 只显示图标，要看构建是否在跑、agent 是否在干活、终端里是什么，还得切窗口；菜单栏小部件又和 Dock 是两套。",
+          "highlight": "官网称保留原 Dock 的徽章、放大、自动隐藏和堆叠，并加上约 20 个应用的直播件，包括 Spotify、Music、日历、邮件 / Outlook、备忘录、提醒、Xcode、Terminal / iTerm2 / Ghostty，以及 ChatGPT、Codex、Claude；Safari、Chrome、Arc 等浏览器可看打开的标签。另有剪贴板历史、应用文件夹、每块屏幕独立边缘和四种样式（含 Liquid Glass，需 macOS 26）。7 天全功能试用，无需账号；买断 $9.99，含后续更新，授权 2 台 Mac，14 天可退。需要 macOS 14 Sonoma+。权限按你启用的组件可选开。",
+          "inspo": "原生工作台可以把「正在跑的 agent / 终端 / 构建」做成和 Dock 图标一样一眼能看到、一点就能操作的状态块，而不只是通知。前提是工作台能从本机读到这些会话的状态（是否在跑、是否等你、最近输出），并且不把这个入口做成又一个要抢焦点的窗口。",
+          "tags": [
+            "效率",
+            "开发者工具"
+          ],
+          "id": "2026-11-13-ganella",
+          "slug": "ganella",
+          "status": "新发现",
+          "followups": []
+        }
+      ]
+    },
+    {
       "date": "2026-11-12",
       "source": "https://www.producthunt.com/leaderboard/daily/2026/11/12",
       "fetched": "2026-11-13 16:56 北京",
