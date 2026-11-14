@@ -3,7 +3,15 @@
  "label": "11 月 14 日 · 星期六",
  "href": "digest/2026-11-14.html",
  "json": "data/digest/2026-11-14.json",
- "brief": null,
+ "brief": {
+  "title": "X 简报 · 11/14（周六）",
+  "href": "x-brief/2026-11-13.html",
+  "lines": [
+   "Anthropic 的 Lydia Hallie 在 AI Engineer Code Summit 上重讲 Claude Code 最佳实践：面向 Claude 5.5 系列，默认改用 Opus 5.5 和 auto mode，CLAUDE.md 里不要再堆「重要」和感叹号，把真正不能做错的事写成拒绝规则、hooks 和 CI（作者整理演讲并对照官方文档）：meng shao 根据演讲写成文章，并核过官方文档（原帖、文章、演讲视频、最佳实践、auto mode 说明）；她说 Anthropic 内部已是几十个会话同时跑数小时，人更像在管理大批会话，而不是逐步批准；auto mode 是单独的分类器，会审查「在项目里读文件或改文件」之外的操作，默认只信任当前文件夹和当前仓库",
+   "Claude Code 2.1.323 静默去掉了 subagentStatusLine，后台子 agent 的上下文、花费、模型和推理强度不再显示；官方工程师已承认处理不当，并称宽限期预计下周一版本加回（issue 作者报告，官方已回应）：yibie 根据 GitHub issue #109446 整理（原帖、原文链接）；2.1.322 还会运行用户为每个子 agent 配置的状态栏命令，2.1.323 完全不调用，启动无警告，设置文件仍能加载，官方文档当时仍把该设置写成可用；默认行只剩名字和当前动作",
+   "OpenAI 公开了内部管理大批 OpenClaw 等持久运行 Agent 的做法：把网关等可信逻辑和模型执行拆开，用沙箱、Auto-review 和独立身份约束它们（官方博文；Peter Steinberger 转发）：北京时间 11/13 凌晨，OpenAI 的 Kevin 称公司里已有大批这类 Agent，并分享实践（原帖、官方博文）；Peter Steinberger 说这是他的团队写的（原帖）；博文把网关、网络、身份和沙箱视为可信的确定性代码，把 Agent 及其写出的代码视为不可信，并在开源 OpenClaw 里做了远程 harness，让网关跑在单独的容器或集群里"
+  ]
+ },
  "posters": {
   "title": "6 张技术海报",
   "href": "x-posters/2026-11-14/index.html",
