@@ -3,7 +3,15 @@
  "label": "11 月 15 日 · 星期日",
  "href": "digest/2026-11-15.html",
  "json": "data/digest/2026-11-15.json",
- "brief": null,
+ "brief": {
+  "title": "X 简报 · 11/15（周日）",
+  "href": "x-brief/2026-11-14.html",
+  "lines": [
+   "Anthropic 官方发文《Building always-on agents》：常驻只是使用体验，agent 大部分时间在睡，被事件叫醒后跑一个 run、存状态再睡；外围五个原语是事件收件箱、定时器、记忆、权限和发件箱。官方称 Opus 5.5 在一个长周期编程基准上，每解开一个任务比 Opus 5 便宜 78%，典型工作负载上只便宜 40%（官方文章）：作者 William Hu（官方文章）。收件箱是唯一事实来源，每inbox 同时只有一个 worker，可按来源 ID 去重、把连发消息合成一轮；定时器分跟进和排期，到期后往收件箱投事件；记忆只存查不到的东西，别处已有的只存指针；凭证不进 agent 环境，由外部代理注入，auto mode 用分类器拦高危动作，hook 可把 tool call 挂起等用户批准，期间 worker 可处理别的事；用户只收结果和少量细节，建议先少发、用评测再调消息量。meng shao、yibie、宝玉分别做了中文拆解（meng shao、文章、yibie、原文链接、宝玉）；花叔当天按该文在开源驾驶舱 FanBox 2.20.0 做了一版，终端 agent 等待而人不在时，微信或飞书会收到一句话（作者自测，原帖、跟进、仓库）",
+   "Addy Osmani 再次强调：大多数编码先用 Opus 5.5 的 medium（他也称这是 Claude Code 给 Opus 5.5 设的默认），吃力先加 effort，再把 Fable 5.2 留给大迁移和长时间无人值守；他引用的一项 52 任务评测里，Fable 并不明显更准，但每个解开任务大约贵 2.80 倍（作者经验，并对照官方开发者博客）：Addy 发帖并链到自己 11/9 在 claude.dev 写的选模型指南，官方建议大多数工作从 Opus 5.5 的默认 medium 起步，并写明它是 Claude Code 的默认模型，每输入/输出 token 价格是 Fable 5.2 的一半（原帖、选模型指南、补充）。他引用 Garry Tan 在 Claude Code 2.1.322 上 52 个编码任务的评测：Fable 5.2 解开约 82.7%，Opus 5.5 为 84.6%，但每个解开任务成本约 2.80 倍（Garry Tan）。向阳乔木的用法是先让 Opus 5.5 出方案，再让它「请求自己的 Fable 5.2 评估方案」，会另起智能体复审，他感觉能省至少 3 倍消耗；有人问为何不用 /advisor，他说目前只能选 Fable 5.1，「有点奇怪」（作者自测，原帖、省消耗、/advisor）",
+   "宝玉认为，Grokbot / Dots 那种「一个主会话」和 Claude Code 那种「一堆 Session」都不够好；他更看好把任务和作品从主会话里沉淀出来，并称自己在用的 Claude Duet 的 Tasks / 作品视图最接近（作者观点）：只有主会话时，子任务不好干预细节、不好补上下文；只盯主会话则既不好找做过哪些任务，也不好找产出，就像在微信群里翻文件（原帖、沉淀任务和成果）。评论里他说 Duet 偏办公效率，普通用户也许更喜欢 Grokbot 那种不必看见任务；他还认为先建 Project 再开 Session 对普通任务很反人性，Bot 默认带一个主会话更顺（Duet、最接近、Project/Session）。TestingCatalog 称 Claude Duet 已邀请所有在 waitlist 上的美国 Pro / Max / Ultra 用户（转述，原帖）"
+  ]
+ },
  "posters": {
   "title": "5 张技术海报",
   "href": "x-posters/2026-11-15/index.html",
