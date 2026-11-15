@@ -61,3 +61,4 @@
 | 旺旺 / Jev Engineering PDF Jev Engineering：KV cache 怎样决定 coding agent 的设计 | — | — | 2026-11-10 | — | — | — | — | — |
 | wibus.松 / Lody Agent 怎样睡下再被事件叫醒：Lody Automation 的持久化基底 | — | — | 2026-11-12 | — | — | — | — | — |
 | William Hu 常驻 agent：多数时间在休眠 | — | — | 2026-11-15 | — | — | — | — | — |
+| Feicai 用 Grok Bot + Codex 搭建多 Agent 团队：从架构设计到落地 | — | — | 2026-11-15 | — | — | — | — | — |
