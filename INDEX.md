@@ -7,5 +7,6 @@
 | 公开课 | courses/cs146s/INDEX.md | Stanford CS146S 2026 秋（逐讲笔记索引） | https://themodernsoftware.dev |
 | X 好文 | x-posts/huangtongxueh-ai-dev/huangtongxueh-ai-dev.html | 黄同学h《入职大厂两个月，我的 AI 开发心得》可视化学习页（原文存档：_private/x-articles/huangtongxueh-ai-dev.md，不发布） | https://x.com/huangtongxueh/status/2108577165306687938 |
 | X 好文 | x-posts/addy-agents-manager/addy-agents-manager.html | Addy Osmani《Your coding agents made you a manager》图文长读（制作材料在 _private，不发布） | https://x.com/addyosmani/status/2119332146485891501 |
+| 技术研究 | research/always-on-agents/always-on-agents.html | William Hu《Building always-on agents》全文讲解（2026-11-15 制作，未学完；下次从核心应用题开始。精读版已加密） | https://claude.com/resources/articles/building-always-on-agents |
 
 其他：inbox.md 待学收件箱 · review.md 复习队列 · glossary.html 概念卡 · 旧路径 cs146s/、x-articles/ 是指向新位置的快捷方式。

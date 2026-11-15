@@ -60,3 +60,4 @@
 | Smartpig / LangChain Managed Deep Agents v0.10：给 Agent 一个浏览器，把长任务放到后台 | — | — | 2026-11-09 | — | — | — | — | — |
 | 旺旺 / Jev Engineering PDF Jev Engineering：KV cache 怎样决定 coding agent 的设计 | — | — | 2026-11-10 | — | — | — | — | — |
 | wibus.松 / Lody Agent 怎样睡下再被事件叫醒：Lody Automation 的持久化基底 | — | — | 2026-11-12 | — | — | — | — | — |
+| William Hu 常驻 agent：多数时间在休眠 | — | — | 2026-11-15 | — | — | — | — | — |

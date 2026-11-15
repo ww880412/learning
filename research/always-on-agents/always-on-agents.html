@@ -1,0 +1,505 @@
+<!DOCTYPE html><html lang="zh-CN" class="layout-article" data-layout="article"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<script>(function(){var v;try{v=localStorage.getItem('site-theme')}catch(e){}document.documentElement.dataset.theme=/^[ABC]$/.test(v||'')?v:'C'})();
+(function(){var k='theme',s=localStorage.getItem(k);if(s?s==='dark':matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark');
+window.__tt=function(){var f=function(){var d=document.documentElement.classList.toggle('dark');localStorage.setItem(k,d?'dark':'light')};if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.startViewTransition(f);else f()}})();</script>
+<title>常驻 agent：多数时间在休眠</title><style>
+/* Site tokens copied verbatim, in cascade order, from ref/site-assets/site.css. */
+:root{--paper:#f6f7f9;--sheet:#fff;--card:#fff;--ink:#111827;--ink2:#4b5563;--meta:#6b7280;--hair:#e5e7eb;--hair2:#eef0f3;--blue:#2563eb;--blue-soft:#eff4ff;--red:#dc2626;--red-soft:#fef2f2;--green:#16a34a;--green-soft:#f0fdf4;--amber:#b45309;--amber-soft:#fffbeb;--purple:#7c3aed;--purple-soft:#f5f3ff;--font:system-ui,-apple-system,"PingFang SC","Noto Sans SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;--serif:var(--font);--mono:ui-monospace,SFMono-Regular,Menlo,monospace;--r-lg:12px;--r-sm:8px;--grad:none;color-scheme:light}
+html.dark{--paper:#0f1115;--sheet:#171a21;--card:#171a21;--ink:#e5e7eb;--ink2:#b6bcc6;--meta:#9ca3af;--hair:#2a2f3a;--hair2:#20242c;--blue:#7aa2ff;--blue-soft:rgba(122,162,255,.12);--red:#f87171;--red-soft:rgba(248,113,113,.12);--green:#4ade80;--green-soft:rgba(74,222,128,.12);--amber:#fbbf24;--amber-soft:rgba(251,191,36,.12);--purple:#c4b5fd;--purple-soft:rgba(196,181,253,.14);color-scheme:dark}
+[data-theme=B]{--paper:#fbfbfc;--sheet:#fff;--card:#fff;--ink:#16171a;--ink2:#4a4c55;--meta:#6e707a;--hair:#ececf0;--hair2:#f2f2f5;--blue:#5e6ad2;--blue-soft:#eef0fb;--red:#d4483b;--red-soft:#fdf0ee;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif}
+html.dark[data-theme=B]{--paper:#0e0f12;--sheet:#16171b;--card:#16171b;--ink:#e8e9ed;--ink2:#b3b5bd;--meta:#8b8d97;--hair:#26272d;--hair2:#1f2025;--blue:#8b93f0;--blue-soft:rgba(139,147,240,.14);--red:#f0776b}
+[data-theme=A]{--paper:#f7f4ee;--sheet:#fffdf9;--card:#fffdf9;--ink:#2b2722;--ink2:#5f574e;--meta:#8a8076;--hair:#e6dfd3;--hair2:#efe8dc;--blue:#b4532a;--blue-soft:#f6e1d6;--red:#a2461f;--red-soft:#f6e1d6;--green:#5f7a3a;--green-soft:#e7ecd9;--purple:#7a5a8c;--purple-soft:#eee4f1;--serif:"Noto Serif CJK SC","Noto Serif SC","Songti SC",serif;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif}
+html.dark[data-theme=A]{--paper:#1b1814;--sheet:#23201b;--card:#23201b;--ink:#ede6da;--ink2:#c7bdaf;--meta:#9b9184;--hair:#3a342c;--hair2:#2d2923;--blue:#e08a5f;--blue-soft:rgba(224,138,95,.15);--red:#e8916a;--red-soft:rgba(232,145,106,.15)}
+[data-theme=C]{--paper:#f3f5fb;--sheet:#fff;--card:#fff;--ink:#1d2340;--ink2:#5a6185;--meta:#8a90ad;--hair:#e6e9f4;--hair2:#eef0f7;--blue:#3b5bfd;--blue-soft:#e8edff;--red:#d4483b;--red-soft:#ffe6e3;--green:#1f9d5c;--green-soft:#e3f7ec;--amber:#d9771e;--amber-soft:#fff1e0;--purple:#7a4bf5;--purple-soft:#f2eaff;--r-lg:20px;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif;--sh:0 1px 2px rgba(30,40,90,.04),0 8px 24px rgba(30,40,90,.06)}
+html.dark[data-theme=C]{--paper:#0f1222;--sheet:#181c33;--card:#181c33;--ink:#e6e9fb;--ink2:#aab0d0;--meta:#7d84a8;--hair:#272c48;--hair2:#20253f;--blue:#7d93ff;--blue-soft:rgba(125,147,255,.15);--red:#ff8a7d;--red-soft:rgba(255,138,125,.15);--green-soft:rgba(31,157,92,.18);--amber-soft:rgba(217,119,30,.18);--purple-soft:rgba(122,75,245,.2);--sh:0 1px 2px rgba(0,0,0,.3)}
+:root{--acc2:#8b5cf6;--ease:cubic-bezier(.22,1,.36,1)}
+[data-theme=A]{--acc2:#c98a2b}
+html.dark[data-theme=A]{--paper:#181512;--sheet:#211d18;--card:#211d18;--meta:#a89d8f;--hair:#382f26;--acc2:#e3b15c}
+[data-theme=B]{--paper:#fafafb;--blue:#5b5bd6;--blue-soft:#efeffc;--acc2:#a855f7}
+html.dark[data-theme=B]{--paper:#0c0d10;--sheet:#14151a;--card:#14151a;--ink:#ececf1;--ink2:#babcc6;--meta:#9597a3;--hair:#262830;--hair2:#1c1d23;--blue:#9198ff;--blue-soft:rgba(145,152,255,.14);--acc2:#c084fc}
+[data-theme=C]{--acc2:#06b6d4}
+html.dark[data-theme=C]{--meta:#a3a9b8;--acc2:#22d3ee}
+html.dark{--meta:#a1a7b3}
+[data-theme=B]{--paper:#eef1f5;--hair:#dfe4ea;--hair2:#eef1f5;--green:#16a34a}
+html.dark[data-theme=B]{--paper:#0b0d12;--hair:#252a35;--hair2:#1a1e27}
+[data-theme=C]{--blue:#7b5cff;--blue-soft:#f0ecff;--acc2:#ff5e8a}
+html.dark[data-theme=C]{--paper:#0b0b0f;--sheet:#15151c;--card:#15151c;--ink:#f2f2f5;--ink2:#b8b8c6;--meta:#9a9aab;--hair:#26262f;--hair2:#1d1d25;--blue:#a08bff;--blue-soft:rgba(160,139,255,.14)}
+:root{--sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:24px;--sp-6:32px;--fs-xs:12px;--fs-sm:13.5px;--fs-md:15px;--fs-lg:18px;--fs-xl:24px;--fs-2xl:32px;--r-xs:6px;--r-sm:8px;--r-md:10px;--r-lg:12px;--r-xl:18px;--r-pill:999px;--sh-1:0 1px 2px rgba(15,23,42,.06);--sh-2:0 4px 16px -8px rgba(15,23,42,.22);--sh-3:0 14px 30px -12px rgba(15,23,42,.28);--dur-1:120ms;--dur-2:220ms;--dur-3:420ms;--ease:cubic-bezier(.22,1,.36,1);--ease-in-out:cubic-bezier(.65,0,.35,1);--spring:cubic-bezier(.34,1.3,.64,1);--icon-stroke:2}
+:root{--spring:linear(0,.0089,.0346,.0752,.1286,.1927,.2654,.3445,.4278,.5131,.5983,.6812,.7598,.8325,.8981,.9555,1.0042,1.0441,1.0753,1.0982,1.1134,1.1218,1.1243,1.1218,1.1155,1.1062,1.0949,1.0825,1.0697,1.0571,1.0451,1.034,1.0242,1.0157,1.0085,1.0027,.9982,.995,.9928,.9916,.9912,.9914,.9921,.9931,.9943,.9956,.9968,.998,.999,1)}
+html.dark{--sh-1:0 1px 2px rgba(0,0,0,.4);--sh-2:0 4px 16px -8px rgba(0,0,0,.6);--sh-3:0 14px 30px -12px rgba(0,0,0,.7)}
+/* Five reading levels: title / section / subsection / body / note. */
+:root{--reading-width:680px;--toc-width:208px;--rail-width:180px;--reading-gap:28px;--top-height:56px;--body-size:18px;--body-leading:1.8;--finish-space:104px}
+*{box-sizing:border-box}html{scroll-padding-top:72px}html,body{margin:0;background:var(--paper);color:var(--ink);font:var(--body-size)/var(--body-leading) var(--font);-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}a{color:var(--blue);text-underline-offset:3px;overflow-wrap:anywhere}a:hover{text-decoration-thickness:2px}button,input,textarea,select{font:inherit;color:inherit}button,a,summary{touch-action:manipulation}button{cursor:pointer}button:disabled{opacity:.5;cursor:default}:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+h1,h2,h3{color:var(--ink);font-family:var(--serif);line-height:1.35;letter-spacing:-.02em;overflow-wrap:anywhere}h1{font-size:var(--fs-2xl);margin:8px 0 16px}h2{font-size:var(--fs-xl);margin:8px 0 16px}h3{font-size:var(--fs-lg);margin:24px 0 8px}p{margin:0 0 12px}ul,ol{padding-left:24px}li{margin:4px 0}code{font:.88em var(--mono);background:var(--hair2);padding:1px 4px;border-radius:var(--r-xs)}pre{overflow:auto;white-space:pre;tab-size:4;font:14px/1.65 var(--mono);padding:16px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-md);margin:12px 0}pre code{font:inherit;white-space:inherit;background:none;padding:0}
+.i{display:inline-block;vertical-align:middle;flex:none;width:18px;height:18px;stroke-width:2}.btn,button.opt{min-height:44px;border:1px solid var(--hair);border-radius:var(--r-sm);background:var(--sheet);padding:8px 14px;font-size:var(--fs-md);font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:6px}.btn:hover{border-color:var(--blue);background:var(--blue-soft)}.btn.main{background:var(--blue);color:var(--sheet)}.btn.sm{font-size:var(--fs-sm)}textarea{display:block;width:100%;padding:10px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-sm);resize:vertical}
+.top{position:fixed;inset:0 0 auto;height:var(--top-height);z-index:30;display:flex;align-items:center;gap:16px;padding:0 20px;background:var(--paper);border-bottom:1px solid var(--hair)}.top .course{font-size:var(--fs-sm);font-weight:700;max-width:35vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.top .track{flex:1;height:4px;background:var(--hair);border-radius:var(--r-pill);overflow:hidden}.top .track i{display:block;width:0;height:100%;background:var(--blue);transition:width var(--dur-2) var(--ease)}.top .count{font-size:var(--fs-sm);max-width:32vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.toc-toggle{min-width:44px}.top .theme-toggle{font-size:var(--fs-sm);min-height:44px}
+.layout-article .deck,.layout-pair .deck{padding:80px 20px calc(var(--finish-space) + env(safe-area-inset-bottom));max-width:720px;margin:0 auto;min-width:0}.layout-article .sec{position:relative;margin:0 0 32px;padding-top:16px;border-top:1px solid var(--hair);scroll-margin-top:72px;min-width:0}.layout-article .hero{border:0;padding-top:0}.kicker,.meta,.src,.source-anchor,figcaption,caption,.aside{font-size:var(--fs-sm);line-height:1.65}.kicker{display:block;color:var(--blue);font-weight:700}.lede{font-size:var(--fs-lg);font-weight:600}.links{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:var(--fs-sm)}.links a{display:inline-flex;align-items:center;min-height:44px}.src{margin:16px 0 0;padding-top:8px;border-top:1px solid var(--hair);color:var(--ink2)}.source-anchor{display:block;color:var(--ink2);margin-top:6px;overflow-wrap:anywhere}.source-anchor a{min-height:44px;display:inline-flex;align-items:center}.src.extra::before{content:'补充 · ';color:var(--amber)}.src.official::before{content:'官方 · ';color:var(--blue)}.src.article::before{content:'原文 · ';color:var(--blue)}
+.toc{position:fixed;left:max(20px,calc((100vw - 1192px)/2));top:76px;width:var(--toc-width);max-height:calc(100dvh - 180px);overflow:auto;font-size:var(--fs-sm);line-height:1.5;z-index:25}.toc ol{list-style:none;margin:0;padding:0}.toc a{display:flex;gap:8px;align-items:center;min-height:44px;padding:6px 10px;color:var(--ink2);text-decoration:none;border-radius:var(--r-sm)}.toc a[aria-current=true]{background:var(--blue-soft);color:var(--blue);font-weight:700}.toc b{display:block;margin:0 10px 8px}.toc-backdrop{display:none}.tldr,.argmap{padding:16px;background:var(--blue-soft);border-radius:var(--r-lg);margin:16px 0}.tldr a,.argmap a{display:block;min-height:44px;align-content:center}.argmap ol{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 16px;margin:0}.points{padding:12px 16px 12px 36px;background:var(--hair2);border-radius:var(--r-md)}
+figure.orig,figure.redraw,.figure{margin:20px 0;min-width:0}figure img{display:block;max-width:100%;height:auto;border:1px solid var(--hair);border-radius:var(--r-md);cursor:zoom-in;background:var(--sheet)}figcaption{margin-top:8px;color:var(--ink2)}figcaption b{color:var(--ink)}.how{margin-top:6px}.table{margin:20px 0;overflow-x:auto}.table table,table.data{width:100%;border-collapse:collapse;background:var(--sheet);font-size:var(--fs-md)}th,td{border-bottom:1px solid var(--hair);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--hair2)}caption{text-align:left;font-weight:700;padding:8px 0}.table-note{font-size:var(--fs-sm);color:var(--ink2)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;margin:16px 0}.stat{padding:12px 14px;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet)}.stat b{display:block;font-size:var(--fs-xl);line-height:1.35;color:var(--blue);font-variant-numeric:tabular-nums}.stat span{display:block;font-size:var(--fs-sm);color:var(--ink2)}.stat .source-anchor{font-size:var(--fs-xs)}
+blockquote.quote{margin:16px 0;padding:12px 16px;border-left:3px solid var(--blue);background:var(--sheet)}.quote cite{display:block;font-style:normal;font-size:var(--fs-sm);color:var(--ink2)}.callout{padding:12px 16px;margin:16px 0;border-left:3px solid var(--blue);background:var(--blue-soft);border-radius:0 var(--r-sm) var(--r-sm) 0}.callout.limit{border-color:var(--amber);background:var(--amber-soft)}.callout.extra{border:1px dashed var(--meta);background:var(--sheet)}.callout.myth{border-color:var(--amber);background:var(--hair2)}.callout.limit::before{content:'作者的限定 · ';font-weight:700}.aside{padding:12px;border-left:2px solid var(--hair);color:var(--ink2);margin:12px 0}
+.stories,.compare,.roles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}.story,.compare>div,.roles>div{padding:12px;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);font-size:var(--fs-md)}.story b,.roles b{display:block}.story dt{font-weight:700;color:var(--ink2);font-size:var(--fs-sm)}.story dd{margin:0 0 8px}.story p,.story .fix{display:block;margin:8px 0}.steps,.ladder{display:grid;gap:8px;padding:0;list-style:none;counter-reset:step}.steps>li,.ladder>li{padding:10px 14px;background:var(--hair2);border-radius:var(--r-sm);counter-increment:step}.steps>li::before{content:counter(step)'. ';color:var(--blue);font-weight:700}.ladder i{font-style:normal;font-weight:700;margin-right:8px}.matrix{border:1px solid var(--hair);padding:16px;border-radius:var(--r-md)}.matrix .axes{font-size:var(--fs-sm);color:var(--ink2)}.matrix ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));list-style:none;padding:0;gap:1px;background:var(--hair)}.matrix li{margin:0;padding:16px;background:var(--sheet)}.refs{font-size:var(--fs-sm);line-height:1.7}.refs a{display:inline-block;min-height:44px;align-content:center}.thread{border-left:2px solid var(--hair);padding-left:16px}.formula{padding:16px;border:1px solid var(--hair);overflow:auto}.formula math{font-size:var(--fs-xl)}details.more{margin:12px 0;border-top:1px solid var(--hair);font-size:var(--fs-md)}summary{min-height:44px;cursor:pointer;display:flex;align-items:center;gap:8px}summary .i{transition:transform var(--dur-1)}details[open] summary .i{transform:rotate(90deg)}
+/* Shared interactive components. No fixed page/card height. */
+.flow-scroll{max-width:100%;overflow-x:auto;min-width:0;touch-action:pan-x pan-y}.flow-scroll svg.flow{display:block;width:100%;height:auto;min-height:0}.flow-tip{font-size:var(--fs-sm);color:var(--ink2)}.fl-node rect{fill:var(--sheet);stroke:var(--hair);stroke-width:2}.fl-node text{font:600 17px var(--font);fill:var(--ink)}.fl-node .sub{font-size:13px;font-weight:400;fill:var(--ink2)}.fl-node.act rect{stroke:var(--blue);fill:var(--blue-soft);stroke-width:3}.fl-node.blue rect{stroke:var(--blue)}.fl-node.amber rect,.fl-node.red rect{stroke:var(--amber)}.fl-node.green rect{stroke:var(--green)}.fl-edge{fill:none;stroke:var(--meta);stroke-width:2}.fl-edge.act{stroke:var(--blue);stroke-width:3}.fl-elab{font:13px var(--font);fill:var(--ink2)}
+.sim{margin:16px 0;padding:12px;border:1px solid var(--hair);border-radius:var(--r-lg);background:var(--sheet);display:flex;flex-direction:column;gap:12px}.sim .ctl{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.sim .ctl label{min-height:44px;display:flex;align-items:center;gap:6px;font-size:var(--fs-sm)}.sim .ctl input[type=range]{min-width:110px}.sim .body{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}.sim .narr{order:-1;background:var(--blue-soft);padding:10px 12px;border-radius:var(--r-sm);font-size:var(--fs-md)}.sim .log{max-height:240px;overflow:auto;font:var(--fs-sm)/1.6 var(--mono)}.sim .msg{border-left:3px solid var(--hair);padding:8px;margin:6px 0;background:var(--paper);white-space:pre-wrap;overflow-wrap:anywhere}.msg b{display:block;font-family:var(--font)}.sim .msg.err{border-color:var(--amber)}.prediction{order:-2}.component-error{padding:16px;border:1px solid var(--amber);color:var(--amber)}
+.quiz{margin:16px 0;padding:16px;border:1px solid var(--hair);border-radius:var(--r-lg);background:var(--sheet)}.quiz .qn{font-size:var(--fs-sm);color:var(--ink2)}.quiz .qt{font-size:var(--fs-lg);font-weight:700;margin-bottom:12px}.quiz .opt{display:block;width:100%;text-align:left;margin:8px 0;font-weight:400}.quiz .opt.ok{border-color:var(--green);background:var(--green-soft)}.quiz .opt.no{border-color:var(--amber);background:var(--amber-soft)}.quiz .fb{margin:12px 0;font-size:var(--fs-md)}.quiz .nav{display:flex;gap:8px;margin-top:12px}.quiz label{display:block;font-size:var(--fs-sm)}.stack{display:grid;gap:6px;font-size:var(--fs-sm)}.stack .row{display:grid;grid-template-columns:28px 80px minmax(0,1fr);gap:8px;padding:8px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-sm)}.stack .t{overflow-wrap:anywhere;white-space:pre-wrap}.stack .new{background:var(--blue-soft)}.bar{display:grid;grid-template-columns:100px minmax(0,1fr) 80px;gap:8px;margin:8px 0;align-items:center;font-size:var(--fs-sm)}.bar .bt{height:20px;background:var(--hair2);border-radius:var(--r-xs);overflow:hidden}.bar .bt i{display:block;height:100%;background:var(--blue)}.bar .bn,.bar .bmiss{grid-column:2/4}.bars .bc{font-size:var(--fs-sm);color:var(--ink2)}
+/* Paired material stays inside its own container; highlighting never scrolls the page. */
+.pair.codewalk,.pair.read-pair,.pair.material-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start;margin:20px 0;position:relative;min-width:0}.pair-source{position:sticky;top:72px;max-height:calc(100dvh - 160px);overflow:auto;overscroll-behavior:contain;min-width:0;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);padding:12px;scroll-padding:16px}.pair-notes{min-width:0}.pair-notes .step{padding:16px 0 24px;border-top:1px solid var(--hair);scroll-margin-top:84px}.pair-notes .step.is-active{border-color:var(--blue)}.pair-source .source-block{padding:12px 8px;border-left:3px solid transparent}.pair-source .source-block.is-active{background:var(--blue-soft);border-color:var(--blue)}.source-text{overflow-wrap:anywhere}.pair-source pre{border:0;padding:0;margin:8px 0;overflow:visible}.code-line{display:block;min-height:1.65em;white-space:pre;padding-left:48px;position:relative}.code-line::before{content:attr(data-line);position:absolute;left:0;width:36px;text-align:right;color:var(--meta);user-select:none}.code-line.hl{background:var(--blue-soft)}.copy-code{position:static;flex:none;white-space:nowrap}.pair-source .source-anchor{font-size:var(--fs-xs)}
+/* A separate toolbar never shares the scrolling code viewport. */
+.heading-source{font-size:var(--fs-xs);margin:0 0 8px}
+.pair.codewalk{grid-template-columns:minmax(0,60%) minmax(0,1fr)}
+.code-panel{position:sticky;top:72px;display:flex;flex-direction:column;min-width:0;max-height:calc(100dvh - 160px);border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sheet);overflow:hidden}
+.code-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;flex:none;border-bottom:1px solid var(--hair);font-size:var(--fs-xs);color:var(--ink2)}
+.code-panel .pair-source{position:static;max-height:none;min-height:0;flex:1 1 auto;border:0;border-radius:0;box-shadow:none;overflow:auto}
+.code-panel .pair-source pre{width:max-content;min-width:100%}
+dialog.image-dialog{width:calc(100vw - 24px);max-width:none;max-height:92dvh;padding:12px;border:1px solid var(--hair);background:var(--sheet);color:var(--ink);border-radius:var(--r-md);overflow:auto}dialog::backdrop{background:rgba(0,0,0,.75)}.image-dialog img{max-width:none;width:max(100%,min(1400px,180vw));height:auto}.image-dialog .dialog-close{position:sticky;top:0;left:0}.image-open{min-height:44px;border:0;background:transparent;padding:0;display:block;cursor:zoom-in;max-width:100%}.image-open img{max-width:100%}
+/* Only CSS changes the unchanged finish.js button. High specificity beats injected styles. */
+html body .fin-btn{bottom:calc(16px + env(safe-area-inset-bottom));right:16px;min-height:44px;z-index:35}html body #quiz-return{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:35;max-width:45vw}
+@media(min-width:1180px){.layout-article .deck{width:var(--reading-width);max-width:none;padding-left:0;padding-right:0;margin-left:max(260px,calc((100vw - 1192px)/2 + 236px));margin-right:0}.layout-article .sec>.doc-body>figure,.layout-article .sec>.doc-body>.table,.layout-article .sec>.codewalk{width:calc(100% + 120px);margin-left:0}.layout-article .aside{position:absolute;left:calc(100% + 28px);top:24px;width:var(--rail-width);margin:0}.layout-article .aside~figure{width:100%}html.layout-article body .fin-btn{left:max(20px,calc((100vw - 1192px)/2));right:auto;max-width:208px}.layout-pair .deck{max-width:1280px;margin-left:236px;margin-right:20px}.layout-pair .toc{width:188px;left:20px}html.layout-pair body .fin-btn{left:20px;right:auto;max-width:188px}}
+@media(max-width:1179px){.toc{display:none;visibility:hidden;left:0;top:var(--top-height);width:min(360px,90vw);max-height:calc(100dvh - 72px);background:var(--sheet);padding:16px;border-right:1px solid var(--hair);border-bottom:1px solid var(--hair)}html.toc-open .toc{display:block;visibility:visible}html.toc-open .toc-backdrop{display:block;position:fixed;inset:var(--top-height) 0 0;background:rgba(0,0,0,.3);z-index:24}}
+@media(max-width:820px){:root{--body-size:17px}.layout-article .deck,.layout-pair .deck{padding-left:18px;padding-right:18px}.top{gap:8px;padding:0 12px}.top .course{display:none}.top .count{max-width:44vw}.top .track{min-width:24px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stories,.compare,.roles{grid-template-columns:minmax(0,1fr)}.argmap ol{grid-template-columns:minmax(0,1fr)}table.data thead,.table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}table.data,table.data tbody,table.data tr,table.data td,.table table,.table tbody,.table tr,.table td{display:block;width:100%}table.data tr,.table tr{padding:8px 12px;margin-bottom:8px;border:1px solid var(--hair);background:var(--sheet);border-radius:var(--r-md)}table.data td,.table td{border:0;padding:4px 0}td[data-label]::before{content:attr(data-label)'：';font-size:var(--fs-sm);font-weight:700;color:var(--ink2)}.table caption,table.data caption{display:block;width:100%}.pair.codewalk,.pair.read-pair,.pair.material-pair{display:block}.pair-notes{margin-top:12px}.code-panel{top:var(--top-height);max-height:40dvh;z-index:15}.pair-source{top:var(--top-height);max-height:40dvh;z-index:15;box-shadow:var(--sh-1)}.pair-notes .step{scroll-margin-top:calc(40dvh + 80px)}.flow-scroll svg.flow{width:var(--flow-width);max-width:none;height:var(--flow-height)}.sim .flow-scroll svg.flow{width:100%;height:auto}.stack .row{grid-template-columns:22px 64px minmax(0,1fr)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+@media print{.top,.toc,.fin-btn,#quiz-return,.toc-backdrop,.zoom-toggle,.code-toolbar{display:none!important}.layout-article .deck,.layout-pair .deck{margin:0;padding:0;max-width:100%;width:auto}.pair-source,.code-panel{position:static;max-height:none;overflow:visible}.sec{break-inside:auto}figure,.stat{break-inside:avoid}}
+/* Applies after legacy CSS too. Zoom is an intentional local viewport; non-zoom stays unnested. */
+html body .sim .flow-scroll.zoom{overflow:auto;max-height:40dvh;min-height:0;height:auto;overscroll-behavior:contain;scroll-padding:16px;padding:16px}
+html body .sim .flow-scroll.zoom svg.flow{width:var(--flow-width);min-width:var(--flow-width);height:var(--flow-height);max-height:none;flex:none}
+html body .sim .zoom-toggle{min-height:44px;justify-self:start}.layout-deck .sim .body{position:relative}.layout-deck .card{padding-bottom:8px}.layout-deck .deck{bottom:calc(92px + env(safe-area-inset-bottom))}
+html body .fin-btn{bottom:calc(16px + env(safe-area-inset-bottom));right:16px;min-height:44px}html.layout-deck .bottom{padding-right:170px;padding-left:12px;height:76px}.layout-deck .btn,.layout-deck .sim .branches label{min-height:44px}.layout-deck details.more summary::before{content:none}.layout-deck .fl-edge.act{animation:none}
+@media(max-width:820px){html.layout-deck .bottom{padding-right:12px;gap:8px}.layout-deck .bottom .btn{padding:8px 10px;font-size:13px}html.layout-deck body .fin-btn{padding:8px 12px;font-size:13px}.layout-deck .card.full:has(.sim)>.head-full{position:sticky;top:0;z-index:4;background:var(--sheet);padding-top:12px;padding-bottom:12px}.layout-deck .sim .body{overflow:visible}.layout-deck .card .stage:has(.sim){overflow:visible}.layout-deck .sim .flow-scroll:not(.zoom){overflow:visible}}
+
+.layout-deck .card.doc.on{display:block;overflow:auto;padding:24px}.layout-deck .card.doc .doc-body{overflow:visible}.layout-deck .hero.card{height:auto}
+
+/* Legacy .stage svg also matches button icons: keep Lucide at its declared size. */
+html body svg.i{width:18px;height:18px;max-height:none;flex:none}
+
+/* Below the desktop sidebar breakpoint, finish lives in the opaque top bar.
+   Reserve its width before laying out the title; keep the deck footer for paging. */
+@media(max-width:1179px){
+ html body .top{gap:8px;padding:0 132px 0 12px;z-index:40;background:var(--paper)}
+ html body .top .course{display:none}
+ html body .top .count{flex:1;min-width:0;max-width:none;font-size:var(--fs-sm);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ html body .top .track{position:absolute;left:12px;right:12px;bottom:0;height:2px;min-width:0}
+ html body .top .toc-toggle{width:44px;flex:none;padding:0}
+ html body .top .theme-toggle{flex:none;padding:8px;font-size:var(--fs-sm)}
+ html body .fin-btn{top:6px;bottom:auto;left:auto;right:12px;width:112px;max-width:112px;height:44px;padding:8px;font-size:13px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:41;box-shadow:none}
+}
+</style></head><body>
+<header class="top"><button class="btn toc-toggle" aria-label="打开目录" aria-expanded="false"><svg class="i i-menu" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h16"/></svg></button><span class="course">常驻 agent：多数时间在休眠</span><span class="track" role="presentation"><i></i></span><span class="count"></span><button class="btn theme-toggle" aria-label="切换深浅色">深浅色</button></header><main class="deck"><section class="sec hero" id="s1" data-toc="常驻是使用体验" data-source-section="s1">
+<p class="kicker extra">全文讲解约 20 分钟</p>
+<h1>Building always-on agents：多数时间在休眠</h1>
+<p class="meta extra">William Hu · 2026-11-13 · Applied AI @ Anthropic · Claude Platform · Best practices</p>
+<p class="lede" id="e01" data-points="p01">William Hu 这份指南讲的是产品里的常驻 agent。常驻指的是使用体验。agent 可以跨很多次 session 自己决定何时动手。</p>
+<p id="e01b" data-points="p01">底层仍是和其他 agent 一样的 <a href="https://www.anthropic.com/research/building-effective-agents">core loop</a>。差别在外围：什么时候醒、什么跨 run 留下、结果怎样到用户手里。</p>
+<p class="links extra"><a href="https://claude.com/resources/articles/building-always-on-agents">原文</a> <a href="always-on-agents-close.html">精读版</a></p>
+</section>
+<section class="sec" id="s2" data-toc="变便宜的是长任务" data-source-section="s1">
+<h2>作者把回潮主要归于判断力，以及长任务更便宜</h2>
+<p id="e02" data-points="p02">近几个月 always-on agents 又多起来。作者用 stateful 描述它们：跨 session 管上下文，没人盯着也会行动。</p>
+<p id="e03" data-points="p03">78% 只属于一项 long-horizon 编程基准：Opus 5.5 每解决一个任务，比 Opus 5 少 78%。40% 是 typical workloads 上的降幅，不是这项基准里的另一个数。</p>
+<div class="stats">
+<div class="stat" id="st78" data-points="p03" data-unit="%" data-source-lines="15"><b>78%</b><span>每解决一个任务。口径是作者点名的那一项 long-horizon 基准，对比 Opus 5。</span></div>
+<div class="stat" id="st40" data-points="p03" data-unit="%" data-source-lines="15"><b>40%</b><span>典型工作负载上的降幅。不是那项 long-horizon 基准的结果。</span></div>
+</div>
+<p class="callout limit" id="e03b" data-points="p03">78% 的范围是那一项基准、每解决一个任务。40% 的范围是典型工作负载。两数都不要写成所有任务的普遍降幅。出处链到成本优化文档。</p>
+<p id="e04" data-points="p04">Customers 已经来问怎样把这种体验放进自己的产品。有的想让现有 agent 更主动。有的打算从头搭。</p>
+<p class="src article"><span class="source-anchor" data-source-section="s1">出处：William Hu · <a href="https://claude.com/resources/articles/building-always-on-agents">开篇</a></span></p>
+</section>
+<section class="sec" id="s3" data-toc="run 与 session" data-source-section="s2">
+<h2>run 是醒着的那一轮，session 是这轮所在的记录</h2>
+<blockquote class="quote"><p id="q05" data-points="p05">An always-on agent is not actually “always on.”</p><cite>William Hu</cite><span class="source-anchor">出处：William Hu · <a href="https://claude.com/resources/articles/building-always-on-agents#the-cycle-behind-the-always-on-agent">The cycle behind the always-on agent</a></span></blockquote>
+<p id="e05" data-points="p05">always on 描述的是用户看到的体验。agent 大部分时间在睡，隔一阵醒过来干活。</p>
+<p id="e06" data-points="p06">一次醒来到做完，叫做 run。agent 收到事件，做完任务，再把发生的事存下来。run 发生在 session 里面。session 是消息和工具调用的记录。</p>
+<p id="e06b" data-points="p06">run 结束就回到睡眠。这个循环可以一直重复。</p>
+<figure class="orig" data-asset="img1" data-points="p07" id="f1"><img src="images/fig-01-timeline.gif" alt="Animated diagram of an always-on agent’s timeline: long stretches asleep with no tokens spent, broken by brief runs. Each run has four steps: an event arrives, a session starts, the agent loop runs, and the run writes back to stored state that carries over between runs."><figcaption><b>原图 1 · 时间轴</b><span class="how">怎么看：长灰段写着 Asleep、no tokens spent。醒过来的窄段展开成四步：事件到达、session 开始、agent loop、把状态写回。文件是动图，静帧只是其中一格。</span><span class="source-anchor">出处：William Hu · <a href="https://claude.com/resources/articles/building-always-on-agents#the-cycle-behind-the-always-on-agent">The cycle behind the always-on agent</a></span></figcaption></figure>
+</section>
+<section class="sec" id="s4" data-toc="五个组件" data-source-section="s3">
+<h2>外围架构是 event inbox、timer、memory、permissions、outbox</h2>
+<p id="e08" data-points="p08">event inbox 是事件的持久列表。timer 负责到点再叫醒。memory 留下查不回来的内容。permissions 管这次能不能自己做。outbox 管要不要把结果送给用户。</p>
+<p id="e08b" data-points="p08">下面按这个顺序看每件东西怎样接到 run 上。</p>
+</section>
+<section class="sec" id="s5" data-toc="事件先入 inbox" data-source-section="s4">
+<h2>来源不要直接叫醒 agent，先写入 event inbox</h2>
+<p id="e09" data-points="p09">多数 agent 只在用户发消息时跑。常驻 agent 还会被 webhook、定时任务和后台作业叫醒。</p>
+<p id="e09b" data-points="p09">每个来源直接调用 agent，会有两种失败。两个事件同时到，可能开出两场互相抢的 run。进程崩溃，事件会整个丢掉。</p>
+<p id="e10" data-points="p10">所以每个来源把事件送给 inbox，再由 worker 领取。最简单的版本有三件：durable list，通常是一张数据库表；handler，通常是 HTTP endpoint；worker，通常是 background service，负责从列表里读。</p>
+<p id="e11" data-points="p11">inbox 记下每条事件的状态。可以用源那边的唯一标识去掉重复。作者建议先按每个用户一个 inbox。需要更多并行时再拆开。这是建议，不是唯一合法的切法。</p>
+<p id="e11b" data-points="p11">handler 把事件写入 inbox，并唤醒 worker。worker 先读还没做的事件，再开始 run。接着先前工作的事件，例如用户的回复，恢复已有 session。其他事件新开 session。</p>
+<p id="e11c" data-points="p11">worker 把事件交给 agent loop，等 run 结束，再把对应事件标成完成。</p>
+<figure class="orig" data-asset="img2" data-points="p12" id="f2"><img src="images/fig-02-inbox.png" alt="Diagram of the event inbox. A handler (an HTTP endpoint) writes each event to the inbox, a database table that tracks status and drops duplicates, and wakes the worker. The worker reads what’s pending, starts the run, waits for it to finish, and marks the events done."><figcaption><b>原图 2 · event inbox</b><span class="how">怎么看：Handler 把事件写入表。同一 ID 送了两次的那行标成 dropped。worker 读 pending，启动 run，等结束后 mark done。</span><span class="source-anchor">出处：William Hu · <a href="https://claude.com/resources/articles/building-always-on-agents#the-core-primitives">The core primitives</a></span></figcaption></figure>
+</section>
+<section class="sec" id="s6" data-toc="一个 worker 与三种选择" data-source-section="s4">
+<h2>handler 快回执，inbox 是唯一事实来源，同时只有一个 worker</h2>
+<p id="e13" data-points="p13">handler 要尽快 acknowledge。有的 webhook 来源把慢响应当成失败。轻量检查可以留在 handler。提示注入这类更深的核对，放到 run 里面做。</p>
+<p id="e14" data-points="p14">inbox 是 source of truth。worker 被叫醒后，先从 inbox 拉最新事件。worker 若死在 run 中途，新的 worker 还能捡起同一条事件重试。</p>
+<p id="e15" data-points="p15">一个 inbox 同时只有 one active worker。这样两场 run 不会重复干活，也不会互相覆盖。</p>
+<p id="e15b" data-points="p15">run 进行中又来了新事件，作者给出三种做法，可以任选：推到 next，折进 current，或者 restart。文中没有规定只能用其中一种。</p>
+<p id="e16" data-points="p16">worker 应 batch pending events。用户连发几条消息时，可以合成一场 run，只回复一次。</p>
+</section>
+<section class="sec" id="s7" data-toc="timer 不自己开 run" data-source-section="s5">
+<h2>timer 存在另一张表里，到期后才变成 inbox 里的事件</h2>
+<p id="e17" data-points="p17">timer 和 event inbox 一起，agent 才能主动。timer 大体两类。follow-up 是 agent 给自己定的截止时间，例如去看对方回了没有。schedule 是已知节奏上的重复任务，例如每日简报。</p>
+<p id="e17b" data-points="p17">timer 放在自己的持久存储里，通常是另一张表，和 inbox 分开。inbox 里只放已经可以动手的事件。原文用的词是 only。两类 timer 的字段可以相近。schedule 还要记下重复规则。</p>
+<figure class="orig" data-asset="img3" data-points="p18" id="f3"><img src="images/fig-03-timers.png" alt="Diagram of timers. A run sets a timer in a database table, either a follow-up set by the agent or a schedule set by the user. A scheduler finds what’s due and adds an event to the event inbox, which starts the next run."><figcaption><b>原图 3 · timer</b><span class="how">怎么看：左边 run 写入 timer。Follow-up 的例子是周四 18:00，由 agent 设定。Schedule 的例子是周五 09:00 的每日简报，由图中文字标成用户设定。scheduler 找出到期项，写入 event inbox，再开始下一场 run。</span><span class="source-anchor">出处：William Hu · <a href="https://claude.com/resources/articles/building-always-on-agents#the-core-primitives">The core primitives</a></span></figcaption></figure>
+<p id="e19" data-points="p19">timer 自己不发起 run。scheduler 通常是后台服务，按固定间隔去扫这张表，把到期的触发掉。scheduler 可以自己写，也可以用持久执行引擎。原文没有给这个引擎的产品名或链接。</p>
+<figure data-asset="ex1" data-points="p20" id="ex1"><div class="example-text">Scans the store and finds timers that are due.
+Updates each timer based on its category.
+A follow-up should be marked as done.
+A schedule should get its due time updated to the next occurrence.
+Adds an event to the inbox and wakes the worker.</div><figcaption>原示例 1：scheduler 每一轮对到期 timer 做的事</figcaption><p class="source-anchor">出处：William Hu · <a href="https://claude.com/resources/articles/building-always-on-agents#the-core-primitives">The core primitives</a></p></figure>
+<p id="e20" data-points="p20">每一轮里，scheduler 先找出到期的 timer。follow-up 标成完成。schedule 把到期时间改到下一次。然后往 inbox 加一条事件，并唤醒 worker。</p>
+</section>
+<section class="sec" id="s8" data-toc="memory 只存查不到的" data-source-section="s6">
+<h2>memory 只留下以后查不到的内容，别处已有的只留指针</h2>
+<p id="e21" data-points="p21">常驻 agent 的 run 彼此断开，连续性靠 memory。memory 也要有自己的存储。Claude Code 的 <a href="https://code.claude.com/docs/en/memory">auto memory</a> 和 Messages API 的 <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/memory-tool">memory tool</a> 在产品里是一个文件目录。常驻 agent 要把这些目录映射到数据库或对象存储，这样 worker 停了，记忆还在。</p>
+<p id="e22" data-points="p22">经验法则是：memory 只放 agent 不能再查到的东西。事情已经在别的系统里，例如问题跟踪器，就只存一个 pointer。</p>
+<p id="e23" data-points="p23">User instructions: 用户关于 agent 行为的指令单独成文，每次 run 开始时加载。用户不会一直在旁边纠正，所以指令要跨 run 带上。</p>
+<p id="e24" data-points="p24">User notes: 记下角色、偏好和用户做过的纠正。可以从一个文件开始。变多以后拆成小文件。那时每次开头只加载索引，需要细节再把单个文件拉进上下文。</p>
+<p id="e25" data-points="p25">Past messages: 记下已经告诉过用户的话，避免重复。可以单独成文并在每次开头加载，也可以由 worker 载入最近几条和用户的消息。</p>
+<p id="e26" data-points="p26">Task progress: 每个进行中的任务有一份进度文件，写已经做了什么、还剩什么。新的 run 读这份文件接着做。和 user notes 一样，开头只加载索引，需要时再读具体文件。</p>
+<p id="e26b" data-points="p27">下面这张图是一种示例摆法，不是唯一目录结构。</p>
+<figure class="orig" data-asset="img4" data-points="p27" id="f4"><img src="images/fig-04-memory.png" alt="Diagram of an example memory setup as a directory of files. instructions.md, index.md, and reported.md are loaded at the start of every run, while the notes/ and progress/ folders are read when needed. The agent writes to memory during the run."><figcaption><b>原图 4 · memory 目录</b><span class="how">怎么看：左侧 run 在开始时加载 instructions.md、index.md、reported.md。run 进行中写回 memory。notes/ 和 progress/ 标的是需要时再读。</span><span class="source-anchor">出处：William Hu · <a href="https://claude.com/resources/articles/building-always-on-agents#the-core-primitives">The core primitives</a></span></figcaption></figure>
+</section>
+<section class="sec" id="s9" data-toc="dreaming 与上下文开销" data-source-section="s7">
+<h2>每次 run 都先付一笔上下文开销，压缩或新开 session 都会丢细节</h2>
+<p id="e28" data-points="p28">上面说的是 run 进行中写下的 memory。还可以加 dreaming：回看过去的 session，整理记忆。dreaming 可以换掉过时条目，也能找出只有跨很多 run 才看得到的模式。细节在 <a href="https://www.anthropic.com/research/components-of-agent-memory">agent memory</a> 那篇。</p>
+<p id="e29" data-points="p29">动手之前，agent 先加载系统提示、工具定义和 memory 文件。这笔开头的 context overhead 每次 run 都在。作者建议把它保持精简，并用 <a href="https://platform.claude.com/docs/en/build-with-claude/prompt-caching">prompt caching</a> 降低成本。这是建议。</p>
+<p id="e29b" data-points="p29">新 session 只有这笔开销，加上触发这次 run 的事件。已有 session 还会带回先前 run 的消息和工具调用。</p>
+<p id="e29c" data-points="p29">session 太长时，可以做 <a href="https://platform.claude.com/docs/en/build-with-claude/compaction">compaction</a>，也可以新开一个 session。两种做法都会丢掉细节。需要留下来的内容，要在过程中写进 memory。</p>
+<figure class="orig" data-asset="img5" data-points="p30" id="f5"><img src="images/fig-05-context.gif" alt="Animated chart of context used over time. A fixed band for the system prompt, tools, and memory is present on every run. An existing session brings back its whole transcript and grows until compaction turns the older transcript into a summary."><figcaption><b>原图 5 · 上下文随时间</b><span class="how">怎么看：底部一条固定带是 system prompt、tools、memory，每次 run 都在。已有 session 会把整段记录带回来，长到压缩后，较早的记录变成摘要。文件是动图。</span><span class="source-anchor">出处：William Hu · <a href="https://claude.com/resources/articles/building-always-on-agents#the-core-primitives">The core primitives</a></span></figcaption></figure>
+</section>
+<section class="sec" id="s10" data-toc="批准时 run 结束" data-source-section="s8">
+<h2>无人值守时，工具调用可以自己做、拦下，或停下来等批准</h2>
+<p id="e31" data-points="p31">Permissions 是风险最大的一块。一场 run 拿着用户的访问能力，而且按设计是无人看着的。每次工具调用，agent 要决定自己继续、拦下，还是等批准。</p>
+<p id="e31b" data-points="p31">用到的组件和其他 agent 相同。作者着重写了三件。</p>
+<p id="e32" data-points="p32">Credential store: 常驻 agent 常常需要密码或访问令牌才有用。推荐的做法是 agent 环境外面放一个代理。agent 发出的请求不带凭证。代理在转发前注入真正的凭证。文档在 <a href="https://code.claude.com/docs/en/agent-sdk/secure-deployment#credential-management">credential management</a>。</p>
+<p id="e33" data-points="p33">Auto mode: 常驻 agent 不能每一步都等人。Claude Code 里已经有一版 <a href="https://www.anthropic.com/research/claude-code-auto-mode">auto mode</a>。分类器审查风险较高的动作，拦下它认定危险的，让 Claude 改走更安全的做法。最重要的决定仍然要用户看。分类器不代替这些决定。</p>
+<p id="e34" data-points="p34">Deferred tool calls: Claude Code 里 <a href="https://code.claude.com/docs/en/hooks#defer-a-tool-call-for-later">hook 可以推迟一次工具调用</a>，等用户再给信息。常驻 agent 在某些动作前也可能要澄清或批准。调用被推迟时，这场 run 结束，session 停在这次调用中间并保存下来。</p>
+<p id="e34b" data-points="p34">请求展示给用户，例如用 <a href="https://modelcontextprotocol.io/extensions/apps/overview">MCP Apps</a> 做一张交互卡片。用户的回答作为 inbox 里的一条事件回来。这条事件开始一场新的 run，用用户的输入恢复已保存的 session。</p>
+<p id="e34c" data-points="p34">推迟的调用在等回复时，worker 可以去领别的事件。agent 不会因此被卡住。这里说的是这一次被推迟的工具调用，不是所有待办都先挂起。</p>
+<p class="callout extra" id="e34x">补充：deferred tool call 只覆盖需要澄清或批准的那次调用。不要把它理解成队列里每件待办都要先结束 run。</p>
+</section>
+<section class="sec" id="s11" data-toc="静默也是一种结果" data-source-section="s9">
+<h2>多数情况直接 send 就够，正式 outbox 只在要控制节奏或能恢复时才需要</h2>
+<p id="e35" data-points="p35">普通 agent 把生成过程流式推给用户。用户看得到推理、工具调用和答案。常驻 agent 的大部分工作在后台。用户得到的是结果和少量细节，不是逐步过程。</p>
+<figure class="orig" data-asset="img6" data-points="p36" id="f6"><img src="images/fig-06-outbox.png" alt="Diagram of the outbox. A run ends with nothing to say, a send tool call, or a deferred tool call that asks the user. Messages go to the outbox, a database table, and a dispatcher delivers them to the user. A deferred request can go through the outbox or be shown in your own interface."><figcaption><b>原图 6 · outbox</b><span class="how">怎么看：一场 run 可以走向 Nothing to say、Send，或 Ask the user。待发消息进 outbox 表，dispatcher 送给用户。虚线那条表示延迟请求也可以直接出现在你自己的界面里。</span><span class="source-anchor">出处：William Hu · <a href="https://claude.com/resources/articles/building-always-on-agents#the-core-primitives">The core primitives</a></span></figcaption></figure>
+<p id="e37" data-points="p37">一场 run 可以以三种方式结束。一种是 sends。一种是 nothing。一种是去要 additional。</p>
+<p id="e38" data-points="p38">多数常驻 agent 有一个 send 工具，直接把消息交给用户就够了。只有当你要控制发送节奏，或要让 agent 能从发送错误里恢复时，才需要正式的 outbox。这是条件，不是默认都必须建表。</p>
+<p id="e39" data-points="p39">outbox 是一张待发消息的表，和 event inbox 对称。dispatcher 通常是后台服务，和 worker 对称。它读待发消息，决定送哪些，再送给用户。deferred tool call 的请求可以走 outbox，也可以直接显示在界面上。</p>
+<p id="e39b" data-points="p39">发得太多会吵。发得太少会漏掉用户该知道的事。作者建议用评测去找这个平衡。实践上，更好的起步是先安静，再逐渐挣得用户的注意。这是建议。</p>
+</section>
+<section class="sec" id="s12" data-toc="五件东西连成循环" data-source-section="s10">
+<h2>每场 run 都很短，循环一直转，才像始终在线</h2>
+<p id="e40" data-points="p40">每场 run 都从 inbox 里的一条事件开始。它可以是用户消息、webhook，或 timer。worker 领到事件后开一场 run，在新的或已有的 session 里叫醒 agent。</p>
+<p id="e40b" data-points="p40">agent 先读 memory 取得基线，在 permissions 允许的范围内行动，再把新学到的写回 memory。run 结束后把一行推进 outbox，由 dispatcher 送给用户。</p>
+<p id="e40c" data-points="p40">这些合在一起是一个循环。一场 run 可以设一个 timer，以后再把自己叫醒。用户回复一条消息，回答又成为 inbox 里的事件。每场 run 都很短。循环可以一直继续。这就是它让人觉得始终在线的原因。</p>
+<figure class="orig" data-asset="img7" data-points="p41" id="f7"><img src="images/fig-07-cycle.gif" alt="Animated diagram of how the five primitives fit together. Timers and the event inbox start a run, the run works with memory and permissions inside a session, and the outbox delivers messages to the user, whose answer comes back as an event."><figcaption><b>原图 7 · 五件东西怎样相连</b><span class="how">怎么看：左边 timer 到期后写入 event inbox，再开始或恢复一场 run。run 读写 memory，每个工具调用经过 permissions。要说的话进 outbox。用户的回答沿底边回到 inbox。文件是动图。</span><span class="source-anchor">出处：William Hu · <a href="https://claude.com/resources/articles/building-always-on-agents#how-everything-fits-together">How everything fits together</a></span></figcaption></figure>
+<div class="sim" id="sim1"><script type="application/json">{"note": "教学示例。退款和人名是为了走通分支，不是原文里的一次真实运行。", "predict": "用户还没批准时，worker 能不能去处理别的事件？", "flow": {"nodes": [{"id": "in", "x": 40, "y": 70, "t": "event inbox", "s": "持久列表", "w": 150}, {"id": "wk", "x": 230, "y": 70, "t": "worker", "s": "同时只一个", "w": 140}, {"id": "run", "x": 420, "y": 70, "t": "run", "s": "在 session 里", "w": 140}, {"id": "mem", "x": 420, "y": 230, "t": "memory", "s": "并检查 permissions", "w": 170}, {"id": "out", "x": 640, "y": 70, "t": "outbox", "s": "或保持安静", "w": 140}], "edges": [{"f": "in", "t": "wk"}, {"f": "wk", "t": "run"}, {"f": "run", "t": "mem"}, {"f": "mem", "t": "out", "l": "要说才送"}, {"f": "out", "t": "in", "l": "用户回复", "route": "bottom"}]}, "steps": [{"act": "in", "say": "一条 webhook 先写入 inbox。handler 立刻回执。"}, {"act": "wk", "edge": "in>wk", "say": "这个 inbox 只有一个 worker 在读 pending。"}, {"act": "run", "edge": "wk>run", "say": "没有旧 session 可接，所以新开一场 session，开始 run。"}, {"act": "mem", "edge": "run>mem", "say": "先读 user instructions 和任务进度。工具调用按 permissions 决定自己做还是等。"}, {"act": "out", "edge": "mem>out", "msg": {"r": "asst", "n": "agent", "t": "日报已生成"}, "say": "这场 run 选择 send。dispatcher 再交给用户。"}], "alts": [{"label": "分支：中途又来一条消息", "steps": [{"act": "run", "msg": {"r": "user", "n": "用户", "t": "再补一句：只要摘要"}, "say": "run 还没结束。三种做法都可以：推到下一场、折进当前这场，或打断重开。"}, {"act": "run", "say": "本例走折进当前 run。worker 仍是同一个，不另开第二个。"}]}, {"label": "分支：要批准退款", "steps": [{"act": "mem", "msg": {"r": "tool", "n": "deferred", "t": "Approve a refund?"}, "say": "这次工具调用被推迟。run 结束，session 停在调用中间。"}, {"act": "wk", "say": "等待期间 worker 去领别的事件。被卡住的是这场 session，不是整个 worker。"}, {"act": "in", "msg": {"r": "user", "n": "用户", "t": "批准"}, "say": "回答回到 inbox，新的 run 恢复刚才保存的 session。"}]}, {"label": "分支：决定不发", "steps": [{"act": "out", "msg": {"r": "sys", "n": "run", "t": "nothing to send"}, "say": "没有新信息要告诉用户。静默是这场 run 的结果，不写 outbox。"}]}]}</script></div>
+<p class="src extra">模拟器是教学示例，用来把原文的分支走一遍。数字和退款情节不是原文记录的一次运行。</p>
+<p id="e42" data-points="p42">作者是 William Hu。致谢 Rodrigo Olivares。还有 Michael Segner。</p>
+<p class="src article"><span class="source-anchor" data-source-section="s11">出处：William Hu · <a href="https://claude.com/resources/articles/building-always-on-agents#acknowledgements">Acknowledgements</a></span></p>
+</section>
+<section class="sec" id="s13" data-toc="邵文多出来的判断" data-source-section="s12">
+<h2>邵文在转述之外，加了讲座对照、子集口径和落地顺序</h2>
+<p class="meta extra" data-source-section="s13">meng shao · @shao__meng · 2026-11-14T02:18:47Z</p>
+<p id="es1" data-points="ps1">帖子状态号是 2121427594260398327。文章标题里写着 7*24。五个部件他译成收件箱、计时器、记忆、权限和发件箱。</p>
+<p id="es1b" data-points="ps1" data-source-section="s14">Article 正文第一行开头多了一个空格，第二段标题写成 uilding，少了开头的 B。两段开场并排。第一段写读者可能是想改已有 agent。第二段又写也可能从零开始搭。这里按原文保留，不改字。</p>
+<figure data-asset="shao-cover" data-points="ps2" id="fcover"><img src="images/shao/00-HXDS24lakAAVXjB-orig.jpg" alt="邵文封面：标题为 Anthropic 发布 7×24 在线 Agent 架构指南，右侧嵌了 event inbox 图的局部，底部署名 AI 启蒙小伙伴 @shao__meng。这是邵文自己的封面，不是官方正文图。"><figcaption><b>邵文封面</b><span class="how">怎么看：这是邵文自己的封面，标题是 7×24 在线 Agent 架构指南，右侧嵌了 event inbox 图的局部，底部署名 AI 启蒙小伙伴 @shao__meng。不把它算作官方原图。</span><span class="source-anchor">出处：meng shao · <a href="https://x.com/i/article/2121421287063179264">X Article</a></span></figcaption></figure><figure data-asset="shao-f1" data-points="ps11" id="fs1"><img src="images/shao/02-HXDQC8rbQAAb5AW-orig.jpg" alt="邵文静帧：官方时间轴动图的一帧。上方 Asleep、no tokens spent，中间 Run 四步，第 4 步 The run writes back 被框出，顶端事件是 The user sends a message。"><figcaption><b>索引 · 对应原图 1</b><span class="how">静帧停在第 4 步 The run writes back，顶端事件写成 The user sends a message。与官方动图是同一张时间轴，字节不同，正文不再讲一遍。</span><span class="source-anchor">出处：meng shao · <a href="https://x.com/i/article/2121421287063179264">X Article</a></span></figcaption></figure><figure data-asset="shao-f2" data-points="ps11" id="fs2"><img src="images/shao/04-HXDPYr6bMAApgl_-orig.jpg" alt="邵文静帧：官方 event inbox 图。Handler 写入，重复 ID 标 dropped，worker 读取 pending、启动 run、结束后 mark done。"><figcaption><b>索引 · 对应原图 2</b><span class="how">尺寸 2040×1821，画面与官方 event inbox 图一致，包括 Delivered twice, same ID 被标成 dropped。</span><span class="source-anchor">出处：meng shao · <a href="https://x.com/i/article/2121421287063179264">X Article</a></span></figcaption></figure><figure data-asset="shao-f3" data-points="ps11" id="fs3"><img src="images/shao/05-HXDPcfpbIAAIfyO-orig.jpg" alt="邵文静帧：官方 timer 图。Follow-up 由 agent 设定，Schedule 由用户设定，scheduler 到期后写入 event inbox。"><figcaption><b>索引 · 对应原图 3</b><span class="how">尺寸 1400×732，画面与官方 timer 图一致。Follow-up 由 agent 设定，Schedule 由图中文字标成用户设定。</span><span class="source-anchor">出处：meng shao · <a href="https://x.com/i/article/2121421287063179264">X Article</a></span></figcaption></figure><figure data-asset="shao-f4" data-points="ps11" id="fs4"><img src="images/shao/03-HXDPfhSa0AA2hhW-orig.jpg" alt="邵文静帧：官方 memory 目录图。instructions.md、index.md、reported.md 每次 run 加载，notes/ 与 progress/ 需要时再读。"><figcaption><b>索引 · 对应原图 4</b><span class="how">尺寸 1400×703，画面与官方 memory 目录图一致。</span><span class="source-anchor">出处：meng shao · <a href="https://x.com/i/article/2121421287063179264">X Article</a></span></figcaption></figure><figure data-asset="shao-f5" data-points="ps11" id="fs5"><img src="images/shao/07-HXDP0UkbMAAEOvq-orig.jpg" alt="邵文静帧：官方上下文动图的一帧。固定带是 system prompt、tools、memory；已有 session 带上 whole transcript，compaction 后变摘要，新 session 只带 last few messages。"><figcaption><b>索引 · 对应原图 5</b><span class="how">静帧画出 compaction 把旧记录收成摘要，新 session 只带 last few messages。与官方上下文动图是同一张图。</span><span class="source-anchor">出处：meng shao · <a href="https://x.com/i/article/2121421287063179264">X Article</a></span></figcaption></figure><figure data-asset="shao-f6" data-points="ps11" id="fs6"><img src="images/shao/01-HXDPsSlbIAAWlhH-orig.jpg" alt="邵文静帧：官方 outbox 图。run 可以 nothing to say、send，或 deferred tool call；dispatcher 发给用户，审批也可以走界面。"><figcaption><b>索引 · 对应原图 6</b><span class="how">尺寸 1506×739，画面与官方 outbox 图一致，包括 Approve a refund? 可以走消息或走界面。</span><span class="source-anchor">出处：meng shao · <a href="https://x.com/i/article/2121421287063179264">X Article</a></span></figcaption></figure><figure data-asset="shao-f7" data-points="ps11" id="fs7"><img src="images/shao/06-HXDP8TybMAAgcS9-orig.jpg" alt="邵文静帧：官方五组件闭环动图的一帧。timer 与 event inbox 启动 run，run 读写 memory，每个 tool call 经过 permissions，outbox 发给用户，回答再回到 inbox。"><figcaption><b>索引 · 对应原图 7</b><span class="how">静帧把 run、memory 和 permissions 的检查框出来。与官方闭环动图是同一张图。</span><span class="source-anchor">出处：meng shao · <a href="https://x.com/i/article/2121421287063179264">X Article</a></span></figcaption></figure>
+<p id="es3" data-points="ps3">短评把五件东西分开点名。收件箱、计时器、记忆、权限各自出现。发件箱在他看来看都不新，因为队列加定时任务早就有人拼过。他更看重职责被划开，以及始终在线只是体验，模型不必一直醒着烧 token。</p>
+<p id="es5" data-points="ps5">邵文另写了一句对照：SpacexSI 团队的 Lee Robinson，在斯坦福 CS146S 的讲座。题目里有 always-on，也有 proactive，还点了 @Bot。这句不在 William Hu 的正文里。</p>
+<p class="callout extra" id="es5x">补充：本站已有课件页 <a href="../../courses/cs146s/L06-always-on-agents.html">CS146S · 10/8 Lee Robinson</a>。封面文字是 How always-on agents work，日期写 October 8, 2026。和邵文所写的讲座标题不完全相同。邵文的 entities.posts 只有一条未展开的 id，没有给出课件 URL。不能据此把两场说成已经核对为同一场。</p>
+<p id="es6" data-points="ps6">邵文把配套文档里的基准叫成 SWE-bench Pro 的子集。他写 Opus 5.5 和 Opus 5 的解题比例大致相当。他又写子集成绩不能拿去和公开榜单直接比。Hu 正文没有写出基准名字。他的 78% 在一项 long-horizon 基准上。40% 在典型工作负载上。</p>
+<p class="callout extra" id="es6x">补充：本页打开了 Hu 链出的 <a href="https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence">成本优化文档</a>。页面上写着 SWE-bench Pro subset，Opus 5 到 Opus 5.5 约从 91.9% 到 92.8%，以及 whose scores are not comparable to the public leaderboard。这是该文档的说法，经邵文转述。不把它改写成 Hu 正文里的原句。</p>
+<p id="es7" data-points="ps7">邵文写：用户不一定在场。他又用了必须。范围是每一次运行。Hu 的原文是指令要跨 run 带上。两句都保留，不把「必须」挪回 Hu。</p>
+<p id="es8" data-points="ps8">邵文写 dreaming 能找出只有跨很多次 run 才出现的规律，并给配套文写了日期：11 月 6 日。Hu 正文只给了链接，没有写这个日期。</p>
+<p id="es9" data-points="ps9">邵文给 auto mode 那篇写了日期：3 月 25 日。Hu 正文只给了链接，没有写这个日期。</p>
+<p id="es10" data-points="ps10">读后感是邵文自己的话。收件箱、计时器、记忆、权限和发件箱，他觉得看都不新。他建议先做收件箱，把它当成唯一可信来源，同时只留一个活跃 worker，并把连发消息合并成一次运行。中途新事件可以放到下一轮。也可以并入当前这轮。还可以中断重来。他说这个选择留给做产品的人。</p>
+<p id="es10b" data-points="ps10">记忆方面，他建议写成团队约定：只存以后查不到的。目录里分开存放指令，再放索引，再放已告知内容，最后是任务进度。dreaming 他只点到，细节要看配套文。</p>
+<p id="es10c" data-points="ps10">权限方面，他认为凭证要放在 Agent 环境之外，并由代理注入。他希望这从一开始就是默认。这是他的落地建议。Hu 写的是 recommended pattern。延后的调用会结束当前运行，并让 worker 去处理别的事。他用来对照的画面，是整个 Agent 挂起。用户再点击之前，系统只是干等。</p>
+<p class="src extra">邵文对官方同段的转述放在精读里，不在本节再搬一遍。本节只保留他多出来的句子和他的读后感。</p>
+</section>
+<section class="sec" id="s14" data-toc="Xudong 的对照" data-source-section="s15">
+<h2>Xudong 把这篇和 DeepSeek、LangChain 放在一起看</h2>
+<p id="ex1p" data-points="px1">发帖的人是 Xudong Han，账号 @Xudong07452910。时间是 2026-11-15T01:20:00Z。状态号 2121775188639437102。这篇没有 Article。也没有 entities.code。也无配图。</p>
+<p id="ex2" data-points="px2">他想把这篇和更早的 DeepSeek Super-agent，以及 LangChain 的 Async Subagents 对照着看。DeepSeek 在他笔下是：Router 先收 GitHub 和飞书事件，按授权规则决定开不开工，再交给独立 Worker。</p>
+<p id="ex2b" data-points="px2">LangChain 在他笔下是另一件事：主 Agent 继续应答。长任务交给后台 Subagent 自己跑，人还可以查看进度，也可以修改指令。</p>
+<p id="ex2c" data-points="px2">他说 Anthropic 这次把架构拆得很细。agent 平时在休眠。唤醒可以来自收到消息。也可以来自 Webhook。还可以来自定时。做完一轮再保存，然后继续休眠。</p>
+<p id="ex3" data-points="px3">他数出 5 个组件，顺序和用词是他自己的。Inbox 被他用来做去重和失败重试。Timer 被他用来定时叫醒。Memory 被他用来留跨 Session 的进度。Permissions 被他用来管人工审批。Outbox 被他用来决定何时发消息。触发来源他写成收到消息，以及 Webhook。</p>
+<p id="ex4" data-points="px4">他个人比较喜欢的设计叫 Deferred Tool Call。人要审批时，先把 Session 保存下来。Worker 被释放。等用户回复后再恢复。这样不会一直卡在原地。这是他对同一机制的读法。</p>
+<p id="ex5" data-points="px5">收在一起，他觉得大家越来越关心 agent 怎样持续工作，以及怎样减少人的管理负担。他建议想自己搭的人系统学习这篇原文。原文链接指向同一篇官方文章。</p>
+<p class="callout extra" id="ex6">补充：三篇已有学习页解决的不是同一张规格表，也不排先后。DeepSeek 那页主要讲事件怎样进门。LangChain 那两页主要讲后台执行时主循环还能不能说话、能不能改指令。本页讲的是跨 run 的外围架构。Xudong 没有写这句分工。</p>
+<p class="links extra"><a href="../../wechat/dsh-superagent/dsh-superagent.html">Super-agent：事件入口</a><a href="../../x-posts/langchain-agents-async/langchain-agents-async.html">Agents Are Going Async</a><a href="../../x-posts/langchain-managed-deep-agents/langchain-managed-deep-agents.html">Managed Deep Agents 的后台子任务</a><a href="../../x-posts/lody-automation/lody-automation.html">Lody：睡下再被事件叫醒</a><a href="../../research/agent-memory-components/agent-memory-components.html">Agent 记忆的部件</a></p>
+<p class="src extra">Lody 和本站的记忆页是对照指针。官方原文只链了 Anthropic 自己的 agent memory 文章，没有提到 Lody。已核实的 DeepSeek 页写的是群聊、PR、CI 等事件进 Router，再分给隔离的 Worker。该页没有写「飞书」或「授权规则」。这两点只属于 Xudong 的帖。</p>
+</section>
+<section class="sec" id="s15" data-toc="换一个场景">
+<h2>用六个新场景检查你会不会用错</h2>
+<div class="quiz" id="quiz1"><script type="application/json">[{"q": "退款工具调用已推迟，用户还没回复。这时哪句话符合原文？", "opts": ["worker 必须空等，不能再领别的事件", "这场 run 已经结束，session 停在调用中间，worker 可以去领别的事件", "整份待办列表都要先挂起"], "a": 1, "why": "推迟的是这一次调用。run 结束并保存 session，worker 可以处理其他事件。", "back": 10}, {"q": "同事把「Opus 5.5 比 Opus 5 便宜 78%」写进所有任务的报价。按这篇原文，问题在哪？", "opts": ["78% 属于那一项基准；40% 属于典型工作负载，不是该基准的结果", "原文没写 78%", "40% 也是那项基准的降幅"], "a": 0, "why": "78% 是每解决一个任务、相对 Opus 5，范围是那项基准。40% 的范围是典型工作负载。", "back": 2}, {"q": "一场 run 还在进行，用户又发来一条消息。原文要求必须怎么做？", "opts": ["必须打断并重开", "必须折进当前 run", "可以推到下一场、折进当前这场，或打断重开"], "a": 2, "why": "这是三种可选做法，原文没有规定只能用一种。", "back": 6}, {"q": "agent 检查后发现没有新情况。按原文，这场 run 可以怎样结束？", "opts": ["必须往 outbox 写一条无事消息", "可以决定什么都不送", "必须等用户先问一句"], "a": 1, "why": "三种结局之一就是判断没有什么需要送。静默是结果。", "back": 11}, {"q": "问题跟踪器里已经有这张工单。memory 里应该存什么？", "opts": ["把工单全文再抄一份", "什么都不留，包括指针", "只存一个指回去的指针"], "a": 2, "why": "已经能再查到的，只留指针。memory 留给查不回来的内容。", "back": 8}, {"q": "还没有控制发送节奏或发送失败后恢复的要求。按原文，outbox 怎么处理？", "opts": ["有 send 工具直接送给用户即可", "必须先建正式 outbox 表", "所有消息都先静默一周"], "a": 0, "why": "正式 outbox 是有条件才需要。多数情况直接 send。", "back": 11}]</script></div>
+<p class="src extra">小测考的是应用。答错只回到对应节，不显示答案。做完也不会自动标成学完。</p>
+</section>
+<section class="sec" id="s16" data-toc="出处">
+<h2>文中链接都留在这里</h2>
+<ul class="refs extra"><li><a href="https://claude.com/resources/articles/building-always-on-agents">William Hu 原文</a></li>
+<li><a href="https://www.anthropic.com/research/building-effective-agents">Building effective agents</a></li>
+<li><a href="https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence">成本与智能的优化文档</a></li>
+<li><a href="https://code.claude.com/docs/en/memory">Claude Code auto memory</a></li>
+<li><a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/memory-tool">Messages API memory tool</a></li>
+<li><a href="https://www.anthropic.com/research/components-of-agent-memory">agent memory 一文</a></li>
+<li><a href="https://platform.claude.com/docs/en/build-with-claude/prompt-caching">prompt caching</a></li>
+<li><a href="https://platform.claude.com/docs/en/build-with-claude/compaction">compaction</a></li>
+<li><a href="https://code.claude.com/docs/en/agent-sdk/secure-deployment#credential-management">credential management</a></li>
+<li><a href="https://www.anthropic.com/research/claude-code-auto-mode">Claude Code auto mode</a></li>
+<li><a href="https://code.claude.com/docs/en/hooks#defer-a-tool-call-for-later">defer a tool call</a></li>
+<li><a href="https://modelcontextprotocol.io/extensions/apps/overview">MCP Apps</a></li>
+<li><a href="https://x.com/shao__meng/status/2121427594260398327">meng shao 的帖</a></li>
+<li><a href="https://x.com/i/article/2121421287063179264">meng shao 的 X Article</a></li>
+<li><a href="https://x.com/Xudong07452910/status/2121775188639437102">Xudong Han 的帖</a></li></ul>
+</section>
+</main><script>var __H=location.hash;window.lessonIcons={"menu": "<svg class=\"i i-menu\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/><\/svg>", "play": "<svg class=\"i i-play\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z\"/><\/svg>", "pause": "<svg class=\"i i-pause\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"14\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/><rect x=\"5\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/><\/svg>", "check": "<svg class=\"i i-check\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 6 9 17l-5-5\"/><\/svg>", "x": "<svg class=\"i i-x\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/><\/svg>", "zoom-in": "<svg class=\"i i-zoom-in\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><line x1=\"21\" x2=\"16.65\" y1=\"21\" y2=\"16.65\"/><line x1=\"11\" x2=\"11\" y1=\"8\" y2=\"14\"/><line x1=\"8\" x2=\"14\" y1=\"11\" y2=\"11\"/><\/svg>", "zoom-out": "<svg class=\"i i-zoom-out\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><line x1=\"21\" x2=\"16.65\" y1=\"21\" y2=\"16.65\"/><line x1=\"8\" x2=\"14\" y1=\"11\" y2=\"11\"/><\/svg>", "copy": "<svg class=\"i i-copy\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\"/><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"/><\/svg>", "chevron-right": "<svg class=\"i i-chevron-right\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m9 18 6-6-6-6\"/><\/svg>", "book-open": "<svg class=\"i i-book-open\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 5v16\"/><path d=\"M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z\"/><\/svg>", "external-link": "<svg class=\"i i-external-link\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M15 3h6v6\"/><path d=\"M10 14 21 3\"/><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/><\/svg>"};window.lessonIcon=n=>window.lessonIcons[n]||"";</script><script>/* Article/pair navigation only. No global swipe or arrow-key paging. */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const H=document.documentElement, sections=$$('main.deck > .sec, main.deck > .hero, .pair-notes > .sec');
+if(!sections.length)return;
+const ids=new Set($$('[id]').map(n=>n.id));
+sections.forEach((s,i)=>{if(!s.id){let n=i+1,id=s.classList.contains('hero')?'intro':'s'+n;while(ids.has(id))id='s'+(++n);s.id=id;ids.add(id)}});
+const title=s=>s.dataset.toc||$('h2,h1,h3',s)?.textContent||s.id;
+const toc=document.createElement('nav');toc.className='toc';toc.id='lesson-toc';toc.setAttribute('aria-label','目录');
+const heading=document.createElement('b');heading.textContent='目录';toc.appendChild(heading);const ol=document.createElement('ol');toc.appendChild(ol);
+sections.forEach((s,i)=>{const li=document.createElement('li'),a=document.createElement('a');a.href='#'+s.id;a.textContent=(i+1)+'. '+title(s);li.appendChild(a);ol.appendChild(li)});document.body.appendChild(toc);
+const links=$$('a',toc),toggle=$('.toc-toggle'),count=$('.count'),bar=$('.track i');
+const shade=document.createElement('div');shade.className='toc-backdrop';document.body.appendChild(shade);
+function open(value){H.classList.toggle('toc-open',value);toggle?.setAttribute('aria-expanded',String(value));if(value)links.find(a=>a.getAttribute('aria-current')==='true')?.focus();else toggle?.focus()}
+if(toggle){toggle.setAttribute('aria-controls',toc.id);toggle.onclick=()=>open(!H.classList.contains('toc-open'))}shade.onclick=()=>open(false);
+addEventListener('keydown',e=>{if(e.key==='Escape'&&H.classList.contains('toc-open'))open(false)});
+function locate(hash){let id;try{id=decodeURIComponent(hash.replace(/^#/,''))}catch(e){return null}if(/^\d+$/.test(id))return sections[+id-1];return document.getElementById(id)}
+function jump(target){if(!target)return;H.classList.remove('toc-open');toggle?.setAttribute('aria-expanded','false');target.scrollIntoView({block:'start',behavior:'instant'});history.replaceState(null,'','#'+target.id);update();dispatchEvent(new Event('lesson:navigate'))}
+window.lessonNav={layout:H.dataset.layout,go:n=>jump(document.getElementById('s'+n)||sections[n-1]),returnTo:box=>jump(box.closest('.sec')||box),jump};window.goCard=n=>window.lessonNav.go(n);
+toc.onclick=e=>{const a=e.target.closest('a');if(!a)return;e.preventDefault();jump(locate(a.hash))};
+const key='pos:'+location.pathname;let queued=false,restoring=true;
+function update(){queued=false;let current=sections[0];const line=H.dataset.layout==='pair'&&innerWidth<=820?innerHeight*.4+90:100;for(const s of sections)if(s.getBoundingClientRect().top<=line)current=s;
+ count.textContent=title(current);links.forEach(a=>a.setAttribute('aria-current',String(a.hash==='#'+current.id)));const max=H.scrollHeight-innerHeight;bar.style.width=Math.max(0,Math.min(100,max>0?scrollY/max*100:100))+'%';
+ if(!restoring)try{localStorage.setItem(key,JSON.stringify({id:current.id,offset:scrollY-(current.getBoundingClientRect().top+scrollY)}))}catch(e){}
+}
+addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(update)}},{passive:true});addEventListener('resize',update);addEventListener('hashchange',()=>jump(locate(location.hash)));
+addEventListener('load',()=>{const hash=window.__H||location.hash;let target=locate(hash),offset=0;if(!hash){try{const pos=JSON.parse(localStorage.getItem(key)||'null');if(pos){target=document.getElementById(pos.id);offset=Number(pos.offset)||0}}catch(e){}}
+ if(target){target.scrollIntoView({block:'start',behavior:'instant'});if(!hash)scrollBy(0,offset+72)}restoring=false;update();
+});update();
+})();
+</script><script>/* Reveal an offscreen simulator first, then move only its local SVG viewport. */
+(function(root){
+function delta(start,end,low,high,pad=16){if(start<low+pad)return start-low-pad;if(end>high-pad)return end-high+pad;return 0}
+function focus(svg,scroller){
+ let frame=scroller.getBoundingClientRect(),bottom=innerHeight-88;
+ const top=document.querySelector('.top')?.getBoundingClientRect().bottom||56;
+ if(frame.bottom<=top||frame.top+112>bottom){
+  scroller.closest('.sim').scrollIntoView({block:'start',behavior:'instant'});
+  frame=scroller.getBoundingClientRect();
+ }
+ for(let p=scroller.parentElement;p&&p!==document.body;p=p.parentElement){const c=getComputedStyle(p);if(/auto|scroll|hidden|clip/.test(c.overflowY)){const r=p.getBoundingClientRect();bottom=Math.min(bottom,r.top+p.clientHeight)}}
+ const space=Math.max(112,Math.min(innerHeight*.4,bottom-frame.top));scroller.style.maxHeight=space+'px';
+ frame=scroller.getBoundingClientRect();const node=svg.querySelector('.fl-node.act');if(!node)return;const r=node.getBoundingClientRect();
+ scroller.scrollTop+=delta(r.top,r.bottom,frame.top,frame.top+scroller.clientHeight);
+ scroller.scrollLeft+=delta(r.left,r.right,frame.left,frame.left+scroller.clientWidth);
+}
+root.LessonGeometry={delta,focus};if(typeof module!=='undefined')module.exports={delta,focus};
+})(typeof window==='undefined'?globalThis:window);
+</script><script>/* Shared material/explanation pairing, original-image dialog and copy actions. */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)],ic=window.lessonIcon;
+window.lessonCopy=async(text,button)=>{try{if(navigator.clipboard?.writeText)await navigator.clipboard.writeText(text);else{const t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();if(!document.execCommand('copy'))throw Error('copy');t.remove()}button.textContent='已复制'}catch(e){button.textContent='复制未成功，请选中文字复制'}};
+$$('.pair.codewalk,.pair.read-pair,.pair.material-pair').forEach(pair=>{
+ const source=$('.pair-source',pair),notes=$('.pair-notes',pair);if(!source||!notes)return;
+ const pre=$('pre[data-lines]',source),code=pre&&$('code',pre),steps=$$('.step',notes);let lines=[],raw='';
+ if(code){raw=code.textContent;const first=Number(pre.dataset.lines)||1;code.textContent='';const pieces=raw.replace(/\n$/,'').split('\n');pieces.forEach((text,i)=>{const line=document.createElement('span');line.className='code-line';line.dataset.line=String(first+i);line.textContent=text;code.appendChild(line);lines.push(line)});
+  const panel=document.createElement('div');panel.className='code-panel';source.before(panel);
+  const toolbar=document.createElement('div');toolbar.className='code-toolbar';
+  const hint=document.createElement('span');hint.className='code-scroll-hint';hint.textContent='长行可横向滚动';
+  const button=document.createElement('button');button.className='btn sm copy-code';button.innerHTML=ic('copy')+' 复制代码';button.onclick=()=>window.lessonCopy(raw,button);
+  toolbar.append(hint,button);panel.append(toolbar,source);
+ }
+ let active=null;
+ function select(step){if(!step||active===step)return;active=step;steps.forEach(s=>s.classList.toggle('is-active',s===step));let targets=[];
+  if(code){const ranges=(step.dataset.hl||'').split(',').map(v=>v.split('-').map(Number));lines.forEach(line=>{const n=Number(line.dataset.line),on=ranges.some(([a,b=a])=>n>=a&&n<=b);line.classList.toggle('hl',on);if(on)targets.push(line)})}
+  else{const ids=(step.dataset.explains||step.dataset.target||'').split(/\s+/);$$('.source-block,[data-material]',source).forEach(block=>{const on=ids.includes(block.dataset.sourceId||block.id);block.classList.toggle('is-active',on);if(on)targets.push(block)})}
+  if(targets.length){const a=targets[0].getBoundingClientRect(),b=targets[targets.length-1].getBoundingClientRect(),r=source.getBoundingClientRect();const bottom=r.top+source.clientHeight;source.scrollTop+=b.bottom-a.top>source.clientHeight-32?a.top-r.top-16:window.LessonGeometry.delta(a.top,b.bottom,r.top,bottom)}
+ }
+ const update=()=>{
+  const rect=notes.getBoundingClientRect(),material=source.closest('.code-panel')||source;
+  const top=Math.max(0,$(".top")?.getBoundingClientRect().bottom||0,innerWidth<=820?material.getBoundingClientRect().bottom:0),bottom=Math.min(innerHeight,rect.bottom);
+  if(bottom<=top)return;
+  const line=top+(bottom-top)*.4;let step=steps[0];
+  for(const s of steps)if(s.getBoundingClientRect().top<=line)step=s;
+  const last=steps.at(-1),lastRect=last?.getBoundingClientRect();
+  if(scrollY+innerHeight>=document.documentElement.scrollHeight-2&&lastRect?.top<bottom&&lastRect.bottom>top)step=last;
+  select(step);
+ };
+ let queued=false;addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(()=>{queued=false;update()})}},{passive:true});addEventListener('resize',update);
+ steps.forEach(step=>{step.addEventListener('focusin',()=>select(step));step.addEventListener('click',e=>{select(step);const a=e.target.closest('a');if(a?.hash&&source.querySelector(a.hash)){e.preventDefault();source.focus()}})});select(steps[0]);addEventListener('load',update);
+});
+$$('figure img').forEach(img=>{const button=document.createElement('button');button.className='image-open';button.type='button';button.setAttribute('aria-label','放大图片：'+img.alt);img.replaceWith(button);button.appendChild(img);button.onclick=()=>{
+ const dialog=document.createElement('dialog');dialog.className='image-dialog';dialog.setAttribute('aria-label',img.alt);const close=document.createElement('button');close.className='btn dialog-close';close.innerHTML=ic('x')+' 关闭';const large=img.cloneNode();large.removeAttribute('loading');dialog.append(close,large);document.body.appendChild(dialog);close.onclick=()=>dialog.close();dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close()});dialog.addEventListener('close',()=>{dialog.remove();button.focus()});dialog.showModal();close.focus();
+}});
+$$('details.more summary').forEach(s=>{if(!s.textContent.trim())s.textContent='展开细节';s.insertAdjacentHTML('afterbegin',ic('chevron-right'))});
+})();
+</script><script>/* 学习搭子 固定组件库 — 不要在课程里改这个文件。 */
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const NS='http://www.w3.org/2000/svg';
+const data=(box,kind)=>JSON.parse(box.querySelector('script[type="application/json"]')?.textContent||box.dataset[kind]);
+const ic=window.lessonIcon;
+const el=(t,a={},p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p&&p.appendChild(e);return e};
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+function component(selector,render){
+  $$(selector).forEach(box=>{try{render(box)}catch(error){
+    const message=document.createElement('p');message.className='component-error';
+    message.textContent='这张图的数据有误';message.setAttribute('role','status');
+    box.replaceWith(message);console.error('组件数据有误',error);
+  }});
+}
+
+/* ---------- flow：用 JSON 画流程图 ----------
+ spec = {w,h,nodes:[{id,x,y,t,s?,c?,w?}],edges:[{f,t,l?,bend?}]}  节点坐标是中心点 */
+function drawFlow(svg,spec){
+  svg.innerHTML='';
+  const defs=el('defs',{},svg);
+  [['a','var(--meta)'],['b','var(--blue)'],['red','var(--amber)'],['amber','var(--amber)'],['green','var(--green)']].forEach(([id,c])=>{const m=el('marker',{id:'ar'+id+svg.dataset.uid,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:7,markerHeight:7,orient:'auto-start-reverse'},defs);el('path',{d:'M0,0L10,5L0,10z',fill:c},m)});
+  const N={};spec.nodes.forEach(n=>N[n.id]={...n,w:n.w||150,h:n.h||(n.s?70:56)});
+  const ns=Object.values(N);
+  let x0=Math.min(...ns.map(n=>n.x-n.w/2)),x1=Math.max(...ns.map(n=>n.x+n.w/2)),y0=Math.min(...ns.map(n=>n.y-n.h/2)),y1=Math.max(...ns.map(n=>n.y+n.h/2));
+  const B={x0,x1,y0,y1};
+  const eg=el('g',{},svg),ng=el('g',{},svg);svg._edges={};svg._nodes={};
+  const clip=(a,b)=>{const dx=b.x-a.x,dy=b.y-a.y;const s=Math.min(Math.abs((a.w/2+6)/(dx||1e-9)),Math.abs((a.h/2+6)/(dy||1e-9)));return[a.x+dx*s,a.y+dy*s]};
+  spec.edges.forEach(e=>{const a=N[e.f],b=N[e.t];let d,lx,ly;
+    if(e.route){ /* 沿外圈走的直角线：top|bottom|left|right，lane 控制离外框的距离 */
+      const g=30+(e.lane||0)*30,oa=e.oa||0,ob=e.ob||0;
+      if(e.route==='top'||e.route==='bottom'){const t=e.route==='top',Y=t?B.y0-g:B.y1+g,ya=a.y+(t?-1:1)*(a.h/2+2),yb=b.y+(t?-1:1)*(b.h/2+8);
+        d=`M${a.x+oa},${ya} V${Y} H${b.x+ob} V${yb}`;lx=(a.x+oa+b.x+ob)/2;ly=Y+(t?-8:18);
+        t?(y0=Math.min(y0,Y-26)):(y1=Math.max(y1,Y+26));}
+      else{const l=e.route==='left',X=l?B.x0-g:B.x1+g,xa=a.x+(l?-1:1)*(a.w/2+2),xb=b.x+(l?-1:1)*(b.w/2+8);
+        d=`M${xa},${a.y+oa} H${X} V${b.y+ob} H${xb}`;lx=X+(l?-8:8);ly=(a.y+b.y)/2;
+        l?(x0=Math.min(x0,X-90)):(x1=Math.max(x1,X+90));}
+    }else{const[p1,q1]=clip(a,b),[p2,q2]=clip(b,a);const mx=(p1+p2)/2,my=(q1+q2)/2,len=Math.hypot(p2-p1,q2-q1)||1,bd=e.bend||0;
+      const cx=mx-(q2-q1)/len*bd,cy=my+(p2-p1)/len*bd;d=`M${p1},${q1} Q${cx},${cy} ${p2},${q2}`;
+      const qx=.25*p1+.5*cx+.25*p2,qy=.25*q1+.5*cy+.25*q2,sg=bd>=0?1:-1;lx=qx-(q2-q1)/len*sg*14;ly=qy+(p2-p1)/len*sg*14+4;}
+    const mk=e.c||'a';const p=el('path',{d,class:'fl-edge '+(e.c||''),'marker-end':`url(#ar${mk}${svg.dataset.uid})`},eg);p._mk=mk;
+    let lab=null;if(e.l){const anc=e.route==='left'?'end':e.route==='right'?'start':'middle';lab=el('text',{x:lx,y:ly,'text-anchor':anc,class:'fl-elab '+(e.c||''),stroke:'var(--paper)','stroke-width':5,'paint-order':'stroke'},eg);lab.textContent=e.l}
+    svg._edges[e.f+'>'+e.t]={p,lab}});
+  ns.forEach(n=>{const g=el('g',{class:'fl-node '+(n.c||'')},ng);
+    el('rect',{x:n.x-n.w/2,y:n.y-n.h/2,width:n.w,height:n.h,rx:14},g);
+    const t=el('text',{x:n.x,y:n.y+(n.s?-4:6),'text-anchor':'middle'},g);t.textContent=n.t;
+    if(n.s){const s=el('text',{x:n.x,y:n.y+18,'text-anchor':'middle',class:'sub'},g);s.textContent=n.s}
+    svg._nodes[n.id]=g});
+  /* 自动贴合：viewBox 只包住内容，图会放大填满面板 */
+  const P=spec.pad??8,W=x1-x0+2*P,H=y1-y0+2*P+20;
+  svg.setAttribute('viewBox',`${x0-P} ${y0-P-10} ${W} ${H}`);
+  svg.style.setProperty('--flow-width',W+'px');svg.style.setProperty('--flow-height',H+'px');
+  const scroll=document.createElement('div');scroll.className='flow-scroll';
+  svg.replaceWith(scroll);scroll.appendChild(svg);
+  if(!scroll.closest('.sim')&&W>innerWidth-78){const t=document.createElement('p');t.className='flow-tip';t.textContent='← 左右滑动看全图 →';scroll.after(t)}
+  svg._set=(act,edge)=>{for(const k in svg._nodes)svg._nodes[k].classList.toggle('act',k===act);
+    for(const k in svg._edges){const on=k===edge,E=svg._edges[k];E.p.classList.toggle('act',on);E.p.setAttribute('marker-end',`url(#ar${on?'b':E.p._mk}${svg.dataset.uid})`);E.lab&&E.lab.classList.toggle('act',on)}};
+  svg._set(svg.dataset.act,svg.dataset.edge);
+  svg._center=()=>{if(!matchMedia('(max-width:820px)').matches)return;
+    const active=Object.values(svg._nodes).find(n=>n.classList.contains('act'));if(!active)return;
+    const a=active.getBoundingClientRect(),r=scroll.getBoundingClientRect();
+    scroll.scrollLeft+=a.left+a.width/2-r.left-r.width/2;
+  };
+}
+let uid=0;
+component('svg.flow',s=>{s.dataset.uid=++uid;drawFlow(s,data(s,'flow'))});
+
+/* ---------- sim：一步步走的模拟器 ----------
+ data-sim = {flow:{...}, steps:[{act,edge,msg:{r:user|asst|tool|err|sys,n?,t},say}], alt?:{label,steps:[...]}} */
+component('.sim',box=>{
+  const spec=data(box,'sim');if(spec.alt&&!spec.alts)spec.alts=[spec.alt];const AL=spec.alts||[];const gname='br'+(++uid);
+  box.innerHTML=`<div class="ctl"><button class="btn sm" data-a="step">下一步</button><button class="btn sm" data-a="play">${ic("play")} 自动</button><button class="btn sm" data-a="reset">重置</button>
+   <label>速度 <input type="range" min="300" max="2500" step="100" value="1200"></label></div>${AL.length?`<div class="ctl branches"><label><input type="radio" name="${gname}" value="-1" checked> ${esc(spec.label||'正常路径')}</label>${AL.map((a,j)=>`<label><input type="radio" name="${gname}" value="${j}"> ${esc(a.label)}</label>`).join('')}</div>`:''}
+   <div class="body"><svg class="flow"></svg><div class="log"></div></div><div class="narr"></div>`;
+  if(spec.layout==='wide')box.classList.add('wide');
+  const svg=$('.body > svg.flow',box);svg.dataset.uid=++uid;drawFlow(svg,spec.flow);
+  const fs=svg.parentElement,tip=document.createElement('p');tip.className='flow-tip';tip.textContent='点图放大看字，再点回到全图';fs.after(tip);
+  const focus=()=>{if(!fs.classList.contains('zoom'))return svg._center();window.LessonGeometry.focus(svg,fs)};
+  const zoom=document.createElement('button');zoom.className='btn sm zoom-toggle';zoom.innerHTML=ic('zoom-in')+' 放大图';zoom.setAttribute('aria-pressed','false');tip.replaceWith(zoom);const toggle=()=>{const on=fs.classList.toggle('zoom');zoom.innerHTML=ic(on?'zoom-out':'zoom-in')+(on?' 返回全图':' 放大图');zoom.setAttribute('aria-pressed',String(on));if(!on){fs.style.maxHeight='';fs.scrollTop=0}focus()};fs.onclick=toggle;zoom.onclick=toggle;window.addEventListener('resize',focus);window.addEventListener('load',()=>requestAnimationFrame(()=>{const params=new URLSearchParams(location.search);if((params.has('sim')||params.has('zoom'))&&!(window.__H??location.hash)&&box===$('.sim')){const section=box.closest('.sec,.card');if(window.lessonNav.layout==='deck')window.goCard($$('.card').indexOf(section)+1);else section.scrollIntoView({block:'start',behavior:'instant'})}focus()}));window.addEventListener('lesson:navigate',()=>requestAnimationFrame(focus));
+  const log=$('.log',box),narr=$('.narr',box),radios=$$('input[type=radio]',box),spd=$('input[type=range]',box),play=$('[data-a=play]',box);
+  let i=0,timer=null,predicted=!spec.predict;const prediction=document.createElement('div');if(spec.predict){prediction.className='prediction callout';prediction.innerHTML='<p>先预测：'+esc(spec.predict)+'</p><label>你的判断<textarea rows="2"></textarea></label><button class="btn sm" data-a="predict">提交预测，再看过程</button>';box.prepend(prediction)};const sel=()=>{const r=radios.find(r=>r.checked);return r?+r.value:-1};const steps=()=>sel()>=0?AL[sel()].steps:spec.steps;
+  const hint=spec.note?esc(spec.note)+'　点「下一步」开始。':'点「下一步」开始。';const reset=()=>{i=0;log.innerHTML='';narr.innerHTML=hint;svg._set(null,null);stop()};
+  const stop=()=>{clearTimeout(timer);timer=null;play.innerHTML=ic('play')+' 自动'};
+  const step=()=>{const S=steps();if(i>=S.length){narr.textContent='流程结束。点「重置」再走一遍。';stop();return false}
+    const s=S[i++];svg._set(s.act,s.edge);focus();if(s.msg){const d=document.createElement('div');d.className='msg '+s.msg.r;
+      d.innerHTML=`<b>${esc(s.msg.n||({user:'用户',asst:'模型',tool:'工具结果',err:'出错',sys:'系统提示词'}[s.msg.r]))}</b>${esc(s.msg.t)}`;log.appendChild(d);log.scrollTop=1e9}
+    narr.innerHTML=`<b>第 ${i}/${S.length} 步</b>　${esc(s.say)}`;return true};
+  const loop=()=>{if(step())timer=setTimeout(loop,+spd.value);else stop()};
+  box.onclick=e=>{const a=e.target.closest('button')?.dataset.a;if(a==='predict'){predicted=true;prediction.hidden=true;step()}if(a==='step'){stop();if(predicted)step();else prediction.querySelector('textarea').focus()}if(a==='reset')reset();if(a==='play'){if(!predicted){prediction.querySelector('textarea').focus();return}if(timer)stop();else{play.innerHTML=ic('pause')+' 暂停';loop()}}};
+  narr.innerHTML=hint;radios.forEach(r=>r.onchange=reset);
+  const P=new URLSearchParams(location.search);if(P.get('alt')&&radios[+P.get('alt')]){radios[+P.get('alt')].checked=true}for(let n=+P.get('sim')||0;n>0;n--)step();if(P.get('sim')){predicted=true;prediction.hidden=true}if(P.get('zoom')){fs.classList.add('zoom');zoom.setAttribute('aria-pressed','true');zoom.innerHTML=ic('zoom-out')+' 返回全图'} /* 自查用：?sim=5&alt=1&zoom=1 */
+});
+
+/* ---------- bars：横向条形图 ----------
+ data-bars = {unit, items:[{l,v,c?:blue|amber|green|red,note?}], caption?}  数字必须来自原文 */
+component('.bars',box=>{const B=data(box,'bars'),mx=Math.max(1,...B.items.filter(i=>i.v!=null).map(i=>i.v));
+  box.innerHTML=B.items.map(i=>`<div class="bar ${i.c||''}"><span class="bl">${esc(i.l)}</span>${i.v==null?`<span class="bmiss">${esc(i.miss||'原文未给数字')}</span>`:`<span class="bt"><i style="width:${(i.v/(B.axis==='independent'?Math.max(1,i.v):mx)*100).toFixed(1)}%"></i></span><span class="bv">${esc(i.v)}${esc(i.unit||B.unit||'')}</span>`}${i.note?`<span class="bn">${esc(i.note)}</span>`:''}</div>`).join('')+(B.caption?`<div class="bc">${esc(B.caption)}</div>`:'')});
+
+/* ---------- quiz：页内小测 ----------
+ data-quiz = [{q,opts:[...],a:正确下标,why,back:答错时回到第几张卡片}] */
+component('.quiz,.checkpoint',box=>{
+  const checkpoint=box.classList.contains('checkpoint');box.classList.add('quiz');const raw=data(box,checkpoint?'checkpoint':'quiz'),Q=Array.isArray(raw)?raw:[raw],P=new URLSearchParams(checkpoint?'':location.search);
+  let k=Math.max(0,Math.min(Q.length-1,(parseInt(P.get('q'))||1)-1));
+  const answers=Q.map(()=>({first:null,selected:null,retries:0}));
+  const score=()=>answers.filter((s,i)=>s.first===Q[i].a).length;
+  const complete=()=>answers.every(s=>s.selected!==null);
+  const reviewButton=i=>{
+    const target=window.lessonNav.layout==='deck'?$$('.card')[Q[i].back-1]:document.getElementById('s'+Q[i].back);
+    const title=target.dataset.toc||$('h2,h1,h3',target)?.textContent||'相关内容';
+    return `<button class="btn sm" data-review="${i}">回看：${esc(title)}</button>`;
+  };
+  function summary(){
+    const wrong=answers.map((s,i)=>s.first!==Q[i].a?i:-1).filter(i=>i>=0);
+    const recovered=wrong.filter(i=>answers[i].selected===Q[i].a).length;
+    box.innerHTML=`<div class="qt">小测总结</div><p>首次得分：${score()} / ${Q.length}。重试答对：${recovered} 题。</p>
+      <div>${wrong.length?wrong.map(i=>`<p>第 ${i+1} 题：${esc(Q[i].q)} ${reviewButton(i)} <button class="btn sm" data-question="${i}">回到此题</button></p>`).join(''):'没有首次错题。'}</div>
+      <p>用自己的话复述这页的核心机制，再举一个新场景。</p><label>你的复述<textarea class="retelling" rows="3"></textarea></label><button class="btn sm" data-copy-result="1">${ic("copy")} 复制学习结果 JSON</button><button class="btn sm" data-question="0">查看作答</button>`;
+  }
+  function render(){const q=Q[k],s=answers[k];
+    box.innerHTML=`<div class="qn">第 ${k+1} / ${Q.length} 题 ${checkpoint?'· 不计分':'· 首次答对 '+score()}</div><div class="qt">${esc(q.q)}</div>
+      ${q.opts.map((o,j)=>`<button class="opt ${s.selected===null?'':j===s.selected?(j===q.a?'ok':'no'):''}" data-j="${j}" aria-pressed="${j===s.selected}">${String.fromCharCode(65+j)}. ${esc(o)}</button>`).join('')}
+      <div class="fb" aria-live="polite">${s.selected===null?'':s.selected===q.a?ic('check')+' 对。'+esc(q.why):ic('x')+' 不对。先回去看看，或再试一次。'}
+      ${s.selected!==null&&s.selected!==q.a?reviewButton(k)+' <button class="btn sm" data-retry="1">再试一次</button>':''}</div>
+      <div class="nav"><button class="btn sm" data-n="-1" ${k?'':'disabled'}>上一题</button>
+      <button class="btn sm main" data-n="1" ${s.selected===null?'disabled':''}>${checkpoint?'完成检查':k===Q.length-1?'查看总结':'下一题'}</button></div>`;
+  }
+  box.onclick=e=>{const t=e.target.closest('button');if(!t)return;
+    if(t.dataset.review!==undefined){const i=+t.dataset.review;window.lessonNav.go(Q[i].back);
+      let ret=$('#quiz-return');if(!ret){ret=document.createElement('button');ret.id='quiz-return';ret.className='btn sm';document.body.appendChild(ret)}
+      ret.textContent='回到小测';ret.onclick=()=>{window.lessonNav.returnTo(box);ret.remove()};return;
+    }
+    if(t.dataset.copyResult!==undefined){const result={path:location.pathname,firstScore:score(),total:Q.length,answers:answers.map((s,i)=>({question:i+1,first:s.first,selected:s.selected,retries:s.retries,wrong:s.first!==Q[i].a,review:'#s'+Q[i].back})),retelling:$('.retelling',box).value};window.lessonCopy(JSON.stringify(result,null,2),t);return}
+    if(t.dataset.question!==undefined){k=+t.dataset.question;render();return}
+    if(t.dataset.retry){answers[k].selected=null;answers[k].retries++;render();return}
+    if(t.dataset.n){if(checkpoint&&+t.dataset.n===1){box.querySelector('.nav').hidden=true;return}if(k===Q.length-1&&+t.dataset.n===1){if(complete())summary();else{k=answers.findIndex(s=>s.selected===null);render()}return}k+=+t.dataset.n;render();return}
+    if(t.dataset.j===undefined||answers[k].selected!==null)return;
+    const j=+t.dataset.j;answers[k].selected=j;if(answers[k].first===null)answers[k].first=j;render();const nv=$('.nav',box);nv&&nv.scrollIntoView&&nv.scrollIntoView({block:'nearest'});
+  };
+  render();
+  const pk=P.get('pick'),pick=pk==='wrong'?Q[k].opts.findIndex((_,i)=>i!==Q[k].a):pk!==null&&/^\d+$/.test(pk)?+pk:-1;
+  if(pick>=0&&$$('.opt',box)[pick])$$('.opt',box)[pick].click();
+
+});
+
+})();
+</script><script>/* End-of-build readiness marker, used by the screenshot harness. */
+document.querySelector('.theme-toggle').onclick=window.__tt;
+window.__lessonReady=true;
+</script><script>/* ---------- 学完了：点一下记为已学完（存在本机浏览器） ---------- */
+(function(){if(window.__finish)return;window.__finish=1;
+if(!document.querySelector('.deck'))return;
+const st=document.createElement('style');st.textContent=`.fin-btn{position:fixed;right:16px;bottom:76px;z-index:50;padding:10px 16px;border-radius:999px;border:0;background:#16a34a;color:#fff;font:600 15px system-ui;box-shadow:0 4px 14px rgba(0,0,0,.18);cursor:pointer}.fin-btn.done{background:#e5e7eb;color:#166534}`;document.head.appendChild(st);
+const p=n=>String(n).padStart(2,'0');
+const doneKeys=()=>{const out=new Set();const seed=location.pathname;const vs=new Set([seed]);if(seed.endsWith('/index.html')){const d=seed.slice(0,-10);vs.add(d);vs.add(d.replace(/\/$/,'')||'/')}else if(seed.endsWith('/')){vs.add(seed+'index.html');vs.add(seed.replace(/\/$/,'')||'/')}else if(!/\.[a-z0-9]+$/i.test(seed)){vs.add(seed+'/');vs.add(seed+'/index.html')}for(const u of vs){out.add(u);const m=u.match(/^(.*)\/courses\/(.+)$/);if(m)out.add(m[1]+'/'+m[2]);const m2=u.match(/^(.*)\/(cs146s)\/(.+)$/);if(m2&&!u.includes('/courses/'))out.add(m2[1]+'/courses/'+m2[2]+'/'+m2[3])}return[...out]};
+const getDone=()=>{for(const k of doneKeys()){const d=localStorage.getItem('done:'+k);if(d)return d}return null};
+const setDone=v=>{for(const k of doneKeys())localStorage.setItem('done:'+k,v)};
+const clearDone=()=>{for(const k of doneKeys())localStorage.removeItem('done:'+k)};
+const b=document.createElement('button');b.className='fin-btn';document.body.appendChild(b);
+const show=()=>{const d=getDone();b.classList.toggle('done',!!d);b.textContent=d?'✓ 已学完 '+d:'✓ 学完了';b.title=d?'再点一下取消':''};show();
+b.onclick=()=>{if(getDone()){if(confirm('取消「已学完」记录？'))clearDone()}else{const x=new Date();setDone(x.getFullYear()+'-'+p(x.getMonth()+1)+'-'+p(x.getDate()))}show()};
+})();
+</script><script src="../../assets/gh.js" defer></script><script src="../../assets/progress.js" defer></script></body></html>
