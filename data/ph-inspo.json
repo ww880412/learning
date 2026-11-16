@@ -24,6 +24,123 @@
   ],
   "days": [
     {
+      "date": "2026-11-15",
+      "source": "https://www.producthunt.com/leaderboard/daily/2026/11/15",
+      "fetched": "2026-11-16 17:27 北京",
+      "note": "榜单页只取到前 10 名；第 13 名 Pixel Office 的排名来自 PH 产品页日榜名次，综合分来自 hunted.space（其前 10 名与官网日榜综合分一致）。第 6 名 Agentic Canvas 是已收录的 AgentGrid.io 的新一次发布（免费本机设计画布），未重复入库。第 3 名 Tulvo（中小企业一体化工作区）、第 4 名 HuntMonitor（PH 实时榜看板）、第 7 名 TwoBucket、第 8 名 Remindly、第 9 名 Perit Marketplace、第 10 名 Spiik（无机器人会议记录，和昨日 Replay 相近）未收。decohack 标「11.15」实为太平洋 11/14 产品，已在昨日收录，今天还没有对应太平洋 11/15 的那篇。",
+      "picks": [
+        {
+          "id": "2026-11-15-talyn",
+          "why": "每个任务独占一条分支和一台云端沙箱，关掉电脑也能把 PR 修到可合并，正好是工作台里「并行落地」这一环。",
+          "limit": "只接 GitHub；公开测试阶段，maker 称一人维护；团队还不能共享工作区，也没有 SSO。"
+        },
+        {
+          "id": "2026-11-15-pixel-office",
+          "why": "把每个 agent 的职责、权限和是否在等审批画成工位，开发者还可以给每人一份 git worktree，避免并行改同一份代码。",
+          "limit": "本机服务默认绑在 127.0.0.1 且没有登录认证，工作目录也不是安全边界；记忆会发到所选模型通道，不是纯本地。"
+        },
+        {
+          "id": "2026-11-15-rakazo",
+          "why": "开源可自托管的 Grok Bot 替代，审批规则、审计日志和按空间隔离，可对照工作台的权限与合规设计。",
+          "limit": "云端还在 Beta；Claude Pro/Max 要自己从源码自托管并走 Claude Code CLI，默认集成用的是 API key。"
+        }
+      ],
+      "items": [
+        {
+          "name": "Talyn",
+          "tagline": "Run Claude Code and Codex in parallel cloud sandboxes",
+          "ph": "https://www.producthunt.com/products/talyn",
+          "site": "https://www.talyn.dev/",
+          "repo": "https://github.com/Gilbert09/talyn",
+          "rank": 5,
+          "score": 152,
+          "comments": 21,
+          "what": "桌面和网页应用，把 Claude Code / Codex 放到云端沙箱里并行跑任务：每个会话独占一条分支和一台沙箱，做完可以开 PR，并继续修失败的检查、冲突和评审意见，直到可合并。",
+          "problem": "本机同时开多个 coding agent 窗口时，关电脑或走开，CI 一红就要自己回来接着盯；并行任务还容易改到同一份文件。",
+          "highlight": "官网和文档称：①用你已有的 Claude Pro/Max 或 ChatGPT Plus/Pro 订阅跑官方 CLI，不收 token 差价，只收沙箱机时；②每个会话独占分支和 microVM，彼此看不到对方的文件；一个「线程」可按目标在多个仓库各开一个会话；③凭证和 MCP 密钥经沙箱外的代理附加，不进虚拟机；④空闲沙箱休眠不计费（文档和定价 FAQ 写约 3 分钟，定价页另一处和仓库 README 写 10 分钟）；⑤可修复失败检查、冲突和评审意见并推到同一分支（自动修复需手动打开；打开后会直接推，再用下一轮 CI 验证）；⑥合并队列和「保持 PR 可合并」都是按 PR 选择加入，走 GitHub 合并 API，遵守你设好的分支保护；⑦桌面应用也可以在本机 git worktree 里跑，或把本机 Claude Code 会话迁到沙箱继续。免费档每月 10 box-hours、同时 2 台；Pro 每月 40 美元含 200 小时；Max 每月 100 美元含 1000 小时。只支持 GitHub。源码公开，LICENSE 为 MIT。公开测试阶段，maker 称一人维护；Windows 安装包尚未代码签名。雷达未收录该仓库。",
+          "inspo": "工作台可以把「一个任务 = 一条分支 + 一台隔离沙箱」做成默认，而不是多个 agent 挤在同一工作树上；凭证放在沙箱外、按出口代理注入，避免密钥进执行环境。跨仓改动用一个线程按目标拆会话，前提是任务已经标清要动哪些仓库、以及合并是否要人点头。自动修 CI 并推送应做成按 PR 打开的选项，不要作为默认。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "开源"
+          ],
+          "id": "2026-11-15-talyn",
+          "slug": "talyn",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Pixel Office",
+          "tagline": "Run a team of AI agents from a pixel-art office",
+          "ph": "https://www.producthunt.com/products/pixel-office-3",
+          "site": "https://github.com/basriayaz/pixel-office",
+          "repo": "https://github.com/basriayaz/pixel-office",
+          "rank": 13,
+          "score": 87,
+          "comments": 6,
+          "what": "开源的本机像素风「办公室」：每个员工是一个真实的 AI agent（Claude、Codex、Gemini 或 OpenRouter），有自己的职责、记忆、技能、模型和权限，在你指定的文件夹里干活；一眼能看出谁在做、谁在等审批、谁做完了。",
+          "problem": "同时跑多个 coding agent 时，终端标签和聊天窗口长得一样，分不清谁在工作、谁卡在等许可、谁一小时前就做完了。",
+          "highlight": "仓库 README 称：一条命令 `npx github:basriayaz/pixel-office` 在本机打开（默认 http://localhost:4747，需 Node.js 20+），MIT 许可，用你自己的密钥或已有的 Claude Code / Codex CLI 登录。每位员工是一个文件夹：`agent.md`（身份和职责）、`memory.md`（每轮会话加载，任务后追加教训，可手改）以及该员工的技能。看板带负责人、阻塞和「完成前须评审」（勾了 Needs review，负责人不能自己关掉）；可设项目经理来拆任务，但不会在后台轮询。给开发者打开「Own working copy」后，每人一份私有 git worktree（`.pixel-office/worktrees/<id>`，分支 `po/<id>`），合进主分支要你或项目经理来做，仓库须已有至少一次提交。同事之间用内置工具 `list_colleagues` / `message_colleague` 交接；也可以开会，结束时写出决定和跟进任务。员工还会镜像到 `<工作目录>/.claude/agents/<id>.md`，本机 `claude` 会话可以把他们当 subagent 调用。README 还写有 151 个集成（员工看不到凭证）和 82 个钉在特定 commit 的现成技能、安装前可预览，这些数字未经独立核实。安全方面：服务默认只绑 127.0.0.1、没有登录认证，不要暴露到网络；工作目录不是普遍的安全边界；`bypassPermissions` 会跳过审批，对 Codex 还会关掉沙箱；记忆和聊天存在本地文件，但模型请求会发到所选供应商，并不保证数据留在本机。Claude / OpenRouter 可以出审批卡片；Codex 和 Gemini 在这套集成里不能中途停下等人批准。每个办公室最多 16 个工位。默认全局模式的工作目录是用户主目录，要用项目目录得先在设置里改路径。雷达未收录该仓库。",
+          "inspo": "并行开发时给每个 agent 开「Own working copy」：独立 worktree 和 `po/<id>` 分支，结果说明里写下分支名，合进主分支留给人。这要先约定仓库已有至少一次提交，并在该员工档案里打开该选项（会新开会话）。状态上，把「等许可 / 会话出错 / 已停下」从一堆终端里抽出来，做成看板上的工位和计数，比再加一个聊天窗口更有用。项目模式可以把 `.pixel-office/employees/` 提交进仓库共享员工设定，记忆不想入库就用 `pixel-office init --no-memory-git`。不要把默认的用户主目录当成工作区。",
+          "tags": [
+            "coding agent",
+            "AI工具",
+            "开源"
+          ],
+          "id": "2026-11-15-pixel-office",
+          "slug": "pixel-office",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Rakazo",
+          "tagline": "The open source Grok Bot alternative you actually own",
+          "ph": "https://www.producthunt.com/products/rakazo",
+          "site": "https://rakazo.com/",
+          "repo": "https://github.com/elie222/rakazo",
+          "rank": 1,
+          "score": 373,
+          "comments": 45,
+          "what": "开源、可自托管的 Grok Bot 替代：每个 bot 有自己的记忆、例行任务和电脑，用你自己的模型和密钥，在自己的机器或防火墙后面跑。",
+          "problem": "托管式 AI 助手把会话、凭证和审计日志放在别人的云上，审批规则也不透明，关掉聊天后工作就停了。",
+          "highlight": "官网和仓库称 Apache-2.0；可用官方 Docker 镜像自托管（本机 Docker 电脑默认开启），也有托管方案。每个 bot 可选用不同模型（Claude、ChatGPT、OpenRouter、Grok、Ollama、LM Studio 等）。功能包括例行任务（日程、邮件、webhook、GitHub 事件）、记忆、可旁观和接管的电脑与浏览器、群聊与委派，以及 Gmail、Slack、GitHub、Notion、Linear 和 MCP。审批文档写了 Ask / Auto / Never ask 三种模式，可设允许和阻止名单，以及按账户的支出上限；企业页还列了 SSO（OIDC）、SCIM 2.0、可导出或转发到 SIEM 的审计日志、按空间加密（主密钥可放 AWS KMS），以及按空间隔离的 bot、记忆、电脑和凭证。定价：自托管免费；「Your model」托管档每月 15 美元（年付合每月 12 美元）含 25 电脑小时，另有更高档和 credits 方案。官网 FAQ 称要用 Claude Pro/Max，需从源码自托管并经官方 Claude Code CLI 登录；maker 在 PH 评论里补充，当前默认 Claude 集成用的是 Anthropic API key，不是 Pro/Max 订阅额度。符合条件的 ChatGPT 订阅可通过登录接入。云端标为 Beta。雷达未收录该仓库。",
+          "inspo": "审批可以做成账户默认、再按「空间」覆盖：Ask 模式在改动类动作前出卡片，Always allow 写入允许名单，阻止名单直接拒绝不再弹窗；支出上限按账户汇总，超限先拒再问。空间把不同团队或客户的 bot、记忆、电脑和凭证隔开，默认不串。前提是先定义好转发到 SIEM 的审计事件（谁批了什么、改了哪些设置和凭证）。这是对照设计，不是要换掉正在用的 Grok Bot。",
+          "tags": [
+            "AI工具",
+            "开源",
+            "效率"
+          ],
+          "id": "2026-11-15-rakazo",
+          "slug": "rakazo",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Frevana Multiplayer",
+          "tagline": "AI that grows your business alongside your team",
+          "ph": "https://www.producthunt.com/products/frevana-2",
+          "site": "https://www.frevana.com/",
+          "repo": "",
+          "rank": 2,
+          "score": 291,
+          "comments": 45,
+          "what": "Frevana 是做增长、内容和运营的无代码 Agent App 平台；这次上线 Multiplayer：用链接邀请同事，共享 agent、技能和工作流，在同一套上下文里一起做。",
+          "problem": "团队里每人对着空白对话写自己的提示词，好用的流程和技能传不出去，交接时对方的 agent 又从零开始。",
+          "highlight": "官网称 Agent App 把 agent、界面和工作流绑在一起，可先审查再执行，信任的流程也可设成自动跑。maker 在 PH 上说：今天起对所有用户开放；可共享工具、技能和现成 agent，并可选择是否把凭证一并共享；更新共享技能后全队生效；人可以随时接管。maker 也承认目前会保留每次运行记录，但还不能精确追踪是哪一版技能产出了某次结果，已列入路线图。平台面向广告、电商、内容和 AI 搜索可见度等增长工作；官网展示的客户结果（如「两周内 AI 可见度从 0% 到 47%」等）是厂商引用的说法，未经独立验证。官网写由 a16z、Craft、OpenAI 支持。无公开产品源码。",
+          "inspo": "共享的不该只是技能文件，而是「技能 + 界面 + 评审流」打成一个 App，用链接分发；更新默认全队生效，但要先能看到某次输出用的是哪一版技能——Frevana 目前还缺这层追溯。分享时凭证默认不要跟着走，让接收方自己接工具。前提是团队已经有一份可复用的工作流，而不是每人一段私有提示词。",
+          "tags": [
+            "AI工具",
+            "创作",
+            "效率"
+          ],
+          "id": "2026-11-15-frevana-multiplayer",
+          "slug": "frevana-multiplayer",
+          "status": "新发现",
+          "followups": []
+        }
+      ]
+    },
+    {
       "date": "2026-11-14",
       "source": "https://www.producthunt.com/leaderboard/daily/2026/11/14",
       "fetched": "2026-11-15 17:27 北京",
