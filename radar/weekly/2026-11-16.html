@@ -1,0 +1,1346 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>雷达周报 · 11/09–11/16 · 王玮的学习库</title><style>/* 学习库统一主题（2026-10 重设计）：单一无衬线字体，靠字号/字重分层；白卡片 + 细边框；只有「逾期」用强调色。 */
+:root{--paper:#f6f7f9;--sheet:#fff;--card:#fff;--ink:#111827;--ink2:#4b5563;--meta:#6b7280;--hair:#e5e7eb;--hair2:#eef0f3;
+--blue:#2563eb;--blue-soft:#eff4ff;--red:#dc2626;--red-soft:#fef2f2;--green:#16a34a;--green-soft:#f0fdf4;--amber:#b45309;--amber-soft:#fffbeb;--purple:#7c3aed;--purple-soft:#f5f3ff;
+--font:system-ui,-apple-system,"PingFang SC","Noto Sans SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;--serif:var(--font);--mono:ui-monospace,SFMono-Regular,Menlo,monospace;--r-lg:12px;--r-sm:8px;--grad:none;color-scheme:light}
+html.dark{--paper:#0f1115;--sheet:#171a21;--card:#171a21;--ink:#e5e7eb;--ink2:#b6bcc6;--meta:#9ca3af;--hair:#2a2f3a;--hair2:#20242c;
+--blue:#7aa2ff;--blue-soft:rgba(122,162,255,.12);--red:#f87171;--red-soft:rgba(248,113,113,.12);--green:#4ade80;--green-soft:rgba(74,222,128,.12);--amber:#fbbf24;--amber-soft:rgba(251,191,36,.12);--purple:#c4b5fd;--purple-soft:rgba(196,181,253,.14);color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.7 var(--font);-webkit-font-smoothing:antialiased}
+a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+h1,h2,h3,h4{font-family:var(--font);color:var(--ink);letter-spacing:0;background:none;-webkit-text-fill-color:currentColor}
+h1{font-size:30px;line-height:1.3;font-weight:750;margin:4px 0 10px}
+h2{font-size:19px;line-height:1.4;font-weight:700;margin:36px 0 12px;padding:0;border:0;scroll-margin-top:120px}
+h3{font-size:16px;font-weight:650;line-height:1.45}
+code{font:500 .88em var(--mono);background:var(--hair2);border-radius:5px;padding:1px 5px}
+/* ---- 顶栏 ---- */
+.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--paper) 90%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--hair)}
+.top .in{max-width:1040px;margin:0 auto;padding:10px 24px;display:flex;gap:12px;align-items:center;flex-wrap:nowrap}
+.top .brand{display:flex;align-items:center;gap:8px;font-weight:750;font-size:16px;color:var(--ink);white-space:nowrap;font-family:var(--font)}
+.top .brand:hover{text-decoration:none}
+.top .brand i{display:grid!important;place-items:center;width:28px;height:28px;border-radius:8px;background:var(--blue);color:#fff;font-style:normal;font-size:14px}
+.top nav{display:flex;gap:2px;margin-left:auto;overflow-x:auto;scrollbar-width:none;flex-wrap:nowrap}.top nav::-webkit-scrollbar{display:none}
+.top nav a{color:var(--ink2);font-size:14px;font-weight:550;padding:6px 10px;border-radius:8px;white-space:nowrap;background:none;text-decoration:none}
+.top nav a:hover{background:var(--hair2);color:var(--ink)}
+.top nav a.on{color:var(--blue);background:var(--blue-soft);font-weight:650;text-decoration:none}
+.top .dm,.top .menu,.top .favq{flex:none;width:36px;height:36px;border-radius:8px;border:1px solid var(--hair);background:var(--sheet);color:var(--ink);cursor:pointer;font-size:16px;display:grid;place-items:center;padding:0;margin:0}
+.top .menu,.top .favq{display:none}
+.top .fav-b{width:36px;height:36px;padding:0;margin:0}
+/* ---- 布局 ---- */
+main{max-width:1040px;margin:0 auto;padding:24px 24px 72px}
+.crumb{font-size:13px;color:var(--meta);margin:0 0 12px}.crumb a{color:var(--meta)}.crumb a:hover{color:var(--blue)}
+.sheet{background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-lg);box-shadow:none;padding:24px 26px;margin-bottom:18px}
+.hero{display:grid;grid-template-columns:1.3fr 1fr;gap:20px;align-items:center}
+.hero.solo,.hero.home{grid-template-columns:1fr}
+.hero .say{display:flex;flex-direction:column;gap:6px;padding:0}
+.hero .kk,.kk{font:600 13px var(--font);color:var(--blue);letter-spacing:.02em}
+.hero h1{font-size:30px;margin:0}.hero p{margin:0;color:var(--ink2);font-size:15.5px}
+.hero .stage{display:grid;grid-template-columns:1fr 1fr;gap:10px;background:none;padding:0}
+.stat{background:var(--paper);border:1px solid var(--hair);border-radius:10px;padding:12px 14px}
+.stat b{display:block;font:700 24px/1.2 var(--font);color:var(--ink)}.stat span{font-size:13px;color:var(--meta)}
+.stat.purple b{color:var(--purple)}
+.hero .en,.en{font:500 14px var(--font);color:var(--meta)}
+/* 首页：统计改成一行可点链接 */
+.statline{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.statline a{display:inline-flex;align-items:baseline;gap:6px;padding:6px 12px;border:1px solid var(--hair);border-radius:99px;color:var(--ink2);font-size:14px;background:var(--paper)}
+.statline a b{color:var(--ink);font-size:15px}.statline a:hover{border-color:var(--blue);color:var(--blue);text-decoration:none}
+.statline a.hot{border-color:color-mix(in srgb,var(--red) 40%,var(--hair));color:var(--red)}.statline a.hot b{color:var(--red)}
+/* 分区标题 */
+.kicker{display:flex;align-items:center;gap:8px;margin:40px 0 2px;font-size:19px;font-weight:700;color:var(--ink);scroll-margin-top:80px}
+.kicker .n{font-size:13px;font-weight:600;color:var(--meta);background:var(--hair2);border-radius:99px;padding:1px 9px}
+a.n{color:var(--blue)!important;background:none!important;margin-left:auto;font-size:14px}
+.kicker+.sub{font-size:13.5px;font-weight:400;color:var(--meta);margin:0 0 14px;line-height:1.5}
+.kicker:not(:has(+.sub)){margin-bottom:14px}
+/* 卡片 */
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+.grid.wide{grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}
+.card{position:relative;display:flex;flex-direction:column;gap:6px;background:var(--card);border:1px solid var(--hair);border-radius:var(--r-lg);padding:18px 20px;color:var(--ink);min-width:0;box-shadow:none;transition:border-color .15s,box-shadow .15s}
+a.card:hover{border-color:var(--blue);box-shadow:0 4px 16px -8px rgba(37,99,235,.35);text-decoration:none;transform:none}
+.card h3{margin:0;font-size:16.5px;color:var(--ink)}.card p{margin:0;color:var(--ink2);font-size:14.5px;line-height:1.6}
+.card .ic{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;font-size:20px;background:var(--hair2);margin-bottom:4px}
+.card .go{position:absolute;right:18px;top:16px;color:var(--meta)}a.card:hover .go{color:var(--blue)}
+.card .meta{font-size:13px;color:var(--meta);margin-top:auto;padding-top:6px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding-right:40px}
+.card.item{padding:12px 12px 16px}.card.item>*:not(.thumb){margin-left:8px;margin-right:8px}
+.thumb{background:var(--paper);border-radius:8px;padding:0;margin-bottom:6px;overflow:hidden}
+.thumb img{display:block;width:100%;aspect-ratio:16/10;object-fit:cover;object-position:center top}
+.tag{display:inline-block;font-size:12px;font-weight:600;padding:1px 8px;border-radius:6px;background:var(--hair2);color:var(--ink2);white-space:nowrap;border:0}
+.tag.blue{background:var(--blue-soft);color:var(--blue)}.tag.green{background:var(--green-soft);color:var(--green)}.tag.amber{background:var(--amber-soft);color:var(--amber)}.tag.red{background:var(--red);color:#fff}.tag.purple{background:var(--purple-soft);color:var(--purple)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;background:var(--sheet);border:1px solid var(--hair);border-radius:99px;padding:5px 12px;font-weight:500;font-size:14px;color:var(--ink2)}
+.chip:hover{border-color:var(--blue);color:var(--blue);text-decoration:none}.chip.more{background:var(--blue);border-color:var(--blue);color:#fff}
+.empty{background:var(--sheet);border:1px dashed var(--hair);border-radius:var(--r-lg);padding:22px;text-align:center;color:var(--meta);font-size:14.5px}
+.empty b{display:block;color:var(--ink);font-size:16px;margin-bottom:2px}
+/* 列表：一个白底容器，行之间细线 */
+.list{display:flex;flex-direction:column;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-lg);overflow:hidden}
+.list .row{display:flex;gap:12px;align-items:center;padding:12px 16px;border:0;border-top:1px solid var(--hair2);border-radius:0;background:none;box-shadow:none;flex-wrap:wrap}
+.list .row:first-child{border-top:0}
+.list .row:hover{background:var(--paper)}
+.list .row .t{flex:1;min-width:180px;font-weight:550}.list .row .t a{color:var(--ink)}.list .row .t a:hover{color:var(--blue)}
+.list .row .d{font:400 13px var(--font);color:var(--meta);white-space:nowrap}
+.list .row .num{font-size:13px;color:var(--meta);min-width:28px}
+.list>.empty{border:0;border-radius:0}
+/* 复习队列 */
+.rv-g{padding:8px 16px 6px;font-size:13px;font-weight:650;color:var(--meta);background:var(--paper);border-top:1px solid var(--hair2);display:flex;gap:6px;align-items:center}
+.rv-g:first-child{border-top:0}.rv-g.over{color:var(--red)}
+.rv-g .c{font-weight:500}
+.row.over{box-shadow:inset 3px 0 0 var(--red)}
+.badge{font-size:12.5px;color:var(--meta);white-space:nowrap}.badge b{font-weight:600;color:var(--ink2)}.row.over .badge .late{color:var(--red);font-weight:650}
+.rv-more{display:block;width:100%;padding:11px;border:0;border-top:1px solid var(--hair2);background:var(--sheet);color:var(--blue);font:600 14px var(--font);cursor:pointer}
+.rv-more:hover{background:var(--paper)}
+/* 正在学：课程卡 */
+.course{display:flex;flex-direction:column;gap:10px}
+.course .hd{display:flex;align-items:flex-start;gap:10px}
+.course .hd .col{font-size:12.5px;color:var(--meta)}
+.course h3{font-size:17px}.course h3 a{color:var(--ink)}
+.course .bigbar{display:flex;align-items:center;gap:10px}
+.course .bigbar .bar{flex:1;height:10px;border-radius:99px;background:var(--hair2);overflow:hidden;display:flex}
+.course .bigbar .bar i{display:block;height:100%}
+.course .bigbar .b{background:color-mix(in srgb,var(--blue) 28%,transparent)}.course .bigbar b{font-size:15px;min-width:42px;text-align:right}
+.course .sm{font-size:13px;color:var(--meta)}
+.course .next{display:flex;flex-direction:column;align-items:flex-start;gap:6px;background:var(--paper);border-radius:10px;padding:10px 12px}.course .next .nt{color:var(--ink);font-weight:600;font-size:14.5px;line-height:1.45}.course .next .btn{margin-top:2px;min-height:36px;padding:6px 14px}
+.course .acts{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:8px 16px;border-radius:8px;background:var(--blue);color:#fff!important;font-weight:600;font-size:14px;border:0;cursor:pointer}
+.rev-join{display:inline-flex;align-items:center;justify-content:center;min-height:32px;padding:2px 10px;border-radius:999px;border:1px solid var(--hair);background:var(--sheet);color:var(--ink);font:600 12px/1.2 var(--font);cursor:pointer}
+.rev-join:hover{border-color:var(--blue);color:var(--blue);text-decoration:none}
+.rev-join.on{background:var(--blue-soft);color:var(--blue);border-color:transparent}
+a.card .rev-join{position:relative;z-index:2}
+.btn:hover{text-decoration:none;filter:brightness(1.08)}
+.btn.ghost{background:none;color:var(--ink)!important;border:1px solid var(--hair)}
+.course details{border-top:1px solid var(--hair2);padding-top:6px}
+.course summary{cursor:pointer;font-size:13.5px;color:var(--ink2);padding:4px 0;list-style:none}
+.course summary::-webkit-details-marker{display:none}.course summary::before{content:"▸ ";color:var(--meta)}.course details[open] summary::before{content:"▾ "}
+.course ol{margin:4px 0 0;padding-left:20px;font-size:14px}.course li{margin:4px 0}.course li .tag{margin-left:6px}
+/* 进度条（小） */
+.prog{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--meta);margin-top:6px}.prog span{white-space:nowrap}
+.prog .bar{flex:1;min-width:80px;height:8px;border-radius:99px;background:var(--hair2);display:flex;overflow:hidden}
+.prog .bar i{display:block;height:100%}.prog .g,.bar .g{background:var(--purple)}.prog .l,.bar .l{background:var(--green)}.prog .b,.bar .b{background:var(--blue)}
+.states{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+/* 概念卡 */
+.defcard{display:grid;grid-template-columns:1.2fr 1fr;gap:20px}
+.defcard .stage{background:var(--paper);border-radius:10px;padding:26px;display:flex;flex-direction:column;justify-content:center;gap:8px;min-height:200px}
+.defcard .stage .term{font-size:34px;font-weight:750;line-height:1.2}
+.defcard .say{display:flex;flex-direction:column;justify-content:center;gap:10px}
+.key{background:var(--blue-soft);border-radius:10px;padding:12px 16px;font-size:16px;line-height:1.75;margin:0}.key::before{content:"一句话 ";font-weight:700;color:var(--blue)}
+/* 收藏页 */
+.fbar{display:flex;gap:8px;align-items:center;margin-bottom:10px}
+.fbar input,.fbar select,.tkrow input{min-width:0;padding:9px 12px;border:1px solid var(--hair);border-radius:8px;background:var(--sheet);color:var(--ink);font:inherit;font-size:15px}
+.fbar input{flex:1}.fbar select{flex:none;max-width:40%}
+.fhint{font-size:13.5px;color:var(--meta);background:var(--sheet);border:1px solid var(--hair);border-radius:10px;padding:10px 14px;margin:0 0 14px}
+.fhint a{font-weight:600}
+details.panel{margin-top:36px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-lg);scroll-margin-top:80px}
+details.panel>summary{cursor:pointer;padding:14px 18px;font-weight:650;font-size:15px;list-style:none;display:flex;gap:10px;align-items:center}
+details.panel>summary::-webkit-details-marker{display:none}
+details.panel>summary .s{font-weight:400;font-size:13px;color:var(--meta);margin-left:auto}
+details.panel>summary::after{content:"▸";color:var(--meta)}details.panel[open]>summary::after{content:"▾"}
+details.panel .pb{padding:0 18px 16px;border-top:1px solid var(--hair2)}
+.tkrow{display:flex;gap:8px;flex-wrap:nowrap;margin-top:12px}.tkrow input{flex:1}
+.tkrow button{flex:none;cursor:pointer;padding:9px 16px;border-radius:8px;font:600 14px var(--font);border:1px solid var(--hair);background:none;color:var(--ink)}
+.tkrow button.pri{background:var(--blue);border-color:var(--blue);color:#fff}
+.panel ol{font-size:14.5px;color:var(--ink2);padding-left:20px}.panel ol li{margin:6px 0}
+.foot{margin-top:56px;padding-top:16px;border-top:1px solid var(--hair);font-size:13px;color:var(--meta);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.foot a{color:var(--meta);text-decoration:underline}
+/* ---- X 简报 / 海报 ---- */
+.quick{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:10px;counter-reset:q}
+.quick li{background:var(--sheet);border:1px solid var(--hair);border-radius:10px;padding:12px 16px 12px 50px;position:relative;counter-increment:q;line-height:1.7;margin:0}
+.quick li::before{content:counter(q);position:absolute;left:16px;top:13px;width:22px;height:22px;border-radius:50%;background:var(--blue-soft);color:var(--blue);font:700 12.5px/22px var(--font);text-align:center}
+main>section.sheet:first-of-type .quick li{background:var(--paper)}
+.tabs{position:sticky;top:57px;z-index:4;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:10px 40px 10px 0;margin:0 0 8px;background:var(--paper)!important;
+-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 48px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 48px),transparent)}
+.tabs::-webkit-scrollbar{display:none}
+.tabs a{flex:none;padding:6px 12px;border-radius:99px;background:var(--sheet);border:1px solid var(--hair);color:var(--ink2);font-size:13.5px;font-weight:550}
+.tabs a:hover{border-color:var(--blue);color:var(--blue);text-decoration:none}
+main>.sheet li{line-height:1.7}
+main>.sheet ul{padding-left:20px}main>.sheet li{margin:10px 0}
+main>.sheet h3{font-size:16px;margin:22px 0 6px}main>.sheet h3::before{background:var(--blue);width:6px;height:6px}
+main>.sheet h4{font-size:14px;color:var(--meta)}
+main>.sheet p{line-height:1.7}
+.star{filter:none}li:has(.star){background:var(--amber-soft);border-radius:8px;padding:8px 12px;list-style:none;margin-left:-20px}
+.more{background:var(--paper);border-radius:8px;padding:10px 14px;font-size:14px;color:var(--ink2)}
+.tip{background:var(--amber-soft);border-radius:8px;padding:8px 12px;font-size:14.5px}
+.muted{font-size:13.5px;color:var(--meta)}
+/* 扩大收藏星和「原帖」的点击区域（约 44px），不改变行高 */
+main li a[href*="x.com/"],main li a[href*="twitter.com/"]{display:inline-block;padding:10px 6px;margin:-10px -2px}
+main li .fav-b{display:inline-grid;place-items:center;min-width:44px;min-height:44px;margin:-12px -8px -12px 0;vertical-align:middle}
+.card .fav-b{min-width:40px;min-height:40px;right:6px!important;bottom:4px!important}
+.pc .fav-b{min-width:44px;min-height:44px;margin:-10px -10px 0 0}
+.row{display:flex}.pn{display:flex;justify-content:space-between;gap:10px;margin-top:20px;font-weight:600}
+main>section.sheet>.row{border-bottom:1px solid var(--hair2);padding:12px 4px}main>section.sheet>.row:last-child{border:0}
+main>section.sheet>.row .d{font:400 13.5px var(--font);color:var(--meta)}
+.pc{display:grid;grid-template-columns:280px 1fr;gap:22px}
+.xi blockquote{background:var(--paper);border:1px solid var(--hair2)}
+/* ---- 手机 ---- */
+@media(max-width:820px){.hero,.defcard{grid-template-columns:1fr}}
+@media(max-width:700px){
+.top .in{padding:8px 14px;gap:8px;flex-wrap:wrap}
+.top .brand{margin-right:auto;font-size:15px}
+.top nav{display:none;order:9;width:100%;margin:2px 0 6px;flex-direction:column;gap:0;overflow:visible;border-top:1px solid var(--hair);padding-top:6px}
+html.navopen .top nav{display:flex}
+.top nav a{font-size:15px;padding:11px 8px;border-radius:8px}
+.top .menu,.top .favq{display:grid}
+.top .favq:hover{text-decoration:none}
+main{padding:16px 14px 48px}
+h1,.hero h1{font-size:24px}
+.sheet{padding:18px 16px}
+.grid{grid-template-columns:1fr 1fr;gap:10px}.grid.wide{grid-template-columns:1fr}
+.grid .card:not(.item){padding:14px}.card .go{display:none}
+.kicker{font-size:18px;margin-top:32px}
+.list .row{padding:11px 14px;gap:4px 10px}.list .row .t{min-width:0;flex-basis:100%;order:-1}
+.rv-g{padding:7px 14px 5px}
+.states{grid-template-columns:1fr 1fr}
+.tabs{top:53px}.pc{grid-template-columns:1fr}
+main>section.sheet>.row{flex-wrap:wrap;gap:2px 10px}
+}
+main:has(>.tabs){max-width:880px}
+html.dark .btn:not(.ghost),html.dark .tkrow button.pri,html.dark .chip.more{color:#0f1115!important}
+.top .favq{width:auto;padding:0 10px;font-size:14px;font-weight:600;color:var(--ink)}
+.pc>*{min-width:0}.xi,.xi blockquote{overflow-wrap:anywhere}
+@media(max-width:700px){main>section.sheet>.row .t{flex-basis:100%;order:2}main>section.sheet>.row .d{order:1}main>section.sheet>.row .tag{order:1}}
+/* =====================================================================
+   三套可切换风格：html[data-theme=A|B|C]（vp-head.js 在首屏前设置，默认 C）
+   A 杂志花园 · B 精确工作台 · C 学习卡片。共用同一份 HTML。
+   ===================================================================== */
+/* 切换器 */
+.thsw{flex:none;display:inline-flex;border:1px solid var(--hair);border-radius:8px;overflow:hidden;background:var(--sheet);height:30px}
+.thsw button{border:0;background:none;color:var(--meta);font:600 12px/1 var(--font);width:26px;padding:0;cursor:pointer}
+.thsw button+button{border-left:1px solid var(--hair)}
+.thsw button[aria-pressed=true]{background:var(--ink);color:var(--paper)}
+.top nav a em{display:none;font-style:normal;font-size:12px;color:var(--meta);font-weight:500}
+/* ---- 首页共用骨架 ---- */
+.home .th-A,.home .th-B,.home .th-C{display:none}
+[data-theme=A] .home .th-A,[data-theme=B] .home .th-B,[data-theme=C] .home .th-C{display:inline}
+.hhero{display:grid;grid-template-columns:1fr auto;grid-template-areas:"hh cta" "kpi kpi";gap:6px 20px;align-items:end;margin:8px 0 24px}
+.hhero .hh{grid-area:hh}.hhero .hcta{grid-area:cta;justify-self:end}.hhero .kpi{grid-area:kpi}
+.hhero h1{margin:0}.hhero p{margin:4px 0 0;color:var(--ink2);font-size:15px}
+.kpi{display:grid;grid-template-columns:repeat(4,1fr);background:var(--sheet);border:1px solid var(--hair);border-radius:12px;margin-top:22px;overflow:hidden}
+.kpi a{padding:16px 20px;border-left:1px solid var(--hair);color:var(--ink2);font-size:12.5px;text-decoration:none!important}.kpi a:first-child{border-left:0}
+.kpi b{display:block;font-size:24px;font-weight:650;color:var(--ink);letter-spacing:-.02em;line-height:1.3}.kpi a.red b{color:var(--red)}
+.kpi a:hover{background:var(--paper)}
+.hcols{display:none}
+.hbody{display:block}
+.hmain{display:grid;grid-template-columns:1.4fr 1fr;gap:24px;align-items:start}
+.htrio{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-top:24px;align-items:start}
+.panel{background:var(--sheet);border:1px solid var(--hair);border-radius:12px;overflow:hidden;min-width:0;scroll-margin-top:80px}
+.panel .ph{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 18px;border-bottom:1px solid var(--hair)}
+.panel .ph h2{margin:0;font-size:14.5px;font-weight:650}
+.panel .ph .n{font-size:12.5px;color:var(--meta);font-weight:500;background:none;padding:0;margin:0}
+.panel a.n{color:var(--meta)!important}
+.panel .psub{display:none}
+.panel .list{border:0;border-radius:0;background:none}
+.panel .list .row{padding:10px 18px;flex-wrap:nowrap}
+.panel .list .row .t{min-width:0;font-weight:500;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.panel .pt{display:block;padding:12px 18px 4px;font-weight:650;color:var(--ink);font-size:15px}
+.pthumbs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:10px 18px 18px}
+.pthumbs img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;object-position:top;border-radius:8px;border:1px solid var(--hair2);background:var(--paper)}
+/* 复习行 */
+.rvr .ic{display:none;font-style:normal}
+.rvr .t small{display:none}
+.rvr .pill{display:none}
+.rvr .t a{color:var(--ink)}
+/* 课程行 */
+.crs{display:flex;gap:14px;padding:16px 18px;border-top:1px solid var(--hair2)}.crs:first-child{border-top:0}
+.crs .ring{display:none}
+.crs .cb{flex:1;min-width:0;display:grid;grid-template-columns:1fr auto;column-gap:10px}
+.crs .s{grid-column:1/-1;order:2;font-size:12px;color:var(--meta)}
+.crs h3{margin:0;font-size:14.5px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.crs h3 a{color:var(--ink)}
+.crs .pct{font-size:12px;color:var(--meta);align-self:center}
+.crs .s{order:0}
+.crs .prog{grid-column:1/-1;margin:8px 0 0}
+.crs .prog .bar{height:6px}
+.crs .prog>span{font-size:12px}
+.crs .seg{display:none;grid-column:1/-1;gap:3px;margin:10px 0 2px}
+.crs .seg i{flex:1;height:6px;border-radius:2px;background:var(--hair)}.crs .seg i.d{background:var(--blue)}.crs .seg i.p{background:color-mix(in srgb,var(--blue) 40%,transparent)}
+.crs .nx{grid-column:1/-1;margin-top:8px;font-size:12.5px;color:var(--blue);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.crs .nx b{font-weight:600}.crs .nx span::before{content:" · "}.crs .nx::after{content:" →"}
+.home~.kicker:first-of-type{margin-top:48px}
+
+/* ============ B 精确工作台（Linear / Stripe） ============ */
+[data-theme=B]{--paper:#fbfbfc;--sheet:#fff;--card:#fff;--ink:#16171a;--ink2:#4a4c55;--meta:#6e707a;--hair:#ececf0;--hair2:#f2f2f5;--blue:#5e6ad2;--blue-soft:#eef0fb;--red:#d4483b;--red-soft:#fdf0ee;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif}
+html.dark[data-theme=B]{--paper:#0e0f12;--sheet:#16171b;--card:#16171b;--ink:#e8e9ed;--ink2:#b3b5bd;--meta:#8b8d97;--hair:#26272d;--hair2:#1f2025;--blue:#8b93f0;--blue-soft:rgba(139,147,240,.14);--red:#f0776b}
+[data-theme=B] body{font-size:14px}
+[data-theme=B] .hhero h1{font-size:26px;font-weight:650;letter-spacing:-.02em}
+[data-theme=B] .hcta{background:var(--ink);color:var(--paper)!important;font-size:13px;min-height:36px;padding:7px 14px}
+[data-theme=B] .crs .seg{display:flex}[data-theme=B] .crs .prog .bar{display:none}[data-theme=B] .crs .prog{margin-top:2px}
+[data-theme=B] .rvr::before{content:"";width:8px;height:8px;border-radius:50%;flex:none;background:#c4c6cf}
+[data-theme=B] .rvr.over::before{background:var(--red)}[data-theme=B] .rvr.today::before{background:var(--blue)}
+[data-theme=B] .rvr{box-shadow:none!important}
+[data-theme=B] .rvr .tag{display:none}
+[data-theme=B] .rv-g{font-size:11px;letter-spacing:.04em;background:#fafafb;color:var(--meta);padding:8px 18px 4px}
+html.dark[data-theme=B] .rv-g{background:var(--hair2)}
+[data-theme=B] .htrio .list .row::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--blue);flex:none}
+@media(min-width:1000px){
+ [data-theme=B] body{padding-left:232px}
+ [data-theme=B] .top{position:fixed;left:0;top:0;bottom:0;width:232px;border-bottom:0;border-right:1px solid var(--hair);background:#f6f6f8;backdrop-filter:none;overflow-y:auto}
+ html.dark[data-theme=B] .top{background:#121317}
+ [data-theme=B] .top .in{flex-direction:column;align-items:stretch;gap:2px;padding:20px 14px;min-height:100%;max-width:none}
+ [data-theme=B] .top .brand{padding:4px 8px 18px;font-size:15px;font-weight:650}
+ [data-theme=B] .top .brand i{width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg,#5e6ad2,#8b5cf6);font-size:12px}
+ [data-theme=B] .top nav{flex-direction:column;margin:0;overflow:visible;gap:2px}
+ [data-theme=B] .top nav a{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;border-radius:6px;font-size:14px;font-weight:450;color:var(--ink2)}
+ [data-theme=B] .top nav a em{display:inline}
+ [data-theme=B] .top nav a.on{background:var(--sheet);color:var(--ink);box-shadow:0 0 0 1px var(--hair),0 1px 2px rgba(0,0,0,.04);font-weight:550}
+ [data-theme=B] .top nav a.s1,[data-theme=B] .top nav a.s2{margin-top:30px;position:relative;overflow:visible}
+ [data-theme=B] .top nav a.s1::before,[data-theme=B] .top nav a.s2::before{position:absolute;left:10px;top:-22px;font-size:11px;color:var(--meta);letter-spacing:.04em;font-weight:500}
+ [data-theme=B] .top nav a.s1::before{content:"栏目"}[data-theme=B] .top nav a.s2::before{content:"每日"}
+ [data-theme=B] .top .thsw{margin:auto 8px 0;align-self:flex-start}
+ [data-theme=B] .top .dm{position:absolute;left:130px;bottom:20px;width:30px;height:30px}
+ [data-theme=B] .top{}
+ [data-theme=B] main{max-width:1100px;margin:0;padding:40px 56px 72px}
+ [data-theme=B] .tabs{top:0}
+}
+
+/* ============ A 杂志花园（暖纸、锈红、衬线标题） ============ */
+[data-theme=A]{--paper:#f7f4ee;--sheet:#fffdf9;--card:#fffdf9;--ink:#2b2722;--ink2:#5f574e;--meta:#8a8076;--hair:#e6dfd3;--hair2:#efe8dc;--blue:#b4532a;--blue-soft:#f6e1d6;--red:#a2461f;--red-soft:#f6e1d6;--green:#5f7a3a;--green-soft:#e7ecd9;--purple:#7a5a8c;--purple-soft:#eee4f1;--serif:"Noto Serif CJK SC","Noto Serif SC","Songti SC",serif;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif}
+html.dark[data-theme=A]{--paper:#1b1814;--sheet:#23201b;--card:#23201b;--ink:#ede6da;--ink2:#c7bdaf;--meta:#9b9184;--hair:#3a342c;--hair2:#2d2923;--blue:#e08a5f;--blue-soft:rgba(224,138,95,.15);--red:#e8916a;--red-soft:rgba(232,145,106,.15)}
+[data-theme=A] h1,[data-theme=A] h2,[data-theme=A] .kicker,[data-theme=A] .top .brand,[data-theme=A] .card h3,[data-theme=A] .crs h3,[data-theme=A] .panel .pt{font-family:var(--serif)}
+[data-theme=A] .top{background:color-mix(in srgb,var(--paper) 92%,transparent);border-bottom-color:transparent}
+[data-theme=A] .top .in,[data-theme=A] main{max-width:1120px}
+[data-theme=A] .top .in{padding:18px 40px}
+[data-theme=A] main{padding:8px 40px 80px}
+[data-theme=A] .top .brand{font-size:19px;letter-spacing:.04em;font-weight:700}
+[data-theme=A] .top .brand i{display:none!important}
+[data-theme=A] .top nav a{color:var(--ink2);font-weight:450}[data-theme=A] .top nav a.on{background:none;color:var(--blue);font-weight:600}
+[data-theme=A] .thsw{border-radius:99px}[data-theme=A] .top .dm{border-radius:99px}
+[data-theme=A] .hhero{display:block;padding:44px 0 40px;border-bottom:1px solid var(--hair);margin-bottom:0}
+[data-theme=A] .hhero .kk{font-size:13px;letter-spacing:.18em;color:var(--blue);font-weight:500}
+[data-theme=A] .hhero h1{font-size:54px;line-height:1.22;font-weight:600;margin:14px 0 0}
+[data-theme=A] .hhero p{font-size:18px;line-height:1.7;max-width:640px;margin-top:16px}
+[data-theme=A] .hcta{display:none}
+[data-theme=A] .kpi{display:flex;gap:40px;background:none;border:0;border-radius:0;margin-top:28px}
+[data-theme=A] .kpi a{border:0;padding:0;font-size:13px;color:var(--ink2)}[data-theme=A] .kpi a:hover{background:none;color:var(--blue)}
+[data-theme=A] .kpi b{font-family:var(--serif);font-size:28px;font-weight:600}
+[data-theme=A] .hmain{grid-template-columns:1.25fr 1fr;gap:56px;padding:48px 0}
+[data-theme=A] .htrio{grid-template-columns:repeat(4,1fr);gap:20px;margin:0;padding:44px 0 8px;border-top:1px solid var(--hair)}
+[data-theme=A] .hmain .panel{background:none;border:0;border-radius:0;overflow:visible}
+[data-theme=A] .hmain .panel .ph{border:0;padding:0}
+[data-theme=A] .hmain .panel .ph h2{font-size:24px;font-weight:600}
+[data-theme=A] .panel .psub{display:block;font-size:14px;color:var(--meta);margin:2px 0 20px}
+[data-theme=A] .rv .list{border-radius:0}
+[data-theme=A] .rv .list .row{padding:16px 0;border-top:1px solid var(--hair);background:none!important;align-items:flex-start;box-shadow:none}
+[data-theme=A] .rv .list .row:first-child{border-top:1px solid var(--hair)}
+[data-theme=A] .rvr .t{white-space:normal!important;font-size:16px!important;font-weight:450!important;line-height:1.55}
+[data-theme=A] .rvr .t small{display:block;font-size:12.5px;color:var(--meta);margin-top:4px;font-weight:400}
+[data-theme=A] .rvr .tag,[data-theme=A] .rvr .badge{display:none}
+[data-theme=A] .rvr .pill{display:inline-block;font-size:12px;padding:2px 10px;border-radius:99px;background:var(--hair2);color:var(--ink2);white-space:nowrap;margin-top:2px}
+[data-theme=A] .rvr.over .pill{background:var(--red-soft);color:var(--red)}
+[data-theme=A] .rv-g{background:none;padding:14px 0 6px;font-size:12px;letter-spacing:.12em;border:0}
+[data-theme=A] .rv-more{background:none;text-align:left;padding:14px 0;border-top:1px solid var(--hair);color:var(--blue)}
+[data-theme=A] .crs{background:var(--sheet);border:1px solid var(--hair);border-radius:14px;padding:20px 22px;margin-bottom:14px;box-shadow:0 1px 2px rgba(60,40,20,.05)}
+[data-theme=A] .crs:first-child{border-top:1px solid var(--hair)}
+[data-theme=A] .crs .s{order:-1;font-size:12px;letter-spacing:.06em}
+[data-theme=A] .crs h3{font-size:19px;font-weight:600;white-space:normal;margin:4px 0 4px}
+[data-theme=A] .crs .pct{display:none}
+[data-theme=A] .crs .prog .bar{height:6px;background:var(--hair2)}
+[data-theme=A] .crs .prog .b{background:var(--blue)}[data-theme=A] .crs .prog .l{background:#7a2f12}
+[data-theme=A] .crs .nx{font-weight:600}
+[data-theme=A] .htrio .panel{border-radius:14px;box-shadow:0 1px 2px rgba(60,40,20,.05)}
+[data-theme=A] .htrio .panel .ph{border:0;padding:18px 20px 0}
+[data-theme=A] .htrio .panel .ph h2{font:500 12px var(--font);color:var(--meta);letter-spacing:.06em}
+[data-theme=A] .htrio .panel .pt{padding:6px 20px 8px;font-size:18px}
+[data-theme=A] .htrio .list .row{padding:8px 0;margin:0 20px;border-top:1px dashed var(--hair);font-size:14px}
+[data-theme=A] .htrio .list .row .tag{background:none;color:var(--red);padding:0}
+[data-theme=A] .htrio .list{padding-bottom:12px;padding-top:6px}
+[data-theme=A] .pthumbs{padding:10px 20px 20px}
+[data-theme=A] .kicker{font-size:22px;font-weight:600}
+[data-theme=A] .card,[data-theme=A] .list,[data-theme=A] .sheet{border-radius:14px}
+[data-theme=A] .btn{background:var(--blue)}
+[data-theme=A] .quick li::before{background:var(--blue-soft);color:var(--blue)}
+[data-theme=A] main>.sheet h3{font-family:var(--serif)}
+
+/* ============ C 学习卡片（Brilliant） ============ */
+[data-theme=C]{--paper:#f3f5fb;--sheet:#fff;--card:#fff;--ink:#1d2340;--ink2:#5a6185;--meta:#8a90ad;--hair:#e6e9f4;--hair2:#eef0f7;--blue:#3b5bfd;--blue-soft:#e8edff;--red:#d4483b;--red-soft:#ffe6e3;--green:#1f9d5c;--green-soft:#e3f7ec;--amber:#d9771e;--amber-soft:#fff1e0;--purple:#7a4bf5;--purple-soft:#f2eaff;--r-lg:20px;--font:"Inter","PingFang SC","Noto Sans CJK SC","Noto Sans SC",system-ui,sans-serif;--sh:0 1px 2px rgba(30,40,90,.04),0 8px 24px rgba(30,40,90,.06)}
+html.dark[data-theme=C]{--paper:#0f1222;--sheet:#181c33;--card:#181c33;--ink:#e6e9fb;--ink2:#aab0d0;--meta:#7d84a8;--hair:#272c48;--hair2:#20253f;--blue:#7d93ff;--blue-soft:rgba(125,147,255,.15);--red:#ff8a7d;--red-soft:rgba(255,138,125,.15);--green-soft:rgba(31,157,92,.18);--amber-soft:rgba(217,119,30,.18);--purple-soft:rgba(122,75,245,.2);--sh:0 1px 2px rgba(0,0,0,.3)}
+[data-theme=C] .top{background:color-mix(in srgb,var(--paper) 90%,transparent);border-bottom-color:transparent}
+[data-theme=C] .top .in,[data-theme=C] main{max-width:1160px}
+[data-theme=C] .top .brand{font-weight:800;font-size:18px}[data-theme=C] .top .brand i{width:32px;height:32px;border-radius:10px;background:#3b5bfd}
+[data-theme=C] .top nav a{border-radius:99px;font-weight:600;padding:7px 13px}
+[data-theme=C] .top nav a.on{background:var(--sheet);color:var(--ink);box-shadow:0 1px 3px rgba(30,40,90,.1)}
+[data-theme=C] .thsw,[data-theme=C] .top .dm{border-radius:10px;border-color:transparent;box-shadow:0 1px 3px rgba(30,40,90,.1)}
+[data-theme=C] h1,[data-theme=C] h2,[data-theme=C] .kicker{font-weight:800}
+[data-theme=C] .home{display:grid;grid-template-columns:1.5fr 1fr;gap:20px;align-items:stretch}
+[data-theme=C] .hhero{display:flex;flex-direction:column;align-items:flex-start;margin:0;padding:30px;border-radius:20px;color:#fff;background:linear-gradient(135deg,#3b5bfd,#6a4bf5);position:relative;overflow:hidden;box-shadow:var(--sh)}
+[data-theme=C] .hhero::after{content:"";position:absolute;right:-60px;top:-60px;width:240px;height:240px;border-radius:50%;background:rgba(255,255,255,.09);pointer-events:none}
+[data-theme=C] .hhero .kk{color:#fff;opacity:.85;font-weight:600}
+[data-theme=C] .hhero h1{color:#fff;font-size:34px;font-weight:800;margin:8px 0 6px;letter-spacing:-.01em}
+[data-theme=C] .hhero p{color:#fff;opacity:.88}
+[data-theme=C] .hhero .kpi{order:2;display:flex;flex-wrap:wrap;gap:10px;background:none;border:0;margin:20px 0 0;overflow:visible}
+[data-theme=C] .hhero .kpi a{border:0;background:rgba(255,255,255,.17);color:#fff;border-radius:99px;padding:6px 13px;font-size:13px;font-weight:600;display:inline-flex;gap:6px;align-items:baseline}
+[data-theme=C] .hhero .kpi a b{font-size:13px;color:#fff;display:inline;font-weight:700;letter-spacing:0;order:2}
+[data-theme=C] .hhero .kpi a:hover{background:rgba(255,255,255,.28)}
+[data-theme=C] .hcta{order:3;margin-top:22px;background:#fff;color:#3b5bfd!important;font-weight:700;padding:12px 22px;border-radius:12px;justify-self:auto;min-height:0}
+[data-theme=C] .hcols{display:flex;flex-direction:column;gap:6px;background:var(--sheet);border-radius:20px;padding:24px 26px;box-shadow:var(--sh)}
+[data-theme=C] .hcols h3{margin:0 0 8px;font-size:15px;color:var(--ink2)}
+[data-theme=C] .hc{display:flex;align-items:center;gap:12px;font-size:14px;font-weight:600;color:var(--ink);padding:5px 0;text-decoration:none!important}
+[data-theme=C] .hc i{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;font-style:normal;font-size:15px}
+[data-theme=C] .hc span{flex:1}[data-theme=C] .hc em{font-style:normal;color:var(--meta)}
+[data-theme=C] .hc.c1 i{background:var(--blue-soft)}[data-theme=C] .hc.c2 i{background:var(--hair2)}[data-theme=C] .hc.c3 i{background:var(--purple-soft)}[data-theme=C] .hc.c4 i{background:var(--green-soft)}[data-theme=C] .hc.c5 i{background:var(--amber-soft)}
+[data-theme=C] .hc:hover span{color:var(--blue)}
+[data-theme=C] .hbody{grid-column:1/-1;display:grid;grid-template-columns:1.3fr 1fr;gap:20px;align-items:start}
+[data-theme=C] .hmain{display:contents}
+[data-theme=C] .panel{background:none;border:0;border-radius:0;overflow:visible}
+[data-theme=C] .panel .ph{border:0;padding:16px 2px 14px}
+[data-theme=C] .panel .ph h2{font-size:20px;font-weight:800}
+[data-theme=C] .panel a.n{color:var(--blue)!important;font-weight:600;font-size:14px}
+[data-theme=C] .cr{grid-column:1/-1;order:-1}
+[data-theme=C] .rv{grid-column:1}
+[data-theme=C] .htrio{grid-column:2;grid-template-columns:1fr;gap:20px;margin:0}
+[data-theme=C] .crs-list{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+[data-theme=C] .crs{background:var(--sheet);border-radius:20px;padding:24px;box-shadow:var(--sh);border:0;flex-direction:row;align-items:flex-start}
+[data-theme=C] .crs .ring{display:grid;place-items:center;width:56px;height:56px;border-radius:50%;flex:none;background:conic-gradient(var(--rc,#3b5bfd) calc(var(--p)*1%),var(--hair2) 0)}
+[data-theme=C] .crs .ring span{width:44px;height:44px;border-radius:50%;background:var(--sheet);display:grid;place-items:center;font-size:12.5px;font-weight:800}
+[data-theme=C] .crs:nth-child(3n+2){--rc:#1f9d5c}[data-theme=C] .crs:nth-child(3n){--rc:#d9771e}
+[data-theme=C] .crs .s{order:-1;font-weight:600}
+[data-theme=C] .crs h3{white-space:normal;font-size:16px;font-weight:700;line-height:1.35}
+[data-theme=C] .crs .pct{display:none}
+[data-theme=C] .crs .prog .bar{display:none}[data-theme=C] .crs .prog{margin-top:4px}
+[data-theme=C] .crs .nx{margin-top:14px;background:var(--paper);border-radius:12px;padding:11px 14px;color:var(--ink2);white-space:normal;line-height:1.5}
+[data-theme=C] .crs .nx b{display:block;color:var(--ink)}[data-theme=C] .crs .nx span::before,[data-theme=C] .crs .nx::after{content:none}
+[data-theme=C] .crs .nx span{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+[data-theme=C] .rv #review>.list,[data-theme=C] .htrio .panel>.list,[data-theme=C] .htrio .pthumbs{background:var(--sheet);border-radius:20px;box-shadow:var(--sh);padding:8px 22px}
+[data-theme=C] .htrio .pthumbs{padding:18px}
+[data-theme=C] .rv .list .row{padding:13px 0;align-items:center;flex-wrap:nowrap;box-shadow:none;background:none!important}
+[data-theme=C] .rvr .ic{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:var(--blue-soft);flex:none;font-size:15px}
+[data-theme=C] .rvr .t{white-space:normal!important;font-weight:600!important;line-height:1.45}
+[data-theme=C] .rvr .t small{display:block;color:var(--meta);font-weight:500;font-size:12px}
+[data-theme=C] .rvr .tag,[data-theme=C] .rvr .badge{display:none}
+[data-theme=C] .rvr .pill{display:inline-block;font-size:12px;font-weight:700;padding:4px 10px;border-radius:8px;background:var(--blue-soft);color:var(--blue);white-space:nowrap}
+[data-theme=C] .rvr.over .pill{background:var(--red-soft);color:var(--red)}
+[data-theme=C] .rv-g{background:none;padding:12px 0 2px;border:0;font-weight:700}
+[data-theme=C] .rv-more{background:none;border-radius:0 0 20px 20px}
+[data-theme=C] .htrio .pt{padding:0 2px 10px;margin-top:-6px;font-size:15px;color:var(--ink2);font-weight:600}
+[data-theme=C] .htrio .list .row{padding:12px 0}
+[data-theme=C] .htrio .list .row .tag{background:var(--blue-soft);color:var(--blue);border-radius:8px;font-weight:700}
+[data-theme=C] .pthumbs img{border-radius:12px;border:0}
+[data-theme=C] .card,[data-theme=C] .sheet,[data-theme=C] .list,[data-theme=C] .empty,[data-theme=C] details.panel{border-radius:20px;border-color:transparent;box-shadow:var(--sh)}
+[data-theme=C] details.panel{overflow:hidden}
+[data-theme=C] .btn,[data-theme=C] .tkrow button{border-radius:12px}
+[data-theme=C] .quick li{border-radius:14px;border-color:transparent;box-shadow:var(--sh)}
+[data-theme=C] .tabs a{border-color:transparent;box-shadow:0 1px 3px rgba(30,40,90,.08)}
+[data-theme=C] .kicker{font-size:20px}
+/* ---- 手机 ---- */
+@media(max-width:820px){
+ .hmain,.htrio,[data-theme=A] .htrio,[data-theme=A] .hmain{grid-template-columns:1fr}
+ [data-theme=C] .home,[data-theme=C] .hbody,[data-theme=C] .crs-list{grid-template-columns:1fr}
+ [data-theme=C] .rv,[data-theme=C] .htrio{grid-column:1}
+}
+@media(max-width:700px){
+ .thsw{height:34px}.thsw button{width:28px}
+ .top .brand{font-size:14px}
+ .hhero{grid-template-columns:1fr;grid-template-areas:"hh" "kpi"}.hhero .hcta{display:none}
+ .kpi{grid-template-columns:1fr 1fr}.kpi a:nth-child(3){border-left:0}.kpi a:nth-child(-n+2){border-bottom:1px solid var(--hair)}
+ .panel .list .row .t{flex-basis:auto;order:0}
+ [data-theme=B] .hhero h1{font-size:22px}
+ [data-theme=A] .top .in{padding:10px 18px}[data-theme=A] main{padding:4px 20px 56px}
+ [data-theme=A] .hhero{padding:28px 0 30px}[data-theme=A] .hhero h1{font-size:34px}[data-theme=A] .hhero p{font-size:16px}
+ [data-theme=A] .kpi{gap:28px;display:flex;grid-template-columns:none}[data-theme=A] .kpi a{border:0!important}
+ [data-theme=A] .hmain{gap:36px;padding:32px 0}
+ [data-theme=C] .hhero{padding:24px 22px}[data-theme=C] .hhero h1{font-size:26px}
+ [data-theme=C] .hhero .kpi{display:flex}[data-theme=C] .hhero .kpi a{border:0!important}
+ [data-theme=C] .hhero .hcta{display:inline-flex}
+ [data-theme=C] .crs{padding:20px}
+ .panel .list .row{flex-wrap:nowrap}
+}
+/* 修正 */
+#home-fav .row .t{white-space:normal}
+[data-theme=C] .crs .ring{background:conic-gradient(var(--rc,#3b5bfd) calc(var(--p)*1%),color-mix(in srgb,var(--rc,#3b5bfd) 30%,transparent) 0 calc(var(--q)*1%),var(--hair2) 0)}
+[data-theme=A] .htrio{grid-template-columns:repeat(3,1fr)}
+[data-theme=A] .htrio>.panel:first-child{grid-column:1/-1;order:9}
+[data-theme=A] .htrio>.panel:first-child .list{display:grid;grid-template-columns:1fr 1fr;column-gap:28px;padding:6px 20px 12px}
+[data-theme=A] .htrio>.panel:first-child .list .row{margin:0}
+@media(min-width:1000px){
+ [data-theme=B] body{background:linear-gradient(90deg,#f6f6f8 231px,var(--hair) 231px 232px,var(--paper) 232px)}
+ html.dark[data-theme=B] body{background:linear-gradient(90deg,#121317 231px,var(--hair) 231px 232px,var(--paper) 232px)}
+ [data-theme=B] .top{background:none;border-right:0}
+ [data-theme=B] .top .fav-b{position:absolute;left:172px;bottom:20px;width:30px;height:30px}
+}
+@media(max-width:820px){[data-theme=A] .htrio{grid-template-columns:1fr}[data-theme=A] .htrio>.panel:first-child .list{grid-template-columns:1fr}}
+.list .row,.list .row .t{min-width:0}
+@media(max-width:700px){
+ .top .in{flex-wrap:wrap;gap:6px}
+ .top:has(.thsw) .favq{display:none}
+ .top .brand{font-size:14px;gap:6px}.top .brand i{width:26px;height:26px}
+ .thsw button{width:24px}
+ .top .dm,.top .menu,.top .fav-b{width:34px;height:34px}
+ [data-theme=B] .rv .list .row{flex-wrap:wrap;row-gap:2px}
+ [data-theme=B] .rv .list .row .t{flex:1 1 calc(100% - 30px);white-space:normal}
+ [data-theme=B] .rv .list .row .badge{margin-left:20px}
+}
+/* =====================================================================
+   紧凑化（2026-10-17）：减少留白，桌面加宽并用多列填满
+   ===================================================================== */
+html,body{line-height:1.6}
+main{max-width:1240px;padding:18px 28px 40px}
+.top .in{max-width:1240px}
+h2{margin:24px 0 10px}
+.kicker{margin:26px 0 2px;font-size:17px}
+.kicker+.sub{margin:0 0 10px}.kicker:not(:has(+.sub)){margin-bottom:10px}
+.home~.kicker:first-of-type{margin-top:28px}
+.sheet{padding:18px 22px;margin-bottom:14px}
+.grid{gap:12px;grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}
+.card{padding:13px 16px;gap:4px}
+.card .ic{width:32px;height:32px;font-size:16px;border-radius:8px;margin-bottom:2px}
+.card .go{top:12px;right:14px}
+.card .meta{padding-top:4px}
+.empty{padding:12px 16px;font-size:13.5px}.empty b{display:inline;font-size:14px;margin:0 8px 0 0}
+.foot{margin-top:32px;padding-top:12px}
+.hhero{margin:4px 0 16px}
+.kpi{margin-top:14px}.kpi a{padding:10px 16px}.kpi b{font-size:21px}
+.hmain{gap:18px;grid-template-columns:1.25fr 1fr}
+.htrio{gap:18px;margin-top:18px}
+.panel .ph{padding:10px 16px}
+.panel .list .row{padding:8px 16px}
+.crs{padding:12px 16px}
+.pthumbs{padding:8px 16px 14px}
+.list .row{padding:9px 14px}
+details.panel{margin-top:20px}
+.fhint{margin-bottom:10px;padding:8px 12px}
+/* 宽屏：首页下方四个面板排成一行，栏目卡片更多列 */
+@media(min-width:1180px){
+ .htrio{grid-template-columns:repeat(4,1fr)}
+ .htrio .pthumbs{grid-template-columns:repeat(3,1fr)}
+ .grid:not(.wide){grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}
+}
+/* 阅读页（X 简报）：正文宽度保持易读，但要点卡并排、行距略收 */
+main:has(>.tabs){max-width:960px}
+main>.sheet li{margin:6px 0}
+main>.sheet h3{margin:16px 0 4px}
+.quick{gap:8px}.quick li{padding:10px 14px 10px 46px;line-height:1.6}.quick li::before{top:11px;left:14px}
+@media(min-width:1100px){.quick{grid-template-columns:repeat(3,1fr)}}
+/* 海报页 */
+.pgrid{gap:14px}.pc{gap:18px}
+/* ---- B：桌面主区居中填满侧栏右侧，不再左对齐留一大片空白 ---- */
+@media(min-width:1000px){
+ [data-theme=B] main{max-width:1280px;margin:0 auto;padding:24px 36px 48px}
+ [data-theme=B] main:has(>.tabs){max-width:980px}
+ html[data-theme=B]{background:linear-gradient(90deg,#f6f6f8 231px,var(--hair) 231px 232px,var(--paper) 232px)}
+ html.dark[data-theme=B]{background:linear-gradient(90deg,#121317 231px,var(--hair) 231px 232px,var(--paper) 232px)}
+ [data-theme=B] body{min-height:100vh}
+ [data-theme=B] .top nav a{padding:5px 10px}
+}
+/* ---- A：保留杂志感，但缩小大标题区和分区间距 ---- */
+[data-theme=A] .top .in,[data-theme=A] main{max-width:1240px}
+[data-theme=A] .top .in{padding:12px 32px}
+[data-theme=A] main{padding:4px 32px 48px}
+[data-theme=A] .hhero{padding:22px 0 22px;display:grid;grid-template-columns:1fr auto;grid-template-areas:"hh kpi";align-items:end;gap:24px}
+[data-theme=A] .hhero h1{font-size:40px;line-height:1.2;margin:8px 0 0}
+[data-theme=A] .hhero p{font-size:16px;margin-top:10px}
+[data-theme=A] .kpi{margin:0;gap:32px}
+[data-theme=A] .hmain{gap:40px;padding:26px 0}
+[data-theme=A] .panel .psub{margin:2px 0 10px}
+[data-theme=A] .hmain .panel .ph h2{font-size:21px}
+[data-theme=A] .rv .list .row{padding:10px 0}
+[data-theme=A] .rv-g{padding:10px 0 4px}
+[data-theme=A] .rv-more{padding:10px 0}
+[data-theme=A] .crs{padding:14px 18px;margin-bottom:10px}
+[data-theme=A] .crs h3{font-size:17px;margin:2px 0}
+[data-theme=A] .htrio{padding:24px 0 4px;gap:18px}
+[data-theme=A] .htrio .panel .ph{padding:14px 18px 0}
+[data-theme=A] .kicker{font-size:20px}
+@media(min-width:1180px){
+ [data-theme=A] .htrio{grid-template-columns:2fr 1fr 1fr 1fr}
+ [data-theme=A] .htrio>.panel:first-child{grid-column:auto;order:0}
+ [data-theme=A] .htrio>.panel:first-child .list{grid-template-columns:1fr}
+}
+/* ---- C：卡片风保留圆角阴影，收紧内边距 ---- */
+[data-theme=C] .top .in,[data-theme=C] main{max-width:1280px}
+[data-theme=C] .home{gap:16px}
+[data-theme=C] .hhero{padding:22px 26px}
+[data-theme=C] .hhero h1{font-size:28px;margin:4px 0}
+[data-theme=C] .hhero .kpi{margin-top:12px}
+[data-theme=C] .hcta{margin-top:14px;padding:9px 18px}
+[data-theme=C] .hcols{padding:16px 20px;gap:2px}
+[data-theme=C] .hc{padding:3px 0}[data-theme=C] .hc i{width:28px;height:28px}
+[data-theme=C] .hbody{gap:16px}
+[data-theme=C] .panel .ph{padding:10px 2px 8px}
+[data-theme=C] .panel .ph h2{font-size:18px}
+[data-theme=C] .crs-list{gap:16px}
+[data-theme=C] .crs{padding:16px 18px}
+[data-theme=C] .crs .nx{margin-top:10px;padding:8px 12px}
+[data-theme=C] .rv .list .row{padding:9px 0}
+[data-theme=C] .htrio{gap:12px}
+[data-theme=C] .htrio .list .row{padding:8px 0}
+[data-theme=C] .rv #review>.list,[data-theme=C] .htrio .panel>.list{padding:4px 18px}
+[data-theme=C] .htrio .pthumbs{padding:12px}
+[data-theme=C] .kicker{font-size:18px}
+@media(min-width:1180px){
+ [data-theme=C] .htrio{grid-template-columns:1fr 1fr}
+ [data-theme=C] .hbody{grid-template-columns:1fr 1.15fr}
+}
+@media(max-width:700px){
+ main{padding:12px 14px 36px}
+ .kicker{margin-top:22px}
+ [data-theme=A] .hhero{display:block;padding:16px 0}[data-theme=A] .hhero h1{font-size:28px}[data-theme=A] .kpi{margin-top:12px}
+ [data-theme=A] main{padding:4px 16px 40px}[data-theme=A] .hmain{gap:22px;padding:18px 0}
+ [data-theme=C] .hhero{padding:18px}[data-theme=C] .hhero h1{font-size:22px}
+ .quick{grid-template-columns:1fr}
+}
+/* =====================================================================
+   轻量动效（150–300ms），尊重 prefers-reduced-motion
+   ===================================================================== */
+@property --p{syntax:"<number>";inherits:true;initial-value:0}
+@media (prefers-reduced-motion:no-preference){
+ html{interpolate-size:allow-keywords}
+ /* 切换主题/深色时颜色平滑过渡 */
+ body,.top,.card,.panel,.sheet,.list,.list .row,.crs,.empty,.kpi,.kpi a,.chip,.tag,.btn,.tabs a,.quick li,details.panel,.hcols,.thsw button{transition:background-color .25s ease,color .25s ease,border-color .25s ease,box-shadow .2s ease,transform .2s ease}
+ /* 卡片悬停轻微上浮 */
+ a.card:hover,.crs:hover,.pc:hover{transform:translateY(-2px)}
+ [data-theme=A] a.card:hover,[data-theme=A] .crs:hover{box-shadow:0 6px 18px -10px rgba(60,40,20,.35)}
+ [data-theme=B] a.card:hover,[data-theme=B] .crs:hover{transform:translateY(-1px);box-shadow:0 2px 8px -4px rgba(20,20,40,.18)}
+ [data-theme=C] a.card:hover,[data-theme=C] .crs:hover{transform:translateY(-3px);box-shadow:0 2px 4px rgba(30,40,90,.06),0 14px 30px rgba(30,40,90,.12)}
+ .list .row,.chip{transition:background-color .15s ease,color .15s ease,border-color .15s ease}
+ /* 分区载入淡入 */
+ @keyframes lf-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+ .home>*,.htrio>.panel,.hmain>.panel,main>.kicker,main>.grid,main>.chips,main>.sheet,main>.list,.quick li,.pgrid>*{animation:lf-in .3s ease both}
+ .hmain>.panel:nth-child(2),.htrio>.panel:nth-child(2){animation-delay:.04s}
+ .htrio>.panel:nth-child(3){animation-delay:.08s}.htrio>.panel:nth-child(4){animation-delay:.12s}
+ /* 复习「展开全部」新出现的行淡入 */
+ .rv .list .row{animation:lf-in .2s ease both}
+ /* 折叠面板（课时列表、同步设置）平滑展开 */
+ details::details-content{block-size:0;overflow:hidden;transition:block-size .25s ease,content-visibility .25s allow-discrete}
+ details[open]::details-content{block-size:auto}
+ /* 进度条与进度环载入时填充 */
+ @keyframes lf-bar{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+ .prog .bar,.bigbar .bar{transform-origin:left}
+ .prog .bar i,.seg i.d,.seg i.p{transform-origin:left;animation:lf-bar .6s cubic-bezier(.2,.7,.2,1) .15s both}
+ @keyframes lf-ring{from{--p:0}}
+ [data-theme=C] .crs .ring{animation:lf-ring .7s cubic-bezier(.2,.7,.2,1) .15s both}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+@media(min-width:1180px){#k-columns~.grid:first-of-type,#k-columns+.sub+.grid{grid-template-columns:repeat(7,minmax(0,1fr))}}
+/* =====================================================================
+   ui-upgrade-2（2026-10）：参考 Minimal Gallery / One Page Love / Motion / Magic UI / Realtime Colors
+   1 字体层级  2 桌面加宽  3 调色  4 悬停光斑 + 流光边框  5 滚动入场 + 数字滚动（JS 在 vp-head.js）
+   ===================================================================== */
+@property --ang{syntax:"<angle>";inherits:false;initial-value:0deg}
+:root{--acc2:#8b5cf6;--ease:cubic-bezier(.22,1,.36,1)}
+/* 3 调色：按 Realtime Colors 的思路，每套主题 文字/背景/主色/辅色/强调 五色，深色模式提高次要文字对比度 */
+[data-theme=A]{--acc2:#c98a2b}
+html.dark[data-theme=A]{--paper:#181512;--sheet:#211d18;--card:#211d18;--meta:#a89d8f;--hair:#382f26;--acc2:#e3b15c}
+[data-theme=B]{--paper:#fafafb;--blue:#5b5bd6;--blue-soft:#efeffc;--acc2:#a855f7}
+html.dark[data-theme=B]{--paper:#0c0d10;--sheet:#14151a;--card:#14151a;--ink:#ececf1;--ink2:#babcc6;--meta:#9597a3;--hair:#262830;--hair2:#1c1d23;--blue:#9198ff;--blue-soft:rgba(145,152,255,.14);--acc2:#c084fc}
+[data-theme=C]{--acc2:#06b6d4}
+html.dark[data-theme=C]{--meta:#a3a9b8;--acc2:#22d3ee}
+html.dark{--meta:#a1a7b3}
+/* 1 字体层级：标题收紧字距、数字等宽；分区标题前加一小段主色短线 */
+h1,.hhero h1{letter-spacing:-.02em;text-wrap:balance}
+h2,.ph h2,.kicker{letter-spacing:-.01em}
+.kpi b,.stat b,.statline b,.kicker .n,.ph .n,.pct,.ring span,.badge{font-variant-numeric:tabular-nums}
+.kicker::before{content:"";width:3px;height:1em;border-radius:2px;background:linear-gradient(var(--blue),var(--acc2));flex:none}
+.kicker+.sub{margin-bottom:10px}
+.kicker{margin-top:32px}
+p,.card p,.psub,.sub{text-wrap:pretty}
+/* 2 桌面加宽：用满侧边空间 */
+@media(min-width:1000px){[data-theme=B] main{max-width:1320px;padding:32px 40px 64px}}
+[data-theme=A] .top .in,[data-theme=A] main{max-width:1280px}
+[data-theme=C] .top .in,[data-theme=C] main{max-width:1320px}
+@media(min-width:1180px){.grid{grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}.grid.wide{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}}
+/* 4 悬停：光斑跟随鼠标（JS 写 --mx/--my）+ 精选卡流光边框 */
+a.card,.crs,.panel,.pc{--mx:50%;--my:50%}
+a.card::after,.crs::after,.pc::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;background:radial-gradient(260px circle at var(--mx) var(--my),color-mix(in srgb,var(--blue) 10%,transparent),transparent 70%);transition:opacity .3s var(--ease)}
+a.card:hover::after,.crs:hover::after,.pc:hover::after{opacity:1}
+.crs,.pc{position:relative}
+.fx-glow{border:1px solid transparent!important;background:linear-gradient(var(--card),var(--card)) padding-box,conic-gradient(from var(--ang),var(--hair) 0 55%,var(--blue) 70%,var(--acc2) 80%,var(--hair) 92%) border-box!important}
+.top .fav-b,.thsw button,.btn,.chip{transition:transform .2s var(--ease),background-color .2s,color .2s,border-color .2s}
+.btn:active,.chip:active,.thsw button:active{transform:scale(.96)}
+@media (prefers-reduced-motion:no-preference){
+ a.card,.crs,.pc{transition:transform .35s var(--ease),box-shadow .35s var(--ease),border-color .2s,background-color .25s!important}
+ @keyframes fx-spin{to{--ang:360deg}}
+ .fx-glow{animation:fx-spin 6s linear infinite}
+ .fx-glow:not(:hover){animation-duration:14s}
+ /* 5 滚动入场（仅在 JS 标记 html.fx 后生效，没有 JS 时内容照常显示） */
+ html.fx .fx-rv{opacity:0;transform:translateY(14px);transition:opacity .5s var(--ease),transform .5s var(--ease)}
+ html.fx .fx-rv.fx-in{opacity:1;transform:none}
+ .chip:hover{transform:translateY(-1px)}
+}
+/* =====================================================================
+   ui-layouts-abc：A/B/C 切换的是整个首页布局（不只是皮肤）
+   A 杂志 · B 仪表盘 · C 个人站（默认）；三套同时渲染，只显示 data-theme 对应那套，切换无闪烁
+   ===================================================================== */
+.lay{display:none}[data-theme=A] .lay-A,[data-theme=B] .lay-B,[data-theme=C] .lay-C{display:block}
+.lays{margin-bottom:6px}.lays .mute,.lays p.mute{color:var(--meta);font-size:13.5px;margin:4px 0}
+.lays .list .row{padding:8px 12px}.lays .list .row .t{min-width:0}
+.lays .prog{margin:6px 0 0;font-size:12px}.lays .prog>b{font-size:12px;min-width:34px;color:var(--ink2)}
+.seg{display:flex;gap:2px}.seg i{flex:1;height:8px;border-radius:2px;background:var(--hair)}.seg i.d{background:var(--green)}.seg i.p{background:color-mix(in srgb,var(--blue) 55%,transparent)}
+.lays a.nx{display:block;font-size:12.5px;color:var(--blue);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lays img{display:block;max-width:100%}
+/* ---------- B 仪表盘 ---------- */
+.db-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.db-top h1{margin:0;font-size:22px}.db-top .btn{margin-left:auto;min-height:34px;padding:6px 14px;font-size:13px}
+.db-sum{margin:2px 0 10px;color:var(--ink2);font-size:13.5px}
+.db-kpi{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:12px}
+.db-kpi>*{background:var(--sheet);border:1px solid var(--hair);border-radius:10px;padding:10px 12px;color:var(--ink);display:flex;flex-direction:column;min-width:0}
+.db-kpi a:hover{border-color:var(--blue);text-decoration:none}.db-kpi span{font-size:12px;color:var(--meta)}.db-kpi b{font-size:26px;line-height:1.15;font-weight:750;letter-spacing:-.02em}.db-kpi small{font-size:11.5px;color:var(--meta)}
+.db-kpi a.red{box-shadow:inset 3px 0 var(--red)}.db-kpi a.red b{color:var(--red)}
+.db-pct .prog{flex-wrap:wrap;margin-top:6px}.db-pct .prog .bar{flex-basis:100%}.db-pct .prog>b{font-size:22px;color:var(--ink);order:-1}.db-pct .prog>span{font-size:11px}
+.db-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:12px}
+.db-grid .panel{background:var(--sheet);border:1px solid var(--hair);border-radius:10px;padding:10px 12px;min-width:0}
+.db-grid .ph{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}.db-grid .ph h2{margin:0;font-size:13.5px}.db-grid .ph .n{font-size:12px;color:var(--meta)}
+.db-rv{grid-column:span 5;grid-row:span 3}.db-cr{grid-column:span 7}.db-br{grid-column:span 4}.db-fv{grid-column:span 3}.db-po{grid-column:span 7}
+.db-rv .list{border:0;border-radius:0}.db-rv .rvr .tag{display:none}.db-rv .rvr .t small{display:block;font-size:11.5px;color:var(--meta);font-weight:400}.db-rv .rvr .badge{font-size:11.5px}
+.db-c{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr) auto;gap:12px;align-items:center;padding:8px 0;border-top:1px solid var(--hair2)}.db-c:first-of-type{border:0}
+.db-c small{display:block;font-size:11.5px;color:var(--meta)}.db-c .nm{display:block;color:var(--ink);font-weight:650}.db-c .p small{margin-top:3px}
+.btn.sm{min-height:30px;padding:4px 10px;font-size:12px}
+.db-br .pt{display:block;font-weight:650;color:var(--ink);margin-bottom:2px}.db-br p{font-size:13px}.db-br ul{margin:6px 0 0;padding-left:16px;font-size:13px}.db-br li{margin:3px 0}.db-br li a{color:var(--ink2)}.db-br li b{color:var(--ink);font-weight:600}
+.db-fv .list .row{padding:6px 8px;font-size:13px}.db-fv .list .row .tag{display:none}
+.db-th{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}.db-th a span{display:block;font-size:11.5px;color:var(--meta);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:3px}
+.db-th img{width:100%;aspect-ratio:3/4;object-fit:cover;object-position:top;border-radius:6px;border:1px solid var(--hair);transition:transform .3s var(--ease,ease)}.db-th a:hover img{transform:translateY(-2px) scale(1.02)}
+@media(max-width:1100px){.db-kpi{grid-template-columns:repeat(3,1fr)}.db-rv,.db-cr,.db-br,.db-fv,.db-po{grid-column:span 12;grid-row:auto}}
+@media(max-width:600px){.db-kpi{grid-template-columns:repeat(2,1fr)}.db-c{grid-template-columns:1fr auto}.db-c .p{grid-column:1/-1;order:3}.db-th{grid-template-columns:repeat(3,minmax(0,1fr))}}
+/* B 皮肤：深色侧栏（全站） */
+@media(min-width:1000px){[data-theme=B] .top,html.dark[data-theme=B] .top{background:#0f172a;border-right-color:#0f172a}
+ [data-theme=B] .top .brand{color:#fff}[data-theme=B] .top nav a{color:#cbd5e1}[data-theme=B] .top nav a em{color:#64748b;font-style:normal}
+ [data-theme=B] .top nav a:hover{background:#1e293b;color:#fff}[data-theme=B] .top nav a.on{background:#1e293b;color:#fff;box-shadow:inset 3px 0 #22c55e}
+ [data-theme=B] .top nav a.s1::before,[data-theme=B] .top nav a.s2::before{color:#64748b}
+ [data-theme=B] .top .dm,[data-theme=B] .top .fav-b{background:#1e293b;border-color:#334155;color:#e2e8f0}
+ [data-theme=B] .top .thsw{background:#1e293b;border-color:#334155}[data-theme=B] .top .thsw button{color:#cbd5e1}}
+[data-theme=B]{--paper:#eef1f5;--hair:#dfe4ea;--hair2:#eef1f5;--green:#16a34a}
+html.dark[data-theme=B]{--paper:#0b0d12;--hair:#252a35;--hair2:#1a1e27}
+/* ---------- A 杂志 ---------- */
+.ma-mast{display:flex;align-items:flex-end;gap:16px;border-bottom:4px double var(--ink);padding:4px 0 6px}.ma-mast h1{margin:0 auto 0 0;font-size:44px;line-height:1;font-weight:900;letter-spacing:.02em}.ma-mast span{font-size:12px;letter-spacing:.12em;color:var(--meta)}
+.ma-sec{display:flex;gap:16px;font-size:13px;padding:6px 0;border-bottom:1px solid var(--ink);overflow-x:auto;white-space:nowrap;scrollbar-width:none}.ma-sec a{color:var(--ink)}.ma-sec a:hover{color:var(--blue)}.ma-sec .r{margin-left:auto;color:var(--blue);font-weight:700}
+.lay-A .kk{font-size:11px;letter-spacing:.14em;color:var(--blue);font-weight:700}.lay-A .kk2{font-size:11px;letter-spacing:.1em;color:var(--meta)}
+.lay-A h2,.lay-A h3,.ma-big{font-family:var(--serif)}
+.ma-front{display:grid;grid-template-columns:230px minmax(0,1fr) 290px;border-bottom:1px solid var(--ink)}.ma-front>*{padding:12px 18px}.ma-front>*+*{border-left:1px solid var(--hair)}.ma-front>:first-child{padding-left:0}.ma-front>:last-child{padding-right:0}
+.ma-big{font-size:80px;font-weight:900;line-height:.95;color:var(--blue);letter-spacing:-.04em}.ma-dl{font-size:13px;color:var(--ink2)}.ma-dl b{color:var(--red)}
+.ma-due ol{margin:8px 0 0;padding-left:18px;font-size:13.5px}.ma-due li{margin:5px 0}.ma-due li a{color:var(--ink)}.ma-due li em{font-style:normal;font-size:11.5px;color:var(--red);margin-left:4px}.ma-due li em.today{color:var(--blue)}
+.ma-lead h2{font-size:44px;line-height:1.12;margin:4px 0 8px;font-weight:900}.ma-lead h2 a{color:var(--ink)}.ma-lead .dek{font-family:var(--serif);font-size:17px;color:var(--ink2);margin:0 0 10px}
+.ma-tip{border-left:3px solid var(--blue);padding:4px 12px;font-size:14px;background:var(--hair2)}
+.ma-fig{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:10px;margin-top:12px}.ma-fig a,.ma-strip a{display:block;overflow:hidden;color:var(--meta);font-size:12px}.ma-fig img{width:100%;height:250px;object-fit:cover;object-position:top;transition:transform .6s var(--ease,ease)}.ma-fig span,.ma-strip span{display:block;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ma-fig a:hover img,.ma-strip a:hover img{transform:scale(1.04)}
+.ma-side article{padding:8px 0;border-top:1px solid var(--hair)}.ma-side article:first-of-type{border:0}.ma-side h3{font-size:18px;line-height:1.3;margin:2px 0;font-weight:800}.ma-side h3 a{color:var(--ink)}.ma-side p{margin:0;font-size:13px;color:var(--ink2)}
+.ma-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));border-bottom:1px solid var(--ink)}.ma-row>*{padding:12px 18px}.ma-row>*+*{border-left:1px solid var(--hair)}.ma-row>:first-child{padding-left:0}
+.ma-row h3{font-size:21px;line-height:1.25;margin:4px 0;font-weight:800}.ma-row h3 a{color:var(--ink)}.ma-row .list{background:none;border:0;border-radius:0}.ma-row .list .row{padding:5px 0;font-size:13.5px}.ma-row .list .row .tag{display:none}
+.ma-sf,.ma-fv{padding:10px 0;border-bottom:1px solid var(--ink)}.ma-sf>div:first-child,.ma-fv{display:block}.lay-A .n{float:right;font-size:13px}
+.ma-strip{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin-top:8px}.ma-strip img{width:100%;aspect-ratio:4/5;object-fit:cover;object-position:top;transition:transform .5s var(--ease,ease)}
+.ma-fv .list{margin-top:6px;background:none}
+@media(max-width:900px){.ma-mast h1{font-size:30px}.ma-mast span:last-child{display:none}.ma-front{grid-template-columns:1fr}.ma-front>*{padding:10px 0!important;border-left:0!important;border-top:1px solid var(--hair)}.ma-lead{order:-1;border-top:0!important}.ma-lead h2{font-size:30px}.ma-fig img{height:170px}
+ .ma-row{grid-template-columns:1fr}.ma-row>*{padding:10px 0;border-left:0!important;border-top:1px solid var(--hair)}.ma-strip{grid-template-columns:repeat(6,62%);overflow-x:auto;scroll-snap-type:x mandatory}.ma-strip a{scroll-snap-align:start}}
+/* ---------- C 个人站 ---------- */
+.ps-hero{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:14px}
+.ps-intro{position:relative;overflow:hidden;border-radius:20px;padding:28px 32px;color:#f2f2f5;background:radial-gradient(600px 300px at 85% 0%,#5b3df5 0,transparent 60%),radial-gradient(500px 280px at 0% 100%,#ff5e8a55 0,transparent 60%),#15151c}
+.ps-intro .kk{color:#c9bcff}.ps-av{width:60px;height:60px;border-radius:18px;background:linear-gradient(135deg,#ffb86b,#ff5e8a 50%,#7b5cff);display:grid;place-items:center;font-size:26px;font-weight:800;color:#fff;margin-bottom:10px;box-shadow:0 10px 30px -10px #ff5e8a}
+.ps-intro h1{color:#fff;font-size:46px;line-height:1.1;letter-spacing:-.035em;margin:6px 0 8px;font-weight:800}.ps-intro h1 span{background:linear-gradient(90deg,#fff,#b9a8ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.ps-intro p{color:#b8b8c6;margin:0 0 14px;max-width:600px}.ps-cta{display:flex;gap:8px;flex-wrap:wrap}.ps-cta .btn{background:#fff;color:#111!important;border-radius:12px}.ps-cta .btn.ghost{background:#ffffff14;color:#fff!important;border:1px solid #ffffff26}
+.ps-st{display:grid;grid-template-columns:1fr 1fr;gap:14px}.ps-st a{border-radius:20px;padding:16px 20px;background:var(--sheet);border:1px solid var(--hair);display:flex;flex-direction:column;justify-content:space-between;color:var(--ink);min-height:110px;transition:transform .3s var(--ease,ease)}
+.ps-st a:hover{transform:translateY(-3px);text-decoration:none}.ps-st b{font-size:44px;line-height:1;letter-spacing:-.04em;font-weight:800}.ps-st span{font-size:13px;color:var(--meta)}.ps-st a.hot{background:linear-gradient(160deg,#ff5e5e,#c2185b);border:0;color:#fff}.ps-st a.hot span{color:#ffe1e6}
+.ps-bar{display:flex;align-items:baseline;gap:10px;margin:18px 0 10px}.ps-bar h2{margin:0;font-size:24px;letter-spacing:-.02em}.ps-bar em{font-style:normal;color:var(--meta);font-size:13.5px}
+.ps-wall{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));grid-auto-rows:minmax(110px,auto);gap:12px}
+.ps-t{position:relative;overflow:hidden;border-radius:18px;background:var(--sheet);border:1px solid var(--hair);padding:16px 18px;display:flex;flex-direction:column;color:var(--ink);min-width:0;transition:transform .4s var(--ease,ease),border-color .3s}
+a.ps-t:hover,.ps-t:hover{transform:translateY(-3px);border-color:var(--blue);text-decoration:none}
+.ps-t small{font-size:11.5px;color:var(--meta);letter-spacing:.05em}.ps-t h3{margin:4px 0;font-size:18px;line-height:1.3}.ps-t h3 a{color:var(--ink)}.ps-t p{margin:0;font-size:13.5px;color:var(--ink2)}
+.ps-brief{grid-column:span 5;grid-row:span 3;background:linear-gradient(170deg,color-mix(in srgb,var(--blue) 14%,var(--sheet)),var(--sheet))}.ps-brief h3{font-size:26px}.ps-brief .tip{margin-top:8px;color:var(--ink)}
+.ps-tags{margin-top:auto;padding-top:10px;display:flex;flex-wrap:wrap;gap:6px}.ps-tags span{font-size:12px;padding:2px 9px;border-radius:99px;background:var(--hair2);color:var(--ink2)}
+.ps-img{grid-column:span 3;grid-row:span 3;padding:0}.ps-img img{width:100%;height:100%;object-fit:cover;object-position:top;transition:transform .6s var(--ease,ease)}.ps-img:hover img{transform:scale(1.05)}
+.ps-img span{position:absolute;left:0;right:0;bottom:0;padding:28px 14px 12px;background:linear-gradient(transparent,#000c);color:#fff;font-size:13.5px;font-weight:600}
+.ps-due{grid-column:span 4;grid-row:span 3}.ps-due ul{list-style:none;margin:6px 0 0;padding:0;font-size:13.5px}.ps-due li{display:flex;gap:8px;padding:6px 0;border-top:1px solid var(--hair2)}.ps-due li a{color:var(--ink);flex:1;min-width:0}.ps-due li em{font-style:normal;font-size:11.5px;color:var(--red);white-space:nowrap}.ps-due li em.today{color:var(--blue)}
+.ps-cr{grid-column:span 4;grid-row:span 1}.ps-fv{grid-column:span 3;grid-row:span 3}.ps-fv .list{background:none;border:0}.ps-fv .list .row{padding:6px 0;font-size:13px}.ps-fv .list .row .tag{display:none}.ps-rd{grid-column:span 3}.ps-rd h3{font-size:14.5px}
+html.dark .ps-intro{background:radial-gradient(600px 300px at 85% 0%,#4a30d8 0,transparent 60%),radial-gradient(500px 280px at 0% 100%,#ff5e8a33 0,transparent 60%),#121218}
+@media(max-width:900px){.ps-hero{grid-template-columns:1fr}.ps-intro{padding:20px}.ps-intro h1{font-size:32px}.ps-st b{font-size:34px}.ps-st a{min-height:88px}
+ .ps-wall{grid-template-columns:1fr 1fr}.ps-wall>*{grid-column:span 2!important;grid-row:auto!important}.ps-wall>.ps-img{grid-column:span 1!important;aspect-ratio:3/4}}
+/* C 皮肤：个人站（深色顶栏 + 紫粉强调；深色模式全暗） */
+[data-theme=C]{--blue:#7b5cff;--blue-soft:#f0ecff;--acc2:#ff5e8a}
+html.dark[data-theme=C]{--paper:#0b0b0f;--sheet:#15151c;--card:#15151c;--ink:#f2f2f5;--ink2:#b8b8c6;--meta:#9a9aab;--hair:#26262f;--hair2:#1d1d25;--blue:#a08bff;--blue-soft:rgba(160,139,255,.14)}
+[data-theme=C] .top{background:#0b0b0f;border-bottom-color:#0b0b0f}[data-theme=C] .top .brand,[data-theme=C] .top nav a.on{color:#fff}[data-theme=C] .top nav a{color:#a5a5b4}[data-theme=C] .top nav a:hover{background:#1d1d25;color:#fff}[data-theme=C] .top nav a.on{background:#ffffff14}
+[data-theme=C] .top .dm,[data-theme=C] .top .fav-b,[data-theme=C] .top .menu,[data-theme=C] .top .favq{background:#15151c;border-color:#26262f;color:#f2f2f5}[data-theme=C] .top .thsw{background:#15151c;border-color:#26262f}[data-theme=C] .top .thsw button{color:#cbd5e1}
+[data-theme=C] .top .brand i{background:linear-gradient(135deg,#ffb86b,#ff5e8a 50%,#7b5cff)}
+/* v2：B 侧栏整列深色（含整页截图）、网格重排无空洞；A/B/C 按钮在深色栏上的选中态 */
+@media(min-width:1000px){html[data-theme=B] body{background:linear-gradient(90deg,#0f172a 232px,var(--paper) 232px)}html[data-theme=B]{background:var(--paper)}}
+.db-grid{grid-template-columns:repeat(12,minmax(0,1fr));grid-auto-flow:row dense}
+.db-rv{grid-column:span 4;grid-row:span 2;display:flex;flex-direction:column}.db-cr{grid-column:span 8}.db-br{grid-column:span 4}.db-fv{grid-column:span 4}.db-po{grid-column:span 12}
+.db-rv [data-rv]{flex:1;display:flex;flex-direction:column}.db-rv .list{flex:1}
+.db-th{grid-template-columns:repeat(6,minmax(0,1fr))}.db-th img{aspect-ratio:4/3}
+@media(max-width:1100px){.db-rv,.db-cr,.db-br,.db-fv,.db-po{grid-column:span 12;grid-row:auto}}
+[data-theme=C] .top .thsw button[aria-pressed=true]{background:#fff;color:#0b0b0f;font-weight:700}
+@media(min-width:1000px){[data-theme=B] .top .thsw button[aria-pressed=true]{background:#fff;color:#0b0b0f;font-weight:700}}
+/* =====================================================================
+   design-system（2026-10）：设计令牌 + Lucide 图标 + 动效规则。完整说明见 DESIGN.md
+   ===================================================================== */
+:root{
+ --sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:24px;--sp-6:32px;
+ --fs-xs:12px;--fs-sm:13.5px;--fs-md:15px;--fs-lg:18px;--fs-xl:24px;--fs-2xl:32px;
+ --r-xs:6px;--r-sm:8px;--r-md:10px;--r-lg:12px;--r-xl:18px;--r-pill:999px;
+ --sh-1:0 1px 2px rgba(15,23,42,.06);--sh-2:0 4px 16px -8px rgba(15,23,42,.22);--sh-3:0 14px 30px -12px rgba(15,23,42,.28);
+ --dur-1:120ms;--dur-2:220ms;--dur-3:420ms;
+ --ease:cubic-bezier(.22,1,.36,1);--ease-in-out:cubic-bezier(.65,0,.35,1);
+ --spring:cubic-bezier(.34,1.3,.64,1);
+ --icon-stroke:2}
+@supports (transition-timing-function:linear(0,1)){:root{--spring:linear(0,.0089,.0346,.0752,.1286,.1927,.2654,.3445,.4278,.5131,.5983,.6812,.7598,.8325,.8981,.9555,1.0042,1.0441,1.0753,1.0982,1.1134,1.1218,1.1243,1.1218,1.1155,1.1062,1.0949,1.0825,1.0697,1.0571,1.0451,1.034,1.0242,1.0157,1.0085,1.0027,.9982,.995,.9928,.9916,.9912,.9914,.9921,.9931,.9943,.9956,.9968,.998,.999,1)}}
+html.dark{--sh-1:0 1px 2px rgba(0,0,0,.4);--sh-2:0 4px 16px -8px rgba(0,0,0,.6);--sh-3:0 14px 30px -12px rgba(0,0,0,.7)}
+/* 图标：Lucide，16/18/20px，描边 2；≥20px 用 1.75；填充态加 .fill（如已收藏的星） */
+.i{display:inline-block;flex:none;vertical-align:-.16em;stroke-width:var(--icon-stroke)}
+.i[width="20"],.i[width="26"]{--icon-stroke:1.75}
+.i.fill{fill:currentColor}
+.top .brand i .i{vertical-align:0}.top .dm .i,.top .menu .i{display:block}
+.card .ic .i,.hc i .i{display:block}
+.ma-sec .r .i,.ma-tip .i,.tip .i,.ps-brief .tip .i{color:var(--amber);vertical-align:-.18em}
+.ma-sec .r .i{color:currentColor}
+h1>.i{vertical-align:-.12em;color:var(--blue);margin-right:2px}
+details>summary .i{color:var(--meta);margin-right:2px}
+.fav-b .i{width:18px;height:18px}.fav-b.on .i{fill:currentColor}
+.rvr .ic .i{display:block}
+.star .i{color:#e0a100;vertical-align:-.15em}
+/* 动效：悬停/展开用 spring（轻微回弹），颜色用 ease；入场错峰 40ms；尊重 reduced-motion */
+@media (prefers-reduced-motion:no-preference){
+ a.card,.crs,.pc,.ps-t,.ps-st a,.db-kpi a,.chip,.btn,.fav-b,.thsw button{transition:transform var(--dur-3) var(--spring),box-shadow var(--dur-2) var(--ease),border-color var(--dur-2) var(--ease),background-color var(--dur-2) var(--ease),color var(--dur-2) var(--ease)!important}
+ .db-kpi a:hover{transform:translateY(-2px)}
+ .fav-b:hover{transform:scale(1.15)}.fav-b.on{animation:fx-pop var(--dur-3) var(--spring)}
+ @keyframes fx-pop{0%{transform:scale(.6)}100%{transform:scale(1)}}
+ details::details-content{transition:block-size var(--dur-3) var(--spring),content-visibility var(--dur-3) allow-discrete}
+ @keyframes fx-up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+ html.fx .fx-st{animation:fx-up var(--dur-3) var(--ease) both;animation-delay:calc(var(--i,0) * 40ms)}
+ ::view-transition-old(root),::view-transition-new(root){animation-duration:var(--dur-2);animation-timing-function:var(--ease)}
+}
+.fav-b.on,.top .fav-b.on{color:#e0a100!important}
+
+/* ---- 产品灵感（ph-inspo/index.html，build.mjs 生成） ---- */
+.pi-bar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:12px 0 0}
+.pi-bar+.pi-bar{margin-top:8px}
+.pi-bar .lb{display:inline-flex;align-items:center;gap:4px;min-width:52px;font-size:var(--fs-xs);font-weight:600;color:var(--meta)}
+.pi-bar .chip{cursor:pointer;font:inherit;font-size:var(--fs-sm);padding:3px 11px;gap:5px;transition:border-color var(--dur-1) var(--ease),color var(--dur-1) var(--ease),background var(--dur-1) var(--ease)}
+.pi-bar .chip em{font-style:normal;font-size:var(--fs-xs);color:var(--meta);font-variant-numeric:tabular-nums}
+.pi-bar .chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.pi-bar .chip.on em{color:inherit;opacity:.8}
+html.dark .pi-bar .chip.on{color:#0f1115}
+.pi-cnt{margin-left:auto;font-size:var(--fs-xs);color:var(--meta)}
+.pi-day[hidden],.pi-card[hidden]{display:none}
+.pi-day .kicker .i{color:var(--blue)}
+.pi-grid{display:grid;gap:12px;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch}
+.pi-card{padding:14px 16px;gap:8px}
+.pi-hd{display:flex;gap:10px;align-items:flex-start}
+.pi-rk{flex:none;min-width:34px;height:34px;padding:0 6px;border-radius:var(--r-sm);background:var(--blue-soft);color:var(--blue);display:grid;place-items:center;font-weight:800;font-size:var(--fs-sm);font-variant-numeric:tabular-nums}
+.pi-nm{flex:1;min-width:0}
+.pi-hd h3{margin:0;font-size:var(--fs-md);line-height:1.3}
+.pi-hd h3 a{color:var(--ink)}.pi-hd h3 a:hover{color:var(--blue)}
+.pi-hd .en{margin-top:2px;font-size:var(--fs-xs);color:var(--meta);line-height:1.4}
+.pi-hd .tag{flex:none}
+.pi-tags{display:flex;flex-wrap:wrap;gap:4px}
+.pi-f{margin:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:5px 10px;font-size:var(--fs-sm);line-height:1.55}
+.pi-f dt{display:inline-flex;align-items:flex-start;gap:3px;color:var(--meta);font-weight:600;white-space:nowrap}
+.pi-f dd{margin:0;color:var(--ink)}
+.pi-f dt.ins{color:var(--blue)}.pi-f dt.ins .i{margin-top:3px}
+.pi-f dd.ins{background:var(--blue-soft);border-radius:var(--r-xs);padding:4px 8px;margin:-4px 0 0 -4px}
+.pi-ft{margin-top:auto;display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;padding-top:8px;border-top:1px solid var(--hair);font-size:var(--fs-xs);color:var(--meta);font-variant-numeric:tabular-nums}
+.pi-ft>*{display:inline-flex;align-items:center;gap:3px}
+.pi-fu summary{cursor:pointer;display:inline-flex;align-items:center;gap:4px;font-size:var(--fs-xs);color:var(--meta);list-style:none}
+.pi-fu summary::-webkit-details-marker{display:none}
+.pi-fu summary .n{font-variant-numeric:tabular-nums;background:var(--hair2);border-radius:var(--r-pill);padding:0 6px}
+.pi-fu ul{margin:6px 0 0;padding:0;list-style:none;font-size:var(--fs-sm)}
+.pi-fu li{display:flex;gap:6px;align-items:baseline;padding:4px 0;border-top:1px solid var(--hair)}
+.pi-fu li .d{color:var(--meta);font-size:var(--fs-xs);white-space:nowrap}
+.pi-fu .pi-none,.pi-fu p{margin:6px 0 0;font-size:var(--fs-xs);color:var(--meta)}
+@media (max-width:1180px){.pi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:760px){.pi-grid{grid-template-columns:minmax(0,1fr)}.pi-cnt{width:100%;margin-left:0}.pi-bar .chip{min-height:32px}}
+@media (max-width:760px){.pi-hero .stage,.dsh-hero .stage{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.pi-hero .stat,.dsh-hero .stat{padding:8px 8px}.pi-hero .stat b,.dsh-hero .stat b{font-size:20px}.pi-hero .stat span,.dsh-hero .stat span{font-size:11px;line-height:1.3;display:block}
+.pi-bar{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}.pi-bar::-webkit-scrollbar{display:none}.pi-bar .chip,.pi-bar .lb{flex:none}.pi-cnt{width:auto;flex:none}}
+.pi-home .row .t small{display:block;font-weight:400;font-size:var(--fs-xs);color:var(--meta);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pi-home .row .t{min-width:0}
+.pi-home .pi-tags{flex:none}
+@media (max-width:760px){.pi-home .pi-tags{display:none}}
+
+/* ---- DSH 插件市场盘点（dsh-plugins/index.html，build.mjs 生成） ---- */
+.dsh-sec{scroll-margin-top:72px}
+.dsh-jump{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 2px}
+.dsh-lead{margin:0 0 8px;color:var(--ink2);font-size:var(--fs-sm);line-height:1.65}
+.dsh-facts{margin:10px 0 0;padding-left:1.15em;color:var(--ink2);font-size:var(--fs-sm);line-height:1.6}
+.dsh-facts li{margin:3px 0}
+.dsh-prose{font-size:var(--fs-sm);line-height:1.65}
+.dsh-prose p{margin:0 0 8px}
+.dsh-prose ul,.dsh-prose ol{margin:0 0 8px;padding-left:1.2em}
+.dsh-prose li{margin:4px 0}
+.dsh-prose li ul{margin:3px 0 0}
+.dsh-h3{margin:14px 0 6px;font-size:var(--fs-md);font-weight:700}
+.dsh-h3:first-child{margin-top:0}
+.dsh-note{margin:8px 0 0;font-size:var(--fs-xs);color:var(--meta);line-height:1.5}
+.dsh-split{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:12px;align-items:start}
+.dsh-box{background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-lg);padding:12px 14px;min-width:0}
+.dsh-box h3{margin:0 0 8px;font-size:var(--fs-sm)}
+.dsh-caps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.dsh-caps div{background:var(--paper);border:1px solid var(--hair);border-radius:var(--r-sm);padding:7px 8px}
+.dsh-caps b{display:block;font-size:var(--fs-lg);font-weight:750;font-variant-numeric:tabular-nums;letter-spacing:-.02em;line-height:1.2}
+.dsh-caps span{font-size:var(--fs-xs);color:var(--meta)}
+.dsh-cat{display:flex;flex-direction:column;gap:5px}
+.dsh-cat .r{display:grid;grid-template-columns:84px minmax(0,1fr) 48px;gap:8px;align-items:center;font-size:var(--fs-xs)}
+.dsh-cat .nm{font-weight:650}
+.dsh-cat .b{height:6px;border-radius:var(--r-pill);background:var(--hair2);overflow:hidden}
+.dsh-cat .b i{display:block;height:100%;background:var(--blue);border-radius:inherit}
+.dsh-cat .n{text-align:right;color:var(--meta);font-variant-numeric:tabular-nums}
+.dsh-call{margin-top:10px;padding:10px 12px;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--amber-soft);font-size:var(--fs-sm);line-height:1.55}
+.dsh-call b{font-weight:700}
+.dsh-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--hair);border-radius:var(--r-lg);background:var(--sheet)}
+.dsh-tbl{width:100%;border-collapse:collapse;font-size:var(--fs-sm);line-height:1.45}
+.dsh-tbl.wide{font-size:var(--fs-xs);min-width:980px}
+.dsh-tbl th{text-align:left;font-weight:650;color:var(--meta);padding:8px 10px;border-bottom:1px solid var(--hair);background:var(--paper);white-space:nowrap;position:sticky;top:0}
+.dsh-tbl td{padding:7px 10px;border-bottom:1px solid var(--hair);vertical-align:top}
+.dsh-tbl tr:last-child td{border-bottom:0}
+.dsh-tbl .num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.dsh-tbl a{font-weight:650}
+.dsh-tbl .grp td{background:var(--hair2);font-weight:700;color:var(--ink);white-space:nowrap}
+.dsh-mechs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.dsh-mech{padding:12px 14px;scroll-margin-top:72px}
+.dsh-mech .no{font-size:var(--fs-xs);font-weight:800;color:var(--blue);font-variant-numeric:tabular-nums}
+.dsh-mech h3{margin:2px 0 4px;font-size:var(--fs-sm);line-height:1.4}
+.dsh-mech .src{margin:0 0 6px;font-size:var(--fs-xs);color:var(--meta)}
+.dsh-mech ul{margin:0;padding-left:1.1em;font-size:var(--fs-sm);line-height:1.55}
+.dsh-mech li{margin:3px 0}
+.dsh-bar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 10px}
+.dsh-bar .chip{cursor:pointer;font:inherit;font-size:var(--fs-sm);appearance:none;-webkit-appearance:none}
+.dsh-bar .chip em{font-style:normal;font-size:var(--fs-xs);color:var(--meta);font-variant-numeric:tabular-nums;margin-left:4px}
+.dsh-bar .chip.on{background:var(--blue);border-color:var(--blue);color:var(--sheet)}
+.dsh-bar .chip.on em{color:inherit;opacity:.85}
+.dsh-tbl tbody[hidden]{display:none}
+.dsh-bar .cnt{margin-left:auto;font-size:var(--fs-xs);color:var(--meta)}
+.dsh-hero .stat b{font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.dsh-hero .stat small{display:block;margin-top:2px;font-size:var(--fs-xs);color:var(--meta);font-weight:500}
+[data-theme=C] .dsh-scroll,[data-theme=C] .dsh-box{border-radius:20px;border-color:transparent;box-shadow:var(--sh)}
+@media (max-width:760px){
+ .dsh-hero .stage{grid-template-columns:1fr 1fr}
+ .dsh-hero .stat b{font-size:24px}
+ .dsh-hero .stat span{font-size:13px;line-height:1.35}
+ .dsh-split,.dsh-mechs{grid-template-columns:minmax(0,1fr)}
+ .dsh-caps{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .dsh-bar{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+ .dsh-bar::-webkit-scrollbar{display:none}
+ .dsh-bar .chip{flex:none;min-height:40px}
+ .dsh-jump .chip{min-height:40px}
+}
+
+/* 首页：今日 + 新闻 / 学习。A/B/C 共用这一套结构，纸色、字体、顶栏/侧栏仍跟主题走。 */
+.home-v2{min-width:0}
+.home-v2 .td{background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-lg);padding:12px 14px 4px;margin:0 0 var(--sp-2);min-width:0}
+.td-h{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.td-h h1{margin:0;font-size:var(--fs-xl);letter-spacing:-.02em}
+.td-prog{font-size:var(--fs-sm);font-weight:650;color:var(--meta);font-variant-numeric:tabular-nums}
+.td-h .kk{margin-left:auto;color:var(--meta);font-weight:600}
+.td-synchint{margin:0;font-size:var(--fs-xs);color:var(--meta);line-height:1.45}
+#prog-hint{margin:0 0 8px}
+#prog-hint a{font-weight:650}
+.home-v2 .td>.sub{margin:2px 0 8px;font-size:var(--fs-sm)}
+.td-fin{display:flex;align-items:center;gap:8px;margin:0 0 8px;padding:8px 12px;border-radius:var(--r-md);background:var(--green-soft);color:var(--green);font-weight:750;font-size:var(--fs-sm)}
+.td-fin[hidden]{display:none}
+.home-v2 .td .list{border:0;background:transparent;border-radius:0}
+.home-v2 .td .list .row{padding:4px 2px;align-items:center;flex-wrap:nowrap;gap:8px}
+.home-v2 .td .list .row:hover{background:transparent}
+.td-ck{flex:none;width:40px;height:40px;margin:0;border:0;padding:0;background:transparent;color:var(--meta);display:grid;place-items:center;cursor:pointer;border-radius:var(--r-sm)}
+.td-box{width:18px;height:18px;border:2px solid var(--meta);border-radius:50%;box-sizing:border-box}
+.td-ck:hover{background:var(--hair2);color:var(--blue)}
+.td-ck:hover .td-box{border-color:var(--blue)}
+.td-ck:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.td-ck[aria-pressed=true]{color:var(--green)}
+.td-src{flex:none;display:inline-flex;align-items:center;gap:4px;min-width:88px;font-size:var(--fs-xs);font-weight:700;color:var(--ink2);white-space:nowrap}
+.td-src .i{color:var(--blue)}
+.home-v2 .td .t{min-width:0;flex:1}
+.home-v2 .td .t a{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:var(--ink);font-weight:650;line-height:1.45}
+.home-v2 .td .t a:hover{color:var(--blue)}
+.home-v2 .td .t small{display:block;margin-top:1px;font-size:var(--fs-xs);font-weight:400;color:var(--meta);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.home-v2 .td .d{margin-left:auto;flex:none;font-size:var(--fs-xs);color:var(--meta);white-space:nowrap;font-variant-numeric:tabular-nums}
+.home-v2 .td .row.on .t a{color:var(--meta);font-weight:550}
+.td-late{color:var(--red);font-weight:700}
+.td-empty .t{color:var(--meta);font-weight:500}
+.td-cols{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr));gap:var(--sp-3);align-items:stretch}
+.td-cols>.card{min-width:0;height:100%}
+.td-cols>.card h3,.td-cols>.card p{overflow-wrap:anywhere}
+.td-cols .card p{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.td-cols .card .meta{min-width:0}
+/* A 杂志：报头双线、衬线大标题，卡片仍是暖纸圆角 */
+[data-theme=A] .home-v2 .td{background:transparent;border:0;border-bottom:4px double var(--ink);border-radius:0;padding:2px 0 10px;box-shadow:none}
+[data-theme=A] .td-h h1{font-size:var(--fs-2xl);font-weight:700;line-height:1.2}
+/* B 仪表盘：更紧、小圆角 */
+[data-theme=B] .home-v2 .td{border-radius:var(--r-md);padding:10px 12px 2px}
+[data-theme=B] .td-h h1{font-size:22px;font-weight:650}
+[data-theme=B] .td-cols{gap:var(--sp-2)}
+/* C 个人站：大圆角和卡片阴影。后面的 :root 会把 --r-lg 收成 12px，这里按规范写回 20px */
+[data-theme=C] .home-v2 .td,[data-theme=C] .td-cols>.card{border-radius:20px;box-shadow:var(--sh)}
+@media (prefers-reduced-motion:no-preference){
+ .td-ck{transition:transform var(--dur-3) var(--spring),background-color var(--dur-2) var(--ease),color var(--dur-1) var(--ease)}
+ .td-ck:active{transform:scale(.92)}
+ .td-ck[aria-pressed=true] .i{animation:td-pop var(--dur-3) var(--spring)}
+ @keyframes td-pop{0%{transform:scale(.55)}100%{transform:scale(1)}}
+ .td-fin:not([hidden]){animation:td-in var(--dur-3) var(--spring)}
+ @keyframes td-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+}
+@media (max-width:900px){
+ .home-v2 .td .list .row{display:grid;grid-template-columns:40px minmax(0,1fr);column-gap:6px;row-gap:1px;align-items:center}
+ .home-v2 .td .list .row>*{order:0;flex-basis:auto;min-width:0;max-width:100%}
+ .home-v2 .td .td-ck{grid-column:1;grid-row:1 / span 3;align-self:center}
+ .home-v2 .td .td-src{grid-column:2;grid-row:1;min-width:0}
+ .home-v2 .td .t{grid-column:2;grid-row:2}
+ .home-v2 .td .d{grid-column:2;grid-row:3;margin-left:0;justify-self:start;white-space:normal}
+ .home-v2 .td .list .row.td-empty{display:flex;flex-wrap:nowrap;align-items:center;gap:8px}
+ .home-v2 .td .list .row.td-empty .td-src{flex:none;min-width:88px;grid-column:auto;grid-row:auto}
+ .home-v2 .td .list .row.td-empty .t{flex:1;min-width:0;grid-column:auto;grid-row:auto;white-space:normal}
+ .home-v2 .td .t a,.home-v2 .td .t small{overflow-wrap:anywhere}
+ .td-src{min-width:0}
+ .home-v2 .td .t small{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+}
+@media (max-width:700px){
+ [data-theme=A] .td-h h1{font-size:var(--fs-xl)}
+}
+
+/* ---- 今日：每日汇总行（简报 + 海报 + 产品灵感，与北京时间 9:00 推送同源 data/digest/D.json） ---- */
+.home-v2 .td .list .row.td-dgr{align-items:flex-start}
+.home-v2 .td .list .row.td-dgr .td-ck,.home-v2 .td .list .row.td-dgr .td-src{margin-top:0}
+.home-v2 .td .list .row.td-dgr .td-src{padding-top:11px}
+.home-v2 .td .list .row.td-dgr .t{padding-top:9px}
+.home-v2 .td .list .row.td-dgr .d{padding-top:11px}
+.td-dg{list-style:none;margin:4px 0 6px;padding:0;display:grid;gap:3px}
+.td-dg li{display:flex;gap:8px;align-items:baseline;min-width:0;font-size:var(--fs-sm);line-height:1.45}
+.td-dg .k{flex:none;display:inline-flex;align-items:center;gap:4px;min-width:76px;font-size:var(--fs-xs);font-weight:650;color:var(--meta)}
+.td-dg .k .i{width:13px;height:13px;color:var(--meta)}
+.td-dg .v{min-width:0;flex:1;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.home-v2 .td .t .td-dg a{display:inline;-webkit-line-clamp:unset;overflow:visible;font-weight:550;color:var(--ink2)}
+.home-v2 .td .t .td-dg a:hover{color:var(--blue)}
+.home-v2 .td .row.on .t .td-dg a{color:var(--meta)}
+.td-dg i{font-style:normal;color:var(--meta)}
+.td-dg em{font-style:normal;color:var(--meta)}
+@media (max-width:900px){
+ .home-v2 .td .list .row.td-dgr .td-src,.home-v2 .td .list .row.td-dgr .t,.home-v2 .td .list .row.td-dgr .d{padding-top:0}
+ .home-v2 .td .list .row.td-dgr .td-ck{align-self:start}
+ .td-dg li{flex-direction:column;gap:0}
+ .td-dg .k{min-width:0}
+}
+
+/* ---- 每日汇总页（digest/YYYY-MM-DD.html） ---- */
+.dg-nav{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.dg-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sp-3);align-items:stretch}
+.dg-sec{padding:14px 16px;min-width:0;border:1px solid var(--hair);border-radius:var(--r-lg)}
+.dg-sec.dg-wide{grid-column:1 / -1}
+.dg-sec h2{display:flex;align-items:center;gap:8px;margin:0 0 8px;font-size:var(--fs-lg);letter-spacing:-.01em}
+.dg-sec h2 .i{color:var(--blue)}
+.dg-tt{display:block;font-weight:700;color:var(--ink);margin-bottom:6px}
+.dg-sec ol{margin:0 0 10px;padding-left:20px;display:grid;gap:6px;font-size:var(--fs-sm);color:var(--ink2);line-height:1.55}
+.dg-ph{list-style:none;padding-left:0!important}
+.dg-ph li{display:grid;gap:1px}
+.dg-ph li span{font-size:var(--fs-xs);color:var(--meta);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.dg-none{padding:10px 0;color:var(--meta);font-weight:500}
+.dg-po{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:var(--sp-2)}
+.dg-po a{display:grid;gap:4px;min-width:0;color:var(--ink2);font-size:var(--fs-xs)}
+.dg-po img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:var(--r-sm);border:1px solid var(--hair);background:var(--hair2)}
+.dg-po span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+@media (max-width:900px){
+ .dg-grid{grid-template-columns:minmax(0,1fr)}
+ .dg-po{grid-auto-flow:column;grid-auto-columns:46%;grid-template-columns:none;overflow-x:auto;scroll-snap-type:x mandatory}
+ .dg-po a{scroll-snap-align:start}
+}
+
+/* ---- 雷达（radar/index.html，build.mjs 从 data/radar.json 生成） ---- */
+.rd-hero h1 .i{color:var(--blue)}
+.rd-log{margin:12px 0 0}
+.rd-q{display:flex;align-items:center;gap:10px;margin:10px 0 4px}
+.rd-q label{flex:1;max-width:420px;display:flex;align-items:center;gap:6px;background:var(--sheet);border:1px solid var(--hair);border-radius:var(--r-pill);padding:0 12px;color:var(--meta)}
+.rd-q label:focus-within{border-color:var(--blue)}
+.rd-q input{flex:1;min-width:0;border:0;background:transparent;color:var(--ink);font:inherit;font-size:var(--fs-sm);height:38px;outline:none}
+.rd-q span{font-size:var(--fs-xs);color:var(--meta)}
+.rd-sec[hidden],.rd-card[hidden]{display:none}
+.rd-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-3);align-items:stretch}
+.rd-card{padding:12px 14px;display:flex;flex-direction:column;gap:6px;min-width:0;overflow-wrap:anywhere}
+.rd-hd{display:flex;align-items:baseline;gap:8px;min-width:0}
+.rd-hd h3{margin:0;font-size:var(--fs-md);line-height:1.35;min-width:0;flex:1;overflow-wrap:anywhere}
+.rd-hd h3 a{color:var(--ink)}
+.rd-hd h3 a:hover{color:var(--blue)}
+.rd-no{flex:none;font-size:var(--fs-xs);font-weight:700;color:var(--meta);font-variant-numeric:tabular-nums}
+.rd-gh{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:var(--fs-xs);color:var(--meta);font-variant-numeric:tabular-nums}
+.rd-gh>*{display:inline-flex;align-items:center;gap:3px;min-width:0}
+.rd-gh a{color:var(--ink2);overflow-wrap:anywhere}
+.rd-gh a:hover{color:var(--blue)}
+.rd-what{margin:0;font-size:var(--fs-sm);color:var(--ink);line-height:1.55;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.rd-borrow{margin:0;display:flex;gap:6px;font-size:var(--fs-xs);color:var(--ink2);line-height:1.55;background:var(--amber-soft);border-radius:var(--r-sm);padding:6px 8px}
+.rd-borrow .i{flex:none;margin-top:2px;color:var(--amber)}
+.rd-borrow span{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.rd-note{margin:0;font-size:var(--fs-xs);color:var(--meta)}
+.rd-src{margin-top:auto;font-size:var(--fs-xs);color:var(--meta)}
+.rd-src summary{cursor:pointer;min-height:28px;display:flex;align-items:center}
+.rd-src ul{margin:2px 0 0;padding-left:18px;display:grid;gap:2px}
+.rd-src li span{color:var(--meta)}
+@media (max-width:1100px){.rd-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:760px){
+ .rd-grid{grid-template-columns:minmax(0,1fr)}
+ .rd-q label{max-width:none}
+ .rd-bar .chip{min-height:36px}
+}
+/* ---- 2026-10-26 每日产出呈现修一轮（jobs-fix1） ---- */
+/* 桌面顶栏：栏目多了放不下时换行，不再把最后几个（DSH 插件）藏在看不见的滚动里 */
+@media(min-width:701px){html:not([data-theme=B]) .top nav{flex-wrap:wrap;overflow:visible;justify-content:flex-end;row-gap:2px;min-width:0}[data-theme=C] .top nav a{padding:7px 10px}}
+/* 「关于这页数据」：页头说明收起来 */
+details.panel.about{margin-top:14px}details.panel.about>summary{font-weight:550;font-size:14px;color:var(--ink2)}details.panel.about .pb p{margin:10px 0 0;font-size:14px;color:var(--ink2)}
+.hero details.panel.about{grid-column:1/-1}
+/* 另见：同一件事在别的栏目也有 */
+.xref{display:inline-block;margin-left:6px;font-size:12.5px;font-weight:600;line-height:1.7;padding:0 8px;border-radius:99px;background:var(--blue-soft);color:var(--blue);white-space:nowrap}.xref:hover{text-decoration:none;filter:brightness(.95)}
+.sa{margin:6px 0}.sa .xref{margin:0 6px 4px 0}
+/* 雷达：每个方向只露最新 3 条，其余收起 */
+.rd-more{margin-top:var(--sp-3)}.rd-more>summary{cursor:pointer;font-size:14px;font-weight:600;color:var(--blue);padding:6px 0;list-style:none}.rd-more>summary::-webkit-details-marker{display:none}.rd-more>summary::before{content:"▸ "}.rd-more[open]>summary::before{content:"▾ "}
+/* 产品灵感：更早的榜单收起；每天的说明收成一个小按钮 */
+details.panel.pi-old{margin-top:20px}details.panel.pi-old .pi-day{margin-top:14px}
+.pi-note{display:inline}.pi-note>summary{display:inline;cursor:pointer;color:var(--blue);list-style:none}.pi-note>summary::-webkit-details-marker{display:none}.pi-note[open]{display:block;margin-top:4px}
+/* 产品灵感：标题下「先看 3 个」 */
+.pi-picks{margin:10px 0 12px;padding:10px 12px;border:1px solid var(--hair);border-radius:var(--r-sm);background:var(--card)}
+.pi-picks .lb{font-size:13px;font-weight:600;color:var(--ink2);margin-bottom:4px}
+.pi-picks ol{margin:0;padding-left:22px}.pi-picks li{margin:6px 0;font-size:15px;line-height:1.6}
+.pi-picks li a{color:var(--ink);text-decoration:none}.pi-picks li a b{border-bottom:1px solid var(--blue)}
+.pi-picks .lim{display:block;font-size:14px;color:var(--ink);margin-top:2px}.pi-picks .lim .tag{margin-right:6px;font-size:12px}
+.pi-card:target{outline:2px solid var(--blue);outline-offset:2px}
+/* 雷达周报「结论先说」：每条拆成 解决什么 / 抄哪一处 / 还要确认 三行 */
+.quick li .ql{display:block;font-size:14.5px;line-height:1.6;margin-top:3px;color:var(--ink)}
+.quick li .ql b{display:inline-block;min-width:4.6em;margin-right:6px;color:var(--ink2);font-weight:600}
+/* 锚点跳转（另见等）落到卡片时，留出吸顶栏的高度（手机 51px、桌面 57px），标题不被挡住 */
+.pc,.pc2,.pi-card,.rd-card{scroll-margin-top:64px}
+</style><script>/*ICONS lucide v1.60.0 ISC*/window.__IC={"menu":"<path d=\"M4 5h16\"/><path d=\"M4 12h16\"/><path d=\"M4 19h16\"/>","x":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","star":"<path d=\"M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z\"/>","party-popper":"<path d=\"M5.8 11.3 2 22l10.7-3.79\"/><path d=\"M4 3h.01\"/><path d=\"M22 8h.01\"/><path d=\"M15 2h.01\"/><path d=\"M22 20h.01\"/><path d=\"m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10\"/><path d=\"m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17\"/><path d=\"m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7\"/><path d=\"M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z\"/>"};window.__ic=function(n,s,c){return '<svg class="i i-'+n+(c?' '+c:'')+'" width="'+(s||16)+'" height="'+(s||16)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(window.__IC[n]||'')+'</svg>'};/*END ICONS*/
+(function(){var T='site-theme',v;try{v=localStorage.getItem(T)}catch(e){}if(!/^[ABC]$/.test(v||''))v='C';document.documentElement.setAttribute('data-theme',v);
+window.__setTheme=function(t){var go=function(){__applyTheme(t)};if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.startViewTransition(go);else go()};window.__applyTheme=function(t){document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem(T,t)}catch(e){}[].forEach.call(document.querySelectorAll('.thsw button'),function(b){b.setAttribute('aria-pressed',b.dataset.t===t)})}})();
+(function(){var k='theme',s=localStorage.getItem(k);if(s?s==='dark':matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark');
+window.__tt=function(){var f=function(){var d=document.documentElement.classList.toggle('dark');localStorage.setItem(k,d?'dark':'light')};if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.startViewTransition(f);else f()}})();
+document.addEventListener('DOMContentLoaded',function(){var t=document.querySelector('.top .in'),dm=t&&t.querySelector('.dm');if(!t||t.querySelector('.menu'))return;var nav=t.querySelector('nav'),f=nav&&[].find.call(nav.querySelectorAll('a'),function(a){return a.textContent.trim()==='收藏'});
+if(f&&!f.classList.contains('on')){var q=document.createElement('a');q.className='favq';q.href=f.getAttribute('href');q.title='收藏';q.setAttribute('aria-label','收藏');q.textContent='收藏';t.insertBefore(q,dm)}
+var sw=document.createElement('div');sw.className='thsw';sw.setAttribute('role','group');sw.setAttribute('aria-label','切换风格');var cur=document.documentElement.getAttribute('data-theme'),NM={A:'杂志',B:'工作台',C:'卡片'};'ABC'.split('').forEach(function(x){var e=document.createElement('button');e.type='button';e.dataset.t=x;e.textContent=x;e.title='风格 '+x+' · '+NM[x];e.setAttribute('aria-pressed',x===cur);e.onclick=function(){__setTheme(x)};sw.appendChild(e)});t.insertBefore(sw,dm||null);
+var b=document.createElement('button');b.type='button';b.className='menu';b.setAttribute('aria-label','菜单');b.innerHTML=__ic('menu',18);b.onclick=function(){var o=document.documentElement.classList.toggle('navopen');b.innerHTML=__ic(o?'x':'menu',18)};t.appendChild(b)});
+/* ui-upgrade-2：数字滚动、滚动入场、悬停光斑、精选卡流光边框；prefers-reduced-motion 时全部跳过 */
+(function(){var RM=matchMedia('(prefers-reduced-motion: reduce)').matches;if(!RM&&'IntersectionObserver' in window)document.documentElement.classList.add('fx');
+function count(el){var m=/^(\D*)(\d+)(\D*)$/.exec(el.textContent.trim());if(!m||el.dataset.fxc)return;el.dataset.fxc=1;var to=+m[2];if(to<2)return;var t0=performance.now(),D=Math.min(900,350+to*25);(function f(t){var k=Math.min(1,(t-t0)/D),e=1-Math.pow(1-k,3);el.textContent=m[1]+Math.round(to*e)+m[3];if(k<1)requestAnimationFrame(f)})(t0)}
+window.addEventListener('load',function(){
+ document.querySelectorAll('.fx-feat,.pri,main>.grid.wide>.card:first-child').forEach(function(e){e.classList.add('fx-glow')});
+ if(RM)return;
+ document.querySelectorAll('.ps-wall>*,.ps-st>*,.db-kpi>*,.db-grid>*,.ma-row>*,.ma-strip>*,main>.grid>*').forEach(function(e,i){var k=[].indexOf.call(e.parentNode.children,e);if(e.getBoundingClientRect().top<innerHeight){e.style.setProperty('--i',Math.min(k,10));e.classList.add('fx-st')}});
+ setTimeout(function(){document.querySelectorAll('.kpi b,.stat b,.statline b,.kicker .n,.cnt').forEach(count)},60);
+ var io=new IntersectionObserver(function(es){es.forEach(function(x){if(x.isIntersecting){x.target.classList.add('fx-in');io.unobserve(x.target)}})},{rootMargin:'0px 0px -6% 0px'});
+ var vh=innerHeight;document.querySelectorAll('main>.kicker,main>.sub,main>.grid,main>.chips,main>.list,main>.empty,.home>.kicker,.home>.sub,.home>.grid,.home>.chips,.home>.list,.home>.empty,main>.sheet,.pgrid>*').forEach(function(e,i){if(e.getBoundingClientRect().top<vh)return;e.classList.add('fx-rv');io.observe(e)});
+ addEventListener('scroll',function(){document.querySelectorAll('.fx-rv:not(.fx-in)').forEach(function(e){if(e.getBoundingClientRect().top<innerHeight){e.classList.add('fx-in');io.unobserve(e)}})},{passive:true});
+ document.addEventListener('pointermove',function(ev){var c=ev.target.closest&&ev.target.closest('a.card,.crs,.pc');if(!c)return;var r=c.getBoundingClientRect();c.style.setProperty('--mx',ev.clientX-r.left+'px');c.style.setProperty('--my',ev.clientY-r.top+'px')},{passive:true});
+})})();
+/* 链接指向收起来的内容（<details> 里）时，先展开再滚过去：简报栏目、雷达其余条目、产品灵感更早的榜单 */
+(function(){function go(){var h=location.hash.slice(1);if(!h)return;var t;try{t=document.getElementById(decodeURIComponent(h))}catch(e){}if(!t)return;var d=t.closest('details'),inD=!!d;while(d){d.open=true;d=d.parentElement&&d.parentElement.closest('details')}if(inD){/* 浏览器可能已自己展开但滚动位置不对，统一再对准一次 */setTimeout(function(){t.scrollIntoView()},30);setTimeout(function(){t.scrollIntoView()},450)}}/* 第二次等展开动画（.25s）走完再对准 */
+document.addEventListener('DOMContentLoaded',go);addEventListener('hashchange',go);
+document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href^="#"]');if(a&&a.getAttribute('href')===location.hash)setTimeout(go,0)})})();
+</script><script src="../../assets/gh.js" defer></script><script src="../../assets/favorites.js" defer></script><script src="../../assets/progress.js" defer></script></head><body>
+<header class="top"><div class="in"><a class="brand" href="../../index.html"><i><svg class="i i-book-open" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/></svg></i>王玮的学习库</a><nav><a href="../../index.html" class="">首页</a><a href="../../favorites/index.html" class="">收藏</a><a href="../../courses/index.html" class="s1">公开课<em>52</em></a><a href="../../x-posts/index.html" class="">X 好文<em>12</em></a><a href="../../research/index.html" class="">技术研究<em>4</em></a><a href="../../wechat/index.html" class="">微信公众号<em>7</em></a><a href="../../video/index.html" class="">视频<em>1</em></a><a href="../../glossary.html" class="">概念卡<em>31</em></a><a href="../../x-brief/index.html" class="s2">X 简报</a><a href="../../x-posters/index.html" class="">X 海报</a><a href="../../ph-inspo/index.html" class="">产品灵感</a><a href="../index.html" class="on">雷达<em>300</em></a><a href="../../dsh-plugins/index.html" class="">DSH 插件<em>57</em></a></nav><button class="dm" onclick="__tt()" aria-label="切换深色模式"><svg class="i i-sun-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2"/><path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715"/><path d="M16 12a4 4 0 0 0-4-4"/><path d="m19 5-1.256 1.256"/><path d="M20 12h2"/></svg></button></div></header>
+<main><div class="crumb"><a href="../../index.html">首页</a> / <a href="../index.html">雷达</a> / 周报 2026-11-16</div>
+<section class="sheet"><span class="kk">2026-11-16 发布 · 日期均为北京时间</span><h1>雷达周报 · 11/09–11/16</h1><div class="kk" style="margin:4px 0">结论先说</div><ol class="quick"><li><b><a href="https://github.com/Tencent/LoopForge" target="_blank" rel="noopener">LoopForge</a></b><span class="ql"><b>解决什么</b>自托管编码交付工作台；Main Bot 收需求，Docker 沙箱执行，按 SOP 调度 Codex、Claude Code、DSH 等 CLI，人可批准或退回步骤。</span><span class="ql"><b>抄哪一处</b><code>docs/architecture.md</code>、<code>internal/engine</code> 的 SOP 图与沙箱生命周期，以及 <code>cmd/agentflow-gate-mcp</code> 的结构化审批结果；规划、实现、评审、测试分角色配置。</span><span class="ql"><b>还要确认</b>本轮未部署；v0.3.8 相对前一正式版逐条变更未核；GitHub 许可元数据为 NOASSERTION，仓库 LICENSE 主体为 MIT，须保留第三方原许可。</span></li><li><b><a href="https://github.com/HarnessRouter/harnessrouter" target="_blank" rel="noopener">Harness Memory（HarnessRouter v0.40.0）</a></b><span class="ql"><b>解决什么</b>跨 harness 的长期记忆；HarnessRouter 自己不存记忆，按 agent 职责选 Mem0、Graphiti、Hindsight、ReMe 等引擎，按用户隔离，召回当数据而非指令。</span><span class="ql"><b>抄哪一处</b><code>gateway/memory_choice.py</code>、<code>gateway/memory_plane.py</code>、<code>protocol/versions/2026-10-19/memories.md</code> 的引擎选择与记忆接口；部署入口 <code>deploy/memories/up.sh</code>。</span><span class="ql"><b>还要确认</b>本轮未启动部署脚本；控制台 <code>ui/src/components/hrui/memories/</code> 只列了路径、没打开实现。不是新增仓库，更新既有 #17。</span></li><li><b><a href="https://github.com/ccch1mneyyy/dsh-go-market" target="_blank" rel="noopener">dsh-go-market</a></b><span class="ql"><b>解决什么</b>DSH Go（#264）的插件市场目录；市场不托管、不执行插件代码，只收精确版本，并把静态检查和风险特征留给客户端展示。</span><span class="ql"><b>抄哪一处</b><code>VERIFICATION.md</code> 的 base/head SHA 固定与解包约束、<code>audit.json</code> 风险特征及 <code>policy.json</code> 的官方包/禁用版本清单。</span><span class="ql"><b>还要确认</b>作者写明未验证依赖树安全、真机安装字节一致性及完整安装链路；没有 GitHub Release 标签，本轮未走完一次上架。</span></li></ol></section>
+<nav class="tabs"><a href="#s1">上期下落</a><a href="#s2">各方向的新东西</a><a href="#s3">上期首选的详细核对</a><a href="#s4">六个候补的证据</a><a href="#s5">安全跟进与库内版本更新</a><a href="#s6">库内老项目本周重要发版</a><a href="#s7">新发现、值得抄的文件路径</a><a href="#s8">当前仍缺什么</a><a href="#s9">补存与修订说明</a></nav><section class="sheet"><p>&gt; 北京时间 2026-11-09 00:00–11-16 09:10 的研究窗口；2026-11-17 补存正式周报。以下星数、许可、推送和版本信息沿用 11/16 核实记录，不冒充 11/17 实时数据。本期未部署这些项目。库从 286 条到 300 条，新增 #287–#300；不是本次重新收录。</p>
+<h2 id="s1">上期下落</h2>
+<ul><li><b><a href="https://github.com/deepseek-ai/dsh-superagent-prototype" target="_blank" rel="noopener">dsh-superagent-prototype</a></b>：本周没有新证据，仍为单提交研究原型；与内部版差异和效果数字仍无独立验证，本周没部署｜判断没变｜仍推荐。
+</li><li><b><a href="https://github.com/AgentBull/ankole" target="_blank" rel="noopener">Ankole</a></b>：补读检索和写入授权调用链，见下文；仍为 v2.0.0-alpha 系列，未运行测试或部署，不能把源码阅读当完整运行时验证｜判断变了：过滤链路证据更具体，但运行时边界仍待验证｜仍推荐。
+</li><li><b><a href="https://github.com/KKKKhazix/agent-autoloop" target="_blank" rel="noopener">Agent Autoloop</a></b>：窗口内发布到 <a href="https://github.com/KKKKhazix/agent-autoloop/releases/tag/v1.8.5" target="_blank" rel="noopener">v1.8.5</a>，作者扩大自报验证面；Webhook/场景模板仍未接真实完整业务，本周没安装｜判断变了：产品更完整，验证限制仍在｜仍推荐。
+</li><li><b><a href="https://github.com/wiva-hq/CodeRail" target="_blank" rel="noopener">CodeRail</a></b>（候补第 2 周）：继续候补；还差远端控制台的授权和会话模型源码核对，本周没细读。
+</li><li><b><a href="https://github.com/AkaraChen/cc-remote" target="_blank" rel="noopener">cc-remote</a></b>（候补第 2 周）：继续候补；仍无 LICENSE，还差许可。
+</li><li><b><a href="https://github.com/thefullgc/opensuperagent" target="_blank" rel="noopener">OpenSuperAgent</a></b>（候补第 2 周）：继续候补；还差正式发版及与 dsh-superagent 授权模型对照，本周没细读源码。
+</li><li><b><a href="https://github.com/BridgLabs/opencodereview" target="_blank" rel="noopener">OpenCodeReview</a></b>（候补第 2 周）：继续候补；PolyForm Small Business 不是 OSI 开源许可，还差可接受的开源许可。
+</li><li><b><a href="https://github.com/cloader/dsh-taskboard" target="_blank" rel="noopener">dsh-taskboard</a></b>（候补第 2 周）：继续候补；11/09 推送具体内容未核清，需有说明的发版或补读推送。
+</li><li><b><a href="https://github.com/HsiangNianian/dsh-auto-continue" target="_blank" rel="noopener">dsh-auto-continue</a></b>（候补第 2 周）：入库（#292）；有 v0.18.0/v0.19.0 发版依据，错误分类和防循环实现仍未读完。
+</li></ul>
+<p>11/02 文字曾称候补的 safeagents、MCode Stack、ThinkRail、Floorplan、cheap-ag 当期已入库 #257–#261，不再当作第三周未决候补。本期未追加新的正式候补名单。其余研究线索不自动变成候补。</p>
+<h2 id="s2">各方向的新东西</h2>
+<h3>#287 · harness 与编排 · <a href="https://github.com/Tencent/LoopForge" target="_blank" rel="noopener">LoopForge</a></h3>
+<p>11/16 核实记录：★1526；许可 NOASSERTION；最近推送 2026-11-15（北京时间；日期精度沿用入库记录）。</p>
+<p>自托管工作区：人在聊天里向 Main Bot 提需求，系统开 Docker 沙箱、检出仓库、按 SOP 把活交给 coding-agent CLI。执行器包括 CodeBuddy、Codex、Claude Code、OpenCode、Cursor CLI、Antigravity、Kimi Code、Pi、DeepSeek Harness、ZCode。角色（规划、实现、评审、测试）各自有提示词、执行器、模型、规则、Skills 和 MCP；角色既是 SOP 节点，也可以是聊天里的子 agent。审批闸门：人读报告后批准，或退回指定步骤；需求、变更、成本报告走同一条「要求」线。本周正式版 v0.3.8（北京时间 2026-11-12 21:05），另有 v0.3.9-rc.1（2026-11-13）。</p>
+<p>可以抄什么：①架构与调度：docs/architecture.md——internal/engine 负责 SOP 图、租约、调度、沙箱生命周期与交付；取消后重跑一条分支会恢复被取消的兄弟节点。②结构化闸门：cmd/agentflow-gate-mcp。③前端选权限和沙箱：chatbot/src/PermissionPicker.jsx、SandboxPicker.jsx。上游 Go 模块名仍用 agentflow，为了减少合并冲突。</p>
+<p>边界与未确认：创建 2026-07-28（北京时间）。最近推送 2026-11-15。GitHub 许可元数据为 NOASSERTION，仓库 LICENSE 写明主体为 MIT（Copyright 2026 Tencent，并保留 superpowers 等第三方原许可）。★1,526。本轮没部署；v0.3.8 相对前一正式版的逐条变更未核；公开版登录与 GitHub 适配器只接到已有契约，没有另做一套引擎。与库内 #11 TeamAI CLI 不是同一个项目。</p>
+<h3>#288 · harness 与编排 · <a href="https://github.com/pmndrs/pine" target="_blank" rel="noopener">pine</a></h3>
+<p>11/16 核实记录：★215；许可 MIT；最近推送 2026-11-16（北京时间；日期精度沿用入库记录）。</p>
+<p>pmndrs（react-three-fiber 团队）的响应式 harness：agent 订阅文件夹、命令、webhook 等事件。内置 BM25 手册工具，避免把文档塞进上下文。配置由主 agent 用管理工具完成，不改用户配置文件。创建于 2026-11-11，本周发到 v0.31.3（北京时间 2026-11-16 06:55）。</p>
+<p>可以抄什么：①proposals/sandbox-and-modes.md（2026-11-12 草案，文中称四档已实现）：把原来的 mode + sandbox.scope + security.review 收成一档。bypass 关沙箱不问；auto 关沙箱、关键动作和外泄/改记忆要审；safe 开沙箱；manual 每次改动都问。默认主 agent 用 auto，其他 agent 用 safe。评审模型只看主人消息和动作、不看工具结果；连续拦 3 次或累计 20 次改问人。②对照表写明：pine 的 OS 沙箱强制、覆盖 shell / 六个文件工具 / agent 自加的 MCP；Claude Code 默认关、只包 shell。源码：src/sandbox-fs.ts、src/sandbox-linux.ts、docs/references/security.md。</p>
+<p>边界与未确认：创建 2026-11-11（北京时间）；最近推送 2026-11-16。MIT。★215。草案里「较小改动」仍标未做；本轮没在本机跑过四档切换。</p>
+<h3>#289 · harness 与编排 · <a href="https://github.com/phuryn/mini-harness" target="_blank" rel="noopener">mini-harness</a></h3>
+<p>11/16 核实记录：★184；许可 MIT；最近推送 2026-11-07（北京时间；日期精度沿用入库记录）。</p>
+<p>为讲课而写的小型但完整的 Python harness（约 1400 行）：工具循环、Skills、MCP、子 agent、服务端 compaction。最新 v1.0.5 在 2026-11-07（本窗口之前），上期扫描已见到、上周报未收，本期补入库。</p>
+<p>可以抄什么：①/goal：自称「做完」不算数，要验证命令通过，且换一个全新上下文的评审者过目（「工人从不给自己打分」）。②权限：危险动作问人，或交给约 0.3 秒、成本极低的判定模型（README 自述）。③对话只追加，不改已发出的内容，以保住 Claude 的思考块和前缀缓存。④压测任务在 smoke-test/tasks/compaction/。</p>
+<p>边界与未确认：创建 2026-11-03（北京时间）；最近推送 2026-11-07；v1.0.5@2026-11-07。MIT。★184。Terminal-Bench 2.1 数字以仓库当时表格为准，本轮未复跑；本轮没安装。</p>
+<h3>#290 · 端侧插件生态 · <a href="https://github.com/ccch1mneyyy/dsh-go-market" target="_blank" rel="noopener">dsh-go-market</a></h3>
+<p>11/16 核实记录：★81；许可 AGPL-3.0；最近推送 2026-11-15（北京时间；日期精度沿用入库记录）。</p>
+<p>库内 #264 DSH Go（同一作者 ccch1mneyyy）的插件市场目录仓库：不托管、不执行插件代码，只维护锁定版本和静态检查结果。只接受精确版本（如 1.2.3），拒绝 latest、版本范围和 Git 地址。结构/许可/完整性失败会挡住上架；风险特征（shell、network、filesystem、obfuscated、not-adapted）不单独挡上架，但写入 audit.json 给 App 展示。无 GitHub Release 标签。</p>
+<p>可以抄什么：①上架约束：只收精确版本，拒绝 latest / 范围 / Git 地址。②VERIFICATION.md：PR 检查钉死 base/head SHA，拒绝符号链接、子模块、路径穿越和重复解包目标。③policy.json 目前只有 officialPackages 与 blockedVersions 两块，刻意保持小。④风险特征写入 audit.json，供客户端展示，不把它当成安全背书。可与 #264 仓库里 market/candidates → market/plugins 的两段式目录对照。</p>
+<p>边界与未确认：创建 2026-10-31（北京时间）；最近推送 2026-11-15。AGPL-3.0。★81。作者写明未验证：依赖树安全、真机安装字节一致性、App 完整安装链路。本轮没走完一次上架。补报（上期窗口已存在，上周报未收）。</p>
+<h3>#291 · 端侧插件生态 · <a href="https://github.com/microsoft/apm" target="_blank" rel="noopener">♻️ Agent Package Manager</a></h3>
+<p>11/16 核实记录：★4377；许可 Apache-2.0；最近推送 2026-11-14（北京时间；日期精度沿用入库记录）。</p>
+<p>微软开源的 Agent Package Manager：一份 apm.yml 写清技能、提示词、插件和 MCP，apm install 一次装完；apm.lock.yaml 记录解析后的图和已部署文件，apm install --frozen 按锁定提交重装。锁文件规范写明四件事：可复现、用 SHA-256 查完整性、按部署清单清理、供 apm view / apm audit 查看实际安装。本周正式版 v0.35.1（GitHub Release 北京时间 2026-11-12 06:16；changelog 写作 2026-11-11）把项目许可改为 Apache-2.0，并修了一组安装/锁文件问题（符号链接锁文件不再被悄悄换成普通文件、--frozen 重放等）。</p>
+<p>可以抄什么：①锁文件契约：docs/src/content/docs/reference/lockfile-spec.md（实现入口 src/apm_cli/deps/lockfile.py、src/apm_cli/install/phases/lockfile.py）。②安装时的策略闸门：src/apm_cli/install/phases/policy_gate.py、docs/src/content/docs/enterprise/apm-policy.md。③本周默认分支上还有尚未发成 0.36.0 的改动（changelog 的 Unreleased：把 marketplace 写进用户清单、按 host 做依赖 allow/deny、许可证随包装入并记入 carried_licenses 等），不要写成已经发版。</p>
+<p>边界与未确认：创建 2025-09-18（北京时间），老项目；近 90 天持续发版，本周变化是 v0.35.1。最近推送 2026-11-14。Apache-2.0（v0.35.1 起；更早发行仍是 MIT）。★4,377。文档还写安装前扫描隐藏 Unicode、可部署到 .github/ / .claude/ / .cursor/ / .agents/ 等。本轮读了 changelog、lockfile 规范和部分源码路径，没有在企业环境跑 apm install --frozen 或 apm audit --ci。curl | sh / irm | iex 的安装方式不要照搬到企业。</p>
+<h3>#292 · 端侧插件生态 · <a href="https://github.com/HsiangNianian/dsh-auto-continue" target="_blank" rel="noopener">dsh-auto-continue</a></h3>
+<p>11/16 核实记录：★198；许可 MIT；最近推送 2026-11-13（北京时间；日期精度沿用入库记录）。</p>
+<p>DeepSeek Harness 的自动续跑插件：引擎跑在 DSH 宿主进程里，只保留一份，避免多标签页重复发送。监听会话事件，在错误、打到输出上限、没有可见输出，或自主循环模式下的正常完成时决定是否续跑。错误分类把网络/超时/5xx/429 当可重试，把 401/403、认证和额度、模型不存在、上下文长度当永久错误并跳过。循环守卫用时间窗内连续短句、相同消息重复、同工具同参数同结果重复来打断原地打转。上期列为候补，本周入库。</p>
+<p>可以抄什么：①宿主单实例引擎：src/host/engine.ts（注释写明因此不存在多标签页重复发送）；共享配置与分类在 src/shared/core.ts（loopWindowMs、loopShortCount、loopRepeatText、loopToolRepeat、loopMaxIterations 等）。②错误分类与流程：README.zh.md「错误分类」「触发 / 会话检查 / 结束原因」。③本周 v0.18.0（北京时间 2026-11-10 12:27）增加自主循环轮次上限 loopMaxIterations；v0.19.0（北京时间 2026-11-13 13:08）可给仍加载中的子 agent 会话做失败续跑（resumeSubagentSessions，默认关），子 agent 从不进入自主循环、也不受循环守卫重启。④测试：tests/loop-guard-progress.mjs、tests/failure-classification.mjs、tests/autonomous-loop.mjs。</p>
+<p>边界与未确认：创建 2026-08-14（北京时间）；最近推送 2026-11-13；最新 v0.19.0。MIT。★198。本轮读了 host/engine.ts 开头、CHANGELOG 和中文 README 的循环守卫/错误分类，没有安装，也没有在真实会话上复现打断条件。</p>
+<h3>#293 · 上下文/记忆 · <a href="https://github.com/Tranquillitatis-Lab/dsh-live-compact" target="_blank" rel="noopener">dsh-live-compact</a></h3>
+<p>11/16 核实记录：★287；许可 MIT；最近推送 2026-11-16（北京时间；日期精度沿用入库记录）。</p>
+<p>DSH 上下文压缩插件：每轮结束在本机收短已完成的长输出，不另调模型。只替换选中片段，切点之前保持原样，以便前缀缓存仍能命中。整理前先备份，备份失败则不动原文。默认约 2 万 token 才开始检查。本周发到 v1.1.11（北京时间 2026-11-15 22:55）。创建于 2026-11-03，上期窗口已存在，本期补报。</p>
+<p>可以抄什么：①多压缩插件共存：gate.js——若检测到对端压缩插件（bili-native、billion-context，或 SPINE_STAND_DOWN=1）处于 LOADING/ACTIVE，本插件让位，不切上下文、不改预设。②规划与落刀：plan.js / index.js（文件较大，建议从 gate.js 和 README 的「切点前面保持原样」读起）。③测评材料：docs/benchmarks.md、docs/benchmark-results.json（作者自测，本轮未复跑）。SPINE_THUNDER 模型摘要模式默认关。</p>
+<p>边界与未确认：创建 2026-11-03（北京时间）；最近推送 2026-11-16。MIT。★287。测评数字为作者自测。本轮没安装。</p>
+<h3>#294 · 上下文/记忆 · <a href="https://github.com/Old-Friends-Gathering/sedimem" target="_blank" rel="noopener">sedimem</a></h3>
+<p>11/16 核实记录：★101；许可 MIT；最近推送 2026-11-16（北京时间；日期精度沿用入库记录）。</p>
+<p>本地优先记忆：DSH、Codex CLI、Claude Code 走同一个 stdio MCP，同一份分库。零第三方运行时依赖（Node ≥ 22.15，内置 sqlite FTS5）。无 GitHub Release 标签。契约写在 docs/02-data-model-and-contract.md（doc-version 1.3，verified-at 2026-11-15）。创建于 2026-11-02，本期补报。</p>
+<p>可以抄什么：①磁盘布局（契约文档）：~/.memo/items/&lt;scope&gt;.jsonl 是真相层（每次状态变更追加完整快照，同一 id 最后一行生效）；events.jsonl 审计；.lock/ 用 mkdir 做跨进程写锁。②记录字段：kind 为 fact/pref/decision/gotcha/state；status 为 active/superseded/disputed/tombstoned；validFrom/validTo 支持 as-of；source.agent 必填且属于 dsh|codex|claude|cli|test|unknown；contentHash 为 sha256:…；privacy 默认 private。③改过去 = 追加新版本，不原地改。索引和派生 brief 可以删掉重建。</p>
+<p>边界与未确认：创建 2026-11-02（北京时间）；最近推送 2026-11-16。MIT。★101。README 提到的「四道写入卫生 + Agent 裁决闭环」在契约文档后半，本轮读了模型与不变式，未逐条核卫生实现；本轮没安装。</p>
+<h3>#295 · 上下文/记忆 · <a href="https://github.com/Asymptote-Labs/agent-beacon" target="_blank" rel="noopener">♻️ beacon.sh</a></h3>
+<p>11/16 核实记录：★3515；许可 MIT；最近推送 2026-11-14（北京时间；日期精度沿用入库记录）。</p>
+<p>开源、本地优先的 coding agent 记忆层。先把 Claude Code、Cursor、Codex、OpenCode 等会话收成统一轨迹，再把有用的流程、纠错和调试模式变成项目记忆。记忆默认不自动生效：先打分或手写候选，人审过再批准，然后通过 beacon mcp serve 的只读工具（search_memory / get_memory / get_memory_context）或写成项目下 .agents/skills/&lt;slug&gt;/SKILL.md 给别的 agent 用。和 #202 Hindsight、#17 Harness Memory 互补：Beacon 强调「先人工批准再写入」。仓库 README 徽章也写 asymptote-labs/agent-beacon，会转到同一仓库。</p>
+<p>可以抄什么：①闭环：docs/concepts/cross-harness-memory.mdx——捕获 → beacon memory evaluations run 或手写候选 → 审阅 → 批准时补上 lesson 文本 → MCP / Skill 复用。评测只给概率，不自动改指令、不自动装 Skill。候选门槛：task_success ≥ 0.50，且三项概率均值 ≥ 0.60；失败任务不能靠另外两项被升上去。②本地产物在 endpoint 日志旁的 memory.db；批准记忆按「轨迹所属仓库」划项目，不自动变成用户全局记忆。Beacon Cloud 有一套平行 MCP 工具，但云上没有评测器，候选必须由 agent 起草、人确认；云记忆和本地记忆互不复制。③随仓库发布的 skill：agent-skills/ 下的 beacon-memory-recall / beacon-memory-distill / beacon-memory-promote。④隐私边界（同页）：hooks 从不调用 Jev/SubQ；dry-run 不发网；评测只由显式命令触发，且先做有界、打码的轨迹投影。另见 docs/cli/memory.mdx、docs/concepts/beacon-skills.mdx、docs/architecture/architecture.mdx。</p>
+<p>边界与未确认：创建 2026-05-12（北京时间），老项目；PH 日期 2026-11-02，故标补报。最近推送 2026-11-14。MIT。★3,515。本周 GitHub Release 有 v1.3.61（北京时间 2026-11-14；changelog 写作 November 13），主要是 Cursor 云 agent 轨迹修复等，不是记忆协议本身的首次发布。README 称覆盖 20+ harness，为作者自报，本轮未逐项核对支持矩阵。交互安装会预选 Beacon Cloud，需明确选 Local 才能纯本地，不要写成「默认完全离线」。本轮没有实际安装或跑记忆闭环；未通读 collector/gateway 实现。</p>
+<h3>#296 · 评测与可观测 · <a href="https://github.com/alexeyw/lot-map" target="_blank" rel="noopener">lot-map</a></h3>
+<p>11/16 核实记录：★891；许可 MIT；最近推送 2026-11-16（北京时间；日期精度沿用入库记录）。</p>
+<p>Claude Code 插件：聊天旁一块活地图，工具调用、模型步骤、hook、技能、子 agent 按站点亮起来。本机运行，不外发。创建于 2026-11-10，本周发到 v0.8.0（北京时间 2026-11-15 09:41）。</p>
+<p>可以抄什么：①原则写成可跑的测试：PRINCIPLES.md，测试在 hooks/principles.test.tsx、scripts/check-surface.mjs。只观察、不改任何输入/结果/权限，禁止挂上会改模型输入或放行决策的 hook；标签只放名字（路径最后两段、URL host、工具名），不放命令内容；不做网络、不读文件、不跑进程、不调模型；地图故障不得挡住干活（引擎调用走 quietly，吞掉失败）。②hooks/classify.ts 把工具映射到站点：memory / files / shell / web / agents / skills / you / browser。MCP 是否算记忆，看 setup.memoryServers。③成本有预算（作者 2026-11-13 在 M1 Pro 上自测，如 classify 约 13 µs，自报）。</p>
+<p>边界与未确认：创建 2026-11-10（北京时间）；最近推送 2026-11-16。MIT。★891。本轮没安装。耗时数字为作者自测。</p>
+<h3>#297 · 评测与可观测 · <a href="https://github.com/NVIDIA/SkillEvaluator" target="_blank" rel="noopener">♻️ SkillEvaluator</a></h3>
+<p>11/16 核实记录：★1711；许可 Apache-2.0；最近推送 2026-11-16（北京时间；日期精度沿用入库记录）。</p>
+<p>NVIDIA Verified Skills 流水线里的技能评测工具，按 agentskills.io 规范：先做静态质量检查，再对照「有技能 / 无技能」的任务结果。本周发 v0.9.0（北京时间 2026-11-13 19:03）。仓库创建于 2026-06-24，按近 90 天大版本收录。</p>
+<p>可以抄什么：①Tier 1 质量检查不需要 API key：skillevaluator quality-check，退出码 0 并写 skillevaluator-quality.json。②CI 捆绑包在 ci/bundles/0.9.0/，工作流 .github/workflows/evaluate-skills.yml、evaluate-all-tiers.yml。③docs/agents-and-sandboxes.mdx 讲各档 agent 与沙箱怎么接；config/oss_boundary_allowlist.json 是开源边界白名单。④安全与发布证据不足时标记 INCOMPLETE，不假装过关。</p>
+<p>边界与未确认：创建 2026-06-24（北京时间）；最近推送 2026-11-16。Apache-2.0。★1,711。v0.9.0 相对 v0.8.0（11-06，窗口前一天）的变更清单本轮未逐条核对；本轮没跑评测。</p>
+<h3>#298 · 沙箱与安全权限 · <a href="https://github.com/n8n-io/nod" target="_blank" rel="noopener">Nod by n8n</a></h3>
+<p>11/16 核实记录：★1739；许可 Apache-2.0；最近推送 2026-11-16（北京时间；日期精度沿用入库记录）。</p>
+<p>n8n 的开源个人 agent（官方标 research preview）。跑在你的机器上，自带 Linux workspace 容器和 Chromium 浏览器容器，用你选的模型（或 ChatGPT Plus/Pro 登录），在 Gmail/Calendar/Slack/Notion 和真实网站上干活，行动前询问。README 写：服务器检查每个应用动作、以及每个可能改数据的网页步骤，对照你的请求和规则；覆盖不到的就等你点头。密码、验证码、卡号走 Vault，不进模型。不是 coding workbench，但「自带电脑 + 行动前审批」的信任模型可直接抄。PH 2026-11-11，本周发 nod-v0.7.0（北京时间 2026-11-12）到 nod-v0.7.6（北京时间 2026-11-14）。</p>
+<p>可以抄什么：①授权模型：docs/src/content/docs/trust/approvals.mdx——「你的请求覆盖完成它所必要的步骤」，而不是逐步弹窗。例如「买某商品」覆盖加购和下单，但不覆盖用卡付、新开订阅、给店家发消息、换一家店。规则优先：规则要求先问，即使当前请求已经覆盖该动作。站立指令只看指令、规则和动作，看不见触发邮件正文，且不能改 Nod 自己的日程/设置/限额/记忆。②实现入口：src/server/approvals.ts、src/server/trust-jev-policy.ts（本轮看了文件头和导出结构，未逐函数通读）；沙箱说明 docs/src/content/docs/how-it-works/sandbox-and-browser.md。③README 写「Policy lives in the server, not the prompt。」架构是一个 Node 进程 + 若干 Docker 容器。</p>
+<p>边界与未确认：创建 2026-09-25（北京时间）；最近推送 2026-11-16。Apache-2.0。★1,739。支持 macOS 14+（Apple silicon 或 Intel）、Windows 11 preview、Linux x64 preview。README 自报评测（模型 GPT-6.1 Sol，2026 年 10 月，在模拟账户和网站上）：98% 任务完成（226 件差事，各 3 轮）、678 轮里 0 次不安全动作、LongMemEval-S 记忆召回 93.2%、WhisperBench 216 次攻击中 0 条虚假记忆——写明是测试结果不是保证，本轮未复跑。本轮未通读审批判定实现。</p>
+<h3>#299 · 代码审查与 CI · <a href="https://github.com/HexmosTech/LiveReview" target="_blank" rel="noopener">♻️ LiveReview</a></h3>
+<p>11/16 核实记录：★158；许可 NOASSERTION；最近推送 2026-11-15（北京时间；日期精度沿用入库记录）。</p>
+<p>面向业务关键系统的风险感知 AI 代码评审：自动批准一部分低风险 PR/MR，人只看风险高的；对仍需人看的 diff，按爆炸半径（调用图能走多远、是否碰持久状态、测试覆盖）和审查优先级给每个 hunk 打分。支持 GitHub/GitLab/Bitbucket/Gitea/Azure DevOps。风险分由语义 LLM、按生产风险信号训练的 ML、静态图分析三路混合；策略可选 conservative / balanced / aggressive。PH 2026-11-07，标补报。最近正式版 v1.2.3（北京时间 2026-11-07）是依赖安全补丁，无用户可见行为变化。</p>
+<p>可以抄什么：①漏斗设计：docs/risk-policy-engine.md，对标 Meta RADAR——资格审查 → 静态/确定性门禁 → ML 风险分 → LLM 语义分类 → 最终决定。文档开头曾把旧逻辑写成占位（result.Approved = result.Critical == 0），但同仓库里已经有实现。②策略接口：internal/api/auto_approve_policy_handlers.go（PolicyDTO 含 mode、min_author_level、资格白名单、risk_threshold_percentile、require_llm_confidence、阻塞 ruleset、landing_delay_seconds、每日批准上限、force_approve_min_level）。③评分：internal/riskscore/features.go（在线学习逻辑回归 + 百分位校准；特征表只追加不删，以免旧模型错位）。④回写与资格分支：internal/jobqueue/pr_policy_worker.go。⑤组织默认、按仓库覆盖、模拟回放：internal/docindex/docs/routes_guide/settings/auto-approve.md。</p>
+<p>边界与未确认：创建 2025-08-26（北京时间），老项目。最近推送 2026-11-15。GitHub 许可元数据为 NOASSERTION；根目录 LICENSE.md 是修改过的 Sustainable Use License（fair-code：允许自建和内部使用，禁止转售/作为竞品服务、禁止商业再分发修改版）；含 .ee. 的文件走 LICENSE_EE.md 企业许可。★158。README 写「自动批准约 40–50% / 30–50%」是产品宣称，本轮没有外部数据核过。文中「Inspired by Meta's RADAR paper: 50x fewer production incidents…」是论文数字，不要写成 LiveReview 自己的实测。本轮未通读 internal/policyengine 完整判定路径，也没有用真实 PR 验证自动批准。</p>
+<h3>#300 · 代码审查与 CI · <a href="https://github.com/sdsvn/co-review" target="_blank" rel="noopener">Co-Review</a></h3>
+<p>11/16 核实记录：★22；许可 MIT；最近推送 2026-11-14（北京时间；日期精度沿用入库记录）。</p>
+<p>基于 Eclipse Theia 的评审工具（不是通用 IDE）：偶尔把整个仓库当作一次评审打开，和当初构建它的 agent 一起读。命令拆成 understand（写指南和 C4，不给结论）、audit（按区域给发现）、review（自己的 diff）、pr（别人的 PR，可打回 GitHub）、design（写代码前的 L1/L2/L3）。评论锚在符号和 Tree-sitter token 上，代码改了会跟着走或标 outdated。评审数据在 ~/.co-review，不进仓库。无遥测、无账号。PH 2026-11-10，标本周发布。最近正式版 v0.9.2 在 2026-11-02（窗口前）；本周主要是文档和 C4/审计拆分，没有新的 GitHub Release。</p>
+<p>可以抄什么：①先理解、后审计，不把两件事混在一个命令里：docs/adr/0003-understand-then-audit.md、docs/adr/0001-understanding-first-repository-review.md。②命令与 skill：docs/architecture.md、plugin/skills/co-review/SKILL.md、plugin/commands/understand.md。③README 写明发现先以 proposed 出现，等人接受或驳回。</p>
+<p>边界与未确认：创建 2026-09-25（北京时间）；最近推送 2026-11-14。MIT。★22。安装包尚未签名。本轮未安装桌面应用，也未打开 Theia 扩展实现细节。</p>
+<h2 id="s3">上期首选的详细核对</h2>
+<h3>1. dsh-superagent-prototype</h3>
+<p>仓库：<a href="https://github.com/deepseek-ai/dsh-superagent-prototype" target="_blank" rel="noopener">来源</a></p>
+<p>License：MIT。当前 ★23,296。默认分支 <code>main</code> 仍只有一个提交 <a href="https://github.com/deepseek-ai/dsh-superagent-prototype/commit/8c32a9dc5d72c033816c6a8110b37f40cf94fba4" target="_blank" rel="noopener"><code>8c32a9dc5d72</code></a>（提交时间 北京时间 2026-10-31 20:06:31）。没有 tag，没有 GitHub Release，只有 <code>main</code> 一个分支。README.md 的 blob SHA 仍是 <code>39e1c4af12</code>，与这份唯一提交一致，本周没有文档或代码改动。<code>pushed_at</code> 为 北京时间 2026-11-03 17:29:14（窗口前），和「只有 10-31 一个提交」并不矛盾，本周也没有新推送。</p>
+<p>还要确认的事项：README 写明是研究原型、和长文 / 内部版不完全一致——本周代码没变，也就没有新的对照材料。长文里的批处理和省 token 数字仍是团队自报，本周没有新数字。本周没部署。</p>
+<ul><li><b>dsh-superagent-prototype</b>：本周没有新证据｜判断没变｜仍推荐
+</li></ul>
+<h3>2. Ankole</h3>
+<p>仓库：<a href="https://github.com/AgentBull/ankole" target="_blank" rel="noopener">来源</a></p>
+<p>License：仍是 Apache-2.0。当前 ★183（上期 ★179）。本窗口持续发 <code>v2.0.0-alpha.*</code>，<b>没有离开 alpha</b>：最新是 <a href="https://github.com/AgentBull/ankole/releases/tag/v2.0.0-alpha.156" target="_blank" rel="noopener">v2.0.0-alpha.156</a>（发布于 北京时间 2026-11-16 01:56:48）。最后一次推送 北京时间 2026-11-16 01:56:32。本周提交主要是 Jobs 看板、图交互性能、ChatGPT OAuth 刷新协议共享等，<b><code>access.ex</code>、<code>turn_authority.ex</code>、<code>request_context.ex</code>、<code>pod/access.ex</code>、<code>recall.ex</code>、<code>forget.ex</code> 在本窗口内没有新提交</b>，过滤路径文件仍在原位置。</p>
+<p>本周实际多读了检索和写入准入，而不是只读两个文件的开头。下面是核到的，和还没核完的。</p>
+<h3>已核对（读了源码调用链，本轮没跑测试、没部署）：</h3>
+<ul><li>披露结构仍在 <code>app/control_plane/lib/ankole/brain/access.ex</code>：<code>disclosure</code> 为 <code>%{mode: :strict | :relaxed, asker_uid, present_uids}</code>。<code>visibility/2</code> 把提问者 <code>querier_uid</code> 和收件人的可达锚点做按位交集；<code>strict</code> 且收件人为空时直接返回空图。<code>recipients/1</code>：<code>strict</code> 模式收 <code>asker_uid + present_uids</code>，否则只收 <code>asker_uid</code>。<code>filter_claims/2</code>、<code>filter_chunks/2</code>、<code>filter_timelines/2</code>、<code>filter_links/2</code>、<code>filter_objects/2</code> 都要求源节点 / 页面 <code>is_nil(deleted_at)</code>，并按 ACL 锚点过滤。
+</li><li>披露怎么进检索：<code>app/control_plane/lib/ankole/brain/request_context.ex</code> 的 <code>event_disclosure/2</code> 从当前 Signal 组装。<code>relaxed</code> 只带提问者（注释写明：没有提问者的回合一律降为 <code>strict</code>，因为最终文本仍可能发到频道）。<code>strict</code> 的 <code>present_uids</code> 来自会话频道：IM 群成员、IM 单聊的提问者 / 人类发言者、原生会话参与者（不含正在回复的 agent）。解析不到收件人集合时用 <code>closed_disclosure()</code>（<code>strict</code> 且 asker/present 皆空），按上面的规则检索结果为空。
+</li><li>检索主路径：<code>app/control_plane/lib/ankole/brain/recall.ex</code> 先 <code>Access.for_readers(querier_uid, disclosure)</code>，SQL 预过滤 <code>filter_source/2</code>（<code>deleted_at</code> + ACL），claim 臂和 chunk 臂召回后再跑 <code>Access.filter_disclosable/3</code>（分别按 <code>source_node_id</code>、<code>chunk.source_node_id</code>）。对象可见性另走 <code>Access.visible_node?/2</code>，链接走 <code>Access.filter_links/2</code>。同一套过滤器还出现在 <code>knowledge.ex</code>、<code>experts.ex</code>、<code>browser.ex</code>、<code>synthesis.ex</code>、<code>context_pack.ex</code>、<code>objects.ex</code>、<code>get_page.ex</code>、<code>applet_takes.ex</code>。
+</li><li>写入时再验指令是否仍有效：<code>app/control_plane/lib/ankole/authz/turn_authority.ex</code> 仍在原路径，<code>authorize_in_tx/2</code> 在提交事务里复查。实际检查落到 <code>app/control_plane/lib/ankole/agent_workers/worker_route_auth.ex</code> 的 <code>authorize_turn_in_tx/4</code>：Signal 必须仍在、agent/session 仍匹配、状态仍是 <code>:queued</code> 或 <code>:running</code>，并且 <code>WorkAccess</code> 字段与锁前快照一致，否则 <code>{:error, :run_closed}</code>。<code>RequestContext</code> 还带 <code>write_fence</code>，用 <code>live_turn_fence/2</code> 再查该 Signal 是否仍为 queued/running。<code>Pod.Access.write/3</code>、<code>write_tree/3</code> 会先 <code>validate_turn_authority</code>，再在事务里调用 <code>authorize_turn_in_tx</code> 之后才执行写入函数。
+</li><li>记忆 / 页面写入的授权：<code>app/control_plane/lib/ankole/pod/agent_pages.ex</code> 的 <code>save/5</code>、<code>create/5</code>、<code>editable/2</code> 走 <code>authorize_change/5</code>，后者调用 <code>Ankole.Brain.Access.authorize_change/5</code>（先 <code>visible_page</code>，再 <code>Pod.Access.authorize</code>，再按 <code>asker_uid</code> 做 <code>requester_authorize</code>）。<code>Pod.Access.authorize/4</code> 对 Brain 页会再调 <code>Ankole.Brain.Access.authorize_turn/4</code>。<code>app/control_plane/lib/ankole/pod/rpc_broker.ex</code> 同样经过 <code>AgentPages.authorize_change</code>。<code>object_writes.ex</code> 的提交入口调用 <code>AgentPages.save/create</code>。
+</li><li>源文档撤回后派生记忆是否隐藏：过滤器在源节点带 <code>deleted_at</code> 时会把依赖该 <code>source_node</code> 的 claim / chunk / timeline / link 滤掉。<code>app/control_plane/lib/ankole/brain/forget.ex</code> 的 <code>forget_object/3</code> 对对象做软删除（注释写明：离开常规召回，等待 TTL 后再硬删）；<code>forget_claim/3</code> 让 fact 过期、take 停用，并写下原因。这是「软删除 / 遗忘」路径上的代码行为。
+</li></ul>
+<h3>还没核完（不能声称完整过滤路径已验证）：</h3>
+<ul><li>本周没跑测试，也没部署。
+</li><li>没把 claim / 派生记忆<b>创建时</b> <code>source_node_id</code> 是怎么挂上的整条写路径走完（读了 <code>object_writes.ex</code> 和 <code>AgentPages</code> 的页面写入，没把 <code>claims.ex</code> / <code>source_learning.ex</code> 的创建入口逐段对完）。若某种派生记忆没有指向源文档的 <code>source_node_id</code>，上面的 <code>filter_disclosable</code> 管不到，本周未核实是否存在这种记录。
+</li><li>没单独追踪「只撤授权、不打 <code>deleted_at</code>」：<code>visibility/2</code> 会按当前授权重建交集，理应让失去授权的人看不到，但本周没有对着改 grant 的代码把这条路径走完。
+</li><li>没把 <code>Graph.reachable_anchors</code> 的 ACL 位语义通读完。
+</li></ul>
+<ul><li><b>Ankole</b>：新证据：本周仍在发 v2.0.0-alpha（最新 <a href="https://github.com/AgentBull/ankole/releases/tag/v2.0.0-alpha.156" target="_blank" rel="noopener">alpha.156</a>，北京时间 2026-11-16 01:56），过滤文件路径未改、本窗口无新提交；本周把检索（<code>recall.ex</code> + <code>request_context.ex</code>）和写入准入（<code>Pod.Access.write</code> + <code>TurnAuthority.authorize_in_tx</code> + <code>AgentPages.authorize_change</code>）读到了函数级，源文档软删除后依赖 <code>source_node</code> 的派生记录会被滤掉。本周没跑测试，也没把 claim 创建时的 <code>source_node</code> 挂接、以及「只撤权不删除」走完｜判断没变（仍是带权限 RAG 的有效样本，证据比上期完整，但完整路径仍未验证）｜仍推荐
+</li></ul>
+<h3>3. Agent Autoloop</h3>
+<p>仓库：<a href="https://github.com/KKKKhazix/agent-autoloop" target="_blank" rel="noopener">来源</a></p>
+<p>License：MIT。当前 ★5,506（上期 ★4,107）。本窗口发版很密：</p>
+<p>| 版本 | 发布（北京时间） | 说明（摘自 release notes） |</p>
+<p>|---|---|---|</p>
+<p>| <a href="https://github.com/KKKKhazix/agent-autoloop/releases/tag/v1.7.0" target="_blank" rel="noopener">v1.7.0</a> | 2026-11-09 09:14:43 | 卡片回答带上所选文字；Windows 上 npm 安装的 Claude Code 能启动 |</p>
+<p>| <a href="https://github.com/KKKKhazix/agent-autoloop/releases/tag/v1.7.1" target="_blank" rel="noopener">v1.7.1</a> | 2026-11-09 16:29:55 | 修复 macOS LaunchAgent 权限导致服务起不来；Codex 重连后被误判失败；收件箱模板漏信 |</p>
+<p>| <a href="https://github.com/KKKKhazix/agent-autoloop/releases/tag/v1.7.2" target="_blank" rel="noopener">v1.7.2</a> | 2026-11-10 17:21:58 | Windows 登录任务更新顺序；飞书卡片可填文字回答 |</p>
+<p>| <a href="https://github.com/KKKKhazix/agent-autoloop/releases/tag/v1.8.0" target="_blank" rel="noopener">v1.8.0</a> | 2026-11-11 01:01:54 | 多项目共用审查策略；按已检查提交推进合并 |</p>
+<p>| <a href="https://github.com/KKKKhazix/agent-autoloop/releases/tag/v1.8.1" target="_blank" rel="noopener">v1.8.1</a> | 2026-11-11 01:30:53 | 应急交付可在原临时目录重试 |</p>
+<p>| <a href="https://github.com/KKKKhazix/agent-autoloop/releases/tag/v1.8.2" target="_blank" rel="noopener">v1.8.2</a> | 2026-11-12 09:06:43 | 内置 ZCode 适配器；暂停期间跳过的事件可补跑 |</p>
+<p>| <a href="https://github.com/KKKKhazix/agent-autoloop/releases/tag/v1.8.3" target="_blank" rel="noopener">v1.8.3</a> | 2026-11-13 09:03:32 | 卡片标明来源规则；Token 统计含缓存 |</p>
+<p>| <a href="https://github.com/KKKKhazix/agent-autoloop/releases/tag/v1.8.4" target="_blank" rel="noopener">v1.8.4</a> | 2026-11-14 09:03:13 | 规则已删/改名时到期复查改为发通知卡片 |</p>
+<p>| <a href="https://github.com/KKKKhazix/agent-autoloop/releases/tag/v1.8.5" target="_blank" rel="noopener">v1.8.5</a> | 2026-11-15 09:03:49 | <code>restore</code> 先拷到暂存目录再换入，避免备份中途打断留下坏库 |</p>
+<p>| <a href="https://github.com/KKKKhazix/agent-autoloop/releases/tag/v1.9.0" target="_blank" rel="noopener">v1.9.0</a> | 2026-11-16 09:13:13 | <b>晚于本窗口截止 09:10 约 3 分钟</b>；对应提交在窗口内。交付审查超时 30 分钟并写明原因；文档补上已验证的 Antigravity ACP 用法（#298） |</p>
+<p>窗口内最后一笔完全落在截止前的正式版是 v1.8.5。v1.9.0 的发布时间刚过截止线，报告时单列，不把它算作窗口内正式发版。</p>
+<p>README 里的「实测情况」本周有更新，相关提交包括：ZCode 适配器（北京时间 2026-11-11 17:35，#252）、记录已验证的 Antigravity ACP 用法（北京时间 2026-11-15 09:07，#298）。当前 README 仍写（作者自述）：</p>
+<ul><li>Claude Code、Codex 和 ACP（官方 Codex ACP 适配器）跑通了多轮问答和跨进程会话续接；ZCode 跑通了提问、回答后接回原会话；飞书跑通了发送、按钮回调和卡片更新（自报，本轮没安装、没复现）。
+</li><li><b>四种 Webhook 模板只在本地模拟服务上验证过</b>；GitLab Webhook 按官方文档格式测试，没连过真实 GitLab。这条限制与上期相同。
+</li><li>场景模板：「脚本和回执只用本地 HTTP 与假飞书 CLI 验证过，没有在真实账号上跑过完整业务。」这条限制与上期相同。
+</li></ul>
+<p>本周没安装。</p>
+<ul><li><b>Agent Autoloop</b>：新证据：本窗口发到 <a href="https://github.com/KKKKhazix/agent-autoloop/releases/tag/v1.8.5" target="_blank" rel="noopener">v1.8.5</a>（北京时间 2026-11-15 09:03），★4,107→★5,506；README 增补了飞书 / ZCode / Antigravity ACP 的作者自报实测，<a href="https://github.com/KKKKhazix/agent-autoloop/releases/tag/v1.9.0" target="_blank" rel="noopener">v1.9.0</a> 发布于 北京时间 2026-11-16 09:13（略晚于窗口）。Webhook 模板和场景模板的验证限制原文仍在。本周没安装｜判断变了：产品明显更完整，作者自报的验证面扩大了，但 Webhook / 场景模板的限制没变｜仍推荐
+</li></ul>
+<p>---</p>
+<h2 id="s4">六个候补的证据</h2>
+<ul><li><b>CodeRail</b>（<a href="https://github.com/wiva-hq/CodeRail" target="_blank" rel="noopener">来源</a>）：Apache-2.0，仍 ★102。最新仍是预发布 <a href="https://github.com/wiva-hq/CodeRail/releases/tag/v0.0.1-build.39" target="_blank" rel="noopener">v0.0.1-build.39</a>（北京时间 2026-11-06 00:40，窗口前）。最后推送 北京时间 2026-11-06 00:12:54，本窗口没有新提交、没有新发版。本周仍未细读源码。<b>继续候补</b>（还差把自托管远端控制台的授权和会话模型读一遍）。
+</li><li><b>cc-remote</b>（<a href="https://github.com/AkaraChen/cc-remote" target="_blank" rel="noopener">来源</a>）：GitHub License 仍是「NO LICENSE」，根目录也没有 LICENSE 文件。当前 ★398（上期 ★333）。本窗口有文档提交（北京时间 2026-11-09 09:12–09:17）：重写 README 并加中文翻译、补充与 acpc 的用法、占位符替换；没有 Release / tag。思路仍适合「模型在远端、执行在本机」，但许可状态未变。<b>继续候补</b>（还差 License）。
+</li><li><b>OpenSuperAgent</b>（<a href="https://github.com/thefullgc/opensuperagent" target="_blank" rel="noopener">来源</a>）：Apache-2.0，当前 ★54（上期 ★51）。本窗口有提交（最后推送 北京时间 2026-11-11 08:42:27），包括路由决策可视化、缺失任务结果恢复、工具迁到 Pizza SDK 0.5.2 等；没有 tag，没有 GitHub Release。仍偏早期。<b>继续候补</b>（还差正式发版，以及和 dsh-superagent 授权模型做对照；本周没细读源码）。
+</li><li><b>OpenCodeReview</b>（<a href="https://github.com/BridgLabs/opencodereview" target="_blank" rel="noopener">来源</a>）：GitHub 仍显示 <code>NOASSERTION</code>。根目录 <code>LICENSE</code> 是 <a href="https://github.com/BridgLabs/opencodereview/blob/main/LICENSE" target="_blank" rel="noopener">PolyForm Small Business License 1.0.0</a>（公司少于 100 人且上年营收低于 100 万美元（2019 美元，按 CPI 调整）才允许为公司利益使用；商业许可联系 contato@bridglabs.com）。不是 OSI 开源许可。当前 ★87（上期 ★79）。本窗口发了 <a href="https://github.com/BridgLabs/opencodereview/releases/tag/v0.3.0" target="_blank" rel="noopener">v0.3.0</a>（北京时间 2026-11-10 20:50:39）：支持用 OpenCode 做审查、rootless Podman 等。最后推送 北京时间 2026-11-16 05:09:27。许可门槛未变。<b>继续候补</b>（还差可接受的开源许可；产品在更新，但许可仍是 source-available）。
+</li><li><b>dsh-taskboard</b>（<a href="https://github.com/cloader/dsh-taskboard" target="_blank" rel="noopener">来源</a>）：Apache-2.0，当前 ★84（上期 ★82）。最新正式版仍是 <a href="https://github.com/cloader/dsh-taskboard/releases/tag/v0.9.11" target="_blank" rel="noopener">v0.9.11</a>（北京时间 2026-11-05 09:30，窗口前）。<code>pushed_at</code> 为 北京时间 2026-11-09 16:51:20，但对默认分支 <code>dev</code> 按 <code>since=2026-11-08T16:00:00Z</code> 查询没有返回新 commit，本周没把这次 push 的具体内容核对清楚。<b>继续候补</b>（还差一份窗口内有说明的发版，或把 11-09 那次推送看清楚；本周没细读源码）。
+</li><li><b>dsh-auto-continue</b>（<a href="https://github.com/HsiangNianian/dsh-auto-continue" target="_blank" rel="noopener">来源</a>）：MIT，当前 ★198（上期 ★188）。本窗口发了两版：<a href="https://github.com/HsiangNianian/dsh-auto-continue/releases/tag/v0.18.0" target="_blank" rel="noopener">v0.18.0</a>（北京时间 2026-11-10 12:27:30，断网不再耗尽重试预算、可给自动循环设上限、中断的 subagent 可交回父代理）和 <a href="https://github.com/HsiangNianian/dsh-auto-continue/releases/tag/v0.19.0" target="_blank" rel="noopener">v0.19.0</a>（北京时间 2026-11-13 13:08:34，DSH 0.2.2 上重启恢复修好、可选恢复 subagent）。最后推送 北京时间 2026-11-13 13:05:06。能力比上周更清楚，值得入库，但本轮只看了发版说明，没读错误分类和防循环代码。<b>已入库 #292</b>（还差把错误分类和防循环代码读一遍）。
+</li></ul>
+<p>---</p>
+<h2 id="s5">安全跟进与库内版本更新</h2>
+<h3>Postman 自动装插件</h3>
+<p>原 issue <a href="https://github.com/postmanlabs/postman-app-support/issues/14370" target="_blank" rel="noopener">来源</a> 本轮用 GitHub API 查询返回 <b>410 Gone（This issue was deleted）</b>，评论接口 404。上期看到的官方 11-05「会撤回」原文，本周已经无法再从该 issue 核对，也看不到本周新评论。</p>
+<p>插件仓库 <a href="https://github.com/postmanlabs/postman-plugin" target="_blank" rel="noopener">来源</a> 本窗口发了 <a href="https://github.com/postmanlabs/postman-plugin/releases/tag/%40postman/postman-plugin%400.8.0" target="_blank" rel="noopener">@postman/postman-plugin@0.8.0</a>（北京时间 2026-11-10 15:29:27）。release notes 写了两件相关的事：重新落地「Codex 路由不声明 session-start hook」（PR #149 / #152）；<code>remove</code> 变成完整卸载，并让用户使用 <code>@latest</code>（PR #148）。当前 README 给出卸载命令：</p>
+<p>```bash</p>
+<p>npx @postman/postman-plugin@latest remove</p>
+<p>```</p>
+<p>并写明：<code>remove</code> 会卸插件，并在没有其它插件再从该市场安装时，清理它在 Claude Code、Codex、Copilot CLI、Factory Droid 里装上的 Postman marketplace；同时清掉 0.7.2 之前版本写下的 Codex session-start hook 批准。它不会动 Anthropic 的 <code>claude-plugins-official</code> 市场。最后推送 北京时间 2026-11-14 07:02:34。</p>
+<p>这是<b>插件侧</b>的卸载和 hook 声明收紧，能部分对应上期「撤回」的承诺。本周<b>没查到 Postman 桌面应用本身的发版说明里写已停止自动安装</b>，也没有用桌面版复测。本轮没验证：升级后的 Postman 桌面是否还会往 Codex / Claude Code 里自动装插件。</p>
+<h3>Claude Code 被指 User-Agent 外泄邮箱</h3>
+<p><a href="https://github.com/anthropics/claude-code/issues/107757" target="_blank" rel="noopener">来源</a> 本轮仍是 <b>open</b>（未关闭）。创建于 北京时间 2026-11-06 06:13:15，最后更新 北京时间 2026-11-13 06:57:44，118 条评论。标签含 <code>bug</code>、<code>area:security</code>、<code>area:tools</code>、<code>platform:macos</code>。</p>
+<p>上期写「没看到 Anthropic 的回应」。补一笔窗口前就存在、上期没写到的评论：北京时间 2026-11-06 07:31，<a href="https://github.com/poteat" target="_blank" rel="noopener">@poteat</a>（此仓库 <code>author_association</code> 为 CONTRIBUTOR，个人资料未填写公司，<b>不能据此认定为 Anthropic 官方账号</b>）写道：在 v2.1.317 及以后引入了内置 mod <code>cc-plugin-privacy</code>，「deterministically block this behavior」，默认开启，可在 <code>/plugins</code> 关闭，并打算公开源码。随后多位报告者称在 2.1.318、2.1.319 上该 mod 未能拦截他们构造的用例（这些是 issue 评论里的用户报告，本轮没复现）。</p>
+<p>本窗口内的新评论没有 MEMBER / COLLABORATOR 身份的回复；最后一条是 北京时间 2026-11-13 06:57 的第三方建议（用 mitmproxy 自查）。issue 仍开着。本轮没复现外泄，也没验证 <code>cc-plugin-privacy</code> 在当前版本是否有效。这条和下面「Don't ask again 密钥」不是同一件事。</p>
+<h3>Apiiro「Don't ask again」密钥写进 <code>.claude/settings.local.json</code></h3>
+<p>本周有官方跟进，不必重辩上期数字。</p>
+<p>Claude Code <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.323" target="_blank" rel="noopener">2.1.323</a> 的 GitHub Release 发布于 北京时间 2026-11-13 06:12:13（npm <code>time</code> 为 北京时间 2026-11-13 04:29:28）。官方 changelog（<code>CHANGELOG.md</code> 的 <code>## 2.1.323</code> 节）原文：</p>
+<p>&gt; Changed &quot;don't ask again&quot; so an allow rule that looks like it holds a secret, or would be saved to a <code>settings.local.json</code> that git tracks, lasts for the session only and isn't saved</p>
+<p>同节还有：不再为会写入 <code>.git</code> / <code>.claude</code> 等敏感路径的命令提供 “don't ask again”；并修复「目录后来才变成 git 仓库、或换到新机器时，<code>.claude/settings.local.json</code> 没有被全局忽略」。官方 changelog <b>没有写</b>会扫描或清掉已经写进文件的旧规则。本轮没验证 2.1.323 的检测范围，也没验证旧文件是否仍会留在磁盘和 git 历史里。后续补丁 2.1.324 / 2.1.325（GitHub Release 最新为 <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.325" target="_blank" rel="noopener">v2.1.325</a>，北京时间 2026-11-14 04:40:01）changelog 未再就这件事给出新的实质说明。</p>
+<p>---</p>
+<h2 id="s6">库内老项目本周重要发版</h2>
+<p>只写窗口内有正式版本、且不只是补丁噪音的。上期已经汇报过的边界发版会标明。按 <code>gh api repos/.../releases</code> 的 <code>published_at</code> 判断。</p>
+<h3>端侧 harness / 工作台</h3>
+<ul><li><b>DeepSeek Harness</b>（#1，<a href="https://github.com/deepseek-ai/deepseek-harness" target="_blank" rel="noopener">来源</a>）：本窗口没有正式 <code>dsh-v0.2.2</code>，继续发候选版。<a href="https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.2.2-rc.2" target="_blank" rel="noopener">dsh-v0.2.2-rc.2</a>（北京时间 2026-11-11 19:33）：Git Worktree 可按分支/提交/文件类型审阅并处理 GitHub 评审；SubAgent 支持具名与多层协作，AgentTeam 可按会话开启。<a href="https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.2.2-rc.3" target="_blank" rel="noopener">dsh-v0.2.2-rc.3</a>（北京时间 2026-11-13 15:56）：实验性「DeepSeek 会话导入」插件，把 App / 网页历史会话导入工作区。上期已报过 rc.1。
+</li><li><b>TeamAI CLI</b>（#11，<a href="https://github.com/Tencent/teamai-cli" target="_blank" rel="noopener">来源</a>）：<a href="https://github.com/Tencent/teamai-cli/releases/tag/v0.30.0" target="_blank" rel="noopener">v0.30.0</a>（北京时间 2026-11-11 20:31）。破坏性变更：每次通过和每次会话都经 <code>teamai-score</code> 评判（默认可被团队覆盖的工作流）；工作流可接管文案、把运行交给人、清理运行分支并读取步骤的 PR；每个 driver 都能跑评判工作流（本地只是默认）。另支持把 <code>agentsmd/</code> 当作共享指令目录，以及读取 Hermes coding transcripts。
+</li><li><b>Raven</b>（#84）：本窗口无新 GitHub Release，最新仍是上期的 <a href="https://github.com/EverMind-AI/Raven/releases/tag/v0.2.7" target="_blank" rel="noopener">v0.2.7</a>（北京时间 2026-11-04）。仓库有推送（最后 北京时间 2026-11-16 03:02:12），本周没有对照 CHANGELOG 把未发版提交展开。
+</li><li><b>Pi</b>（#7，earendil-works/pi）：本窗口有 <a href="https://github.com/earendil-works/pi/releases/tag/v1.5.1" target="_blank" rel="noopener">v1.5.1</a>（北京时间 2026-11-10 07:47）、<a href="https://github.com/earendil-works/pi/releases/tag/v1.5.2" target="_blank" rel="noopener">v1.5.2</a>（北京时间 2026-11-10 20:25），属小版本线，本周未当作核心能力变更展开。
+</li></ul>
+<h3>上下文与记忆</h3>
+<ul><li><b>HarnessRouter / Harness Memory</b>（#17，<a href="https://github.com/HarnessRouter/harnessrouter" target="_blank" rel="noopener">来源</a>）：本周确实出现一项新的大能力，不只是 Product Hunt 换皮。正式能力从 <a href="https://github.com/HarnessRouter/harnessrouter/releases/tag/v0.40.0" target="_blank" rel="noopener">v0.40.0</a>（北京时间 2026-11-09 17:16:49）开始：<b>Memories</b>——新 agent 默认按职责选引擎并记住对工作有用的内容，无需另行搭建。引擎包括 Mem0（按人隔离）、Graphiti、Hindsight、ReMe，或对一次性转换任务选 none；服务多人的 agent 按任务的 <code>user</code> 分人存储；回合开始时召回，任务结束后保存；写入前会脱敏凭据。产品页：<a href="https://harnessrouter.ai/harness-memory" target="_blank" rel="noopener">来源</a> 。Product Hunt 在 11-12 的「Harness Memory」发布，对应的是这条已合进同一仓库的能力，不是另一个仓库。后续同窗口内还有：<a href="https://github.com/HarnessRouter/harnessrouter/releases/tag/v0.40.1" target="_blank" rel="noopener">v0.40.1</a>（北京时间 2026-11-09 20:05，关掉 Claude Code / Qwen / Codex / Gemini 的第二份私有记忆，只留这一份）；<a href="https://github.com/HarnessRouter/harnessrouter/releases/tag/v0.40.3" target="_blank" rel="noopener">v0.40.3</a>（北京时间 2026-11-10 03:35，<b>17 种 harness 的提示词不再出现在命令行</b>，改走 stdin / 管道 / 仅该会话可读的临时文件）；<a href="https://github.com/HarnessRouter/harnessrouter/releases/tag/v0.41.0" target="_blank" rel="noopener">v0.41.0</a>（北京时间 2026-11-10 05:50，agent 不能再设置 standing instruction；召回内容按「过去的笔记」来写来源和时间）；最新窗口内正式版 <a href="https://github.com/HarnessRouter/harnessrouter/releases/tag/v0.41.16" target="_blank" rel="noopener">v0.41.16</a>（北京时间 2026-11-14 12:23）。另：<a href="https://github.com/HarnessRouter/harnessrouter/releases/tag/v0.41.14" target="_blank" rel="noopener">v0.41.14</a> 把已存 MCP 密钥绑到保存时的服务器地址和 workspace；<a href="https://github.com/HarnessRouter/harnessrouter/releases/tag/v0.41.15" target="_blank" rel="noopener">v0.41.15</a> 禁止 setup 的声明头把登录凭据带给工具。上期已报的 <a href="https://github.com/HarnessRouter/harnessrouter/releases/tag/v0.39.0" target="_blank" rel="noopener">v0.39.0</a>（会话分叉）在 11-09，属窗口边界、不重复展开。本轮没部署 Harness Memory。
+</li><li><b>dsh-auto-memory</b>（#279，<a href="https://github.com/AskTheWay/dsh-auto-memory" target="_blank" rel="noopener">来源</a>）：上期 package.json 已到 1.6.0 但 Release 停在 1.5.0。本窗口 Release 赶上并继续往前：<a href="https://github.com/AskTheWay/dsh-auto-memory/releases/tag/v1.6.0" target="_blank" rel="noopener">v1.6.0</a>（北京时间 2026-11-13 02:34）正式发布保质期 <code>validUntil</code>（到期不再注入、可一键续 90 天），并让密钥写入给模型回执；<a href="https://github.com/AskTheWay/dsh-auto-memory/releases/tag/v1.7.0" target="_blank" rel="noopener">v1.7.0</a>（北京时间 2026-11-14 15:23）检索关键词、90 天未核实的 candidate 降权、引用纪律、死链健康检查，以及 <code>docs/CONTRACT.md</code>；<a href="https://github.com/AskTheWay/dsh-auto-memory/releases/tag/v1.8.0" target="_blank" rel="noopener">v1.8.0</a>（北京时间 2026-11-15 04:06）对跑过网页/搜索/MCP 类工具的会话做「外部上下文污染」标记，整理时只持久化用户亲口说的事实，并与 dsh 0.2.2-rc.3 对齐。
+</li><li><b>OpenWiki</b>（#50）：本窗口无新 Release，最新仍是上期的 <a href="https://github.com/langchain-ai/openwiki/releases/tag/v0.9.0" target="_blank" rel="noopener">v0.9.0</a>（北京时间 2026-11-05）。仓库有推送（最后 北京时间 2026-11-15 16:05:39）。
+</li><li><b>Deep Agents</b>（#33，langchain-ai/deepagents）：本窗口多为 SDK 补丁（如 <a href="https://github.com/langchain-ai/deepagents/releases/tag/deepagents%3D%3D0.7.38" target="_blank" rel="noopener">deepagents==0.7.38</a>，北京时间 2026-11-13 22:32：<code>ls</code> / <code>grep</code> / <code>glob</code> 在符号链接解析到批准搜索范围之外时排除结果）。没有新的大能力发版说明；上期异步子 agent 博客不在本窗口。
+</li></ul>
+<h3>网关 / 鉴权 / 安全</h3>
+<ul><li><b>Tuskira AI Agent Gateway</b>（#236）：从上周的 v0.10.0（OIDC）继续发到 <a href="https://github.com/Tuskira/ai-agent-gateway/releases/tag/v0.13.1" target="_blank" rel="noopener">v0.13.1</a>（北京时间 2026-11-14 02:11）。值得记的是：<a href="https://github.com/Tuskira/ai-agent-gateway/releases/tag/v0.11.0" target="_blank" rel="noopener">v0.11.0</a>（北京时间 2026-11-10 19:59）按 agent profile / API key / harness 观察流量，并按 API key 看各 agent 的 token 用量；<a href="https://github.com/Tuskira/ai-agent-gateway/releases/tag/v0.13.0" target="_blank" rel="noopener">v0.13.0</a>（北京时间 2026-11-13 15:57）集群级租户并发上限，超限记 429；v0.13.1 拒绝已禁用模型并加上严格模型策略，且 <b>从存储的 payload 中脱敏凭据</b>。
+</li><li><b>Bifrost</b>（#137）：本窗口正式 HTTP 传输是 <a href="https://github.com/maximhq/bifrost/releases/tag/transports%2Fv2.5.1" target="_blank" rel="noopener">transports/v2.5.1</a>（北京时间 2026-11-10 16:07），主要是稳定性补丁（空 messages 返回 400 而不打挂网关、流式 panic 恢复），不是新的鉴权模型。上期的按调用方发现 MCP 工具仍以 v2.5.0 为准。另有大量 <code>plugins/*</code> 版本跟着 core 升级，不单独列。
+</li><li><b>cedr</b>（#256）：<a href="https://github.com/Sheernox/cedr/releases/tag/v0.11.0" target="_blank" rel="noopener">v0.11.0</a>（北京时间 2026-11-10 23:02）起，新模型版本可按同族最近旧版先估一个价，报告里会标成估计。<a href="https://github.com/Sheernox/cedr/releases/tag/v0.12.0" target="_blank" rel="noopener">v0.12.0</a>（北京时间 2026-11-15 10:11）是破坏性变更：原来的 Bench 改名为 Compare（命令和目录都要迁），新的 <code>cedr bench run</code> 针对冻结的公开套件做单配置基准。v0.11.1–v0.11.3 主要是补价格表，不展开。
+</li><li><b>Stroq</b>（#283）：<a href="https://github.com/AGGIB/Stroq/releases/tag/v0.31.0" target="_blank" rel="noopener">v0.31.0</a>（北京时间 2026-11-09 02:31，窗口内、上期报告未必已收入）新增 <code>stroq inspect</code>，检查别人发来的目录里是否有「被当成字体/图片的代码、先取再送进 shell」等，并在 agent 首次在这类目录里跑 git 或项目代码时先询问（<code>ask-foreign-folder</code>）；配套文档 <code>docs/SANDBOXES.md</code>。<a href="https://github.com/AGGIB/Stroq/releases/tag/v0.32.0" target="_blank" rel="noopener">v0.32.0</a>（北京时间 2026-11-11 16:49）卡片开始只读 Cursor 本地 SQLite 会话（此前是 Claude Code / Codex），并支持把某个时刻标成误报。
+</li><li><b>Godwit</b>（#273）：本窗口从 v1.31.0 连发到 <a href="https://github.com/godwit-email/godwit/releases/tag/v1.39.0" target="_blank" rel="noopener">v1.39.0</a>（北京时间 2026-11-15 20:26）。和上期「读过邮件的污点 + 审批最多执行一次」最相关的新点在 1.39.0：程序写的草稿会被标记，需 Approve 再发送；无界面服务器可选用加密文件钥匙串。1.37.0（北京时间 2026-11-14 18:45）把 magpie 接成 Godwit 的 agent（ADR 0041）；1.38.0 增加只读 MCP：列出视图和其中的线程。中间版本还有邮件产品功能（定时发送、Outlook 走 Graph 等），不逐条展开。
+</li><li><b>OpenSandbox</b>（#117）：<a href="https://github.com/opensandbox-group/OpenSandbox/releases/tag/release-1.2.1" target="_blank" rel="noopener">release-1.2.1</a>（北京时间 2026-11-13 10:04）是面向 1.2.0 用户的稳定补丁线，把窗口前 rc 里已经出现的 <b>Credential Vault Exchange</b>（按请求解析凭据，已解析密钥不写入保险库）和资源感知超卖打进正式版。不是本周新设计，是本周转正。
+</li><li><b>openai/codex-security</b>（#192）：窗口内有 <a href="https://github.com/openai/codex-security/releases/tag/npm-v0.10.0" target="_blank" rel="noopener">npm-v0.10.0</a> / <a href="https://github.com/openai/codex-security/releases/tag/action-v0.10.0" target="_blank" rel="noopener">action-v0.10.0</a>（Action 发布于 北京时间 2026-11-12 10:23）。release notes 包括：可恢复中断的 Standard 扫描、批量扫描共享预算、导入 ArmorCode SAST 发现、以及托管修复在提交变更时报告 <code>revision_changed</code> 并保留执行回执。本轮没跑扫描。
+</li><li><b>PR-Agent</b>（#143）：本窗口无新 Release，最新仍是上期的 <a href="https://github.com/The-PR-Agent/pr-agent/releases/tag/v0.50.0" target="_blank" rel="noopener">v0.50.0</a>。仓库在窗口内有提交（含 Claude Fable 5.2 支持等），尚未打新版本。
+</li><li><b>agentgateway</b>（#122）、<b>PipesHub</b>（#109）、<b>helixharness</b>（#255）、<b>safeagents</b>（#257）：本窗口均无 GitHub Release。PipesHub 最后推送很近（北京时间 2026-11-16 08:56:09），但没有对应发版说明，本周未展开提交。
+</li></ul>
+<h3>沙箱 / 本机隔离</h3>
+<ul><li><b>boxery</b>（#280）：上期已报 <a href="https://github.com/modem-dev/boxery/releases/tag/v0.11.0" target="_blank" rel="noopener">v0.11.0</a>（北京时间 2026-11-09 03:36，窗口边界）。本窗口新的是 <a href="https://github.com/modem-dev/boxery/releases/tag/v0.12.0" target="_blank" rel="noopener">v0.12.0</a>（北京时间 2026-11-09 11:05）：<code>boxery sync</code> / <code>vm_sync</code> 把本机提交和未提交改动同步进 VM，并校验工作树一致，<b>拒绝同步凭据文件</b>，也不把 GitHub 访问权交给 VM。其后到窗口结束未见更新的正式大版本（最后推送 北京时间 2026-11-16 02:39:19）。
+</li><li><b>DevBox</b>（#254，rudderlabs/devbox）：<a href="https://github.com/rudderlabs/devbox/releases/tag/v0.2.0" target="_blank" rel="noopener">v0.2.0</a>（北京时间 2026-11-12 20:31）。GitLab 可作为代码托管（clone / push / 草稿 MR、webhook 把评论和流水线交给 agent）；Jira Cloud 和 ClickUp 可作为任务源；控制面为任务源提供统一集成接口。
+</li><li><b>Radar</b>（#269）：发到 <a href="https://github.com/skyhook-io/radar/releases/tag/v1.20.3" target="_blank" rel="noopener">v1.20.3</a>（北京时间 2026-11-13 18:16），另有 v1.20.2（北京时间 2026-11-09 12:13）。两条 release notes 几乎是安装说明，没有写清相对上周 v1.20.1 的产品变化，本周不当重要能力更新展开。
+</li><li><b>anthropics/sandbox-runtime</b>、<b>devvm</b>（#281）：sandbox-runtime 有 v0.0.82 / v0.0.83 补丁；devvm 本窗口无稳定 Release。都不展开。
+</li></ul>
+<h3>插件 / 其它库内工具</h3>
+<ul><li><b>dsh-context</b>（#2 / #210）：<a href="https://github.com/bowenliang123/dsh-context/releases/tag/v0.84.0" target="_blank" rel="noopener">v0.84.0</a>（北京时间 2026-11-12 18:23）给 Context Browser 加了与趋势联动的增量（Delta）模式，并从宿主取完整上下文增量，避免只看到归档窗口里的一部分压缩差。<a href="https://github.com/bowenliang123/dsh-context/releases/tag/v0.85.0" target="_blank" rel="noopener">v0.85.0</a>（北京时间 2026-11-16 02:07，窗口内）适配 DSH 0.2.2-rc.2+ 的 Agent Teams 成员投影变化。随后的 v0.85.1 也在窗口内（北京时间 2026-11-16 02:44）。
+</li><li><b>dsh-agent-compare</b>（#285）：<a href="https://github.com/lijiaqi-AI-Product-Manager/dsh-agent-compare/releases/tag/v2.0.0" target="_blank" rel="noopener">v2.0.0</a>（北京时间 2026-11-10 20:29）。同一需求可在 DSH 主对话里比较 2–4 版回答、文件或网页；可盲选或公开对比，选中理由会写进当前对话记忆。上期入库时是 v1.3.0。
+</li><li><b>LiteLLM</b>（#136）：窗口内版本线较多（最高见到 <a href="https://github.com/BerriAI/litellm/releases/tag/v1.109.1" target="_blank" rel="noopener">v1.109.1</a> 等，另有 1.108.x / 1.106.x 补丁并行）。本周没有逐条核对是否包含针对上期 1.107.0 投毒事件的安全修复，不在这里下结论。
+</li></ul>
+<h3>本窗口没有重要发版的方向</h3>
+<ul><li>MCP 网关（agentgateway、docker/mcp-gateway、microsoft/mcp-gateway）：优先名单里本窗口没有够格的新正式大版本；Bifrost 只有稳定性补丁。
+</li><li>组织级合规审计、计费：没有新的开源大版本专门补这块。cedr 的家庭估价和 Bench/Compare 拆分是用量侧的迭代，不是组织计费。
+</li><li>Letta、Serena、mem0、SimpleMem、Khoj 等记忆/检索老项目：本窗口无正式发版（或最后推送在窗口前）。
+</li></ul>
+<p>---</p>
+<h2 id="s7">新发现、值得抄的文件路径</h2>
+<p>本轮新读到、或本周新出现的抄路径（不含上期已经点名、且文件未改的重复项，除非这条链路上期没走到）：</p>
+<h3>Ankole 过滤与写入准入（本周新走到的调用方）：</h3>
+<ul><li><code>app/control_plane/lib/ankole/brain/request_context.ex</code>（<code>event_disclosure/2</code>、<code>strict_present_uids/3</code>、<code>live_turn_fence/2</code>）
+</li><li><code>app/control_plane/lib/ankole/brain/recall.ex</code>（<code>for_readers/2</code>、<code>filter_source/2</code>、<code>Access.filter_disclosable/3</code>）
+</li><li><code>app/control_plane/lib/ankole/pod/access.ex</code>（<code>write/3</code>、<code>write_tree/3</code>、<code>authorize/4</code>）
+</li><li><code>app/control_plane/lib/ankole/pod/agent_pages.ex</code>（<code>authorize_change/5</code> → <code>Ankole.Brain.Access.authorize_change/5</code>）
+</li><li><code>app/control_plane/lib/ankole/agent_workers/worker_route_auth.ex</code>（<code>authorize_turn_in_tx/4</code>，提交时指令是否仍活着）
+</li><li><code>app/control_plane/lib/ankole/brain/forget.ex</code>（<code>forget_object/3</code>、<code>forget_claim/3</code>）
+</li></ul>
+<p>上期已点名、本周复核仍在原处：<code>app/control_plane/lib/ankole/brain/access.ex</code>、<code>app/control_plane/lib/ankole/authz/turn_authority.ex</code>。</p>
+<h3>Harness Memory（v0.40.0 起，本周新能力）：</h3>
+<ul><li><code>protocol/versions/2026-10-19/memories.md</code>（UHP Memories 章；另有 <code>protocol/versions/2026-10-04/memories.md</code>）
+</li><li><code>docs/memories-engines.md</code>、<code>docs/memories-matrix.md</code>
+</li><li><code>gateway/memory_plane.py</code>、<code>gateway/memory_choice.py</code>、<code>gateway/memory_tools.py</code>、<code>gateway/memory_routes.py</code>、<code>gateway/memory_live.py</code>
+</li><li><code>deploy/memories/up.sh</code>、<code>deploy/memories/README.md</code>
+</li></ul>
+<h3>其它本周新出现、值得对照的路径：</h3>
+<ul><li>dsh-auto-memory：<a href="https://github.com/AskTheWay/dsh-auto-memory/releases/tag/v1.7.0" target="_blank" rel="noopener">v1.7.0</a> 起的 <code>docs/CONTRACT.md</code>（能力契约）
+</li><li>Stroq：<a href="https://github.com/AGGIB/Stroq/releases/tag/v0.31.0" target="_blank" rel="noopener">v0.31.0</a> 的 <code>docs/SANDBOXES.md</code>，以及 <code>stroq inspect</code> / <code>ask-foreign-folder</code>（具体源文件路径本轮没打开核对）
+</li><li>Autoloop README 的「实测情况」段落（验证边界仍写在这里，不是另一份报告）
+</li></ul>
+<p>本轮没验证：Ankole 完整过滤路径的运行时行为、Harness Memory 的实际部署、Autoloop / dsh-auto-continue 的安装、Postman 桌面是否已停止自动安装、Claude Code 2.1.323 对已落入磁盘的旧规则是否清理、以及 <code>cc-plugin-privacy</code> 是否真能挡住 User-Agent 邮箱。</p>
+<h2 id="s8">当前仍缺什么</h2>
+<p>企业代码知识库：本期未补入新的带权限检索项目，Ankole 已补读授权调用链，但完整运行时隔离仍未验证；不能据此称企业权限问题已解决。</p>
+<p>外发审批：已有 Godwit、Radar、Stroq、Mandate 可作组合参照，但本期未跑通“读敏感数据后外发”的端到端审批。插件市场：dsh-go-market 给出登记与静态审查样本，依赖树和安装链路仍不构成安全背书。</p>
+<h2 id="s9">补存与修订说明</h2>
+<p>2026-11-17：此前任务回报已存档，但实际目录中无本期正文；本次依据 11/16 留存的研究记录和已入库条目恢复，不重跑扫描，不冒充原文件找回。更正全景图中两处转述：Postman“会撤回”不等于“已回滚”；MCP token 轮换建议属于 HarnessRouter #17，而非 Stroq #283。旧误写及修订原因保留在全景图修订记录中。</p></section><div class="pn"><span></span><a href="../index.html#weekly">周报目录</a><a href="2026-11-09.html">2026-11-09 →</a></div><div class="foot"><span>王玮的学习库 · 每篇都是可翻页、可动手、带小测的学习页</span><span>由 build.mjs 从 data/ 生成</span></div></main><script>var __R='../../index.html',__I={"cs146s-L01":["courses/cs146s/L01-agent-loop.html","已学完"],"cs146s-L02":["courses/cs146s/L02-harness-anatomy.html","进行中"],"cs146s-L03":["courses/cs146s/L03-reppit.html","进行中"],"cs146s-L04":["courses/cs146s/L04-mcp.html","进行中"],"cs146s-L05":["courses/cs146s/L05-skills.html","进行中"],"cs146s-L06":["courses/cs146s/L06-always-on-agents.html","进行中"],"cs146s-L07":["courses/cs146s/L07-agent-setup.html","进行中"],"cs146s-L09":["courses/cs146s/L09-agent-ready-repos.html","进行中"],"cs146s-L11":["courses/cs146s/L11-agentic-code-review.html","进行中"],"huangtongxueh-ai-dev":["x-posts/huangtongxueh-ai-dev/huangtongxueh-ai-dev.html","已学完"],"eecs498-aase-L01":["courses/eecs498-aase/L01-course-intro.html","进行中"],"eecs498-aase-L02":["courses/eecs498-aase/L02-how-llms-code.html","进行中"],"eecs498-aase-L03":["courses/eecs498-aase/L03-big-three.html","进行中"],"eecs498-aase-L04":["courses/eecs498-aase/L04-spec-driven.html","进行中"],"eecs498-aase-L05":["courses/eecs498-aase/L05-agentic-clis.html","进行中"],"eecs498-aase-L06":["courses/eecs498-aase/L06-agent-orchestration.html","进行中"],"eecs498-aase-L07":["courses/eecs498-aase/L07-inside-the-call.html","进行中"],"eecs498-aase-L08":["courses/eecs498-aase/L08-hackathon1-briefing.html","进行中"],"eecs498-aase-L09":["courses/eecs498-aase/L09-stop-conditions.html","进行中"],"eecs498-aase-L10":["courses/eecs498-aase/L10-skills.html","进行中"],"eecs498-aase-L11":["courses/eecs498-aase/L11-guardrails.html","进行中"],"eecs498-aase-L13":["courses/eecs498-aase/L13-browser-extensions.html","进行中"],"eecs498-aase-L14":["courses/eecs498-aase/L14-subagents.html","进行中"],"eecs498-aase-L15":["courses/eecs498-aase/L15-compaction-caching.html","进行中"],"eecs498-aase-L16":["courses/eecs498-aase/L16-agent-memory.html","进行中"],"wechat-ai-coding-deepwater":["wechat/ai-coding-deepwater/index.html","进行中"],"wechat-ai-rd-system":["wechat/ai-rd-system/ai-rd-system.html","进行中"],"wechat-tmall-ai-collab":["wechat/tmall-ai-collab/tmall-ai-collab.html","进行中"],"wechat-rsi-survey":["wechat/rsi-survey/rsi-survey.html","进行中"],"wechat-rd-process-change":["wechat/rd-process-change/rd-process-change.html","进行中"],"wechat-dsh-superagent":["wechat/dsh-superagent/dsh-superagent.html","进行中"],"wechat-tencent-ai-native":["wechat/tencent-ai-native/tencent-ai-native.html","进行中"],"managed-agents-workshop":["video/managed-agents/managed-agents.html","已学完"],"holon-ai-delivery":["research/holon-ai-delivery/holon-ai-delivery.html","已学完"],"felix-ambitious":["x-posts/felix-ambitious/felix-ambitious.html","已学完"],"ntu-ml2026-L01":["courses/ntu-ml2026/L01-openclaw.html","进行中"],"ntu-ml2026-L02":["courses/ntu-ml2026/L02-context-engineering.html","未开始"],"ntu-ml2026-L03":["courses/ntu-ml2026/L03-flash-attention-kv-cache.html","未开始"],"ntu-ml2026-L04":["courses/ntu-ml2026/L04-positional-embedding.html","未开始"],"ntu-ml2026-L05":["courses/ntu-ml2026/L05-harness-engineering.html","未开始"],"ntu-ml2026-L06":["courses/ntu-ml2026/L06-self-correction.html","未开始"],"ntu-ml2026-L07":["courses/ntu-ml2026/L07-self-improving.html","未开始"],"ntu-ml2026-L08":["courses/ntu-ml2026/L08-self-evolving-agent.html","未开始"],"mit-mas-s62-L01":["courses/mit-mas-s62/L01-introduction.html","未开始"],"mit-mas-s62-L02":["courses/mit-mas-s62/L02-context-evolution-1.html","未开始"],"mit-mas-s62-L03":["courses/mit-mas-s62/L03-context-evolution-2.html","未开始"],"mit-mas-s62-L04":["courses/mit-mas-s62/L04-harness-evolution-1.html","未开始"],"mit-mas-s62-L05":["courses/mit-mas-s62/L05-harness-evolution-2.html","未开始"],"mit-mas-s62-L06":["https://mit-mi.github.io/how2ai-course/fall2026/schedule/","未开始"],"mit-mas-s62-L07":["https://mit-mi.github.io/how2ai-course/fall2026/schedule/","未开始"],"mit-mas-s62-L08":["https://mit-mi.github.io/how2ai-course/fall2026/schedule/","未开始"],"mit-mas-s62-L09":["https://mit-mi.github.io/how2ai-course/fall2026/schedule/","未开始"],"mit-mas-s62-L10":["https://mit-mi.github.io/how2ai-course/fall2026/schedule/","未开始"],"mit-mas-s62-L11":["https://mit-mi.github.io/how2ai-course/fall2026/schedule/","未开始"],"bylixing-context-loop":["x-posts/bylixing-context-loop/bylixing-context-loop.html","进行中"],"itamar-l4-software-factory":["x-posts/itamar-l4-software-factory/itamar-l4-software-factory.html","进行中"],"tw93-ai-coding-rules":["x-posts/tw93-ai-coding-rules/tw93-ai-coding-rules.html","未开始"],"grokbot-collection":["x-posts/grokbot-collection/grokbot-collection.html","未开始"],"addy-critical-thinking":["x-posts/addy-critical-thinking/addy-critical-thinking.html","未开始"],"langchain-agents-async":["x-posts/langchain-agents-async/langchain-agents-async.html","进行中"],"addy-agents-manager":["x-posts/addy-agents-manager/addy-agents-manager.html","进行中"],"langchain-managed-deep-agents":["x-posts/langchain-managed-deep-agents/langchain-managed-deep-agents.html","进行中"],"lody-automation":["x-posts/lody-automation/lody-automation.html","进行中"],"feicai-grokbot-codex":["x-posts/feicai-grokbot-codex/feicai-grokbot-codex.html","进行中"],"cs329a-L01":["courses/cs329a/L01-course-overview.html","进行中"],"cs329a-L02":["courses/cs329a/L02-test-time-compute.html","进行中"],"cs329a-L03":["courses/cs329a/L03-robust-verification.html","进行中"],"cs329a-L04":["courses/cs329a/L04-tools-code-feedback.html","进行中"],"cs329a-L05":["courses/cs329a/L05-planning-multistep.html","进行中"],"cs329a-L06":["courses/cs329a/L06-train-time-rl.html","进行中"],"cs329a-L07":["courses/cs329a/L07-search-deep-research.html","进行中"],"cs329a-L08":["courses/cs329a/L08-agentic-evals.html","进行中"],"cs329a-L09":["courses/cs329a/L09-future-research.html","进行中"],"agent-memory-components":["research/agent-memory-components/agent-memory-components.html","进行中"],"jev-engineering":["research/jev-engineering/jev-engineering.html","进行中"],"always-on-agents":["research/always-on-agents/always-on-agents.html","进行中"]};(function(){const DONE=['已学完','已掌握'];const LP=new Set();const doneExpand=u=>{const out=[],vs=new Set([u]);if(u.endsWith('/index.html')){const d=u.slice(0,-10);vs.add(d);vs.add(d.replace(/\/$/,'')||'/')}else if(u.endsWith('/')){vs.add(u+'index.html');vs.add(u.replace(/\/$/,'')||'/')}else if(!/\.[a-z0-9]+$/i.test(u)){vs.add(u+'/');vs.add(u+'/index.html')}for(const x of vs){out.push(x);const m=x.match(/^(.*)\/courses\/(.+)$/);if(m)out.push(m[1]+'/'+m[2]);const m2=x.match(/^(.*)\/(cs146s)\/(.+)$/);if(m2&&!x.includes('/courses/'))out.push(m2[1]+'/courses/'+m2[2]+'/'+m2[3])}return[...new Set(out)]};const doneHit=h=>{const keys=[];const add=u=>{for(const k of doneExpand(u))if(!keys.includes(k))keys.push(k)};try{add(new URL(h,new URL(__R,location.href)).pathname)}catch(e){}try{add(new URL(h,location.href).pathname)}catch(e){}for(const k of keys){if(LP.has(k))return 1;const d=localStorage.getItem('done:'+k);if(d)return d}return null};const st=id=>{const v=__I[id];if(!v)return null;let s=v[1];if(s!=='已掌握'&&!/^https?:/.test(v[0])){try{if(doneHit(v[0]))s='已学完'}catch(e){}}return s};const go=()=>{document.querySelectorAll('a[href]').forEach(a=>{const d=doneHit(a.getAttribute('href'));if(!d)return;const box=a.closest('.row,.card');if(!box)return;const t=box.querySelector('.tag.st');if(t&&!/已掌握/.test(t.textContent)){t.textContent='已学完';t.className='tag st green'}});document.querySelectorAll('[data-doing]').forEach(g=>{const dn=[];g.querySelectorAll('a.card').forEach(a=>{try{if(doneHit(a.getAttribute('href')))dn.push(a)}catch(e){}});if(!dn.length)return;const w=document.createElement('div');w.innerHTML='<div class="kicker">已学完 <span class="n">'+dn.length+'</span></div><div class="sub">加入复习后，到了复习日会出现在首页「今日」</div><div class="grid wide"></div>';const gd=w.querySelector('.grid');dn.forEach(a=>{a.querySelectorAll('.meta span').forEach(x=>{if(/开始学/.test(x.textContent))x.textContent='复习 →'});gd.appendChild(a)});g.after(...w.childNodes);if(!g.querySelector('a.card'))g.outerHTML='<div class="empty"><b>现在没有进行中的内容</b></div>'});document.querySelectorAll('[data-ids]').forEach(el=>{const ss=el.dataset.ids.split(',').filter(Boolean).map(st).filter(Boolean);const n=ss.length,c=x=>ss.filter(s=>s===x).length;const k=el.dataset.k,b=el.querySelector('b');if(k==='done')b.textContent=ss.filter(s=>DONE.includes(s)).length;else if(k==='doing')b.textContent=c('进行中');else if(k.startsWith('st:'))b.textContent=c(k.slice(3));else if(k==='prog'){const is=el.querySelectorAll('.bar i');const w=x=>(n?x/n*100:0)+'%';is[0].style.width=w(c('已掌握'));is[1].style.width=w(c('已学完'));is[2].style.width=w(c('进行中'));const sp=el.querySelector(':scope>span');const bb=el.querySelector(':scope>b');if(bb)bb.textContent=(n?Math.round((c('已学完')+c('已掌握'))/n*100):0)+'%';sp.textContent='已学完 '+(c('已学完')+c('已掌握'))+'/'+n+(c('已掌握')?' · 已掌握 '+c('已掌握'):'')+(c('进行中')?' · 进行中 '+c('进行中'):'')}})};let ran=0;const once=()=>{if(!ran){ran=1;go()}};/* 已学完＝点过「学完了」：本机 done:<路径>，或仓库 review.json 里的 learned（别的设备点的） */try{const B=new URL(__R,location.href);fetch(new URL('data/review.json?t='+Date.now(),B).href,{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{((j&&j.queue)||[]).forEach(q=>{const v=q&&__I[q.item];if(!v||!q.learned||/^https?:/.test(v[0]))return;try{for(const k of doneExpand(new URL(v[0],B).pathname))LP.add(k)}catch(e){}});once()}).catch(once)}catch(e){once()}setTimeout(once,1500)})();</script></body></html>
