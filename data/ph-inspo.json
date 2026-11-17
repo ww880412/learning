@@ -24,6 +24,210 @@
   ],
   "days": [
     {
+      "date": "2026-11-16",
+      "source": "https://www.producthunt.com/leaderboard/daily/2026/11/16",
+      "fetched": "2026-11-17 17:24 北京",
+      "note": "官网日榜页本次被 Cloudflare 拦截，综合分和日排名来自 hunted.space（其前 10 名与官网日榜综合分一致）。第 3 名 readywhen 已在 2026-10-19 收录（当时主打 WhatsApp 助理，这次发布强调常驻邮件），未重复入库。第 1 名 Zoom Slides（会议转幻灯片）、第 5 名 OpenFrame（面向小型 IT 团队的端点管理和支持代理；文档里审批是按动作配允许/询问/禁止，并非宣传语那样每一步都必须批）、第 6 名 Cal.com v7（已知产品的版本更新）、第 8 名 Cookie Away、第 9 名 Pharen Hub（公司一体化 AI 工作区）、第 10 名 Trusty CSV、第 19 名 Freebuff（广告和可能的训练数据换免费 coding agent）未收。decohack 标「11.16」实为太平洋 11/15 产品，已在昨日收录，今天还没有对应太平洋 11/16 的那篇。",
+      "picks": [
+        {
+          "id": "2026-11-16-openbot",
+          "why": "可自托管的企业级 agent 工作区，自带审批、审计、SSO，并能把已有的 AG-UI agent 接进来，正好对照工作台的治理和接入层。",
+          "limit": "应用模板是 MIT，但对话记忆和 Automatic Learning 依赖另有许可的 CopilotKit Intelligence；个人电脑可免费用，Kubernetes 生产环境要商业许可。默认同一人的 Bot 共用一台电脑，隔离是 Business 功能。"
+        },
+        {
+          "id": "2026-11-16-zode",
+          "why": "给 coding agent 开带独立内核的微虚拟机，密钥只在主机侧注入，还能把正在跑的虚拟机连内存一起分叉，适合并行试改和按 PR 算账。",
+          "limit": "目前只在比利时（GCP europe-west1）；官网称新虚拟机约 12 秒、分叉约 20 秒，亚秒级启动还在规划。桌面界面要从 Pro 起。"
+        },
+        {
+          "id": "2026-11-16-stateweave",
+          "why": "用 Slack、GitHub、Stripe 等应用的孪生副本跑 agent，再用这些应用自己的 API 验收，还能注入故障，补上工作台里对真实工具调用的评测。",
+          "limit": "被测 agent 要改成指向 StateWeave 地址（厂商称自有 SDK 通常只需换地址）；应用目录由他们提供，没有的要等他们克隆。产品本身未见公开源码。"
+        }
+      ],
+      "items": [
+        {
+          "name": "OpenBot",
+          "tagline": "Grok Bot alternative: self-host, fully customize, any stack",
+          "ph": "https://www.producthunt.com/products/copilotkit",
+          "site": "https://open.bot",
+          "repo": "https://github.com/CopilotKit/OpenBot",
+          "rank": 4,
+          "score": 236,
+          "comments": 78,
+          "what": "CopilotKit 做的可自托管 agent 工作区：每个 Bot 有浏览器、文件和命令行，动作先过策略再执行并记审计；可以白标或深度定制，也能把已有的 AG-UI agent 接进来当 Bot。",
+          "problem": "要把企业里已经写好的 agent 放到带审批、审计和隔离执行环境的工作区里，往往得自建整套前端和治理，或者把浏览器会话交给封闭的云端同事产品。",
+          "highlight": "仓库 LICENSE 为 MIT；README 写明应用模板可分叉和白标，但对话记忆、Automatic Learning 和企业治理服务依赖另有许可的 CopilotKit Intelligence，可跑在本机或自有集群。许可分档：个人电脑实验用免费本地许可（桌面安装会代办；文档称本地许可 30 天，可用 copilotkit CLI 续期，面向 macOS 加 Docker Desktop 的预览，不是生产安装）；Kubernetes 评估用免费试用许可；生产要用商业许可，OpenBot for Business 包含供 OpenBot 使用的 Intelligence。官网和 1.0 博文称：可用 Claude / ChatGPT / xAI 订阅登录，也接 Gemini 或任意 OpenAI 兼容端点；在 New Bot 里贴上 AG-UI 地址即可接入 LangChain、Mastra、Google ADK、Claude Agent SDK 等；默认同一个人的 Bot 共用一台电脑，Business 可把某个 Bot 标成 Isolated、独占一台；人可以中途接管浏览器（如 2FA），桌面应用还可给 Bot 只读本机文件夹，改文件要先问。删除、发送、分享或发帖默认都要问，付款始终留给人；可在设置里自定审批规则。Business 还提供 SSO / SCIM、Boundaries（命名规则，执行前拦截）、可筛选并导出 CSV 的审计表，以及模型、MCP 和网络的企业开关。Automatic Learning 把你在浏览器里演示的操作做成待审技能，管理员发布后其他 Bot 才能用。生成式界面走 A2UI 1.0，官网称有 65 个组件。部署上，桌面应用可在 Mac / Windows 上跑通工作区；也可用 ghcr.io/copilotkit/openbot 镜像，或用发布附带的 Helm chart（README 在 v1.1.0 写了 openbot-bundle 和单独的 openbot chart）装到自有 EKS / AKS / GKE 或其他集群。电脑执行层可替换，默认走 Kubernetes，也可接兼容的外部沙箱。iOS、Android、Slack、Teams 官网标为 Early access。雷达未收录该仓库。官方说 CopilotKit「被多数 Fortune 500 用于生产」，指的是 CopilotKit 本身，不是对 OpenBot 装机量的独立核实。",
+          "inspo": "工作台可以把「策略和审计放在统一网关、执行环境可插拔」做成默认：Bot 无论是内置的还是外部 AG-UI agent，都走同一条动作通道，删除、外发和付款默认要人点头，Boundaries 用命名规则在执行前拦截，而不是事后补日志。隔离电脑不要当成个人版默认——先约定哪些任务必须独占环境，再打开 Isolated。把已有 coding agent 接进来的前提是它能说 AG-UI，并且 Intelligence（记忆和学习）的许可和部署路径已经单独想清楚；评估用的单用户 Helm 部署里，能访问端口的人都是管理员，只能本地 port-forward，不要直接暴露。",
+          "tags": [
+            "AI工具",
+            "开发者工具",
+            "开源"
+          ],
+          "id": "2026-11-16-openbot",
+          "slug": "openbot",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Zode",
+          "tagline": "The fastest, cheapest cloud VMs for agents",
+          "ph": "https://www.producthunt.com/products/zode",
+          "site": "https://zode.dev",
+          "repo": "",
+          "rank": 37,
+          "score": 71,
+          "comments": 3,
+          "what": "面向 coding agent 的云端 Linux 微虚拟机：每台沙箱有自己的内核、磁盘和内存，可用 CLI、TypeScript SDK、HTTP API 或 MCP 驱动，支持把正在运行的虚拟机连同内存一起分叉，并按分支或 PR 汇总费用。",
+          "problem": "并行跑 Claude Code / Codex 时，容器往往共用宿主机内核，密钥也直接进环境变量；想从某个运行中的状态再分出一条尝试，通常只能重新开机、重新装依赖。",
+          "highlight": "文档称每台沙箱是 Cloud Hypervisor on KVM 的微虚拟机，根权限只在该虚拟机内。官网和文档称：密钥是只写的，任何 API 都不返回明文，沙箱里只能看到占位符，主机只在你允许的 HTTPS 目标上换成真值；改密钥后占位符不变，主机约 30 秒内用新值。可 fork 正在运行或已停止的沙箱（内存和磁盘一起复制，父沙箱里的进程在子沙箱里也在跑），也可 snapshot / 恢复；stop 会休眠并停止计算计费，磁盘和内存保留。预装 Docker、Postgres、Node、Python、Claude Code 和 Codex 等；可用自己的 Claude 或 ChatGPT 订阅，官方称不加成模型差价。CLI 可 zode up 把当前仓库和 Claude Code 会话迁进沙箱，zode down 把结果带回来变成分支；zode mcp 把这些能力交给 coding agent。花费可按仓库、分支、PR、成员、沙箱或模型看，并可设每台沙箱和每日上限，卡住的循环会暂停虚拟机。目前只在 GCP europe-west1（比利时）；官网称新虚拟机约 12 秒、分叉约 20 秒，美国东部和亚秒级启动仍在规划（PH 标语写「一秒内分叉」，与官网现状不符）。规格从 small（2 vCPU / 4 GB / 每小时 0.0175 美元）到 xlarge（16 vCPU / 32 GB / 每小时 0.14 美元），按秒计费；不写 --size 得到的是 small，名叫 default 的档其实是 4 vCPU，并不是缺省值。个人工作区送 10 美元额度（约 440 小时 small），免绑卡，免费档最多同时 2 台；团队工作区要先绑卡才有这 10 美元。Linux 桌面要 Pro 及以上。与 GitHub、Daytona、E2B 的价格对比是官网自行测算，未经独立核实。未见公开产品源码。雷达无对应仓库。",
+          "inspo": "工作台可以把密钥留在沙箱外：agent 环境变量里只放占位符，出口代理按允许的主机名单注入真值；改密钥不要指望正在跑的进程立刻换掉，得到下一轮 exec 才会读到。并行试改可以在任务中途 fork 一台「连内存一起复制」的虚拟机，前提是先约定父沙箱继续跑还是休眠（免费档同时只能开 2 台，停掉的不占名额）。把本机 Claude Code 会话迁到云端再用 zode down 带回来，前提是这次改动要落成一条分支。看费用时按 PR 汇总，而不是只看一台机器的小时数。",
+          "tags": [
+            "coding agent",
+            "开发者工具"
+          ],
+          "id": "2026-11-16-zode",
+          "slug": "zode",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "StateWeave",
+          "tagline": "Test your AI agent on working clones of the apps it uses",
+          "ph": "https://www.producthunt.com/products/stateweave",
+          "site": "https://stateweave.net/",
+          "repo": "",
+          "rank": 12,
+          "score": 98,
+          "comments": 17,
+          "what": "给 AI agent 提供 Slack、Gmail、Salesforce、GitHub 等应用的有状态孪生副本（同一套 API、部分还带官方 MCP 和界面），在你自己的电脑或 CI 里跑原来的 agent，用这些应用自己的 API 做验收，并可注入故障。",
+          "problem": "agent 一旦要在 Slack、工单和支付系统里做事，评测要么靠手工点，要么靠 mock；mock 过了，换到真实 API 的错误、限流和重试行为又对不上。",
+          "highlight": "文档称：agent 并不跑在 StateWeave 上，仍在你原来的环境，只是把请求打到孪生服务的地址；每次 sw run 拿到一份沙箱版本的全新副本。已列出的应用包括 Slack、Gmail、Google Calendar / Sheets / Drive、Salesforce、Shopify、Zendesk、WhatsApp、Microsoft Teams、Stripe、HubSpot 和 GitHub，并注明各家 API 版本，以及哪些带 MCP（Calendar、Sheets、Drive、Zendesk 文档写不带）。任务是一个文件夹：instruction.md、可加 stateweave_faults（如 slack.outage）的 task.toml，以及读应用 API 的 checks；可先 sw task import --check 验证再入库。pip install stateweave-sdk 会带 sw CLI 和仅依赖 Python 标准库的 SDK，也有 REST API。sw setup 会给本机找到的 Claude Code、Codex、Cursor 安装两个技能（不先询问）：stateweave-setup 负责读你的代码、改地址并写 stateweave-agent.sh，stateweave-use 负责建沙箱、写任务、跑评测和根据失败记录改代码；密钥留在 sw 自己的设置里，不写进 coding agent 的配置。对 Claude Code，它还会把 *.app.stateweave.net 加进 ~/.claude/settings.json 的沙箱网络白名单。每个 API 密钥最多同时 3 个孪生运行；默认 1 小时、最长 24 小时；成绩单上限 20 MB。官网称没有的应用可提交需求，他们在 1 天内回复，这一点未经独立核实。产品本身未见公开源码（GitHub 上一些同名仓库是别的项目）。雷达无对应仓库。",
+          "inspo": "给会调用外部 SaaS 的 agent 加一层「真实 API 形状的沙箱评测」：任务用应用自己的 API 验收，并至少准备一个故障用例（例如 Slack 宕机后是否重复发消息）。接到工作台的前提是：先用 sw setup 让 coding agent 写出地址映射脚本，再把评测跑在你自己的 harness 里，而不是把被测 agent 迁到对方云上。技能会改 Claude Code 的网络白名单，只在你接受这一点时安装；只给某个项目用就加 --project，装进仓库里的技能目录再提交。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "AI工具"
+          ],
+          "id": "2026-11-16-stateweave",
+          "slug": "stateweave",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "UI SDK by Vercel",
+          "tagline": "Give AI agents the building blocks to create UI",
+          "ph": "https://www.producthunt.com/products/ui-sdk",
+          "site": "https://ui-sdk.dev/docs",
+          "repo": "https://github.com/vercel-labs/ui",
+          "rank": 16,
+          "score": 81,
+          "comments": 5,
+          "what": "Vercel Labs 的开源界面行为库：把焦点、键盘、选择、弹出层、拖放和相应的 ARIA 做成可组合的 primitive，agent 用它们生成组件；已有界面也可以通过 agent bridge 读取状态并调用动作。",
+          "problem": "让 coding agent 改设置页或自己拼一个组件时，通常只能靠浏览器点选无障碍树，步骤多、代币贵，而且跨 React / Vue / Svelte 还要各学一套库。",
+          "highlight": "仓库 vercel-labs/ui，LICENSE 为 Apache-2.0；文档和 README 标明目前是 beta，受 Vercel 公开测试条款约束，API 和行为在正式版前可能变。核心在 @ui-sdk/core，适配 React、Vue、Svelte、Solid 和 Web Components。定义 primitive 时写下 state、api 和 slots，同一套可在五个框架里渲染。给 agent 装技能：npx skills@latest add vercel-labs/ui --skill ui-sdk。连到已有界面时，从对应框架包导入 createAgent()，页面渲染后 agent.snapshot() 列出组件、状态和可调用动作，agent.act({ steps: [{ ref, action, args }] }) 走组件自己的 API 和回调；可用 allow 回调批准或拒绝，变更回调会带 source: \"agent\"，也可以取消这次改动。文档称这些工具也可通过 WebMCP 注册到受支持的浏览器。官网放了一组厂商自测：在同一项目设置页上，用 Claude Code + Sonnet，ui-sdk 的 agent bridge 对比其他组件库加浏览器工具，React 上中位数少 59% 工具调用、少 76% 代币、快 41%、便宜 68%（各列三次运行的中位数；他们也测了 ui-sdk 配浏览器工具，耗时与其他库相近，因而把差异归到 bridge）。基准代码在仓库 benchmarks/agent，可自行复跑。雷达未收录该仓库。",
+          "inspo": "工作台里把可被 agent 操作的控件做成「有名字的动作」而不是只能点 DOM：每个输入和开关暴露 setValue、clear 这类 API，snapshot() 列出当前可做的事，act() 走同一套回调。对人点的改动和 agent 点的改动，用 source: \"agent\" 区分，并在 allow 里拒绝危险动作（比如删除项目、改权限）。前提是这些界面本身用同一套 primitive 渲染，而不是事后在任意页面上挂一层点击脚本。现在还是 beta，接入时要能跟着版本改。",
+          "tags": [
+            "开发者工具",
+            "开源",
+            "AI工具"
+          ],
+          "id": "2026-11-16-ui-sdk",
+          "slug": "ui-sdk",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Puffin",
+          "tagline": "Identity and inboxes for AI agents",
+          "ph": "https://www.producthunt.com/products/puffin-2",
+          "site": "https://www.justpuffin.tech/",
+          "repo": "",
+          "rank": 11,
+          "score": 96,
+          "comments": 20,
+          "what": "给 AI agent 提供对外身份和通信：每个 agent 有自己的邮箱、日历，以及 Discord / Telegram 席位；用内置模型或你自己的 runtime 起草回复，默认每封真实外发都要人批准。",
+          "problem": "coding agent 一旦要回邮件、进群或处理验证码，要么共用你的个人账号，要么自己拼收件和审批，密钥和发出去的话都不好管。",
+          "highlight": "官网称：默认每条真实外发都要管理员在控制台或邮件通知里批准，也可对指定对话打开 Chat 模式或 Full automation；对试图给 agent 下指令的邮件会先扣下；入站做 SPF / DKIM 和垃圾规则；附件先扫描再打开；退信或被举报会暂停发送；可限制每个 agent 的收件人和每日封数；密钥有 19 项权限，活动记日志；保险库在浏览器里用 AES-256 加密后再离开设备。主站写目前可用的是邮件（mail.justpuffin.tech 或自有域名或 Gmail）、Discord、Telegram 和 Google Calendar；Slack、电话、短信和 iMessage 标为即将推出（PH 简介里写了 Slack，与官网现状不符）。可用 pip install puffin-local 或 npm install puffin-sdk，也可把托管 MCP 配到 https://api.justpuffin.tech/mcp（需 Bearer 密钥）；密钥不能批准外发或改所有者策略。文档还提供 Claude Code / Codex / Hermes / OpenClaw 插件和技能包。发送可带幂等键。文档有一处仍写「当前免费预览」，并用 @puffin.test 模拟收件、工作区外收件人不真正投递；主站则写没有免费方案、计划从每月 25 美元起，注册后可用示例 agent 逛控制台。两者尚未完全对齐，接入前应再对一下当前环境是预览还是付费投递。雷达无对应产品仓库。",
+          "inspo": "给需要对外通信的 agent 单独发身份，不要复用本人账号：密钥只给 identity:read、email:read 这类最小范围，批准外发留在控制台，不发给 runtime。重试发送时复用同一个幂等键，避免批准后重复寄出。把 2FA 放进浏览器加密的保险库，让 agent 只拿到一次性代码而不是密钥本身——前提是保险库口令由人保管，平台也声明无法代为恢复。官网仍把 Slack 标为即将推出，不要按已经能进 Slack 来设计。",
+          "tags": [
+            "AI工具",
+            "效率"
+          ],
+          "id": "2026-11-16-puffin",
+          "slug": "puffin",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Boost.space AgentOS",
+          "tagline": "One operating system for all your AI agents",
+          "ph": "https://www.producthunt.com/products/boost-space",
+          "site": "https://boost.space/agent-os",
+          "repo": "",
+          "rank": 2,
+          "score": 272,
+          "comments": 68,
+          "what": "面向公司角色的 agent 操作系统：人通过助手 Boosty 发任务，由对口 agent 在共享的数据层、技能和已批准的应用连接上执行；也可用 MCP 从 ChatGPT、Claude 或 Cursor 接入。",
+          "problem": "公司里每个 agent 各连一套工具、各记一份上下文，权限说不清，调度还要人在多个聊天窗口之间转手。",
+          "highlight": "文档称管理员按 agent 分别授权：数据模块可选无权限 / 只读 / 读写，应用按已连接的账号授权，频道里谁可以找它也分开设。ACT 自动化在调用外部服务或上线前，会先展示即将执行的内容并等人同意。人通过 Boosty 用文字或语音下任务，由它交给角色匹配的 agent，需要决策时再问人。Agent 不占用座席。实例可跑在 Boost.space 的欧盟云（文档称大约两分钟就绪），或接到你自己的 Linux + Docker 服务器（用一小时内有效的一次性密钥安装并连接）。一个实例最多承载 50 个 agent。也提供 REST API 以及 TypeScript / Python SDK。定价页：Agent Launch 是一次买断（Bob 2500 美元或定制角色 5000 美元，不含税），含最多 8 或 16 小时专家工作和首月 AgentOS；之后如需托管数据、连接和权限，AgentOS 年付合每月 300 美元起（页面写入门档含 10 万条记录和每月 10 万 AI Credits），具体计划和容量购买前再确认。AI Credits 与第三方模型、托管和 ACT 操作费是分开的。官网同时出现「1500+ 应用」和集成页「2600+ 直接连接」，以及「1400+ 模型」，这些数字未经独立核实。不是开源产品。雷达无对应仓库。",
+          "inspo": "工作台可以把「调度助手 + 按角色授权的专业 agent」分开：人对着一个入口说事，真正动手的 agent 各自只有自己那份数据模块、应用账号和联系人范围。权限不要做成全局开关，至少按无权限 / 只读 / 读写切开。定时或会改外部系统的动作，执行前先出示将要做的事再等人点头——前提是审批超时的策略已经想好（文档强调上线前要同意，但没有在这次材料里看到「无人在线时是暂停一步还是整单停下」的明确答案）。自建实例的前提是有一台你能跑 Docker 的 Linux 服务器，并且能在密钥过期前完成安装。",
+          "tags": [
+            "AI工具",
+            "效率"
+          ],
+          "id": "2026-11-16-boost-space-agentos",
+          "slug": "boost-space-agentos",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "ChatGPT Wallet",
+          "tagline": "Let ChatGPT agents buy things without seeing your card",
+          "ph": "https://www.producthunt.com/products/chatgpt",
+          "site": "https://openai.com/index/introducing-chatgpt-wallet",
+          "repo": "",
+          "rank": 7,
+          "score": 143,
+          "comments": 5,
+          "what": "OpenAI 为 ChatGPT 的 dots agent 做的支付钱包：人先审购物车和金额并做生物识别，支付网络再签发一次性支付令牌，agent 和商家都看不到真实卡号。",
+          "problem": "要让 agent 代下单，通常得把卡号或已登录的结账会话交给它，事后很难证明这一笔是人授权的，卡组织的奖励和争议规则也不好接。",
+          "highlight": "OpenAI 2026-11-13 的公告称，与 American Express、Chase、Mastercard 和 Visa 合作；先向美国、18 岁以上、持合格美国发行卡的 ChatGPT Pro 用户，在 dots 里开放。每次购买都要人核对商品、总额和所用卡，并用 Face ID 或指纹等安全校验批准，形成授权记录；批准后由卡组织提供带卡号、安全码和有效期的支付令牌，扣款走用户选定的卡，真实卡信息既不给商家也不给 agent。官网称符合条件的争议仍保留原卡的奖励和保障，用户仍直接与商家交易。长期计划是让人按金额、品类或时限预先授权，这次尚未上线。同时发布了面向商家的 Commerce Partner Playbook，包括认领资料、用 Web Bot Auth 识别请求、以及与支付和风控供应商协作减少误拒。每周 12 亿用户等数据是 OpenAI 自己的说法。",
+          "inspo": "工作台里给 agent 的敏感凭据也可以做成「一次性、限金额和时限的令牌」，而不是把长期密钥写进沙箱；每次涉及花钱或外发的动作，先给人看清对象和额度，再用本机安全校验点头，并留下授权记录。前提是令牌由你信任的签发方生成，agent 和下游都只能看到令牌，看不到原凭据。预先授权（按上限和品类放行）适合以后再做，不要作为现在的默认。",
+          "tags": [
+            "AI工具",
+            "效率"
+          ],
+          "id": "2026-11-16-chatgpt-wallet",
+          "slug": "chatgpt-wallet",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "ByteVoice",
+          "tagline": "Talk to your coding agents and hear them back",
+          "ph": "https://www.producthunt.com/products/bytevoice",
+          "site": "https://bytevoice.app/",
+          "repo": "",
+          "rank": 15,
+          "score": 85,
+          "comments": 10,
+          "what": "给 Claude Code、Codex、Cursor 等 coding agent 用的语音层：按 Fn 说话下指令，听状态和摘要，agent 提问时可直接口头回复，桌面上用悬浮坞查看多个会话，也可朗读和回复 Slack。",
+          "problem": "并行开着好几个 coding agent 时，要盯着终端才知道谁做完、谁在问问题；回一句往往还要切窗口打字。",
+          "highlight": "官网称安装后为 Claude Code、Codex 等装 hook，会话会自动出现；可把某个会话钉住，即使 ByteVoice 在后台，Fn 也会把语音送到这个 agent。免费档可每周向 agent 输入 5000 词、听 1500 词摘要，并含状态通知和 Slack 语音回复；Plus 年付合每月 12 美元（语音输入不限、摘要每周 5000 词，含 Domain Context Engine 和多 agent 调度）；Pro 年付合每月 16 美元，摘要不限，可先 14 天试用；企业档每用户每月 25 美元，含 SAML SSO 和 SCIM。官网宣传「最多快 5 倍」「最佳准确率」，这些数字和效果未经独立核实。未见公开产品源码。雷达无对应仓库。",
+          "inspo": "并行跑多个 coding agent 时，把「做完了 / 在等你 / 出错了」从一堆终端里抽到一个始终可见的状态层，并允许用语音把回复打回正在等的那一个会话。前提是 agent 能通过 hook 或 CLI 暴露会话状态，并且提问时真的会停下来等人，而不是自己往下做。钉住会话适合「这一个窗口我暂时不看，但 Fn 仍要打到它」。",
+          "tags": [
+            "coding agent",
+            "效率"
+          ],
+          "id": "2026-11-16-bytevoice",
+          "slug": "bytevoice",
+          "status": "新发现",
+          "followups": []
+        }
+      ]
+    },
+    {
       "date": "2026-11-15",
       "source": "https://www.producthunt.com/leaderboard/daily/2026/11/15",
       "fetched": "2026-11-16 17:27 北京",
