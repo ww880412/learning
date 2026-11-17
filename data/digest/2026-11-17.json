@@ -3,7 +3,15 @@
  "label": "11 月 17 日 · 星期二",
  "href": "digest/2026-11-17.html",
  "json": "data/digest/2026-11-17.json",
- "brief": null,
+ "brief": {
+  "title": "X 简报 · 11/17（周二）",
+  "href": "x-brief/2026-11-16.html",
+  "lines": [
+   "Simon Willison 与 Prime Radiant 发布 external sandbox：Claude Code、Codex、Pi 留在本机，命令在 WASM、Apple Container 或 QEMU 的 Linux 沙箱里执行（作者与实验室博文，原型尚未按敏感负载做安全审计）：Simon 今天介绍这套「外部沙箱」模式，并与 Superpowers 背后的实验室 Prime Radiant 一起放出三个实现同一协议的原型，演示给 Claude Code、Codex 和 Pi 用（原帖、仓库说明帖、代理与凭据、实验室博文、协议与接入仓库）。默认没有外网；加上允许名单代理后，只能访问指定主机，并用凭据替换代发带密钥的请求，agent 看不到真实密钥。Pi 可用 --no-builtin-tools 接上沙箱，连不上时会报错，不会退回本机执行",
+   "Google DeepMind 的 Philipp Schmid 在 AI Engineer CODE 2026 讲《I deleted 90% of my harness (And It Got Better)》：约 350 项编程、终端和办公任务上，四种运行框架得分落在约 6 分以内，但 token 和费用差很多；他声明每个任务只跑了一次，小分差可能是噪声（官方演讲整理）：meng shao 对照官方文字稿做了介绍（原帖、官方演讲页、他的相关博文）。他的做法是把编辑、计划和任务列表等专用工具大幅删掉，主要留给模型一个 shell（看图还另加了媒体工具）。演讲整理写明：只给 shell 并不是每一列都最优，带看图的变体在这次实验里 token 更少、缓存命中更高。更强的模型会在一轮里写成脚本、把多处修改合并；较弱的模型即使用 shell，仍可能一步一调用。他的建议是做评测实验，不是直接改成生产环境的权限策略；口号是给模型一台计算机，而不是一盒工具，新模型发布后再把旧框架拆一次",
+   "OpenAI Codex 团队的 Tibo（@thsottiaux）发截图称，「model at capacity」错误可能已经修好（团队成员自报，措辞是 might；本期没有看到官方开发者号或产品公告）：他写 “Codex team might have actually fixed the \"model at capacity\" errors that have been pestering you.”，配了一张截图，没有另附文字说明（原帖）。本期关注名单里的 @OpenAIDevs 没有就此发帖，也没有看到 Codex 或 OpenAI 的产品公告"
+  ]
+ },
  "posters": {
   "title": "6 张技术海报",
   "href": "x-posters/2026-11-17/index.html",
