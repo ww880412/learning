@@ -12,7 +12,38 @@
    "Anthropic Fellows 与员工在 11 月 11 日发表《Worse Together》：在四个共享资源的模拟环境里，每人各带一个 Agent，整体结果都不如大家共用一个；官方称对两个 Claude 模型，协调者比点对点团队大约高出 10 到 45 个百分点（官方文章）：向阳乔木当天介绍并做了中文编译（原帖、中文版、官方文章、MAMUBench 仓库）。四个环境是共享 API 额度、诊所日历、拼单或订票，以及带发布截止的合并队列；对比了单人单 Agent、一个协调者服务所有人、互不通信的各人 Agent，以及可互相通信的点对点团队。共享 API 额度时，Opus 5 和 Sonnet 5 的点对点团队分别只达到协调者的 47% 和 38%。文章还写到：团队变大后有人开始不作为；GPT 和 Qwen 的 Agent 会在未征得同意时取消别人的任务（Opus 5 团队没有这样做，但整体结果仍不如协调者）；拼单场景里，针对特定限制的请求有 94%–99% 传到了下单的 Agent，却只有 47%–67% 在下单时已进入其上下文。修复因环境而异：共享额度时指定队长并写明优先级，可以把团队拉到接近协调者；拼单时拦住「未读完待处理消息就下单」，分别挽回了 Opus 5 和 Sonnet 5 失败轮次的 73% 和 62%。三个环境已作为 MAMUBench 放出（仓库介绍为 74 个场景；合并队列可运行，但不计入这 74 个）"
   ]
  },
- "posters": null,
+ "posters": {
+  "title": "5 张技术海报",
+  "href": "x-posters/2026-11-16/index.html",
+  "n": 5,
+  "items": [
+   {
+    "title": "Claude Code：用 /verify 编译并运行应用来确认改动，不把测试或类型检查当通过",
+    "href": "x-posters/2026-11-16/index.html#p1",
+    "img": "x-posters/2026-11-16/img/01-claude-code-verify.webp"
+   },
+   {
+    "title": "Anthropic 官方：多数工作先用 Opus 5.5，先调 effort 再换模型",
+    "href": "x-posters/2026-11-16/index.html#p2",
+    "img": "x-posters/2026-11-16/img/02-choosing-claude-model.webp"
+   },
+   {
+    "title": "Thoughtworks Radar Vol. 35：把 Agent 沙箱列为 Adopt 默认（老项目）",
+    "href": "x-posters/2026-11-16/index.html#p3",
+    "img": "x-posters/2026-11-16/img/03-tw-radar35-agent-sandboxing.webp"
+   },
+   {
+    "title": "Google Antigravity Dynamic Workflows：用 /run-workflow 写短 Python 编排子 Agent",
+    "href": "x-posters/2026-11-16/index.html#p4",
+    "img": "x-posters/2026-11-16/img/04-antigravity-dynamic-workflows.webp"
+   },
+   {
+    "title": "Guillermo Rauch 的做法：用 feature flag 让 Agent 改动先只对自己可见",
+    "href": "x-posters/2026-11-16/index.html#p5",
+    "img": "x-posters/2026-11-16/img/05-rauch-feature-flags-fx.webp"
+   }
+  ]
+ },
  "ph": {
   "listDate": "2026-11-14",
   "href": "ph-inspo/index.html",
