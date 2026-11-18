@@ -10,6 +10,7 @@
 | 技术研究 | research/always-on-agents/always-on-agents.html | William Hu《Building always-on agents》全文讲解（2026-11-15 制作，未学完；下次从核心应用题开始。精读版已加密） | https://claude.com/resources/articles/building-always-on-agents |
 | 技术研究 | research/lauren-tan-all-code-is-slop/lauren-tan-all-code-is-slop.html | Lauren Tan《All Code Is Slop (Except Mine)》全文讲解（2026-11-17 制作，未学完；王长川长帖只作归纳。精读已加密） | https://ai.engineer/code/2026/talks/lauren-tan |
 | X 好文 | x-posts/feicai-grokbot-codex/feicai-grokbot-codex.html | Feicai《用 Grok Bot + Codex 搭建多 Agent 团队》导读。进行中，未学完。精读已加密 | https://x.com/zhu185178/status/2120171874676347035 |
+| X 好文 | x-posts/jex-software-engineering-handbook/jex-software-engineering-handbook.html | jexchan《推荐一本书，AI 时代的软件工程手册》导读。进行中，未学完。精读已加密，明文不在仓库 | https://x.com/jexchan/status/2122924389293535563 |
 | X 好文 | x-posts/addy-verification/addy-verification.html | Addy Osmani《How the Claude Code team thinks about verification》全文讲解。进行中，未学完。精读已加密 | https://claude.dev/blog/how-the-claude-code-team-thinks-about-verification/ |
 
 其他：inbox.md 待学收件箱 · review.md 复习队列 · glossary.html 概念卡 · 旧路径 cs146s/、x-articles/ 是指向新位置的快捷方式。
