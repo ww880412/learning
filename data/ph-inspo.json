@@ -24,6 +24,217 @@
   ],
   "days": [
     {
+      "date": "2026-11-17",
+      "source": "https://www.producthunt.com/leaderboard/daily/2026/11/17",
+      "fetched": "2026-11-18 17:24 北京",
+      "note": "官网日榜可访问，第 1–18 名的综合分和评论数以官网日榜页为准；Hako、infaiw、polyroom 在截到的日榜页之后，综合分来自 hunted.space（其前 10 名与官网综合分接近，通常低 0–4 分），日排名以各产品页上的 Day Rank 为准。第 1 名 Creatify Max（AI 广告）、第 2 名 RankSpot（面向 agent 的 SEO 执行层）、第 3 名 TheBold（融资对接）、第 5 名 EkLine（开发者工具的 AI SEO）、第 6 名 Versine（给 agent 收付款，和昨日收录的 ChatGPT Wallet 同类）、第 8 名 VINC（影视制作）、第 10 名 Superhands（给 agent 用的设计系统）、第 11 名 Link.bio、第 12 名 Ridian（会议日程）、第 13 名 Pinecall（开源语音 agent）未收。decohack 标「11.17」实为太平洋 11/16 产品，已在昨日收录，今天还没有对应太平洋 11/17 的那篇。",
+      "picks": [
+        {
+          "id": "2026-11-17-appxiom",
+          "why": "把线上崩溃、卡顿和目标流失通过 MCP 交给 coding agent，并用 Goal Friction Impact 按业务目标排修 bug。",
+          "limit": "要先在应用里装 SDK 并圈出目标；Goal Friction Impact 和 Quality Score 从 Professional（每应用每月 99 美元、至多 10 万活跃设备）起才有。产品本身未见公开源码。"
+        },
+        {
+          "id": "2026-11-17-infaiw",
+          "why": "子 agent 必须通过父任务写的 bash 验收脚本才能报完成，审批和时间线还在本地守护进程里，可直接对照工作台的委派和验收。",
+          "limit": "验收脚本是 bash，预算只有 20、40 或 100 轮；目前是 macOS/Linux 上的单用户守护进程，不是多租户工作台。Claude Code 走本机 CLI，官网称每个回合内存上限 512 MiB。"
+        },
+        {
+          "id": "2026-11-17-glass-page",
+          "why": "agent 把 HTML 产物发成可分享的 Pane，人在 Threads 里评，agent 读完再发新版本并关帖，适合工作台里的产物评审闭环。",
+          "limit": "发布的是 HTML 页面，不是任意仓库 diff；免费档每工作区最多 10 个 Pane、每个只留最近 3 个版本、单版本合计 10 MB，批量清理是 Pro 功能。"
+        }
+      ],
+      "items": [
+        {
+          "name": "Appxiom",
+          "tagline": "Context layer for AI coding agents to detect & fix bugs",
+          "ph": "https://www.producthunt.com/products/appxiom",
+          "site": "https://www.appxiom.com/",
+          "repo": "",
+          "rank": 4,
+          "score": 274,
+          "comments": 43,
+          "what": "面向移动和 Web 应用的监控服务：把崩溃、卡顿、内存泄漏、失败的网络请求和中断的用户路径交给 coding agent。装上 SDK 后，agent 经远程 MCP 查询线上问题，并用 Goal Friction Impact 按目标流失排优先级。",
+          "problem": "coding agent 能读仓库和测试，却看不到真实用户会话：不知道先修哪个问题、用户当时点了什么、设备处于什么状态，以及上一次修复上线后是否真的好转。",
+          "highlight": "官网称覆盖 Android（Kotlin、Jetpack Compose、Java）、iOS（Swift、SwiftUI、Objective-C）、Flutter、Kotlin Multiplatform 和 Web（文档写支持所有 JavaScript / TypeScript 框架，对 React 有专门支持）。MCP 地址是 https://app.appxiom.com/ax/app/api/mcp，Claude Code 用 claude mcp add --transport http 接入，Codex 用 codex mcp add --url，均要在浏览器完成 OAuth。另有平台技能包（如 npx @appxiom/android-skills add all）教 agent 接入 SDK，以及 @appxiom/mcp-skills（goals、severity、quality、telemetry）教它如何读数据；CLI 会查找 .claude、.agents、.cursor，Codex 需加 --target ./.agents/skills。文档里的 Goal 要在代码里用 Ax.beginGoal / Ax.completeGoal 圈出来。定价按应用、按每月活跃设备：Starter 每月 10 美元（至多 1 万台，每多 1 万加 10 美元），Professional 每月 99 美元（至多 10 万台）；GFI 和 Quality Score 从 Professional 起才有；各档都含 MCP 和技能、不限席位、30 天试用且不用绑卡。官网写「85% Faster Bug Detection」「$12M+ Conversions Rescued」「<5 min Integration」，以及博文里一次 iOS 事件 MCP 载荷约 350–500 token、原始日志 4,000–8,000 token 的对比，都是厂商说法，博文也提醒要用自己的数据再衡量。产品本身未见公开源码。雷达无对应仓库。",
+          "inspo": "工作台可以把「先按业务目标排序，再把符号化堆栈、操作轨迹和设备状态一次交给 agent」做成修 bug 的默认入口，而不是先按事件次数排。前提是应用已经打点目标（begin/complete），并且修好之后还要再问一次线上数据，确认这条路径的流失是否回来。技能和 MCP 要分开装：MCP 只给查询工具，判断严重程度和读 Quality Score 的方法在技能文件里。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "MCP"
+          ],
+          "id": "2026-11-17-appxiom",
+          "slug": "appxiom",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "infaiw",
+          "tagline": "Delegate work to sidecar agents that pass an approval script",
+          "ph": "https://www.producthunt.com/products/infaiw",
+          "site": "https://infai.dipankar-das.com/infaiw/",
+          "repo": "https://github.com/dipankardas011/infai",
+          "rank": 31,
+          "score": 73,
+          "comments": 2,
+          "what": "开源的本地 agent 编排器：一个 Go 守护进程托住所有会话，TUI 只是客户端。父任务可以把工作交给 sidecar，但 sidecar 必须先通过父任务写的 bash 验收脚本（退出码 0），才能向父会话报完成。",
+          "problem": "子 agent 常自行宣布「做完了」，关闭终端会话就断，走错一步也只能重来；人很难用可执行的标准，而不是模型自评，来验收委派出去的工作。",
+          "highlight": "仓库 dipankardas011/infai 为 Apache-2.0，同一仓库里还有本地推理控制面 infai；infaiw 单独安装。官网和 README 称：父任务在委派时给出任务、验收脚本和 20 / 40 / 100 轮预算，这三项要先经你批准；脚本失败会把输出送回 sidecar 对话继续改，用尽预算则报告 max iterations reached。会话是可分支的追加时间线，80% 上下文窗口时会压缩更早内容并保留最近四条原文，原事件仍留在时间线上。默认策略是读、list、glob、grep、git_status、skills、checklist 直接跑，写、编辑、bash、web、sidecar 和 mcp_* 要人批（可允许、拒绝或拒绝并说明理由），关掉窗口后审批也还在等。可在同一会话中切换 DeepSeek、OpenAI Codex、Claude Code，或接 OpenAI 兼容端点；Claude Code 提供方走本机已登录的 CLI，官网称每个回合内存上限 512 MiB。安装可用 brew install dipankardas011/tap/infaiw 后 brew services start infaiw，或 Linux 用户级 systemd；装上不会自动启动。TUI 默认连 localhost:6000。内存对比是作者 2026-11-14 在 Fedora 上自测：工作中的 infaiw 约 86 MiB，刚打开且空闲的 Claude Code 285 MiB（含 MCP 后 598 MiB），数字未经独立核实。可把整段时间线导出为不需账号的 HTML。工作流编排和多 agent swarm 仍在规划。雷达未收录该仓库。",
+          "inspo": "工作台里的子 agent 不要用「模型说做完了」当完成：委派时由父任务附带一段验收脚本，通过才写回父会话，失败就把脚本输出当作下一轮输入，并设死轮次上限。时间线按事件分支，走错可以从中间分叉而不是清空。审批策略按工具类写（读默认放行，写和 shell 默认等人），一条 mcp_* 覆盖该服务器的全部工具。前提是验收标准能写成退出码，而且守护进程跑在你自己的机器上，不是把会话交到对方云上。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "开源"
+          ],
+          "id": "2026-11-17-infaiw",
+          "slug": "infaiw",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Glass Page",
+          "tagline": "A place for people to review an agent's work",
+          "ph": "https://www.producthunt.com/products/glass-page",
+          "site": "https://glasspage.ai/",
+          "repo": "",
+          "rank": 14,
+          "score": 92,
+          "comments": 13,
+          "what": "给 coding / 聊天 agent 用的产物评审服务：agent 经 MCP 把做好的 HTML 发成 Pane 并得到链接，人在 Threads 里评论，agent 读完后发布新 Version、在帖里回复并关闭。",
+          "problem": "agent 做完一页或一份稿，评审还要靠把文件传来传去或在聊天里贴截图；评论对不准某一版，agent 也不清楚该改哪一条、改完要回给谁。",
+          "highlight": "文档称 MCP 地址为 https://mcp.glasspage.ai/mcp（Streamable HTTP），名称用 glass-page，用 OAuth 在浏览器登录；不支持 OAuth 的宿主可用 API Key（Authorization: Bearer），文档要求不要把密钥贴进对话或提交到仓库。文档写有 24 个工具，分读、改、可删除。Pane 可设为 Private、邀请可见或公开链接，邀请角色是 Viewer、Commenter 或 Collaborator；未关闭的 Thread 会带到下一版，每版有独立 Version Link，Latest Link 始终指向最新版。还可把多个页面铺在 Canvas 的 Board 上并排看。免费档 0 美元、不用绑卡：每工作区最多 10 个 Pane、1 个 Canvas、每 Pane 只留最近 3 个版本、单版本全部文件合计 10 MB、每 Pane 最多 10 位访客；Pro 每月 5 美元或每年 50 美元，去掉 Pane 上限、Canvas 最多 5 个、每版留 10 个、单版本 100 MB，并开放密码、过期链接和 Cleanup Links（agent 列出待删项，你确认后删除）；Team 每席每月 8 美元或每年 80 美元。公开页在免费档会带「Made with Glass Page」标记。各档都有每小时发布上限，用来挡住陷入循环的 agent，具体数字文档未写。超过限额的发布会被拒绝并说明原因，服务不会为腾额度自动删除。产品未见公开源码。雷达无对应仓库。",
+          "inspo": "工作台可以把「发布 → 按版本评论 → agent 带新版本回来并关闭对应帖」做成产物评审的默认闭环，评论要钉在某一版上，未关闭的意见自动带到下一版。Latest 链接给人看，Version 链接用来对照改了什么。前提是产物能发成 HTML 页面；仓库 diff 或二进制包不要硬塞进这一套。免费试用时记得版本和体积上限，批量清测试 Pane 是付费功能，删除仍要人点确认。",
+          "tags": [
+            "coding agent",
+            "AI工具",
+            "MCP"
+          ],
+          "id": "2026-11-17-glass-page",
+          "slug": "glass-page",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Hako",
+          "tagline": "Every coding agent on every Mac, in your pocket",
+          "ph": "https://www.producthunt.com/products/hako",
+          "site": "https://hako.md/",
+          "repo": "",
+          "rank": 34,
+          "score": 72,
+          "comments": 7,
+          "what": "iPhone、iPad 和 Mac 上的客户端：把各台 Mac 上正在跑的 coding agent 收进同一份列表，按谁在等你排序，可在锁屏或 Apple Watch 上回答。agent 仍在 Mac 上跑，手机经 Tailscale 或 SSH 连过去。免费，不用注册账号。",
+          "problem": "多台 Mac、多个 Claude Code / Codex 会话同时跑时，人一离开就只能回到电脑前才知道谁卡住了；用聊天应用遥控又很难对着某个 pane 看 diff、回一句。",
+          "highlight": "官网称支持 Claude Code、Codex、Gemini、Cursor、Copilot、OpenCode 等，以及会向 herdr 报到的其他 agent。Hako for Mac 在用户目录安装桥接和 herdr，不用管理员密码；已有 herdr 的 pane 会保留。配对走 iCloud 钥匙串，或扫 Mac 上的二维码；远程要用同一 Tailscale 账号，Mac 需 macOS 15 或更新，睡眠中的 Mac 算离线。产品页还写 agent 可以跑在 herdr 或 tmux 里。锁屏 Live Activity 可展示谁在工作、谁在提问，并把选项作成按钮发出去；也可打开「完成时通知」、在手机上读该 pane 的分支 / PR 和未提交 diff、把照片或截图送到 Mac 上的 agent，以及把需要密码的命令放到新终端里自己输入（agent 看不到密码）。用量超限或服务端临时出错时，可让 Mac 自动打出 resume。通知经中继做端到端加密，中继看不到正文。Android、Windows 和 Linux 官网写 very soon，目前还没有。演示片是演示模式里脚本化的 agent。雷达已收录 herdrdev/herdr（Apache-2.0，已核实），Hako 本身未见公开产品源码；产品页上的 “Open-source” 应对的是底层 herdr，而不是这个客户端。",
+          "inspo": "工作台的移动入口不必另做一套云会话：列表按「谁在等你」排，锁屏只回答当前这一问，diff 在手机上只读预览，密码类命令必须拆到人自己输入的终端。前提是 agent 本来就跑在她/他的 Mac 上（herdr 或 tmux），手机和电脑在同一 Tailscale（或 SSH）里，而且你接受电脑睡着就连不上。herdr 的能力以雷达核实结果为准，不要把 Hako 写成 herdr 的替代品。",
+          "tags": [
+            "coding agent",
+            "效率",
+            "Mac"
+          ],
+          "id": "2026-11-17-hako",
+          "slug": "hako",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "polyroom",
+          "tagline": "Where AI agents work together and your team decides",
+          "ph": "https://www.producthunt.com/products/polyroom",
+          "site": "https://polyroom.ai/",
+          "repo": "",
+          "rank": 37,
+          "score": 69,
+          "comments": 13,
+          "what": "给人和多个 agent 用的共享房间：Claude Code、Codex 等经插件或 MCP 加入，在自己原来的工具里继续跑，在房间里领取看板卡片、互相提及，并把需要拍板的事项提交给房间的审批规则。房间本身不含模型。",
+          "problem": "并行跑几个 coding agent 时，谁领了哪张卡、哪件事必须人决定，往往散落在各个终端和聊天里，事后也没有一份大家都能读的决策记录。",
+          "highlight": "官网称不提供模型、也不取代各 agent 自己的工具；Claude Code 和 Codex 用插件，可在监听时回复；ChatGPT、Claude.ai 经连接器加入，要在对应聊天里问起才会回；Grok 经连接器加入，并可用例程在被提及时唤醒；其他受支持的 MCP 客户端用服务器 URL 和访问令牌加入。共享工作区含聊天、看板和已记录的决策。免费档不用绑卡：最多 3 人、3 个开启的 agent、每自然月 5,000 条消息、1 GB 文件，界面只显示最近 30 天（更早的仍保存，升到 Team 才看到）；Team 每人每月 15 美元或年付每人 12 美元，每人可开 5 个 agent，再多的每个每月 3 美元（年付 2.40 美元），访客也按人计费。12 个月无活动的免费工作区会被关闭，会提前 30 天和 7 天发邮件。创始人在产品页评论里称：默认房间里任何人都可批准，也可改成指定名单；决策可设为人批、名单中的 agent 批，或两者都可以；改名单的权限仅限工作区所有者/管理员、房间创建者和被指定负责该房间的那个 agent；通知只发给被提及的人或 agent。产品未见公开源码。雷达无对应仓库。",
+          "inspo": "多 agent 并行时，工作台需要一间「领卡 + 提及 + 决策留档」的房间，而不是再开一个会跑模型的新工作区：agent 仍在各自的环境执行，只有要写入真实系统或决定发布的事项，按房间规则提交审批，做成所有 agent 都能读的记录。前提是各 agent 能经 MCP 或插件进房，并且你先写清这间房是只许人批、还是允许指定 agent 互批。免费试用先卡在 3 个 agent 和每月消息上限里。",
+          "tags": [
+            "coding agent",
+            "AI工具",
+            "MCP"
+          ],
+          "id": "2026-11-17-polyroom",
+          "slug": "polyroom",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "seshka",
+          "tagline": "Kill what Claude Code left behind",
+          "ph": "https://www.producthunt.com/products/seshka",
+          "site": "https://www.seshka.dev/",
+          "repo": "https://github.com/jigjoy-ai/seshka",
+          "rank": 9,
+          "score": 132,
+          "comments": 32,
+          "what": "macOS 菜单栏小工具：找出已结束的 Claude Code 会话留下的开发服务器、文件监视器和模拟器等进程，按会话分组后一键结束，也可结束空闲中的会话。",
+          "problem": "Claude Code 会话关了，它拉起的开发服务器、监视器和自动化浏览器往往还在，继续占端口和内存，下一次启动还会冲突。",
+          "highlight": "仓库 jigjoy-ai/seshka 为 MIT。README 称它读取进程环境里的 CLAUDECODE=1 以及会话 ID、父进程 ID；父进程已不在就把子进程视为残留。Chrome 等进程环境不可读时，会把被标记进程拉起的子进程也算进来，因此 Playwright 打开的浏览器会跟 Playwright 出现在同一行。可杀单个进程、一整次会话或全部残留，并显示端口、内存和已运行时间。菜单栏里也会列出仍打开的会话（工作中或空闲、空闲多久）；空闲会话可一键结束，或在超过你设的时限后自动结束（默认两小时，需先打开）。结束的会话可用 claude --resume 恢复。官网和 README 写免费、开源，支持 macOS 14 或更新（Apple 芯片和 Intel），应用已签名并公证，只在本机读进程，数据不离开这台 Mac。仓库截图展示一次清掉 27 个残留进程、释放 5.6 GB，这是作者环境中的一次结果，不是普遍数字。目前只识别 Claude Code 留下的进程，不是任意 coding agent。雷达未收录该仓库。",
+          "inspo": "工作台在回收一个 Claude Code 会话时，应同时收走它拉起的开发服务器、监视器和浏览器，而不是只关父进程。识别可以靠会话写入的环境变量（如此处的 CLAUDECODE=1 和会话 ID），再把环境不可读的子进程挂到启动它的那一行。空闲会话的自动结束要默认关闭，并告诉人可以用 --resume 回来。前提是这些 agent 真的在子进程环境里留下了可查的标记；对 Codex 或其他工具不能直接套用。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "开源",
+            "Mac"
+          ],
+          "id": "2026-11-17-seshka",
+          "slug": "seshka",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Lasso",
+          "tagline": "Draw on your Mac screen, then let AI agents see it",
+          "ph": "https://www.producthunt.com/products/lasso-11",
+          "site": "https://www.trylasso.online/",
+          "repo": "",
+          "rank": 18,
+          "score": 85,
+          "comments": 20,
+          "what": "macOS 屏幕标注工具：按 ⌥⇧A 直接在屏幕上画圈、箭头和编号，再截图；也可通过本机 MCP 让 Claude Code、Codex、Cursor 等看到你圈中的内容，并在窗口上画回箭头。一次买断 9.99 美元，不用账号。",
+          "problem": "想让 coding agent 看清界面上的某一个控件，通常要截图、另开编辑器画箭头再贴回去；agent 也无法在你正在看的窗口上指出该点哪里。",
+          "highlight": "官网称支持 macOS 14 或更新（Apple 芯片和 Intel），应用已签名并公证，当前版本 1.9.2。本地 MCP 是 stdio，不是托管 HTTP：claude mcp add --scope user lasso -- /Applications/Lasso.app/Contents/MacOS/Lasso --mcp，Codex 用类似命令。工具包括 capture_screen、get_screenshot、get_brief、draw、ask / get_answer、resolve_mark、clear_drawing、new_board / move_board。文档写明这些工具不会在其他应用里点击或打字；首次调用要你在 Lasso 里允许，截取屏幕需打开系统的屏幕录制权限，按坐标画画不需要该权限。捕获默认是整块显示器及可见标注，客户端可能把图像发给模型提供商；要更小范围需先自己裁好再附上。按 V 可一边画一边口述，语音在本机转成带编号标注的 brief，文档称音频不会外传。分享链接在本机加密，浏览器打开 24 小时后失效，官网称密钥只在链接里、连 Lasso 也看不到内容。模糊工具可在截图和 agent 看到的画面里遮住敏感信息。产品未见公开源码。雷达无对应仓库。",
+          "inspo": "工作台可以给「指一下这块界面」留一个本机标注通道：人先圈出控件，agent 只读带编号的截图和旁注，需要时在同一窗口上画回箭头，但不要让它代为点击或输入。第一次调用和屏幕录制都要人授权；默认捕获是整屏，发给云端模型前应先裁切或模糊。前提是 agent 跑在同一台 Mac 上，并经本地 stdio MCP 连接。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "MCP",
+            "Mac"
+          ],
+          "id": "2026-11-17-lasso",
+          "slug": "lasso",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "superlog",
+          "tagline": "Finds the production bugs your monitoring never sees",
+          "ph": "https://www.producthunt.com/products/superlog",
+          "site": "https://superlog.sh/",
+          "repo": "https://github.com/superloglabs/superlog",
+          "rank": 7,
+          "score": 184,
+          "comments": 36,
+          "what": "开源核心的可观察性工作区：接入 OpenTelemetry 或已有的 Datadog、Sentry、Grafana 等，对日志做指纹聚类，找出没有告警盯着的新问题，再调查并给出修复建议。社区版可自托管，也有托管云。",
+          "problem": "现有监控只会对已经设过告警的路径响，客户先报过来的问题，往往是告警没覆盖到的新错误模式；调查还要人在日志、代码和工单之间来回搬。",
+          "highlight": "仓库 superloglabs/superlog 为 Apache-2.0（LICENSE.md），README 写社区版含 Web、API、OTLP 接入代理、worker、Postgres schema 和 ClickHouse 查询，以及可插拔的调查运行时。本地需 Node.js 20+、pnpm 9+ 和 Docker。官网称托管版可从 OTLP、Sentry、Datadog、Grafana、AWS CloudWatch 和 Google Cloud 读数据，调查时只读你选定的 GitHub 仓库，并可对照 Linear、GitHub、Slack 和已有告警，避免重复；找出的问题发到指定 Slack 频道，含影响、根因、证据和可用的修复建议。官网 FAQ 写「不会改你的代码」；这次产品页文案又称可以自己修，或由他们开 PR，两边说法不一致，是否会开 PR 尚需以文档或实际产品为准。产品页列出 MCP 地址 api.superlog.sh/mcp，仓库另有 superloglabs/skills，README 建议用 npx skills add superloglabs/skills --all 装到 coding agent 里。官网另有 Apache-2.0 的 responder-oss，用于自托管告警调查 agent。托管版 FAQ 称日志、追踪和指标保存 30 天，各计划含每月 500 万条日志。产品页写「100+ startups use it；87% of our fixes get merged」，以及首页「Trusted by hundreds of organizations」，都是厂商说法，未经独立核实。雷达未收录该仓库。",
+          "inspo": "工作台不必取代 Datadog / Sentry，可以多一层「对无告警的新指纹做调查，再把带证据的发现交给你自己的 coding agent」。接到 MCP 或 skills 之前，先分清社区版自托管和托管云、以及只读仓库与是否允许开 PR——官网 FAQ 和这次发布文案还对不上。前提是已经在往 OTLP 或现有监控里送数据。",
+          "tags": [
+            "开发者工具",
+            "开源",
+            "MCP"
+          ],
+          "id": "2026-11-17-superlog",
+          "slug": "superlog",
+          "status": "新发现",
+          "followups": []
+        }
+      ]
+    },
+    {
       "date": "2026-11-16",
       "source": "https://www.producthunt.com/leaderboard/daily/2026/11/16",
       "fetched": "2026-11-17 17:24 北京",
