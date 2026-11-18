@@ -63,3 +63,4 @@
 | William Hu 常驻 agent：多数时间在休眠 | — | — | 2026-11-15 | — | — | — | — | — |
 | Feicai 用 Grok Bot + Codex 搭建多 Agent 团队：从架构设计到落地 | — | — | 2026-11-15 | — | — | — | — | — |
 | Addy Osmani Claude Code 团队怎样用证据做验证 | — | — | 2026-11-17 | — | — | — | — | — |
+| Lauren Tan All Code Is Slop：把重复的错收成检查 | — | — | 2026-11-17 | — | — | — | — | — |
