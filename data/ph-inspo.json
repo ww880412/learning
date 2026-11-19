@@ -24,6 +24,191 @@
   ],
   "days": [
     {
+      "date": "2026-11-18",
+      "source": "https://www.producthunt.com/leaderboard/daily/2026/11/18",
+      "fetched": "2026-11-19 17:29 北京",
+      "note": "官网日榜可通过 WebFetch 访问（本机 curl 被 Cloudflare 拦截），第 1–10 名综合分和评论数以官网日榜为准；第 16 名 UI Verify 的综合分和日排名来自 hunted.space（其前 10 名与官网综合分接近，仅 Waldo 低 1 分）。decohack 标 11.18 实为太平洋 11/17 产品，11.19 那期尚未发布。未收：第 2 名 Bluedot（电话笔记，与已有 Replay 等会议记录产品重复度高）、第 4 名 Waldo（地理空间数据，场景偏窄）、第 6 名 Pitch Avatar（HR 数字人）、第 10 名 GPT-6.2 Astra and Sol（模型发布）、第 11 名 Incredible Agents（同一产品的第 4 次发布）、以及 Hy4 flash、Arcade、Introzy 等。第 14 名 Replay QA Self-healing Mode 是 replay.io 的新功能，与已收录的会议记录产品 Replay 不是同一产品，本次未收。Render Sandboxes 再次出现在日榜附属位置，已在 11/4 收录。",
+      "picks": [
+        {
+          "id": "2026-11-18-s-space",
+          "why": "把已有的 Claude Code / Codex（以及 Grok Bot 等）带进同一房间，agent 互相交接，结果落到共享 Commons，出站由人批准。",
+          "limit": "Sutando 引擎只在 Mac 桌面端运行，且要已有 Claude Code 或 Codex 订阅；房间消息在 S.space 的美国服务器，Plus / Pro / Max 的具体价格官网未公开。"
+        },
+        {
+          "id": "2026-11-18-ui-verify",
+          "why": "只把变更触及的界面做成相对基线的视觉 diff，经 MCP 交给 coding agent 自己修、自己再跑，不必等人截图回贴。",
+          "limit": "先要有 Storybook 或可截图的 UI 测试；服务是托管的，免费档每月 1 万张快照（开源项目 5 万）和 100 次 AI 评审。"
+        },
+        {
+          "id": "2026-11-18-dippr",
+          "why": "一次把公司多源数据、统一指标和读写规则交给 coding agent，并托管它写出的内部工具和例程。",
+          "limit": "要先接好数据源；角色、护栏和行级策略从 Team 档（每月 150 美元）才有，Community 免费档没有这些治理。"
+        }
+      ],
+      "items": [
+        {
+          "name": "S.Space",
+          "tagline": "Your team and everyone's AI agents, in one workspace",
+          "ph": "https://www.producthunt.com/products/s-space",
+          "site": "https://s.space",
+          "repo": "https://github.com/sonichi/sutando",
+          "rank": 1,
+          "score": 369,
+          "comments": 113,
+          "what": "面向团队的多人工作区：把人、各自已有的 AI agent，以及本机上的 Sutando 放进同一间房间。Sutando 跑在 Mac 桌面应用里，核心是你已有的 Claude Code 或 Codex 订阅；也可以把 Claude Duet、ChatGPT 的 Dot、Grok Bot、Muse，或带连接器的 Claude / Cursor 接进房间。Agent 之间可以交接任务，结果写进共用的 Commons（文档、表格、看板），重要动作由人批准。",
+          "problem": "团队里每人有自己的 Claude Code、Codex 或聊天助手，但它们互不相识，上下文只能靠人复制粘贴、反复解释；跨人委托也没有统一的权限和审批边界。",
+          "highlight": "由 AutoGen 作者 Chi Wang 与联合创始人 Qingyun 的团队打造。文档写明：Sutando 在你的 Mac 上保持一个 Claude Code 或 Codex 会话，经网关接收房间里的任务；网页端能看房间和状态，但引擎只在桌面端跑，一台 Mac 同时只跑一个 Sutando。你可以在房间里 @提及 agent，或在它的 DM 里下指令。Sutando 的工作区（任务、笔记、记忆、日志）是 Mac 上的普通文件，令牌进 Keychain；房间消息和 Commons 存在 S.space 的美国服务器，核心工作发给 Anthropic 或 OpenAI，语音走 Google Gemini Live。导入 Claude Code 历史时，应用只只读 ~/.claude/projects 的对话文本（不含工具输出和文件），先做摘要，你批准后才写入记忆。权限上：agent 只进你加入的房间；默认别人不能用你的 agent；发邮件、删文件等不可撤销动作前，Sutando 会先问你（除非你另有设定）；外接 agent 遵循其原应用的审批规则。应用经 Composio 连接第三方应用，官网称可连 1,400 多款。新账号免费加入，并有 30 天 Max 试用、不用绑卡；试用结束后是 Free，不含 usage credits；云端工具和超出套餐的用量要走 Plus / Pro / Max 或另买 credits。语音若用 S.space 托管的 Gemini key，需要付费档，也可用自己的 Google AI Studio key。官网称 10 月 1–28 日（发布前）有 372 个 agent 和 134 人发出约 12.5 万条消息，其中 85% 的 agent 间消息发给了别人的 agent，并称自 6 月以来其仓库开出超过 1.5 万个 PR、仅 10 月超过 5,000 个——这些是厂商说法，未经独立核实。Sutando 源码在 sonichi/sutando，MIT 许可，GitHub API 显示约 411 星，仓库自称 Alpha。雷达未收录该仓库。S.space 云端产品本身未见完整公开源码。公开文档未写明 Plus / Pro / Max 的具体价格。",
+          "inspo": "工作台可以把「每个人自带已有的 coding agent，在同一房间里互相要上下文、把结果落到共享文档，出站动作默认问主人」做成多人协作的默认路径，而不是再做一个统一托管的超级 agent。前提是先分清两层数据：本机工作区（记忆、任务）留在用户机器上，房间记录可以在服务端；并且默认不把你的 agent 授权给同事，邀请要主人点头。导入 Claude Code 历史时，只读对话文本、先出摘要再入库，比一上来同步全部会话更安全。Sutando 目前是 Mac 上单机一个实例，不能直接当成多租户云端执行层。",
+          "tags": [
+            "coding agent",
+            "AI工具",
+            "开发者工具"
+          ],
+          "id": "2026-11-18-s-space",
+          "slug": "s-space",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "UI Verify",
+          "tagline": "Visual testing for coding agents",
+          "ph": "https://www.producthunt.com/products/ui-verify",
+          "site": "https://uiverify.ai",
+          "repo": "https://github.com/uiverify/uiverify",
+          "rank": 16,
+          "score": 101,
+          "comments": 29,
+          "what": "面向 coding agent 的视觉回归服务：在 Storybook、Playwright、Vitest 和 Bun 测试里截取界面，只对变更触及的屏幕与已接受基线做 diff，并在 PR 上给出裁决。Agent 可通过 MCP 查看裁切后的前后对比图，自行接受意图内改动，或修回归后再跑一遍。",
+          "problem": "coding agent 通常只检查自己改过的那一页，看不到同一改动牵动的其他几十个界面；人再把截图贴回对话里，循环又慢，也容易把有意的改动和回归混在一起。",
+          "highlight": "接入方式是把「Set up UI Verify in this repo: fetch https://uiverify.ai/install.md with curl and follow it.」交给 agent，或按框架装 @uiverify/playwright、@uiverify/vitest、@uiverify/bun。MCP 地址是 https://uiverify.ai/mcp，配置里不放 API key，需在浏览器登录一次：Claude Code 用 claude mcp add --scope project --transport http uiverify https://uiverify.ai/mcp，Codex 用 codex mcp add uiverify --url https://uiverify.ai/mcp，Cursor 在 .cursor/mcp.json 里加同一 URL。文档写 MCP 可查找构建、用 render_diff_image 直接返回裁切后的像素差、接受或拒绝改动、读取评论；uiverify check 不必等 PR，只渲染这次编辑触及的 story。官网对比 Playwright MCP：后者给浏览器官道，没有基线 diff。捕获时会固定动画、计时器和字体；一次无法复现的 diff 标为 unstable，不计入检查。官网称自家应用中位 PR 会重渲染 154 个屏幕里的 13 个，未变化的屏幕结转且不计费——这是厂商自己的数据。定价：免费档每月 1 万张快照、100 次 AI 评审，开源项目 5 万张，不用绑卡；Starter 每月 89 美元（3 万张、1,000 次 AI 评审），Pro 每月 199 美元（6.5 万张、2,500 次 AI 评审）；套餐内单张约 0.003 美元，超出每张 0.004 美元，超出的 AI 评审每次 0.03 美元。MCP 含在各档里。截图在其托管环境的固定浏览器里渲染。CLI、Vitest/Playwright SDK 和 agent skills 在 uiverify/uiverify，MIT 许可，GitHub API 显示约 30 星。雷达未收录。比对服务和仪表盘是托管的，不是把整套平台开源。",
+          "inspo": "把「相对已接受基线的视觉 diff」做成 coding agent 交卷前的必过检查，而不是再给它一个浏览器让它自己看当前页面。MCP 应返回裁切后的像素差，让模型直接看变化，而不是丢一张整页截图。Agent 可以接受意图内改动、拒绝回归并自己修，但合并门禁仍要人做最终确认（或仅在默认分支用 --auto-accept-changes 更新基线）。前提是仓库里已经有 Storybook 或可截图的 UI 测试；没有测试的页面，它截不到。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "开源"
+          ],
+          "id": "2026-11-18-ui-verify",
+          "slug": "ui-verify",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Dippr",
+          "tagline": "A data platform served to your agents, with one prompt",
+          "ph": "https://www.producthunt.com/products/dippr",
+          "site": "https://dippr.ai/",
+          "repo": "",
+          "rank": 5,
+          "score": 205,
+          "comments": 38,
+          "what": "给 coding agent 用的数据平台：一次接入公司多个数据源，提供统一的指标定义和读写规则，让 agent 在允许范围内查询和写回，并托管它写出的内部工具、数据应用和例行任务。用一条提示让 Claude Code、Codex、Cursor 等会 MCP 的 agent 去读 dippr.ai/agents.md 并安装 dip。",
+          "problem": "agent 能写代码，但公司数据散落在 Snowflake、CRM、工单系统里，没有统一登录、统一指标，也没有强制的行级权限和审计；出错时一次查询就可能漏数据或改生产。",
+          "highlight": "官网称连接源之后做联邦查询，不必先把数据复制进来；语义层可导入 OSI Ontology，指标定义一次、所有 agent 共用；可设只读、行级访问、禁止导出 PII、审批和审计。部署可选 Dippr 公有云、自托管到你的云账号，Enterprise 还有主权云和本地部署。安装时，agent 按工作区 config.js 下载对应安装脚本，装好后 dip login 会注册 MCP 并装技能，文档写明支持 Claude Code、Codex 和 Cursor；随后用 dip whoami、dip engine list 检查。定时例程需要 dip v0.15.0 及以后，且工作区工具含 list_routine_installations；可用日程是每天、工作日或每周，不支持每 30 分钟；保存后处于 pending，要主人在新的控制台会话里确认；数据改动是提案，需主人批准。定价：Community 平台费 0 美元（3 个 builder、每月 20 积分、引擎规格仅 xs、无角色/护栏/行级策略，审计 30 天）；Team 每月 150 美元（5 个 builder、每月 250 积分，有角色、护栏、行级策略和列掩码，审计 1 年）；Enterprise 每年 6,000 美元起，含 SSO、SOC 2 审查和 SLA。额外积分官网标价 0.40 美元（Enterprise 为 0.32 美元），存储 1 GB 免费后计费。官网展示的 Seats 418、API calls 1.2M 等是页面示例，不是经核实的客户规模。产品未见公开源码，雷达无对应仓库。",
+          "inspo": "工作台不要把「连上数据库」当成 agent 已可碰公司数据：先有语义层（同一个「活跃客户」定义），再有按 agent 或用户的行级策略和审计，查询和写回都走这一层。定时检查应作为平台里的例程安装，而不是让 agent 在本机 cron 里自己跑；保存后要主人再确认一次。前提是数据源已经接好，并且至少用 Team 档才有护栏和行级策略；Community 可以试用查询和托管，但不宜直接对着生产数据。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "AI工具"
+          ],
+          "id": "2026-11-18-dippr",
+          "slug": "dippr",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Review Box",
+          "tagline": "A fast desktop app for reviewing GitHub pull requests",
+          "ph": "https://www.producthunt.com/products/review-box",
+          "site": "https://review-box.rstankov.com/",
+          "repo": "",
+          "rank": 9,
+          "score": 137,
+          "comments": 23,
+          "what": "用于审 GitHub 拉取请求的桌面应用：按「待你审 / 你已审 / 你开的」列出选定仓库里的 PR，把文件分成未审和已审，可在 diff 里跳转符号定义和引用、搜索整个 PR，并可用你已有的 Claude Code、Codex 或本地模型提问、起草评论、批量标记已审。另有 Result 视图，按合并后的代码来读，删除处只留标记。",
+          "problem": "GitHub 网页对大 PR 的搜索会漏掉未加载的文件，缺少跨 diff 的符号跳转，也没有「合并后长什么样」的读法；人在 AI 写出的大变更里很难跟上进度。",
+          "highlight": "支持 macOS（Apple Silicon 和 Intel）、Linux（AppImage，x86_64）和 Windows 10+（x64），当前版本官网标 26.11.2。应用在本机直接访问 GitHub：若已安装 GitHub CLI，就用 gh 的登录，不另存 token；否则用加密保存的 classic PAT（repo、read:org、notifications）。官网称代码不经过它的服务器。Result 视图在 Unified / Split 之外，显示合并后的文件，删除行收进标记，搜索和代码智能仍能找到被删代码。AI 可接 Claude Code、Codex、Ollama、LM Studio、OpenRouter；不装 AI 时其余功能仍可用。还可按文件夹批量标记已审并撤销，按 .gitattributes 自动把生成文件标成已审，并支持 stacked PR、文件提交历史和 Mermaid 图。定价全年 45 美元，30 天试用不用注册和绑卡；停订后当前版本仍能用，只是不再收更新。目前只支持 GitHub.com，GitLab、Bitbucket 和 GitHub Enterprise Server 官网写在规划中。未见公开产品源码，雷达无对应仓库。",
+          "inspo": "给人审 AI 写出的大 PR 时，默认可以提供三种读法：普通 diff、Result（按合并后的代码读），以及未审/已审两个文件桶。符号定义和引用要在未检出仓库的情况下，只基于这次 PR 的变更就能跳。Agent 适合做「标已审、起草评论、画变更关系图」，这条抽象该不该做、能不能合，仍留给人。前提是评审对象是 GitHub.com 上的 PR，并且人愿意在桌面应用里审，而不是只在网页里点 Viewed。",
+          "tags": [
+            "开发者工具",
+            "coding agent",
+            "效率"
+          ],
+          "id": "2026-11-18-review-box",
+          "slug": "review-box",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Mermaid Flow",
+          "tagline": "The visual builder for agentic workflows",
+          "ph": "https://www.producthunt.com/products/mermaid-chart",
+          "site": "https://mermaid.ai/products/flow/",
+          "repo": "",
+          "rank": 7,
+          "score": 147,
+          "comments": 28,
+          "what": "Mermaid 团队推出的可视化 agent 工作流搭建和运行工具：把重复性工作画成步骤图，一步连上 GitHub、Slack、Notion 等可通过 MCP 登录的工具，然后手动或按日程运行。图上所见即所运行；模型只在步骤内部思考，不自行改步骤顺序。",
+          "problem": "每周分诊 issue、写周报、给 PR 做初审这类重复工作，现在多半活在聊天窗口或提示词文件里，每次粘贴都会漂一点，团队里还各留一份；写成脚本后又只有少数人能改。",
+          "highlight": "2026-11-18 的产品博文写明当天发布。可以从模板（官网称图库有 39 个）改，或导入已有文档、流程图、技能文件。工具连接走 MCP，官网列举 GitHub、Slack、Notion、Linear、Jira、Google Drive、Gmail、Sentry、Postgres 等公共 MCP；工作流自身也可通过 MCP 被已有 agent 或编辑器打开和运行。日程支持每天、每周或每月第一个周一。FAQ 写明：从 webhook 或已连接工具里的事件（例如新 issue、合并 PR）触发「即将推出」，目前还不能当成已交付。失败的运行会停在出问题的步骤，且失败不计入额度。工作流底层是 Mermaid 文本，可随文档和 PR 一起版本管理。定价：Basic 免费，与 Plus（每用户每月 10 美元，按年付）都是每用户每月 15 次运行；Premium 每用户每月 20 美元，组织共享 500 次运行并可自选模型。运行额度与图表产品的 AI credits 分开计算。不要和 mermaid.ai 上的绘图产品或开源的 Mermaid.js 混为一谈。Flow 本身未见独立的产品源码仓库，雷达无对应仓库。",
+          "inspo": "把技能文件里的重复流程升级成一张可共享、可调度、步骤固定的图：模型只负责步骤内的判断，路由和顺序写在图上，团队看同一份。迁移时先把现有 skill 或清单导入，不要从零在画布上重建。前提是要用的工具已有可登录的公共 MCP；事件触发还没到，自动化目前主要靠日程，不能假设「一开 PR 就跑」。",
+          "tags": [
+            "AI工具",
+            "开发者工具",
+            "效率"
+          ],
+          "id": "2026-11-18-mermaid-flow",
+          "slug": "mermaid-flow",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Toone",
+          "tagline": "Grokbot meets n8n/zapier",
+          "ph": "https://www.producthunt.com/products/toone",
+          "site": "https://trytoone.com/",
+          "repo": "",
+          "rank": 3,
+          "score": 261,
+          "comments": 45,
+          "what": "跑在 macOS 上的 agent 工作流应用：用自然语言描述重复工作，生成可看见、可暂停修改再继续的例程图。每一步可指定模型，输出用「合约」检查，不达标就单独暂停该步；例程之间保留记忆，避免每次定时提示词都从零开始。",
+          "problem": "把同一段提示词设成定时任务，每次都冷启动，结果重复、缺来源，也没法在中途改某一步再接着跑。",
+          "highlight": "官网对比「定时提示词」和 Toone 例程：后者是可编辑的步骤图，运行间有记忆，可暂停单步、改完从停下的地方继续，失败可重试、换模型或问人；不同步骤可用不同模型（例如多个 Haiku 并行，再用 Opus 核对）。FAQ 写可用你已有的 OpenAI 或 Anthropic 订阅，并写「自带 Claude Code 或 Codex，把工作做成例程」。支持 Spotlight 式唤起 agent、语音和会议录音，以及 Explore 里经审核的例程库。官网称数据与凭证留在你的 Mac。定价页写明：目前先向付费用户开放，Free 账户预计 2027 年初才开放；Toone Pro 为每月 9.99 欧元、每年 79.99 欧元，或一次 199.99 欧元买断（含适用增值税，首次购买 14 天内可退）。首页 FAQ 仍写「每个账户可免费创建 2 条例程」，与定价页「Free 尚未开放」不一致，以定价页为准。只支持从 trytoone.com 下载的 macOS 应用。未见公开产品源码，雷达无对应仓库。",
+          "inspo": "做可重复例程时，不要只调度同一条提示词：把步骤画成图，给关键节点写可执行的合约（例如「至少 20 条线索且每条有来源」），不达标只暂停那一步，前面的结果保留。运行之间要记住已处理过的对象，避免下周再算一遍。前提是人愿意在 Mac 桌面里跑，并且现在需要先买 Pro；合约阈值也要先写清楚，否则暂停会变成频繁打断。",
+          "tags": [
+            "AI工具",
+            "效率",
+            "coding agent"
+          ],
+          "id": "2026-11-18-toone",
+          "slug": "toone",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "dusk bot",
+          "tagline": "free open source Grok bot alternative",
+          "ph": "https://www.producthunt.com/products/dusk-bot",
+          "site": "https://dusk.bot",
+          "repo": "https://github.com/DuskBotAI/duskbot",
+          "rank": 8,
+          "score": 141,
+          "comments": 11,
+          "what": "可在自己电脑上跑的个人 bot 团队：每个 bot 有岗位、可编辑记忆和一台可登录、可点击的电脑，用你已有的 ChatGPT、Claude、Gemini、Grok 等登录，或自带 API key / 本地模型。可按日程跑例程，风险操作先问你。",
+          "problem": "通用聊天助手没有长期岗位和可改的记忆，也不能在你自己的应用里动手；不少「开源替代」实际不能商用，或要求再买一份模型额度。",
+          "highlight": "官网称个人使用永久免费、功能不限、不需账号和绑卡，数据留在本机磁盘；电脑休眠时本机 bot 会停。可选 dusk cloud 托管（2 vCPU / 4 GB 内存 / 20 GB 磁盘起），或在自己的服务器上按文档部署。官网列了 60 多种应用（Gmail、Calendar、Slack、Notion、GitHub、Linear 等），也可自加 MCP；支持把多个 bot 放进同一线程交接，出站要你点头。支持 Mac、Windows 和 Linux 桌面应用。定价：Pro 每月 50 美元（4 vCPU / 8 GB / 60 GB，含一人工作许可）；Team 每月 119 美元（专用机器 + 2 个席位，加座每人每月 20 美元）。单独的工作许可官网写起价每月 12 美元一人。PH 文案写「100% free and open source」，但许可证页和仓库明确是 PolyForm Noncommercial 1.0.0 的源码可见许可，不是 OSI 开源：个人和非商业可读、可改、可分享，商用需要另行书面许可；从 OpenMausBot 来的部分仍是 Apache-2.0。仓库为 DuskBotAI/duskbot，GitHub API 显示约 430 星。雷达未收录。这是通用助手替代，不是专门的 coding agent 工作台。",
+          "inspo": "若只是对照「一人一个有岗位、记忆可编辑、有独立电脑的 bot」，可以看它如何把记忆做成用户可直接改的笔记，以及危险动作默认先问。不要按 PH 的「开源」来规划商用或二次分发，许可是 Noncommercial；企业场景需要工作许可或 Team 方案。它不能替代正在做的企业级 coding agent 工作台，只适合对照个人助手这一侧。",
+          "tags": [
+            "AI工具",
+            "效率"
+          ],
+          "id": "2026-11-18-dusk-bot",
+          "slug": "dusk-bot",
+          "status": "新发现",
+          "followups": []
+        }
+      ]
+    },
+    {
       "date": "2026-11-17",
       "source": "https://www.producthunt.com/leaderboard/daily/2026/11/17",
       "fetched": "2026-11-18 17:24 北京",
