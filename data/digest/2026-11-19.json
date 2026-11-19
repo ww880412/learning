@@ -3,7 +3,15 @@
  "label": "11 月 19 日 · 星期四",
  "href": "digest/2026-11-19.html",
  "json": "data/digest/2026-11-19.json",
- "brief": null,
+ "brief": {
+  "title": "X 简报 · 11/19（周四）",
+  "href": "x-brief/2026-11-18.html",
+  "lines": [
+   "OpenAI 官方介绍 Codex sandbox 与默认 permission profile：以 Git 仓库为工作区时，内置 :workspace 可在仓库内改源码而无需逐次批准，但根目录 .git 和 .codex 只读；允许受用户系统权限限制的广泛读取；默认关网络，命令要上网时可能直接询问用户，或交给 auto-review（官方博客）：OpenAI 开发者号写，改仓库的命令不应自动获得网络权限；Codex 不用另开容器，而是在用户现有环境里用操作系统级沙箱限制文件系统和网络。官方博客（Michael Bolin，2026-11-18）补充：.git / .codex 只读，是为了防止直接改 .codex/config.toml 或 .git/hooks；广泛读权限是为了让编译器和 SDK 能工作，但机器上其他配置里的 API key 仍可能被读到；关网络能挡住一批外传，也会挡住下依赖，常用包仓库域名可以写进 permission profile。官方明确残留风险：agent 仍可能向常被 gitignore 的依赖（例如 node_modules/prettier）注入代码，用户编辑器在沙箱外保存时可能执行。官方把它写成 defense in depth，并称 codex sandbox 可把同一套限制用到自己的工具里（介绍帖、默认 profile、OS 级沙箱、网络与 auto-review、官方文章）",
+   "OpenAI 的 Tibo 解释 GPT-6.2 体感分化：较早给少数人试用后，最近 3–4 天又做了很多改动，他相当确定那些人没有在这几天复测，而且视频是上周拍的；他同时承认沟通风格的反馈，「我们正在处理」（官方）：他另写，这些模型能力很强，但还有若干 rough edges，会慢慢打磨。他引用 OpenAI 官方账号与 AMD 的结果：不到五个月，在 AMD 工程师已优化多年的旗舰 GPU IP 上识别出最高约 14% 的 PPA 改进；同样方法也用于 OpenAI 第一颗自定义推理芯片 Jalapeño，「gains verified」（官方原帖此句被截断）。Greg Brockman 转发第三方 browser_use 榜：GPT-6.2 Sol 在 browser use 上 82%（6.1 Sol 为 81%），便宜 35%，快一倍（12 分钟对 22 分钟），步数少 36%。歸藏自测：Sol UltraFast 剪 8 分钟视频，总耗时 27 分钟，模型响应约 14 分钟，均速 126 token/s，峰值 252 token/s；他一度说会多用 Sol、Astra 先不搞，晚些又说 Astra 在复杂 3D 建模上细节很好，从零在 Blender 里建、几乎没干涉，共约 6 小时（大部分是渲染），花了 8198 万 token（Tibo 解释测评时差、他推荐 Sol UltraFast、沟通风格与 AMD、Brockman 转发、歸藏 UltraFast 实测、歸藏后来的 3D 实测、OpenAI 官方 AMD 帖）",
+   "OpenAI 官方称：对可以等待的单轮或多轮工作流，GPT-6.2 Astra 或 Sol 相比 Standard 最高可省 40%/token；Responses API background mode 的折扣窗口已公开 beta（官方）：第一次回复可选 2 小时或 8 小时目标窗口；官方开发者号和文档都写，completion_window=2h 比 Standard 少 30%，8h 少 40%。例子是下班前提交会议记录，早上再取 brief。第一次请求设 continuation ID，后续请求复用可提高排队优先级。官方文档还写，折扣适用于符合条件的每次请求（含后续回合），默认窗口 soonest 没有这笔折扣（介绍帖、8 小时例子、2h/8h 折扣、官方文档）"
+  ]
+ },
  "posters": {
   "title": "5 张技术海报",
   "href": "x-posters/2026-11-19/index.html",
