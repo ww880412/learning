@@ -24,6 +24,209 @@
   ],
   "days": [
     {
+      "date": "2026-11-19",
+      "source": "https://www.producthunt.com/leaderboard/daily/2026/11/19",
+      "fetched": "2026-11-20 17:22 北京",
+      "note": "官网日榜可通过 WebFetch 访问，第 1–10 名综合分和评论数以官网为准；第 15、21、23 名（ToolJet、Tecla、Fieldwork Code）的综合分和排名来自 hunted.space（其前 10 名与官网一致）。官网上第 7 名 Manufact 的当前分 198 高于第 6 名 Spellar 的 194，排名按榜单结束时。前三名与 vocus.cc《矽谷今天在瘋什麼》（按 PH 11/19 太平洋榜）一致。未收：第 2 名 Verse Engine（浏览器 3D 引擎，场景偏远）、第 4 名 Stripo Email Widgets（邮件营销）、第 5 名 Adside（广告投放 agent）、第 6 名 Spellar for Chrome 和第 11 名 Wispr Flow Notetaker（会议记录，与已有产品重复度高）、第 10 名 Gemini 4 Neon（模型发布，PH 链接与已收的 Gemini 4 Hydrogen 相同）、第 12 名 Enrichable（MIT 开源，但面向销售线索整理）、第 22 名 Polylane for Azure（Polylane 已在 10/23 收录）。",
+      "picks": [
+        {
+          "id": "2026-11-19-testsprite-4-0",
+          "why": "给 coding agent 一个外部验收环：agent 用开源 CLI 发起测试，按 runId 取回单条失败的原因和证据再修，测试预期只能由人改。",
+          "limit": "测试在 TestSprite 云端执行，要有可访问的预览环境或本机隧道；免费档每月 150 积分，官网没写一个积分能跑多少测试。"
+        },
+        {
+          "id": "2026-11-19-fieldwork-code",
+          "why": "把 Claude Code、Codex、OpenCode 等多个 harness 的并行会话放在一处，diff / PR / CI 侧栏和 diff 批注一键发给 agent，手机能接着看。",
+          "limit": "本地会话关机就暂停，合盖续跑要云沙箱（每人每月优惠价 50 美元，标准价 99 美元）；模型循环跑在 Fieldwork 云端。"
+        },
+        {
+          "id": "2026-11-19-teaflask",
+          "why": "Allow / Ask / Deny、能挂两天的持久化审批、断线写操作记为「未知」不重试、真实对话回放做回归，这套运行时规则能直接搬进工作台。",
+          "limit": "它是给 SaaS 加产品内助手的托管服务，agent 循环本身不能改；SDK 用 FSL-1.1-ALv2，不是 OSI 开源。"
+        }
+      ],
+      "items": [
+        {
+          "name": "TestSprite 4.0",
+          "tagline": "Fix one thing, break another? This agent checks it all",
+          "ph": "https://www.producthunt.com/products/testsprite",
+          "site": "https://www.testsprite.com",
+          "repo": "https://github.com/TestSprite/testsprite-cli",
+          "rank": 1,
+          "score": 357,
+          "comments": 55,
+          "what": "面向 AI 编程团队的测试 agent：用大白话、PRD 或 Jira / Linear 工单说明应用应该做什么，它先探索正在运行的应用，再在真实浏览器里写并跑端到端 UI 和 API 测试，把每个失败判成真 bug、测试问题或环境问题；批准过的测试沉淀成回归套件，可以从网页、终端 CLI 或每个 PR 触发。",
+          "problem": "coding agent 改好一处又弄坏另一处；团队有 agent 写、AI 评审，却没人真去点一遍产品。agent 也很难从测试仪表盘里拿到能直接动手修的失败结果。",
+          "highlight": "这是 TestSprite 在 PH 的第 6 次发布，4.0 是重做的测试 agent。CLI 开源在 TestSprite/testsprite-cli，Apache-2.0，GitHub API 显示约 5,200 星。README 写明：`testsprite setup` 会给检测到的 coding agent（Claude Code、Codex、Cursor 等）装好 skill；循环是 plan → apply → run → result get → 修 → 再 run；`run --output json` 有稳定的 JSON 结构和退出码（0 通过、1 失败）；`result get <resultId>` 只返回这一条结果的结论、原因、修复建议、失败步骤截图和录像，agent 读的永远是它刚发起的那次运行；`--local 3000` 开隧道测本机应用；`ci init github` 生成 PR 门禁。PH 发布文写明：测试的预期只能经你批准才改；可同时开 100 多个真实浏览器，能自己登录（含一次性验证码）。测试在 TestSprite 云端执行，CLI 只是客户端。官网定价：Free 每月 150 积分；Starter 19 美元/月（首月免费）；Standard 39 美元；Pro 69 美元；Enterprise 199 美元起（10 席起）；官网没写一个积分能跑多少测试。厂商自测：自家基准上找 bug 准确率 94%，Claude Code 和 Codex 为 86%；生成并运行 200 个 UI 集成测试花 4.60 美元，用 GPT-6 Astra 要 428 美元——均未经独立验证。雷达未收录该仓库。",
+          "inspo": "工作台给 agent 的「验收」接口可以照它的 CLI 契约来设计：一次运行有 runId，每条结果有 resultId，agent 只按自己刚发起的 runId 取结果；失败时返回「失败步骤 + 原因 + 修复建议 + 证据文件」一个包，退出码就是结论。另一条可以直接抄的规则是「测试预期只能由人批准修改」，防止 agent 改测试让自己通过。前提是被测应用有可访问的预览环境（PR 预览部署或本机端口），测试在独立的执行器里跑，不和 agent 共用工作区。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "开源"
+          ],
+          "id": "2026-11-19-testsprite-4-0",
+          "slug": "testsprite-4-0",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Fieldwork Code",
+          "tagline": "AI coding on your laptop or in the cloud, from your phone",
+          "ph": "https://www.producthunt.com/products/fieldwork-code",
+          "site": "https://fieldwork.ai",
+          "repo": "https://github.com/fieldwork-ai/fieldwork-code",
+          "rank": 23,
+          "score": 84,
+          "comments": 12,
+          "what": "Fieldwork（一款团队 AI 助理）里的编码模块：并行开多个 AI 编码会话，可选 Claude Code、Codex、OpenCode、Pi 或 Fieldwork 自己的 harness 和模型；会话跑在本机桌面应用（免费）或云端沙箱，网页和手机 App 都能接着同一个会话。",
+          "problem": "编码会话被绑在一台电脑的终端里，离开工位就看不到 diff、CI 结果，也没法给 agent 下一步指令；几个 harness 各开各的窗口，也难统一管理。",
+          "highlight": "会话旁有侧栏，放终端、文件 diff、PR 状态和 CI 检查结果；一键动作（推 PR、评审代码、解冲突等，提示词可自定义）直接发进对话；可以在 diff 上批注，把整批人工评审一键发给 agent。厂商在 PH 评论里说明：本地会话随电脑关机暂停，电脑开着留在桌上就能从手机继续；合盖后还要跑就用云沙箱；diff 和 CI 状态会同步到手机。开源的终端客户端 fwcode（fieldwork-ai/fieldwork-code，MIT 或 Apache-2.0 二选一，其中源自 OpenAI 的 Codex 传输部分保留 Apache-2.0）的 README 写明：模型循环和工具清单在 Fieldwork 云端，终端只执行你批准的读、写、改、bash 调用；会话绑定到具体机器和目录，恢复会话必须是同一台机器、同一目录，机器离线也不会自动换到云工作区。官网定价：Fieldwork 标准价每人每月 99 美元，目前优惠价 50 美元，含 Fieldwork Code 云沙箱算力（每席每月 1,440 vCPU 小时），可接自己的 ChatGPT 或 Claude 订阅；PH 写本机桌面版免费。官网称有 3,000 多个连接器，并自带任务和知识库。仓库很新，GitHub 显示 0 星；雷达未收录。",
+          "inspo": "两条可以直接抄。一是「会话 = 机器 + 目录」绑定：恢复必须回到同一台机器同一目录，离线时不悄悄换到云端，企业工作台靠这个避免 agent 在错的环境里改代码。二是把评审做成 diff 上的批注，攒一批一次发给 agent，而不是在聊天框里逐条描述。前提是工作台自己掌握 diff、PR、CI 数据，并把不同 harness 抽象成同一种会话对象；手机续接要服务端中转会话流，内网部署得另行考虑。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "开源"
+          ],
+          "id": "2026-11-19-fieldwork-code",
+          "slug": "fieldwork-code",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Teaflask",
+          "tagline": "Self-improving AI copilot for your app. No backend changes.",
+          "ph": "https://www.producthunt.com/products/teaflask",
+          "site": "https://teaflask.com",
+          "repo": "https://github.com/teaflask/assistant",
+          "rank": 9,
+          "score": 171,
+          "comments": 14,
+          "what": "给现有 SaaS 加产品内 AI 助手的托管服务（YC 公司）：前端放一个组件（React 或 script 标签）接入，可以复用你自己的 UI 组件；助手能替用户填表、查记录、上传文件、调用你已有的接口完成多步操作，不改后端。",
+          "problem": "想让产品「说一句就办成」，通常得自己搭 agent 运行时、审批、断线恢复和评测；文档和代码也常对不上，助手照着旧文档答错。",
+          "highlight": "每个动作可设 Allow / Ask / Deny；运行是持久化的，崩溃、重新部署或一个挂了两天的审批都不会丢，断线后流式输出从句子中间接上；长任务可以拆给后台子 agent 再合并报告。真实对话会存成测试用例，改提示词或换模型前回放检查回归，也能看便宜模型能否做同样的活；文档里的说法会对照代码检查，代码变了就提醒；Steep 定期分析用户卡在哪，给出能交给 coding agent 的证据（以上为官网和 PH 发布文所称）。官网示例报告里有个细节：提交请求时页面断开，系统不重试，把结果记为「未知」，先去业务系统核对再决定。模型可选 Anthropic、OpenAI 或 OpenRouter 上的模型，用自己的 key，或往 Teaflask 钱包充值（官网称 0 加价）；分 Free 和 Enterprise 两档。厂商在评论里说明：agent 循环本身（调模型、跑工具、管上下文）不能改。前端 SDK 仓库 teaflask/assistant 用 FSL-1.1-ALv2（Functional Source License，按条款两年后转 Apache-2.0），不是 OSI 开源许可。",
+          "inspo": "工作台里长任务的审批可以照它做成「停车」：Ask 类动作把这一轮挂起，人隔两天批准也能从原步骤继续，而不是超时重来。更值钱的一条：外部写操作中途断线时记为「结果未知」而不是自动重试，先查后端是否已提交，避免重复执行。真实会话存成回放用例，作为换模型、改提示词前的回归门槛。前提是每次工具调用都有持久化的执行记录，且被调系统有幂等键或可查询的状态接口。",
+          "tags": [
+            "AI工具",
+            "开发者工具"
+          ],
+          "id": "2026-11-19-teaflask",
+          "slug": "teaflask",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Manufact",
+          "tagline": "Ship and test your MCP to every plugin marketplace",
+          "ph": "https://www.producthunt.com/products/manufact",
+          "site": "https://manufact.com",
+          "repo": "https://github.com/mcp-use/mcp-use",
+          "rank": 7,
+          "score": 198,
+          "comments": 55,
+          "what": "MCP 服务器和插件的托管云：连上 GitHub 仓库就得到线上 MCP 端点，每个 PR 有预览部署；在真实的 ChatGPT、Claude 等客户端以及多种模型、harness 上跑评测；生成插件市场的上架材料；按会话看 agent 调了哪些工具。团队是开源 MCP 框架 mcp-use 的作者，YC S25。",
+          "problem": "MCP 跑通只是开始：在用户实际用的客户端里能不能用、能不能过插件市场审核、agent 任务失败了为什么失败，都缺工具。",
+          "highlight": "评测由 LLM 评委打分，可以逐个看工具调用，判断的是「用户任务有没有完成」，而不只是「工具有返回」。发布侧有上架检查、就绪分数和 Auto fix，再把上架文案、给审核员的测试用例等打成一个 ZIP 提交包。分析侧按会话跟踪工具调用、延迟和错误。支持 OAuth，工具能拿到已验证的用户身份；不限框架（FastMCP 也行）；接入托管在别处的 MCP 只在 Enterprise 档。官网定价：Free 每月含 5 美元用量；按量付费含 10 美元；Pro 每月 250 美元另计用量（含 300 美元）；工具调用每千次 0.10 美元，每次评测 0.70 美元，上架检查每次 0.90 美元，提交包每个 0.50 美元。PH 用户评论说 Product Hunt 自己的 MCP 用它准备上架。mcp-use（mcp-use/mcp-use）是 MIT 许可，GitHub API 显示约 1.1 万星；Manufact 云平台本身未开源。雷达未收录 mcp-use。",
+          "inspo": "如果工作台要把自己的能力以 MCP 或插件形式发到 ChatGPT、Claude 等客户端，可以借它的跨客户端评测：同一组任务在每个目标客户端里各跑一遍，用「任务完成」而不是「调用成功」判定，再逐个查看工具调用。上架前的元数据检查（服务说明长度、工具描述长度等）可以先做成本地 lint。前提是先攒一套固定的任务样例；用它评测自托管的 MCP 需要 Enterprise 档。",
+          "tags": [
+            "开发者工具",
+            "AI工具"
+          ],
+          "id": "2026-11-19-manufact",
+          "slug": "manufact",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Tecla",
+          "tagline": "A proactive AI agent whose interface is a TODO list",
+          "ph": "https://www.producthunt.com/products/tecla-3",
+          "site": "https://usetecla.com",
+          "repo": "",
+          "rank": 21,
+          "score": 84,
+          "comments": 7,
+          "what": "Mac 上的主动式工作助理：读你连接的邮件、Slack、会议纪要和应用，自动整理出属于你的待办清单，每条带上下文和执行计划；点 Run 它就去做。",
+          "problem": "聊天式 agent 要你先想好问什么、再粘贴上下文；散落在各处的承诺和请求又很容易漏掉。",
+          "highlight": "界面是待办列表而不是聊天线程：每条显示它知道什么、计划和进度；需要你决定时给按钮或可编辑的草稿，不让你回一段话。同一任务在几个地方出现会自动合并（厂商在评论里说明）。以你名义发的消息或邮件要你批准；自动开新任务的 Autopilot 默认关闭；纠正一次会记住；任务可以设成定期执行；连不上的网站用自带浏览器去点，需要登录时让你自己登。官网称已接 57 个应用（Gmail、Slack、GitHub、Linear、Jira、Notion、Figma 等）。免费起步，之后 47 美元/月，或买 8 美元起的点数包。目前只有 Mac 版。",
+          "inspo": "工作台首页可以试「待办即入口」：从 issue、PR 评论、群消息里提取派给我的事，每条先给计划，用户点运行才交给 agent；需要决定时给按钮或草稿，而不是让人打字。「默认不自动开跑」「以我名义发言前必须批准」这两个开关可以直接沿用。前提是任务去重和归属判断要靠谱，否则清单很快被噪音淹没。",
+          "tags": [
+            "AI工具",
+            "效率"
+          ],
+          "id": "2026-11-19-tecla",
+          "slug": "tecla",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "ToolJet",
+          "tagline": "Vibe-coded business apps that pass the security review",
+          "ph": "https://www.producthunt.com/products/tooljet",
+          "site": "https://www.tooljet.com",
+          "repo": "https://github.com/ToolJet/ToolJet",
+          "rank": 15,
+          "score": 96,
+          "comments": 2,
+          "what": "开源低代码平台 ToolJet 的新版本：让 Claude Code、Codex 或 Cursor 用 React 写内部工具（管理后台、仪表盘、审批应用），ToolJet 提供这些应用上线所需的数据连接、内置数据库、权限、SSO、审计和带人工审批的工作流。",
+          "problem": "coding agent 十分钟就能写出管理后台，但它跑在哪、谁能打开、谁检查过、碰到生产数据怎么管，没人负责。",
+          "highlight": "本次新增：React Builder 每次保存都做安全扫描，有风险的版本在修好或被人工覆盖前不能发布；可视化构建器支持版本对比，并可以请同事评审后再发布；工作流可以停下来等人批准（比如大额退款）；管理员可以按人限制 AI 额度。官网称经 ToolJet MCP 从 Claude Code、Codex、Cursor 构建应用，不消耗 ToolJet 的 AI 额度。权限可细到应用、页面、查询和数据源；可用 ToolJet Cloud，也可自托管在 AWS、GCP、Azure、Docker 或 Kubernetes。官网云端定价：Free（1 个构建者、3 个应用）；Basic 每构建者每月 23 美元；Pro 79 美元；Team 199 美元（SSO、审计日志、Git 同步、评审请求在这一档）；多环境、强制推广审批、自带模型 key 在 Enterprise。开源仓库 ToolJet/ToolJet，AGPL-3.0，GitHub API 显示约 4.1 万星；部分企业功能要商业许可。雷达未收录。",
+          "inspo": "「agent 生成的代码保存即扫描、有风险就挡在发布前、必须有人显式覆盖」可以直接作为工作台的发布门禁；人工审批做成工作流里的一个等待节点，而不是外挂一条聊天提醒。前提是有确定的扫描规则和发布流水线；ToolJet 是 AGPL，若要嵌入它的代码要先评估许可影响。",
+          "tags": [
+            "开发者工具",
+            "coding agent",
+            "开源"
+          ],
+          "id": "2026-11-19-tooljet",
+          "slug": "tooljet",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Netlify Server",
+          "tagline": "Run WebSockets, multiplayer apps, and long-running agents",
+          "ph": "https://www.producthunt.com/products/netlify",
+          "site": "https://www.netlify.com/blog/introducing-netlify-server/",
+          "repo": "",
+          "rank": 3,
+          "score": 282,
+          "comments": 20,
+          "what": "Netlify 新推出的长驻后端：应用有人在用时服务器一直活着，能保持 WebSocket、在内存里留状态、跑需要几分钟到几小时的 agent 循环；Express、Fastify、Hono、Koa 代码可以直接带来，和前端一起部署。",
+          "problem": "函数式后端有超时，实时协作、多人游戏和长时间运行的 agent 任务只能拆到别处托管。",
+          "highlight": "每个分支的部署预览都有自己的服务器和 Netlify Database 分支，可以回滚，空闲缩到零。文档写明的 Early Access 限制：每个服务器最多 3 个实例（Free 和 Personal 档 1 个），空闲约 5 分钟后缩到零；单个请求（包括 WebSocket、SSE 连接）最长 30 分钟，Pro 及以上 2 小时，到点断开，客户端要自己重连；每个实例约两百个 WebSocket；实例被替换时连接最多保留 90 秒，建议在 onShutdown 里用 1012 关闭码断开，让客户端马上重连到新实例；多实例共享的状态要放 Netlify Database 或 Blobs，不能只放内存。需要 Node.js 24+ 和 Netlify CLI 27.17.0+。Early Access 期间免费；Netlify 官方 agent skill 文档写明 GA 后按预留内存（GB 小时）和活跃 CPU（vCPU 小时）计费。",
+          "inspo": "工作台要托管长时间 agent 任务时，它的边界写法值得抄：连接有硬上限、到点必断，所以客户端必须会重连、状态必须外置；停机时用专门的关闭码通知客户端立刻换实例。前提是任务能中途续跑；超过 2 小时的工作要走后台任务，而不是一直挂着请求。",
+          "tags": [
+            "开发者工具"
+          ],
+          "id": "2026-11-19-netlify-server",
+          "slug": "netlify-server",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Tabstack by Mozilla",
+          "tagline": "Give your model the web without giving up your privacy",
+          "ph": "https://www.producthunt.com/products/tabstack",
+          "site": "https://tabstack.ai",
+          "repo": "https://github.com/mozilla/pilo",
+          "rank": 8,
+          "score": 187,
+          "comments": 18,
+          "what": "Mozilla 出品的 agent 联网 API：/research 一次返回带引用的综合回答；/extract 把公开网页转成干净的 Markdown，或按你给的 schema 返回 JSON；/generate 把内容改写成新结构；/automate 在公开网站上完成多步点击和表单任务。",
+          "problem": "给 agent 联网通常要自己拼抓取 API、无头浏览器，再加一层模型做结构化，网站一改版就得维护；数据怎么留存也说不清。",
+          "highlight": "官网称数据从不用于训练、默认私密；但厂商在评论里说明，请求历史默认开启（用于支持），可以在调用前关掉，90 天后清除。Research 只引用实际读过的页面，并告诉你有多少页没读到；Extract 找不到的字段返回 null。automate 有交互模式，提交表单前可以停下来问用户；不会代你登录，需要登录的网站要用开源的 Pilo（mozilla/pilo，Apache-2.0，约 120 星）。官网提供 agents.md、OpenAPI 规范、TypeScript / Python SDK 和 CLI，以及 LangChain、Vercel AI SDK、OpenAI Agents、Claude Agent SDK 等适配。官网定价：新账号送 1 万点；Starter 10 美元/月含 10 万点，Team 99 美元，Pro 499 美元；Extract Markdown 每次 10 点、JSON 50 点、Automate 100 点、Research 250–350 点。雷达未收录 Pilo。",
+          "inspo": "给 agent 的联网工具可以照它的返回约定：没读到的页数要报出来，抽不到的字段显式返回 null，不让模型自己补；网页写操作提供「提交前暂停请批准」的交互模式。在站点根目录放 agents.md 和 OpenAPI 让 agent 自助接入，也可以用在工作台自己的 API 文档上。前提是只处理公开页面；内网或要登录的页面得自建（例如 Pilo）。",
+          "tags": [
+            "AI工具",
+            "开发者工具"
+          ],
+          "id": "2026-11-19-tabstack",
+          "slug": "tabstack",
+          "status": "新发现",
+          "followups": []
+        }
+      ]
+    },
+    {
       "date": "2026-11-18",
       "source": "https://www.producthunt.com/leaderboard/daily/2026/11/18",
       "fetched": "2026-11-19 17:29 北京",
