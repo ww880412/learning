@@ -24,6 +24,166 @@
   ],
   "days": [
     {
+      "date": "2026-11-20",
+      "source": "https://www.producthunt.com/leaderboard/daily/2026/11/20",
+      "fetched": "2026-11-21 17:30 北京",
+      "note": "官网日榜可通过 WebFetch 访问，第 1–10 名综合分和评论数以官网为准；Groundwork、UndoGuard 的日排名来自 PH 产品页的 Day Rank，官网日榜只列前 10 名综合分，这两项分数按 hunted.space 记录的票数填写（67、63），其前 10 名票数比官网综合分通常低 0–3 分，不能当作已公布的综合分。decohack 标 11.20 实为太平洋 11/19 产品，已在昨日收录。未收：第 1 名 Saparo（购物优惠叠加 agent）、第 2 名 Tripmojo（旅行 agent）、第 4 名 Bookella（阅读追踪）、第 6 名 Kuc-kuc（独居老人天气关怀）、第 7 名 Direct by Instagram（目前只在土耳其和泰国测试）、第 8 名 Tamekoshi（电子宠物式通用助手，开源仍在路线图上），以及 aiteam.space、Memanto Cloud、Stormi、FFMPA Kids News 等。",
+      "picks": [
+        {
+          "id": "2026-11-20-docker",
+          "why": "用 sbx run claude 把 coding agent 放进本机或云端同一套微虚拟机，密钥留在宿主机，还可以按沙箱开关 MCP。",
+          "limit": "本机 CLI 和本机算力免费，云端按秒计费；组织级网络、文件系统和 MCP 策略要另买 Docker AI Governance。产品本身未见公开源码。"
+        },
+        {
+          "id": "2026-11-20-currents",
+          "why": "从 Claude / Codex 插件目录连上后，agent 能直接读到失败用例、历史和 Playwright trace，并带上 fix-failing-tests 等现成技能。",
+          "limit": "先要在 CI 里把测试记录到 Currents；14 天试用后 Scale 档从每月 1 万条结果、49 美元起。Codex IDE 扩展不支持插件，要手动加 MCP。Cypress 13 及以上不支持。"
+        },
+        {
+          "id": "2026-11-20-groundwork",
+          "why": "计划文件里生成区和手写区分开，重跑时由无依赖的 Python 脚本按 sha256 决定写不写盘，模型改不掉你改过的段落。",
+          "limit": "要先按它的计划文件夹和围栏约定来写，并需要本机 Python 3。浏览器里看板的 Start 只是复制提示词，不会直接开会话。"
+        }
+      ],
+      "items": [
+        {
+          "name": "Docker",
+          "tagline": "Built to run on trust, for the agentic era",
+          "ph": "https://www.producthunt.com/products/docker",
+          "site": "https://www.docker.com/products/docker-sandboxes/",
+          "repo": "",
+          "rank": 3,
+          "score": 253,
+          "comments": 4,
+          "what": "这次 PH 发布的是 Docker 面向 agent 的新产品线：用独立 CLI `sbx`，在微虚拟机里跑 Claude Code、Codex 等 coding agent；本机和 Docker 托管的云端用同一套隔离模型，也可用 `sbx move` 把沙箱的文件系统搬到另一边。",
+          "problem": "容器是为工作负载隔离设计的，agent 却会自己决定跑什么、访问和改什么；若还要在隔离环境里构建镜像，用容器常常不得不抬高权限（Docker-in-Docker）。企业和开发者需要专门给 agent 用的隔离和治理。",
+          "highlight": "官网称每个沙箱是带自己内核的微虚拟机，内有私有 Docker Engine，相对宿主机是硬件边界；密钥留在宿主机，不进虚拟机。macOS 安装是 `brew trust docker/tap && brew install docker/tap/sbx`，然后 `sbx run claude` 或 `sbx run codex`。FAQ 写默认以 `--dangerously-skip-permissions` 无人值守运行，安全性来自沙箱而不是提示词。支持 Claude Code、Codex、Gemini、Cursor、GitHub Copilot 等。Sandbox Kit 用一份 YAML 固定工具、网络规则和配置；`sbx mcp enable <server> --sandbox <name>` 只给这一个沙箱开 MCP，凭证放在 sbx 密钥库。文档写：`sbx` CLI 和本机算力免费（含商业使用），云端按秒计费（官网站出 Micro 为每小时 0.07 美元，XL 为每小时 1.12 美元），模型费用自理。组织级网络、文件系统和 MCP 策略由 Docker AI Governance 提供，文档写明是另付费的订阅。官网称自己是「唯一能在本机和云端用同一套微虚拟机、并用一条命令在两边搬动沙箱」的方案——此为厂商说法，未经独立验证。公开仓库只见到发布用的 docker/sbx-releases，未见完整源码，故不填 repo。雷达已有 docker/mcp-gateway（MIT），与这次 Sandboxes 不是同一个产品。",
+          "inspo": "工作台可以抄三件事。第一，给 agent 的默认模式就是「在沙箱里无人值守」，权限靠隔离而不是靠提示词；前提是每个任务真有独立的内核级边界，而不是和宿主机共享内核的容器。第二，密钥和 MCP 凭证放在宿主机或控制面，按沙箱白名单注入，不进运行环境。第三，同一套沙箱描述（Kit YAML）既能在开发者本机跑，也能在任务变重时迁到云端（`sbx move`），隔离不降级。组织级网络和 MCP 策略适合做成一次配置、到处执行，但那是 Governance 订阅里的能力。",
+          "tags": [
+            "coding agent",
+            "开发者工具"
+          ],
+          "id": "2026-11-20-docker",
+          "slug": "docker",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Currents",
+          "tagline": "Currents for Claude & Codex to see all your tests",
+          "ph": "https://www.producthunt.com/products/currents-4",
+          "site": "https://currents.dev/",
+          "repo": "",
+          "rank": 5,
+          "score": 156,
+          "comments": 24,
+          "what": "Currents 是把 CI 里的测试运行记录下来的平台（支持 Playwright、Jest、Vitest 等）。这次发布是让 Claude 和 Codex 能从官方插件目录连上，直接读取失败、历史和 trace。",
+          "problem": "coding agent 修失败测试时，往往只能看到 CI 日志摘要，拿不到完整失败证据和历史 flake 信息，要人从仪表盘里翻 trace 再贴给 agent。",
+          "highlight": "官方 changelog（2026-11-03）起，Currents 出现在 Claude 插件目录和 ChatGPT/Codex 共用插件目录，连上后登录即可，不必手填服务器地址；底层仍是托管 MCP `https://mcp.currents.dev/mcp`，以你的 Currents 账号和角色行事。插件自带三个 skill：`fix-failing-tests`、`collect-evidence`、`browser-evidence`。Claude 这边一次连接会跟随账号到 Desktop、Claude.ai、移动端、Cowork 和 Claude Code，但 Claude Code 只有在用 Claude.ai 账号登录时才会自动加载，否则需 `claude mcp add`。Codex IDE 扩展不支持插件，要用 `codex mcp add currents --url https://mcp.currents.dev/mcp`。工具里带写操作，例如 `currents-delete-run` 会永久删除一次运行，文档写 Currents 不会再确认，建议把审批设为写入前询问。文档还写：Cypress 13 及以上不支持；GitHub Actions 来自 fork 的 PR 拿不到 secrets，记录到不了 Currents。官网定价：注册有 14 天免费试用（含全部功能、最多 1 万条测试结果，不用信用卡）；之后 Scale 档在每月 1 万条结果时为 49 美元/月，超出按每千条 4.9 美元；Business 档同档位 99 美元/月并含 SSO/SCIM；Enterprise 可自托管。产品本身未见公开源码。雷达未收录。",
+          "inspo": "工作台给 coding agent 的「修测试」接口可以做成：agent 不问人要日志，而是按项目和分支直接取「最近一次失败 + 历史 + trace/截图」一个包，并预置 `fix-failing-tests` / `collect-evidence` 这类技能名。写入类工具（删运行记录）默认先问人。前提是测试已经在 CI 里被记录到同一套可查询的运行库，并且每人用自己的身份登录，权限跟他在测试平台上的角色走。",
+          "tags": [
+            "coding agent",
+            "开发者工具"
+          ],
+          "id": "2026-11-20-currents",
+          "slug": "currents",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Groundwork",
+          "tagline": "Claude Code plans that re-runs never overwrite",
+          "ph": "https://www.producthunt.com/products/groundwork-6",
+          "site": "https://ikenga.dev/docs/use/groundwork/",
+          "repo": "https://github.com/ikenga-hq/groundwork",
+          "rank": 33,
+          "score": 67,
+          "comments": 4,
+          "what": "一个开源的 Claude Code skill（也可用 npx skills 格式给 Codex、Cursor 等用）：按目标生成一套计划文件夹（研究、设计、计划、跟踪和独立 HTML 看板），以后每次重跑只改它生成的区块。",
+          "problem": "用 agent 写计划后再让它更新，它常把整份文件重写，连你手写的段落一起覆盖，计划逐渐漂移，人只好把笔记拷出去再重跑。",
+          "highlight": "Apache-2.0，仓库 ikenga-hq/groundwork，GitHub API 显示 2 星。安装：`npx skills add ikenga-hq/groundwork`。文档写权威执行者是一个无第三方依赖的 Python 脚本，不让模型自己算哈希或改锚点：文件夹根上有 `.groundwork.json` 记录每份文档的哈希和稳定 ID；生成内容写在围栏里，围栏外和未识别的围栏都不动；重跑时对新内容做 sha256，和上次写入相同则不写盘，若围栏内字节已与记录不符，就认定是人改过，除非强制否则拒绝覆盖。稳定 ID（如工作包 `WP-NN`、缺口 `G-NN`）一旦分配不复用号码。厂商说明：需要本机 Python 3；普通浏览器里看板的 Start 只是把提示词复制到剪贴板，不会启动会话（Ikenga 桌面应用里可以）；看板首次打开要从 CDN 拉 React，探索器可以离线；research 动作会把网页内容写入文件，应视为不可信文本。不需要 Ikenga 也能用。官网日榜未公布该名次的综合分，分数栏是 hunted.space 记录的 67 票；日排名以 PH 产品页 #33 为准。雷达未收录该仓库。",
+          "inspo": "工作台里的计划或设计文档可以抄这套「脚本拍板、模型只提议」：生成区用围栏标出来，哈希由无模型参与的脚本比对，人改过的区块重跑就跳过。稳定 ID 用来精确重同步下游跟踪，而不是靠 agent 猜该改哪一段。前提是团队接受这种文件夹和围栏约定，并且本机有 Python 3（或把同等脚本做进工作台）。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "开源"
+          ],
+          "id": "2026-11-20-groundwork",
+          "slug": "groundwork",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "UndoGuard",
+          "tagline": "The Ctrl+Z button for autonomous AI agents",
+          "ph": "https://www.producthunt.com/products/undoguard",
+          "site": "https://undoguard.vercel.app/",
+          "repo": "",
+          "rank": 48,
+          "score": 63,
+          "comments": 5,
+          "what": "一个加在 agent 和已有 REST API 之间的回滚代理（也提供 MCP）：写操作执行前先拍下当前资源快照，之后可以回滚单次调用或整段 session。",
+          "problem": "给 agent 生产环境写权限风险很高，一次错误的 DELETE 或 PUT 就可能改掉或清空客户数据，团队往往只敢给读权限。",
+          "highlight": "官网称 agent 改为调用 `POST /api/v1/execute`，代理先读 pre-state 再发真实请求，并把 pre/post 状态用 AES-256-GCM 加密保存，自动推导回滚方式（DELETE→POST、POST→DELETE、PUT/PATCH→PUT）。可按单次事务回滚，或 `POST /api/v1/rollback-session/{sessionId}` 从新到旧回滚整段。厂商在 PH 评论中说明：若只回滚中间某一步（`/api/v1/rollback/:id`），发现后续步骤已改同一资源会返回 `409 downstream_dependency_conflict`；也可用 `/api/v1/rollback-from/:id` 从该步起按时间倒序级联回滚；故意不自动重放后续 LLM 步骤，以免制造新的副作用。厂商又称已发出的邮件、已结算的汇款无法收回，应标记为 `non_reversible` 并可用补偿 webhook——评论写「今天会上到代理和仪表盘」，是否已上线未独立核实。官网自称延迟小于 15ms，未经独立验证。PH 与厂商评论称免费档每月 1,000 次可回滚操作、不用信用卡，回滚本身不计费；Pro 含不限量、SSO/SAML、审计日志和自托管或 VPC。未见公开源码。官网日榜未公布该名次的综合分，分数栏是 hunted.space 记录的 63 票；日排名以 PH 产品页 #48 为准。雷达无此项目。",
+          "inspo": "工作台若要让 agent 改生产数据，可以把写操作统一走「先快照再执行」的代理，sessionId 与一次 agent 运行绑定；单步撤销时若有后续依赖就拒绝，并让人选择从该步级联回滚，而不是静默改乱后面的状态。前提是这些写操作都是可 GET 再回写的资源型 API，并且全部流量都经过该代理；已发出的邮件这类副作用，回滚只能标记和补偿，不能当作已撤销。",
+          "tags": [
+            "coding agent",
+            "开发者工具"
+          ],
+          "id": "2026-11-20-undoguard",
+          "slug": "undoguard",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "tensorViz",
+          "tagline": "Let your coding agent see inside your PyTorch model",
+          "ph": "https://www.producthunt.com/products/tensorviz",
+          "site": "https://tensorviz.dev",
+          "repo": "https://github.com/tensorviz-org/tensorviz",
+          "rank": 10,
+          "score": 96,
+          "comments": 8,
+          "what": "开源的 PyTorch（及 JAX/Flax）模型可视化工具：对你 Python 源码里的 `nn.Module` 做一次真实前向，得到带实测 tensor 形状的交互图，编码 agent 可以查图并基于证据改模型代码。",
+          "problem": "coding agent 能读模型源码，却看不到一次真实前向里实际流过的形状和模块，修模型时常靠猜测。",
+          "highlight": "MIT，仓库 tensorviz-org/tensorviz，GitHub API 显示 7 星。官网称不经 torch.export 或 ONNX，用 eager 前向加 hook 记录形状。编辑器扩展可用于 VS Code / Cursor / VSCodium；coding agent 插件（预览）支持 Claude Code、Codex、Cursor。文档示例中的 agent 接口包括 `get_graph`、`inspect_nodes`、`propose_edit`，由人接受或丢弃补丁。也可在 Model Explorer 浏览 560 多篇近期刊论文的现成图，不必先安装。插件安装示例：`claude plugin marketplace add tensorviz-org/tensorviz`，再 `claude plugin install tensorviz@tensorviz-standalone --scope user`。限制：预览插件支持 macOS 和 glibc Linux（x64/ARM64），Windows（x64/ARM64）在 Codex 上；CPython 3.12，CPU 采集；同一 agent 不要同时连插件和扩展。文档写 TensorViz 自己的代码是 MIT，但画布用 tldraw 5.0.1，对外打包发行需要你自己的 tldraw 许可密钥。雷达未收录该仓库。",
+          "inspo": "对「agent 改模型」可以抄「先采集一次真实前向，再让 agent 只提议、人接受」：给 agent 的是实测形状图和节点，而不是让它只看源码猜维度；补丁经 `propose_edit` 出来后默认不直接写文件。前提是能在该环境跑一次前向（需要合适的 Python 和输入），并且人和 agent 看同一张图。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "开源"
+          ],
+          "id": "2026-11-20-tensorviz",
+          "slug": "tensorviz",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Volcano",
+          "tagline": "The self-healing agent cloud by Kong",
+          "ph": "https://www.producthunt.com/products/volcano-3",
+          "site": "https://volcano.dev",
+          "repo": "",
+          "rank": 9,
+          "score": 108,
+          "comments": 6,
+          "what": "Kong 推出的 agent 云：从你已在用的 Claude Code、Codex、Cursor、OpenCode、Pi 部署，提供持久函数、人工审批、可恢复沙箱、分布式锁、可分支的 Postgres，以及自称能自行修 bug 的 LavaFlow。",
+          "problem": "coding agent 能写出应用，但要把带状态的长期工作流、审批、沙箱和数据库托管到一处，并在生产出错后接上修复，通常要自己拼很多基础设施。",
+          "highlight": "官网称先运行 `npm i -g @volcano.dev/cli && volcano connect --signup`，会给本机检测到的 coding agent 装 skill。能力包括：持久函数逐步 checkpoint、最长一年；审批暂停后从断点继续；沙箱提供文件、shell 和 exec；Postgres 带 pgvector 和行级安全，官网称一分钟内可分支副本。LavaFlow 从重复出现的生产错误（或你写的 issue）诊断并开修复 PR，默认自主度为 `open_pr`（合并可选）；文档写它会把该项目的日志和源码发给 Volcano 运营的 AI 服务；预览期需要 SUPERAGENT 方案。官网定价：Hobby 0 美元/月（沙箱每月最多 5 GB-hour、会话最长 1 小时、每账户最多 5 个并发沙箱、持久执行每月最多 5,000 次）；SUPERAGENT 年付合 17 美元/月（含每月 1,000 积分，额外 1,000 积分 25 美元），沙箱每月含 20 GB-hour、会话最长 8 小时。未见公开源码。雷达无此项目。",
+          "inspo": "若工作台要托管 agent 写出的后端，可参考这组原语：逐步 checkpoint 的持久函数、人工审批后从同一断点恢复、数据库可按任务分支、自愈修复默认只开 PR 不自动合并。前提是应用跑在这套云上（或你自己实现同等原语）；启用自动修复还要接受把日志和源码交给厂商的 AI 服务，并把仓库授权给它开 PR。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "AI工具"
+          ],
+          "id": "2026-11-20-volcano",
+          "slug": "volcano",
+          "status": "新发现",
+          "followups": []
+        }
+      ]
+    },
+    {
       "date": "2026-11-19",
       "source": "https://www.producthunt.com/leaderboard/daily/2026/11/19",
       "fetched": "2026-11-20 17:22 北京",
