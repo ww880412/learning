@@ -1,0 +1,77 @@
+{
+ "date": "2026-11-22",
+ "label": "11 月 22 日 · 星期日",
+ "href": "digest/2026-11-22.html",
+ "json": "data/digest/2026-11-22.json",
+ "brief": null,
+ "posters": {
+  "title": "2 张技术海报",
+  "href": "x-posters/2026-11-22/index.html",
+  "n": 2,
+  "items": [
+   {
+    "title": "Claude Code 团队代码审查：6–9 月合并 PR 翻倍，需回滚比例降超 40%",
+    "href": "x-posters/2026-11-22/index.html#p1",
+    "img": "x-posters/2026-11-22/img/01-anthropic-claude-code-review.webp"
+   },
+   {
+    "title": "GUARD：改 harness 只在收益大于新回退时保留，测试时用冻结的一份",
+    "href": "x-posters/2026-11-22/index.html#p2",
+    "img": "x-posters/2026-11-22/img/02-guard-regret-guided-harness.webp"
+   }
+  ]
+ },
+ "ph": {
+  "listDate": "2026-11-20",
+  "href": "ph-inspo/index.html",
+  "n": 6,
+  "source": "https://www.producthunt.com/leaderboard/daily/2026/11/20",
+  "picks": true,
+  "items": [
+   {
+    "rank": 3,
+    "pick": true,
+    "name": "Docker",
+    "what": "这次 PH 发布的是 Docker 面向 agent 的新产品线：用独立 CLI `sbx`，在微虚拟机里跑 Claude Code、Codex 等 coding agent；本机和 Docker 托管的云端用同一套隔离模型，也可用 `sbx move` 把沙箱的文件系统搬到另一边。",
+    "href": "ph-inspo/index.html#2026-11-20-docker"
+   },
+   {
+    "rank": 5,
+    "pick": true,
+    "name": "Currents",
+    "what": "Currents 是把 CI 里的测试运行记录下来的平台（支持 Playwright、Jest、Vitest 等）。这次发布是让 Claude 和 Codex 能从官方插件目录连上，直接读取失败、历史和 trace。",
+    "href": "ph-inspo/index.html#2026-11-20-currents"
+   },
+   {
+    "rank": 33,
+    "pick": true,
+    "name": "Groundwork",
+    "what": "一个开源的 Claude Code skill（也可用 npx skills 格式给 Codex、Cursor 等用）：按目标生成一套计划文件夹（研究、设计、计划、跟踪和独立 HTML 看板），以后每次重跑只改它生成的区块。",
+    "href": "ph-inspo/index.html#2026-11-20-groundwork"
+   },
+   {
+    "rank": 48,
+    "pick": false,
+    "name": "UndoGuard",
+    "what": "一个加在 agent 和已有 REST API 之间的回滚代理（也提供 MCP）：写操作执行前先拍下当前资源快照，之后可以回滚单次调用或整段 session。",
+    "href": "ph-inspo/index.html#2026-11-20-undoguard"
+   },
+   {
+    "rank": 10,
+    "pick": false,
+    "name": "tensorViz",
+    "what": "开源的 PyTorch（及 JAX/Flax）模型可视化工具：对你 Python 源码里的 `nn.Module` 做一次真实前向，得到带实测 tensor 形状的交互图，编码 agent 可以查图并基于证据改模型代码。",
+    "href": "ph-inspo/index.html#2026-11-20-tensorviz"
+   },
+   {
+    "rank": 9,
+    "pick": false,
+    "name": "Volcano",
+    "what": "Kong 推出的 agent 云：从你已在用的 Claude Code、Codex、Cursor、OpenCode、Pi 部署，提供持久函数、人工审批、可恢复沙箱、分布式锁、可分支的 Postgres，以及自称能自行修 bug 的 LavaFlow。",
+    "href": "ph-inspo/index.html#2026-11-20-volcano"
+   }
+  ]
+ },
+ "url": "https://ww880412.github.io/learning/digest/2026-11-22.html",
+ "rule": "汇总日 D 是北京时间。简报文件名是美东日期，北京时间 D 日 09:00 发布，那时美东还是 D−1 日，所以 D 一般对应 x-brief/(D−1).html（页面若有带时区的发布时间，则改用该时间换算到 Asia/Shanghai；链接仍是原文件）。海报是 x-posters/D/。产品灵感是最新一份榜单日 ≤ D−2 的那组（太平洋时间的 Product Hunt 日榜，北京时间 D 日 09:00 前能入库的最新一份），并标出实际榜单日。某一来源没有就是 null。"
+}
