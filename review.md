@@ -65,3 +65,5 @@
 | Addy Osmani Claude Code 团队怎样用证据做验证 | — | — | 2026-11-17 | — | — | — | — | — |
 | Lauren Tan All Code Is Slop：把重复的错收成检查 | — | — | 2026-11-17 | — | — | — | — | — |
 | jexchan 推荐一本书：AI 时代的软件工程手册 | — | — | 2026-11-18 | — | — | — | — | — |
+| River Leaf AI 编程多智能体编排层 / 控制面产品综述 | — | — | 2026-11-22 | — | — | — | — | — |
+| Harrison Chase How to build a knowledge factory：把公司经验变成智能体下次能用的知识 | — | — | 2026-11-22 | — | — | — | — | — |

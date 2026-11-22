@@ -13,4 +13,6 @@
 | X 好文 | x-posts/jex-software-engineering-handbook/jex-software-engineering-handbook.html | jexchan《推荐一本书，AI 时代的软件工程手册》导读。进行中，未学完。精读已加密，明文不在仓库 | https://x.com/jexchan/status/2122924389293535563 |
 | X 好文 | x-posts/addy-verification/addy-verification.html | Addy Osmani《How the Claude Code team thinks about verification》全文讲解。进行中，未学完。精读已加密 | https://claude.dev/blog/how-the-claude-code-team-thinks-about-verification/ |
 
+| X 好文 | x-posts/riverleaf-agent-orchestrator-control-plane/riverleaf-agent-orchestrator-control-plane.html | River Leaf《AI 编程多智能体编排层 / 控制面产品综述》原文梳理与 Codex 解析。进行中，未学完。无新增加密精读页，原文见 X Article | https://x.com/riverleaf88/status/2124089345271558344 |
+| X 好文 | x-posts/hwchase-knowledge-factory/hwchase-knowledge-factory.html | Harrison Chase《How to build a knowledge factory》原文梳理与 Codex 解析。进行中，未学完。无新增加密精读页，原文见官方博客 | https://www.langchain.com/blog/knowledge-factory |
 其他：inbox.md 待学收件箱 · review.md 复习队列 · glossary.html 概念卡 · 旧路径 cs146s/、x-articles/ 是指向新位置的快捷方式。
