@@ -3,7 +3,15 @@
  "label": "11 月 23 日 · 星期一",
  "href": "digest/2026-11-23.html",
  "json": "data/digest/2026-11-23.json",
- "brief": null,
+ "brief": {
+  "title": "X 简报 · 11/23（周一）",
+  "href": "x-brief/2026-11-22.html",
+  "lines": [
+   "OpenAI 首席科学家 Jakub Pachocki 发表官方文章《Perplexity and Intelligence》，公开公司内部的 log-perplexity（交叉熵损失），并提议把它作为实验室之间可比较的共同安全上限（官方文章，11/22）：文章称，他们主要在一份来自内部代码库、自 GPT-3.5 起沿用的固定评测集上追踪这个指标。官方给出的数字是：GPT-3.5 约 0.99，GPT-4 约 0.91；损失降到 0.8 以下后，在网络安全和数学上出现了「变革性」能力；约 0.76 时，模型开始对数学开放问题给出突破性结果。作者外推，进入约 0.68–0.7 窗口还可能出现今天不一定在测的新能力，同时现有的对齐审计可能进一步失效。他建议前沿实验室先约定共同上限，在监测能力达到具体里程碑（例如思维链监视器的后继方案）之前不要越过。Sam Altman 称这是 OpenAI「一段时间以来最重要的一篇发布」，Greg Brockman 也转发强调（官方文章、Pachocki 原帖、Altman、Brockman）",
+   "小墨对照谷歌 11 月开发者论坛回复和文档整理：个人会员的 OAuth 登录，只适合官方 Antigravity 和原生 ACP 编辑器；把个人订阅塞进 Pi、DeepSeek Harness，或经 ACP / agy -p 给 Codex、Claude Code 当后端，被他归为不合规（作者对照官方材料的整理，我没有打开谷歌论坛原帖逐条核对）：他认为谷歌看的不只是有没有偷 OAuth Token，而是 Antigravity 自己还是不是干活的 Agent 主体。他分成三档：官方 CLI / IDE，以及 Zed、JetBrains、Android Studio、Xcode 和带官方社区插件的 VS Code，属于文档支持的用法；T3 Code、OpenBot 这类轻量客户端只有在单人手动、不接管工具、不跑无人值守循环、且只用套餐里的 Gemini 时才可能被有条件放行；Pi Agent、DeepSeek Harness（他写官方点名过 dsh-antigravity-acp）、OpenCode，以及用 Codex / Claude Code 经 ACP 调个人会员，属于拿个人订阅当廉价 API。他还提醒：自定义 Harness 走 ACP 时，要先在 agy 里 /logout 或显式指定 API Key，否则可能静默复用本机缓存的会员登录态。Pi 和 DeepSeek Harness 若要接谷歌，他建议改走 AI Studio 的 GEMINI_API_KEY 或 Vertex AI（原帖）",
+   "TestingCatalog 称，Grok Bot 的 macOS 应用即将加入本地 Computer Use 和系统级听写（第三方观察，目前没看到官方确认）：它写道，云端虚拟机上的 Computer Use 已经可用，团队正在做可在本机桌面操作应用的本地 Computer Use；「在任意应用里听写」也在开发，并引用了快捷键、词典、片段、whisper、保留和历史等能力说明，还提到 SuperGrok 应用（原帖）"
+  ]
+ },
  "posters": {
   "title": "6 张技术海报",
   "href": "x-posters/2026-11-23/index.html",
