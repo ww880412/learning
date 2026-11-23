@@ -1,0 +1,3078 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Agent 公开课清单</title>
+  <style>
+    :root {
+      --bg-canvas: #F6F7F9;
+      --bg-surface: #FFFFFF;
+      --bg-subtle: #F9FAFB;
+      --bg-accent-soft: #EFF6FF;
+      --text-primary: #111827;
+      --text-body: #1F2937;
+      --text-secondary: #4B5563;
+      --text-muted: #6B7280;
+      --border-light: #E5E7EB;
+      --border-strong: #D1D5DB;
+      --accent: #2563EB;
+      --accent-hover: #1D4ED8;
+      --accent-ring: rgba(37, 99, 235, 0.22);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 12px;
+      --max-width: 1180px;
+      --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", "Helvetica Neue", Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      margin: 0;
+      background-color: var(--bg-canvas);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      overflow-x: clip;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover {
+      color: var(--accent-hover);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .skip-link {
+      position: absolute;
+      left: 16px;
+      top: -100px;
+      z-index: 100;
+      padding: 8px 14px;
+      background: var(--text-primary);
+      color: #FFFFFF;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .skip-link:focus {
+      top: 12px;
+      color: #FFFFFF;
+      text-decoration: none;
+    }
+
+    .container {
+      width: 100%;
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+
+    /* Editorial Masthead */
+    .masthead {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-light);
+      padding: 28px 0 24px;
+    }
+
+    .masthead-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px 16px;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .masthead-meta .sep {
+      color: var(--border-strong);
+      user-select: none;
+    }
+
+    .masthead-title {
+      margin: 0;
+      font-size: clamp(26px, 3.2vw, 34px);
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    .masthead-desc {
+      margin: 10px 0 0;
+      color: var(--text-secondary);
+      font-size: 15px;
+      max-width: 72ch;
+    }
+
+    .masthead-stats {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 18px;
+      font-size: 13px;
+      color: var(--text-muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Sticky Selection Bar */
+    .toolbar-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px 16px;
+      padding-top: 12px;
+      padding-bottom: 12px;
+    }
+
+    .toolbar-status {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px 14px;
+      min-width: 0;
+    }
+
+    .selection-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .selection-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 24px;
+      height: 22px;
+      padding: 0 7px;
+      border-radius: 999px;
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-light);
+      color: var(--text-primary);
+      font-size: 13px;
+      font-weight: 600;
+      transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .selection-count[data-active="true"] {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #FFFFFF;
+    }
+
+    .feedback-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+      min-height: 1.4em;
+    }
+
+    .feedback-text[data-tone="accent"] {
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .toolbar-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn {
+      appearance: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 36px;
+      padding: 0 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-strong);
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    }
+
+    .btn:hover:not(:disabled) {
+      background: var(--bg-subtle);
+      border-color: #9CA3AF;
+    }
+
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #FFFFFF;
+      font-weight: 600;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+      color: #FFFFFF;
+    }
+
+    .btn-ghost {
+      border-color: transparent;
+      background: transparent;
+      color: var(--text-secondary);
+      padding: 0 10px;
+    }
+
+    .btn-ghost:hover:not(:disabled) {
+      background: var(--bg-canvas);
+      border-color: transparent;
+      color: var(--text-primary);
+    }
+
+    /* Manual Copy Fallback Drawer */
+    .fallback-panel {
+      border-top: 1px solid var(--border-light);
+      background: var(--bg-subtle);
+      padding: 14px 0 16px;
+    }
+
+    .fallback-panel[hidden] {
+      display: none;
+    }
+
+    .fallback-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px 12px;
+      margin-bottom: 10px;
+    }
+
+    .fallback-title {
+      margin: 0;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .fallback-hint {
+      margin: 2px 0 0;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .fallback-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .fallback-textarea {
+      width: 100%;
+      min-height: 150px;
+      max-height: 280px;
+      padding: 10px 12px;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 1.5;
+      resize: vertical;
+    }
+
+    /* Group Directory Navigation */
+    .group-nav-wrap {
+      padding-top: 20px;
+    }
+
+    .group-nav {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 14px 16px;
+    }
+
+    .group-nav-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .group-nav-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .group-nav-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 11px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-light);
+      color: var(--text-body);
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.35;
+      max-width: 100%;
+      transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+    }
+
+    .group-nav-link:hover {
+      background: var(--bg-accent-soft);
+      border-color: #BFDBFE;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .group-nav-index {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      font-variant-numeric: tabular-nums;
+      flex-shrink: 0;
+    }
+
+    .group-nav-name {
+      overflow-wrap: anywhere;
+    }
+
+    .group-nav-count {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-variant-numeric: tabular-nums;
+      flex-shrink: 0;
+    }
+
+    /* Main Catalog */
+    main {
+      padding: 24px 0 56px;
+    }
+
+    .course-group {
+      scroll-margin-top: 96px;
+    }
+
+    .course-group + .course-group {
+      margin-top: 38px;
+    }
+
+    .group-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 6px 16px;
+      padding-bottom: 10px;
+      margin-bottom: 14px;
+      border-bottom: 2px solid var(--text-primary);
+    }
+
+    .group-heading-wrap {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .group-number {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.04em;
+      flex-shrink: 0;
+    }
+
+    .group-title {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+      overflow-wrap: break-word;
+    }
+
+    .group-meta {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-variant-numeric: tabular-nums;
+      flex-shrink: 0;
+    }
+
+    .course-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Course Card */
+    .course-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 18px 22px;
+      box-shadow: 0 1px 2px rgba(17, 24, 39, 0.03);
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+    }
+
+    .course-card:hover {
+      border-color: var(--border-strong);
+    }
+
+    .course-card[data-selected="true"] {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent), 0 4px 14px rgba(37, 99, 235, 0.07);
+      background: #FCFDFF;
+    }
+
+    .course-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .check-hit {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      margin: -4px 0 0 -6px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .check-hit:hover {
+      background: var(--bg-accent-soft);
+    }
+
+    .course-checkbox {
+      appearance: none;
+      -webkit-appearance: none;
+      margin: 0;
+      width: 19px;
+      height: 19px;
+      border: 1.5px solid #9CA3AF;
+      border-radius: 5px;
+      background: var(--bg-surface);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: background-color 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
+    }
+
+    .course-checkbox::after {
+      content: "";
+      width: 10px;
+      height: 6px;
+      border-left: 2px solid #FFFFFF;
+      border-bottom: 2px solid #FFFFFF;
+      transform: rotate(-45deg) translate(0.5px, -1px) scale(0);
+      transition: transform 0.12s ease;
+    }
+
+    .course-checkbox:hover {
+      border-color: var(--accent);
+    }
+
+    .course-checkbox:checked {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .course-checkbox:checked::after {
+      transform: rotate(-45deg) translate(0.5px, -1px) scale(1);
+    }
+
+    .course-checkbox:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      box-shadow: 0 0 0 4px var(--accent-ring);
+    }
+
+    .course-main {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .course-heading-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 6px 14px;
+    }
+
+    .course-title {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 650;
+      line-height: 1.4;
+      color: var(--text-primary);
+      overflow-wrap: break-word;
+    }
+
+    .course-term {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-light);
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.5;
+      white-space: nowrap;
+      max-width: 100%;
+      overflow-wrap: anywhere;
+    }
+
+    .course-body {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .course-summary,
+    .course-materials {
+      margin: 0;
+      font-size: 14.5px;
+      line-height: 1.7;
+      color: var(--text-body);
+      overflow-wrap: break-word;
+    }
+
+    .course-materials {
+      color: var(--text-secondary);
+    }
+
+    .course-links {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-light);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .course-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid #DBEAFE;
+      background: var(--bg-accent-soft);
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.35;
+      max-width: 100%;
+      overflow-wrap: anywhere;
+      transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    }
+
+    .course-link:hover {
+      background: #DBEAFE;
+      border-color: #93C5FD;
+      color: var(--accent-hover);
+      text-decoration: none;
+    }
+
+    .course-link-arrow {
+      font-size: 12px;
+      line-height: 1;
+      flex-shrink: 0;
+      opacity: 0.85;
+    }
+
+    .empty-state {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 32px 24px;
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    /* Footer */
+    .site-footer {
+      border-top: 1px solid var(--border-light);
+      background: var(--bg-surface);
+      padding: 20px 0 28px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .footer-inner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px 20px;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px 14px;
+    }
+
+    @media (max-width: 720px) {
+      .container {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .masthead {
+        padding: 20px 0 18px;
+      }
+
+      .toolbar {
+        padding-top: 10px;
+        padding-bottom: 10px;
+      }
+
+      .toolbar-actions {
+        width: 100%;
+      }
+
+      .toolbar-actions .btn-primary {
+        flex: 1 1 auto;
+      }
+
+      .course-group {
+        scroll-margin-top: 132px;
+      }
+
+      .group-title {
+        font-size: 18px;
+      }
+
+      .course-card {
+        padding: 15px 14px;
+      }
+
+      .course-top {
+        gap: 10px;
+      }
+
+      .course-title {
+        font-size: 16px;
+      }
+
+      .course-term {
+        white-space: normal;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        transition-duration: 0.01ms !important;
+      }
+    }
+    .saved-mark {font-size:.75rem;color:#155e75;background:#ecfeff;padding:2px 7px;border-radius:4px}
+    .course-facts {margin:14px 0 10px;padding:10px 14px;background:#f7f8fa;border-radius:6px}
+    .course-facts > div {display:grid;grid-template-columns:6em minmax(0,1fr);gap:10px;margin:4px 0;font-size:.9rem;line-height:1.65}
+    .course-facts dt {color:#475569;font-weight:600}
+    .course-facts dd {margin:0;overflow-wrap:anywhere}
+    .course-facts dd a {margin-inline-start:.6em;color:#1e40af}
+    @media(max-width:600px){.course-facts > div{grid-template-columns:1fr;gap:0;margin:8px 0}}
+    .topic-overview {padding:12px 16px;margin:0 0 1rem;background:#f2f8f7;border-left:3px solid #0f766e}
+    .topic-overview h3,.study-order-heading {font-size:1rem;color:#233e3a;margin:0 0 .4rem}
+    .topic-overview p {margin:.45rem 0;line-height:1.65}
+    .topic-overview a {color:#1e40af;text-underline-offset:3px}
+    .rank-nav {display:flex;flex-wrap:wrap;gap:.45rem 1rem;margin:0 0 1rem}
+    .rank-nav a {color:#1e40af;font-size:.9rem;text-underline-offset:3px}
+    .rank-reason {margin:.6rem 0;padding:.55rem .75rem;border-left:3px solid #0f766e;background:#f2f8f7;line-height:1.65;color:#233e3a}
+    .rank-reason strong {color:#115e59;margin-right:.65em;white-space:nowrap}
+    .course-title[id] {scroll-margin-top:8rem}
+  </style>
+<style>
+  :root {
+    --bg-canvas: #F6F7F9;
+    --bg-surface: #FFFFFF;
+    --bg-subtle: #F9FAFB;
+    --bg-accent-soft: #EFF6FF;
+    --text-primary: #111827;
+    --text-body: #1F2937;
+    --text-secondary: #4B5563;
+    --text-muted: #6B7280;
+    --border-light: #E5E7EB;
+    --border-strong: #D1D5DB;
+    --accent: #2563EB;
+    --accent-hover: #1D4ED8;
+    --accent-border: #BFDBFE;
+    --accent-ring: rgba(37, 99, 235, 0.22);
+    --teal: #0F766E;
+    --teal-ink: #115E59;
+    --teal-soft: #F0FDFA;
+    --teal-border: #99F6E4;
+    --amber-ink: #92400E;
+    --amber-soft: #FFFBEB;
+    --amber-border: #FDE68A;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 12px;
+    --max-width: 1180px;
+    --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", "Helvetica Neue", Arial, sans-serif;
+  }
+
+  body {
+    background-color: var(--bg-canvas);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    font-size: 14.5px;
+    line-height: 1.6;
+  }
+
+  /* Compact Editorial Masthead */
+  .masthead {
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border-light);
+    padding: 12px 0 11px;
+  }
+
+  .masthead-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 6px 16px;
+  }
+
+  .masthead-title {
+    margin: 0;
+    font-size: clamp(20px, 2.2vw, 24px);
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+  }
+
+  .masthead-meta {
+    margin: 0;
+    gap: 6px 10px;
+    font-size: 12.5px;
+    color: var(--text-muted);
+  }
+
+  .masthead-meta a {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .masthead-details {
+    margin-top: 8px;
+  }
+
+  .masthead-details-summary {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 7px;
+    padding: 4px 10px;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    background: var(--bg-subtle);
+    color: var(--text-secondary);
+    font-size: 12.5px;
+    font-weight: 500;
+    line-height: 1.4;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+
+  .masthead-details-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .masthead-details-summary:hover {
+    background: var(--bg-accent-soft);
+    border-color: var(--accent-border);
+    color: var(--accent);
+  }
+
+  .masthead-details-summary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .masthead-details-caret,
+  .course-details-caret {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-right: 1.75px solid currentColor;
+    border-bottom: 1.75px solid currentColor;
+    transform: rotate(-45deg);
+    transition: transform 0.15s ease;
+    flex-shrink: 0;
+  }
+
+  .masthead-details[open] > .masthead-details-summary .masthead-details-caret,
+  .course-details[open] > .course-details-summary .course-details-caret {
+    transform: rotate(45deg) translateY(-1px);
+  }
+
+  .masthead-details-hint {
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  .masthead-details-body {
+    margin-top: 10px;
+    padding: 12px 14px;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .masthead-details-body .masthead-stats {
+    margin: 0 0 2px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+  }
+
+  .masthead-details-body .masthead-stats > span {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 9px;
+    border-radius: 999px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-light);
+    color: var(--text-primary);
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .masthead-details-body .masthead-desc {
+    margin: 0;
+    max-width: none;
+    font-size: 13px;
+    line-height: 1.62;
+    color: var(--text-secondary);
+  }
+
+  .masthead-details-body .masthead-desc[data-learner-scope="true"] {
+    padding-left: 10px;
+    border-left: 2px solid var(--teal);
+    color: var(--text-body);
+  }
+
+  /* Compact Sticky Selection Bar */
+  .toolbar-wrap {
+    z-index: 40;
+    background: rgba(255, 255, 255, 0.97);
+    border-bottom: 1px solid var(--border-light);
+    box-shadow: 0 1px 3px rgba(17, 24, 39, 0.04);
+  }
+
+  .toolbar {
+    padding-top: 8px;
+    padding-bottom: 8px;
+    gap: 8px 14px;
+  }
+
+  .btn {
+    height: 33px;
+    padding: 0 12px;
+    font-size: 13px;
+  }
+
+  /* Two-Column Desktop Shell */
+  .catalog-shell {
+    display: grid;
+    grid-template-columns: 244px minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+    padding-top: 18px;
+    padding-bottom: 52px;
+  }
+
+  .catalog-shell > .group-nav-wrap {
+    width: auto;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    position: sticky;
+    top: 64px;
+    max-height: calc(100vh - 80px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .catalog-shell > main {
+    width: auto;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+  }
+
+  /* Left Direction Navigation */
+  .group-nav {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    padding: 12px 10px;
+    box-shadow: 0 1px 2px rgba(17, 24, 39, 0.03);
+  }
+
+  .group-nav-label {
+    padding: 0 8px 8px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid var(--border-light);
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .group-nav-list {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .group-nav-list > li {
+    min-width: 0;
+  }
+
+  .group-nav-item--standalone {
+    margin-top: 6px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--border-strong);
+  }
+
+  .group-nav-link {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    width: 100%;
+    padding: 7px 9px;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-body);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.35;
+    text-decoration: none;
+  }
+
+  .group-nav-link:hover {
+    background: var(--bg-subtle);
+    border-color: var(--border-light);
+    color: var(--text-primary);
+    text-decoration: none;
+  }
+
+  .group-nav-link.is-active,
+  .group-nav-link[aria-current="location"] {
+    background: var(--bg-accent-soft);
+    border-color: var(--accent-border);
+    color: var(--accent-hover);
+    font-weight: 600;
+  }
+
+  .group-nav-index {
+    margin-top: 1px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+  }
+
+  .group-nav-link.is-active .group-nav-index,
+  .group-nav-link[aria-current="location"] .group-nav-index {
+    color: var(--accent);
+  }
+
+  .group-nav-name {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .group-nav-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: var(--bg-canvas);
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .group-nav-link.is-active .group-nav-count,
+  .group-nav-link[aria-current="location"] .group-nav-count {
+    background: var(--bg-surface);
+    color: var(--accent);
+  }
+
+  /* Course Group Sections */
+  .course-group {
+    scroll-margin-top: 70px;
+  }
+
+  .course-group + .course-group {
+    margin-top: 32px;
+  }
+
+  .group-header {
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+    border-bottom: 1.5px solid var(--text-primary);
+  }
+
+  .group-number {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--teal);
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: var(--teal-soft);
+    border: 1px solid var(--teal-border);
+  }
+
+  .group-title {
+    font-size: 18.5px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+  }
+
+  .group-meta {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--text-muted);
+  }
+
+  /* Distinct Group Brief: 方向代表课 (Teal) vs 首轮共学顺位 (Action Blue) */
+  .group-brief {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    gap: 12px;
+    margin: 0 0 14px;
+    align-items: stretch;
+  }
+
+  .group-brief--single {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .topic-overview {
+    margin: 0;
+    padding: 11px 14px;
+    background: var(--teal-soft);
+    border: 1px solid var(--teal-border);
+    border-left: 3px solid var(--teal);
+    border-radius: var(--radius-md);
+    min-width: 0;
+  }
+
+  .topic-overview h3 {
+    margin: 0 0 7px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--teal-ink);
+  }
+
+  .topic-overview h3::after {
+    content: "了解这个方向在学什么";
+    font-size: 11.5px;
+    font-weight: 400;
+    color: var(--teal);
+  }
+
+  .topic-overview p {
+    margin: 5px 0 0;
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--text-body);
+    overflow-wrap: anywhere;
+  }
+
+  .topic-overview p:first-of-type {
+    margin-top: 0;
+  }
+
+  .topic-overview a {
+    color: var(--teal-ink);
+    font-weight: 650;
+    text-decoration: underline;
+    text-decoration-color: rgba(15, 118, 110, 0.35);
+    text-underline-offset: 2px;
+  }
+
+  .topic-overview a:hover {
+    color: var(--teal);
+    text-decoration-color: var(--teal);
+  }
+
+  .study-order-panel {
+    margin: 0;
+    padding: 11px 14px;
+    background: var(--bg-surface);
+    border: 1px solid var(--accent-border);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius-md);
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+
+  .study-order-heading {
+    margin: 0 0 8px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--accent-hover);
+  }
+
+  .study-order-heading::after {
+    content: "按材料、作业与反馈排定开组先后";
+    font-size: 11.5px;
+    font-weight: 400;
+    color: var(--text-muted);
+  }
+
+  .rank-nav {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .rank-nav a {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 9px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-accent-soft);
+    border: 1px solid var(--accent-border);
+    color: var(--accent-hover);
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 1.35;
+    text-decoration: none;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+
+  .rank-nav a:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #FFFFFF;
+    text-decoration: none;
+  }
+
+  /* Course Cards */
+  .course-list {
+    gap: 10px;
+  }
+
+  .course-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    padding: 15px 18px;
+    box-shadow: 0 1px 2px rgba(17, 24, 39, 0.025);
+  }
+
+  .course-card:hover {
+    border-color: var(--border-strong);
+  }
+
+  .course-card[data-selected="true"] {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent), 0 4px 12px rgba(37, 99, 235, 0.08);
+    background: #FAFCFF;
+  }
+
+  .course-card.is-jump-target {
+    box-shadow: 0 0 0 2px var(--teal), 0 6px 18px rgba(15, 118, 110, 0.12);
+  }
+
+  .course-top {
+    gap: 12px;
+  }
+
+  .course-heading-row {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 7px;
+  }
+
+  .course-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.38;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+  }
+
+  .course-title[id] {
+    scroll-margin-top: 84px;
+  }
+
+  .course-meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  .course-term {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 5px;
+    background: var(--bg-canvas);
+    border: 1px solid var(--border-light);
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.45;
+  }
+
+  .saved-mark {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 5px;
+    background: var(--teal-soft);
+    border: 1px solid var(--teal-border);
+    color: var(--teal-ink);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.45;
+  }
+
+  .meta-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 2px 8px;
+    border-radius: 5px;
+    border: 1px solid var(--border-light);
+    background: var(--bg-subtle);
+    color: var(--text-secondary);
+    font-size: 12px;
+    line-height: 1.45;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  .meta-tag-k {
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .meta-tag-v {
+    font-weight: 600;
+  }
+
+  .meta-tag[data-tone="teal"] {
+    background: var(--teal-soft);
+    border-color: var(--teal-border);
+    color: var(--teal-ink);
+  }
+
+  .meta-tag[data-tone="teal"] .meta-tag-k {
+    color: var(--teal);
+  }
+
+  .meta-tag[data-tone="blue"] {
+    background: var(--bg-accent-soft);
+    border-color: var(--accent-border);
+    color: var(--accent-hover);
+  }
+
+  .meta-tag[data-tone="blue"] .meta-tag-k {
+    color: var(--accent);
+  }
+
+  .meta-tag[data-tone="amber"] {
+    background: var(--amber-soft);
+    border-color: var(--amber-border);
+    color: var(--amber-ink);
+  }
+
+  .meta-tag[data-tone="amber"] .meta-tag-k {
+    color: #B45309;
+  }
+
+  /* Study Order Rank & Rationale (Action Blue aligned with 首轮共学顺位) */
+  .rank-reason {
+    margin: 10px 0 0;
+    padding: 8px 12px;
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius-sm);
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--text-body);
+    overflow-wrap: anywhere;
+  }
+
+  .rank-reason strong {
+    display: inline-block;
+    padding: 1px 8px;
+    margin: 0 8px 2px 0;
+    border-radius: 999px;
+    background: var(--bg-accent-soft);
+    border: 1px solid var(--accent-border);
+    color: var(--accent-hover);
+    font-size: 12px;
+    font-weight: 650;
+    line-height: 1.45;
+    white-space: nowrap;
+  }
+
+  /* Native Card Details Drawer */
+  .course-details {
+    margin-top: 10px;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    background: var(--bg-subtle);
+  }
+
+  .course-details[open] {
+    background: var(--bg-surface);
+    border-color: var(--border-strong);
+  }
+
+  .course-details-summary {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px 12px;
+    padding: 8px 12px;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+    font-size: 13px;
+    color: var(--text-secondary);
+    border-radius: var(--radius-md);
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  .course-details-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .course-details-summary:hover {
+    background: var(--bg-accent-soft);
+    color: var(--accent-hover);
+  }
+
+  .course-details-summary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+  }
+
+  .course-details[open] > .course-details-summary {
+    border-bottom: 1px solid var(--border-light);
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    background: var(--bg-subtle);
+    color: var(--text-primary);
+  }
+
+  .course-details-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .course-details[open] > .course-details-summary .course-details-toggle {
+    color: var(--text-primary);
+  }
+
+  .course-details-meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .course-details-panel {
+    padding: 12px 14px 14px;
+    min-width: 0;
+  }
+
+  .course-details-panel .course-body {
+    margin-top: 0;
+    gap: 7px;
+  }
+
+  .course-details-panel .course-summary,
+  .course-details-panel .course-materials {
+    font-size: 13.5px;
+    line-height: 1.65;
+  }
+
+  .course-details-panel .course-facts {
+    margin: 12px 0 0;
+    padding: 10px 12px;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+  }
+
+  .course-details-panel .course-facts > div {
+    display: grid;
+    grid-template-columns: 6.5em minmax(0, 1fr);
+    gap: 6px 12px;
+    margin: 0;
+    padding: 7px 0;
+    border-top: 1px solid var(--border-light);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .course-details-panel .course-facts > div:first-child {
+    padding-top: 0;
+    border-top: 0;
+  }
+
+  .course-details-panel .course-facts > div:last-child {
+    padding-bottom: 0;
+  }
+
+  .course-details-panel .course-facts dt {
+    color: var(--text-secondary);
+    font-weight: 600;
+  }
+
+  .course-details-panel .course-facts dd {
+    min-width: 0;
+    color: var(--text-body);
+  }
+
+  .course-details-panel .course-facts dd > div a {
+    margin-inline-start: 0;
+    color: var(--accent);
+  }
+
+  /* Preserve & Polish Nested Learner Quotes */
+  .course-facts [data-learner-row] ul > li {
+    padding: 8px 10px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+  }
+
+  .course-facts [data-learner-row] ul > li a {
+    margin-inline-start: 0.35em;
+    color: var(--accent);
+    font-size: 12.5px;
+  }
+
+  .course-facts [data-learner-row] details > summary {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 4px;
+    background: var(--bg-canvas);
+    color: var(--teal-ink);
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .course-facts [data-learner-row] details > summary:hover {
+    background: var(--teal-soft);
+    color: var(--teal);
+  }
+
+  .course-facts [data-learner-row] details > summary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .course-facts [data-learner-row] blockquote {
+    margin-top: 6px !important;
+    padding: 6px 10px !important;
+    background: var(--bg-subtle);
+    border-left: 2.5px solid var(--teal) !important;
+    border-radius: 0 5px 5px 0;
+    color: var(--text-secondary);
+    font-size: 12.5px;
+    line-height: 1.55;
+    opacity: 1 !important;
+    overflow-wrap: anywhere;
+  }
+
+  .course-details-panel .course-links {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-light);
+    gap: 7px;
+  }
+
+  .course-link {
+    padding: 4px 9px;
+    font-size: 12.5px;
+  }
+
+  /* Responsive: Tablet & Mobile Single Column */
+  @media (max-width: 960px) {
+    .catalog-shell {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 16px;
+      padding-top: 14px;
+    }
+
+    .catalog-shell > .group-nav-wrap {
+      position: static;
+      max-height: none;
+      overflow: visible;
+    }
+
+    .group-nav {
+      padding: 10px 12px;
+    }
+
+    .group-nav-label {
+      padding: 0 0 6px;
+      margin-bottom: 8px;
+    }
+
+    .group-nav-list {
+      flex-direction: row;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      gap: 6px;
+      padding: 2px 2px 6px;
+    }
+
+    .group-nav-list > li {
+      flex: 0 0 auto;
+    }
+
+    .group-nav-item--standalone {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: 0;
+    }
+
+    .group-nav-link {
+      width: auto;
+      padding: 5px 9px;
+      background: var(--bg-canvas);
+      border-color: var(--border-light);
+      font-size: 12.5px;
+    }
+
+    .group-brief {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 10px;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .masthead {
+      padding: 10px 0;
+    }
+
+    .toolbar {
+      padding-top: 8px;
+      padding-bottom: 8px;
+    }
+
+    .course-group {
+      scroll-margin-top: 112px;
+    }
+
+    .course-title[id] {
+      scroll-margin-top: 120px;
+    }
+
+    .course-card {
+      padding: 13px 12px;
+    }
+
+    .course-top {
+      gap: 9px;
+    }
+
+    .course-title {
+      font-size: 15.5px;
+    }
+
+    .course-details-panel {
+      padding: 10px 10px 12px;
+    }
+
+    .course-details-panel .course-facts > div {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 2px;
+    }
+  }
+</style>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳到正文</a>
+
+  <header class="masthead">
+    <div class="container">
+      <div class="masthead-meta">
+        <span>核对日期 2026-11-22</span>
+        <span class="sep" aria-hidden="true">/</span>
+        <a href="https://ww880412.github.io/learning/courses/index.html" target="_blank" rel="noopener noreferrer">原收藏入口</a>
+      </div>
+      <h1 class="masthead-title">AI Agent 公开课清单</h1>
+      <p class="masthead-desc">目录含六个专题方向，另列机器学习综合课程。先看每组的代表课，了解这个方向在学什么；准备开组时，再看按材料完整度、共同作业和学习者反馈排出的共学顺位。X 互动数来自已核对的单帖。</p>
+      <div class="masthead-stats" id="catalog-stats" aria-live="polite"></div>
+    </div>
+  </header>
+
+  <div class="toolbar-wrap" role="region" aria-label="选择与导出操作栏">
+    <div class="container">
+      <div class="toolbar">
+        <div class="toolbar-status">
+          <div class="selection-badge">
+            <span>已选</span>
+            <span class="selection-count" id="selected-count" data-active="false">0</span>
+            <span id="selected-total">/ 0 门</span>
+          </div>
+          <span class="feedback-text" id="copy-feedback" role="status" aria-live="polite"></span>
+        </div>
+        <div class="toolbar-actions">
+          <button type="button" class="btn btn-primary" id="copy-json-btn">复制已选 JSON</button>
+          <button type="button" class="btn" id="toggle-manual-btn" aria-expanded="false" aria-controls="manual-copy-panel">手动复制</button>
+          <button type="button" class="btn btn-ghost" id="clear-selection-btn" disabled>清空</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="fallback-panel" id="manual-copy-panel" hidden>
+      <div class="container">
+        <div class="fallback-header">
+          <div>
+            <p class="fallback-title">已选课程 JSON</p>
+            <p class="fallback-hint" id="fallback-hint">如剪贴板受限，请全选后按 Ctrl/Cmd + C 手动复制。</p>
+          </div>
+          <div class="fallback-actions">
+            <button type="button" class="btn" id="select-json-btn">全选文本</button>
+            <button type="button" class="btn btn-ghost" id="close-manual-btn">关闭</button>
+          </div>
+        </div>
+        <textarea class="fallback-textarea" id="manual-json-output" readonly aria-label="已选课程 JSON 文本"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="container group-nav-wrap" id="group-nav-wrap" hidden>
+    <nav class="group-nav" aria-label="课程分组导航">
+      <div class="group-nav-label">分组目录</div>
+      <ol class="group-nav-list" id="group-nav-list"></ol>
+    </nav>
+  </div>
+
+  <main id="main-content" class="container">
+    <div id="catalog-root"></div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-links">
+        <span>核对日期：2026-11-22</span>
+        <span aria-hidden="true">·</span>
+        <a href="https://ww880412.github.io/learning/courses/index.html" target="_blank" rel="noopener noreferrer">原收藏入口</a>
+      </div>
+      <span>勾选状态仅保存于当前浏览器本地。</span>
+    </div>
+  </footer>
+
+  <script type="application/json" id="course-data">[{"title": "CMU 06-643 · Creating Scientific Software with AI Coding Agents", "term": "2026 春", "group": "用编码 Agent 开发软件", "summary": "如果组员平时写 Python 脚本，怎样用编码 Agent 把脚本变成可测试、可分发、别人能接手的软件包？这门半学期课程把这个过程从头做一遍。", "materials": "12 个主模块和 5 份作业公开，覆盖 Git、测试、打包、CI/CD 和扩展 Agent。可直接看第三份作业要求学员交出什么。", "links": [{"label": "课程大纲", "url": "https://kitchingroup.cheme.cmu.edu/s26-06643/syllabus.html"}, {"label": "打包与测试作业", "url": "https://kitchingroup.cheme.cmu.edu/s26-06643/assignments/a3-testing-quality.html"}, {"label": "教材源码", "url": "https://github.com/jkitchin/s26-06643"}], "id": "使用编码 Agent 交付软件::CMU 06-643 · Creating Scientific Software with AI Coding Agents::2026 春", "saved": false, "state": "已结课", "timing": "2026 春季半学期课程，第 7 周为最终演示。", "coverage": "核心材料齐备", "coverageDetail": "可从头读完 12 个主模块、5 份作业及期末项目要求，适合按公开文字教材动手；未核到整期课堂录像。", "statusUrl": "https://kitchingroup.cheme.cmu.edu/s26-06643/syllabus.html", "rankReason": "12 个模块和 5 份作业已公开。全组可从同一份 Python 脚本出发，互测对方交付的软件包能否安装、能否通过测试。首轮范围最容易定；这轮没找到学员复盘。", "anchor": 0}, {"title": "Stanford CS146S · The Modern Software Developer", "term": "2026 秋", "group": "用编码 Agent 开发软件", "summary": "收藏的 9 个讲次已含 L11 代码审查。另外可补 10 月 22 日 Factory 客座课，以及 11 月 10 日的后台 Agent 专讲和 11 月 17 日的 Software Factory 专讲。官网日历和 Syllabus 的第 9 周安排有出入，这里按能对应到课件的 Syllabus 记录。", "materials": "第 6 周看审查 Agent 怎么配合人工审查，第 8 周看后台 Agent 如何把任务推进到 PR，第 9 周可对照一个真实工作流示例。官网课件按钮要求邮箱验证，公开阅读和示例可直接打开。11 月 19 日更新的成本优化作业要求同时看任务是否做对和花了多少钱。", "links": [{"label": "成本优化作业", "url": "https://github.com/mihail911/modern-software-dev-assignments/blob/master/week6/assignment.md"}, {"label": "官网 → Syllabus", "url": "https://themodernsoftware.dev/"}, {"label": "代码审查案例", "url": "https://blog.cloudflare.com/ai-code-review"}, {"label": "后台 Agent 案例", "url": "https://stripe.dev/blog/minions-stripes-one-shot-end-to-end-coding-agents"}, {"label": "Issue 到 PR 示例", "url": "https://github.com/warpdotdev/warp-factory-examples/tree/main/examples/02-sdlc-issue-to-pr"}], "id": "现有收藏::Stanford CS146S · The Modern Software Developer::2026 秋", "saved": true, "state": "在授", "timing": "12 月 10 日期末项目展示。", "coverage": "部分公开", "coverageDetail": "10 周 Syllabus 已列出，后台 Agent 和 Software Factory 有材料；课件入口需邮箱验证，课程仓库已发布 Week 6 作业。未核到整期课堂录像。", "statusUrl": "https://themodernsoftware.dev/", "rankReason": "想把编码 Agent 用进日常研发，可以从一次真实的模型调用或一个 MCP 工具做起。已有两份校外作业记录可对照；课件需邮箱验证，整期录像尚未核到。", "anchor": 1, "leadOrder": 1, "leadText": "CS146S 从代码审查讲到后台 Agent，展示研发流程怎样改变。", "leadSignal": "X 样本：教师开课公告 10,607 赞。"}, {"title": "CMU 17-214/514 · Agentic Software Development", "term": "2026 秋", "group": "用编码 Agent 开发软件", "summary": "Agent 写完代码后，工程师怎么证明它能用、继续改、交给别人维护？课程让学生围绕同一系统连续做设计、重构、扩展和运维。", "materials": "公开逐讲 PDF、实验题和连续项目作业。可单独拿“审查生成的测试”和“监督一次涉及仓库多个文件的改动”练习，再比较各人的验收证据。", "links": [{"label": "课程", "url": "https://cmu-17-214.github.io/f2026/"}, {"label": "审查测试套件实验", "url": "https://github.com/CMU-17-214/f2026/blob/main/labs/lab02.md"}, {"label": "监督仓库级任务实验", "url": "https://github.com/CMU-17-214/f2026/blob/main/labs/lab08.md"}], "id": "使用编码 Agent 交付软件::CMU 17-214/514 · Agentic Software Development::2026 秋", "saved": false, "state": "在授", "timing": "12 月 2 日总结课，12 月 4 日仍有作业和实验。", "coverage": "部分公开", "coverageDetail": "目前课表链接到第 21 份主题课件、6 份连续作业和多次实验。末段课表已排出，未逐讲提供录像。", "statusUrl": "https://cmu-17-214.github.io/f2026/", "rankReason": "公开实验适合结对做代码审查，6 份连续作业还能让组员轮流接手同一系统。若只试学一两次，先挑一项实验；这轮没找到当期作业复盘。", "anchor": 2}, {"title": "UMich EECS 498-016 · Applied Agentic Software Engineering", "term": "2026 秋", "group": "用编码 Agent 开发软件", "summary": "收藏已有 L16，L12 跳号，所以已有 15 讲。官方材料仓库可再补 L17 知识库、L18 同一 Harness 接多种模型、L19 本机运行 Claude Code 项目、L20 手绘课程是怎样做出来的。", "materials": "四讲都有 Markdown、PDF 和 PPTX，L20 侧重课程制作。原有实验里还可补 Lab04（Shell、MCP、浏览器）和 Lab05（基于 Codex 开发）。学生提交和校内模型服务需授权。", "links": [{"label": "官方课表", "url": "https://eecs498-aase.github.io/syllabus.html"}, {"label": "讲义目录", "url": "https://github.com/eecs498-aase/materials/tree/main/lectures"}, {"label": "实验", "url": "https://github.com/eecs498-aase/materials/tree/main/labs"}], "id": "现有收藏::UMich EECS 498-016 · Applied Agentic Software Engineering::2026 秋", "saved": true, "state": "在授", "timing": "学期至 12 月 11 日。", "coverage": "部分公开", "coverageDetail": "计划 28 次课，公开讲义库有 19 个讲次目录（L01–11、L13–20），配套实验到 Lab05。后半程仍有 TBD，校内录课与公开播客为两种材料。", "statusUrl": "https://eecs498-aase.github.io/syllabus.html", "rankReason": "适合系统追一学期，从 Aider 一路做到自建 Agent。两篇高赞推荐说明这套课程设计受到关注。首次组队要额外解决校内模型服务和提交权限，前面的课程更容易直接互测。", "anchor": 3, "leadOrder": 2, "leadText": "密歇根 EECS 498 把 Aider、自建 Agent 和工程实验串成一学期。", "leadSignal": "X 样本：两篇独立推荐分别获 1,781 和 1,570 赞。"}, {"title": "Stanford CS329Z · Engineering AI Agents", "term": "2026 秋", "group": "Agent 应用开发与协作", "summary": "怎样从一个任务出发，设计工具、运行环境和评测？与已有 CS329A 同看，可以把“系统怎么搭”和“系统怎么改进”接起来。", "materials": "官网前 10 讲逐讲列出录像与课件，另有框架示例、两份 Harness 作业和公开项目要求。", "links": [{"label": "课程", "url": "https://cs329z.stanford.edu/"}, {"label": "框架示例代码", "url": "https://github.com/cs329z/lecture5-frameworks"}, {"label": "HW1", "url": "https://github.com/cs329z/assignment1-harness"}, {"label": "评测课件", "url": "https://web.stanford.edu/class/cs329z/slides/lecture10.pdf"}, {"label": "项目要求", "url": "https://cs329z.stanford.edu/project.html"}], "id": "构建 Agent、验证结果与改进能力::Stanford CS329Z · Engineering AI Agents::2026 秋", "saved": false, "state": "在授", "timing": "12 月 9 日 Demo Day，12 月 11 日交报告。", "coverage": "部分公开", "coverageDetail": "课表挂有 15 份逐讲 PDF、前 10 讲录像和两份 Harness 作业。后半学期录像未配齐。", "statusUrl": "https://cs329z.stanford.edu/", "rankReason": "首轮就能用同一批邮件搭 Agent，再交换测试。前 10 讲录像和 HW1 足够开工；已有学习日志记录了压缩上下文后丢失约束的故障，适合一起复现。", "anchor": 4, "leadOrder": 2, "leadText": "CS329Z 用同一份邮件作业贯穿工具、记忆和运行控制。", "leadSignal": ""}, {"title": "Hugging Face Agents Course", "term": "", "group": "Agent 应用开发与协作", "summary": "Hugging Face Agents Course 有官方简体中文教程，可作为不同技术背景成员的共同起点。", "materials": "第一单元讲工具调用，最后一单元给出 GAIA 子集评测任务和示例代码。阅读免费，运行和提交涉及模型服务或 Hugging Face 账号。", "links": [{"label": "中文课程", "url": "https://huggingface.co/learn/agents-course/zh-CN/unit0/introduction"}, {"label": "期末动手任务", "url": "https://huggingface.co/learn/agents-course/en/unit4/hands-on"}], "id": "中文配套课程::Hugging Face Agents Course", "saved": false, "state": "自定进度", "timing": "可随时学习，无统一结课日。", "coverage": "核心材料齐备", "coverageDetail": "从入门到 Unit 4 最终评测任务都有公开单元、代码指引，另有选修单元；在线运行、排行榜和证书涉及账号或服务。", "statusUrl": "https://huggingface.co/learn/agents-course/en/unit4/introduction", "rankReason": "中文单元和示例可以自定进度，适合约定同一组题来做工具调用或期末评测。有人记录了 20 题做对 14 题的过程，也有人反映提交后只有总分；共学时可保留各自的逐题记录。", "anchor": 19}, {"title": "MIT 6.S950 · Agency with AI", "term": "2026 秋", "group": "Agent 应用开发与协作", "summary": "一个模型写，另一个模型评分，循环十轮后究竟是作品更好，还是分数更高？这门课把人的判断、委派和验收做成了双人实验。", "materials": "公开讲次网页、实验步骤和配套文件。Lab 5 可以读、改 Harness，Lab 8 提供 ZIP，让两人对照作品和评分作判断。按原题运行需能使用 Claude Code。", "links": [{"label": "课程大纲", "url": "https://agencyai.mit.edu/syllabus/"}, {"label": "Lab 5", "url": "https://agencyai.mit.edu/lab5/"}, {"label": "Lab 8", "url": "https://agencyai.mit.edu/lab8/"}], "id": "构建 Agent、验证结果与改进能力::MIT 6.S950 · Agency with AI::2026 秋", "saved": false, "state": "在授", "timing": "12 月 8 日排第 12 讲，12 月 10 日收尾。", "coverage": "部分公开", "coverageDetail": "12 个讲次均有网页入口，Lab 1–9 已有实验页。12 月 3 日 Lab 11 只列日程。未核到全套录课。", "statusUrl": "https://agencyai.mit.edu/syllabus/", "rankReason": "若想两人一组做实验，Lab 8 很合适：一人调整生成过程，另一人比较成品质量和评分是否一起提高。实验步骤和文件公开，按原题运行需能使用 Claude Code；本轮未找到学员实作记录。", "anchor": 7}, {"title": "Stanford CS224V · Agentic AI", "term": "2026 秋", "group": "Agent 应用开发与协作", "summary": "如何让知识型 Agent 在长文档、知识图谱和数据库之间查证答案？课上用 STORM、WikiChat 等系统讨论知识整理、可验证检索和长程研究。", "materials": "官网可读逐讲课件、论文、作业说明和项目题目。课堂录像在校内 Canvas。", "links": [{"label": "课程", "url": "https://web.stanford.edu/class/cs224v/"}, {"label": "逐讲课件与作业", "url": "https://web.stanford.edu/class/cs224v/schedule.html"}], "id": "构建 Agent、验证结果与改进能力::Stanford CS224V · Agentic AI::2026 秋", "saved": false, "state": "在授", "timing": "12 月 2 日排期末项目展示。", "coverage": "部分公开", "coverageDetail": "公开课表提供专题课件、两份作业入口与项目材料；录像放在 Canvas。教师注明公开讲义省略了部分课堂细节。", "statusUrl": "https://web.stanford.edu/class/cs224v/", "rankReason": "若组内要做可查证的问答，可以围绕同一检索任务比较答案和出处。论文、逐讲课件与作业入口公开，录像限校内，本轮也未找到当期学员复盘。", "anchor": 10}, {"title": "UC Berkeley RDI · Agentic AI", "term": "2025 秋", "group": "Agent 评测与基准设计", "summary": "训练、推理基础设施、多 Agent 和基准设计在实际项目中如何配合？这门系列讲座可以按专题选听。", "materials": "有录像、讲义、论文和 AgentBeats 项目说明。可先看同一讲的评测录像与项目介绍，再决定是否回看训练部分。", "links": [{"label": "课程与讲次", "url": "https://rdi.berkeley.edu/agentic-ai/f25"}, {"label": "评测讲录像", "url": "https://www.youtube.com/watch?v=VfOA2a0dj4w"}, {"label": "评测讲课件", "url": "https://rdi.berkeley.edu/agentic-ai/slides/LLM%20Agent%20Evaluations%20%26%20Project%20Overview.pdf"}], "id": "构建 Agent、验证结果与改进能力::UC Berkeley RDI · Agentic AI::2025 秋", "saved": false, "state": "已结课", "timing": "2025 年 12 月收尾，项目第二阶段截止 12 月 17 日。", "coverage": "讲座录像为主", "coverageDetail": "课程表列有 11 个不同的课堂录像链接、9 个标作 Slides 的课件链接，并有论文和项目说明；部分嘉宾场次仅提供录像。", "statusUrl": "https://rdi.berkeley.edu/agentic-ai/f25", "rankReason": "适合已经准备组队做评测项目的成员。讲座、课件和 AgentBeats 项目说明公开，已有学员复盘本地与容器结果不一致的问题。首次活动若只安排一场，宜先看评测讲。", "anchor": 8, "leadOrder": 1, "leadText": "Berkeley 的 AgentBeats 让参与者亲自设计评测任务。", "leadSignal": ""}, {"title": "Princeton COS 597C · AI Agents", "term": "2026 秋", "group": "Agent 评测与基准设计", "summary": "怎样判断评测量到了 Agent 的真实能力？课表把评判器、成本、环境设计和基准缺陷放在一起，能围绕一个争议对读多篇论文。", "materials": "公开逐周阅读、项目说明和代码链接，尤其适合按问题挑论文。当前核到的材料以阅读为主。", "links": [{"label": "课程与阅读清单", "url": "https://princeton-nlp.github.io/ai-agents/#schedule-materials"}, {"label": "基准能否衡量能力", "url": "https://arxiv.org/abs/2607.22368"}, {"label": "mini-SWE-agent", "url": "https://github.com/SWE-agent/mini-swe-agent"}], "id": "构建 Agent、验证结果与改进能力::Princeton COS 597C · AI Agents::2026 秋", "saved": false, "state": "在授", "timing": "12 月 4 日进行第二个项目展示。", "coverage": "部分公开", "coverageDetail": "12 周教学安排和逐周阅读可查，含公开论文、代码和项目概述；项目详细分组与要求通过 Slack 发布。", "statusUrl": "https://princeton-nlp.github.io/ai-agents/", "rankReason": "适合论文领读组，让两组围绕同一基准分别论证它测到了什么、漏掉了什么。逐周阅读公开，项目细节在 Slack，作为首次动手课需要组内自拟题目。", "anchor": 11, "leadOrder": 2, "leadText": "Princeton 从论文切入，讨论基准究竟测到了什么。", "leadSignal": ""}, {"title": "CMU 11-768 · AI Agents", "term": "2026 秋", "group": "Agent 训练与自我改进", "summary": "同一个编码 Agent，怎么接上工具、量出表现，再用训练改进？三份相连的作业正好对应这三个问题。", "materials": "公开课堂录像、讲义、论文，以及 Harness、Eval、Training 三个作业仓库。训练作业涉及模型算力。", "links": [{"label": "课程", "url": "https://www.cmu-agents.com/"}, {"label": "首讲录像", "url": "https://www.youtube.com/watch?v=UwfjzyLnvMg"}, {"label": "搭 Harness", "url": "https://github.com/cmu-agents/assignment-1"}, {"label": "做评测", "url": "https://github.com/cmu-agents/assignment-2"}, {"label": "做训练", "url": "https://github.com/cmu-agents/assignment-3"}], "id": "构建 Agent、验证结果与改进能力::CMU 11-768 · AI Agents::2026 秋", "saved": false, "state": "在授", "timing": "期末海报展示排在 12 月 1 日、3 日。", "coverage": "部分公开", "coverageDetail": "前 14 讲有录像，后续已有部分课件（含第 20 讲），3 份作业仓库均公开。训练用的校内算力需自备替代。", "statusUrl": "https://www.cmu-agents.com/", "rankReason": "组员已有 Agent 基础时优先。三份作业把搭建、评测和训练串起来，首轮可只做上下文压缩对照；两位学习者公开了实验，能比较任务结果、token 和费用。训练阶段另需算力。", "anchor": 6}, {"title": "Stanford CS329A · Self-Improving AI Agents", "term": "2025 秋", "group": "Agent 训练与自我改进", "summary": "公开课程主页仍是 Autumn 2025，收藏已覆盖 Stanford Online 的 9 段录像。可同时挂出同学期三份公开作业，作为看完录像后的动手入口。", "materials": "从推理时扩展、验证器、工具反馈学到深度研究和长任务评测。官网按原课表列论文，录像按公开顺序编号，两种编号在后半段不同。", "links": [{"label": "课程与论文", "url": "https://cs329a.stanford.edu/"}, {"label": "首讲录像", "url": "https://www.youtube.com/watch?v=6YnLB0XbTnI"}, {"label": "课程组作业仓库", "url": "https://github.com/stanford-cs329a"}, {"label": "2025 冬季项目论文与海报，含 AppBench 网页应用评测", "url": "https://cs329a.stanford.edu/pastprojects.html"}], "id": "现有收藏::Stanford CS329A · Self-Improving AI Agents::2025 秋", "saved": true, "state": "已结课", "timing": "2025 年 12 月 12 日期末海报展示。", "coverage": "部分公开", "coverageDetail": "原课表有 20 次活动，含学生展示；公开系列有 9 段课堂录像。阅读清单及 3 份作业可得，其余活动未查到对应公开录像。", "statusUrl": "https://cs329a.stanford.edu/", "rankReason": "聚焦自我改进时很值得选。可用 HW1 对比模型首答、投票和自我修正，已有自学者记下验证器出错导致零分的过程。3 份作业公开，9 段录像只覆盖部分课表。", "anchor": 9, "leadOrder": 1, "leadText": "CS329A 从验证器和工具反馈切入，追问 Agent 如何发现并修正错误。", "leadSignal": "X 样本：开课公告 1,302 赞，公开录像推荐 146 赞。"}, {"title": "MIT MAS.S62 · Self-Evolving AI", "term": "2026 秋", "group": "Agent 训练与自我改进", "summary": "收藏页已链接 L01–L05。官方课表的第 6、7 次讲授各有两份课件，可补模型训练、强化学习实践和自博弈。之后四个讲次虽显示 Slides，链接仍为空。", "materials": "可读模型演化课件及配套论文，或先用 L02 的 Colab 理解上下文优化。本轮未核到本学期公开课堂录像。", "links": [{"label": "官方课表", "url": "https://mit-mi.github.io/how2ai-course/fall2026/schedule/"}, {"label": "模型训练 PDF", "url": "https://mit-mi.github.io/how2ai-course/fall2026/schedule/lec6%20-%20training.pdf"}, {"label": "自博弈 PDF", "url": "https://mit-mi.github.io/how2ai-course/fall2026/schedule/lec7%20-%20self%20play.pdf"}, {"label": "L02 Colab", "url": "https://colab.research.google.com/drive/1rL24Ydm9yQKRUPoGXHr2-zJumFbBRfvJ"}], "id": "现有收藏::MIT MAS.S62 · Self-Evolving AI::2026 秋", "saved": true, "state": "在授", "timing": "12 月 2 日项目展示，12 月 9 日仍排有课。", "coverage": "部分公开", "coverageDetail": "11 个讲授单元中前 7 个已有课件；后 4 个的课件链接为占位。论文和 L02 Colab 可读，作业在 Canvas，未核到本期公开课录。", "statusUrl": "https://mit-mi.github.io/how2ai-course/fall2026/schedule/", "rankReason": "对自演化有明确兴趣时，可用第 2 讲 Colab 一起试上下文优化。前 7 个讲授单元有课件，后 4 个仍是占位，正式作业在 Canvas，较难沿原课表连续共学。", "anchor": 12, "leadOrder": 2, "leadText": "MIT MAS.S62 把演化对象拆成上下文、运行框架、模型和任务，适合用来理解这个方向的全貌。", "leadSignal": "X 样本：教师公告 1,185 赞，读者推荐 156 赞。"}, {"title": "University of Maryland CMSC 848N · Generative AI Agents", "term": "2026 秋", "group": "Agent 训练与自我改进", "summary": "改编码 Agent 的 Harness 和训练模型，各自能解决什么问题？课程将强化学习、Harness 优化和自我改进放进同一学期。", "materials": "课程页按周列课件和课前阅读，可直接从第 8 周的编码 Agent Harness 优化读起。需要机器学习和深度学习基础。", "links": [{"label": "课程与阅读", "url": "https://furong-huang.com/cmsc848n-fall-2026/"}, {"label": "优化编码 Agent Harness 课件", "url": "https://furong-huang.com/courses/cmsc848n/fall-2026/slides/W8-L2-2026-Optimizing-Coding-Agent-Harnesses.pdf"}], "id": "构建 Agent、验证结果与改进能力::University of Maryland CMSC 848N · Generative AI Agents::2026 秋", "saved": false, "state": "在授", "timing": "期末展示排在 12 月 8 日、10 日，12 月 11 日交报告。", "coverage": "部分公开", "coverageDetail": "官网规划 26 讲，当前挂出 16 份当期讲课 PDF，另有按课阅读及项目评分标准。详细项目题目需课程密码，未核到整期公开录像。", "statusUrl": "https://furong-huang.com/cmsc848n-fall-2026/", "rankReason": "适合已经懂强化学习的成员选读第 8 周，讨论怎样优化编码 Agent。课件和论文可用，具体项目题目需要密码，目前能核实的校友反馈来自往届。", "anchor": 13}, {"title": "Harvard CS2680 · Modern AI Systems: Agents and System Optimizations", "term": "2026 秋", "group": "推理系统与生产运维", "summary": "为什么同样的 Agent 会有不同的延迟和成本？从观察、实现 Agent 循环一路下钻到推理服务、缓存和调度，补上现有收藏较少覆盖的系统层。", "materials": "公开 Slides、配套阅读、作业说明和期末项目。后半门假设有系统基础以及 Python/PyTorch 经验，旁听者需自备运行资源。", "links": [{"label": "课程", "url": "https://agentic-system.org/"}, {"label": "作业目录", "url": "https://agentic-system.org/assignments/index.html"}, {"label": "第一个实验", "url": "https://agentic-system.org/assignments/assignment1.html"}], "id": "Agent 基础设施与运行成本::Harvard CS2680 · Modern AI Systems: Agents and System Optimizations::2026 秋", "saved": false, "state": "在授", "timing": "期末项目截止 12 月 8 日。", "coverage": "部分公开", "coverageDetail": "讲义、阅读、5 份作业的说明和项目要求可查；部分作业反馈课件受保护，旁听者需要自备运行资源。", "statusUrl": "https://agentic-system.org/", "rankReason": "5 份作业有公开说明，第一份就能比较不同组如何显示 Agent 的任务分派和工具调用。已有两份当期学生作品可对照，能直接看到不同设计取舍。", "anchor": 14, "leadOrder": 1, "leadText": "Harvard CS2680 从 Agent 运行过程讲到推理服务和成本。", "leadSignal": ""}, {"title": "CMU 17-445/645/745 · Machine Learning in Production", "term": "2026 秋", "group": "推理系统与生产运维", "summary": "AI 功能上线后，团队如何发现质量下降、衡量影响并处理故障？可以选修与 Agent 运行相关的监控和持续交付部分。", "materials": "教师公开了课件、配套教材、实验与项目要求；Lab 8 用 Prometheus 和 Grafana 做监控。", "links": [{"label": "课程", "url": "https://mlip-cmu.github.io/f2026/"}, {"label": "监控实验", "url": "https://github.com/mlip-cmu/f2026/blob/main/labs/lab08.md"}], "id": "与现有 Agent 课程配套的专题::CMU 17-445/645/745 · Machine Learning in Production::2026 秋", "saved": false, "state": "在授", "timing": "12 月 11 日期末项目展示。", "coverage": "部分公开", "coverageDetail": "课表链接到公开教材、讲义、11 组实验材料及团队项目要求，也提供录像播放列表；录像对本学期的逐讲覆盖未确认。", "statusUrl": "https://mlip-cmu.github.io/f2026/", "rankReason": "想把实验接到现有服务上，可以先做 Lab 8，比较哪组能从监控指标发现异常。课程有 11 组公开实验，往届团队也留下了部署和漂移监控实例。", "anchor": 16, "leadOrder": 2, "leadText": "CMU 的 Machine Learning in Production 关注部署后的监控和维护。", "leadSignal": ""}, {"title": "UC San Diego CSE-291A · Systems for LLMs and AI Agents", "term": "2026 秋", "group": "推理系统与生产运维", "summary": "Agent 上线后怎样托管、管理上下文、评测和观测？课程从后端系统的取舍讲起，每篇指定论文配 1–3 个讨论题。", "materials": "公开阅读页按讲列出论文、部分课件和问题，可直接取一组用来领读。课程以研究项目为主，先修是本科操作系统与机器学习。", "links": [{"label": "课程", "url": "https://cseweb.ucsd.edu/~yiying/cse291a-fall26/"}, {"label": "阅读与讨论题", "url": "https://cseweb.ucsd.edu/~yiying/cse291a-fall26/reading/"}], "id": "Agent 基础设施与运行成本::UC San Diego CSE-291A · Systems for LLMs and AI Agents::2026 秋", "saved": false, "state": "在授", "timing": "12 月 3 日排有课程总结。", "coverage": "研讨材料为主", "coverageDetail": "阅读页覆盖至最后一讲，可获取论文、讨论题与部分课件。课程本身以研究项目替代常规作业和考试，课堂讨论提交在 Canvas。", "statusUrl": "https://cseweb.ucsd.edu/~yiying/cse291a-fall26/reading/", "rankReason": "适合有操作系统基础、喜欢读论文的组。每讲的阅读和问题可直接领读，但主作业是研究项目；本轮找到的团队实验来自往届。", "anchor": 15}, {"title": "Stanford CS336 · Language Modeling from Scratch", "term": "2026 春", "group": "语言模型训练与代码生成", "summary": "想理解模型如何从反馈中学会推理，可以读最后一份作业，把监督微调和强化学习与 CS329A 的自我改进机制对照。", "materials": "有录像、讲义和 5 份编程作业，完整实践需要 Python、PyTorch 和训练算力。", "links": [{"label": "课程与录像入口", "url": "https://cs336.stanford.edu/"}, {"label": "作业 5：对齐与推理训练", "url": "https://github.com/stanford-cs336/assignment5-alignment/tree/main"}], "id": "与现有 Agent 课程配套的专题::Stanford CS336 · Language Modeling from Scratch::2026 春", "saved": false, "state": "已结课", "timing": "2026 春季末两次客座课排在 6 月 1 日、3 日。", "coverage": "核心材料齐备", "coverageDetail": "课程页列出从建模到对齐的 5 份编程作业、讲义与录像入口。整套从头训练需要自备算力；未逐讲核对录像版本。", "statusUrl": "https://cs336.stanford.edu/", "rankReason": "若目标是理解模型训练，可优先选这门。5 份编程作业和录像可用，自学者记录了在 Mac 上增大批次反而变慢的实验；全组跑完训练的算力成本较高。", "anchor": 17, "leadOrder": 1, "leadText": "CS336 从分词到训练，让组员亲手实现语言模型。", "leadSignal": ""}, {"title": "CMU 11-891 · Neural Code Generation", "term": "2025 秋", "group": "语言模型训练与代码生成", "summary": "编码模型生成的程序怎样评测？课程从模型训练讲到推理、验证和人机协作，可对照 CS146S 的工程案例读。", "materials": "以逐讲论文和 PDF 为主，第 5 讲专讲代码生成评测。", "links": [{"label": "课程与阅读", "url": "https://cmu-codegen.github.io/f2025/"}, {"label": "代码评测课件", "url": "https://cmu-codegen.github.io/f2025/static_files/codegen_f2025_5_evaluation.pdf"}], "id": "与现有 Agent 课程配套的专题::CMU 11-891 · Neural Code Generation::2025 秋", "saved": false, "state": "已结课", "timing": "2025 年 12 月 4 日期末项目展示。", "coverage": "研讨材料为主", "coverageDetail": "全学期阅读与研究项目要求可查，课表有 13 个标作 slides 的不同链接。未核到整期录像或配套编程作业。", "statusUrl": "https://cmu-codegen.github.io/f2025/", "rankReason": "适合对代码生成评测做专题领读。可以一起拆解第 5 讲的评测方法；公开材料以论文和课件为主，缺少可直接照做的编程作业及当期学习者反馈。", "anchor": 18, "leadOrder": 2, "leadText": "CMU 11-891 专门研究模型如何生成程序、如何验证程序。", "leadSignal": ""}, {"title": "台大李宏毅 · 機器學習", "term": "2026 春", "group": "机器学习综合课程", "summary": "公开课目录计 1 篇，课程页实际已链接 L01–L08。八个主题都能在官网找到中文录像与课件，十份作业也已有入口。本轮未发现更新一期开设同一门课的公开材料。", "materials": "想讨论 Agent 从反馈中能改什么，可连看 Harness Engineering、Self-Correction 和最后两讲自我成长。想动手，可直接试 HW2「AI Agent as an AI Engineer」。", "links": [{"label": "官网课表、录像与作业", "url": "https://speech.ee.ntu.edu.tw/~hylee/ml/2026-spring.php"}, {"label": "Harness 录像", "url": "https://youtu.be/R6fZR_9kmIw"}, {"label": "HW2 题目", "url": "https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/hw2.pdf"}, {"label": "HW2 Colab", "url": "https://colab.research.google.com/drive/1hAT97f4GmBQFpWKHiRymIDJiXEsPlXS1"}, {"label": "HW8 推理时扩展", "url": "https://speech.ee.ntu.edu.tw/~hylee/ml/ml2026-course-data/hw8.pdf"}], "id": "现有收藏::台大李宏毅 · 機器學習::2026 春", "saved": true, "state": "已结课", "timing": "春季课表至 6 月，HW10 截止 6 月 18 日。", "coverage": "核心材料齐备", "coverageDetail": "8 个主课主题均有中文录像和课件，HW1–10 有公开题目与配套材料。客座讲座部分缺录像，校内评分需账号。", "statusUrl": "https://speech.ee.ntu.edu.tw/~hylee/ml/2026-spring.php", "rankReason": "适合用中文按整学期系统学习。8 个核心主题都有录像和课件，HW2 提供 Colab 示例，组员可以各自完成练习，再讨论方法和结果。", "anchor": 5, "leadOrder": 1, "leadText": "2026 春从 Agent 的工具与上下文讲起，再讲推理加速、长输入处理、自我修正和模型自我改进。", "leadSignal": "X 样本：OpenClaw 单讲推荐 736 赞。"}]</script>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var STORAGE_KEY = 'ai_agent_courses_selection_v1';
+
+      var catalogRoot = document.getElementById('catalog-root');
+      var catalogStats = document.getElementById('catalog-stats');
+      var groupNavWrap = document.getElementById('group-nav-wrap');
+      var groupNavList = document.getElementById('group-nav-list');
+      var selectedCountEl = document.getElementById('selected-count');
+      var selectedTotalEl = document.getElementById('selected-total');
+      var copyFeedbackEl = document.getElementById('copy-feedback');
+      var copyJsonBtn = document.getElementById('copy-json-btn');
+      var toggleManualBtn = document.getElementById('toggle-manual-btn');
+      var clearSelectionBtn = document.getElementById('clear-selection-btn');
+      var manualPanel = document.getElementById('manual-copy-panel');
+      var manualOutput = document.getElementById('manual-json-output');
+      var fallbackHint = document.getElementById('fallback-hint');
+      var selectJsonBtn = document.getElementById('select-json-btn');
+      var closeManualBtn = document.getElementById('close-manual-btn');
+
+      var feedbackTimer = null;
+
+      function asText(value) {
+        return typeof value === 'string' ? value.trim() : '';
+      }
+
+      function getSafeUrl(rawUrl) {
+        var trimmed = asText(rawUrl);
+        if (!trimmed || !/^https?:\/\//i.test(trimmed)) {
+          return null;
+        }
+        try {
+          var parsed = new URL(trimmed);
+          if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+            return trimmed;
+          }
+        } catch (err) {
+          return null;
+        }
+        return null;
+      }
+
+      function parseCourseData() {
+        var dataEl = document.getElementById('course-data');
+        if (!dataEl) {
+          return null;
+        }
+        var raw = (dataEl.textContent || '').trim();
+        if (!raw) {
+          return null;
+        }
+        try {
+          var parsed = JSON.parse(raw);
+          return Array.isArray(parsed) ? parsed : null;
+        } catch (err) {
+          return null;
+        }
+      }
+
+      function loadSelection(validIds) {
+        var set = new Set();
+        try {
+          var saved = window.localStorage.getItem(STORAGE_KEY);
+          if (!saved) {
+            return set;
+          }
+          var parsed = JSON.parse(saved);
+          if (Array.isArray(parsed)) {
+            parsed.forEach(function (id) {
+              if (typeof id === 'string' && validIds.has(id)) {
+                set.add(id);
+              }
+            });
+          }
+        } catch (err) {
+          return set;
+        }
+        return set;
+      }
+
+      function saveSelection(selectedIds) {
+        try {
+          window.localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(selectedIds)));
+        } catch (err) {
+          // Ignore storage quota or private-mode restrictions
+        }
+      }
+
+      function setFeedback(message, tone) {
+        if (feedbackTimer) {
+          window.clearTimeout(feedbackTimer);
+          feedbackTimer = null;
+        }
+        copyFeedbackEl.textContent = message || '';
+        if (tone) {
+          copyFeedbackEl.setAttribute('data-tone', tone);
+        } else {
+          copyFeedbackEl.removeAttribute('data-tone');
+        }
+        if (message) {
+          feedbackTimer = window.setTimeout(function () {
+            copyFeedbackEl.textContent = '';
+            copyFeedbackEl.removeAttribute('data-tone');
+          }, 5000);
+        }
+      }
+
+      function renderEmpty(message) {
+        catalogRoot.textContent = '';
+        var box = document.createElement('div');
+        box.className = 'empty-state';
+        box.textContent = message;
+        catalogRoot.appendChild(box);
+        copyJsonBtn.disabled = true;
+        toggleManualBtn.disabled = true;
+        clearSelectionBtn.disabled = true;
+      }
+
+      function addFact(list, label, tag, text) {
+        var row = document.createElement('div');
+        var name = document.createElement('dt');
+        name.textContent = label;
+        var value = document.createElement('dd');
+        if (tag) {
+          var heading = document.createElement('strong');
+          heading.textContent = tag + '　';
+          value.appendChild(heading);
+        }
+        value.appendChild(document.createTextNode(text));
+        row.append(name, value);
+        list.appendChild(row);
+        return value;
+      }
+
+      var rawCourses = parseCourseData();
+      if (!rawCourses) {
+        renderEmpty('尚未注入课程数据，请检查课程 JSON 数据源。');
+        return;
+      }
+
+      var keyCounter = new Map();
+      var courses = rawCourses.map(function (item, idx) {
+        var title = asText(item && item.title) || ('未命名课程 ' + (idx + 1));
+        var term = asText(item && item.term);
+        var group = asText(item && item.group) || '未分组';
+        var summary = asText(item && item.summary);
+        var materials = asText(item && item.materials);
+        var links = Array.isArray(item && item.links)
+          ? item.links
+              .filter(function (link) {
+                return link && (asText(link.label) || asText(link.url));
+              })
+              .map(function (link) {
+                var url = asText(link.url);
+                var label = asText(link.label) || url;
+                return { label: label, url: url };
+              })
+          : [];
+
+        var baseKey = item.id;
+        var seen = keyCounter.get(baseKey) || 0;
+        keyCounter.set(baseKey, seen + 1);
+        var id = seen === 0 ? baseKey : baseKey + '#' + seen;
+
+        return {
+          rankReason: item.rankReason,
+          leadOrder: item.leadOrder,
+          leadText: item.leadText,
+          leadSignal: item.leadSignal,
+          saved: item.saved,
+          state: item.state, timing: item.timing,
+          coverage: item.coverage, coverageDetail: item.coverageDetail, statusUrl: item.statusUrl,
+          id: id,
+          index: item.anchor,
+          title: title,
+          term: term,
+          group: group,
+          summary: summary,
+          materials: materials,
+          links: links
+        };
+      });
+
+      if (courses.length === 0) {
+        renderEmpty('当前清单暂无课程条目。');
+        return;
+      }
+
+      // Preserve exact first-seen group order and original course order
+      var groupsMap = new Map();
+      courses.forEach(function (course) {
+        if (!groupsMap.has(course.group)) {
+          groupsMap.set(course.group, []);
+        }
+        groupsMap.get(course.group).push(course);
+      });
+      var groups = Array.from(groupsMap.entries()).map(function (entry, groupIdx) {
+        return {
+          id: 'group-' + (groupIdx + 1),
+          number: String(groupIdx + 1).padStart(2, '0'),
+          name: entry[0],
+          items: entry[1]
+        };
+      });
+
+      var validIds = new Set(courses.map(function (c) { return c.id; }));
+      var selectedIds = loadSelection(validIds);
+      var cardById = new Map();
+      var checkboxById = new Map();
+
+      function buildExportJson() {
+        var payload = courses
+          .filter(function (course) {
+            return selectedIds.has(course.id);
+          })
+          .map(function (course) {
+            return {
+              title: course.title,
+              term: course.term,
+              group: course.group,
+              links: course.links.map(function (link) {
+                return {
+                  label: link.label,
+                  url: link.url
+                };
+              })
+            };
+          });
+        return JSON.stringify(payload, null, 2);
+      }
+
+      function syncManualOutput() {
+        manualOutput.value = buildExportJson();
+      }
+
+      function openManualPanel(hintText, autoSelect) {
+        syncManualOutput();
+        if (hintText) {
+          fallbackHint.textContent = hintText;
+        }
+        manualPanel.hidden = false;
+        toggleManualBtn.setAttribute('aria-expanded', 'true');
+        if (autoSelect) {
+          manualOutput.focus();
+          manualOutput.select();
+        }
+      }
+
+      function closeManualPanel() {
+        manualPanel.hidden = true;
+        toggleManualBtn.setAttribute('aria-expanded', 'false');
+      }
+
+      function updateSelectionUI() {
+        var count = selectedIds.size;
+        selectedCountEl.textContent = String(count);
+        selectedCountEl.setAttribute('data-active', count > 0 ? 'true' : 'false');
+        selectedTotalEl.textContent = '/ ' + courses.length + ' 门';
+        clearSelectionBtn.disabled = count === 0;
+
+        if (!manualPanel.hidden) {
+          syncManualOutput();
+        }
+      }
+
+      // Render stats
+      var statTotal = document.createElement('span');
+      statTotal.textContent = '共 ' + courses.length + ' 门课程';
+      var statGroups = document.createElement('span');
+      statGroups.textContent = groups.length + ' 个分组';
+      catalogStats.appendChild(statTotal);
+      catalogStats.appendChild(statGroups);
+
+      // Render group navigation
+      var navFrag = document.createDocumentFragment();
+      groups.forEach(function (group) {
+        var li = document.createElement('li');
+        var a = document.createElement('a');
+        a.className = 'group-nav-link';
+        a.href = '#' + group.id;
+
+        var idxSpan = document.createElement('span');
+        idxSpan.className = 'group-nav-index';
+        idxSpan.textContent = group.number;
+
+        var nameSpan = document.createElement('span');
+        nameSpan.className = 'group-nav-name';
+        nameSpan.textContent = group.name;
+
+        var countSpan = document.createElement('span');
+        countSpan.className = 'group-nav-count';
+        countSpan.textContent = String(group.items.length);
+
+        a.appendChild(idxSpan);
+        a.appendChild(nameSpan);
+        a.appendChild(countSpan);
+        li.appendChild(a);
+        navFrag.appendChild(li);
+      });
+      groupNavList.appendChild(navFrag);
+      groupNavWrap.hidden = false;
+
+      // Render course sections
+      var catalogFrag = document.createDocumentFragment();
+      groups.forEach(function (group) {
+        var section = document.createElement('section');
+        section.className = 'course-group';
+        section.id = group.id;
+
+        var headingId = group.id + '-heading';
+        section.setAttribute('aria-labelledby', headingId);
+
+        var header = document.createElement('div');
+        header.className = 'group-header';
+
+        var headingWrap = document.createElement('div');
+        headingWrap.className = 'group-heading-wrap';
+
+        var numSpan = document.createElement('span');
+        numSpan.className = 'group-number';
+        numSpan.setAttribute('aria-hidden', 'true');
+        numSpan.textContent = group.number;
+
+        var h2 = document.createElement('h2');
+        h2.className = 'group-title';
+        h2.id = headingId;
+        h2.textContent = group.name;
+
+        headingWrap.appendChild(numSpan);
+        headingWrap.appendChild(h2);
+
+        var metaSpan = document.createElement('span');
+        metaSpan.className = 'group-meta';
+        metaSpan.textContent = group.items.length + ' 门';
+
+        header.appendChild(headingWrap);
+        header.appendChild(metaSpan);
+        section.appendChild(header);
+
+        var overview = document.createElement('div');
+        overview.className = 'topic-overview';
+        var leadHeading = document.createElement('h3');
+        leadHeading.textContent = group.items.length === 1 ? '课程范围' : '方向代表课';
+        overview.appendChild(leadHeading);
+        group.items.filter(function (course) { return course.leadOrder; })
+          .sort(function (a, b) { return a.leadOrder - b.leadOrder; })
+          .forEach(function (course) {
+            var line = document.createElement('p');
+            var link = document.createElement('a');
+            link.href = '#ranked-course-' + course.index;
+            link.textContent = course.title.split(' · ')[0];
+            line.appendChild(link);
+            line.appendChild(document.createTextNode('　' + course.leadText + (course.leadSignal ? ' ' + course.leadSignal : '')));
+            overview.appendChild(line);
+          });
+        section.appendChild(overview);
+        var orderHeading = document.createElement('h3');
+        orderHeading.className = 'study-order-heading';
+        orderHeading.textContent = '首轮共学顺位';
+        if (group.items.length > 1) section.appendChild(orderHeading);
+        var rankNav = document.createElement('nav');
+        rankNav.className = 'rank-nav';
+        rankNav.setAttribute('aria-label', group.name + '组内排序');
+        if (group.items.length > 1) section.appendChild(rankNav);
+
+        var list = document.createElement('ol');
+        list.className = 'course-list';
+
+        group.items.forEach(function (course, position) {
+          var isSelected = selectedIds.has(course.id);
+
+          var li = document.createElement('li');
+          var article = document.createElement('article');
+          article.className = 'course-card';
+          article.setAttribute('data-selected', isSelected ? 'true' : 'false');
+
+          var top = document.createElement('div');
+          top.className = 'course-top';
+
+          var checkboxId = 'course-check-' + course.index;
+          var checkLabel = document.createElement('label');
+          checkLabel.className = 'check-hit';
+          checkLabel.setAttribute('for', checkboxId);
+
+          var checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.className = 'course-checkbox';
+          checkbox.id = checkboxId;
+          checkbox.checked = isSelected;
+          checkbox.setAttribute('aria-label', '选择课程：' + course.title);
+
+          checkbox.addEventListener('change', function () {
+            if (checkbox.checked) {
+              selectedIds.add(course.id);
+              article.setAttribute('data-selected', 'true');
+            } else {
+              selectedIds.delete(course.id);
+              article.setAttribute('data-selected', 'false');
+            }
+            saveSelection(selectedIds);
+            updateSelectionUI();
+          });
+
+          checkLabel.appendChild(checkbox);
+          top.appendChild(checkLabel);
+
+          var mainCol = document.createElement('div');
+          mainCol.className = 'course-main';
+
+          var headingRow = document.createElement('div');
+          headingRow.className = 'course-heading-row';
+
+          var h3 = document.createElement('h3');
+          h3.className = 'course-title';
+          h3.textContent = course.title;
+          h3.id = 'ranked-course-' + course.index;
+          headingRow.appendChild(h3);
+          if (group.items.length > 1) {
+            var jump = document.createElement('a');
+            jump.href = '#' + h3.id;
+            jump.textContent = (position + 1) + '. ' + course.title.split(' · ')[0];
+            rankNav.appendChild(jump);
+          }
+
+          if (course.term) {
+            var termSpan = document.createElement('span');
+            termSpan.className = 'course-term';
+            termSpan.textContent = course.term;
+            headingRow.appendChild(termSpan);
+          }
+
+          if (course.saved) {
+            var savedMark = document.createElement('span');
+            savedMark.className = 'saved-mark';
+            savedMark.textContent = '原收藏';
+            headingRow.appendChild(savedMark);
+          }
+          mainCol.appendChild(headingRow);
+          var recommendation = document.createElement('p');
+          recommendation.className = 'rank-reason';
+          var rank = document.createElement('strong');
+          rank.textContent = group.items.length === 1 ? '共学建议' : '首轮共学第 ' + (position + 1) + ' 名';
+          recommendation.appendChild(rank);
+          recommendation.appendChild(document.createTextNode(course.rankReason));
+          mainCol.appendChild(recommendation);
+
+          var bodyDiv = document.createElement('div');
+          bodyDiv.className = 'course-body';
+
+          if (course.summary) {
+            var pSummary = document.createElement('p');
+            pSummary.className = 'course-summary';
+            pSummary.textContent = course.summary;
+            bodyDiv.appendChild(pSummary);
+          }
+
+          if (course.materials) {
+            var pMaterials = document.createElement('p');
+            pMaterials.className = 'course-materials';
+            pMaterials.textContent = course.materials;
+            bodyDiv.appendChild(pMaterials);
+          }
+
+          mainCol.appendChild(bodyDiv);
+          var facts = document.createElement('dl');
+          facts.className = 'course-facts';
+          addFact(facts, '授课进度', course.state, course.timing);
+          var coverageLine = addFact(facts, '公开材料', course.coverage, course.coverageDetail);
+          var source = document.createElement('a');
+          source.href = getSafeUrl(course.statusUrl);
+          source.target = '_blank';
+          source.rel = 'noopener noreferrer';
+          source.textContent = '官方依据 ↗';
+          coverageLine.appendChild(source);
+          mainCol.appendChild(facts);
+
+          if (course.links.length > 0) {
+            var linksDiv = document.createElement('div');
+            linksDiv.className = 'course-links';
+
+            course.links.forEach(function (link) {
+              var safeHref = getSafeUrl(link.url);
+              if (safeHref) {
+                var a = document.createElement('a');
+                a.className = 'course-link';
+                a.href = safeHref;
+                a.target = '_blank';
+                a.rel = 'noopener noreferrer';
+
+                var labelText = document.createElement('span');
+                labelText.textContent = link.label;
+
+                var arrow = document.createElement('span');
+                arrow.className = 'course-link-arrow';
+                arrow.setAttribute('aria-hidden', 'true');
+                arrow.textContent = '↗';
+
+                a.appendChild(labelText);
+                a.appendChild(arrow);
+                linksDiv.appendChild(a);
+              }
+            });
+
+            if (linksDiv.childNodes.length > 0) {
+              mainCol.appendChild(linksDiv);
+            }
+          }
+
+          top.appendChild(mainCol);
+          article.appendChild(top);
+          li.appendChild(article);
+          list.appendChild(li);
+
+          cardById.set(course.id, article);
+          checkboxById.set(course.id, checkbox);
+        });
+
+        section.appendChild(list);
+        catalogFrag.appendChild(section);
+      });
+
+      catalogRoot.appendChild(catalogFrag);
+      updateSelectionUI();
+
+      function fallbackCopy(jsonText, count) {
+        openManualPanel('剪贴板受限，请按 Ctrl/Cmd + C 手动复制下方 JSON。', true);
+        var copied = false;
+        try {
+          copied = document.execCommand('copy');
+        } catch (err) {
+          copied = false;
+        }
+        if (copied) {
+          fallbackHint.textContent = '已通过兼容模式复制，亦可直接从下方手动复制。';
+          setFeedback('已复制 ' + count + ' 门课程 JSON', 'accent');
+        } else {
+          setFeedback('剪贴板受限，请在下方手动复制', 'accent');
+        }
+      }
+
+      copyJsonBtn.addEventListener('click', function () {
+        var count = selectedIds.size;
+        if (count === 0) {
+          setFeedback('请先勾选至少一门课程');
+          return;
+        }
+
+        var jsonText = buildExportJson();
+        if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+          navigator.clipboard.writeText(jsonText).then(
+            function () {
+              setFeedback('已复制 ' + count + ' 门课程 JSON', 'accent');
+              if (!manualPanel.hidden) {
+                syncManualOutput();
+              }
+            },
+            function () {
+              fallbackCopy(jsonText, count);
+            }
+          );
+        } else {
+          fallbackCopy(jsonText, count);
+        }
+      });
+
+      toggleManualBtn.addEventListener('click', function () {
+        if (manualPanel.hidden) {
+          openManualPanel('按 Ctrl/Cmd + C 可手动复制下方 JSON。', true);
+        } else {
+          closeManualPanel();
+        }
+      });
+
+      selectJsonBtn.addEventListener('click', function () {
+        manualOutput.focus();
+        manualOutput.select();
+        setFeedback('已全选 JSON 文本，请按 Ctrl/Cmd + C 复制');
+      });
+
+      closeManualBtn.addEventListener('click', function () {
+        closeManualPanel();
+      });
+
+      clearSelectionBtn.addEventListener('click', function () {
+        if (selectedIds.size === 0) {
+          return;
+        }
+        selectedIds.clear();
+        checkboxById.forEach(function (cb) {
+          cb.checked = false;
+        });
+        cardById.forEach(function (card) {
+          card.setAttribute('data-selected', 'false');
+        });
+        saveSelection(selectedIds);
+        updateSelectionUI();
+        setFeedback('已清空全部勾选');
+      });
+    })();
+  </script>
+<script type="application/json" id="x-data">[{"title": "Stanford CS146S · The Modern Software Developer", "heat": "新版公告获广泛转发，也有人反馈材料获取体验；所列 2 帖分别为 10,607、2 赞。", "praise": "授课教师说明新版约八成半内容重做。另有读者指出课件较短，下载需订阅，公开录像不足。", "posts": [{"label": "新版公告 · @mihail_eric · 2026-09-02（10,607 赞 / 1,581 转帖）", "url": "https://x.com/mihail_eric/status/2095166860740174273"}, {"label": "材料使用反馈 · @Mr_Wakefield_Jr · 2026-11-15（2 赞 / 0 转帖）", "url": "https://x.com/Mr_Wakefield_Jr/status/2121861974489485701"}]}, {"title": "UMich EECS 498-016 · Applied Agentic Software Engineering", "heat": "两篇独立中文推荐都得到逾千赞；所列 2 帖分别为 1,781、1,570 赞。", "praise": "两位作者推荐从 Aider 到自建 Agent 的课程设计，依据是查阅课表和仓库；未说明实际修完。", "posts": [{"label": "公开仓库推荐 · @Ryrenz · 2026-10-17（1,781 赞 / 340 转帖）", "url": "https://x.com/Ryrenz/status/2111292372474536118"}, {"label": "课程安排点评 · @Xudong07452910 · 2026-10-19（1,570 赞 / 302 转帖）", "url": "https://x.com/Xudong07452910/status/2111979391546773875"}]}, {"title": "台大李宏毅 · 機器學習", "heat": "中文讲次及全课均有讨论；所列 2 帖分别为 736、221 赞。", "praise": "读者认为 OpenClaw 一讲把工具调用、记忆和心跳机制讲得通俗；评价针对这一讲。", "posts": [{"label": "OpenClaw 推荐 · @hongming731 · 2026-03-09（736 赞 / 182 转帖）", "url": "https://x.com/hongming731/status/2030867406206406896"}, {"label": "整课梳理 · @shao__meng · 2026-09-27（221 赞 / 79 转帖）", "url": "https://x.com/shao__meng/status/2104096547747291584"}]}, {"title": "MIT MAS.S62 · Self-Evolving AI", "heat": "教师公告和独立读者均有传播；所列 2 帖分别为 1,185、156 赞。", "praise": "独立读者称系统整理自我演化的课程少见，特别提到 harness；未说明做过项目。", "posts": [{"label": "教师公告 · @pliang279 · 2026-10-22（1,185 赞 / 159 转帖）", "url": "https://x.com/pliang279/status/2113300326015275424"}, {"label": "读者推荐 · @lucas_flatwhite · 2026-10-23（156 赞 / 36 转帖）", "url": "https://x.com/lucas_flatwhite/status/2113638642107498883"}]}, {"title": "Stanford CS329A · Self-Improving AI Agents", "heat": "开课公告及后来发布的录像均有人分享；所列 2 帖分别为 1,302、146 赞。", "praise": "有非参课者推荐公开录像，点名验证、工具反馈和长程评测；未找到当期学生的学习效果评价。", "posts": [{"label": "2025 开课公告 · @Azaliamirh · 2025-09-23（1,302 赞 / 119 转帖）", "url": "https://x.com/Azaliamirh/status/1970610290724339804"}, {"label": "2026 录像推荐 · @techNmak · 2026-11-16（146 赞 / 25 转帖）", "url": "https://x.com/techNmak/status/2122415137776885858"}]}, {"title": "CMU 17-214/514 · Agentic Software Development", "heat": "找到当期讲次解读；所列 1 帖 17 赞。", "praise": "一篇读书笔记细说第 21 讲怎样用 CI 验证 Agent 改动；未见修课者给出总体评价。", "posts": [{"label": "第 21 讲笔记 · @shao__meng · 2026-11-19（17 赞 / 3 转帖）", "url": "https://x.com/shao__meng/status/2123278617497186713"}]}, {"title": "CMU 06-643 · Creating Scientific Software with AI Coding Agents", "heat": "未找到可核验的当期 X 原帖。", "praise": "按课程名、编号、仓库及讲师姓名检索，未取得独立学习评价。", "posts": []}, {"title": "Stanford CS329Z · Engineering AI Agents", "heat": "有教师公告和观看者评价；所列 3 帖分别为 2,210、121、0 赞。", "praise": "一名观看者特别推荐第 6、8 讲，称设计模式与多 Agent 协作的讲解清晰；另一位读者喜欢 HW1 把异常处理与模型调用分开测试，原帖没有说明做完了哪些环节。", "posts": [{"label": "教师公告 · @Diyi_Yang · 2026-09-02（2,210 赞 / 268 转帖）", "url": "https://x.com/Diyi_Yang/status/2095192282970615970"}, {"label": "第 6、8 讲观看评价 · @Zhaoyang___ · 2026-11-17（121 赞 / 29 转帖）", "url": "https://x.com/Zhaoyang___/status/2122696685222494554"}, {"label": "HW1 测试设计点评 · @YZJZJZJZJ · 2026-11-22（0 赞 / 0 转帖）", "url": "https://x.com/YZJZJZJZJ/status/2124397762120761745"}]}, {"title": "CMU 11-768 · AI Agents", "heat": "教师开课公告得到较多互动；所列 2 帖分别为 2,367、3 赞。", "praise": "独立读者推荐把 harness、评测和 RL 训练连起来的三项作业；未说明亲自完成。", "posts": [{"label": "教师公告 · @gneubig · 2026-07-02（2,367 赞 / 283 转帖）", "url": "https://x.com/gneubig/status/2072730570304430183"}, {"label": "作业设计点评 · @Sercanvwty · 2026-09-29（3 赞 / 0 转帖）", "url": "https://x.com/Sercanvwty/status/2104984762729566673"}]}, {"title": "MIT 6.S950 · Agency with AI", "heat": "两位作者讨论同一讲；所列 2 帖分别为 180、4 赞。", "praise": "外部读者介绍约 300 行 Python 的 harness 示例，肯定它能说明 Agent 外层如何执行与停止；评价集中于第 5 讲。", "posts": [{"label": "第 5 讲解读 · @shao__meng · 2026-10-21（180 赞 / 50 转帖）", "url": "https://x.com/shao__meng/status/2112821429121204275"}, {"label": "另一位读者笔记 · @Moblacksoil · 2026-10-21（4 赞 / 0 转帖）", "url": "https://x.com/Moblacksoil/status/2112833267846054317"}]}, {"title": "Princeton COS 597C · AI Agents", "heat": "未找到可归属到 2026 秋 AI Agents 的 X 原帖。", "praise": "COS 597C 往年也用于其他主题；检索未取得本期独立评价。", "posts": []}, {"title": "Stanford CS224V · Agentic AI", "heat": "当期讲义有第三方解读；所列 2 帖分别为 78、12 赞。", "praise": "读者梳理如何用检索、结构化数据和形式方法提高可靠性；未见能归到当期的学后好评。", "posts": [{"label": "当期课程解读 · @shao__meng · 2026-10-02（78 赞 / 21 转帖）", "url": "https://x.com/shao__meng/status/2105843731429789702"}, {"label": "项目与课程安排 · @shao__meng · 2026-11-03（12 赞 / 3 转帖）", "url": "https://x.com/shao__meng/status/2117463121271128531"}]}, {"title": "UC Berkeley RDI · Agentic AI", "heat": "教师公告和学后项目分享可查；所列 2 帖分别为 247、0 赞。", "praise": "一名学习者表示，修完 MOOC 并参加 AgentBeats 后改变了构建多 Agent 系统的做法。", "posts": [{"label": "2025 秋公告 · @dawnsongtweets · 2025-09-04（247 赞 / 36 转帖）", "url": "https://x.com/dawnsongtweets/status/1963662244455293033"}, {"label": "学习者项目复盘 · @kitelord · 2026-02-01（0 赞 / 0 转帖）", "url": "https://x.com/kitelord/status/2017840948265554030"}]}, {"title": "University of Maryland CMSC 848N · Generative AI Agents", "heat": "教师预告 2026 秋；较多互动来自往届；所列 2 帖分别为 0、22 赞。", "praise": "教师转述一名往届学生认为本课拓宽了他对 LLM 应用的认识。该评价发表于 2026 秋开课前。", "posts": [{"label": "新学期预告 · @furongh · 2026-08-07（0 赞 / 0 转帖）", "url": "https://x.com/furongh/status/2085792048200720543"}, {"label": "往届学生反馈转述 · @furongh · 2026-08-07（22 赞 / 0 转帖）", "url": "https://x.com/furongh/status/2085787689798767028"}]}, {"title": "Harvard CS2680 · Modern AI Systems: Agents and System Optimizations", "heat": "教师公告和独立推荐都有较多互动；所列 2 帖分别为 4,006、1,280 赞。", "praise": "独立推荐者看重从 Claude Code 原理、自建 Agent 一直到 GPU 服务的完整覆盖；未声明已修完。", "posts": [{"label": "教师公告 · @1a1a11a · 2026-10-10（4,006 赞 / 447 转帖）", "url": "https://x.com/1a1a11a/status/2108924569398411566"}, {"label": "独立课程推荐 · @joshva_jebaraj · 2026-11-10（1,280 赞 / 149 转帖）", "url": "https://x.com/joshva_jebaraj/status/2120247442063167984"}]}, {"title": "UC San Diego CSE-291A · Systems for LLMs and AI Agents", "heat": "找到当期课表与具体讲次的解读；所列 2 帖分别为 115、53 赞。", "praise": "同一位作者整理课纲，并复述第 13 讲的前缀缓存与预填充、解码分离；未取得独立修课评价。", "posts": [{"label": "当期课表解读 · @shao__meng · 2026-10-11（115 赞 / 29 转帖）", "url": "https://x.com/shao__meng/status/2109255026631983170"}, {"label": "第 13 讲笔记 · @shao__meng · 2026-11-10（53 赞 / 9 转帖）", "url": "https://x.com/shao__meng/status/2119953352901755240"}]}, {"title": "CMU 11-891 · Neural Code Generation", "heat": "仅核到早期同名课传播；所列 1 帖 388 赞。", "praise": "2025 秋未找到学后评价。链接指向讲师对 2024 春同名课的介绍。", "posts": [{"label": "2024 同名课公告 · @wellecks · 2024-01-21（388 赞 / 71 转帖）", "url": "https://x.com/wellecks/status/1749212667036721514"}]}, {"title": "CMU 17-445/645/745 · Machine Learning in Production", "heat": "当期公开视频列入推荐清单；所列 2 帖分别为 0、1 赞。", "praise": "独立读者把 17-645 推荐给想学部署、验证和维护的人；样本中未见完成本学期作业后的评价。", "posts": [{"label": "2026 秋课程清单推荐 · @jingyi_duan_ · 2026-11-22（0 赞 / 0 转帖）", "url": "https://x.com/jingyi_duan_/status/2124358184068661302"}, {"label": "公开视频分享 · @0xpiyushvm · 2026-11-17（1 赞 / 0 转帖）", "url": "https://x.com/0xpiyushvm/status/2122648942970085503"}]}, {"title": "Stanford CS336 · Language Modeling from Scratch", "heat": "官方发布了 2026 版录像，读者也讨论本期；所列 3 帖分别为 1,717、4、305 赞。", "praise": "有观看者在发布帖下说，内核和数据选择让自己对系统部分有了直觉；另有读者推荐从分词器写到分布式训练的作业。", "posts": [{"label": "2026 录像公告 · @stanfordnlp · 2026-05-12（1,717 赞 / 217 转帖）", "url": "https://x.com/stanfordnlp/status/2054257378271613138"}, {"label": "系统部分学习反馈 · @Thomas_Tao_1 · 2026-05-12（4 赞 / 0 转帖）", "url": "https://x.com/Thomas_Tao_1/status/2054279361092850074"}, {"label": "春季版独立推荐 · @techNmak · 2026-10-21（305 赞 / 50 转帖）", "url": "https://x.com/techNmak/status/2112907915694936123"}]}, {"title": "Hugging Face Agents Course", "heat": "常设网课的发布和持续学习均有记录；所列 3 帖分别为 247、12、0 赞。", "praise": "有读者自述结课并学会用三种框架搭建工具型 Agent，另有学习者完成第一单元后给出推荐。", "posts": [{"label": "课程上线 · @ThomasSimonini · 2025-01-15（247 赞 / 60 转帖）", "url": "https://x.com/ThomasSimonini/status/1879549104654885089"}, {"label": "结课自述 · @LukmanAJJK · 2025-05-01（12 赞 / 1 转帖）", "url": "https://x.com/LukmanAJJK/status/1917984031133622421"}, {"label": "第一单元学后推荐 · @bsulivn · 2026-11-08（0 赞 / 0 转帖）", "url": "https://x.com/bsulivn/status/2119273479489089738"}]}]</script>
+<script type="text/plain" id="x-scope">X 数据截至 2026-11-22（美东上午）。Grok 按课程名、课号、学期、教师和课程网址检索；按原帖核对作者、内容与互动数。每门展示 0–3 条代表帖，点赞和转帖是单帖快照。往届讨论、教师公告和独立学习体验分别标明；没有本期样本时，热度和好评率无法据此判断。</script>
+<script>
+(() => {
+  const scopeText = document.getElementById('x-scope')?.textContent.trim();
+  const statsEl = document.getElementById('catalog-stats');
+  if (scopeText && statsEl) {
+    const p = document.createElement('p');
+    p.className = 'masthead-desc';
+    p.textContent = scopeText;
+    statsEl.after(p);
+  }
+
+  const xEl = document.getElementById('x-data');
+  if (!xEl) return;
+  let xItems;
+  try { xItems = JSON.parse(xEl.textContent || '[]'); } catch { return; }
+  const xMap = new Map(xItems.map((item) => [item.title, item]));
+
+  const appendRow = (dl, term, fill) => {
+    const row = document.createElement('div');
+    const dt = document.createElement('dt');
+    const dd = document.createElement('dd');
+    dt.textContent = term;
+    fill(dd);
+    row.append(dt, dd);
+    dl.append(row);
+  };
+
+  document.querySelectorAll('article.course-card').forEach((card) => {
+    const titleEl = card.querySelector('h3.course-title');
+    const dl = card.querySelector('dl.course-facts');
+    const item = titleEl && (xMap.get(titleEl.textContent) || xMap.get(titleEl.textContent.trim()));
+    if (!dl || !item) return;
+
+    appendRow(dl, 'X 讨论热度', (dd) => { dd.textContent = item.heat ?? ''; });
+    appendRow(dl, 'X 评价与好评', (dd) => {
+      dd.textContent = item.praise ?? '';
+      const posts = Array.isArray(item.posts) ? item.posts.filter((p) => p && p.url && p.label) : [];
+      if (!posts.length) return;
+      const list = document.createElement('div');
+      list.style.cssText = 'display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:4px;';
+      posts.forEach(({ label, url }) => {
+        const a = document.createElement('a');
+        a.href = url;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        a.textContent = label;
+        list.append(a);
+      });
+      dd.append(list);
+    });
+  });
+})();
+</script>
+<script type="application/json" id="learner-data">[{"title": "Stanford CS146S · The Modern Software Developer", "entries": [{"url": "https://x.com/Mr_Wakefield_Jr/status/2121861974489485701", "source": "@Mr_Wakefield_Jr · X · 公开资料使用反馈", "term": "2026 秋；仅材料获取体验", "experience": "作者比较了两门 Stanford 课的公开资料，对 CS146S 课件简短、下载需要订阅通讯表达不满；没有说做过作业。", "quote": "你想下载他的课件,需要订阅这门课prof自己的newsletter", "author": "@Mr_Wakefield_Jr", "evidence": "公开资料使用反馈", "change": "上轮已有，原文复核", "origin": "上轮 Grok"}, {"url": "https://github.com/starsstreaming/CS146S-learning/blob/main/CS146s%E8%AF%BE%E7%A8%8B%E4%BD%9C%E4%B8%9A/week2/README.md", "source": "starsstreaming · 个人 GitHub 作业 · 部分作业实现", "term": "2026 秋，第 2 周，部分完成", "experience": "作者把自己学校的课表和教务查询做成只读 MCP 服务。登录过期要手动重登，没有完成作业要求的 OAuth 刷新与写入功能。", "quote": "An expired school session requires manual login", "author": "starsstreaming", "evidence": "部分作业实现", "change": "本轮新增", "origin": "Grok 本轮"}, {"url": "https://github.com/hyh0601/cs146s-portfolio/blob/main/writeups/w1.md", "source": "hyh0601 · 个人作业复盘 · 学习者自述", "term": "2026 秋，第 1 周；校外自学", "experience": "hyh0601 记录了 14 次模型请求、测试失败和修复过程。他从工具列表变化导致前缀缓存失效的观察，写到下次如何先写测试。", "quote": "要求它先写测试再写实现", "author": "hyh0601", "evidence": "学习者自述", "change": "本轮新增", "origin": "Grok 本轮"}], "note": "本轮新增 2 条。复核上轮 1 条。"}, {"title": "UMich EECS 498-016 · Applied Agentic Software Engineering", "entries": [], "note": "公开资料以教学仓库和课程推荐为主，个人交付仓库须受邀；未核到学生亲自做实验或参加黑客松的公开记录。"}, {"title": "台大李宏毅 · 機器學習", "entries": [{"url": "https://hackmd.io/@JuitingChen/rkOaIps9bg", "source": "JuitingChen · 个人 HackMD 观课笔记 · 个人观看笔记", "term": "2026 春；3 月 20 日笔记链接到本期第 1 讲录像", "experience": "JuitingChen 看 OpenClaw 这一讲后，把身份、系统提示、工具与技能分开做了笔记，并提醒读者以原片为准。未声称亲自部署。", "quote": "內容可能有錯誤，請參考原始影片", "author": "JuitingChen", "evidence": "个人观看笔记", "change": "本轮新增", "origin": "Grok 本轮"}], "note": "本轮新增 1 条。 仅核到对应录像的个人听课笔记，未核到 2026 春个人作业实现或教学效果评价。"}, {"title": "MIT MAS.S62 · Self-Evolving AI", "entries": [], "note": "X 上有课程推荐，公开项目页主要是课程安排；未取得可指认到 2026 秋本课的学员项目或亲历评论。"}, {"title": "Stanford CS329A · Self-Improving AI Agents", "entries": [{"url": "https://github.com/wilkinszhang/cs329a-homework1-fall2025-public/blob/main/CLAUDE.md", "source": "wilkinszhang · 个人 GitHub 作业记录 · 与 AI 共写的运行记录", "term": "2025 秋公开 HW1；2026 年 9 月事后自学", "experience": "作者在 Windows 做 AIME 推理评测时，验证器异常却静默返回零分。他修正环境问题后跑了零样本、投票和自改进对比，记录了有题变对、也有题退步。", "quote": "On Windows every verification raised", "author": "wilkinszhang", "evidence": "与 AI 共写的运行记录", "change": "本轮新增", "origin": "Grok 本轮"}, {"url": "https://x.com/rahulshivchand/status/1999872128104202320", "source": "Rahul Chand · X · 学习者自述", "term": "2025 秋；期末项目后发帖", "experience": "Rahul 把异步离策略强化学习作为自己的 CS329A 项目，称用 prime-rl 在两天内完成。帖子没有给出评分或研究结论。", "quote": "Could complete it in 2 days thanks to prime-rl", "author": "Rahul Chand", "evidence": "学习者自述", "change": "本轮新增", "origin": "Grok 本轮"}], "note": "本轮新增 2 条。"}, {"title": "CMU 17-214/514 · Agentic Software Development", "entries": [], "note": "课程作业与 Agent 记录通常在学生私库提交。公开检索找到讲义解读，未取得当期作业复盘。"}, {"title": "CMU 06-643 · Creating Scientific Software with AI Coding Agents", "entries": [], "note": "以课号、讲师、作业和仓库名检索，得到官方模板、泛泛推荐等，未核到学生本人提交或自学复盘。"}, {"title": "Stanford CS329Z · Engineering AI Agents", "entries": [{"url": "https://x.com/YZJZJZJZJ/status/2124397762120761745", "source": "杨正经 · X · 读者对作业设计的点评；未确认完成作业", "term": "2026 秋；阅读公开 HW1，是否完成未说明", "experience": "作者说自己此前跟做过另一个小 Demo。翻看本课 HW1 时，他特别喜欢模拟用户对话的测试和每次模型调用的预算上限；帖子没有确认他亲自实现了邮件分类、检索或完成此作业。", "quote": "我的感受是，这份作业比再刷十个教程管用。", "author": "杨正经", "evidence": "读者对作业设计的点评；未确认完成作业", "change": "上轮已有，原文复核", "origin": "上轮 Grok"}, {"url": "https://x.com/Zhaoyang___/status/2122696685222494554", "source": "Zhaoyang · X · 学习者自述", "term": "2026 秋；公开录像观看者", "experience": "作者看了第 6、8 讲，特别肯定讲师把设计模式和多 Agent 协作的适用条件讲得清楚。", "quote": "two of the best lectures I have ever watched", "author": "Zhaoyang", "evidence": "学习者自述", "change": "上轮已有，原文复核", "origin": "上轮 Grok"}, {"url": "https://github.com/shuningzhang16/cs329z-learning/blob/main/LEARNING_LOG.md", "source": "shuningzhang16 · 个人 GitHub 学习日志 · 学习者自述", "term": "2026 秋，HW1；选课身份未明", "experience": "作者用 Codex CLI 做公开作业。真实压缩实验中，辅助模型把摘要写成工具调用，覆盖了早先约束；日志区分确定性测试与真实模型验证。", "quote": "真实压缩测试发现辅助模型曾把摘要写成工具调用", "author": "shuningzhang16", "evidence": "学习者自述", "change": "本轮新增", "origin": "Grok 本轮"}], "note": "本轮新增 1 条。复核上轮 2 条。"}, {"title": "CMU 11-768 · AI Agents", "entries": [{"url": "https://github.com/ceelil/assignment-1/blob/main/artifacts/token-usage-analysis.md", "source": "ceelil · 个人 GitHub 作业实验 · 作业实验，单个任务上的自报数字", "term": "2026 秋，Assignment 1；选课身份未明", "experience": "ceelil 在同一 Django 修复题比较压缩与不压缩。两次都修好，压缩后输入 token 减少 55%，费用只低 20%；作者追到缓存命中减少。", "quote": "its dollar cost was only 20% lower even though it used 55% fewer prompt tokens", "author": "ceelil", "evidence": "作业实验，单个任务上的自报数字", "change": "本轮新增", "origin": "Grok 本轮"}, {"url": "https://github.com/kiiiire/CMU-11768-assignment-1/blob/main/artifacts/token-usage-analysis.md", "source": "kire · 个人 GitHub 作业实验 · 可检查的作业实验", "term": "2026 秋，Assignment 1；选课身份未明", "experience": "kire 换用另一模型做了上下文压缩对照，两次都通过同一修复任务。作者认为这次最确定的收益是限制上下文长度。", "quote": "The decisive benefit of compaction here is not price but the bounded context window.", "author": "kire", "evidence": "可检查的作业实验", "change": "本轮新增", "origin": "Grok 本轮"}], "note": "本轮新增 2 条。"}, {"title": "MIT 6.S950 · Agency with AI", "entries": [], "note": "查了 Baby Anigans、成对实验与现场验收等作业词。外部帖子多为讲义解读，未核到实际做过 lab 的记录。"}, {"title": "Princeton COS 597C · AI Agents", "entries": [], "note": "搜过 COS 597C、课程站和项目展示。现有公开材料是作业说明或同号旧课；未核到 2026 秋学员复盘。"}, {"title": "Stanford CS224V · Agentic AI", "entries": [], "note": "查了课号、课程站和项目标识；本期主要是讲义梳理。往届同号异名课程的回复未计入。"}, {"title": "UC Berkeley RDI · Agentic AI", "entries": [{"url": "https://x.com/kitelord/status/2017840948265554030", "source": "Eric Zhou · X · 学习者自述", "term": "2025 秋课程后；2026 年 2 月发帖", "experience": "作者说自己修了 Dawn Song 的 MOOC 并做了 AgentX / AgentBeats 多 Agent 系统，复盘哪些想法改变了自己的构建方式。", "quote": "building an AgentX / AgentBeats multi-agent system", "author": "Eric Zhou", "evidence": "学习者自述", "change": "上轮已有，原文复核", "origin": "上轮 Grok"}, {"url": "https://www.linkedin.com/pulse/rethinking-how-we-evaluate-agents-muhammad-maaz-uddin-fndrf", "source": "Muhammad Maaz Uddin · 学员 LinkedIn 复盘 · 学习者自述", "term": "2025 秋 MOOC", "experience": "Maaz 把 BrowserGym 接进 AgentBeats，提交评测器 WEAG。他说亲手走完评测流程才发现，一个配置差异就会让本地和容器里的结果难以解释。", "quote": "For the Web Agent category, I built and submitted WEAG by porting BrowserGym into AgentBeats.", "author": "Muhammad Maaz Uddin", "evidence": "学习者自述", "change": "本轮新增", "origin": "Grok 本轮"}, {"url": "https://www.linkedin.com/pulse/learning-agentic-ai-uc-berkeley-building-evaluating-agents-felipe-kph1f", "source": "Fabio Felipe · 学员 LinkedIn 复盘 · 学习者自述", "term": "2025 秋 MOOC；学期后发文", "experience": "Fabio 用 SEC 文件设计金融任务基准，发现多 Agent 之间很小的上下文传递错误就能让整套系统失败；他因此推荐这门课给想了解系统如何在实践中失败的人。", "quote": "Small communication errors often caused system-level failures, making debugging harder than in single-agent systems.", "author": "Fabio Felipe", "evidence": "学习者自述", "change": "本轮新增", "origin": "Grok 本轮"}], "note": "本轮新增 2 条。复核上轮 1 条。"}, {"title": "University of Maryland CMSC 848N · Generative AI Agents", "entries": [{"url": "https://www.cs.umd.edu/article/2026/08/learning-when-pivot", "source": "Ananth Sankaralingam · 校方校友采访 · 采访直接引语；课号据讲师交叉核实", "term": "往届，2026 秋开课前已毕业", "experience": "Ananth 在采访中谈到黄芙蓉的课让他重新认识 LLM 能支持的产品。采访未列课号，教师在原帖中确认是 CMSC 848N。", "quote": "You realize there’s so much more possible at this moment", "author": "Ananth Sankaralingam", "evidence": "采访直接引语；课号据讲师交叉核实", "change": "本轮新增", "origin": "由上轮教师帖追回原访谈", "related_url": "https://x.com/furongh/status/2085787689798767028"}], "note": "本轮新增 1 条。 只取得毕业校友对往届课的直接采访；2026 秋未取得当期学生作业或本人评价。"}, {"title": "Harvard CS2680 · Modern AI Systems: Agents and System Optimizations", "entries": [{"url": "https://github.com/HarvardMadSys/CS2680-Assignment1-Mads-Lens/blob/main/patchwork/README.md", "source": "Djordje Ivanovic · 课程收录的学生作品 · 具名学生作业，非主观评价", "term": "2026 秋，Assignment 1", "experience": "Djordje Ivanovic 做了 Patchwork，把 Claude Code 的任务派给谁、谁交回结果画成不同列，仍可展开看工具调用。可检查作品，作者没有给课程评分。", "quote": "Patchwork makes a Claude Code run look like a team working together.", "author": "Djordje Ivanovic", "evidence": "具名学生作业，非主观评价", "change": "本轮新增", "origin": "Grok 本轮"}, {"url": "https://blog.cs2680.com/2026/assignment1/raulromero/", "source": "Raul Romero · 学生署名课程博客 · 学生设计与实现复盘", "term": "2026 秋，Assignment 1", "experience": "Raul 做了一个控制 Claude Code 的终端界面，用旋钮和推子调 Agent、显示耗时和调用。他公开了工作过程与原型；没给课程评分。", "quote": "Controller was built with Claude Code", "author": "Raul Romero", "evidence": "学生设计与实现复盘", "change": "本轮新增", "origin": "Grok 本轮", "related_url": "https://x.com/Raul_RomeroM/status/2112004052464591107"}], "note": "本轮新增 2 条。"}, {"title": "UC San Diego CSE-291A · Systems for LLMs and AI Agents", "entries": [{"url": "https://github.com/ConstBob/Context-Memory-Management-for-Agents", "source": "Zihao Wang、Ye Tian、Yiming Zhao、Hengzhou Li、Ziqiao Xi · 学生团队项目仓库 · 往届课程项目，非当期课评", "term": "2025 秋同名课；2026 秋未找到当期记录", "experience": "五人团队拿 15 个多轮饮食规划任务比较无状态基线与记忆加检索；项目自报完成数从 2 提到 8。只代表这次实验。", "quote": "We evaluated the system on a benchmark of 15 multi-turn diet-planning tasks", "author": "Zihao Wang、Ye Tian、Yiming Zhao、Hengzhou Li、Ziqiao Xi", "evidence": "往届课程项目，非当期课评", "change": "本轮新增", "origin": "Grok 本轮"}], "note": "本轮新增 1 条。 只有 2025 秋同名课程的项目记录；当期公开阅读材料和课程介绍没有提供学生体验。"}, {"title": "CMU 11-891 · Neural Code Generation", "entries": [], "note": "2024 春教师公告与 2025 秋不是同一学期。未找到可归到 2025 秋的学生短评、项目报告或自学记录。"}, {"title": "CMU 17-445/645/745 · Machine Learning in Production", "entries": [{"url": "https://github.com/Aravinda214/AI-Movie-Recommendation-System", "source": "Pulp Predictions · 学生团队 GitHub 仓库 · 可检查的团队项目，非主观评价", "term": "往届；2025 年 9 月已有项目提交，非 2026 秋", "experience": "Pulp Predictions 团队给电影推荐模型做了容器化 API、按时间切分的评测、数据漂移监控和 CI。", "quote": "This repository was developed as part of Carnegie Mellon University's Machine Learning in Production course", "author": "Pulp Predictions", "evidence": "可检查的团队项目，非主观评价", "change": "本轮新增", "origin": "Grok 本轮"}], "note": "本轮新增 1 条。 只取得往届学生团队作品。2026 秋的公开 fork 与官方仓库一致，公开视频清单未提供学习者体验。"}, {"title": "Stanford CS336 · Language Modeling from Scratch", "entries": [{"url": "https://github.com/mangeshraut712/Stanford-CS336/blob/main/assignments/assignment1-basics/LEARNINGS.md", "source": "Mangesh Raut · 个人 GitHub 仓库 · 个人作业仓库；测试结果为作者自报", "term": "2026 春；校外自学", "experience": "Mangesh 在 Mac 上实测增大 batch 反而变慢：batch 64 触发内存交换，速度比留出余量的 batch 32 慢约一倍。 仓库还标出本地单测与未跑的云端 GPU 训练。", "quote": "batch 64 with swap was ~2× slower than batch 32 with headroom", "author": "Mangesh Raut", "evidence": "个人作业仓库；测试结果为作者自报", "change": "本轮新增", "origin": "Grok 本轮与 Codex 独立找到同一作者", "related_url": "https://github.com/mangeshraut712/Stanford-CS336"}, {"url": "https://x.com/Thomas_Tao_1/status/2054279361092850074", "source": "Thomas Tao · X · 学习者自述", "term": "2026 版录像发布帖下的同期回复", "experience": "Thomas 说训练系统这一部分让他建立了直觉，尤其是内核与数据选择；未声称已完成整课。", "quote": "the systems side is where my intuition finally clicked", "author": "Thomas Tao", "evidence": "学习者自述", "change": "上轮已有，原文复核", "origin": "上轮 Grok"}], "note": "本轮新增 1 条。复核上轮 1 条。"}, {"title": "Hugging Face Agents Course", "entries": [{"url": "https://discuss.huggingface.co/t/agent-course-final-project-can-we-see-the-score-for-each-question/171760", "source": "jugglingbits · Hugging Face 学习论坛 · 学习者自述", "term": "常设网课，2025 年 12 月反馈", "experience": "jugglingbits 提交最后项目的 20 题后只收到总成绩，无法定位哪些题答错，于是在课程论坛求助。", "quote": "That doesn’t tell us which questions we got wrong or right, just the total number.", "author": "jugglingbits", "evidence": "学习者自述", "change": "本轮新增", "origin": "Codex 补检并复核"}, {"url": "https://x.com/bsulivn/status/2119273479489089738", "source": "Bob Sullivan · X · 学习者自述", "term": "常设网课，2026 年 11 月反馈", "experience": "Bob 完成第一单元、拿到证书，推荐给想理解 Agent 工作原理的人。", "quote": "Would recommend it for folks looking to learn how things work under the hood!", "author": "Bob Sullivan", "evidence": "学习者自述", "change": "上轮已有，原文复核", "origin": "上轮 Grok"}, {"url": "https://github.com/ssgrummons/huggingface_final_assignment", "source": "ssgrummons · 个人期末作业仓库 · 作者的作业与分数自述", "term": "常设网课，2025 年春", "experience": "ssgrummons 先在 M1 Max 尝试小模型，再用 Gemini 2.5 Pro 做期末 GAIA 题，记录拿到 14/20；他也描述了限流如何影响运行。", "quote": "The GAIA tasks are too complex for a small model.", "author": "ssgrummons", "evidence": "作者的作业与分数自述", "change": "本轮新增", "origin": "Grok 本轮"}], "note": "本轮新增 2 条。复核上轮 1 条。"}]</script>
+<script type="text/plain" id="learner-scope">学习者亲历 · 截至 2026-11-22，专项检索覆盖全部 20 门课，在 12 门找到 24 条可回看的学习记录，其中 3 门仅有往届记录。包含听课感受、作业复盘和学生作品。</script>
+<script>
+(function () {
+  'use strict';
+
+  function el(tag, text) {
+    const node = document.createElement(tag);
+    if (text != null) node.textContent = text;
+    return node;
+  }
+
+  function trimStr(value) {
+    return typeof value === 'string' ? value.trim() : '';
+  }
+
+  const scopeEl = document.getElementById('learner-scope');
+  const statsEl = document.getElementById('catalog-stats');
+  if (scopeEl && statsEl && statsEl.parentNode && !document.querySelector('[data-learner-scope]')) {
+    let scopeText = trimStr(scopeEl.textContent);
+    if (scopeText) {
+      try {
+        const parsedScope = JSON.parse(scopeText);
+        if (typeof parsedScope === 'string') {
+          scopeText = parsedScope.trim();
+        } else if (parsedScope && typeof parsedScope === 'object') {
+          const picked = parsedScope.summary || parsedScope.scope || parsedScope.text || parsedScope.description || parsedScope.note || parsedScope.message;
+          scopeText = typeof picked === 'string'
+            ? picked.trim()
+            : Object.values(parsedScope).filter(function (v) { return typeof v === 'string' && v.trim(); }).map(function (v) { return v.trim(); }).join(' · ');
+        }
+      } catch (_) {}
+    }
+    if (scopeText) {
+      const desc = el('p', scopeText);
+      desc.className = 'masthead-desc';
+      desc.setAttribute('data-learner-scope', 'true');
+      statsEl.parentNode.insertBefore(desc, statsEl.nextSibling);
+    }
+  }
+
+  const dataEl = document.getElementById('learner-data');
+  if (!dataEl) return;
+
+  let records;
+  try {
+    const parsed = JSON.parse(dataEl.textContent || '[]');
+    records = Array.isArray(parsed)
+      ? parsed
+      : (Array.isArray(parsed && parsed.courses) ? parsed.courses : (Array.isArray(parsed && parsed.items) ? parsed.items : []));
+  } catch (_) {
+    return;
+  }
+
+  const byTitle = new Map();
+  for (const item of records) {
+    if (!item || typeof item.title !== 'string') continue;
+    byTitle.set(item.title, item);
+    const trimmed = item.title.trim();
+    if (trimmed && !byTitle.has(trimmed)) byTitle.set(trimmed, item);
+  }
+
+  const cards = document.querySelectorAll('article.course-card');
+  for (const card of cards) {
+    const titleEl = card.querySelector('h3.course-title');
+    const dl = card.querySelector('dl.course-facts');
+    if (!titleEl || !dl || dl.querySelector('[data-learner-row]')) continue;
+
+    const rawTitle = titleEl.textContent || '';
+    const record = byTitle.get(rawTitle) || byTitle.get(rawTitle.trim());
+    if (!record) continue;
+
+    const entries = Array.isArray(record.entries) ? record.entries.filter(Boolean) : [];
+    const note = trimStr(record.note);
+    if (!entries.length && !note) continue;
+
+    const row = el('div');
+    row.setAttribute('data-learner-row', 'true');
+    const dt = el('dt', '学习者亲历');
+    const dd = el('dd');
+
+    if (entries.length) {
+      const list = el('ul');
+      list.style.listStyle = 'none';
+      list.style.margin = '0';
+      list.style.padding = '0';
+      list.style.display = 'grid';
+      list.style.gap = '0.45rem';
+
+      for (const entry of entries) {
+        const exp = trimStr(entry.experience);
+        const source = trimStr(entry.source);
+        const term = trimStr(entry.term);
+        const url = trimStr(entry.url);
+        const quote = trimStr(entry.quote);
+        const label = source && term ? source + ' · ' + term : (source || term || (url ? '来源' : ''));
+        if (!exp && !label && !quote) continue;
+
+        const li = el('li');
+        const line = el('div');
+        if (exp) line.appendChild(el('span', exp));
+        if (label) {
+          if (exp) line.appendChild(document.createTextNode(' '));
+          if (/^https?:\/\//i.test(url)) {
+            const link = el('a', label);
+            link.href = url;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            line.appendChild(link);
+          } else {
+            line.appendChild(el('span', label));
+          }
+        }
+        if (line.childNodes.length) li.appendChild(line);
+
+        if (quote) {
+          const details = el('details');
+          details.style.marginTop = '0.25rem';
+          const summary = el('summary', '查看原话');
+          summary.style.cursor = 'pointer';
+          const blockquote = el('blockquote', quote);
+          blockquote.style.margin = '0.25rem 0 0';
+          blockquote.style.paddingLeft = '0.6rem';
+          blockquote.style.borderLeft = '2px solid currentColor';
+          blockquote.style.opacity = '0.85';
+          details.appendChild(summary);
+          details.appendChild(blockquote);
+          li.appendChild(details);
+        }
+
+        list.appendChild(li);
+      }
+
+      if (list.childNodes.length) dd.appendChild(list);
+    }
+
+    if (note) {
+      const noteEl = el('p', note);
+      noteEl.style.margin = dd.childNodes.length ? '0.45rem 0 0' : '0';
+      noteEl.style.opacity = '0.85';
+      dd.appendChild(noteEl);
+    }
+
+    if (!dd.childNodes.length) continue;
+
+    row.appendChild(dt);
+    row.appendChild(dd);
+
+    let beforeNode = null;
+    for (const child of dl.children) {
+      const childDt = child.querySelector('dt');
+      if (childDt && trimStr(childDt.textContent) === 'X 讨论热度') {
+        beforeNode = child;
+        break;
+      }
+    }
+    if (!beforeNode) {
+      for (const child of dl.children) {
+        const childDt = child.querySelector('dt');
+        if (childDt && childDt.textContent && childDt.textContent.indexOf('X 讨论热度') !== -1) {
+          beforeNode = child;
+          break;
+        }
+      }
+    }
+
+    if (beforeNode) dl.insertBefore(row, beforeNode);
+    else dl.appendChild(row);
+  }
+})();
+</script>
+<script>
+(function () {
+  "use strict";
+
+  function normText(value) {
+    return String(value || "").replace(/\s+/g, " ").trim();
+  }
+
+  function cleanLabel(value) {
+    return String(value || "").replace(/[\u3000\s]+/g, " ").trim();
+  }
+
+  function parseCourseData() {
+    var map = new Map();
+    var scriptEl = document.getElementById("course-data");
+    if (!scriptEl || !scriptEl.textContent) return map;
+
+    var raw;
+    try {
+      raw = JSON.parse(scriptEl.textContent);
+    } catch (e) {
+      return map;
+    }
+
+    var items = [];
+    function collect(node) {
+      if (!node) return;
+      if (Array.isArray(node)) {
+        for (var i = 0; i < node.length; i++) {
+          var entry = node[i];
+          if (entry && typeof entry === "object") {
+            if (typeof entry.title === "string") {
+              items.push(entry);
+            } else if (Array.isArray(entry.courses)) {
+              collect(entry.courses);
+            }
+          }
+        }
+      } else if (typeof node === "object") {
+        if (Array.isArray(node.courses)) collect(node.courses);
+        if (Array.isArray(node.groups)) collect(node.groups);
+      }
+    }
+    collect(raw);
+
+    for (var j = 0; j < items.length; j++) {
+      var item = items[j];
+      var key = normText(item.title);
+      if (key) {
+        map.set(key, {
+          state: cleanLabel(item.state),
+          coverage: cleanLabel(item.coverage)
+        });
+      }
+    }
+    return map;
+  }
+
+  function extractFallbackFacts(factsEl) {
+    var result = { state: "", coverage: "" };
+    if (!factsEl) return result;
+    var rows = factsEl.children;
+    for (var i = 0; i < rows.length; i++) {
+      var dt = rows[i].querySelector("dt");
+      var dd = rows[i].querySelector("dd");
+      if (!dt || !dd) continue;
+      var label = normText(dt.textContent);
+      var strong = dd.querySelector("strong");
+      var val = strong ? cleanLabel(strong.textContent) : "";
+      if (!val) continue;
+      if (label === "授课进度" && !result.state) result.state = val;
+      if (label === "公开材料" && !result.coverage) result.coverage = val;
+    }
+    return result;
+  }
+
+  function getStateTone(state) {
+    if (!state) return "neutral";
+    if (/在授|进行|更新|常青|连载/.test(state)) return "teal";
+    if (/待开|未开|暂停|待核/.test(state)) return "amber";
+    return "neutral";
+  }
+
+  function getCoverageTone(coverage) {
+    if (!coverage) return "neutral";
+    if (/完整|全公开|全部公开|齐全/.test(coverage)) return "teal";
+    if (/部分|陆续|半公开/.test(coverage)) return "blue";
+    if (/少|有限|未公开|仅大纲|受限|无录像|需/.test(coverage)) return "amber";
+    return "neutral";
+  }
+
+  function createMetaTag(prefix, value, extraClass, tone) {
+    var tag = document.createElement("span");
+    tag.className = "meta-tag " + extraClass;
+    tag.setAttribute("data-tone", tone);
+
+    var keySpan = document.createElement("span");
+    keySpan.className = "meta-tag-k";
+    keySpan.textContent = prefix;
+
+    var valSpan = document.createElement("span");
+    valSpan.className = "meta-tag-v";
+    valSpan.textContent = value;
+
+    tag.appendChild(keySpan);
+    tag.appendChild(valSpan);
+    return tag;
+  }
+
+  function enhanceMasthead() {
+    var header = document.querySelector("header.masthead");
+    if (!header) return;
+    var container = header.querySelector(".container");
+    if (!container || container.querySelector(".masthead-details")) return;
+
+    var title = container.querySelector(".masthead-title");
+    var meta = container.querySelector(".masthead-meta");
+    var stats = container.querySelector("#catalog-stats");
+    var descs = Array.prototype.slice.call(container.querySelectorAll(".masthead-desc"));
+
+    if (!title) return;
+
+    var topRow = document.createElement("div");
+    topRow.className = "masthead-top";
+    topRow.appendChild(title);
+    if (meta) topRow.appendChild(meta);
+
+    var details = document.createElement("details");
+    details.className = "masthead-details";
+
+    var summary = document.createElement("summary");
+    summary.className = "masthead-details-summary";
+
+    var caret = document.createElement("span");
+    caret.className = "masthead-details-caret";
+    caret.setAttribute("aria-hidden", "true");
+
+    var label = document.createElement("span");
+    label.textContent = "统计与研究方法说明";
+
+    var hint = document.createElement("span");
+    hint.className = "masthead-details-hint";
+    hint.textContent = "（目录导览 · 亲历检索范围 · X 核对口径）";
+
+    summary.appendChild(caret);
+    summary.appendChild(label);
+    summary.appendChild(hint);
+    details.appendChild(summary);
+
+    var body = document.createElement("div");
+    body.className = "masthead-details-body";
+    if (stats) body.appendChild(stats);
+    for (var i = 0; i < descs.length; i++) {
+      body.appendChild(descs[i]);
+    }
+    details.appendChild(body);
+
+    container.insertBefore(topRow, container.firstChild);
+    container.insertBefore(details, topRow.nextSibling);
+  }
+
+  function enhanceLayout() {
+    var navWrap = document.getElementById("group-nav-wrap");
+    var mainEl = document.getElementById("main-content");
+    if (!navWrap || !mainEl) return;
+    if (navWrap.parentElement && navWrap.parentElement.classList.contains("catalog-shell")) return;
+
+    var shell = document.createElement("div");
+    shell.className = "catalog-shell container";
+    navWrap.parentNode.insertBefore(shell, navWrap);
+    shell.appendChild(navWrap);
+    shell.appendChild(mainEl);
+
+    var navItems = navWrap.querySelectorAll("#group-nav-list > li");
+    if (navItems.length > 1) {
+      var lastItem = navItems[navItems.length - 1];
+      var lastLink = lastItem.querySelector("a");
+      if (lastLink && (lastLink.getAttribute("href") === "#group-7" || /综合/.test(lastLink.textContent))) {
+        lastItem.classList.add("group-nav-item--standalone");
+      }
+    }
+  }
+
+  function enhanceGroups() {
+    var groups = document.querySelectorAll("#catalog-root .course-group");
+    for (var i = 0; i < groups.length; i++) {
+      var group = groups[i];
+      if (group.querySelector(".group-brief")) continue;
+
+      var overview = null;
+      var orderHeading = null;
+      var rankNav = null;
+      var courseList = null;
+
+      var children = group.children;
+      for (var c = 0; c < children.length; c++) {
+        var ch = children[c];
+        if (ch.classList.contains("topic-overview")) overview = ch;
+        else if (ch.classList.contains("study-order-heading")) orderHeading = ch;
+        else if (ch.classList.contains("rank-nav")) rankNav = ch;
+        else if (ch.classList.contains("course-list")) courseList = ch;
+      }
+
+      var hasOverview = Boolean(overview);
+      var hasOrder = Boolean(orderHeading || rankNav);
+      if (!hasOverview && !hasOrder) continue;
+
+      var brief = document.createElement("div");
+      brief.className = "group-brief" + (hasOverview && hasOrder ? "" : " group-brief--single");
+
+      if (hasOverview) {
+        brief.appendChild(overview);
+      }
+
+      if (hasOrder) {
+        var orderPanel = document.createElement("div");
+        orderPanel.className = "study-order-panel";
+        if (orderHeading) orderPanel.appendChild(orderHeading);
+        if (rankNav) orderPanel.appendChild(rankNav);
+        brief.appendChild(orderPanel);
+      }
+
+      if (courseList) {
+        group.insertBefore(brief, courseList);
+      } else {
+        group.appendChild(brief);
+      }
+    }
+  }
+
+  function countCardMeta(nodes) {
+    var learnerCount = 0;
+    var xCount = 0;
+    var linkCount = 0;
+
+    for (var i = 0; i < nodes.length; i++) {
+      var node = nodes[i];
+      if (!node || node.nodeType !== 1) continue;
+
+      if (node.classList.contains("course-links")) {
+        linkCount += node.querySelectorAll("a.course-link").length;
+      } else if (node.classList.contains("course-facts")) {
+        learnerCount += node.querySelectorAll("[data-learner-row] ul > li").length;
+        var rows = node.children;
+        for (var r = 0; r < rows.length; r++) {
+          var dt = rows[r].querySelector("dt");
+          var dd = rows[r].querySelector("dd");
+          if (dt && dd && /X\s*评价/.test(dt.textContent)) {
+            xCount += dd.querySelectorAll("a[href]").length;
+          }
+        }
+      }
+    }
+
+    var parts = [];
+    if (learnerCount > 0) parts.push(learnerCount + " 条亲历");
+    if (xCount > 0) parts.push(xCount + " 条 X 证据");
+    if (linkCount > 0) parts.push(linkCount + " 个链接");
+    return parts.length > 0 ? parts.join(" · ") : "展开完整说明";
+  }
+
+  function enhanceCards(courseMap) {
+    var cards = document.querySelectorAll("#catalog-root .course-card");
+    for (var i = 0; i < cards.length; i++) {
+      var card = cards[i];
+      var main = card.querySelector(".course-main");
+      if (!main || main.querySelector(".course-details")) continue;
+
+      var headingRow = main.querySelector(".course-heading-row");
+      var titleEl = headingRow ? headingRow.querySelector(".course-title") : null;
+      var termEl = headingRow ? headingRow.querySelector(".course-term") : null;
+      var savedEl = headingRow ? headingRow.querySelector(".saved-mark") : null;
+      var rankReasonEl = null;
+      var factsEl = main.querySelector(".course-facts");
+
+      var titleKey = titleEl ? normText(titleEl.textContent) : "";
+      var info = courseMap.get(titleKey);
+      var fallback = extractFallbackFacts(factsEl);
+      var stateText = (info && info.state) ? info.state : fallback.state;
+      var coverageText = (info && info.coverage) ? info.coverage : fallback.coverage;
+
+      if (headingRow) {
+        var metaRow = document.createElement("div");
+        metaRow.className = "course-meta-row";
+        if (termEl) metaRow.appendChild(termEl);
+        if (savedEl) metaRow.appendChild(savedEl);
+        if (stateText) {
+          metaRow.appendChild(createMetaTag("状态", stateText, "meta-tag--state", getStateTone(stateText)));
+        }
+        if (coverageText) {
+          metaRow.appendChild(createMetaTag("材料", coverageText, "meta-tag--coverage", getCoverageTone(coverageText)));
+        }
+        if (metaRow.childNodes.length > 0) {
+          headingRow.appendChild(metaRow);
+        }
+      }
+
+      var detailNodes = [];
+      var children = Array.prototype.slice.call(main.children);
+      for (var c = 0; c < children.length; c++) {
+        var child = children[c];
+        if (child === headingRow) continue;
+        if (child.classList.contains("rank-reason")) {
+          rankReasonEl = child;
+          continue;
+        }
+        detailNodes.push(child);
+      }
+
+      if (detailNodes.length === 0) continue;
+
+      var details = document.createElement("details");
+      details.className = "course-details";
+
+      var summary = document.createElement("summary");
+      summary.className = "course-details-summary";
+
+      var toggle = document.createElement("span");
+      toggle.className = "course-details-toggle";
+
+      var caret = document.createElement("span");
+      caret.className = "course-details-caret";
+      caret.setAttribute("aria-hidden", "true");
+
+      var label = document.createElement("span");
+      label.className = "course-details-label";
+      label.textContent = "课程详情与原链接";
+
+      toggle.appendChild(caret);
+      toggle.appendChild(label);
+
+      var metaSpan = document.createElement("span");
+      metaSpan.className = "course-details-meta";
+      metaSpan.textContent = countCardMeta(detailNodes);
+
+      summary.appendChild(toggle);
+      summary.appendChild(metaSpan);
+      details.appendChild(summary);
+
+      var panel = document.createElement("div");
+      panel.className = "course-details-panel";
+      for (var d = 0; d < detailNodes.length; d++) {
+        panel.appendChild(detailNodes[d]);
+      }
+      details.appendChild(panel);
+
+      if (rankReasonEl && rankReasonEl.nextSibling) {
+        main.insertBefore(details, rankReasonEl.nextSibling);
+      } else {
+        main.appendChild(details);
+      }
+    }
+  }
+
+  function initNavigationPolish() {
+    var navLinks = Array.prototype.slice.call(document.querySelectorAll("#group-nav-list .group-nav-link"));
+    var groups = Array.prototype.slice.call(document.querySelectorAll("#catalog-root .course-group[id]"));
+    if (navLinks.length === 0 || groups.length === 0) return;
+
+    var linkById = new Map();
+    for (var i = 0; i < navLinks.length; i++) {
+      var href = navLinks[i].getAttribute("href") || "";
+      if (href.charAt(0) === "#") {
+        linkById.set(href.slice(1), navLinks[i]);
+      }
+    }
+
+    function setActive(groupId) {
+      for (var k = 0; k < navLinks.length; k++) {
+        navLinks[k].classList.remove("is-active");
+        navLinks[k].removeAttribute("aria-current");
+      }
+      var target = linkById.get(groupId);
+      if (target) {
+        target.classList.add("is-active");
+        target.setAttribute("aria-current", "location");
+      }
+    }
+
+    setActive(groups[0].id);
+
+    for (var j = 0; j < navLinks.length; j++) {
+      navLinks[j].addEventListener("click", function () {
+        var h = this.getAttribute("href") || "";
+        if (h.charAt(0) === "#") setActive(h.slice(1));
+      });
+    }
+
+    if ("IntersectionObserver" in window) {
+      var visible = new Map();
+      var observer = new IntersectionObserver(function (entries) {
+        for (var e = 0; e < entries.length; e++) {
+          var entry = entries[e];
+          visible.set(entry.target.id, entry.isIntersecting ? entry.boundingClientRect.top : null);
+        }
+        var bestId = null;
+        var bestTop = Infinity;
+        for (var g = 0; g < groups.length; g++) {
+          var topVal = visible.get(groups[g].id);
+          if (typeof topVal === "number" && Math.abs(topVal - 76) < bestTop) {
+            bestTop = Math.abs(topVal - 76);
+            bestId = groups[g].id;
+          }
+        }
+        if (bestId) setActive(bestId);
+      }, {
+        rootMargin: "-72px 0px -65% 0px",
+        threshold: 0
+      });
+
+      for (var m = 0; m < groups.length; m++) {
+        observer.observe(groups[m]);
+      }
+    }
+
+    var highlightTimer = null;
+    function flashTarget() {
+      var hash = window.location.hash;
+      if (!hash || hash.length < 2) return;
+      var target = document.getElementById(hash.slice(1));
+      if (!target) return;
+      var card = target.closest(".course-card");
+      if (!card) return;
+      var prev = document.querySelector(".course-card.is-jump-target");
+      if (prev) prev.classList.remove("is-jump-target");
+      card.classList.add("is-jump-target");
+      if (highlightTimer) clearTimeout(highlightTimer);
+      highlightTimer = setTimeout(function () {
+        card.classList.remove("is-jump-target");
+      }, 1600);
+    }
+
+    window.addEventListener("hashchange", flashTarget);
+    flashTarget();
+  }
+
+  function enhance() {
+    if (document.documentElement.getAttribute("data-neon-enhanced") === "1") return;
+    if (!document.querySelector("#catalog-root .course-card")) return;
+    document.documentElement.setAttribute("data-neon-enhanced", "1");
+
+    var courseMap = parseCourseData();
+    enhanceMasthead();
+    enhanceLayout();
+    enhanceGroups();
+    enhanceCards(courseMap);
+    initNavigationPolish();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", enhance);
+  } else {
+    enhance();
+  }
+})();
+</script>
+</body>
+</html>
