@@ -24,6 +24,170 @@
   ],
   "days": [
     {
+      "date": "2026-11-22",
+      "source": "https://www.producthunt.com/leaderboard/daily/2026/11/22",
+      "fetched": "2026-11-23 17:30 北京",
+      "note": "官网日榜可打开，前 10 名综合分来自官网；30yr-uptime、TeaserKit 不在前 10，分数来自 hunted.space 票数而非官网综合分。decohack 标 11.22 的一期（以及 11.23 首页的「PH 今日热榜 11.22」）实为太平洋 11/21 产品（AlterContacts、AI Context Flow、Codemany 等，已在昨日收录）。",
+      "picks": [
+        {
+          "id": "2026-11-22-omi-cli",
+          "why": "终端里的 coding agent：子 agent 各用独立 worktree 并行改代码，还能挂后台或丢到 GitHub Actions 开 PR，和正在做的工作台最接近。",
+          "limit": "不是开源产品；免费档官网称大约每 5 小时 1 个、每周 3 个典型任务，Windows 要走 WSL；默认会把读到的代码发到其服务跑模型。"
+        },
+        {
+          "id": "2026-11-22-resurf",
+          "why": "把个人资料库做成本地文件，再用 MCP 和 CLI 交给 Claude、Cursor、Codex，正好补上「上下文在笔记里、agent 拿不到」的缺口。",
+          "limit": "只有 Apple 设备；Mac 应用试用 7 天，之后继续添加要一次性买许可。MCP 默认只读，而且命令行不受这些开关约束。"
+        },
+        {
+          "id": "2026-11-22-teaserkit",
+          "why": "让 coding agent 当导演：从仓库或官网写出按帧渲染的发布片，而不是再另开一套视频工具，适合产品发布和自媒体。",
+          "limit": "一次性付费软件，不是开源；官网称一条 30 秒片子常常要不到一小时，且要占用你已有的 Claude、Cursor 等套餐额度。"
+        }
+      ],
+      "items": [
+        {
+          "name": "Omi CLI",
+          "tagline": "AI coding agents that work while you're away.",
+          "ph": "https://www.producthunt.com/products/omi-cli",
+          "site": "https://cli.builditomi.com",
+          "repo": "",
+          "rank": 8,
+          "score": 97,
+          "comments": 16,
+          "what": "BuildItOmi 的终端 coding agent（npm 包 @builditomi/cli）。在项目目录里读代码、写计划、以 diff 请你批准后改文件，再跑测试并修到通过。0.5.0（2026-11-21）起，子 agent 可在各自的 git worktree 里并行修改；也可用内置浏览器点按页面做检查，或把任务挂到后台、送到仓库的 GitHub Actions 去开 PR。",
+          "problem": "人离开终端后，coding agent 往往就停了；要把一件事拆给几个 agent 同时改，合并时又容易互相覆盖。",
+          "highlight": "安装是 npm install -g @builditomi/cli，需要 Node.js 18.17+，支持 macOS 和 Linux，Windows 需通过 WSL。要先 omi login 登录 BuildItOmi 账号，CLI 的套餐与该公司 App、Bolts、API 分开计算。默认 ask 模式会在每次编辑和非只读命令前询问；另有 auto-edit、yolo（--yes）和只读的 plan。子 agent 各有一份含未提交改动的 worktree，merge_subagent 按普通 diff 合并，与主会话同时改同一段时写入冲突标记，不会静默选边；仓库需要至少一次提交。omi bg 在独立 worktree 里继续跑，关掉终端也行；omi cloud 在 GitHub Actions 上跑并开 PR；omi github 会写入相应工作流。browser 工具用无痕的 headless Chrome（需要本机 Chrome 等浏览器，且 Node.js 22+）。官网列 13 个模型，默认 Auto 按轮次挑选，也可用本机 Ollama/LM Studio 或自带的 OpenAI 兼容密钥（官网称这类轮次不占 Omi 额度）。会读项目里的 OMI.md，以及 AGENTS.md、CLAUDE.md、GEMINI.md；.claude/agents、commands、skills 也可沿用。文件工具不能写出项目目录。官网称读到的代码只为当轮跑模型才发到其服务，会话留在本机 ~/.omi，不以代码训练模型；这是厂商说法，未经独立验证。定价为免费、Pro 每月 20 美元、Pro+ 60 美元、Max 200 美元。官网用自家基准任务（约 3.1 万 token、DeepSeek V4.1 Flash）估算免费档大约每 5 小时 1 个、每周 3 个典型任务，未见到公开产品源码。雷达无此仓库可对。",
+          "inspo": "工作台可以抄三件事。第一，给并行子 agent 各开 git worktree，合并时做三路合并，冲突写成标准冲突标记而不是静默覆盖；前提是仓库至少有一次提交，并且主会话能审批合并进来的 diff。第二，后台 agent（关终端继续跑）和云端 agent（GitHub Actions 开 PR）用同一套「独立 worktree，事后再合并或审 PR」的模型。第三，默认每步 diff 先批，脚本再用 --allow 放行指定命令。Windows 要先有 WSL。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "AI工具"
+          ],
+          "id": "2026-11-22-omi-cli",
+          "slug": "omi-cli",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Resurf",
+          "tagline": "Personal Knowledge Base & Bookmark Manager for Mac",
+          "ph": "https://www.producthunt.com/products/resurf-2",
+          "site": "https://resurf.so",
+          "repo": "",
+          "rank": 3,
+          "score": 179,
+          "comments": 8,
+          "what": "苹果设备上的个人资料库（这是第二次上架，已从 Electron 重写成原生 Swift）。在 Mac、iPhone、iPad 上保存笔记、链接、截图、PDF 和录音，库在本机，可用自己的 iCloud 做可选同步。Mac 上提供 MCP 服务器和 CLI，把已保存的上下文交给 Claude、Cursor、Codex 等 agent。",
+          "problem": "参考资料散落在书签、截图和笔记里，要用时翻不到；即便找到了，也得再粘贴进每一个 AI 对话。",
+          "highlight": "不需要 Resurf 内容账号，库以本地可读文件存放（原文、Markdown、元数据），搜索索引可从库重建。MCP 在 Settings → MCP → Access 里默认只读；「新增」「整理」「移到垃圾桶」三个开关默认关闭，打开后 agent 仍不能改正文、永久删除条目或清空垃圾桶。这些开关只约束 MCP：本机命令行 resurf 不受约束，能跑终端的 agent 也可以直接改库。可连接到 Claude Desktop、Cursor、VS Code、Codex、Gemini CLI 以及 Windsurf、Zed、Cline 等本地 MCP 客户端；浏览器里的 ChatGPT 不能拉起本机程序。语义搜索和 Similar Vibe 是 Mac 上的 Beta，用本机模型（需一次下载约 450 MB），默认关闭。可选的「问资料库」和 AI 建议使用你自己的 OpenAI、Anthropic、Gemini、OpenRouter 密钥或 Ollama；基础的保存、浏览、OCR 和普通搜索不要求 AI 账号。官网称 Mac 应用可免费用 7 天（无需绑卡），之后库仍可打开、搜索和导出，继续添加需一次性许可：One time 现价 39 美元（原价 49，含两年更新），Lifetime 现价 79 美元（原价 99，含后续更新）；iPhone/iPad 应用免费且不限次数。没有 Windows、Android、Linux 或网页版，也不支持多人共享库。未见到公开产品源码。雷达无此仓库可对。",
+          "inspo": "个人资料库不要只做应用内搜索，把 MCP stdio 和 CLI 做成同一套库的接口，默认只读，写权限再拆成新增、整理、进垃圾桶，并且不许 agent 改正文或永久删除。前提是资料在本机可读目录里。若 agent 还能执行终端命令，CLI 会绕过这些开关，所以工作台要把「MCP 权限」和「能否运行 resurf 命令」一起管。",
+          "tags": [
+            "效率",
+            "MCP",
+            "AI工具",
+            "Mac"
+          ],
+          "id": "2026-11-22-resurf",
+          "slug": "resurf",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "TeaserKit",
+          "tagline": "your coding agent directs your launch video",
+          "ph": "https://www.producthunt.com/products/teaserkit",
+          "site": "https://teaserkit.com/",
+          "repo": "",
+          "rank": 16,
+          "score": 76,
+          "comments": 5,
+          "what": "给 coding agent 用的「导演」：装好后，可让 Claude Code、Codex、Cursor、Gemini CLI、Copilot、Windsurf、OpenCode 等从仓库或官网做发布片、广告或讲解。agent 先写概念和分镜，再把每场写成 HTML/CSS 动画，由渲染器逐帧导出 MP4，而不是让视频模型去「想象」画面。也带一个本地 Studio 页面，用链接也能做。",
+          "problem": "产品已经能让 coding agent 写出来，但发布视频仍要另找工具或手工剪，效果还容易做成千篇一律的生成片。",
+          "highlight": "安装是一行脚本（macOS/Linux 为 curl install.sh），再在项目里运行 teaserkit init：添加 videos/ 目录、在 AGENTS.md 或 CLAUDE.md 里写入约定，并把工作文件加入 .gitignore；官网称付费的 skill 留在各 agent 自己的目录，不会提交进仓库。指挥流程包括三个概念里留一个、套用 11 种官网所说「从 X 上传播的视频里提炼」的样式、按节拍剪已授权的人工曲库、做质量检查（阅读时间、仓库或站点里没有的数字、卡死片段等），并输出 16:9 和 9:16。可放入屏幕录像（官网称每个不超过 60 MB），由 agent 找出有动作的片段再嵌进样式框，而不是用生成画面顶替。官网称它基于 Apache-2.0 的开源渲染器 HyperFrames（heygen-com/hyperframes）；TeaserKit 本身是一次性买断，官网写前 25 名买家可 20 美元、之后 49 美元，许可证最多 3 台电脑，无订阅、无按条收费，费用走你已有的 AI 套餐或自备密钥（默认花费上限 15 美元）。官网称一条 30 秒片子常常要不到一小时。未见到 TeaserKit 本身的公开产品源码。雷达无此仓库可对。",
+          "inspo": "发布视频可以做成 coding agent 的一项 skill：先在仓库写约定，再让 agent 用仓库里的文案、颜色和 logo 写场景代码，用确定的渲染器出片，而不是再调一个生成视频模型。前提是本机已装 TeaserKit，并且有可用的 Claude Code 或 Cursor 等套餐。若要自建类似能力，可看开源渲染器 HyperFrames；导演流程和曲库是 TeaserKit 的付费部分。",
+          "tags": [
+            "coding agent",
+            "创作",
+            "自媒体创作",
+            "开发者工具"
+          ],
+          "id": "2026-11-22-teaserkit",
+          "slug": "teaserkit",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Ulika",
+          "tagline": "Visual editor for sites built with Claude, Cursor, or Codex",
+          "ph": "https://www.producthunt.com/products/ulika",
+          "site": "https://ulika.co",
+          "repo": "",
+          "rank": 9,
+          "score": 93,
+          "comments": 8,
+          "what": "给 Claude、Cursor、Codex 等已经做出来的网站用的可视化编辑器。团队在真实页面上改文案、图片和链接，点发布即可；代码仍留在你自己的 GitHub 仓库，站点仍由原来的托管来构建。正在开放测试，官网称编辑和发布可永久免费，团队和代理商方案尚未推出。",
+          "problem": "AI 能在一个周末做出 React、Vite 或 Next 站点，但之后改一句标题、换一张图，又要回到仓库提工单。",
+          "highlight": "文档要求站点公开且走 https，代码在 GitHub.com，框架是 Vite+React、Create React App、其他带 Node 构建的 React，或 Next.js App Router（需要根 layout）；不支持 Next.js Pages Router，以及 Astro、SvelteKit、Nuxt、Remix、Gatsby 和纯静态 HTML。Vite/React 适配器也还不能处理博客列表这类 collections。连接可用仪表盘或 npx 运行官网提供的 CLI（需 Node.js 20+），并安装 Ulika 的 GitHub App。连接器通过 ulika/setup 分支提 PR，不会先写到默认分支；Vite/React 会加入 .ulika/bindings.json、content.json、build.mjs 等，Next App Router 则在 ulika/ 目录生成运行时连接器。发布时，较新的 Git 交付只向默认分支快进提交一份 .ulika/content.json（不强制推送）；分支受保护时改为开 ulika/content- 开头的 PR。绑定的源文件若在扫描后被改过，构建会停下并要求重新扫描，而不是猜测对位。编辑器桥只在带 ulikaPreview=1 的框架里生效。文档还写可以改字号、颜色、间距和对齐，但布局仍由代码决定。官方支持的托管以 Vercel 最完整，也列出 Netlify、Cloudflare Pages、Render、Railway 等。另有给 AI 助手用的 MCP。官网称它在内存中读仓库、不存储源码，这是厂商说法。未见到公开产品源码。雷达无此仓库可对。",
+          "inspo": "AI 生成的站点可以把文案和图片从代码里拆到一份内容文件（如 content.json），用 PR 接入连接器，发布只提交这一份内容、由原来的托管重建。前提是站点在 GitHub 上，框架是 Vite/React 或 Next App Router，并且源文件改动后要重新扫描绑定。工作台若让 agent 改官网，也可以约定：agent 只改内容文件，布局仍走代码评审。",
+          "tags": [
+            "开发者工具",
+            "coding agent",
+            "AI工具"
+          ],
+          "id": "2026-11-22-ulika",
+          "slug": "ulika",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "oovi",
+          "tagline": "Your own team of AI on your desktop",
+          "ph": "https://www.producthunt.com/products/oovi",
+          "site": "https://oovi.conuron.com",
+          "repo": "",
+          "rank": 5,
+          "score": 132,
+          "comments": 20,
+          "what": "Conuron 做的桌面多 bot 应用：你用自然语言交一个任务，默认团队里由负责人规划、研究员检索、写作者起草、评论者检查；也可以自建 bot、换模型和分组。每个 bot 的动作看得到，发邮件、发帖或在网页上点击之前会先出审批卡。",
+          "problem": "一个人既要调研、起草又要对外发送时，多步工作容易在不同聊天窗口里散掉，发出去之前也缺少统一的确认。",
+          "highlight": "官网称聊天、文件和密钥留在本机，密钥加密；默认定时任务只在 oovi 打开时运行。打开可选的 Sync 后，电脑关闭时由 oovi 云端接着跑定时任务和 Telegram，但改用其托管模型并消耗积分，密钥仍不离开电脑，需要本地文件的任务会等电脑回来。Telegram 上的审批是同一套批准/拒绝。可用自己的 Claude、GPT、Gemini、Grok、OpenRouter 或本地模型密钥，此时免费、不占 oovi 积分；也可用内置模型 theOovi 1.1，赠送 1000 积分一次，之后套餐从每月 10 美元（5000 积分）起，未用完的积分留在余额里，另有每日安全上限。更新说明写了可搜索官方 MCP 注册表、给单个 bot 分配工具并审批每次调用，也可安装 SKILL.md。桌面端覆盖 Windows、Mac 和 Linux，另有 Android 应用（目前需侧载，官网称即将上 Google Play），iPhone 即将推出。需要登录 oovi 账号。作者在 Product Hunt 说明它面向个人，而不是给团队接入自有 coding agent 的协作空间。闭源。雷达无此仓库可对。",
+          "inspo": "多 bot 分工时，把「发出去」做成统一审批：邮件、发帖、浏览器点击都先出卡片再放行，桌面和手机/Telegram 用同一套决定。前提是默认在本地跑；若要电脑关闭后还跑定时任务，就得接受云端改用托管模型，本地文件类任务会排队。它更像个人助手工作台，不是 coding agent 编排。",
+          "tags": [
+            "AI工具",
+            "效率"
+          ],
+          "id": "2026-11-22-oovi",
+          "slug": "oovi",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "30yr-uptime",
+          "tagline": "Claude Code mod for taking care of your body",
+          "ph": "https://www.producthunt.com/products/30yr-uptime",
+          "site": "https://github.com/mamrezme/30yr-uptime",
+          "repo": "https://github.com/mamrezme/30yr-uptime",
+          "rank": 13,
+          "score": 81,
+          "comments": 6,
+          "what": "Claude Code 插件：把等模型的时间变成短暂活动提醒。默认每隔 45 分钟，下一次主 turn 超过 15 秒时，终端提示符上方会弹出 16 种动作之一（颈、肩、背、髋、腿、腕、眼或呼吸），由像素角色演示，可选 Done、In 5 min 或 Skip。",
+          "problem": "长时间盯着 coding agent 的等待动画时，人常常维持同一个姿势，小休息没有合适的切入点。",
+          "highlight": "仓库 mamrezme/30yr-uptime 为 MIT（LICENSE 写 Copyright (c) 2026 mamrez）。2026-11-23 查 GitHub 为 11 星、1 个 fork，语言是 TypeScript，2026-11-08 建库，最近一次推送是 2026-11-09。README 写需要 Claude Code 2.1.287+，在 2.1.319 上测试过；安装是 /plugin marketplace add 该仓库，再 /plugin install 30yr-uptime@30yr-uptime。它挂在 session.start、turn.start、turn.complete 和 ui.render（Spinner / AbovePrompt）上，只统计主 turn，子 agent 的 turn 不计；不读取提示词、回复或代码，也没有网络请求和模型调用。动画需要终端至少 54 列，更窄时只显示文字和按钮。作者在 Product Hunt 说明它目前只在终端里弹出，装进 VS Code 扩展也不会显示。角色是 Claude Code 吉祥物的非官方同人形象，未获 Anthropic 背书。雷达未收过此仓库。",
+          "inspo": "可以把「主 turn 超过 N 秒」做成 hook，在 spinner 上方叠一层不改 agent 输入输出的界面（休息、进度或通知都行）。前提是工作台有 turn.start / turn.complete，以及可叠加的等待区域；子 agent 的 turn 不要一并触发。它目前只在终端里显示。",
+          "tags": [
+            "coding agent",
+            "开源",
+            "开发者工具"
+          ],
+          "id": "2026-11-22-30yr-uptime",
+          "slug": "30yr-uptime",
+          "status": "新发现",
+          "followups": []
+        }
+      ]
+    },
+    {
       "date": "2026-11-21",
       "source": "https://www.producthunt.com/leaderboard/daily/2026/11/21",
       "fetched": "2026-11-22 17:23 北京",
