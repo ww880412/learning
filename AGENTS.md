@@ -22,6 +22,7 @@ Codex、Cursor、Claude Code、其他 Grok Bot 改这个仓库前先读这一页
 | `x-brief/**` | X Brief bot 的 `/workspace/x-brief/site/build.py` 生成 | 不要手改，下次发布会整目录重写 |
 | `x-posters/**` | X海报日报 bot 的 `/workspace/daily-x-tech-posters/scripts/publish_gallery.py` 生成 | 不要手改，下次发布会重写所有日期页 |
 | 学习页本身（如 `courses/cs146s/L01-agent-loop.html`、`x-posts/<slug>/<slug>.html`） | `/workspace/skills-src/xuexi-template/build.sh` 做好后放进来 | 可以小修。`build.mjs` 不生成它们 |
+| `courses/ai-agent-catalog/courses.html` | 用户自制的 AI Agent 公开课清单（2026-11-22 快照），原样静态页 | 不要改内容、不要套学习模板。`build.mjs` 只在公开课栏目页加「公开课参考清单」入口，不把它写成课程、不写 review |
 | `*-close.html`（精读版） | staticrypt 加密（盐在 `.staticrypt.json`） | 不要改，改了会坏 |
 | `cs146s/`、`x-articles/` | 指向新位置的相对软链接 | 不要改 |
 | `_private/` | 不发布（`.gitignore`） | 不要碰 |

@@ -670,6 +670,12 @@ for (const c of columns) {
   const pending = items.filter(i => i.column === c.id && !i.group && !isPage(i)).sort((a, b) => a.order - b.order);
   let body = `<div class="crumb"><a href="${rel(f, 'index.html')}">首页</a> / ${esc(c.title)}</div><section class="hero sheet"><div class="say"><span class="kk">栏目</span><h1>${colIc(c, 26)} ${esc(c.title)}</h1><p>${esc(c.desc)}</p></div><div class="stage"><div class="stat blue"><b>${its.length}</b><span>篇学习页</span></div><div class="stat green" data-k="done" data-ids="${its.map(i=>i.id).join(',')}"><b>${its.filter(i => ['已学完','已掌握'].includes(stateOf(i))).length}</b><span>已学完</span></div><div class="stat blue" data-k="doing" data-ids="${its.map(i=>i.id).join(',')}"><b>${its.filter(i => stateOf(i) === '进行中').length}</b><span>进行中</span></div><div class="stat"><b>${pending.length || gs.length}</b><span>${pending.length ? '篇未开始' : '个主题'}</span></div></div></section>`;
   if (!its.length && !gs.length && !pending.length) body += `<div style="margin-top:28px">${emptyBox('还没有内容', `以后学到${esc(c.title)}的内容，会出现在这里。`)}</div>`;
+  // 公开课参考清单是用户自制静态页（courses/ai-agent-catalog/courses.html），不是第 6 门课：不进 items / review，勾选只在该页 localStorage。
+  if (c.id === 'courses') {
+    const cat = 'courses/ai-agent-catalog/courses.html';
+    if (!fs.existsSync(path.join(ROOT, cat))) console.warn(`\n⚠️  warn: 缺少 ${cat}，公开课页的参考清单链接会 404。\n`);
+    body += `<div class="kicker" id="course-catalog">${ic('file-text', 16)} 公开课参考清单 <span class="n">不计入进度</span></div><div class="sub">不是正在学的课，不进入复习队列。20 门、6 专题 + 综合，内容沿 2026-11-22 的快照。勾选只留在这台浏览器。</div><div class="list"><div class="row"><span class="tag amber">参考</span><span class="t"><a href="${rel(f, cat)}">公开课参考清单</a></span><a class="btn sm" href="${rel(f, cat)}">打开 →</a></div></div>`;
+  }
   for (const g of gs) { const gi = its.filter(i => i.group === g.id); const gp = items.filter(i => i.group === g.id && !isPage(i));
     body += `<div class="kicker">主题</div><div class="sub">${esc(g.title)}</div><div class="grid wide"><a class="card c1" href="${rel(f, g.dir + '/index.html')}"><span class="go">→</span><div class="ic">${colIc(c, 20)}</div><h3>${esc(g.title)}</h3><p>${esc(g.desc)}</p><div class="meta"><span class="tag blue">${gi.length} 篇学习页</span>${gp.length ? `<span class="tag">${gp.length} 讲未开始</span>` : ''}</div>${progBar(items.filter(i => i.group === g.id))}</a></div>`; }
   const loose = its.filter(i => !i.group);
