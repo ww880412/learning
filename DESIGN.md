@@ -1,84 +1,61 @@
-# DESIGN.md · 学习库设计规范
+# DESIGN.md · 学习库设计规范（V4 · 活版书房）
 
-所有生成或修改本站页面的人和 bot（学习搭子、X Brief、X海报日报 等）都按这份规范来。令牌的实际值在 `assets/site.css`，这里是摘要。**改样式先改令牌，不要在页面里写零散的颜色、字号和间距。**
+所有生成或修改本站页面的人和 bot（学习搭子、X Brief、X 海报日报、PH 灵感箱等）都按这份规范来。令牌的实际值在 `assets/site.css`（及共享文章外壳 `assets/article.css`），这里是摘要。**改样式先改令牌，不要在页面里写零散的颜色、字号和间距。**
 
-技术栈固定为：静态 HTML + `assets/site.css`（令牌 + 组件）+ `assets/vp-head.js`（主题、动效、运行时图标）+ Lucide 图标（`assets/icons.json`）。不用框架，不依赖 CDN。
+技术栈固定为：静态 HTML + `assets/site.css`（V4 活版书房令牌与组件）+ `assets/vp-head.js`（深浅色切换、全站目录抽屉、筛选、灯箱、折叠锚点、运行时图标）+ Lucide 图标（`assets/icons.json`）。零外部框架，零外链字体与 CDN。
 
-## 1. 主题与令牌
+## 1. 主题与令牌（单一 V4 · 浅/深双模式）
 
-三套主题由 `html[data-theme=A|B|C]` 切换，默认是 **C**。`vp-head.js` 在页面画出来之前就设好主题，用户的选择存在 localStorage `site-theme`。深色模式用 `html.dark`，可以和三套主题任意组合。
+旧版 A/B/C 三套皮肤切换器（`site-theme` / `data-theme`）已退役，生产统一采用单一 **V4「活版书房（Living Monograph）」**视觉系统；遗留的 `site-theme` 键被静默忽略，不做迁移或清空。
 
-| 令牌 | A 杂志 | B 仪表盘 | C 个人站（默认） |
+浅色/深色模式保留，使用 `html.dark` 与 localStorage 键 **`theme`**（`dark` / `light`），由 `assets/vp-head.js` 的 `__tt()` 切换并在首屏绘制前同步。
+
+| 令牌 | 浅色（棉纸） | 深色（墨夜） | 用途 |
 |---|---|---|---|
-| `--paper` 背景 | #f7f4ee · 深 #181512 | #eef1f5 · 深 #0b0d12 | #f3f5fb · 深 #0b0b0f |
-| `--sheet` 卡片 | #fffdf9 · 深 #211d18 | #fff · 深 #14151a | #fff · 深 #15151c |
-| `--ink` 正文 | #2b2722 · 深 #ede6da | #16171a · 深 #ececf1 | #1d2340 · 深 #f2f2f5 |
-| `--meta` 次要文字 | #8a8076 · 深 #a89d8f | #6e707a · 深 #9597a3 | #8a90ad · 深 #9a9aab |
-| `--hair` 细线 | #e6dfd3 · 深 #382f26 | #dfe4ea · 深 #252a35 | #e6e9f4 · 深 #26262f |
-| `--blue` 主色 | #b4532a 砖红 · 深 #e08a5f | #5b5bd6 靛紫 · 深 #9198ff | #7b5cff 紫 · 深 #a08bff |
-| `--acc2` 辅色（渐变/流光） | #c98a2b 琥珀 | #a855f7 紫 | #ff5e8a 粉 |
-| 标志性表面 | 米色纸、衬线标题、双线报头 | 深色侧栏 #0f172a，选中项 #22c55e 竖条 | 深色顶栏 #0b0b0f，首页渐变 hero |
-| 字体 | 标题 `--serif`（Noto Serif CJK），正文 Inter / PingFang | Inter / PingFang，基础字号 14px | Inter / PingFang |
+| `--bg`（别名 `--paper`） | `#f6f3ec` | `#111211` | 页面纸面底色 |
+| `--surface`（别名 `--sheet`/`--card`） | `#fcfbf8` | `#181a18` | 卡片、折叠面板、详情底色 |
+| `--surface-soft`（别名 `--hair2`） | `#ede8de` | `#212421` | 次级底色、行内代码底、进度条底轨 |
+| `--obsidian` / `--obsidian-2` | `#151917` / `#1f2522` | `#1d2420` / `#252e29` | 砚墨焦点块（首页「继续学」案头、海报暗房、雷达本周首选） |
+| `--ink` / `--ink-2` / `--ink-3` | `#171614` / `#4b4740` / `#78736a` | `#eeeae1` / `#b6b0a4` / `#8a8478` | 正文、次级文字、元信息 |
+| `--rule` / `--rule-strong` | `rgba(23,22,20,.12)` / `.78` | `rgba(238,234,225,.12)` / `.72` | 极克制分隔线与刊头底线 |
+| `--cinnabar`（别名 `--red`） | `#b83b24` | `#e86c53` | 绛赭：眉标、主导航激活线、重要信号、逾期警示 |
+| `--indigo`（别名 `--blue`） | `#1d4b6e` | `#7db5dc` | 苍蓝：正文链接、进行中状态、架构借鉴边线 |
+| `--ok`（别名 `--green`） | `#1d6b4a` | `#59c890` | 松绿：已学完、今日已读勾选、无到期复习 |
+| `--warn`（别名 `--amber`） | `#945605` | `#ecba5b` | 赭黄：限制/前提提示、参考清单标识 |
 
-状态色在三套主题里都可以用：`--red`（逾期、警示）、`--green`（已学完）、`--amber`（提示）、`--purple`（已掌握），每个都有对应的 `-soft` 浅底。**逾期只用红色**，其他地方不要用红色强调。
+### 字体与标尺
+- **字体栈（离线本机）**：
+  - 标题 / 刊头 `--serif`：`"Songti SC", "STSong", "Noto Serif CJK SC", "Source Han Serif SC", "Source Han Serif CN", "SimSun", Georgia, serif`
+  - 正文 `--sans`（别名 `--font`）：`-apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Source Han Sans SC", "Microsoft YaHei", system-ui, sans-serif`
+  - 数字与代码 `--mono`：`ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace`，数字统一 `tabular-nums`。
+- **容器与留白**：主容器 `--max-w: 1180px`，左右留白 `--pad-x: clamp(18px, 4vw, 44px)`，顶栏高 `60px`（手机 `52px`），手机底栏高 `58px`（页面底部预留 `calc(126px + env(safe-area-inset-bottom))` 确保末条完全滚离避让）。
 
-### 通用尺度（`:root`）
-- 间距：`--sp-1..6` = 4 / 8 / 12 / 16 / 24 / 32px。卡片内边距 12–18px，卡片之间 10–14px，分区之间 ≤32px。
-- 字号：`--fs-xs` 12 · `--fs-sm` 13.5 · `--fs-md` 15 · `--fs-lg` 18 · `--fs-xl` 24 · `--fs-2xl` 32。首页 hero 标题可以到 44–80px，只用在 A/C 的头条和大数字。标题字距 -0.01 到 -0.035em，数字用 `tabular-nums`。
-- 圆角：`--r-xs` 6 · `--r-sm` 8 · `--r-md` 10 · `--r-lg` 12（C 主题为 20）· `--r-xl` 18 · `--r-pill` 999。
-- 阴影：`--sh-1` 细、`--sh-2` 悬停、`--sh-3` 浮起。默认用边框，不用阴影，阴影只在悬停时出现。
+## 2. 导航与页壳
 
-## 2. 组件
-- **卡片** `.card` / `.panel` / `.ps-t`：`--sheet` 底色、1px `--hair` 边框、`--r-lg` 圆角。可点的卡片悬停时上浮 1–3px，边框变成 `--blue`，并带鼠标光斑。重点卡片（简报头条、收藏）可以加 `.fx-feat` 流光边框，每屏最多 1–2 个。
-- **按钮** `.btn`：主色实心，高 34–40px，圆角 8px；`.btn.ghost` 是描边按钮；`.btn.sm` 高 30px。文字用动词开头，例如「开始复习 →」「继续 →」。
-- **标签** `.tag`：12px，`--hair2` 底色，可以带状态色（`.blue` `.green` `.amber` `.purple`，`.red` 只用于逾期）。
-- **数字卡** `.kpi` / `.stat`：小标签 12px（`--meta`）+ 大数字 26–46px，粗细 750–800。数字会滚动增长：给元素加 `.cnt` 类，或放进 `.kpi`。
-- **分区标题** `.kicker` + `.sub`：17–19px 加粗，前面是 3px 宽的主色渐变短线，`.n` 是计数胶囊；`.sub` 13.5px，`--meta` 色。
-- **列表** `.list .row`：一个白底容器，行之间用 1px 细线分隔，行高紧凑（上下 8–12px）。
-- **收藏星**：`favorites.js` 自动挂到页面、`a.card` 和简报原帖上。已收藏时是实心金色星（#e0a100）。不要手写 ☆ / ★。
+- **顶栏（`.site-header.top`）**：品牌（绛赭圆点 + 衬线站名）+ 5 个高频主枢纽（今日、公开课、X 好文、每日汇总、雷达）+「全站目录」（`/` 或 `⌘K` 打开 `<dialog class="atlas-dialog">` 列出全部 13+ 真实栏目与实时计数）+ 收藏星（由 `favorites.js` 挂载于 `.top .dm` 前）+ 深浅色切换按钮（`.dm`）。
+- **手机底栏（`.mobile-dock`）**：仅在 `<= 780px` 通用浏览页显示，4 项（今日、公开课、日更、全站），实底磨砂贴底；文章精读页不启用底栏。
+- **外部 bot 兼容**：X 简报与 X 海报 bot 生成页内联 `assets/site.css` + `assets/vp-head.js`，其旧顶栏（`header.top:not(.site-header)`）自动继承 V4 棉纸/衬线/绛赭样式，并获得「全站目录」抽屉与手机折叠菜单。
 
-## 3. 图标（只用 Lucide）
-- 图标来源：`assets/icons.json`，由 `scripts/vendor-icons.mjs` 从 lucide-static 抽取，只收本站用到的图标。新图标先加进脚本的 `NAMES` 再运行。不要用 emoji 或其他图标库充当界面图标。
-- 构建时内联：`build.mjs` 用 `ic(name, size)`，X 简报 `build.py` / 海报 `publish_gallery.py` 用 `ic()` / `XB.ic()`；浏览器里用 `__ic(name, size, 'fill')`，只含 menu / x / star / party-popper。
-- 尺寸：行内 14–16px，按钮 18px，卡片图标 20px，标题 26px。描边 2，≥20px 用 1.75。颜色继承 `currentColor`。装饰性图标加 `aria-hidden`，只有图标的按钮要有 `aria-label`。
-- 栏目图标映射（`COL_IC`）：公开课 graduation-cap · X 好文 file-text · 技术研究 flask-conical · 微信公众号 message-circle · 视频 circle-play · 概念卡 puzzle · X 简报 newspaper · X 海报 image · 产品灵感 rocket · DSH 插件 boxes · 雷达 radar · 每日汇总 calendar · 站点标志 book-open · 深色切换 sun-moon · 提示 lightbulb · 设置 settings。
-- 文字里的箭头「→ ←」属于排版，不算图标，可以保留。用户写的内容（简报正文、海报原帖）里的 emoji 不用改。
+## 3. 核心版式与窄屏防裁切铁律
 
-## 4. 动效
-- 时长：`--dur-1` 120ms（颜色、按下）· `--dur-2` 220ms（淡入淡出、主题切换）· `--dur-3` 420ms（位移、展开）。
-- 缓动：位移和展开用 `--spring`（CSS `linear()` 弹簧，有轻微回弹；不支持的浏览器退回 cubic-bezier）；颜色和透明度用 `--ease`（easeOutQuint）。
-- 会动的只有：悬停上浮或放大、收藏星弹出、折叠面板展开、进度条填充、数字滚动、首屏卡片错峰入场（每张 40ms，最多 10 张）、下方分区滚动到时淡入、主题和深色切换的交叉淡化（View Transitions）。
-- 不要做：自动轮播、无限循环的大动画（流光边框是唯一例外，速度要慢）、视差、超过 500ms 的位移。
-- `prefers-reduced-motion: reduce` 时关掉全部动画和过渡，直接显示内容，不做淡入。
+- **首页双主角（`.home-stage`）**：
+  - 桌面（`>= 961px`）：左 `1.18fr` 今日头版（无框直排：刊头、头条导语、前提争议折叠、同日另两条主线）+ 右 `0.88fr` 砚墨「继续学」案头卡（`.study-monolith`：主读卡、次要在学区 `.monolith-secondary`、间隔复习区）。
+  - 平板（`781px–960px`）：案头卡置顶，`.monolith-secondary` 两列并排。
+  - 手机（`<= 780px`）：刊头收束，砚墨案头卡转为紧凑书签形态（隐藏次要项第三行副标题 `.mi-sub`，保留完整篇名/进度/热区），确保「继续学」与「今日头条」共居 390×844 首屏。
+- **窄屏防裁切铁律（390px / 320px）**：
+  - **禁止**在 `html` 或 `body` 上写 `overflow-x: clip` 来掩盖溢出。
+  - 所有单列和响应式 Grid 轨道必须显式写成 `minmax(0, 1fr)`，内容列必须有 `min-width: 0`。
+  - 行内 `code` 及雷达标题/路径/摘要/借鉴框必须启用 `overflow-wrap: anywhere; word-break: break-word; box-decoration-break: clone;`，让长路径在 390px 与 320px 视口内逐字可读、零右侧裁切。
+- **公开课列表（`.course-ledger`）**：无重型卡片外壳，手机端隐藏 `.ce-thumbs` 缩略条、两行截断简介，确保首屏可见多门课程；`courses/ai-agent-catalog/courses.html` 保留独立「公开课参考清单」入口，不计入课程与复习。
+- **文章精读外壳（`assets/article.css`）**：保持原 `<main class="deck">` 与小测/模拟器内置 JSON 协议不变；桌面 `.fin-btn` 停靠左轨底 `.toc-foot`，`< 1180px` 停靠顶栏右侧 `.top-actions`，屏底零悬浮按钮遮挡正文。
 
-## 5. 布局
-- 紧凑，少留白：用户不喜欢大片空白。桌面版用满宽度（主区 1280–1320px，B 有侧栏），多列网格，网格里不能留大空洞，左右列要尽量等高。
-- 网格列写成 `minmax(0,1fr)`，防止长文字把列撑开。
-- 手机（≤900px）改成单列或两列，横向内容（海报）改成可滑动；可点区域 ≥40px。
-- 首页只渲染一套结构（`.home-v2`：今日 + 新闻 / 学习），A/B/C 三个主题共用它，只靠 `data-theme` 的令牌换视觉。旧的 `.lay-A/B` 布局已经不再输出（`site.css` 里还留着它们的专用样式，没清理）。
+## 4. 图标与动效
 
-## 6. 要做 / 不要做
-- ✅ 新颜色、间距、圆角先加成令牌再用；三套主题和深色模式都要检查。
-- ✅ 首页数据只来自 data/、x-brief/、x-posters/，空状态如实显示，不编造打卡天数或数字。
-- ✅ 每日汇总和首页卡片上的「更新」都用北京时间。简报文件名是美东日期（北京时间 09:00 发出，那时美东还是前一天），汇总和卡片按北京日期配对，链接仍指向原文件；页面里若有带时区的发布时间，以换算到 Asia/Shanghai 的那天为准。海报目录已是北京日期。产品灵感写「榜单 MM/DD」（太平洋时间的榜单日），北京时间早上对到的是两天前的榜。雷达每周一更新、平时随时补录，新闻区不要写成它也每天刷新。详见 README「每日汇总」。
-- ✅ 学习进度以 `data/review.json` 为准。本机 `done:` / `rev-join:` / `rev-done:` 马上更新界面；设了收藏页「同步设置」里的令牌后，同一笔也会写入 `review.json`。没令牌时只留在这台设备（见第 7 节）。不要把复习完成只写进按天的 `today-read:`。点「学完了」不排复习。
-- ✅ 外链只放在内容里；课程卡片之类的按钮只链本站学习页或课程页。
-- ❌ 不用 emoji 当界面图标，不引入 CDN 或框架，不在页面里写内联颜色。
-- ❌ 不在页面里写死主题（`data-theme`）；不要绕过 `build.mjs` 手改生成出来的 HTML。
+- **图标（只用 Lucide）**：构建时从 `assets/icons.json` 内联 SVG；运行时通过 `vp-head.js` 的 `__ic()` 提供 `menu` / `x` / `star` / `party-popper`。不用 emoji 当界面图标。
+- **动效**：克制过渡（`0.15s–0.35s cubic-bezier(0.22, 1, 0.36, 1)`）与主题切换 View Transitions；`prefers-reduced-motion: reduce` 时全部关闭。
 
-## 7. 学习进度（换设备）
+## 5. 数据、进度与同步（不变）
 
-两层记录，外加和收藏共用的仓库同步。
-
-- **`data/review.json` 是跨设备的准绳。** `learned` 是「学完了」的日期（可以没有），点学完不排复习。`joined` 是用户点「加入复习」的北京日期，才有 `reviews`（第 1/3/7/14/30 天，从 `joined` 算起）。`reviews[].done` 是某一次做没做，`doneOn` 是勾上的那天。`node build.mjs` 重写这个文件时保留 `learned`，以及已经 `joined` 的 `done` / `doneOn`；没有 `joined` 的 `reviews` 清掉。
-- **浏览器里的操作先写本机，界面马上更新，断网也能记。** `done:<pathname>` 是「学完了」。`rev-join:<条目 id>` 是加入或取消（`{joined, at}`）。`rev-done:<条目 id>` 是「第几天 → 完成日期」：首页「今日」勾上复习行，就把当前已到期的待复习一次记完；当天仍显示为已勾，第二天消失。没加入的篇不进「今日」。`today-read:<日期>` 只记当天简报、雷达有没有看过，不进同步，也不进仓库。
-- **有令牌时，同一笔再提交到仓库。** 令牌就是收藏用的 `fav:token`，在收藏页「同步设置」里填一次，不另要一枚。`assets/gh.js` 走 GitHub Contents API，sha 冲突会重读重试。「学完了」把北京时间当天写入 `learned`，已经有更早的日期就留更早的；取消本机的「已学完」不删除 `learned`，也不创建复习。「加入复习」写入 `joined`、`joinAt` 和五次 `reviews`；取消则清掉排期并留下更晚的 `joinAt`。「今日」勾上把对应 `reviews[].done` 写成 `true`，并写上 `doneOn`；取消勾选把 `done` 改回 `false` 并去掉 `doneOn`。这些都以最后一次操作的 `at` 为准。没有 `joined` 的旧 `rev-done` / `rev-op` 不写回。
-- **没有令牌时，只记在这台设备。** 首页「今日」会指向收藏页的「同步设置」。
-
-首页打开时会再读一次仓库里的 `data/review.json`（有令牌走 GitHub API，没令牌读 Pages 上的副本），以它的 `learned` / `joined` / `reviews` 为准；页面里嵌的那份只是构建时的快照。「今日」里的复习行来源统一标「复习」，并写明哪天学完、第几天复习。只有加入过、而且这一天已经到期的才列出。
-
-首页怎么算学完：有 `learned` 或本机 `done:` 都算学过，继续学会跳过。排期不看学完日。某一次复习在已加入的 `reviews[].done === true`，或本机更新的 `rev-op` / 还没有 `at` 的 `rev-done` 里，都算完成。
-
-换手机或电脑：每台电脑（每个浏览器）在收藏页「同步设置」填一次同一枚令牌，收藏、「学完了」、「加入复习」和「今日」勾选就都走仓库同步。不再提供「同步链接」，也不读 `#sync=`。
-
-收藏按钮的脚本 `assets/favorites.js` 必须能单独引用：X 简报、海报页由别的 bot 生成，只带这一个脚本。缺 `gh.js` 时它自己补载 `gh.js`，再补 `progress.js`。不要让它依赖页面先引 `gh.js`。
+- 所有内容与计数只来自本仓库 `data/*.json`、`x-brief/`、`x-posters/`，日期统一按北京时间（`Asia/Shanghai`）显示。
+- 存储键与同步协议保持不变：`done:<path>`、`rev-done:<id>`、`rev-op:<id>`、`rev-join:<id>`、`today-read:<YYYY-MM-DD>`、`fav:token`、`fav:cache`、`theme`。
+- `assets/favorites.js` 必须保持可单独引用（自动补载 `gh.js` 与 `progress.js`）。
