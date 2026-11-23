@@ -495,7 +495,7 @@ try {
   });
 
   await check('截图：清积压、学完不排复习、加入后到期出现', async () => {
-    const art = '/opt/cursor/artifacts';
+    const art = path.join(SHOTS, 'artifacts');
     fs.mkdirSync(art, { recursive: true });
     const shot = async (page, name, el) => {
       const path = art + '/' + name + '.png';
@@ -544,22 +544,17 @@ try {
     await page._ctx.close();
   });
 
-  await check('截图：首页 A/B/C 和一课', async () => {
+  await check('截图：首页 V4 和一课', async () => {
     const page = await boot(browser, origin);
     await page.setViewport({ width: 1280, height: 1000, deviceScaleFactor: 1 });
     await page.goto(origin + '/index.html', { waitUntil: 'networkidle0' });
     await page.waitForFunction(() => window.__progReady === 1 && document.querySelector('#prog-hint') && !document.querySelector('#prog-hint').hidden);
-    for (const theme of ['A', 'B', 'C']) {
-      await page.evaluate((t) => { localStorage.setItem('site-theme', t); document.documentElement.setAttribute('data-theme', t); }, theme);
-      await new Promise((r) => setTimeout(r, 250));
-      await page.screenshot({ path: path.join(SHOTS, `home-${theme}-desktop.png`) });
-    }
+    await new Promise((r) => setTimeout(r, 250));
+    await page.screenshot({ path: path.join(SHOTS, 'home-v4-desktop.png') });
     await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 });
-    for (const theme of ['A', 'B', 'C']) {
-      await page.evaluate((t) => { document.documentElement.setAttribute('data-theme', t); window.scrollTo(0, 0); }, theme);
-      await new Promise((r) => setTimeout(r, 200));
-      await page.screenshot({ path: path.join(SHOTS, `home-${theme}-mobile.png`) });
-    }
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await new Promise((r) => setTimeout(r, 200));
+    await page.screenshot({ path: path.join(SHOTS, 'home-v4-mobile.png') });
     await page.setViewport({ width: 1280, height: 900, deviceScaleFactor: 1 });
     await page.goto(origin + '/courses/cs146s/L02-harness-anatomy.html', { waitUntil: 'networkidle0' });
     await page.waitForSelector('.fin-btn');
