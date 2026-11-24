@@ -24,6 +24,188 @@
   ],
   "days": [
     {
+      "date": "2026-11-23",
+      "source": "https://www.producthunt.com/leaderboard/daily/2026/11/23",
+      "fetched": "2026-11-24 17:25 北京",
+      "note": "官网日榜可打开，第 1–16 名综合分来自官网日榜；FigmaMCP、Mobile Agent Testers 不在截到的官网日榜前段，日排名来自产品页 Day Rank，分数来自 hunted.space 票数而非官网综合分。decohack 标 11.23 的一期实为太平洋 11/22 产品（Omi CLI、Resurf 等，已在昨日收录）。未重复收：Inkling 2 Mini（PH 链接与 11/8 已收的 Inkling 2 Small 同为 tinker-2；官方 11/20 以 Apache-2.0 开放约 26.4B 权重，约 20GB，可在 32GB 内存的 Apple 芯片上用 Ollama 等本地跑，说明见 https://thinkingmachines.ai/news/inkling-2-mini/）、Polylane Swarms（PH 链接与 10/23 已收的 Polylane for Cloudflare 相同）。同公司 Omi Work 是通用工作区和获客，昨日已收 Omi CLI，本次未收。",
+      "picks": [
+        {
+          "id": "2026-11-23-plango",
+          "why": "在本机给 Claude Code、Cursor、Codex 设规则，拦住高风险文件、命令和出网，才能比较放心地让 agent 通宵跑。",
+          "limit": "只要 Apple 芯片 macOS 15+ 或 Windows 11；免费限 1 台电脑，默认检查都在本机，付费的「更强护栏模型」才会把内容送到其服务器。"
+        },
+        {
+          "id": "2026-11-23-replit-missions",
+          "why": "先写任务合同：可验收的成功标准、美元预算和必须审批的动作，再让 agent 群去执行，并由独立评估器对照标准验收——工作台可以直接抄这套约定。",
+          "limit": "在 Replit 对话里用 /mission 开始，预算是 Replit 的 AI 用量；官网称正在跑的工作可能略超预算才停，PH 页面标了 Payment Required，公开定价页未写清它属于哪一档套餐。"
+        },
+        {
+          "id": "2026-11-23-modem",
+          "why": "把各渠道的客户反馈收成一张可查询的图，经审批后把带原话和工单的任务交给 Claude Code、Cursor 或 Devin，合并后再找回是谁在等。",
+          "limit": "它自己不写你的产品代码；要先接入支持、聊天或代码工具。免费档每月 2,500 事件和 1,000 agent 积分，经 MCP 拉起的 agent 跑也会扣积分。"
+        }
+      ],
+      "items": [
+        {
+          "name": "Plango",
+          "tagline": "Plango lets your AI agents work all night - safely",
+          "ph": "https://www.producthunt.com/products/plango",
+          "site": "https://installplango.com/",
+          "repo": "",
+          "rank": 13,
+          "score": 90,
+          "comments": 4,
+          "what": "本机护栏应用：给 Claude Code、Cursor、Codex 等 coding agent 定规则，在动作执行前按级别拦截，并扫描技能、插件、MCP 和项目里的已知漏洞。宣传语是让 agent 通宵跑时更安全。",
+          "problem": "人离开屏幕后，本机上的 coding agent 仍可能读密钥、跑危险命令或把数据送出网；只靠对话里的「先问再改」挡不住工具调用。",
+          "highlight": "官网写明支持 Apple 芯片 macOS 15+ 和 Windows 11。它夹在 agent 和系统之间，执行前把动作标成 Info 到 Critical：Protect 模式拦住 High 和 Critical，Strict 模式再拦住 Medium。查看的对象包括含密钥的文件（.env、SSH 密钥、云凭证）、会大量删除、改写历史或关掉系统防护的命令、可能把数据带离本机的网络请求，以及改 agent 自身设置、试图关掉 Plango 的操作。也可限制 SSH 密钥、.env 和打了 Finder 标签的文件夹，并把明文密钥迁到 macOS 钥匙串；同时查看已连接的 MCP，以及技能、命令和插件里的隐藏指令与 hook。CVE 扫描是检查本机项目里有已知漏洞的库，并「告诉你怎么修」。官网称默认检查都在本机完成，只有打开付费的 More advanced guard model 才会把所检查的内容送到其服务器。免费档含上述护栏、自定规则、网络视图和安全检查，限 1 台电脑；付费 4.99 美元/月（可多台、含 Plango Chat 和更强护栏模型），登录后付费功能有 7 天试用。未见到公开产品源码。雷达无此仓库可对。",
+          "inspo": "工作台若要让 agent 通宵跑，不要只靠会话里的 ask 模式：在本机加一层执行前护栏，按级别拦截，并单独禁止「改掉护栏自己」。规则至少覆盖密钥文件、破坏性命令和出网。前提是护栏能挂钩到 Claude Code、Cursor、Codex 的实际工具调用，而不是事后读日志；付费的云端护栏模型会把被检查内容送出本机，和企业「默认不出域」的前提可能冲突。",
+          "tags": [
+            "coding agent",
+            "开发者工具"
+          ],
+          "id": "2026-11-23-plango",
+          "slug": "plango",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Replit Missions",
+          "tagline": "Set a budget, coordinate teams of AI agents,",
+          "ph": "https://www.producthunt.com/products/replit",
+          "site": "https://replit.com/missions",
+          "repo": "",
+          "rank": 15,
+          "score": 87,
+          "comments": 4,
+          "what": "Replit 的长期任务模式：在对话里给一个持续目标，先和系统约定做法、成功标准、美元用量上限和边界，再调度一组 agent 去计划、实现、测试和迭代，并由独立评估器对照标准判断是否完成。",
+          "problem": "把大目标丢给一群 agent 后，容易既没有花销上限，又缺少可验收的完成定义，agent 自己报「做完了」并不等于目标达成。",
+          "highlight": "文档写：在对话里说要开始 mission，或输入 /mission 加上目标。规划可选用「只问要点」或「把细节走一遍」，依次确认要做什么、怎么做、哪些结果算完成、AI 用量预算（美元）以及必须先问和绝对禁止的动作，然后在侧栏检查 Mission contract，点 Confirm and start 才生效，Draft 状态还没启动。进行中可改合同；完成时由自动评估器对照成功标准接受或退回，聊天里出现 Mission complete，并打开 Mission report。文档也写：已经在跑的工作可能让花费略超预算才停，预算不保证一定能在额度内做成；自动验收不能代替人对照标准看交付物。清掉 mission 不会自动取消后台进程或撤回已做的事，若要停，需要另行说明。官网博客（11/17 发布，11/19 更新）用自建监控平台 DataCat 举例：厂商自测称 2 天、3,000 美元预算内做出仪表盘、告警和追踪，并与用 Claude Code /goal、同一初始提示的一次对照做了比较；文中写这些是受控测试，不能当成对原平台托管服务或 Replit 生产环境的性能结论。NumPy 上 13 个任务的加速数字（Auto (Max) 下 1 个 agent 最高约 4 倍、32 个约 19 倍）也是厂商自测。PH 产品页是 Replit 公司页上的第 10 次发布，本条 launch 标了 Payment Required；公开定价页未写明 Missions 包含在哪一档套餐。雷达无此仓库可对。",
+          "inspo": "工作台可以抄「任务合同」：开始前先约定做法、可对照证据的成功标准、用量上限、必须先批和绝对禁止的动作；进行中改目标或预算要写进合同再继续；完成时用独立评估器对照标准，而不是让执行的 agent 自己宣布做完；预算用尽就停、标成未完成。前提是成功标准写成能核对的结果（测试通过、延迟低于某值），而不是「去做调研」这种活动清单；自动验收之后仍要人看交付物。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "AI工具"
+          ],
+          "id": "2026-11-23-replit-missions",
+          "slug": "replit-missions",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Modem",
+          "tagline": "Find, fix, and follow up on every customer concern",
+          "ph": "https://www.producthunt.com/products/modem",
+          "site": "https://modem.ai",
+          "repo": "",
+          "rank": 5,
+          "score": 210,
+          "comments": 31,
+          "what": "Modem 的客户—产品图：监听支持工单、群聊、销售通话等渠道，把同一问题收成一条 topic，关联 issue 和 PR，并在你要求时把带原话和历史的任务交给 Claude Code、Cursor 或 Devin；合并后再对应到曾经反馈的人。它自己不写你的产品代码。",
+          "problem": "同一句投诉散落在邮件、通话和聊天里，工程拿到的往往是一句空工单；修完之后，当初提问的客户也很少收到回音。",
+          "highlight": "官网列出的渠道包括 Slack、Discord、Teams、邮件，以及 Intercom、Zendesk、Front、Plain、Pylon、Jira Service Desk；通话目前是 Gong、Fathom，Zoom 写 soon。代码和工单可接 GitHub、GitLab、Linear、Jira。把某条 topic 交给 Claude Code、Cursor 云端 agent 或 Devin 时，在 Slack 和后台默认要先审批。外部助手走 MCP：https://mcp.modem.dev/mcp（Streamable HTTP + OAuth），Claude、ChatGPT/Codex、Cursor 有官方插件；Claude Code 可 claude mcp add --transport http modem https://mcp.modem.dev/mcp。agent 跑是异步的，客户端断开后仍在 Modem 里继续，用 idempotency_key 避免同一轮重试跑出两条；写工具（改 topic、合并公司等）以你的账号权限执行，多数客户端会再确认一次，合并不可从 MCP 撤回。官网称 SOC 2，并有角色、PII 清理和可自定义保留期。定价：新工作区 14 天 Scale 试用（含通话，无需信用卡）；之后免费档每月 2,500 事件、1,000 agent 积分、60 天历史，不限人数；Startup 80 美元、Scale 250 美元。事件是它做过推理的一条信号或其更新；经 MCP 拉起的 agent 跑会扣积分，读文档/技能或直接改记录的工具不扣。可选按量：每 1,000 事件 1 美元、每 1,000 积分 5 美元，需设月度预算。Sentry 产品团队所称「下午的调研变成约 10 分钟」以及厂商自测「读这张图比读原始线程平均少约 98% token」均未独立验证。同一公司还开源了 boxery（雷达已收 modem-dev/boxery），那是给 agent 管 Linux VM 的 MCP，和这次 PH 的商业产品不是同一件事。本次无产品源码仓库可对。",
+          "inspo": "工作台不要把从聊天里抄来的一句需求直接丢给 coding agent。先把多渠道反馈聚成一条 topic（原话、谁受影响、关联 issue/PR），交接默认要人批，再把这份简报交给实现用的 agent；PR 合并后按 topic 找回等待的客户。若自建类似 MCP，agent 跑做成异步，并用幂等键避免重试双开。前提是已经接入支持或聊天和代码工具，并且写操作按登录者的角色执行、合并一类动作不可静默撤销。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "AI工具"
+          ],
+          "id": "2026-11-23-modem",
+          "slug": "modem",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "FigmaMCP",
+          "tagline": "Let Claude Code or Codex edit your open Figma file",
+          "ph": "https://www.producthunt.com/products/figmamcp",
+          "site": "https://figmamcp.dev/",
+          "repo": "",
+          "rank": 28,
+          "score": 66,
+          "comments": 5,
+          "what": "免费的 Mac 应用加 Figma 插件：让 Claude Code 或 Codex 读写你在 Figma 桌面端里打开的那份文件，不走 Figma 托管 MCP，也不需要 Figma API token。",
+          "problem": "官方 MCP 在较低套餐上有读取调用限额，要在草稿之外编辑往往还要 Full 席位；用 REST API 的替代方案同样受配额限制。",
+          "highlight": "官网写：应用装在菜单栏，点 Add to Figma 注册插件（若 Figma 当时开着且尚未安装插件，会重启一次 Figma）。agent 经本机 MCP 和 localhost 与插件通信，插件用桌面端 Plugin API 读写当前文件，编辑再经 Figma 应用自己的同步进云端。它不调用 Figma 托管 MCP 或 REST API，因此不受其按席位的调用限额；你的 Figma 套餐和条款仍适用于打开的文件。约束：每条编辑必须精确点名目标图层；批量里有一条非法则整批不改；插件里可一键只读。作者在 PH 介绍里还写，两个 agent（例如 Claude Code 和 Codex）可以同文件工作、不互相覆盖对方的图层。需要 macOS 14+ 和 Figma 桌面端，不支持浏览器、Windows 或 Linux；插件不在 Figma Community，由 Mac 应用代为注册，出现在 Plugins › Development。未开辅助功能时，每个文件都要手动打开插件并保持开着。不包含 Dev Mode 等 Figma 自身功能。源码在私有仓库，公开发布包和校验和在 https://github.com/MrCoder/figmamcp-releases；它是 Neo Product LLC 的 figma-edit-mcp（公开）的 fork，两边已不同步。官网称应用本身不发送文件内容，但会向 figmamcp.dev 和 Google Analytics 发送一次启动计数（插件版本和随机安装 ID）以及按工具名汇总的调用次数；agent 读到的设计仍会发到它所使用的模型服务。与 Figma, Inc. 无隶属关系。雷达无产品源码仓库可对。",
+          "inspo": "给设计文件上的 agent 一条不走官方托管配额的本地通道时，把安全边界做进协议：编辑必须点名图层、批量原子提交、默认或一键只读。两个 agent 同文件时按图层划分写范围，避免互相覆盖。前提是 macOS、Figma 桌面端打开、插件在该文件中保持运行。源码不公开，接入前要接受这一点；设计内容仍会进入 agent 所用的模型服务，不能把它当成「设计不出本机」。",
+          "tags": [
+            "开发者工具",
+            "coding agent"
+          ],
+          "id": "2026-11-23-figmamcp",
+          "slug": "figmamcp",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Mobile Agent Testers",
+          "tagline": "Free open-source AI agents that beta-test your app on phones",
+          "ph": "https://www.producthunt.com/products/mobile-agent-testers",
+          "site": "https://github.com/pierridotite/mobile-agent-testers",
+          "repo": "https://github.com/pierridotite/mobile-agent-testers",
+          "rank": 21,
+          "score": 80,
+          "comments": 5,
+          "what": "MIT 开源的 GitHub Actions 工作流：按人设在 Android 模拟器或 iOS Simulator 上并行跑 Claude Code agent，让它们像新用户一样使用你的应用，交带回截图的缺陷报告，再在本机解密并合并重复项。",
+          "problem": "许多排版和流程问题只在别人的小屏、最大字号或另一种语言里出现，脚本测试往往测不到这些「没写进用例」的路径。",
+          "highlight": "人设在 personas.json 里，可设机型、系统版本、语言、字体大小、深色模式、地点和要完成的事。一次运行可探索（默认）、按你的 brief 跑通一个功能、在每台设备上复现某条缺陷、出改进意见，或对比两个分支/构建。支持 Flutter、React Native、Expo、Kotlin、Swift、KMP、Capacitor、.NET MAUI，或直接提供 APK / .app。公开仓库可用 GitHub 免费 runner（Android 在 Linux，iOS 在 macOS）；私有仓库会扣除 Actions 分钟，且 macOS 分钟按十倍计。免费档同时大约 20 个任务、其中 macOS 最多 5 个，所以 LocalSend 那次 20 台（含 iOS）README 写整轮 69 分钟。模型用你自己的 Claude 订阅或 API 密钥，也可用 Haiku 或 OpenRouter、DeepSeek、Kimi、GLM、MiniMax、Qwen 等 Anthropic 兼容接口。报告、截图和视频在离开 runner 前用你的密钥加密，本机 scripts/collect.sh 解密并汇总。README 写厂商自测：LocalSend（20 台、14 种语言）找到 46 个不同问题，其中 1 个阻断（iPhone SE、瑞典语、最大字号时发不了文字），花费 4.62 美元；AnkiDroid 10 台 Android 不到 10 分钟、4.69 美元；演示应用 11 个预埋缺陷中 4 个 tester 找到 9 个。FAQ 也写：LocalSend 的 20 个 agent 里有 3 个把模拟器英文键盘误判成应用的一部分。它在模拟器或 Simulator 上跑，不是真机；作者说明不能代替脚本回归，发现要先对截图。雷达此前未收此仓库。",
+          "inspo": "工作台的「试一试」不要只跑脚本用例。按人设（机型、语言、字号、深色模式）在 CI 里各开一台模拟器，让 agent 当新用户去点，交带回编号截图的报告，本机再解密、合并重复。前提是公开仓库才能免费用 GitHub hosted runner；iOS 必须用 macOS runner，免费档同时最多 5 个，私有仓库的 macOS 分钟按十倍计。要用测试账号，发现先对截图再入库；这不能替代回归脚本。有 5 小时用量上限的 Claude 套餐，官网称 20 个 agent 大约 15 分钟就可能用完，宜分批 6–10 个。",
+          "tags": [
+            "开源",
+            "开发者工具",
+            "coding agent"
+          ],
+          "id": "2026-11-23-mobile-agent-testers",
+          "slug": "mobile-agent-testers",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Chat with Work",
+          "tagline": "AI bots in Europe. They work. You decide.",
+          "ph": "https://www.producthunt.com/products/chat-with-work",
+          "site": "https://chatwithwork.com/",
+          "repo": "https://github.com/crmne/chatwithwork-desktop",
+          "rank": 8,
+          "score": 122,
+          "comments": 11,
+          "what": "在欧盟托管的多 bot 工作台：用一句话或现成配方建 bot，跨已接工具自己跑，需要决定时把问题和审批集中到一处。本机文件和命令走开源的 Desktop 伴侣应用。",
+          "problem": "欧洲用户常常用不了 Claude Duet、ChatGPT 的 dots（Pro/Plus）或 Gemini Tasks；多个 bot 的审批如果散落在各会话里，人也容易漏掉。",
+          "highlight": "官网称有 1,920 个集成、1,955 种触发和 116 个配方，也可自行接 MCP。应用和 bot 跑在德国 Hetzner，模型在欧盟（Gemini 在 Google Cloud、GPT 在 Azure EU Data Zone、Claude 在 AWS Bedrock），也可自托管。默认自己读，改动先问、删除另问，除非你按集成放开；本机命令只在 Desktop 允许的范围内执行。Desktop（https://github.com/crmne/chatwithwork-desktop）许可证为 GPL-3.0，支持 Mac、Windows 和 Linux。配方里包括用本机 Claude Code 或 Codex 修小 issue 并开 PR，官网称此时积分只扣 bot 自己的模型，代码模型走你已有的订阅或密钥。每个登录一次赠送 300 试用积分、无需信用卡，用完即停、不会自动加账。个人档含税 20 / 100 / 200 欧元每月（900 / 4,500 / 10,000 积分）；团队按人 25 / 125 / 250 欧元每月另加增值税，积分进共享池，访客免费。对比「Claude Duet 仅美国、ChatGPT dots 在欧洲的 Pro/Plus 不可用、Gemini Tasks 不在欧洲」写明核对于 2026-11-20。托管应用本身未见公开源码。雷达此前未收 Desktop 仓库。",
+          "inspo": "多个 bot 不要把「要你拍板」的请求散落在各条会话里：读可以默认自己做，改动和删除进同一个审批收件箱，并按集成分别放开。本机写文件和跑命令应走单独的本机代理，且只在明确允许的目录执行。若让 bot 去唤起 Claude Code 或 Codex，费用和权限要分开算：代码模型用已有订阅，工作台只计自己的调度。前提是接受 bot 主体跑在其德国服务器或你自托管的实例上，并且额度用完就停。",
+          "tags": [
+            "AI工具",
+            "效率",
+            "开源"
+          ],
+          "id": "2026-11-23-chat-with-work",
+          "slug": "chat-with-work",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Strict",
+          "tagline": "Run GitHub Actions on any spare Mac or Linux machine",
+          "ph": "https://www.producthunt.com/products/strict",
+          "site": "https://strict.ai/",
+          "repo": "",
+          "rank": 14,
+          "score": 88,
+          "comments": 8,
+          "what": "把闲置的 Apple 芯片 Mac 和 Linux（x86_64 / ARM64）编成自托管 GitHub Actions 机群：用官方 actions/runner，做成无需 sudo 的 launchd 或 systemd --user 服务，并带磁盘清理、预检和可选的 Tailscale 缓存。",
+          "problem": "GitHub 托管 runner 按分钟计费，而且每次都是冷的；自己搭自托管 runner 又容易遇到磁盘写满、休眠、Xcode 许可过期和机器之间工具链不一致。",
+          "highlight": "安装是 curl -fsSL https://strict.ai/install.sh | sh，或在 Mac 上用 Strict.app。然后 strict add-runner owner/repo（用 gh 自动申请注册令牌，不必 sudo）。工作流只需把 runs-on 改成 [self-hosted, macOS, ARM64]、[self-hosted, Linux, X64] 或 Linux ARM64，现有步骤、密钥和 actions/cache 可保持不变。strict doctor 做 9 项预检（含 GitHub DNS、磁盘、APFS 剩余空间、macOS 休眠和自动登录、Linux linger、Xcode 许可、Tailscale 等），心跳还会对比各节点的 Xcode/Swift/Node 等版本。job 前用 before-job.sh 做分级磁盘清理；多机可用 Tailscale 共享 ACTIONS_CACHE_URL，本地也可保留 DerivedData、Docker 层等。官网和条款将其写成专有软件，可装在自己的 macOS/Linux 硬件上；独立产品免费、不必注册，可选 Strict Cloud 监控。所谓 0 美元/分钟是指算力出在你自己的机器上，不是云上白用。雷达无产品源码仓库可对。",
+          "inspo": "若工作台或插件 CI 经常排在托管 runner 上，可以把闲置 Mac/Linux 编进同一套标签，用 doctor 做主机预检，并在 job 前自动清理磁盘，避免常驻 runner 把盘写满。前提是接受代码和密钥会出现在这台机器上，并且这是专有安装包而不是可审计的开源 runner 管理器。",
+          "tags": [
+            "开发者工具"
+          ],
+          "id": "2026-11-23-strict",
+          "slug": "strict",
+          "status": "新发现",
+          "followups": []
+        }
+      ]
+    },
+    {
       "date": "2026-11-22",
       "source": "https://www.producthunt.com/leaderboard/daily/2026/11/22",
       "fetched": "2026-11-23 17:30 北京",
