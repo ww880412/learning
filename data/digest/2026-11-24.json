@@ -3,7 +3,15 @@
  "label": "11 月 24 日 · 星期二",
  "href": "digest/2026-11-24.html",
  "json": "data/digest/2026-11-24.json",
- "brief": null,
+ "brief": {
+  "title": "X 简报 · 11/24（周二）",
+  "href": "x-brief/2026-11-23.html",
+  "lines": [
+   "Anthropic 推出 Claude Ship（公测）：把 GitHub 拉取请求的审查、修改和按团队策略审批串在一起；Code Review 已正式可用，PR Steward 与 Claude Approvals 为公开测试，面向 Team 和 Enterprise（官方文档，北京时间 11/24）：官方说明，Code Review 对照周围代码找逻辑错误、安全问题和边界情况，并把发现按严重程度写成行内评论；PR Steward 处理失败的检查、合并冲突，以及来自人和审查机器人的反馈，并推送修改提交，但设计上不批准、不合并；Claude Approvals 读取仓库里的策略文件（文档示例为 .claude/approvals.yml），报告还需要谁批准，也可在策略允许时发布批准。开发者可在 Claude Code 里对自家变更运行 /ship，命令正在命令行和桌面端滚动开通；管理员也可按仓库打开，不必每条都手动 /ship。Claude Code 负责人 Boris Cherny 称自己整天在用，并说所在团队在更广流程里加入这层审查后，6 月到 9 月合并的 PR 增加一倍以上，回退比例下降超过 40%——这是厂商自述（官方文档、ClaudeDevs、Boris Cherny、Addy Osmani）",
+   "Anthropic 官方称，连接器和技能合并为插件；Free、Pro、Max 和 Ultra 现已可用，Team 和 Enterprise 即将推出，并可浏览 10,000 多个插件（官方公告，11/24）：官方写道，现在用同一种方式给 Claude 接工具、教它新技能，或两件事一起做（原帖、插件目录）",
+   "Anthropic 官方宣布，企业前沿防护（Enterprise Frontier Safeguards，EFS）的零数据保留方案进入公开测试，面向符合条件的企业客户（官方公告，11/24）：官方称，EFS 可在多次请求之间检测复杂滥用，同时与零数据保留兼容：Anthropic 和云厂商都不留存企业数据。自 9 月宣布以来，已与 100 多家客户继续打磨，其中包括约四分之一的财富 100 强，以及医疗、金融和律师等对数据可见性要求更严的行业。文章写，检测由 Anthropic 运行，日志可留在客户自己的环境，并由客户管理的密钥保护（官方文章、原帖）"
+  ]
+ },
  "posters": {
   "title": "6 张技术海报",
   "href": "x-posters/2026-11-24/index.html",
