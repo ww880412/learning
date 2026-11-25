@@ -24,6 +24,168 @@
   ],
   "days": [
     {
+      "date": "2026-11-24",
+      "source": "https://www.producthunt.com/leaderboard/daily/2026/11/24",
+      "fetched": "2026-11-25 17:35 北京",
+      "note": "官网日榜可打开，前 10 名综合分来自官网；Fleetify 不在前 10，日排名来自产品页 Day Rank，分数来自 hunted.space 票数而非官网综合分。decohack 标 11.24 的一期实为太平洋 11/23 产品（Plango、Replit Missions 等，已在昨日收录），11.25 期尚未看到。未收 distribution.dev（开发者广告网络）、SparrowDesk Phone Calls、frwrd.to、Kodak SlideTag、Agenda Hero Magic Labs 等，与工作台关系较弱。",
+      "picks": [
+        {
+          "id": "2026-11-24-fleetify",
+          "why": "本机把多个 CLI coding agent 收进一个窗口，默认一任务一 worktree，并统一看花费和状态，和工作台最接近，源码还是 Apache-2.0。",
+          "limit": "公开发布构建要免费账号登录；默认会把会话元数据（含项目文件夹名）同步到其仪表盘；安装包尚未代码签名；文档仍标 private beta。"
+        },
+        {
+          "id": "2026-11-24-claude-ship",
+          "why": "官方把 PR 的评审、修问题和按策略批准拆开，策略写成仓库里的文件，先观察再当成 GitHub 必过检查，企业工作台可以直接抄这套门。",
+          "limit": "只给 Claude Team / Enterprise 的 GitHub 仓库；PR Steward 和 Approvals 仍是公测；有 Zero Data Retention、HIPAA 或客户托管密钥的组织不能用；按 token 计费。"
+        },
+        {
+          "id": "2026-11-24-granular-build",
+          "why": "可视化工作区里用老板 agent 给工人分活，工人默认在各自 worktree，做完再合并，项目还有本地 Markdown 大脑，适合对照自己的工作台交互。",
+          "limit": "免费档每个账号 2 个项目、每项目最多 4 个会话、1 个老板加 2 个工人；macOS 有签名公证，Windows 仍是未签名测试版，Linux 尚未提供。"
+        }
+      ],
+      "items": [
+        {
+          "name": "Fleetify",
+          "tagline": "Open-source command center for your AI coding agents",
+          "ph": "https://www.producthunt.com/products/fleetify",
+          "site": "https://fleetify.dev",
+          "repo": "https://github.com/fleetifydev/fleetify",
+          "rank": 15,
+          "score": 88,
+          "comments": 6,
+          "what": "开源桌面指挥中心：在一个窗口里并排跑多个 AI coding agent，用 Fleet 面板看各会话的状态、花费和 token，并默认给每个任务单独的 git worktree。仓库 fleetifydev/fleetify 为 Apache-2.0，用 Rust 和 Tauri 编写，支持 macOS、Windows 和 Linux。",
+          "problem": "同时开几个 coding agent 时，终端、分支和花费分散，容易搞不清谁卡住了、谁在烧 token、谁在改同一批文件。",
+          "highlight": "README 和文档写：可启动 Claude Code、Codex、OpenCode、Cursor CLI、GitHub Copilot CLI、Kimi Code、Grok Build、Hermes Agent、Antigravity CLI / SDK 这 10 个本机 CLI agent（文档称经 ACP、stdio 或终端驱动），也可调用 OpenAI、Anthropic、Gemini、OpenRouter 或本机 / 局域网 Ollama。会话默认在仓库的 .fleetify/worktrees/<session-id>/ 下工作，主工作区不被改脏；也可在新建时关掉 worktree，改成只读，用于审计和提问。两个会话并行时各用各的 worktree，归档会先自动提交未提交的改动，分支留在仓库里直到你手动删除。Fleet 面板汇总状态、花费和 token，并可一键停止全部；花费按会话累加，归档会话仍计入当日总计。还可从应用里开 PR、内置浏览器和开发服务器预览，并把提示词、技能、hook、规则写入各 agent 自己的配置；市场里装一次插件，支持它的 CLI agent 都能用。例行任务可按计划跑，但要在 Fleetify 开着、机器醒着时。文档写目前仍是 private beta，插件格式在 0.2.0 前可能变动。公开发布构建（包括自己编译的 release）需要免费账号，因为会话、保存的 API 密钥和 fleetify.dev 仪表盘绑在账号上；用 npm run dev:tauri:wt 的开发构建可跳过登录。仪表盘同步默认开启，会把 agent、模型、状态、token、花费、标题和项目文件夹名等会话元数据送到其仪表盘，文档称不会发送代码、提示词、命令、完整路径或 API 密钥；产品分析（PostHog，EU）默认关，可在设置里改。API 密钥放在系统钥匙串，聊天记录在本机磁盘。语音听写默认走 Fleetify 云，可改成自备密钥或本机。macOS 安装包是自签名，Windows / Linux 包未签名，首次打开会有系统警告；安装脚本会先核对发行版的 SHA256SUMS。提交和 PR 默认带 Co-Authored-By: Fleetify，可在设置里关掉。收录时仓库约 11 星，另有 MIT 许可的 marketplace 和 models 目录仓。雷达尚未收过此仓库。",
+          "inspo": "工作台可以默认「一任务一 worktree 一分支」：agent 只改自己的副本，归档时先自动提交再清理；只读提问就关掉 worktree。统一面板显示每个会话的状态和花费，并提供停止全部。前提是先按任务建好隔离的工作树，并且想清楚默认同步哪些元数据——文件夹名也会被送出本机；若企业要求默认不出域，应把仪表盘同步关掉或改为自托管。本机跑的仍是各家 CLI，提示词和代码会按那些产品自己的条款送出。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "开源"
+          ],
+          "id": "2026-11-24-fleetify",
+          "slug": "fleetify",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Claude Ship",
+          "tagline": "Ship code as fast as you can write it",
+          "ph": "https://www.producthunt.com/products/claude-code",
+          "site": "https://claude.com/resources/articles/introducing-claude-ship",
+          "repo": "",
+          "rank": 6,
+          "score": 152,
+          "comments": 5,
+          "what": "Anthropic 为 GitHub 拉取请求提供的一套代理：已正式提供的 Code Review，加上公测中的 PR Steward（修失败的检查、合并冲突和评审意见，但不批准、不合并）和 Claude Approvals（按仓库里的策略文件判断还要谁批、哪些可由 Claude 批）。开发者也可在 Claude Code 里用 /ship，推送、开 PR 并往下走这几步。",
+          "problem": "coding agent 写出大量变更后，评审、修 CI 和等人批准成了新的排队点；只靠人盯每一单，速度跟不上生成代码的速度。",
+          "highlight": "官网文章和文档（https://code.claude.com/docs/en/claude-ship）写：Code Review 对照周围代码做审查，经对抗核实后按严重程度把发现贴到 PR 对应行，仓库可选 Quick、Standard 或 Deep。官网称 Claude Code 团队把这项审查当作更广流程里的一层，6 到 9 月合并的 PR 数量增加一倍以上，被回退的比例下降超过 40%；这是厂商对自家团队的说法，未见独立验证。PR Steward 在云端会话里工作，以 Claude GitHub App 的身份推送提交，处理失败检查、冲突、人和机器人的评审意见，以及 Approvals 检查里可以用提交修掉的项（例如未关闭的 Code Review 发现）；等人批准的项它不动。它被设计为不批准、不合并。默认在开 PR、重新打开或把草稿标成待审时启动，跳过草稿、来自 fork、由机器人开设以及作者没有写权限的 PR；可用标签 claude-pr-steward-watching 或评论 @claude stop 停下。Claude Approvals 读取默认分支上的 .claude/approvals.yml，按路径规定要几个人批、Claude 是只评论还是可以批；条件可以看变更行数、作者、目标分支和分类器判断，但不能读 CI 结果，CI 仍应单独设为 GitHub 必过检查。观察模式下检查标题带 (observe mode)，一般不拦合并；只有在 GitHub 里把它设为必过检查后才会拦。文档提醒：作者可以占一个席位，seats: 1 时可能没有第二个人看过；seats: 0 时机器人开的 PR 可能在无人看过时合并；若 GitHub 分支规则只要求一次批准，Claude 的批准评审可以算作那一次；规则写成 claude: approves 时，它本身不会启动 Code Review，所以可能在没有任何审查的情况下批准。官方建议先观察，再把检查设为必过，并让 Claude 只在 Code Review 通过后才能批准。只对 Claude Team 和 Enterprise、github.com 或连接了 443 端口的 GitHub Enterprise Server 仓库开放。有 Zero Data Retention、HIPAA 配置或客户托管加密密钥的组织不能用；FERPA 或 Access Transparency 设置还会阻止启用 Approvals。按 token 计费，管理员可为 Code Review 和 PR Steward 设月度上限；Approvals 本身无基础费，但策略里的分类器和它触发的 Code Review 即使用观察模式也会计费。/ship 记入普通的 Claude Code 用量。Enterprise 组织可在 2027 年 1 月 15 日前申领至少 10,000 美元的 Claude Ship 额度，须在领取后 30 天内用完，以官网条款为准。雷达无此产品仓库可对。",
+          "inspo": "工作台可以把「评审、修问题、批准」分成三个角色，并规定修问题的那个不得批准或合并。批准策略写成仓库里的文件（可按路径要几个人批、哪些情况 Claude 可批），先只观察、对照实际 PR 看它会怎么判，再把它设成必过门。前提是策略写明 Claude 只能在 Code Review 通过之后批准，作者不能单独凑满席位，且 GitHub 分支保护仍要求人的检查（测试、安全扫描）过了才能合并；否则把批准交给模型，等于把最后那道人审也让出去了。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "AI工具"
+          ],
+          "id": "2026-11-24-claude-ship",
+          "slug": "claude-ship",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Granular.Build",
+          "tagline": "Put your AI agents to work in a visual workspace",
+          "ph": "https://www.producthunt.com/products/granular-build",
+          "site": "https://granular.build/",
+          "repo": "",
+          "rank": 2,
+          "score": 221,
+          "comments": 30,
+          "what": "本机可视化工作区：把已有的 Claude、Codex、Gemini 等订阅和项目文件夹放在一起，用老板 agent 给工人分活，在真实终端里跑，并在画布上预览结果。每个项目可有一份本地 Markdown「大脑」和路线图。",
+          "problem": "多个 agent、终端、预览和项目规则散落在编辑器和终端里，非工程师也很难看清谁在干什么、改动会不会互相覆盖。",
+          "highlight": "文档写可在 macOS 和 Windows 上下载使用，免费开始，也可继续不用账号（选 Continue without an account，本机功能仍可用）。macOS 安装包经 Apple 签名并公证，支持 Apple 芯片和 Intel；Windows 是 64 位未签名测试版，首次打开会有 SmartScreen 警告，更新需再跑安装程序；Linux 尚在计划中。可登录已有的 Claude Pro / Max、Codex / ChatGPT，或填 API 密钥，文档称不加价；也可另购按月计费的 AI Add-on（Granular Hosted）。把一个会话设成老板后，可让它按你的话拆出工人；每个工人是独立会话，默认在自己的 git worktree 里工作，做完由老板把改动合并回主副本，冲突时不自动合并，留给你决定。也可按你的要求建成共享工人，直接改主文件夹。老板对工人汇报有 Autopilot（空闲时自动处理，每小时最多 20 次）和 Ask first（等你点再跑）两种模式；工人出错、卡住、合并冲突，或要做破坏性、超范围、花钱的事时，老板应停下告诉你。免费档：2 个项目、每项目最多 4 个会话、1 个老板加 2 个工人、最多 3 条已发布链接且同时只能有 1 条有效。Pro 为 12.99 美元/月、129 美元/年或 259 美元买断（30 天可退），同一账号最多 2 台电脑。项目大脑是文件夹里的 brain/BRAIN.md 和用 [[wikilink]] 串起来的普通 Markdown，文档称 Granular 不上传大脑，但 agent 读笔记时会把正文送到该会话所用的模型；密码和密钥不要写进大脑，应放进 Key vault。官网展示版本为 v0.7.1。未见到公开产品源码。雷达无此仓库可对。",
+          "inspo": "工作台可以做成「一个老板会话 + 多个工人会话」：工人默认在各自 worktree，任务说明必须能脱离老板的对话单独成立；合并冲突时不要自动覆盖主副本。老板对汇报可设自动处理或先问人，并给自动处理加上每小时次数上限。项目规则用仓库内可版本管理的 Markdown 大脑（任务、决定、工作方式）当默认上下文，而不是只写在某次聊天里。前提是任务能拆成彼此不太依赖的部分；强顺序的工作仍用单会话更省。密钥不要进大脑文件。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "AI工具"
+          ],
+          "id": "2026-11-24-granular-build",
+          "slug": "granular-build",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Clam AI",
+          "tagline": "Your inbox, safely shared with AI agents",
+          "ph": "https://www.producthunt.com/products/clam-ai",
+          "site": "https://useclam.ai",
+          "repo": "",
+          "rank": 3,
+          "score": 184,
+          "comments": 13,
+          "what": "夹在 AI agent 和 Gmail 之间的权限层：为每个 agent 建一个 Shell，用白话规则限定它能读、起草、发送哪些邮件；请求先经策略检查，再通过 MCP 交给 agent。官网称正在把这套做成「懂数据含义」的 MCP 权限层，目前从 Gmail 开始。",
+          "problem": "邮箱里既有行程和收据，也有密码重置、银行通知和健康报告。把整个邮箱交给 agent 后，一次误判或一封带隐藏指令的邮件，就可能读到不该看的内容或对外发信。",
+          "highlight": "官网和文档写：你把 Gmail 连到 Clam，而不是直接连到 agent。Clam 按内容给邮件打标签（如 travel、receipts、banking），把白话规则编译成 Cedar 策略，启用前会让你核对它的理解。每次请求有三种结果：允许、先问你、拦截；匹配到的拦截优先于允许，匹配到的「先问你」也会压过允许。规则可按动作（读、归档、起草、回复等）搭配标签、发件人、收件人、主题、日期、附件和已读状态，不能直接匹配正文里的词，主题要靠标签。未打上 Clam 标签的邮件在打完并核对规则之前一律拦截。官网称策略检查是确定性的：要么完全匹配，要么不匹配；Clam 本身不是自主 agent，不替你规划或决定发信，标签所用的模型与邮箱无直接连接，也不能经 Clam 改规则。官方还称不存储邮件正文。审批可在应用或 WhatsApp、Telegram、Slack 完成。MCP 地址为 mcp.useclam.ai/mcp，PH 页面和创始人说明可与 Claude、ChatGPT、Gemini、Codex 及任何能连 MCP 的 agent 一起用，也可经 Composio 的自定义 MCP 接入。目前只支持 Gmail，更多邮箱「计划中」。定价：14 天免费试用 Starter（不必绑卡）；Starter 2.99 美元/月，1 个邮箱和 1 个 Shell；Pro 6.99 美元/月，每邮箱 10 个 Shell、90 天历史、每月 4,000 封分类邮件、审计日志、审批和办公时间，3 个邮箱「即将推出」。超出月配额的请求会被拒绝，不另收超支费。试用结束未订阅则 Shell 停止应答，连接和规则保留 30 天。未见到公开产品源码。雷达无此仓库可对。",
+          "inspo": "工作台不要把「能调工具」当成授权：在 MCP 之外加一层按数据含义划分的权限壳，默认拒绝未写明的动作，并把「读 / 起草 / 发送」分开；拦截优先于允许，对外发送默认先问人。规则启用前要让人看到编译结果。前提是分类标签足够可靠——文档也写标签可能打错，打成规则允许的类就会被 agent 看到；因此高敏感类（密码重置、银行、医疗）应单独拦截，且不要让 agent 经这层权限去改规则本身。目前只覆盖 Gmail。",
+          "tags": [
+            "AI工具",
+            "开发者工具"
+          ],
+          "id": "2026-11-24-clam-ai",
+          "slug": "clam-ai",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Viktor Code",
+          "tagline": "Coding agents know your repo. Viktor knows your company.",
+          "ph": "https://www.producthunt.com/products/viktor",
+          "site": "https://viktor.com/code",
+          "repo": "",
+          "rank": 4,
+          "score": 183,
+          "comments": 18,
+          "what": "云端「AI 员工」产品 Viktor 的编程向：官网称它同时具备公司上下文（客户、指标和已做决定）和代码仓库，你给业务结果而不是工单，它把工作拆成技术与非技术两条线，在 GitHub、GitLab 或 Bitbucket 上开拉取请求并交回给你审。",
+          "problem": "常见做法是一个 agent 懂公司、另一个 agent 写代码，两边的上下文要人来回转述；编码又往往发生在各自的私有会话里，团队看不到同一件工作的全貌。",
+          "highlight": "官网写：在 Slack、Microsoft Teams 或 Discord 以及桌面应用、手机里是同一个 Viktor，项目对全队可见，而不只属于某位工程师的会话。它在云端克隆并修改你的仓库，开 PR 后带回评审。官网称可连接 9,800+ 工具（PH 发布文案写的是 3,200+），没有现成集成时可用自带浏览器；SOC 2，数据在传输和静态时加密，不为训练使用客户数据，每个用户有隔离的计算环境，只进入被邀请的频道。免费试用，PH 和官网写最多 100 美元额度、不必绑卡。官网用自家仓库的人均每周合并 PR 作展示：约 8 月的 20 个到 11 月 9 日那一周的 195 个，其中 58% 由 Viktor 而不是人发起——这是厂商自测，未见独立验证，也不能当成其他团队的结果。官网还写「被 82,000+ 团队使用」，同样未经独立核实。未见到公开产品源码。雷达无此仓库可对。",
+          "inspo": "不要把「懂公司的 agent」和「写代码的 agent」拆成两个互不共享上下文的系统：把客户反馈、指标和已做决定与仓库放在同一条工作流里，按业务结果拆成技术改动和非技术动作（例如一并起草给客户的说明），并在该由人拍板的地方停下来问。项目应让全队都能打开、看到为什么要做，而不是每人一个私有会话。前提是团队接受把聊天、支持和代码权限交给同一云端 agent，并且合并数字是厂商对自家仓库的自测，不能直接当产能承诺。",
+          "tags": [
+            "coding agent",
+            "AI工具",
+            "开发者工具"
+          ],
+          "id": "2026-11-24-viktor-code",
+          "slug": "viktor-code",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "tday.com",
+          "tagline": "AI-recorded Screen Studio style editable demos",
+          "ph": "https://www.producthunt.com/products/tday",
+          "site": "https://tday.com",
+          "repo": "",
+          "rank": 9,
+          "score": 121,
+          "comments": 12,
+          "what": "给 coding agent 用的产品演示录像工具：在 Claude Code、Cursor、Codex 或任何 MCP 客户端里用一句话请求演示，本机上的 agent 操作你的真实应用（包括 localhost），tday 再配上旁白、光标、缩放、字幕和品牌。可事后改每一句，用于发布、文档或更新日志。",
+          "problem": "功能已经做完，但一条能看的演示往往还要花几小时写脚本、录屏、重拍和剪辑，所以很多更新没有配套录像。",
+          "highlight": "官网写：本机 MCP 服务负责录制，安装可用 curl -fsSL https://tday.com/install.sh | bash；agent 会另起一份带一次性种子数据的应用实例，不重启你正在跑的开发服务器，非本机数据库要先征得你同意。按步骤录，某一步点击没落下就只重做该步。上传前在本机检查是否出现密钥，并提供核对页；官网称离开本机的是视频、一张静帧，以及旁白、步骤和检查记录，源代码、.env、cookie 和网络流量不上传，agent 如何启动应用的说明留在你的仓库里。录完后由 tday 配音、加光标和字幕并渲染，通常要几分钟（官网说法）。支持 Web、桌面、终端、iPhone 和 Android。免费档 5 条已保存演示、不必绑卡；Pro 39 美元/月 25 条；Growth 149 美元/月 150 条，并宣称可把演示嵌进文档、产品变更后重录。产品变更后的重录包含在套餐里，新版本次数有月度上限，细节见定价页。这是该 PH 产品页的第 2 次发布，公司为 Y Combinator 项目。未见到公开产品源码。雷达无此仓库可对。",
+          "inspo": "工作台可以把「给这个功能做一条可嵌入文档的演示」做成 agent 可调用的本机 MCP：在一次性的应用副本上按步骤录屏，上传前做密钥检查，源代码不出本机。前提是应用能在本机再起一份带测试密钥和种子数据的实例；演示用的支付和邮件不应用生产密钥。录坏了某一步可以重录该步，不必整条重来。",
+          "tags": [
+            "创作",
+            "开发者工具",
+            "AI工具"
+          ],
+          "id": "2026-11-24-tday",
+          "slug": "tday",
+          "status": "新发现",
+          "followups": []
+        }
+      ]
+    },
+    {
       "date": "2026-11-23",
       "source": "https://www.producthunt.com/leaderboard/daily/2026/11/23",
       "fetched": "2026-11-24 17:25 北京",
