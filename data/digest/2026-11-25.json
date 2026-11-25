@@ -3,7 +3,15 @@
  "label": "11 月 25 日 · 星期三",
  "href": "digest/2026-11-25.html",
  "json": "data/digest/2026-11-25.json",
- "brief": null,
+ "brief": {
+  "title": "X 简报 · 11/25（周三）",
+  "href": "x-brief/2026-11-24.html",
+  "lines": [
+   "Anthropic 官方宣布，MCP 服务器可随工具一起发布 Skill（Skills over MCP）已在 Claude 和 Claude Code 公开测试；Tasks 与 Elicitation 对 Pro、Max、Ultra 正式可用（官方公告，北京时间 11/25）：官方称，服务器可把工作流、最佳实践或按账号定制的说明作为 Skill 发给 Claude，只用到时才加载，并随服务器更新，用户不必另外安装。Claude Code 负责人 Boris Cherny 说，这样 Claude Code 能开箱就知道怎么用这些 MCP 服务器。同一篇文章写，Tasks 让服务器把费时操作或完整 Agent 循环放到后台，Claude 可继续干活并在结果就绪后取回；Elicitation 可在花钱、删数据等动作中途弹出表单或链接征求确认。File Uploads 扩展将把 PDF、表格和图片直接交给服务器，而不经过上下文窗口，目前还在滚动上线。官方举例包括 Shopify、HubSpot、Atlassian，以及用 Elicitation 的 Supabase、Railway 和 GitHub（官方文章、MCP 两年回顾、ClaudeDevs、Boris Cherny）",
+   "Uber Engineering 官方介绍企业级 Agent Skill 治理：共享市场一年从 1 个扩到 5000 多个，单月调用超过 100 万次，并用分层分发、对照评测和 Code Mode 控质量、控成本（官方博客，小邵于 11/24 介绍）：官方写，每个 Skill 是一个目录，平时只加载约 100 token 的名称和简介，执行时再读正文和材料。版本、负责人和审核用 Git 管理，并分成团队专用、核心推荐和默认启用三层；统一命令行工具 aifx 用来在 Claude Code、Codex、OpenCode 等不同智能体上安装同一套 Skill。评测集大约是 5% 固定输入输出、80% 真实提示词、15% 作者打分；真实提示词重点看有没有选对 Skill、按顺序调用工具和走错误恢复。在一个数仓查询 Skill 的实验里，不带 Skill 时工具调用多 13%、工具错误高 6 倍、耗时多 31%，带 Skill 的答案赢得 87% 的对比——这是单个 Skill 的结果，不能当成全平台收益。他们还借鉴 Cloudflare 的 Code Mode，改由脚本经命令行和网关调工具，避免默认预加载 100 多个工具定义就占掉 5 万到 7 万 token（官方博客、meng shao、UberEng）",
+   "Anthropic 官方推出「Install as app」公开测试：可把 Claude Artifact 装成 Mac 和 Windows 桌面应用，有独立图标和窗口（官方公告，北京时间 11/25）：官方称，应用会随 Artifact 的修改自动更新，可使用 Claude 和你的连接器，向 Claude 发起的请求计入套餐额度。宝玉分析认为，原理接近 Chrome 的 Web App，应用仍需在线，并且要用有权访问该 Artifact 页面的 Claude 账号。权限分三档：默认只相当于浏览器；应用权限可申请通知、全局快捷键、置顶窗口等；完全访问电脑可在未逐次询问的情况下运行程序、读写或删除文件。官方写，Anthropic 不会在安装前审查应用，完全访问只适用于你自己做的应用，或 Team/Enterprise 里本组织的人做的应用；你的许可只覆盖当前版本，应用更新后会再问一次，但来自其他网站的部分发生变化时不会再问（官方文章、帮助文档、ClaudeDevs、宝玉）"
+  ]
+ },
  "posters": {
   "title": "6 张技术海报",
   "href": "x-posters/2026-11-25/index.html",
