@@ -24,6 +24,166 @@
   ],
   "days": [
     {
+      "date": "2026-11-25",
+      "source": "https://www.producthunt.com/leaderboard/daily/2026/11/25",
+      "fetched": "2026-11-26 17:32 北京",
+      "note": "官网日榜可打开，前 10 名综合分来自官网；Tendeck 和 Statefold 不在前 10，日排名来自产品页 Day Rank，分数来自 hunted.space 票数而非官网综合分。decohack 标 11.25 的一期实为太平洋 11/24 产品（Fleetify、Claude Ship 等，已在昨日收录），11.26 期尚未看到。未收 Airbot（官网仍是候补、可核事实少）、Hiring Right Now、Snag by Parallel、Hai、Fompi、Omi X 2.0（与已收 Omi CLI 同属 BuildItOmi，此为桌面 SaaS 生成应用）等。",
+      "picks": [
+        {
+          "id": "2026-11-25-tendeck",
+          "why": "原生 Mac 看板把多个 Claude Code/Codex 收成卡片，权限请求会把卡片亮金并在系统通知里直接回答，还可给每个任务单独 worktree，和工作台的多会话编排最接近。",
+          "limit": "应用只支持 Apple 芯片的 macOS 14+；worktree 默认关闭；用官方 --resume 把会话迁到另一账号目前只支持 Claude Code；应用本身不开源。"
+        },
+        {
+          "id": "2026-11-25-statefold",
+          "why": "把已在用的 Codex、Claude Code 等丢进隔离云沙箱，合上电脑也能继续；CI 失败或评审评论会唤醒同一条线程，密钥不出沙箱、只在出口替换。",
+          "limit": "沙箱内命令默认不必你批准；密钥和 MCP 登录留在 Statefold 一侧；按沙箱机时计费，产品由个人开发、官网称仍有毛边。"
+        },
+        {
+          "id": "2026-11-25-koed",
+          "why": "Apache-2.0 的本机记忆层，后台记录 Claude Code、Codex 和 Pi 的会话，再用带引用的 memory_answer 供给下一次调用，可直接对照工作台怎么做项目记忆。",
+          "limit": "目前只接这三家客户端（Claude Code 需 2.1.227+），Windows 只能走 WSL，本机要跑 Postgres、pgvector 和本地模型；云端 Pro 和团队共享尚未提供。"
+        }
+      ],
+      "items": [
+        {
+          "name": "Tendeck",
+          "tagline": "Run all your Claude Code and Codex agents on one Mac board",
+          "ph": "https://www.producthunt.com/products/tendeck",
+          "site": "https://tendeck.app",
+          "repo": "",
+          "rank": 18,
+          "score": 80,
+          "comments": 9,
+          "what": "原生 macOS 看板：把 Claude Code、Codex 以及多种 agent CLI 收成卡片，可在干净的会话视图和真实终端之间切换。官网称应用需 macOS 14 或更高、仅支持 Apple 芯片；一次买断 59 美元，含一年更新，到期后当前版本可继续用，再买一年更新为 29 美元。7 天试用只需邮箱、不用绑卡，购买后 14 天内可申请退款。制作人称许可证最多两台 Mac。未见公开产品源码。",
+          "problem": "同时开多个 coding agent 时，权限询问和提问散落在终端标签里，常常过很久才看见；多个 agent 还容易改到同一批文件，账号额度用尽时会话也容易断掉。",
+          "highlight": "官网和制作人在 Product Hunt 上的说明写：卡片变成金色表示轮到你，macOS 通知里可直接允许或拒绝，不必一直盯着看板（应用可收进菜单栏）；多个待处理请求排进「Waiting on you」队列。Claude Code 的权限询问走它自己的 permission hook，你在卡片上的回答就是 CLI 收到的结果。新建 agent 时可打开 worktree，让它在仓库的独立副本和分支上工作，避免互相踩文件；制作人说该选项默认关闭，但会记住你上次的选择。制作人还说：Claude Code 会话可在额度将尽时迁到另一个已登录账号，做法是把对话复制到该账号的 Claude 目录并用官方 --resume 继续，不是重放摘要；若当前轮次还在跑，会先跑完再迁。这套迁账号目前只支持 Claude Code，Codex 仍留在原账号。agent 之间可以写信或在你允许后为旁路任务再开一个 agent；由建造者拉起的审查者默认在项目主目录看 PR diff，不会另开 worktree，也不会检出该分支。除 Claude Code 和 Codex 外，Gemini CLI、OpenCode、Cursor CLI、GitHub Copilot CLI、Antigravity CLI、Amp、Qwen Code、Droid、Goose、Crush、Aider、Kiro CLI、Kimi Code CLI、Pi、Cline CLI 或自定义命令可在真实终端卡片里跑，看板仍会提示它在工作还是在等你，并给它单独分支。官网称 Tendeck 不是新的 Claude 客户端，不经手密码或密钥，代码也不经过他们的服务器；可把引擎放到自己的 Linux Docker 上，合上笔记本后仍从应用或浏览器查看，但引擎必须留在私有网络、不可暴露到公网。应用还可在 agent 工作期间用 macOS 自己的电源断言保持机器不因闲置休眠。收录当天版本为 1.11.0，新增卡片上的 Changes 视图。",
+          "inspo": "工作台可以把「需要你」做成卡片级状态：权限和提问把卡片标成待处理，系统通知里直接允许或拒绝，多个请求排进队列，而不是散落在终端标签里。前提是先接上各家 CLI 自己的权限 hook（Tendeck 对 Claude Code 就是这样），并且「一任务一 worktree」不要学它默认关闭——应默认打开，只允许在只读提问时关掉。多账号之间用官方 --resume 迁会话，不要自己重放摘要；前提是目标客户端支持恢复同一会话，目前这套迁法只对 Claude Code 成立，Codex 还不能这样搬。审查者若只看 PR diff，就不要再给它单独检出分支，以免和建造者的工作树缠在一起。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "效率"
+          ],
+          "id": "2026-11-25-tendeck",
+          "slug": "tendeck",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Statefold",
+          "tagline": "Coding agents that keep working while you're away",
+          "ph": "https://www.producthunt.com/products/statefold-2",
+          "site": "https://statefold.sh",
+          "repo": "",
+          "rank": 24,
+          "score": 76,
+          "comments": 15,
+          "what": "托管云沙箱，用来跑你已经在付费使用的编码 harness：Codex、Claude Code、OpenCode、Pi 或 Gemini CLI。官网称它本身不是 coding agent，只提供按线程隔离的机器、git 访问和一条可在关电脑后继续的会话。可用 CLI 把当前工作区（含未提交改动）交出去，而不改动本地分支。制作人在 Product Hunt 上写，项目由他一人开发，并称产品仍新、会有毛边。未见公开产品源码。",
+          "problem": "本机上的 coding agent 合上电脑就会停；CI 失败或评审意见往往要人再把日志贴回对话，换设备后还容易丢掉同一条上下文。",
+          "highlight": "官网写：每个线程一台沙箱（含 Docker、终端、预览端口、PostgreSQL 16、gh 和 tmux），闲置时休眠、快照保留工作区，休眠不收机时费。线程可按事件唤醒并带着完整历史继续，包括 GitHub 检查结束、评审评论、在 issue 或 PR 里写 @statefold、Linear 指派、日程和 API。制作人说明：订阅评论会唤醒他人和机器人的评论，但会跳过你自己的评论以免自唤醒；非协作者的评论按每线程每小时 5 次限流，多出的并成一条摘要；@statefold 只对已绑定账号生效。一条线程可把工作委派给其他 harness，子线程各有自己的沙箱和历史。密钥和 GitHub token 不进沙箱：容器里只有占位符，真实凭证在出口按目标主机替换，MCP（官网举了 Linear、Sentry、Notion）的登录也留在 Statefold 一侧。因为沙箱已隔离，agent 在里面默认不必为每条命令等你批准，官网称会要求它们在 force-push 或合并前询问。记忆按账号和项目默认开启，可检查、编辑或忘记。团队最多 32 人共享项目、技能和线程。计费只收沙箱机时，按秒计，官网标价每小时 0.10 至 0.55 美元（默认 standard-3 为 2 vCPU / 8 GiB / 0.30 美元）；模型 token 走你自己的订阅或密钥，官网称不加价。绑定 GitHub 送 3 美元起步额度，约相当于默认机型 10 小时；月付 10、50 或 100 美元的套餐按价给当月额度，也可从 10 美元起加购且不过期。制作人还写，展示里一次「Codex 干活、Claude Code 写测试并看 diff」的运行大约花 5 美分，此为厂商说法，未经独立验证。",
+          "inspo": "工作台可以把异步任务做成「同一条线程被事件唤醒」，而不是等人回来把 CI 日志再贴进新对话：订阅检查结果、评审评论和 @提及，唤醒时带上原来的沙箱和工作历史。密钥处理可抄「容器内只放占位符，出口按目标主机注入真实凭证」，前提是工作台自己控制出口代理，并能按主机绑定密钥。无值守时可以给隔离沙箱完整权限，只在 force-push 或合并前发问，前提是每个任务确实隔离，并且接受「沙箱内误改可靠 git 回滚」这一取舍。",
+          "tags": [
+            "coding agent",
+            "开发者工具"
+          ],
+          "id": "2026-11-25-statefold",
+          "slug": "statefold",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Koed",
+          "tagline": "Supercharged Agents!",
+          "ph": "https://www.producthunt.com/products/koed",
+          "site": "https://koed.ai",
+          "repo": "https://github.com/koed-labs/koed",
+          "rank": 7,
+          "score": 110,
+          "comments": 21,
+          "what": "开源、本机优先的编码会话记忆层，仓库 koed-labs/koed 为 Apache-2.0，用 TypeScript 编写。它在后台捕获 Codex、Claude Code 和 Pi 的会话，再用 MCP 工具 memory_answer 把带引用的回忆交给这些客户端；仓库写明回答仍由你正在用的 AI 客户端撰写，中间不再另接一个 LLM。支持 macOS、Linux 和 WSL（Windows 需在 WSL 里跑，且 KOED_HOME 与仓库要放在 Linux 文件系统上）。收录时仓库约 20 星。雷达尚未收过此仓库。",
+          "problem": "每个新的 coding agent 会话几乎从零开始，项目约定、已经试过且失败的改法往往要再讲一遍，既费时间也费 token。",
+          "highlight": "仓库和文档写：数据默认留在本机或你自己跑的服务器，Postgres、pgvector 和模型装在 KOED_HOME 下，不依赖 Docker 或云账号；可用桌面应用浏览项目、会话和记忆，也可用策略、暂停捕获和本机隐私过滤模型决定留下什么、屏蔽什么。连接客户端需自行安装：Claude Code 最低 2.1.227，Pi 最低 0.84.2，Codex 未列出最低版本；各客户端彼此独立，一个失败不会顶替另一个。当前发行默认在单台设备上运行，设备配对与个人同步默认关闭。官网把本机核心记忆环标为 Free；云端托管记忆的 Pro 写明即将提供，协作和企业方案只有介绍、没有上线细节。官网和 README 刊载的对比是厂商自测：在 20 道选定的 Terminal-Bench 4 任务上各跑 3 次、模型为 GPT-6 Luna，并且 Koed 侧事先已有这些任务的成功会话；他们写 12 道任务有改善，60 次里通过数从 7 次升到 38 次，编码时间低 52%、编码 token 低 69%、含开销的费用低 42%，单次通过的估计费用从 1.16 美元降到 0.12 美元（含 Koed 回忆和准备成本，费用为 API 等价估算）。制作人在 Product Hunt 上还提到，相对另一款 Markdown 记忆方案 MemPalace，在 GPT-6 Luna 上的回答准确率为 93.8% 对 56.3%，并称将发布更多细节。这些数字均未经独立验证。",
+          "inspo": "工作台的项目记忆可以做成「只检索、不代写」：记忆层提供带引用的证据，答案仍由正在跑的 coding agent 写，避免再插一个改写用的模型。捕获宜在后台自动做，再用策略和本机隐私过滤决定留下什么。前提是先接好各客户端的会话记录（Claude Code 要 2.1.227 或更高），并接受本机要跑 Postgres、pgvector 和本地模型。厂商自测里 Koed 侧事先已有成功会话，省 token 的数字不能当成工作台的承诺。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "开源"
+          ],
+          "id": "2026-11-25-koed",
+          "slug": "koed",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "MyClaw 3.0",
+          "tagline": "Build an always-on AI team with shared memory",
+          "ph": "https://www.producthunt.com/products/myclaw-3-0",
+          "site": "https://myclaw.ai",
+          "repo": "",
+          "rank": 1,
+          "score": 326,
+          "comments": 69,
+          "what": "托管的 AI 队友平台：给每个队友单独配置角色、Agent Engine、工具、技能和模型，在常开的云电脑上跑，并共享一层记忆。官网列出的引擎包括 OpenClaw、Hermes Agent、Pi、Claude Code、Codex 和 DeepSeek Harness，并称可选 50 多种模型。可从网页以及 Slack、Telegram、WhatsApp 指派任务和查看进度。这是托管服务，不是把工作台装到你自己机器上；其博客把 MyClaw 写成为你运维 OpenClaw 的托管方案，3.0 则把可选引擎扩到上述多家。GitHub 上的 LeoYeAI/MyClaw 主要是宣传说明、没有许可证，定价表也已过时，不能当作 3.0 的产品源码。",
+          "problem": "想同时用多家 coding agent、还要它们共享上下文并在人离线时继续跑例行任务时，自己搭常开环境和记忆同步成本很高。",
+          "highlight": "官网写：每个队友在自己的云电脑里浏览网页、处理文件和完成任务，例行工作可在合上电脑后继续；并提供角色模板（如首席助理、研究员、PR Reviewer、软件工程师、内容创作等）。还提供按量付费的 Data Router，官网称无需自备各类数据 API 密钥。定价页（年付约省 17%）为：Pro 每月 20 美元（年付 17 美元/月、200 美元/年），每月 4,000 credits、4 vCPU、8 GB 内存、80 GB 存储、5 TB 流量；Max 每月 40 美元（年付 34 美元/月、400 美元/年），8,000 credits、8 vCPU、16 GB、160 GB、10 TB；ULTRA 每月 200 美元（年付 167 美元/月、2,000 美元/年），40,000 credits、16 vCPU、32 GB、320 GB、20 TB；另有企业定制。定价对照表列出常开、自动更新、每日备份和「Fully private & encrypted」，但常见问题正文未展开，不能当成已核实的企业合规说明。各套餐的 Agent Engine 数量上限在收录时页面仍显示 Loading，这里不写具体限额。制作人在 Product Hunt 上回复：按单个队友查看花费的功能还在做，尚未提供。模型用量如何从 credits 里扣、是否另计，官网未在已打开的页面写清。",
+          "inspo": "可以把「角色 + 引擎 + 工具/技能 + 模型」拆开配置，再让团队共享一层记忆，把例行任务放到常开环境里跑。前提是接受托管，并先想清楚记忆和文件出不出域；若企业要自托管或数据不出域，对照的是开源 OpenClaw 自己运维，而不是把 MyClaw 当作本地工作台。按队友拆开花费目前还没有，若工作台要做多会话，这一项应一并设计进去，不要等事后补。",
+          "tags": [
+            "coding agent",
+            "AI工具"
+          ],
+          "id": "2026-11-25-myclaw-3-0",
+          "slug": "myclaw-3-0",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Canva MCP",
+          "tagline": "Turn any AI agent into a creative powerhouse",
+          "ph": "https://www.producthunt.com/products/canva",
+          "site": "https://www.canva.dev/docs/apps/mcp/",
+          "repo": "",
+          "rank": 4,
+          "score": 178,
+          "comments": 5,
+          "what": "Canva 把设计能力向 AI agent 和开发者开放的一次更新：官网称 Canva MCP 已普遍可用、不再排队，并同时提供 REST API 和扩展后的 Canva CLI。agent 可生成可在 Canva 里继续编辑的设计、图片和视频，也可做去背景、把平面图变成可编辑图层、缩放和导出。文档入口见 Canva Developers。",
+          "problem": "在聊天或编码 agent 里已经把文案和方案讲清，但要变成可编辑的海报、演示文稿或社媒物料时，往往还得回到设计工具里重做一遍。",
+          "highlight": "Canva 新闻室和开发者文档写：MCP 现已一般可用，可在 Developer Portal 创建应用并打开 Canva MCP。官方文档给出的远程 MCP 地址为 https://api.canva.com/connect/v1/mcp（需 OAuth 客户端，用户各自用 Canva 账号授权；不支持远程 MCP 的客户端可用 mcp-remote 转发）。新闻室称还可走 REST API，以及用 CLI 做更聚焦的命令行调用；并新增服务账号，便于在 REST API 上按用量计费、把能力嵌进产品而不要求每个使用者登录自己的 Canva 账号。新闻室列举的能力包括：生成可编辑设计、独立图片或视频、去背景、把平面图像变成可编辑分层设计（Magic Layers）、缩放、导出，以及取出已有设计和模板并用数据做个性化。Canva Craft 图像生成也通过 MCP 和 API 开放。官网还称：成果可在 Canva 里继续编辑，以便人工审阅。以下为官网公布、未经独立验证的使用数据：近 50 万人通过 MCP 注册 Canva（新闻室既写「过去一个月」也写「自 10 月以来」）；10 月 MCP 使用量比 9 月增长约 93%；首次通过 MCP 使用的人中有四成是新用户；10 月 CLI 键入命令中有 72% 来自 agent。",
+          "inspo": "给工作台的 agent 接设计能力时，把三种接口分开：要 agent 自己选工具就走 MCP（官方文档为 Streamable HTTP，地址 https://api.canva.com/connect/v1/mcp，用户各自用 Canva 账号授权）；要可预期、可计费的产品内能力就走 REST，并用服务账号，而不依赖每个员工的登录会话；批量重复操作用 CLI。产物保持可在 Canva 里编辑，方便人审。前提是先有 Canva 开发者应用和相应授权，并接受设计文件仍落在 Canva 体系里。",
+          "tags": [
+            "创作",
+            "AI工具",
+            "开发者工具"
+          ],
+          "id": "2026-11-25-canva-mcp",
+          "slug": "canva-mcp",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "RelayRunner",
+          "tagline": "Swap between CI runners on-demand with zero code changes.",
+          "ph": "https://www.producthunt.com/products/relayrunner",
+          "site": "https://relayrunner.dev",
+          "repo": "https://github.com/relayrunner/relayrunner",
+          "rank": 10,
+          "score": 91,
+          "comments": 9,
+          "what": "开源的 GitHub Actions 路由：在不改作业步骤的前提下，把每个 job 送到你设定顺序里当前空闲的第一个 runner，可以是本机、已有的自托管 runner、第三方托管，或 GitHub 托管。仓库 relayrunner/relayrunner 为 Apache-2.0，另有 relayrunner/actions。收录时主仓库约 11 星。官网称目前受支持的用法是托管仪表盘 app.relayrunner.dev 加上 GitHub App，核心路由保持开源且免费，不向你收取 runner 分钟费。雷达尚未收过此仓库。",
+          "problem": "CI 有时想优先用自己的机器或更便宜的托管 runner，但又不愿为了换线路而改工作流、提 PR；笔记本合上后，跑到一半的任务也容易断在本机上。",
+          "highlight": "文档写：在目标 job 前面加一个 relay job（约一秒结束、不占分钟），用它的输出作为后面 job 的 runs-on；在仪表盘改 runner 顺序，对下一趟生效，不必再改 YAML。本机用 npx relayrunner connect 接入，合上盖子后任务改走顺序里的下一个；可打开自动重试，让中断的 job 在下一个空闲 runner 上重跑。Apple 芯片 Mac 上，任务跑在独立的 Linux 虚拟机里，看不到你本机文件；Linux 和 Intel Mac 上则像普通自托管 runner 一样以当前用户运行，文档要求只接你信任的仓库。公开仓库不会用你的机器，避免陌生人的 PR 在你电脑上执行。还提供不占 runner 的优化检查（如 PR 标题和 lint），以及把每次运行打成 OpenTelemetry 追踪。可把 MCP 接到 Claude、Cursor 或 VS Code，让 agent 查看 runner、失败和用量，并在你允许时改顺序或暂停 runner（官网称 2026-11-24 起此类更改需确认）。限制方面：Windows 机器和 GitHub Enterprise Server 尚不支持；一次 relay 只路由一个 job，不能用一个 relay 做矩阵。支持的托管商包括 Blacksmith、Depot、Namespace、WarpBuild、Ubicloud、Boat 等，GitHub 托管可作为兜底。",
+          "inspo": "可以把 CI 路由从工作流里拆出来：前面加一个不占分钟的 relay job，用它的输出当 runs-on，在控制面改优先级而不改 YAML。公开仓库里来自陌生人的 PR 不要落到开发者自己的机器上；在 Apple 芯片上用独立 Linux VM，避免任务碰到本机文件。前提是团队用 github.com 上的 Actions（暂不支持 GHES 和 Windows runner），并且接受目前受支持的用法是他们的托管仪表盘加 GitHub App。若工作台要让 agent 改 CI 线路，应像它后来加上的那样，先确认再改。",
+          "tags": [
+            "开发者工具",
+            "开源"
+          ],
+          "id": "2026-11-25-relayrunner",
+          "slug": "relayrunner",
+          "status": "新发现",
+          "followups": []
+        }
+      ]
+    },
+    {
       "date": "2026-11-24",
       "source": "https://www.producthunt.com/leaderboard/daily/2026/11/24",
       "fetched": "2026-11-25 17:35 北京",
