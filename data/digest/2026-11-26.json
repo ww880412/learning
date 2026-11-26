@@ -1,0 +1,87 @@
+{
+ "date": "2026-11-26",
+ "label": "11 月 26 日 · 星期四",
+ "href": "digest/2026-11-26.html",
+ "json": "data/digest/2026-11-26.json",
+ "brief": null,
+ "posters": {
+  "title": "4 张技术海报",
+  "href": "x-posters/2026-11-26/index.html",
+  "n": 4,
+  "items": [
+   {
+    "title": "Anthropic：把 Messages API 从 Python 迁到 Rust，靠生产影子验证对等",
+    "href": "x-posters/2026-11-26/index.html#p1",
+    "img": "x-posters/2026-11-26/img/01-migrating-api-to-rust.webp"
+   },
+   {
+    "title": "Anthropic：MCP 服务器可随工具发布 Skill；Tasks 与 Elicitation 对 Pro/Max/Ultra 可用",
+    "href": "x-posters/2026-11-26/index.html#p2",
+    "img": "x-posters/2026-11-26/img/02-skills-over-mcp-r2.webp"
+   },
+   {
+    "title": "Uber：用分层市场、对照评测和 Code Mode 治理企业 Agent Skill",
+    "href": "x-posters/2026-11-26/index.html#p3",
+    "img": "x-posters/2026-11-26/img/03-uber-agent-skills.webp"
+   },
+   {
+    "title": "Anthropic《Working with AI》：58 家客户访谈认为价值主要来自提高产出，并常伴随组织重组",
+    "href": "x-posters/2026-11-26/index.html#p4",
+    "img": "x-posters/2026-11-26/img/04-working-with-ai.webp"
+   }
+  ]
+ },
+ "ph": {
+  "listDate": "2026-11-24",
+  "href": "ph-inspo/index.html",
+  "n": 6,
+  "source": "https://www.producthunt.com/leaderboard/daily/2026/11/24",
+  "picks": true,
+  "items": [
+   {
+    "rank": 15,
+    "pick": true,
+    "name": "Fleetify",
+    "what": "开源桌面指挥中心：在一个窗口里并排跑多个 AI coding agent，用 Fleet 面板看各会话的状态、花费和 token，并默认给每个任务单独的 git worktree。仓库 fleetifydev/fleetify 为 Apache-2.0，用 Rust 和 Tauri 编写，支持 macOS、Windows 和 Linux。",
+    "href": "ph-inspo/index.html#2026-11-24-fleetify"
+   },
+   {
+    "rank": 6,
+    "pick": true,
+    "name": "Claude Ship",
+    "what": "Anthropic 为 GitHub 拉取请求提供的一套代理：已正式提供的 Code Review，加上公测中的 PR Steward（修失败的检查、合并冲突和评审意见，但不批准、不合并）和 Claude Approvals（按仓库里的策略文件判断还要谁批、哪些可由 Claude 批）。开发者也可在 Claude Code 里用 /ship，推送、开 PR 并往下走这几步。",
+    "href": "ph-inspo/index.html#2026-11-24-claude-ship"
+   },
+   {
+    "rank": 2,
+    "pick": true,
+    "name": "Granular.Build",
+    "what": "本机可视化工作区：把已有的 Claude、Codex、Gemini 等订阅和项目文件夹放在一起，用老板 agent 给工人分活，在真实终端里跑，并在画布上预览结果。每个项目可有一份本地 Markdown「大脑」和路线图。",
+    "href": "ph-inspo/index.html#2026-11-24-granular-build"
+   },
+   {
+    "rank": 3,
+    "pick": false,
+    "name": "Clam AI",
+    "what": "夹在 AI agent 和 Gmail 之间的权限层：为每个 agent 建一个 Shell，用白话规则限定它能读、起草、发送哪些邮件；请求先经策略检查，再通过 MCP 交给 agent。官网称正在把这套做成「懂数据含义」的 MCP 权限层，目前从 Gmail 开始。",
+    "href": "ph-inspo/index.html#2026-11-24-clam-ai"
+   },
+   {
+    "rank": 4,
+    "pick": false,
+    "name": "Viktor Code",
+    "what": "云端「AI 员工」产品 Viktor 的编程向：官网称它同时具备公司上下文（客户、指标和已做决定）和代码仓库，你给业务结果而不是工单，它把工作拆成技术与非技术两条线，在 GitHub、GitLab 或 Bitbucket 上开拉取请求并交回给你审。",
+    "href": "ph-inspo/index.html#2026-11-24-viktor-code"
+   },
+   {
+    "rank": 9,
+    "pick": false,
+    "name": "tday.com",
+    "what": "给 coding agent 用的产品演示录像工具：在 Claude Code、Cursor、Codex 或任何 MCP 客户端里用一句话请求演示，本机上的 agent 操作你的真实应用（包括 localhost），tday 再配上旁白、光标、缩放、字幕和品牌。可事后改每一句，用于发布、文档或更新日志。",
+    "href": "ph-inspo/index.html#2026-11-24-tday"
+   }
+  ]
+ },
+ "url": "https://ww880412.github.io/learning/digest/2026-11-26.html",
+ "rule": "汇总日 D 是北京时间。简报文件名是美东日期，北京时间 D 日 09:00 发布，那时美东还是 D−1 日，所以 D 一般对应 x-brief/(D−1).html（页面若有带时区的发布时间，则改用该时间换算到 Asia/Shanghai；链接仍是原文件）。海报是 x-posters/D/。产品灵感是最新一份榜单日 ≤ D−2 的那组（太平洋时间的 Product Hunt 日榜，北京时间 D 日 09:00 前能入库的最新一份），并标出实际榜单日。某一来源没有就是 null。"
+}
