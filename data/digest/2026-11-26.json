@@ -3,7 +3,15 @@
  "label": "11 月 26 日 · 星期四",
  "href": "digest/2026-11-26.html",
  "json": "data/digest/2026-11-26.json",
- "brief": null,
+ "brief": {
+  "title": "X 简报 · 11/26（周四）",
+  "href": "x-brief/2026-11-25.html",
+  "lines": [
+   "Claude Code 团队 Addy Osmani 写了官方指南，介绍如何把 PR 后续工作交给 Claude Ship，并划清本地命令和团队服务的界限（官方文章，11/25）：官方称，Code Review 已正式可用，PR Steward 和 Claude Approvals 仍是公开测试。本地 /ship 随最新版 Claude Code 提供，不必等管理员打开团队 Agent：没有 PR 时，它会按 git add -A 的方式提交待提交改动（遵守 .gitignore）、推送并创建 PR，再用 /code-review 审查，只修复它判断成立的问题，并最多跟进 7 天，PR 合并或关闭后结束。已有 PR、只需跟到合并，可用 /steward 只跑跟进、不再先做一轮审查。同一问题最多推送 3 次修复，仍未解决就交回作者；重新设计 API、扩大范围等重大决定，以及它解决不了的安全问题，应交给人（官方文章、Addy Osmani、ClaudeDevs、meng shao）",
+   "OpenAI 首席执行官 Sam Altman 称，作为 OpenAI Private Intelligence 的一部分，Private Inference 已开始与一小部分客户测试（官方人员公告，11/26）：他写，更强的隐私保护会让前沿模型能做更多工作，并对企业隐私有好处；有兴趣可联系 @shekar4x。他同时提到，ZDR 与 Private Safety Processing 可做自动安全审查，而不让 OpenAI 人员看到底层内容。官方产品页把 Private Inference 标为 Alpha，说明是机密计算（confidential computing）加上「严格、可验证的控制」，图示里标了 API Preview（原帖、官方产品页）",
+   "前 Anthropic、Claude Code 相关成员 Thariq（@trq212）本人发帖确认已加入 OpenAI；OpenAI 的 Anthony Ambrosino 在欢迎帖里写，他们已把 Codex 放进各种产品，现在是重新打造 Codex 的时候（本人确认，11/26）：Thariq 写，他为在 Anthropic 的经历感到自豪，并会继续为前同事加油；他认为自己在 OpenAI 能做的贡献最大，并期待与 @_catwu、@thsottiaux、@ajambrosino 等人共事。OpenAI 总裁 Greg Brockman 和 Codex 相关负责人 Tibo 都在帖下表示欢迎。这是对昨日简报里尚未得到本人确认的转述的更新（Thariq、Anthony Ambrosino、宝玉）"
+  ]
+ },
  "posters": {
   "title": "4 张技术海报",
   "href": "x-posters/2026-11-26/index.html",
