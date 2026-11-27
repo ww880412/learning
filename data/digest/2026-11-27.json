@@ -1,0 +1,69 @@
+{
+ "date": "2026-11-27",
+ "label": "11 月 27 日 · 星期五",
+ "href": "digest/2026-11-27.html",
+ "json": "data/digest/2026-11-27.json",
+ "brief": {
+  "title": "X 简报 · 11/27（周五）",
+  "href": "x-brief/2026-11-26.html",
+  "lines": [
+   "OpenAI 工程负责人 Tibo 称，GPT-6.2 上线时计费出错、少算了多数用户的 Astra 和 Sol 用量，现已修好；同一工作会更耗套餐额度。官方帮助中心同时写明，12 月起 Plus、Pro 和 Business 的额度将在 ChatGPT 与 Codex 之间共用（厂商公告 + 官方帮助中心，11/26）：他写，和上周比，GPT-6.2 Astra 触顶会快 40%，Sol 会快 25%；仍应比 GPT-6 Astra 和 GPT-6.1 Sol 更耐用。其他模型不受影响，以往少算的部分不会补扣。作为道歉，Go、Plus、Pro 和 Business 将各获一次预存重置（banked reset）。他随后又发帖称「Banked reset is online」。BleepingComputer 称可在 ChatGPT 的 Settings → Usage 里看到，有效期约一个月。官方帮助中心「Understanding ChatGPT and Codex usage limits」写明：从 12 月起，上述付费档的用量按 token 在 ChatGPT 与 Codex 之间共享，原因是把 Work 的代理能力并进主聊天界面；Instant Chat 不计入这份额度。设置页会显示合并后的剩余量和重置时间；触顶后可等待重置、升级或购买积分。一小部分用户可能提前看到变化（Tibo 公告、重置已上线、官方帮助中心、TestingCatalog、小墨）",
+   "Grok Bot 相关团队成员 Sam Sokolin 称，普通聊天套餐用量大约多 11%，Routines 最多可多约 50%，来自减少简单、重复任务的推理请求（团队成员自报，11/27）：他写，「团队这几周一直在做优化」，并说稍后会再讲如何改 Routine 的 harness。他个人简介写 building @bot，并标注 SpaceXSI。更早一条里，他曾以「Grok Bot harness 团队」的口吻说，会继续想办法让套餐更耐用。TestingCatalog 转发了这条（原帖、TestingCatalog）",
+   "Antigravity 团队的 Varun Mohan（@_mohansolo）称，为感恩节向所有 Antigravity 用户重置了 Gemini 额度（团队公告，11/26）：他用「我们」的口吻感谢用户，并说产品增长很快、团队在努力保证体验。TestingCatalog 转发时写成「所有用户的 Gemini quota 已重置」。小墨另写了一组可在产品里直接改的省额做法，并称官方实测里，用 Orchestrator（规划加 Hydrogen 执行）比单跑 Carbon 省 24% 额度、速度快 19%；他还提醒 Claude 5.5 在 Pro 里是单独的小池，Turbo、/swarm、/boost 和超额扣费会成倍耗额，Gemini 网页端、NotebookLM 与 Antigravity 的额度分开计算（Varun Mohan、TestingCatalog、小墨省额）"
+  ]
+ },
+ "posters": null,
+ "ph": {
+  "listDate": "2026-11-25",
+  "href": "ph-inspo/index.html",
+  "n": 6,
+  "source": "https://www.producthunt.com/leaderboard/daily/2026/11/25",
+  "picks": true,
+  "items": [
+   {
+    "rank": 18,
+    "pick": true,
+    "name": "Tendeck",
+    "what": "原生 macOS 看板：把 Claude Code、Codex 以及多种 agent CLI 收成卡片，可在干净的会话视图和真实终端之间切换。官网称应用需 macOS 14 或更高、仅支持 Apple 芯片；一次买断 59 美元，含一年更新，到期后当前版本可继续用，再买一年更新为 29 美元。7 天试用只需邮箱、不用绑卡，购买后 14 天内可申请退款。制作人称许可证最多两台 Mac。未见公开产品源码。",
+    "href": "ph-inspo/index.html#2026-11-25-tendeck"
+   },
+   {
+    "rank": 24,
+    "pick": true,
+    "name": "Statefold",
+    "what": "托管云沙箱，用来跑你已经在付费使用的编码 harness：Codex、Claude Code、OpenCode、Pi 或 Gemini CLI。官网称它本身不是 coding agent，只提供按线程隔离的机器、git 访问和一条可在关电脑后继续的会话。可用 CLI 把当前工作区（含未提交改动）交出去，而不改动本地分支。制作人在 Product Hunt 上写，项目由他一人开发，并称产品仍新、会有毛边。未见公开产品源码。",
+    "href": "ph-inspo/index.html#2026-11-25-statefold"
+   },
+   {
+    "rank": 7,
+    "pick": true,
+    "name": "Koed",
+    "what": "开源、本机优先的编码会话记忆层，仓库 koed-labs/koed 为 Apache-2.0，用 TypeScript 编写。它在后台捕获 Codex、Claude Code 和 Pi 的会话，再用 MCP 工具 memory_answer 把带引用的回忆交给这些客户端；仓库写明回答仍由你正在用的 AI 客户端撰写，中间不再另接一个 LLM。支持 macOS、Linux 和 WSL（Windows 需在 WSL 里跑，且 KOED_HOME 与仓库要放在 Linux 文件系统上）。收录时仓库约 20 星。雷达尚未收过此仓库。",
+    "href": "ph-inspo/index.html#2026-11-25-koed"
+   },
+   {
+    "rank": 1,
+    "pick": false,
+    "name": "MyClaw 3.0",
+    "what": "托管的 AI 队友平台：给每个队友单独配置角色、Agent Engine、工具、技能和模型，在常开的云电脑上跑，并共享一层记忆。官网列出的引擎包括 OpenClaw、Hermes Agent、Pi、Claude Code、Codex 和 DeepSeek Harness，并称可选 50 多种模型。可从网页以及 Slack、Telegram、WhatsApp 指派任务和查看进度。这是托管服务，不是把工作台装到你自己机器上；其博客把 MyClaw 写成为你运维 OpenClaw 的托管方案，3.0 则把可选引擎扩到上述多家。GitHub 上的 LeoYeAI/MyClaw 主要是宣传说明、没有许可证，定价表也已过时，不能当作 3.0 的产品源码。",
+    "href": "ph-inspo/index.html#2026-11-25-myclaw-3-0"
+   },
+   {
+    "rank": 4,
+    "pick": false,
+    "name": "Canva MCP",
+    "what": "Canva 把设计能力向 AI agent 和开发者开放的一次更新：官网称 Canva MCP 已普遍可用、不再排队，并同时提供 REST API 和扩展后的 Canva CLI。agent 可生成可在 Canva 里继续编辑的设计、图片和视频，也可做去背景、把平面图变成可编辑图层、缩放和导出。文档入口见 Canva Developers。",
+    "href": "ph-inspo/index.html#2026-11-25-canva-mcp"
+   },
+   {
+    "rank": 10,
+    "pick": false,
+    "name": "RelayRunner",
+    "what": "开源的 GitHub Actions 路由：在不改作业步骤的前提下，把每个 job 送到你设定顺序里当前空闲的第一个 runner，可以是本机、已有的自托管 runner、第三方托管，或 GitHub 托管。仓库 relayrunner/relayrunner 为 Apache-2.0，另有 relayrunner/actions。收录时主仓库约 11 星。官网称目前受支持的用法是托管仪表盘 app.relayrunner.dev 加上 GitHub App，核心路由保持开源且免费，不向你收取 runner 分钟费。雷达尚未收过此仓库。",
+    "href": "ph-inspo/index.html#2026-11-25-relayrunner"
+   }
+  ]
+ },
+ "url": "https://ww880412.github.io/learning/digest/2026-11-27.html",
+ "rule": "汇总日 D 是北京时间。简报文件名是美东日期，北京时间 D 日 09:00 发布，那时美东还是 D−1 日，所以 D 一般对应 x-brief/(D−1).html（页面若有带时区的发布时间，则改用该时间换算到 Asia/Shanghai；链接仍是原文件）。海报是 x-posters/D/。产品灵感是最新一份榜单日 ≤ D−2 的那组（太平洋时间的 Product Hunt 日榜，北京时间 D 日 09:00 前能入库的最新一份），并标出实际榜单日。某一来源没有就是 null。"
+}
