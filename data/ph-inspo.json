@@ -24,6 +24,145 @@
   ],
   "days": [
     {
+      "date": "2026-11-27",
+      "source": "https://www.producthunt.com/leaderboard/daily/2026/11/27",
+      "fetched": "2026-11-28 17:25 北京",
+      "note": "官网日榜可打开，综合分来自官网（含第 15 名 gpyou；其评论数为 hunted.space 显示的 9，日榜摘录里未看到该项评论数）。decohack 标 11.27 的一期实为太平洋 11/26 产品（Hub、QA.tech MCP、ExtraOrbital 等，已在昨日收录），11.28 期打开为 404。Pushary Calls 与 11/5 已收的 Pushary for Teams 同为 https://www.producthunt.com/products/pushary，未重复收；此次新能力是未读权限提示后按设定延迟打电话（制作人在 Product Hunt 上称支持 Claude Code、Codex、Gemini CLI、Grok Build、Hermes 等，尚未支持 Cursor；来电覆盖美、加、英、德、奥、瑞士、荷，收录当天称法国号码也已开通）。未收 Wizstar R1（产品视频模型，厂商自测对标 Seedance 2.0 的可用产出率）、RightFont 2026、Espresso 27、Remove Silence、Woomool、slay、ChickyTutor、Prosed AI、Onset、Ploid 等。",
+      "picks": [
+        {
+          "id": "2026-11-27-contral",
+          "why": "把已有 Claude Code、Codex 等接进来，每轮对照你的请求做检查，并能一键撤销整轮改动。",
+          "limit": "检查是启发式的（没改动、占位符、解析失败等），替代不了测试；对 Claude Code 的纠正要你自己点发送。"
+        },
+        {
+          "id": "2026-11-27-periscope",
+          "why": "把没有 API 的屏幕操作收成可调用的 REST/MCP 端点，登录和放行会停下来问人。",
+          "limit": "官网称目前主要跑网页应用，还不能用你自己的密钥或虚拟机，一次调用往往要几十秒到数分钟。"
+        },
+        {
+          "id": "2026-11-27-gpyou",
+          "why": "一条 CLI 按库存最便宜的 GPU 拉起 OpenAI 兼容的编码模型，给 Codex CLI 等用，暂停后仍保留同一地址。",
+          "limit": "公开测试、账户要人工开通、没有 SLA；公开 MCP 只能查库存不能下单；容器退出默认不停租。"
+        }
+      ],
+      "items": [
+        {
+          "name": "Contral",
+          "tagline": "The AI coding agent that checks its work and teaches you",
+          "ph": "https://www.producthunt.com/products/contral",
+          "site": "https://contral.ai",
+          "repo": "",
+          "rank": 3,
+          "score": 183,
+          "comments": 37,
+          "what": "给已有 coding agent 加一层教学和验收：可在 Contral 里用你自己账号下的 Claude Code、Codex、Cursor、OpenCode、Gemini CLI 或 GitHub Copilot CLI 干活；每轮结束对照你的请求做检查，并用教学卡片解释改动。也提供自带的 Build 代理、Learn 课程和 Defense Mode。Contral IDE 基于 Eclipse Theia，但教学引擎、代理模式和课程是专有闭源，没有公开产品源码仓库。已出 beta：Contral IDE 1.1 与扩展 1.0。",
+          "problem": "Agent 写代码比人读得快，还常在没做完时说「Done」，最后交出一份你讲不清楚、也不确定是否对上需求的改动。",
+          "highlight": "文档写明，Agent mode 在一轮结束后会检查：要改却没改、文件被重写成相同内容、你点名的函数/类/文件不存在、声称做了却没做、文件无法解析或出现 TODO: implement 这类占位，以及改了你没提到的文件（只记一笔，不算失败）。发现缺漏时，会对较小/免费模型自动发最多 2 次具体纠正、对其余模型 1 次；对 Claude Code 则不代发你没发起的消息，只准备好「Ask Claude Code to fix it」按钮。可用 contral.agentMode.checkWork 关掉。Undo 会还原该轮创建、修改或删除的文件（含它没汇报的），但跳过 node_modules、dist、.git 以及超过 512 KB 的文件；检查点只保留当前编辑器会话最近 25 轮，重启即丢失。教学卡片解释改了什么、为什么；Defense Mode 默认 coach（不阻塞），可选 gate 在通过、记录「跳过一次」或回退前拦住 Build 代理的下一步——其他 agent 已写下的文件挡不住。扩展可用于 VS Code、Cursor、Windsurf、Antigravity、Kilo Code 和 VSCodium；独立 IDE 支持 Apple Silicon、Windows 和 Linux，不支持 Intel Mac。免费档 Agent mode / BYOK 每天 30 条（文档称纠正不计入），付费和 AppSumo 终身档不限。官网另称 4,000+ 开发者在用，并与若干大学谈过试点，但「尚未签约」。",
+          "inspo": "工作台可把「对照用户请求的验收」做成每轮固定步骤，而不是只看 agent 自己的「Done」：检查无改动、占位符、解析失败和点名符号是否出现，纠正稿写具体，对较小模型自动重试、对已接管会话的 Claude Code 只准备好稿子等人点发送。整轮撤销要覆盖它没汇报的文件，并在下一轮告诉 agent 这些改动已不在。理解检查可做成默认不阻塞的教练，或可选闸门；闸门只对你能拦住的写入有效，挡不住已经写进工作区的外部 agent。前提是能看到该轮的完整文件变更集，并且这些检查是启发式的，替代不了测试和评审。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "教育"
+          ],
+          "id": "2026-11-27-contral",
+          "slug": "contral",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Periscope",
+          "tagline": "Turn any work into an API",
+          "ph": "https://www.producthunt.com/products/periscope-4",
+          "site": "https://www.getperiscope.ai",
+          "repo": "",
+          "rank": 4,
+          "score": 170,
+          "comments": 18,
+          "what": "把「在真实软件里点屏完成的工作」收成可调用的 API：你描述任务，每个 agent 在自己的云桌面上通过屏幕操作软件，然后用你定义的请求/响应格式，经 REST（带 OpenAPI）或 MCP 调用。需要登录或放行时会停下来问人。",
+          "problem": "大量业务仍跑在没有 API 的旧软件里，人只能手工点；想让编码 agent 或脚本复用这些流程，通常既没有接口，也没有统一的人工确认点。",
+          "highlight": "官网称目前主要在网页应用上跑过；简单任务数秒、长任务数分钟。MCP 地址为 https://mcp.getperiscope.ai/mcp，浏览器登录后由你选择客户端可以做的事。聊天里可发起任务、按描述创建 agent、回答它的提问，并用 call ID 跟进耗时调用。MCP 不能读写登录信息（登录只进 Periscope Studio 的保险库，且需两步验证）、不能删除 agent、不能改账户。计费按「一次运行」：Studio 里启动一次，或对 API/MCP 端点调用一次，算一次；失败重试算同一次，安装程序的那次不计。免费档 1 个 agent、每周 10 次运行、不用绑卡；Starter 每月 20 美元、5 个 agent、每周 100 次；Scale 每月 200 美元、15 个 agent、每周 1,000 次；周限额是滚动 7 天。制作人在 Product Hunt 上说尚不支持 BYOK 或用你自己的虚拟机，agent 跑在他们托管的桌面上。企业档页面提到可 on-prem，需另谈。",
+          "inspo": "把「无 API 的软件操作」封装成带请求/响应契约的端点，比直接把 computer-use 会话暴露给聊天更可复用；MCP 只负责发起和跟进，凭证进单独保险库，不经过聊天。人工闸门应在登录、改关键字段和放行时停下，并把进行中的长调用用 call ID 轮询，而不是让对话一直阻塞。前提是任务主要发生在他们能驱动的界面（目前以网页应用为主），而且你接受运行发生在厂商托管的桌面上。",
+          "tags": [
+            "coding agent",
+            "开发者工具",
+            "AI工具"
+          ],
+          "id": "2026-11-27-periscope",
+          "slug": "periscope",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "gpyou",
+          "tagline": "The OpenRouter for compute for the cheapest GPU in stock",
+          "ph": "https://www.producthunt.com/products/gpyou",
+          "site": "https://gpyou.ai",
+          "repo": "",
+          "rank": 15,
+          "score": 93,
+          "comments": 9,
+          "what": "把多家 GPU 云收成一个市场的命令行工具：按当前库存里最便宜的报价租卡，售罄或被拒就试下一个，预付费、按秒计费。可跑容器、QLoRA 微调、vLLM 端点，或拉起 Qwen3.8-27B 等编码模型，给 aider、OpenCode、Cline、Continue、Codex CLI 用。PyPI 上的 CLI（收录当天为 v0.5.0）许可证为 LicenseRef-Proprietary，没有查到公开产品源码仓库。",
+          "problem": "租一张合适的 GPU 往往要在多个控制台和余额之间刷新库存；编码 agent 若按 token 计费，长上下文或反复尝试会很难预估成本。",
+          "highlight": "gpyou code start 给出 OpenAI 兼容地址和只显示一次的密钥；pause 释放 GPU 但保留地址和密钥，空闲 15 或 60 分钟可自动暂停，也可设月度消费上限。gpyou gpus 和远程 MCP（https://app.gpyou.ai/mcp，工具仅 find_gpus）不用登录即可查库存；公开 JSON 在 https://app.gpyou.ai/v1/public/gpus。文档称现有 Runpod、Vast.ai、Verda（芬兰和冰岛，留在欧盟）、Shadeform 四家，按确认库存、过往启动成功率和价格排序。15 分钟内租不到则预留额度退回。容器退出默认不会自行停租（云厂商可能重启并继续计费），需加 --release-on-exit（Vast.ai 不可用该选项）或 --max-duration。制作人在 Product Hunt 上称这是公开测试：账户人工审批、没有 SLA，端点仅供开发（无自动扩缩）。CLI 以文本或 JSON 输出，便于 agent 编排；文档写明正在跑的任务不会被迁移到下一张卡。",
+          "inspo": "给工作台的「租算力」做成：先报价再下单、售罄自动试下一档、按秒预付，并把编码模型以 OpenAI 兼容地址交给已有 CLI；空闲暂停时保留同一地址和密钥，避免 agent 配置失效。给助手的 MCP 只开放查库存（find_gpus 按 GPU、地区、国家和最高单价过滤），下单仍走需登录的 CLI，避免远程工具直接烧钱。容器必须显式 --release-on-exit 或时长上限，因为进程退出不等于停租。前提是能接受公开测试、人工开通账户，以及数据在第三方 GPU 云上的出入费用要另算。",
+          "tags": [
+            "开发者工具",
+            "AI工具",
+            "coding agent"
+          ],
+          "id": "2026-11-27-gpyou",
+          "slug": "gpyou",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "Depost AI",
+          "tagline": "The LinkedIn AI agent that learns what works for your brand",
+          "ph": "https://www.producthunt.com/products/depost-ai",
+          "site": "https://depost.ai",
+          "repo": "",
+          "rank": 2,
+          "score": 215,
+          "comments": 38,
+          "what": "面向 LinkedIn 的内容代理：按你自己帖子的平均表现打分、找同类里做得好的形状，再按你的口吻规划、起草和配图；你批准后通过 LinkedIn 官方 API 发布。也可在 Claude、ChatGPT、Cursor 等里经 MCP 用同一套工具。回复同样先成草稿，不会自动发出。",
+          "problem": "自媒体往往凭感觉发帖，对照的是别人的「爆款」而不是自己账号的基线；用通用模型读一次导出又留不下持续的数据和口吻。",
+          "highlight": "官网和制作人说明：分数是相对你自己的平均表现（例如 1.28×），发帖量少时星期几、几点的差异多半是噪声，格式和主题会更早显出信号。口吻每周从你实际发布的帖子刷新，你改过再发出去的版本会进入下一轮学习。LinkedIn 不提供评论带来主页访问或私信的数据，Depost 也不声称能测到；评论功能是针对你列出的对象起草回复，仍需你确认后才发出。MCP 在所有套餐都有：在设置里创建带权限的连接 URL（密钥在 URL 里，视为密码），默认可读上下文、分析和写草稿，排期与发布是单独开通的权限；权限创建后不能改，要换就新建并删掉旧的。官网价：Solo 每月 59 美元（1 个 LinkedIn 账号），Team 每月 199 美元（含 3 个，之后每个 59 美元）；另有限时一次买断每账号 399 美元（页面划掉价 999 美元），含每月 50 篇 AI 帖、20 张信息图、5,000 条回复等。Solo/Team 有 7 天试用。用户见证中的浏览量等数字未经独立验证。",
+          "inspo": "做内容或工作台里的「效果分析」时，对照应该是这条相对该账号自己的基线，而不是全站排行；口吻应以实际发布稿为每周刷新的正本，而不是模型一次聊天里的记忆。接到 MCP 的发布能力要默认关闭，连接串里已含密钥，权限不可事后修改。前提是你主要在 LinkedIn 发、并接受经官方 API 授权；它测不到评论带来的访问或私信。",
+          "tags": [
+            "创作",
+            "AI工具",
+            "效率"
+          ],
+          "id": "2026-11-27-depost-ai",
+          "slug": "depost-ai",
+          "status": "新发现",
+          "followups": []
+        },
+        {
+          "name": "snibl",
+          "tagline": "Save highlighted text from any app, then ask AI about it",
+          "ph": "https://www.producthunt.com/products/snibl",
+          "site": "https://snibl.app",
+          "repo": "",
+          "rank": 9,
+          "score": 102,
+          "comments": 25,
+          "what": "Mac / Windows 桌面摘录工具：在任意应用里选中文字，用快捷键（默认 Mac 为 Ctrl+Option+G，Windows 为 Ctrl+Alt+G）保存片段，并记下应用、窗口标题，以及浏览器里的链接。库在本机 SQLite，没有账号和默认云同步。AI 默认关闭，打开后可用你自己的密钥或本地兼容端点提问。",
+          "problem": "读书、查文档时随手划过的句子，事后既找不到出处，也不想为了存一条就切走当前窗口。",
+          "highlight": "文档称抓取时不抢焦点、不弹确认，并把剪贴板内容复原；失败会提示未选中或缺少辅助功能权限。条目可进 Reply、Explore/Learn、Docs 等桶，分类原因会留下；不确定或未开 AI 时进 Unsorted，不会偷偷猜。免费档可无限本地库和搜索，但只能手分桶、不能接模型。Pro 限时 29 美元、常规 39 美元一次买断，可带 OpenAI、Anthropic、OpenRouter、Ollama 或任意 OpenAI 兼容端点的密钥；许可证一机一用，更新含一年，之后应用仍能用。托管 AI 是 Pro 的附加项（每月 7 美元或每年 60 美元），也需先选择加入。官网称无遥测；许可证校验只发送许可证密钥和设备名。安装页提供从源码用 Node.js 22.13+ 和 pnpm 10 跑开发模式的命令，但未给出公开仓库地址。制作人在 Product Hunt 上说目前还不能跳到页面里的精确行，取决于来源是否提供深链；也还没有手机版。",
+          "inspo": "个人知识或工作台的「随手摘录」应默认本机落库、不抢焦点，并强制带上来源（应用、窗口、URL）；AI 分类和问答必须默认关，未配置模型时进未分类而不是静默猜测。若要授权一台设备，应能先在旧设备注销再激活新设备。前提是你主要在桌面阅读，并接受目前不能一键跳回原文精确位置。",
+          "tags": [
+            "效率",
+            "AI工具"
+          ],
+          "id": "2026-11-27-snibl",
+          "slug": "snibl",
+          "status": "新发现",
+          "followups": []
+        }
+      ]
+    },
+    {
       "date": "2026-11-26",
       "source": "https://www.producthunt.com/leaderboard/daily/2026/11/26",
       "fetched": "2026-11-27 17:40 北京",
